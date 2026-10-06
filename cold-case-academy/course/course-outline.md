@@ -12,8 +12,8 @@
 | Ref | Title | Case | Status |
 |---|---|---|---|
 | M01 | Training Case: The Vanishing Mona Lisa | Louvre theft, Paris, 1911 (**solved** — the practice case, so learners see how a real case gets cracked) | **Drafted** |
-| M02 | Case 001, Part 1: The Man in the Last Row | D.B. Cooper skyjacking, Nov 24, 1971 — the flight, the note, the jump | Planned |
-| M03 | Case 001, Part 2: Money on the Riverbank | D.B. Cooper — the manhunt, the 800+ suspects, the cash an 8-year-old found in 1980, why the FBI stopped in 2016 | Planned |
+| M02 | Case 001, Part 1: The Man in the Last Row | D.B. Cooper skyjacking, Nov 24, 1971 — the flight, the note, the jump. Game: *Flight 305* | **Drafted** |
+| M03 | Case 001, Part 2: Money on the Riverbank | D.B. Cooper — the manhunt, the 800+ suspects, the cash an 8-year-old found in 1980, why the FBI stopped in 2016. Game: *The Tena Bar Riddle* | **Drafted** |
 | M04 | Case 002, Part 1: Spoons, Soap and Fake Heads | Alcatraz escape, June 11, 1962 — the plan, the tools, the raincoat raft | Planned |
 | M05 | Case 002, Part 2: Did They Make It? | Alcatraz — the search, the 2013 letter, age-progressed photos, the U.S. Marshals' case (**check current case status before writing**) | Planned |
 | M06 | Case 003, Part 1: 81 Minutes | Gardner Museum heist, Boston, Mar 18, 1990 — fake police, 13 stolen works | Planned |
