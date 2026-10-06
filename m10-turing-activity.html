@@ -1,0 +1,674 @@
+<title>Turing's Decision Problem</title>
+<style>
+/* Layout: single-column, centered, step-by-step card flow */
+/* Color: warm parchment ground, ink type, teal accent, amber highlight */
+:root {
+  --bg: #f5f1e8;
+  --surface: #fdfaf3;
+  --fg: #1e1c18;
+  --muted: #6b6456;
+  --accent: #2a7a6e;
+  --accent-fg: #ffffff;
+  --amber: #b8873a;
+  --amber-bg: #fdf3dc;
+  --border: #d8d0c0;
+  --cell-bg: #fffdf6;
+  --cell-border: #9a8f78;
+  --head-color: #2a7a6e;
+  --correct: #2a7a6e;
+  --correct-bg: #e6f4f1;
+  --wrong: #c0392b;
+  --wrong-bg: #fdecea;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1814;
+    --surface: #232018;
+    --fg: #e8e2d6;
+    --muted: #9a9080;
+    --accent: #3d9e90;
+    --accent-fg: #ffffff;
+    --amber: #d4a055;
+    --amber-bg: #2a2210;
+    --border: #3a3528;
+    --cell-bg: #1e1c14;
+    --cell-border: #6a6050;
+    --head-color: #3d9e90;
+    --correct: #3d9e90;
+    --correct-bg: #0e2820;
+    --wrong: #e05a4a;
+    --wrong-bg: #280e0a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1814;
+  --surface: #232018;
+  --fg: #e8e2d6;
+  --muted: #9a9080;
+  --accent: #3d9e90;
+  --accent-fg: #ffffff;
+  --amber: #d4a055;
+  --amber-bg: #2a2210;
+  --border: #3a3528;
+  --cell-bg: #1e1c14;
+  --cell-border: #6a6050;
+  --head-color: #3d9e90;
+  --correct: #3d9e90;
+  --correct-bg: #0e2820;
+  --wrong: #e05a4a;
+  --wrong-bg: #280e0a;
+  color-scheme: dark;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+  padding: 1.5rem 1rem 3rem;
+  min-height: 100%;
+}
+
+.wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  text-wrap: balance;
+  color: var(--fg);
+}
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 1.5rem;
+}
+
+/* Rule box */
+.rule-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.rule-box h2 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.rule-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.rule-row:first-of-type { border-top: none; }
+.rule-cond { font-weight: 600; color: var(--fg); min-width: 80px; }
+.rule-action { color: var(--muted); }
+
+/* Tape */
+.tape-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1rem 1rem;
+  margin-bottom: 1rem;
+}
+.step-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.tape-wrap {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+.tape {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  margin: 0 auto;
+}
+.cell {
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--cell-border);
+  background: var(--cell-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  transition: background 0.25s, border-color 0.25s;
+}
+.cell + .cell { border-left: none; }
+.cell.highlight {
+  background: var(--amber-bg);
+  border-color: var(--amber);
+  z-index: 1;
+}
+.cell.written {
+  background: var(--amber-bg);
+  border-color: var(--amber);
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.head-row {
+  display: flex;
+  width: max-content;
+  margin: 4px auto 0;
+}
+.head-cell {
+  width: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.head-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.head-arrow.visible { opacity: 1; }
+.head-arrow svg { display: block; }
+.head-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--head-color);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.step-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+  min-height: 2.4em;
+}
+.step-desc strong { color: var(--fg); }
+
+/* Action taken banner */
+.action-banner {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  display: none;
+}
+.action-banner.show { display: block; }
+
+/* Nav */
+.nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 0.55rem 1.25rem;
+  border-radius: 6px;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, background 0.15s;
+}
+.btn:disabled { opacity: 0.35; cursor: default; }
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+.btn-primary:not(:disabled):hover { opacity: 0.85; }
+.btn-secondary {
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+.btn-secondary:not(:disabled):hover { background: var(--border); }
+
+/* Progress dots */
+.progress {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.dot.done { background: var(--accent); }
+.dot.active { background: var(--amber); }
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+/* Quiz */
+.quiz-section { display: none; }
+.quiz-section.active { display: block; }
+
+.question-num {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.question-text {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-wrap: balance;
+  line-height: 1.5;
+}
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.choice-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.92rem;
+  color: var(--fg);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  line-height: 1.4;
+}
+.choice-btn:hover:not(:disabled) { border-color: var(--accent); }
+.choice-btn.correct {
+  background: var(--correct-bg);
+  border-color: var(--correct);
+  color: var(--correct);
+  font-weight: 600;
+}
+.choice-btn.wrong {
+  background: var(--wrong-bg);
+  border-color: var(--wrong);
+  color: var(--wrong);
+}
+.choice-btn:disabled { cursor: default; }
+
+.feedback {
+  font-size: 0.88rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  display: none;
+}
+.feedback.show { display: block; }
+.feedback.ok { background: var(--correct-bg); color: var(--correct); }
+.feedback.err { background: var(--wrong-bg); color: var(--wrong); }
+
+/* Completion */
+.completion {
+  display: none;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.completion.show { display: block; }
+.completion-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+.completion h2 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.completion p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 380px;
+  margin: 0 auto;
+}
+</style>
+
+<div class="wrapper">
+
+  <div class="eyebrow">Module 10 · Try-It Exercise</div>
+  <h1>Turing's Decision Problem</h1>
+  <p class="subtitle">Step a Turing machine through adding 1 to a tally. One cell at a time.</p>
+
+  <!-- Sim section -->
+  <div id="sim-section">
+
+    <div class="rule-box">
+      <h2>The rules</h2>
+      <div class="rule-row">
+        <span class="rule-cond">Read 1:</span>
+        <span class="rule-action">Leave it, move right</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-cond">Read blank:</span>
+        <span class="rule-action">Write 1, then stop</span>
+      </div>
+    </div>
+
+    <div class="progress" id="progress-dots"></div>
+
+    <div class="tape-section">
+      <div class="step-label" id="step-label">Step 1 of 4</div>
+      <div class="tape-wrap">
+        <div class="tape" id="tape"></div>
+        <div class="head-row" id="head-row"></div>
+      </div>
+      <div class="action-banner" id="action-banner"></div>
+      <div class="step-desc" id="step-desc"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" id="btn-back" onclick="simBack()">← Back</button>
+      <button class="btn btn-primary" id="btn-next" onclick="simNext()">Next →</button>
+    </div>
+
+  </div>
+
+  <hr class="divider" id="divider" hidden>
+
+  <!-- Quiz -->
+  <div id="quiz-area" hidden>
+
+    <div class="eyebrow" style="margin-top:0.25rem">Quick check · 3 questions</div>
+
+    <!-- Q1 -->
+    <div class="quiz-section" id="q1">
+      <div class="question-num">Question 1 of 3</div>
+      <div class="question-text">In the simulation you just ran, what did the machine do when it read a blank cell?</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="answer(1,'a')">It erased the cell and moved left</button>
+        <button class="choice-btn" onclick="answer(1,'b')">It stopped without changing anything</button>
+        <button class="choice-btn" onclick="answer(1,'c')">It wrote a 1 in that cell and stopped</button>
+        <button class="choice-btn" onclick="answer(1,'d')">It wrote a 0 and moved right again</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+      <div class="nav" id="nav1" hidden>
+        <button class="btn btn-primary" onclick="nextQ(2)">Next question →</button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-section" id="q2">
+      <div class="question-num">Question 2 of 3</div>
+      <div class="question-text">A Turing machine is best described as —</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="answer(2,'a')">A physical machine Turing built to break Enigma</button>
+        <button class="choice-btn" onclick="answer(2,'b')">An abstract model that defines what any algorithm can do</button>
+        <button class="choice-btn" onclick="answer(2,'c')">A test for deciding whether a computer has emotions</button>
+        <button class="choice-btn" onclick="answer(2,'d')">A programming language invented in the 1940s</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+      <div class="nav" id="nav2" hidden>
+        <button class="btn btn-primary" onclick="nextQ(3)">Next question →</button>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-section" id="q3">
+      <div class="question-num">Question 3 of 3</div>
+      <div class="question-text">Gödel's incompleteness theorems showed that —</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="answer(3,'a')">Every mathematical statement can eventually be proved or disproved</button>
+        <button class="choice-btn" onclick="answer(3,'b')">Mathematics is inconsistent and must be rebuilt</button>
+        <button class="choice-btn" onclick="answer(3,'c')">Any consistent system powerful enough for arithmetic contains true statements it cannot prove</button>
+        <button class="choice-btn" onclick="answer(3,'d')">Arithmetic is too simple to contain unprovable statements</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+      <div class="nav" id="nav3" hidden>
+        <button class="btn btn-primary" onclick="showCompletion()">See results →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Completion -->
+  <div class="completion" id="completion">
+    <div class="completion-icon">✓</div>
+    <h2 id="completion-heading">Exercise complete</h2>
+    <p id="completion-msg"></p>
+  </div>
+
+</div>
+
+<script>
+// Simulation state
+// Tape: cells 0–5; tally of 1s at positions 1,2,3; blank elsewhere
+// Head starts at position 1 (first 1)
+// Steps: start, after step 1 (head right), after step 2, after step 3, final write
+
+const TAPE_LEN = 7;
+const INITIAL_TAPE = ['','1','1','1','','',''];
+const STEPS = [
+  {
+    headPos: 1,
+    tape: ['','1','1','1','','',''],
+    label: 'Step 1 of 4',
+    desc: '<strong>Start:</strong> The tape holds three 1s (the number 3). The head is reading the first 1.',
+    action: null
+  },
+  {
+    headPos: 2,
+    tape: ['','1','1','1','','',''],
+    label: 'Step 2 of 4',
+    desc: '<strong>Rule: Read 1 → move right.</strong> The head read a 1, left it, and moved right. Now it reads the second 1.',
+    action: 'Read 1 → left it, moved right'
+  },
+  {
+    headPos: 3,
+    tape: ['','1','1','1','','',''],
+    label: 'Step 3 of 4',
+    desc: '<strong>Rule: Read 1 → move right.</strong> Same rule again. The head moved right once more. Now it reads the third 1.',
+    action: 'Read 1 → left it, moved right'
+  },
+  {
+    headPos: 4,
+    tape: ['','1','1','1','','',''],
+    label: 'Step 4 of 4',
+    desc: '<strong>Rule: Read 1 → move right.</strong> Head moved right again. Now it reads a blank — the end of the tally.',
+    action: 'Read 1 → left it, moved right'
+  },
+  {
+    headPos: 4,
+    tape: ['','1','1','1','1','',''],
+    label: 'Done!',
+    desc: '<strong>Rule: Read blank → write 1, stop.</strong> The machine wrote a 1 in the blank cell and halted. The tape now holds four 1s — the answer is 4.',
+    action: 'Read blank → wrote 1, stopped',
+    written: 4,
+    final: true
+  }
+];
+
+let simStep = 0;
+
+function buildTape(stepIdx) {
+  const s = STEPS[stepIdx];
+  const tape = document.getElementById('tape');
+  const headRow = document.getElementById('head-row');
+  tape.innerHTML = '';
+  headRow.innerHTML = '';
+  for (let i = 0; i < TAPE_LEN; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    if (i === s.headPos && !s.final) cell.classList.add('highlight');
+    if (s.written !== undefined && i === s.written && s.final) cell.classList.add('written');
+    cell.textContent = s.tape[i];
+    tape.appendChild(cell);
+
+    const hc = document.createElement('div');
+    hc.className = 'head-cell';
+    if (i === s.headPos) {
+      hc.innerHTML = `<div class="head-arrow visible">
+        <svg width="12" height="8" viewBox="0 0 12 8"><polygon points="0,8 6,0 12,8" fill="var(--head-color)"/></svg>
+        <span class="head-label">head</span>
+      </div>`;
+    } else {
+      hc.innerHTML = `<div class="head-arrow"></div>`;
+    }
+    headRow.appendChild(hc);
+  }
+}
+
+function buildDots() {
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < STEPS.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < simStep ? ' done' : i === simStep ? ' active' : '');
+    dots.appendChild(d);
+  }
+}
+
+function renderStep() {
+  const s = STEPS[simStep];
+  document.getElementById('step-label').textContent = s.label;
+  document.getElementById('step-desc').innerHTML = s.desc;
+  const banner = document.getElementById('action-banner');
+  if (s.action) {
+    banner.textContent = s.action;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+  buildTape(simStep);
+  buildDots();
+  document.getElementById('btn-back').disabled = simStep === 0;
+  const nextBtn = document.getElementById('btn-next');
+  if (s.final) {
+    nextBtn.textContent = 'Go to questions →';
+    nextBtn.onclick = startQuiz;
+  } else {
+    nextBtn.textContent = 'Next →';
+    nextBtn.onclick = simNext;
+    nextBtn.disabled = false;
+  }
+}
+
+function simNext() {
+  if (simStep < STEPS.length - 1) { simStep++; renderStep(); }
+}
+function simBack() {
+  if (simStep > 0) { simStep--; renderStep(); }
+}
+
+function startQuiz() {
+  document.getElementById('sim-section').hidden = true;
+  document.getElementById('divider').hidden = false;
+  document.getElementById('quiz-area').hidden = false;
+  document.getElementById('q1').classList.add('active');
+}
+
+// Quiz
+const CORRECT = { 1: 'c', 2: 'b', 3: 'c' };
+const EXPLAIN = {
+  1: 'The rule said: read blank → write 1 and stop. That\'s exactly what the machine did.',
+  2: 'The Turing machine is a thought experiment — a minimal abstract device that defines the outer limit of what any computation can achieve.',
+  3: 'Gödel showed that no sufficiently powerful, consistent formal system can prove every true statement within it. There will always be one it cannot reach.'
+};
+let score = 0;
+const answered = {};
+
+function answer(qNum, choice) {
+  if (answered[qNum]) return;
+  answered[qNum] = choice;
+  const section = document.getElementById('q' + qNum);
+  const btns = section.querySelectorAll('.choice-btn');
+  const correct = CORRECT[qNum];
+  const isCorrect = choice === correct;
+  if (isCorrect) score++;
+
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    const val = ['a','b','c','d'][i];
+    if (val === correct) btn.classList.add('correct');
+    else if (val === choice && !isCorrect) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('fb' + qNum);
+  fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'err');
+  fb.innerHTML = (isCorrect ? '✓ Correct. ' : '✗ Not quite. ') + EXPLAIN[qNum];
+
+  document.getElementById('nav' + qNum).hidden = false;
+}
+
+function nextQ(n) {
+  document.getElementById('q' + (n-1)).classList.remove('active');
+  document.getElementById('q' + n).classList.add('active');
+}
+
+function showCompletion() {
+  document.getElementById('quiz-area').hidden = true;
+  const c = document.getElementById('completion');
+  c.classList.add('show');
+  const heading = document.getElementById('completion-heading');
+  const msg = document.getElementById('completion-msg');
+  if (score === 3) {
+    heading.textContent = 'All three correct!';
+    msg.textContent = 'You stepped through the machine, and you know what Turing and Gödel showed. That\'s the whole exercise.';
+  } else if (score === 2) {
+    heading.textContent = 'Two out of three';
+    msg.textContent = 'Good work. Review the explanation for the one you missed, then let Rocky know you\'re done.';
+  } else {
+    heading.textContent = 'Exercise complete';
+    msg.textContent = 'Read the explanations above, then let Rocky know you\'re done — you\'ll talk through the ideas together.';
+  }
+}
+
+// Init
+renderStep();
+</script>
