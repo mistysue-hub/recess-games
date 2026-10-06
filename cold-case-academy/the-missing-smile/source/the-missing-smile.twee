@@ -1,0 +1,643 @@
+:: StoryTitle
+The Missing Smile
+
+
+:: StoryData
+{
+  "ifid": "6F1B2C9A-4D3E-4A57-9B0C-1E2D3F4A5B6C",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.cards = {
+  "hooks":      { title: "Four empty hooks", text: "The painting was lifted straight off the wall. No forced locks, no broken windows.", type: "evidence" },
+  "genius":     { title: "“A genius did it”", text: "People keep saying only a master thief could pull this off.", type: "assumption" },
+  "frame":      { title: "Frame left in the stairwell", text: "The thief took the painting out of its frame close by, in a quiet stairwell.", type: "evidence" },
+  "print":      { title: "Fingerprint on the glass", text: "A clear thumbprint on the glass box.", type: "evidence" },
+  "panel":      { title: "A wooden panel, not a canvas", text: "The painting is on a thin wooden board. It can't be rolled up, but it's small, about the size of a school notebook opened flat twice.", type: "evidence" },
+  "smock":      { title: "A white smock looks like staff", text: "On Monday, anyone in a worker's white smock would look like he belonged.", type: "evidence" },
+  "monday":     { title: "Closed Monday, workers everywhere", text: "No visitors on Mondays. Cleaners and repair workers were all over the building.", type: "evidence" },
+  "plumber":    { title: "The plumber's story", text: "A plumber says a man in a white smock was stuck at a locked door near the back stairwell on Monday morning. The plumber opened it for him.", type: "evidence" },
+  "photos":     { title: "“It's with the photographers”", text: "The guards guessed the painting was taken down to be photographed.", type: "assumption" },
+  "nophotos":   { title: "Photographers never had it", text: "The guards' guess was wrong. The painting was gone for over a day before anyone checked.", type: "evidence" },
+  "workers":    { title: "The staff list", text: "Five recent Salon Carré workers: Dufresne (cleaner), Bertin (frame repair), Aubry (wall painter), Garnier (electrician), Peruggia (glass fitter). Four have someone who can say where they were on Monday. One doesn't.", type: "evidence" },
+  "collector":  { title: "“A millionaire hired a mastermind”", text: "A favorite newspaper theory.", type: "assumption" },
+  "country":    { title: "“Another country did it”", text: "Another newspaper theory: a rival nation wanted to embarrass France.", type: "assumption" },
+  "apollinaire":{ title: "Apollinaire knew a past Louvre thief", text: "True, but nothing connects him to this theft.", type: "evidence" },
+  "apalibi":    { title: "Apollinaire's Monday", text: "He says he was at home writing. He gets angry when you ask, but he doesn't change his story.", type: "evidence" },
+  "pglass":     { title: "Peruggia built glass boxes", text: "Peruggia says he worked at the Louvre, fitting the glass boxes over paintings.", type: "evidence" },
+  "pmonday":    { title: "Peruggia's Monday", text: "He says he overslept on Monday and got to his new job late. Nobody saw him that morning.", type: "evidence" },
+  "pitaly":     { title: "“She belongs to Italy”", text: "Peruggia gets excited about the Mona Lisa. He says Leonardo was Italian, so she belongs in Italy.", type: "evidence" },
+  "pprints":    { title: "Peruggia's fingerprints", text: "He let you take a set of his prints.", type: "evidence" },
+  "printmix":   { title: "The fingerprint mix-up", text: "Peruggia's old police file only has prints from his RIGHT hand. The print on the glass is a LEFT thumb. The clerk can't match them.", type: "evidence" },
+  "harmless":   { title: "“Peruggia seems harmless”", text: "You crossed him off because he was calm and polite.", type: "assumption" },
+  "trunk":      { title: "The painting in the trunk", text: "Under a false bottom in Peruggia's trunk, wrapped in red cloth: the Mona Lisa.", type: "evidence" },
+
+  "d_smock":    { title: "Hidden under a smock", text: "A small wooden board fits under a white work smock. The thief could walk out looking like staff.", type: "deduction" },
+  "d_insider":  { title: "Someone who knew the building", text: "The thief used a quiet stairwell and knew the museum closed Mondays. Look at people who worked there.", type: "deduction" },
+  "d_glass":    { title: "He knew how the box came apart", text: "The glass box was taken off neatly, and Peruggia built those boxes.", type: "deduction" },
+  "d_alibi":    { title: "No one can vouch for him", text: "A man in a white smock was at the back stairwell Monday morning, and Peruggia can't prove where he was.", type: "deduction" },
+  "d_stories":  { title: "Two stories, zero facts", text: "The newspapers' favorite theories don't rest on a single clue.", type: "deduction" }
+}>>
+<<set setup.recipes = [
+  { a: "panel",  b: "smock",     id: "d_smock" },
+  { a: "frame",  b: "monday",    id: "d_insider" },
+  { a: "frame",  b: "workers",   id: "d_insider" },
+  { a: "frame",  b: "pglass",    id: "d_glass" },
+  { a: "plumber",b: "pmonday",   id: "d_alibi" },
+  { a: "genius", b: "collector", id: "d_stories" },
+  { a: "genius", b: "country",   id: "d_stories" },
+  { a: "collector", b: "country",id: "d_stories" }
+]>>
+<<set setup.interviews = {
+  "guards": [
+    { q: "Who was in the building on Monday?", a: "“Cleaners, repairmen, painters. Even some men who used to work here.”", clue: "monday" },
+    { q: "Did anyone see something odd?", a: "“Ask the plumber. He says he let a man in a white smock through a locked door by the back stairs. Thought nothing of it.”", clue: "plumber" },
+    { q: "Why didn't anyone notice it was gone?", a: "“We figured it was with the photographers. Paintings get taken down all the time.”", clue: "photos" },
+    { q: "Who do you think did it?", a: "“A genius, obviously. Nobody ordinary could pull that off.”", clue: "genius" }
+  ],
+  "cafe": [
+    { q: "Where were you on Monday?", a: "“At home, writing poems. Not at the Louvre!”", clue: "apalibi" },
+    { q: "Did your friend steal from the Louvre?", a: "“Years ago, some little statues. Not paintings. I've told him to give them back.”", clue: "" },
+    { q: "Do you hate old art?", a: "“I write about new art. That isn't a crime, Inspector.”", clue: "" },
+    { q: "Do you know who took the Mona Lisa?", a: "“If I knew, I'd tell all of Paris. It would make a wonderful poem.”", clue: "" }
+  ],
+  "room": [
+    { q: "What did you do at the Louvre?", a: "“Glass. I fitted the glass boxes over the paintings. Careful work.”", clue: "pglass" },
+    { q: "Where were you Monday morning?", a: "“I overslept. I was late to my new job.” He shrugs.", clue: "pmonday" },
+    { q: "What do you think of the Mona Lisa?", a: "His eyes light up. “Leonardo was Italian. She belongs in Italy.”", clue: "pitaly" },
+    { q: "May I take your fingerprints?", a: "He holds out his hands without a fuss. “Of course.”", clue: "pprints" }
+  ]
+}>>
+<<set setup.events = [
+  { at: 6, id: "e1", kind: "headline", text: "CROWDS LINE UP AT THE LOUVRE TO STARE AT AN EMPTY WALL" },
+  { at: 4, id: "e2", kind: "chief", text: "The Chief leans in your doorway. “The papers say a master thief. Do you have one yet?”" },
+  { at: 3, id: "e3", kind: "headline", text: "RUMORS POINT AT MODERN ARTISTS. POLICE WATCH THE CAFÉS" },
+  { at: 2, id: "e4", kind: "chief", text: "“Two leads left, Inspector. Make them count.”" }
+]>>
+<<set $leads to 8>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to { guards: [], cafe: [], room: [] }>>
+<<set $events to []>>
+<<set $pinned to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $suspect to "">>
+<<set $innocent to false>>
+<<set $found to false>>
+<<set $searched to false>>
+<<set $compared to false>>
+<<set $return to "Hub">>
+
+
+:: StoryInterface
+<div id="frame">
+  <header id="tabbar" data-passage="Tabbar"></header>
+  <main id="passages"></main>
+</div>
+
+
+:: Tabbar
+<<if not ["Start","Accusation","Verdict","RealHistory","CaseClosed"].includes(passage())>>
+<div class="tab-row">
+<span class="leads">Leads left: <b><<print $leads>></b> of 8</span>
+<span class="nb-count">Clues: <b><<print $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; }).length>></b> · Deductions: <b><<print $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>></b> of 5</span>
+</div>
+<details class="notebook">
+<summary>Open case notebook</summary>
+<<if $notebook.length is 0>><p class="empty">No clues yet. Visit a location to find some.</p><<else>>
+<div class="cards"><<for _id range $notebook>><div @class="'card ' + (setup.cards[_id].type === 'deduction' ? 'deduction' : '')"><span class="card-title"><<print setup.cards[_id].title>></span><span class="card-text"><<print setup.cards[_id].text>></span></div><</for>></div>
+<</if>>
+</details>
+<</if>>
+
+
+:: widgets [widget]
+<<widget "clue">>
+<<set _isNew to not $notebook.includes($args[0])>>
+<<if _isNew>><<run $notebook.push($args[0])>><</if>>
+<div @class="'card new ' + (setup.cards[$args[0]].type === 'deduction' ? 'deduction' : '') + (_isNew ? '' : ' seen')"><span class="pin" aria-hidden="true"></span><span class="card-label"><<if not _isNew>>Already in your notebook<<elseif setup.cards[$args[0]].type === "deduction">>New deduction<<else>>New clue<</if>></span><span class="card-title"><<print setup.cards[$args[0]].title>></span><span class="card-text"><<print setup.cards[$args[0]].text>></span></div>
+<</widget>>
+
+<<widget "maplink">>
+<<set _dest to $args[0]>><<set _label to $args[1]>>
+<<if $visited.includes(_dest)>><<capture _dest>><span class="opt revisit"><<link _label>><<goto _dest>><</link>><em>Visited · going back is free</em></span><</capture>>
+<<else>><<capture _dest>><<link _label>><<set $leads to $leads - 1>><<run $visited.push(_dest)>><<goto _dest>><</link>><</capture>>
+<</if>>
+<</widget>>
+
+<<widget "tomap">>
+<div class="actions">[[Back to the map|Hub]]<<link "Deduction board">><<set $return to passage()>><<goto "Board">><</link>></div>
+<</widget>>
+
+<<widget "pastanswers">>
+<<set _pw to $args[0]>>
+<<for _pi range $asked[_pw]>><div class="exchange"><p class="asked"><<print setup.interviews[_pw][_pi].q>></p><p class="quote"><<print setup.interviews[_pw][_pi].a>></p><<if setup.interviews[_pw][_pi].clue>><<clue setup.interviews[_pw][_pi].clue>><</if>></div><</for>>
+<</widget>>
+
+<<widget "interview">>
+<<set _who to $args[0]>>
+<<set _left to 2 - $asked[_who].length>>
+<<if _left gt 0>>
+<p class="meta">You have time for <<print _left>> more <<print _left is 1 ? "question" : "questions">>.</p>
+<div class="choices">
+<<for _i to 0; _i lt setup.interviews[_who].length; _i++>>
+<<if not $asked[_who].includes(_i)>>
+<<capture _who, _i>><span class="opt"><<link setup.interviews[_who][_i].q>><<run $asked[_who].push(_i)>><<append "#ans">><div class="exchange"><p class="asked"><<print setup.interviews[_who][_i].q>></p><p class="quote"><<print setup.interviews[_who][_i].a>></p><<if setup.interviews[_who][_i].clue>><<clue setup.interviews[_who][_i].clue>><</if>></div><</append>><<replace "#iv">><<interview _who>><</replace>><<run $(document).trigger(":interview-done")>><</link>></span><</capture>>
+<</if>>
+<</for>>
+</div>
+<<else>>
+<p class="meta">You've used both questions here. Your answers are above.</p>
+<</if>>
+<</widget>>
+
+
+:: Start
+<div class="stamp">Case file</div>
+<p class="meta">Paris · Tuesday, August 22, 1911</p>
+<h1>The Missing Smile</h1>
+<p>Rain taps the window of police headquarters. The Chief of the Sûreté storms in and slams a newspaper on your desk.</p>
+<p class="quote">"The <i>Mona Lisa</i> is gone. Stolen from the Louvre, the biggest museum in the world. And nobody noticed until a painter asked where it was this morning! Half of Paris thinks a criminal genius did it. You have eight leads before I need a name. Go."</p>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new place uses one lead. Going back to a place you've already been is free.</li>
+<li>In interviews you only get two questions. Choose carefully. Your answers stay on the page if you come back.</li>
+<li>On the deduction board, connect two clues to work something out. It's free.</li>
+</ul>
+</div>
+<div class="actions">[[Start investigating|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<<set _ev to setup.events.filter(function(e){ return $leads <= e.at && !$events.includes(e.id); })>>
+<<for _e range _ev>><<run $events.push(_e.id)>>
+<<if _e.kind is "headline">><div class="headline"><span class="paper">Le Petit Parisien</span><<print _e.text>></div>
+<<else>><p class="quote chief"><<print _e.text>></p><</if>>
+<</for>>
+<h2>Where to?</h2>
+<p class="meta">The map of Paris. New places cost a lead. Places you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Wall" "The empty wall in the Salon Carré">></li>
+<li><<maplink "Stairwell" "The back stairwell">></li>
+<li><<maplink "Guards" "Interview the guards">></li>
+<li><<maplink "Photographers" "The photographers' studio">></li>
+<li><<maplink "Records" "The fingerprint records office">></li>
+<li><<maplink "Staff" "The Louvre staff office">></li>
+<li><<maplink "Newspaper" "A newspaper office">></li>
+<li><<maplink "Cafe" "The café where artists meet">></li>
+<li><<if $notebook.includes("workers")>><<maplink "Workers" "Visit a worker from the staff list">><<else>><span class="place locked">Visit a worker <em>Locked: you need the staff list first.</em></span><</if>></li>
+<<if $notebook.includes("pprints") and $notebook.includes("print") and not $compared>><li><<link "Take Peruggia's prints to the records office">><<set $leads to $leads - 1>><<set $compared to true>><<goto "Compare">><</link>></li>
+<<elseif $compared>><li><span class="opt revisit"><<link "Comparing prints">><<goto "Compare">><</link>><em>Visited · going back is free</em></span></li><</if>>
+</ul>
+<div class="actions secondary"><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to name a suspect|Accusation]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"That's all the time I can give you, Inspector," the Chief says. "Let's hear it."</p>
+<div class="actions"><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Make your report|Accusation]]</div>
+
+
+:: Board
+<h2>Deduction board</h2>
+<p class="meta">Pick two clues that fit together, then connect them. Wrong guesses cost nothing.</p>
+<<set _plain to $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; })>>
+<<if _plain.length lt 2>><p class="note">You need at least two clues first.</p>
+<<else>><div id="board"><<include "BoardCards">></div><</if>>
+<<set _made to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; })>>
+<<if _made.length gt 0>><h3>Your deductions</h3><div class="cards"><<for _id range _made>><div class="card deduction"><span class="card-title"><<print setup.cards[_id].title>></span><span class="card-text"><<print setup.cards[_id].text>></span></div><</for>></div><</if>>
+<div class="actions"><<link "Back">><<goto $return>><</link>></div>
+
+
+:: BoardCards
+<<set _plain to $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; })>>
+<p class="meta">Selected: <<print $sel.length>> of 2</p>
+<div class="cards pinboard">
+<<for _id range _plain>><<capture _id>><span @class="$sel.includes(_id) ? 'opt pinned' : 'opt'"><<link setup.cards[_id].title>><<if $sel.includes(_id)>><<run $sel.delete(_id)>><<elseif $sel.length lt 2>><<run $sel.push(_id)>><</if>><<set $boardmsg to "">><<replace "#board">><<include "BoardCards">><</replace>><</link>></span><</capture>><</for>>
+</div>
+<<if $sel.length is 2>><div class="actions"><<link "Connect these two clues">>
+<<set _hit to setup.recipes.find(function(r){ return ($sel[0] === r.a && $sel[1] === r.b) || ($sel[0] === r.b && $sel[1] === r.a); })>>
+<<if _hit and $notebook.includes(_hit.id)>><<set $boardmsg to "already">><<elseif _hit>><<set $boardmsg to _hit.id>><<else>><<set $boardmsg to "miss">><</if>>
+<<set $sel to []>><<replace "#board">><<include "BoardCards">><</replace>>
+<</link>></div><</if>>
+<div id="boardmsg" role="status">
+<<if $boardmsg is "miss">><p class="note">These two don't connect into anything new. Try a different pair.</p>
+<<elseif $boardmsg is "already">><p class="note">You've already worked that one out.</p>
+<<elseif $boardmsg isnot "">><<clue $boardmsg>><<set $boardmsg to "">><</if>>
+</div>
+
+
+:: Wall
+<h2>The empty wall</h2>
+<p>The Salon Carré is a tall square room with a skylight, crowded with famous paintings in heavy gold frames. On one wall there's a gap.</p>
+<p>Four iron hooks stick out of the wallpaper. Around them, the wallpaper is a little brighter, a ghost of the small painting that used to hang there. A crowd is already gathering just to stare at the empty space. Some people are crying.</p>
+<<clue "hooks">>
+<div id="extra"><div class="actions">
+<<if not $notebook.includes("genius")>><<link "Ask a visitor what they think happened">><<replace "#extra">><p>A man in a top hat taps his cane on the floor.</p><p class="quote">"Only a master thief could pull this off. Someone brilliant. Someone rich must have hired him!"</p><p>He sounds very sure. He wasn't here Monday.</p><<clue "genius">><</replace>><</link>>
+<<else>><p>The man in the top hat is still telling anyone who'll listen that a master thief did it.</p><<clue "genius">><</if>>
+</div></div>
+<<tomap>>
+
+
+:: Stairwell
+<h2>The back stairwell</h2>
+<p>Behind a plain door near the Salon Carré, a narrow staircase winds down toward a courtyard. Workers use it. Visitors never see it.</p>
+<p>On a landing, propped against the wall, you find a heavy carved frame and the glass box that covered the painting. Someone took the picture out right here and left everything else behind. At the bottom of the stairs is a door that locks from the inside.</p>
+<<clue "frame">>
+<<clue "print">>
+<div id="extra"><div class="actions">
+<<if not $notebook.includes("panel")>><<link "Look closely at what the painting was made of (free)">><<replace "#extra">><p>You crouch down. The frame has a dent in its backing in the exact shape of what used to sit inside: a flat, stiff board, not a soft rolled cloth. And it's small. You could carry it under one arm.</p><<clue "panel">><</replace>><</link>>
+<<else>><<clue "panel">><</if>>
+</div></div>
+<<tomap>>
+
+
+:: Guards
+<h2>Interview: the guards</h2>
+<p>Three guards in blue uniforms stand stiffly in a side office. They look like they haven't slept. The oldest one, Monsieur Girard, keeps twisting his cap in his hands.</p>
+<p class="quote">"Mondays are for cleaning, Inspector. No visitors. Workers everywhere in white smocks. Nobody's going to stop a man in a white smock on a Monday."</p>
+<<clue "smock">>
+<div id="ans"><<pastanswers "guards">></div>
+<div id="iv"><<interview "guards">></div>
+<<tomap>>
+
+
+:: Photographers
+<h2>The photographers' studio</h2>
+<p>Up under the roof, the museum's photographers work among big wooden cameras on tripods and glass plates drying on racks. It smells of chemicals.</p>
+<p>The head photographer shakes his head before you even finish asking.</p>
+<p class="quote">"The <i>Mona Lisa</i>? We never had her. Nobody asked us until this morning, when the guards came running up the stairs in a panic."</p>
+<<clue "nophotos">>
+<<tomap>>
+
+
+:: Records
+<h2>The fingerprint records office</h2>
+<p>A long, dim room at police headquarters, filled floor to ceiling with wooden drawers. Each drawer holds hundreds of cards about people who've been arrested: their height, the length of their arms, the shape of their ears, and a set of fingerprints.</p>
+<p>A clerk with ink-stained fingers sighs.</p>
+<p class="quote">"The cards are filed by body measurements, not by fingerprint. If you hand me a print with no name, finding a match could take years."</p>
+<<if $notebook.includes("print")>><p>"But bring me a suspect's prints," he adds, "and I can compare them with the one you found."</p>
+<<else>><p class="note">"Do you even have a print to check?" You don't. The crime scene might have one.</p><</if>>
+<<tomap>>
+
+
+:: Compare
+<h2>Comparing prints</h2>
+<p>The clerk lays Peruggia's fresh prints next to the photograph of the print from the glass box. Then he pulls an old card from a drawer. Peruggia was arrested once before, years ago.</p>
+<p>He holds them all up to the lamp for a long time.</p>
+<p class="quote">"Here's the trouble, Inspector. Our old card only has prints from his right hand. That's how we've always done it. The print on the glass is a left thumb. I can't say it's him, and I can't say it isn't."</p>
+<<clue "printmix">>
+<p class="note">Real evidence can still fail to prove something.</p>
+<<tomap>>
+
+
+:: Staff
+<h2>The Louvre staff office</h2>
+<p>A cramped office stacked with ledgers. The staff manager, Madame Lefèvre, has clearly been answering questions all morning. She pushes a sheet of paper across the desk.</p>
+<p class="quote">"Everyone who has done repair work in or near the Salon Carré this year. I've added a note about where each one was on Monday, as far as we know."</p>
+<div class="roster">
+<p class="roster-title">Workers: Salon Carré, 1911</p>
+<table>
+<thead><tr><th>Name</th><th>Job</th><th>Monday, Aug 21</th></tr></thead>
+<tbody>
+<tr><td>Henri Dufresne</td><td>Cleaner</td><td>Signed in by the guards at 7:00, out at 5:00. Mopping the Grande Galerie all day.</td></tr>
+<tr><td>Lucien Bertin</td><td>Frame repairer</td><td>In the basement workshop with two other men the whole morning.</td></tr>
+<tr><td>Marcel Aubry</td><td>Wall painter</td><td>On holiday at the seaside since August 10.</td></tr>
+<tr><td>Émile Garnier</td><td>Electrician</td><td>Putting in new lamps across the river at a different museum.</td></tr>
+<tr><td>Vincenzo Peruggia</td><td>Glass fitter</td><td>Built the glass boxes over the paintings. Stopped working here last winter. Not on Monday's list, so nobody knows.</td></tr>
+</tbody>
+</table>
+</div>
+<<clue "workers">>
+<<if not $visited.includes("Workers")>><p class="note">A new place opened on your map: you can visit a worker from this list.</p><</if>>
+<<tomap>>
+
+
+:: Workers
+<h2>Visit a worker</h2>
+<p class="meta">Madame Lefèvre's list has five names. Who do you want to talk to? Check her notes about Monday before you choose.</p>
+<div class="choices">
+<span class="opt"><<link "Henri Dufresne, cleaner">><<replace "#pick">><p>Dufresne is mopping the Grande Galerie again today. He shows you the guards' sign-in book: his name, in his own handwriting, at 7:00 Monday morning, and again at 5:00 when he left. Two guards remember seeing him all day.</p><p class="note">His Monday checks out.</p><</replace>><</link>></span>
+<span class="opt"><<link "Lucien Bertin, frame repairer">><<replace "#pick">><p>In the basement workshop, Bertin is gluing a broken frame corner. Two other repairmen look up. "He was here with us all Monday morning," one says. "We ate lunch together right there."</p><p class="note">His Monday checks out.</p><</replace>><</link>></span>
+<span class="opt"><<link "Marcel Aubry, wall painter">><<replace "#pick">><p>Aubry's landlady answers the door. "Still at the seaside with his family. He sent me this." She shows you a postcard of the beach at Deauville, stamped August 19.</p><p class="note">His Monday checks out.</p><</replace>><</link>></span>
+<span class="opt"><<link "Émile Garnier, electrician">><<replace "#pick">><p>You find Garnier up a ladder at the other museum, wiring a lamp. His boss shows you the work order for Monday, signed and dated. "He was on this ladder all day."</p><p class="note">His Monday checks out.</p><</replace>><</link>></span>
+<span class="opt">[[Vincenzo Peruggia, glass fitter|Room]]</span>
+</div>
+<div id="pick"></div>
+<<tomap>>
+
+
+:: Newspaper
+<h2>The newspaper office</h2>
+<p>Typewriters clatter and boys run past with stacks of fresh papers. The editor of <i>Le Petit Parisien</i> has his sleeves rolled up and ink on his nose. He waves a page of headlines at you.</p>
+<p class="quote">"Our readers can't get enough! A millionaire hired a master thief to hang her in his secret gallery! Or maybe a rival country did it to embarrass France! Every theory sells papers."</p>
+<p>You ask what evidence he has for either one. He laughs. "Evidence? Inspector, this is a newspaper."</p>
+<<clue "collector">>
+<<clue "country">>
+<<tomap>>
+
+
+:: Cafe
+<h2>Interview: the artists' café</h2>
+<p>A noisy café in Montmartre, full of pipe smoke, paint-stained jackets and loud arguments about art. At a corner table, a young poet named Guillaume Apollinaire is waving his arms.</p>
+<p>Someone at the next table whispers to you: a friend of his once stole little statues from the Louvre. And his painter friend, a young Spaniard named Pablo Picasso, says old art should be swept away.</p>
+<<clue "apollinaire">>
+<div id="ans"><<pastanswers "cafe">></div>
+<div id="iv"><<interview "cafe">></div>
+<div id="extra"><div class="actions">
+<<if $innocent>><p class="note warn">Apollinaire is still in jail because of your arrest. You never found anything linking him to the <i>Mona Lisa</i>.</p>
+<<else>><<link "Arrest Apollinaire!">><<set $innocent to true>><<replace "#extra">><p class="note warn">Apollinaire spends days in jail. He's terrified, the newspapers go wild, and the painting is still missing. You find nothing linking him to the <i>Mona Lisa</i>.</p><</replace>><</link>><</if>>
+</div></div>
+<<tomap>>
+
+
+:: Room
+<h2>Interview: Vincenzo Peruggia</h2>
+<p>A narrow street, a tall old building, five flights of creaky stairs. Peruggia's room is tiny: a bed, a table, a little stove, and a wooden trunk. He's about thirty, with a thick mustache, and he speaks French with an Italian accent.</p>
+<p>He doesn't seem nervous at all. "Of course, Inspector. Look around."</p>
+<div id="ans"><<pastanswers "room">></div>
+<div id="iv"><<interview "room">></div>
+<div id="extra"><div class="actions">
+<<if $notebook.includes("d_smock")>>[[Search the room carefully|Trunk]]
+<<else>><span class="place locked">Search the room carefully <em>You're not sure what you're looking for. A deduction about how the painting left the museum would help.</em></span><</if>>
+<<if $notebook.includes("harmless")>><p>You already crossed him off once. You can still change your mind.</p>
+<<else>><<link "He seems harmless. Cross him off.">><<replace "#extra">><p>You thank him and head back down the creaky stairs.</p><<clue "harmless">><div class="actions"><<if $notebook.includes("d_smock")>>[[Wait, search the room after all|Trunk]]<</if>></div><</replace>><</link>><</if>>
+</div></div>
+<<tomap>>
+
+
+:: Trunk
+<<set $searched to true>>
+<h2>The trunk</h2>
+<p>You remember your deduction: a small wooden board, hidden under a smock. Where would a flat board fit in this room?</p>
+<p>Under the bed sits a wooden trunk. It looks too shallow inside for how deep it is outside.</p>
+<div id="extra"><div class="actions">
+<<link "Tap the bottom of the trunk">><<set $found to true>><<replace "#extra">><p>Hollow. A false bottom. Underneath, wrapped in red cloth, a woman's calm half-smile looks up at you.</p><<clue "trunk">><div class="actions">[[Take it to the Chief|Accusation]]</div><</replace>><</link>>
+</div></div>
+
+
+:: Accusation
+<div class="stamp">Report</div>
+<h2>"Give me a name."</h2>
+<p class="quote chief">The Chief taps the desk. "Well, Inspector? Who took the <i>Mona Lisa</i>?"</p>
+<h3>1. Choose your suspect</h3>
+<div id="suspects"><<include "SuspectList">></div>
+<h3>2. Pin up to 3 cards as proof</h3>
+<<if $notebook.length is 0>><p class="note">Your notebook is empty. You'll have to report with no proof.</p>
+<<else>><div id="pins"><<include "PinList">></div><</if>>
+<div id="file"><<include "FileButton">></div>
+
+
+:: SuspectList
+<<set _opts to [["collector","A master thief hired by a millionaire"],["country","Agents from another country"],["apollinaire","Guillaume Apollinaire (and Picasso)"],["peruggia","Vincenzo Peruggia, former Louvre worker"],["none","I don't have enough evidence yet"]]>>
+<div class="choices">
+<<for _o range _opts>><<capture _o>><span @class="$suspect is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $suspect to _o[0]>><<replace "#suspects">><<include "SuspectList">><</replace>><<replace "#file">><<include "FileButton">><</replace>><</link>></span><</capture>><</for>>
+</div>
+
+
+:: PinList
+<p class="meta">Pinned: <<print $pinned.length>> of 3. Tap a card to pin or unpin it.</p>
+<div class="cards pinboard">
+<<for _id range $notebook>><<capture _id>><span @class="($pinned.includes(_id) ? 'opt pinned' : 'opt') + (setup.cards[_id].type === 'deduction' ? ' ded' : '')"><<link setup.cards[_id].title>><<if $pinned.includes(_id)>><<run $pinned.delete(_id)>><<elseif $pinned.length lt 3>><<run $pinned.push(_id)>><</if>><<replace "#pins">><<include "PinList">><</replace>><</link>></span><</capture>><</for>>
+</div>
+
+
+:: FileButton
+<<if $suspect is "">><p class="note">Choose a suspect to file your report.</p>
+<<else>><div class="actions">[[File my report|Verdict]]</div><</if>>
+
+
+:: Verdict
+<<set _allReal to $pinned.length gt 0 and $pinned.every(function(id){ return setup.cards[id].type !== "assumption"; })>>
+<<set _ded to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<set _s1 to $suspect is "peruggia" and $found>>
+<<set _s2 to ($suspect is "peruggia" or $suspect is "none") and _allReal>>
+<<set _s3 to not $innocent and $suspect isnot "apollinaire">>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0)>>
+<<set $deductions to _ded>>
+
+<<switch $suspect>>
+<<case "peruggia">>
+<<if $found>><div class="stamp solved">Case cracked</div>
+<p>Peruggia sighs. "I wanted to bring her home to Italy." The <i>Mona Lisa</i> goes back on her four hooks.</p>
+<<else>><div class="stamp">Right name, thin proof</div>
+<p>"A handyman? Based on what?" the Chief asks. Without the painting, the case stalls.</p>
+<</if>>
+<<case "collector" "country">><div class="stamp">Wild goose chase</div>
+<p>You spend months chasing a mastermind who never existed. The empty wall gets more famous every week.</p>
+<<case "apollinaire">><div class="stamp">The wrong man</div>
+<p>Apollinaire had nothing to do with it, and now an innocent man's name is in every newspaper in Paris.</p>
+<<case "none">><div class="stamp">Honest detective</div>
+<p>"At least you're honest," the Chief grumbles. "Keep the file open."</p>
+<</switch>>
+
+<h3>Detective rating: <<print $stars>> of 3 stars</h3>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>Right suspect, with proof.</b> <<if _s1>>You named Peruggia and found the painting.<<elseif $suspect is "peruggia">>Right name, but you never found the painting to prove it.<<else>>The real thief got away this time.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>Real evidence.</b> <<if _s2>>Everything you pinned was a fact or a deduction built from facts.<<elseif $pinned.length is 0>>You didn't pin any proof.<<elseif not _allReal>>Some of your proof was only an assumption.<<else>>Your evidence was real, but it doesn't point to that suspect.<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>No innocent person harmed.</b> <<if _s3>>Nobody innocent got hurt by your investigation.<<else>>Apollinaire was innocent, and your case hurt him.<</if>></li>
+</ul>
+<p class="meta">Deductions worked out: <<print _ded>> of 5</p>
+
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal">
+<<for _id range $notebook>><div @class="'card ' + setup.cards[_id].type"><span class="tag"><<print setup.cards[_id].type === 'evidence' ? 'Evidence' : (setup.cards[_id].type === 'deduction' ? 'Deduction' : 'Assumption')>></span><span class="card-title"><<print setup.cards[_id].title>></span><<if $pinned.includes(_id)>><span class="pinned-mark">You pinned this</span><</if>></div><</for>>
+</div>
+<</if>>
+<div class="actions">[[What really happened|RealHistory]]</div>
+
+
+:: RealHistory
+<h2>What really happened</h2>
+<p>The real police chased the master-thief idea and the other-country idea, and they jailed Apollinaire for days. A plumber really did open a locked door for a man in a white smock that Monday.</p>
+<p>The police even visited Peruggia's room and missed the painting in his trunk. And the fingerprint? Peruggia's old police card only had his right-hand prints, while the print on the glass was from his left thumb, so it never led to him.</p>
+<p>The case was cracked in late 1913, more than two years later, only because Peruggia wrote to an art dealer in Florence, trying to bring the painting to Italy.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>The thief looked like he belonged, so nobody noticed him.</li>
+<li>The guards assumed the painting was somewhere ordinary.</li>
+<li>The police expected a genius, so they overlooked an ordinary man with inside knowledge.</li>
+<li>Even real evidence, like a fingerprint, only helps if you can use it.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the guard, the staff manager, and the four other workers on the staff list. Everything else in the case is based on what really happened.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed
+<<run setup.reportResult()>>
+<div class="stamp solved big">Case closed</div>
+<h2>Training case complete</h2>
+<p>Detective rating: <b><<print $stars>> of 3</b>. Deductions: <b><<print $deductions>> of 5</b>.</p>
+<p>Tell Rocky which suspect you named and which clues convinced you.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>
+
+
+:: StoryScript [script]
+Config.history.maxStates = 1;
+Config.saves.slots = 0;
+Config.ui.stowBarInitially = true;
+Config.passages.nobr = true;
+
+/* Result hook for a future Recess integration: posts the outcome to the host page.
+   Harmless when nothing is listening. */
+setup.reportResult = function () {
+  var v = State.variables;
+  var result = {
+    type: "cold-case-result",
+    module: "M01",
+    suspect: v.suspect,
+    pinned: v.pinned.slice(),
+    assumptionsPinned: v.pinned.filter(function (id) { return setup.cards[id].type === "assumption"; }).length,
+    deductions: v.deductions,
+    stars: v.stars,
+    innocentArrested: v.innocent,
+    foundPainting: v.found
+  };
+  try { if (window.parent && window.parent !== window) { window.parent.postMessage(result, "*"); } } catch (e) {}
+  return result;
+};
+
+/* Keep the notebook counts in the top bar current after in-passage updates. */
+$(document).on(":interview-done", function () { setTimeout(function () { $("#tabbar").empty().wiki(Story.get("Tabbar").processText()); }, 0); });
+
+
+:: StoryStylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap");
+
+/* Layout: one manila folder, centered, a paper sheet inside; clue cards pinned like index cards. Deliberately single-theme. */
+:root {
+  --desk: #3b2f26;
+  --folder: #d9b979;
+  --paper: #fbf6e8;
+  --ink: #2a2420;
+  --muted: #6b5d4f;
+  --stamp: #a3231d;
+  --pin: #2f5d8a;
+  --evidence: #2f6b3a;
+  --card: #fffdf6;
+  --line: #cdbf9f;
+  --display: "Special Elite", "Courier New", Courier, monospace;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+html, body { background: var(--desk); }
+body { margin: 0; color: var(--ink); font: 17px/1.55 var(--body); }
+#frame { max-width: 720px; margin: 0 auto; padding-block: 24px 48px; padding-inline: 16px; }
+#passages { background: var(--paper); border-top: 18px solid var(--folder); border-radius: 4px 14px 4px 4px; padding: 24px clamp(18px, 4vw, 40px) 32px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.passage { transition: none; }
+
+h1, h2, h3 { font-family: var(--display); font-weight: 400; color: var(--ink); text-wrap: balance; line-height: 1.2; }
+h1 { font-size: 2.2rem; margin: .2em 0 .4em; }
+h2 { font-size: 1.6rem; margin: 0 0 .6em; }
+h3 { font-size: 1.15rem; margin: 1.4em 0 .5em; }
+p { margin: 0 0 1em; max-width: 62ch; }
+.meta { font-family: var(--display); color: var(--muted); font-size: .95rem; letter-spacing: .02em; }
+.quote { border-left: 3px solid var(--line); padding-left: 14px; font-style: italic; }
+.how, .note { color: var(--muted); }
+.note.warn { color: var(--stamp); font-style: normal; }
+
+.stamp { display: inline-block; font-family: var(--display); text-transform: uppercase; letter-spacing: .12em; color: var(--stamp); border: 3px solid var(--stamp); padding: 4px 12px; border-radius: 4px; transform: rotate(-3deg); margin-bottom: 10px; }
+.stamp.solved { color: var(--evidence); border-color: var(--evidence); }
+.stamp.big { font-size: 1.6rem; padding: 6px 18px; }
+
+a, .macro-link { color: var(--pin); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
+.actions a, .actions .macro-link, .choices a, .map a {
+  display: inline-block; text-decoration: none; background: var(--ink); color: var(--paper);
+  font-family: var(--display); padding: 11px 16px; border-radius: 6px; min-height: 44px; box-sizing: border-box; cursor: pointer;
+}
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+a:focus-visible, .macro-link:focus-visible, summary:focus-visible { outline: 3px solid var(--pin); outline-offset: 3px; }
+
+.map { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.map a { display: block; background: var(--card); color: var(--ink); border: 2px solid var(--line); }
+.map a:hover { border-color: var(--ink); }
+.place { display: block; padding: 11px 16px; border: 2px dashed var(--line); border-radius: 6px; color: var(--muted); font-family: var(--display); }
+.place em { display: block; font-family: var(--body); font-style: normal; font-size: .85rem; margin-top: 2px; }
+.place.done { text-decoration: line-through; text-decoration-color: var(--line); }
+.place.done em { text-decoration: none; display: inline; margin-left: 6px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 10px 0; }
+.card { position: relative; display: flex; flex-direction: column; gap: 4px; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--pin); padding: 14px 12px 12px; border-radius: 3px; box-shadow: 0 2px 6px rgba(60,40,20,.15); min-width: 0; }
+.card.new { max-width: 420px; margin: 14px 0; transform: rotate(-.6deg); }
+.pin { position: absolute; top: -10px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--stamp); box-shadow: 0 2px 2px rgba(0,0,0,.3); }
+.card-label { font-family: var(--display); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.card-title { font-weight: 700; }
+.card-text { font-size: .92rem; color: var(--muted); }
+
+.choices { display: grid; gap: 8px; }
+.opt { display: block; min-width: 0; }
+.choices a { display: block; }
+.choices a { background: var(--card); color: var(--ink); border: 2px solid var(--line); font-family: var(--body); }
+.choices .chosen a { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pinboard a { display: block; background: var(--card); color: var(--ink); text-decoration: none; border: 2px solid var(--line); padding: 12px; border-radius: 3px; min-height: 44px; box-sizing: border-box; font-weight: 700; }
+.pinboard .pinned a { border-color: var(--stamp); box-shadow: inset 0 0 0 2px var(--stamp); }
+.pinboard .pinned a::before { content: "📌 "; }
+
+.stars { list-style: none; padding: 0; display: grid; gap: 8px; }
+.stars li { padding: 10px 12px; border-radius: 6px; background: var(--card); border: 1px solid var(--line); }
+.stars li span { color: #b8860b; font-size: 1.2rem; }
+.stars li.off span { color: var(--muted); }
+
+.reveal .card.evidence { border-top-color: var(--evidence); }
+.reveal .card.assumption { border-top-color: var(--stamp); }
+.tag { font-family: var(--display); font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; }
+.card.evidence .tag { color: var(--evidence); }
+.card.assumption .tag { color: var(--stamp); }
+.pinned-mark { font-size: .8rem; color: var(--muted); }
+
+.lesson { background: var(--card); border: 1px solid var(--line); padding: 4px 18px 10px; border-radius: 4px; }
+
+#tabbar { color: var(--paper); font-family: var(--display); margin-bottom: 10px; }
+#tabbar:empty { display: none; }
+.tab-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 0 2px 8px; }
+.notebook { background: var(--folder); color: var(--ink); border-radius: 6px; padding: 8px 12px; }
+.notebook summary { cursor: pointer; font-family: var(--display); min-height: 28px; }
+.notebook .empty { margin: 8px 0 4px; }
+
+#ui-bar, #ui-dialog-backdrop, #ui-overlay { display: none !important; }
+#story { margin: 0 !important; }
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  h1 { font-size: 1.8rem; }
+  .cards { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+.card.deduction, .reveal .card.deduction { border-top-color: #b8860b; background: #fff8e1; }
+.card.deduction .tag { color: #8a6508; }
+.pinboard .ded a { background: #fff8e1; }
+.headline { background: var(--card); border: 1px solid var(--line); padding: 10px 14px; margin: 0 0 16px; font-family: var(--display); font-size: 1.05rem; line-height: 1.3; }
+.headline .paper { display: block; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.quote.chief { border-left-color: var(--stamp); }
+.exchange { margin: 10px 0 14px; }
+.asked { font-weight: 700; margin-bottom: 4px; }
+.asked::before { content: "You: "; color: var(--muted); font-weight: 400; }
+.how ul { margin: 0 0 1em; padding-left: 1.2em; }
+.lesson ul { padding-left: 1.2em; }
+
+.opt.revisit { display: block; }
+.opt.revisit a { display: block; }
+.map .opt.revisit em, .opt.revisit em { display: block; font-family: var(--body); font-style: normal; font-size: .82rem; color: var(--muted); margin: 4px 2px 0; }
+.card.seen { transform: none; opacity: .92; }
+.card.seen .pin { background: var(--muted); }
+.roster { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 12px; margin: 14px 0; overflow-x: auto; }
+.roster-title { font-family: var(--display); text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; color: var(--muted); margin: 0 0 8px; }
+.roster table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+.roster th { text-align: left; font-family: var(--display); font-weight: 400; border-bottom: 2px solid var(--line); padding: 6px 8px 6px 0; }
+.roster td { border-bottom: 1px solid var(--line); padding: 8px 8px 8px 0; vertical-align: top; }
+.roster td:first-child { font-weight: 700; white-space: nowrap; }
+@media (max-width: 480px) { .roster td:first-child { white-space: normal; } }
