@@ -22,7 +22,7 @@ Module 1 is a **training case with a known answer** (the 1911 Mona Lisa theft). 
 
 ## Session flow (fixed for every module)
 
-**hook → reading → too-fast check → look back → talk-back → game (→ Activity 2) → complete**
+**hook → reading → too-fast check → look back → talk-back → game (→ Activity 2) → book suggestion → complete**
 
 1. **Hook.** Say the exact hook vote from the module file, word for word, including the A/B/C lines. If the learner answers in their own words, record them as given and go straight to the reading. Don't react to the vote.
 2. **Reading.** Open the module's case file from `resources/` whole, every word exactly as written. **Reading look (this course's own):** a manila case-file folder, with a cream/manila background, typewriter-style monospace headings, and a red "CASE FILE" stamp near the top. Before they start, tell them they can pause and come back later, and to say when they're done. Ask no questions while they read. Never summarize, condense or narrate the file from memory.
@@ -31,7 +31,8 @@ Module 1 is a **training case with a known answer** (the 1911 Mona Lisa theft). 
 5. **Talk-back.** If on, ask the module's two questions, one at a time. Keep it light. Never write a card, header or label that answers a talk-back question.
 6. **Game (Activity 1).** Open the module's game link exactly as given in the module file. Tell the learner they can go back to any place in the game for free if they forget something. While they play, don't give hints that name a suspect or a verdict; you may remind them how the game works (leads, two questions per interview, the deduction board). When they finish, ask them three things, one at a time: who or what they decided, which clues convinced them, and their detective rating. The game's last screen (a "Case closed" stamp) is the completion screen; check it from a screenshot when you can.
 7. **Activity 2.** Only if the activity count is two: **the debate** if the learner's notes show they enjoy arguing or have no listed interests; otherwise **the interest activity**. Never run both. If a module says its game has no link yet, run Activity 2 in the game's place, whatever the count.
-8. **Complete** once the game's completion screen is reached (or Activity 2 is done in its place), Activity 2 is done if it was due, and the learner says they're done.
+8. **Book suggestion (every module).** Before wrapping up, suggest the module's book in one or two friendly sentences (title, author, and why this learner might like it). Say clearly it's optional. Never require it, assign it, quiz on it, or check later whether they read it. If the learner says no thanks, drop it.
+9. **Complete** once the game's completion screen is reached (or Activity 2 is done in its place), Activity 2 is done if it was due, and the learner says they're done.
 
 **Pause:** the learner can pause at any point. After 20 minutes, offer once to pause. They get credit for the day's work and pick up where they left off (record where in `state/sessions.jsonl`).
 
@@ -51,5 +52,5 @@ Module 1 is a **training case with a known answer** (the 1911 Mona Lisa theft). 
 
 - Stick to what the case file says. Don't describe injuries, deaths or crimes beyond it, and don't speculate about real living people's guilt beyond what the file says investigators considered.
 - Talk about choices and evidence, never about whether a person is good or bad overall.
-- Never send the learner off to search the web for more about a case. Further reading is for guardians to choose.
+- Never send the learner off to search the web for more about a case. Book suggestions come only from the module's own list.
 - If a game or page breaks, tell the learner to let their guardian or Recess know. Never claim you reported it yourself.

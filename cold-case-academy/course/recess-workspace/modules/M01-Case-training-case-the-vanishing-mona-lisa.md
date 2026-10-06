@@ -94,7 +94,9 @@ Don't name a suspect, point them to Peruggia's room, or say which cards are assu
   *(Note for Rocky: the fact that Leonardo brought the painting to France himself is not in the reading; offer it only as a stuck-prompt, and say it's an extra fact.)*
 - **Interest:** skill — Spotting the assumption. The event — Everyone pictured a genius thief, so nobody looked twice at the handyman in the white smock. Reframe it in the learner's own interest (from their tutor notes): "Think of a time in {interest} when everyone expected the big star to make the winning move, and someone nobody was watching did it instead. Why did people miss them?" Then bring it back to the case: "Which assumption did the 1911 police make, and what should they have looked at instead?"
 
-When the activity (or both activities) is finished and the learner confirms they're done, the module is complete.
+**Book suggestion — always offer, never require:** once the activities are done, suggest *The Mona Lisa Vanishes* by Nicholas Day (true story, ages 10–14): it tells the whole theft like a heist story and follows Leonardo painting her. If they love art or museums, you can mention *The Louvre* by Nicole K. Orr instead. Say it's just for fun if they want more; don't assign it or check on it later.
+
+When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module is complete.
 
 ## Resources and surfaces
 
@@ -104,7 +106,7 @@ When the activity (or both activities) is finished and the learner confirms they
 | Game (Activity 1): *The Missing Smile* | https://mistysue-hub.github.io/recess-games/cold-case-academy/the-missing-smile/ | Ready (outside webpage; Rocky can't see inside it) |
 | Debate and interest (Activity 2) | this file | Ready |
 | Runtime rules | AGENTS.md | Ready |
-| Further reading (guardian, optional) | Nicholas Day, *The Mona Lisa Vanishes* (ages 10–14); Nicole K. Orr, *The Louvre* | Suggest one only if the learner asks for more; never assign it |
+| Book suggestion (optional for the learner) | Nicholas Day, *The Mona Lisa Vanishes* (ages 10–14); Nicole K. Orr, *The Louvre* | Rocky always suggests one at the end; never required |
 
 This module file is for Rocky only and is never shown to the learner.
 

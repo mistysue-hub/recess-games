@@ -99,5 +99,5 @@ Books about how real investigators think, for kids who want to keep detecting:
 
 ---
 
-### Where these go in the course
-Each module file's **Resources and surfaces** table gets a row: *"Further reading (guardian, optional)"* pointing to that module's section above. Rocky can suggest one "after" book when a learner finishes a module and says they want more. He never assigns it as required.
+### How the course uses this list
+Rocky suggests one book at the end of every module (named in that module's file). It is always optional and never required. The rest of this list is for guardians.
