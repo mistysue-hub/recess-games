@@ -1,0 +1,301 @@
+:: StoryTitle
+The Tena Bar Riddle
+
+
+:: StoryData
+{
+  "ifid": "8E2C4A91-5B6F-4D3E-A1C7-2F9B0D8E6A54",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M03">>
+<<set setup.leadsTotal to 7>>
+<<set setup.dedTotal to 6>>
+<<set setup.typeLabel to { survived: "Points to: survived", didnt: "Points to: didn't survive", neither: "Doesn't decide", assumption: "Guess", deduction: "Deduction" }>>
+<<set setup.cards = {
+  "bundles":  { title: "Three bundles of twenties", text: "About $5,800 in rotting $20 bills, a few inches under the sand, still held together with rubber bands.", type: "neither" },
+  "place":    { title: "Where Tena Bar is", text: "A sandy beach on the Columbia River, about 9 miles downstream from Vancouver, Washington, and about 20 miles southwest of Ariel, where the first search happened.", type: "neither" },
+  "match":    { title: "The serial numbers match", text: "The numbers match the FBI's 1971 microfilm list. This is the ransom money. It's the first ransom money ever found.", type: "neither" },
+  "unspent":  { title: "None of it was ever spent", text: "Banks have had the list of 10,000 serial numbers for nine years. Not one ransom bill has turned up anywhere else.", type: "didnt" },
+  "layers":   { title: "The sand layers", text: "A geologist found the money sitting above sand that a dredging boat dumped on the beach in 1974. So the money arrived after 1974, years after the jump.", type: "neither" },
+  "dredge":   { title: "The 1974 dredging", text: "In 1974, a boat dredged the river bottom and spread the sand on Tena Bar. Some people thought the money came with that sand.", type: "neither" },
+  "banded":   { title: "Rubber bands still on", text: "If bundles drifted in a river for years, the rubber bands would rot and the bills would scatter. These stayed together, so they likely didn't drift for long.", type: "neither" },
+  "rivers":   { title: "Which river could carry it?", text: "The Lewis River (near Ariel) joins the Columbia downstream of Tena Bar, so money couldn't float from there up to the beach. The Washougal River joins upstream.", type: "neither" },
+  "buried":   { title: "Maybe someone buried it", text: "Nothing proves it, but nothing rules it out either: someone could have buried the money there.", type: "neither" },
+  "night":    { title: "A brutal night to jump", text: "Dark, freezing, sleet, over thick forest. Hard even for an expert, says the instructor.", type: "didnt" },
+  "clothes":  { title: "Dressed for an office", text: "He jumped in a business suit, a raincoat and ordinary street shoes. No jumpsuit, no helmet, no boots.", type: "didnt" },
+  "chute":    { title: "An older, harder chute", text: "He chose an older military-style parachute that's harder to steer, instead of a newer sport one. The reserve he took was a classroom dummy, sewn shut.", type: "didnt" },
+  "planner":  { title: "A careful plan", text: "He asked for four parachutes so nobody could hand him a broken one, and he made the plane fly low and slow with the stairs ready.", type: "survived" },
+  "weather":  { title: "Weather records", text: "That night: sleet and freezing temperatures at 10,000 feet, with low clouds over the forest.", type: "didnt" },
+  "nothing":  { title: "Nothing found in the woods", text: "Weeks of searching by soldiers, police and volunteers found no body, no parachute and no money in the woods.", type: "survived" },
+  "placard":  { title: "The 1978 placard", text: "In 1978, a deer hunter found a 727 sign with instructions for lowering the back stairs, north of Lake Merwin, right under the flight path.", type: "neither" },
+  "rich":     { title: "“He's living rich in Mexico”", text: "A newspaper story says he's surely on a beach somewhere, spending the money.", type: "assumption" },
+  "dead":     { title: "“The beach is his grave”", text: "Another story says the money proves he crashed right there.", type: "assumption" },
+
+  "d_late":   { title: "The money got there late", text: "Rubber bands intact and sitting above the 1974 sand: the money reached the beach years after 1971, and didn't drift there slowly.", type: "deduction", leans: "neither" },
+  "d_south":  { title: "Maybe he landed farther south", text: "If the money came down a river, it wasn't the Lewis. That fits a landing farther south than the first search.", type: "deduction", leans: "neither" },
+  "d_brutal": { title: "The odds were against him", text: "A freezing, stormy night and office clothes: a hard landing even for an expert.", type: "deduction", leans: "didnt" },
+  "d_gear":   { title: "Not equipped like a skydiver", text: "Street shoes, no helmet, and a harder-to-steer chute: he didn't jump like an experienced skydiver.", type: "deduction", leans: "didnt" },
+  "d_spent":  { title: "He never spent it", text: "The money is real and none of it ever surfaced. Either he couldn't spend it, or he was very careful not to.", type: "deduction", leans: "didnt" },
+  "d_vanish": { title: "A planner who left no trace", text: "Careful planning, and a huge search that found nothing at all. Maybe he got away, or maybe he landed somewhere nobody looked.", type: "deduction", leans: "survived" }
+}>>
+<<set setup.recipes = [
+  { a: "banded", b: "layers", id: "d_late" },
+  { a: "rivers", b: "place", id: "d_south" },
+  { a: "night", b: "clothes", id: "d_brutal" },
+  { a: "weather", b: "clothes", id: "d_brutal" },
+  { a: "clothes", b: "chute", id: "d_gear" },
+  { a: "unspent", b: "match", id: "d_spent" },
+  { a: "planner", b: "nothing", id: "d_vanish" }
+]>>
+<<set setup.interviews = {
+  "river": [
+    { q: "Could the money have floated here?", a: "“Not for years. Rubber bands rot in river water. If these bundles had drifted a long time, they'd have fallen apart.”", clue: "banded" },
+    { q: "Which rivers could carry it here?", a: "“The Lewis River joins the Columbia below this beach, downstream. Water doesn't flow uphill. The Washougal joins above it, upstream.”", clue: "rivers" },
+    { q: "Could someone have buried it?", a: "“Sure. A person with a shovel could have put it here. I can't prove that, and I can't rule it out.”", clue: "buried" },
+    { q: "Did the dredging bring it?", a: "“Maybe. The 1974 dredge spread river-bottom sand right on this beach. Ask a geologist about the layers.”", clue: "dredge" }
+  ],
+  "skydiver": [
+    { q: "Could you make that jump?", a: "“At night, in freezing sleet, over trees? I've made hundreds of jumps and I wouldn't. Not impossible, but very hard.”", clue: "night" },
+    { q: "What was he wearing?", a: "“A suit, a raincoat and street shoes. Every skydiver I know would wear boots, a jumpsuit and a helmet.”", clue: "clothes" },
+    { q: "Does his parachute choice tell you anything?", a: "“He took the older military chute, which is harder to steer, over the better sport one. And the reserve he grabbed was a dummy, sewn shut.”", clue: "chute" },
+    { q: "Was his plan smart?", a: "“The plan was clever. Four chutes so nobody could hand him a bad one. Low and slow with the stairs ready. Whoever he was, he'd thought about this.”", clue: "planner" }
+  ]
+}>>
+<<set setup.events = [
+  { at: 6, id: "e1", kind: "headline", text: "BOY FINDS HIJACK CASH ON COLUMBIA RIVER BEACH" },
+  { at: 4, id: "e2", kind: "chief", text: "Your supervisor calls: “Reporters want to know: is Cooper dead or alive? What do we tell them?”" },
+  { at: 2, id: "e3", kind: "headline", text: "TREASURE HUNTERS FLOCK TO TENA BAR WITH SHOVELS" }
+]>>
+<<set setup.resultFields = function () { var v = State.variables; return { verdict: v.verdict, confidence: v.conf }; }>>
+<<set $leads to 7>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to { river: [], skydiver: [] }>>
+<<set $events to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $pinned to []>>
+<<set $verdict to "">>
+<<set $conf to "">>
+<<set $return to "Hub">>
+
+
+:: Start [nobar]
+<div class="stamp">Case file 001</div>
+<p class="meta">FBI Portland Office · February 1980</p>
+<h1>The Tena Bar Riddle</h1>
+<p>It's been more than eight years since the man called D.B. Cooper jumped from Flight 305. The case has gone cold. Then the phone rings.</p>
+<p class="quote">"A family on a Columbia River beach called Tena Bar was digging to make a campfire. Their eight-year-old, Brian, found bundles of old twenty-dollar bills in the sand. Get down there. I need to know: is it Cooper's money, how did it get there, and is Cooper alive or dead? Seven leads."</p>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new place uses one lead. Going back is free.</li>
+<li>Interviews: two questions each.</li>
+<li>Some clues point toward "he survived," some toward "he didn't," and some don't decide anything. You'll see which at the end.</li>
+<li><b>This case has no answer key.</b> "We can't tell yet" is a real verdict if your evidence points both ways.</li>
+</ul>
+</div>
+<div class="actions">[[Start investigating|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<<set _ev to setup.events.filter(function(e){ return $leads <= e.at && !$events.includes(e.id); })>>
+<<for _e range _ev>><<run $events.push(_e.id)>>
+<<if _e.kind is "headline">><div class="headline"><span class="paper">The Oregonian</span><<print _e.text>></div>
+<<else>><p class="quote chief"><<print _e.text>></p><</if>>
+<</for>>
+<h2>Where to?</h2>
+<p class="meta">New places cost a lead. Places you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Beach" "Tena Bar: the beach">></li>
+<li><<maplink "Lab" "The FBI lab">></li>
+<li><<maplink "Geologist" "A geologist's office">></li>
+<li><<maplink "River" "Interview a river scientist">></li>
+<li><<maplink "Skydiver" "Interview a skydiving instructor">></li>
+<li><<maplink "Weather" "The weather bureau">></li>
+<li><<maplink "Files" "The old 1971 search files">></li>
+<li><<maplink "Newsroom" "A newspaper office">></li>
+</ul>
+<div class="actions secondary"><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to give my verdict|Accusation]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"That's all the time we have," your supervisor says. "What's your verdict?"</p>
+<div class="actions"><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Give my verdict|Accusation]]</div>
+
+
+:: Beach
+<h2>Tena Bar</h2>
+<p>A wide, sandy beach on the Columbia River, cold wind off the water. The Ingram family shows you the shallow hole where Brian was smoothing out sand for a campfire. Agents with shovels and sifting screens are already combing the beach.</p>
+<p>Three crumbly bundles of twenty-dollar bills sit in evidence bags. You can still read some of the serial numbers.</p>
+<<clue "bundles">>
+<<clue "place">>
+<<tomap>>
+
+
+:: Lab
+<h2>The FBI lab</h2>
+<p>An agent lines the soggy bills up against a printout of the 1971 microfilm list, one serial number at a time.</p>
+<p class="quote">"They match. This is the ransom. And here's the strange part: banks across the country have had this list for nine years, and not one of these bills has ever turned up anywhere else."</p>
+<<clue "match">>
+<<clue "unspent">>
+<<tomap>>
+
+
+:: Geologist
+<h2>A geologist's office</h2>
+<p>A geologist, Dr. Leonard Palmer, has dug careful trenches at Tena Bar and drawn the layers of sand like a cake.</p>
+<p class="quote">"Down here is the clay and sand the dredge dumped in 1974. The money was sitting above it, with more layers of river sand in between. So the money got here after 1974. It didn't come with the dredge."</p>
+<<clue "layers">>
+<<clue "dredge">>
+<<tomap>>
+
+
+:: River
+<h2>Interview: a river scientist</h2>
+<p>A river scientist who studies how the Columbia moves sand and logs meets you on the beach with a map of the river and everything that flows into it.</p>
+<div id="ans"><<pastanswers "river">></div>
+<div id="iv"><<interview "river">></div>
+<<tomap>>
+
+
+:: Skydiver
+<h2>Interview: a skydiving instructor</h2>
+<p>An instructor at a local skydiving school has followed the Cooper case for years. She has opinions.</p>
+<div id="ans"><<pastanswers "skydiver">></div>
+<div id="iv"><<interview "skydiver">></div>
+<<tomap>>
+
+
+:: Weather
+<h2>The weather bureau</h2>
+<p>A clerk pulls the records for the night of November 24, 1971, along the flight path.</p>
+<<clue "weather">>
+<<tomap>>
+
+
+:: Files
+<h2>The old 1971 search files</h2>
+<p>Boxes of maps marked with grid squares. In 1971, searchers walked the forest near Ariel and Lake Merwin, square by square.</p>
+<p class="quote">"Mud, steep hills, endless trees," an agent says. "No parachute. No money. No body."</p>
+<<clue "nothing">>
+<p>Clipped to the last box is a newer note.</p>
+<<clue "placard">>
+<<tomap>>
+
+
+:: Newsroom
+<h2>The newspaper office</h2>
+<p>The Cooper story is back on every front page, and everyone has a theory.</p>
+<p class="quote">"He's on a beach in Mexico, spending it," says one reporter. "No way," says another. "That beach is his grave."</p>
+<<clue "rich">>
+<<clue "dead">>
+<<tomap>>
+
+
+:: Accusation [nobar]
+<div class="stamp">Verdict</div>
+<h2>"Is Cooper alive or dead?"</h2>
+<p class="quote chief">"Give me your verdict, how sure you are, and up to three cards that back it up."</p>
+<h3>1. Your verdict</h3>
+<div id="verdicts"><<include "VerdictList">></div>
+<h3>2. How sure are you?</h3>
+<div id="confs"><<include "ConfList">></div>
+<h3>3. Pin up to 3 cards as evidence</h3>
+<<if $notebook.length is 0>><p class="note">Your notebook is empty. You'll have to report with no evidence.</p>
+<<else>><div id="pins"><<include "PinList">></div><</if>>
+<div id="file"><<include "FileButton">></div>
+
+
+:: VerdictList
+<<set _opts to [["survived","He survived the jump"],["didnt","He didn't survive the jump"],["unknown","We can't tell yet"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$verdict is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $verdict to _o[0]>><<replace "#verdicts">><<include "VerdictList">><</replace>><<replace "#file">><<include "FileButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ConfList
+<<set _opts to [["hunch","Just a hunch"],["fairly","Fairly sure"],["very","Very sure"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$conf is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $conf to _o[0]>><<replace "#confs">><<include "ConfList">><</replace>><<replace "#file">><<include "FileButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: PinList
+<p class="meta">Pinned: <<print $pinned.length>> of 3. Tap a card to pin or unpin it.</p>
+<div class="cards pinboard">
+<<for _id range $notebook>><<capture _id>><span @class="($pinned.includes(_id) ? 'opt pinned' : 'opt') + (setup.cards[_id].type === 'deduction' ? ' ded' : '')"><<link setup.cards[_id].title>><<if $pinned.includes(_id)>><<run $pinned.delete(_id)>><<elseif $pinned.length lt 3>><<run $pinned.push(_id)>><</if>><<replace "#pins">><<include "PinList">><</replace>><</link>></span><</capture>><</for>>
+</div>
+
+
+:: FileButton
+<<if $verdict is "" or $conf is "">><p class="note">Choose a verdict and how sure you are to file your report.</p>
+<<else>><div class="actions">[[File my verdict|Verdict]]</div><</if>>
+
+
+:: Verdict [nobar]
+<<set _lean to function(id){ var c = setup.cards[id]; return c.type === "deduction" ? c.leans : c.type; }>>
+<<set _pins to $pinned.map(_lean)>>
+<<set _nS to _pins.filter(function(x){ return x === "survived"; }).length>>
+<<set _nD to _pins.filter(function(x){ return x === "didnt"; }).length>>
+<<set _nA to _pins.filter(function(x){ return x === "assumption"; }).length>>
+<<set _nb to $notebook.map(_lean)>>
+<<set _haveS to _nb.includes("survived")>>
+<<set _haveD to _nb.includes("didnt")>>
+<<if $verdict is "survived">><<set _s1 to _nS gte 2 and _nA is 0>>
+<<elseif $verdict is "didnt">><<set _s1 to _nD gte 2 and _nA is 0>>
+<<else>><<set _s1 to _nS gte 1 and _nD gte 1 and _nA is 0>><</if>>
+<<if $verdict is "unknown">><<set _s2 to $conf isnot "very">>
+<<elseif $conf is "very">><<set _s2 to false>>
+<<elseif $conf is "fairly">><<set _s2 to _s1>>
+<<else>><<set _s2 to true>><</if>>
+<<if $verdict is "survived">><<set _s3 to _haveD>><<elseif $verdict is "didnt">><<set _s3 to _haveS>><<else>><<set _s3 to _haveS and _haveD>><</if>>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0)>>
+<<set $deductions to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<switch $verdict>>
+<<case "survived">><div class="stamp">Verdict: survived</div>
+<<case "didnt">><div class="stamp">Verdict: didn't survive</div>
+<<default>><div class="stamp solved">Verdict: can't tell yet</div>
+<</switch>>
+<h2>Detective rating: <<print $stars>> of 3 stars</h2>
+<p class="meta">Nobody knows the true answer, so these stars measure how well you used evidence, not whether you "won."</p>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>Evidence that fits your verdict.</b> <<if _s1>>The cards you pinned back up what you said.<<elseif _nA gt 0>>You pinned a newspaper guess. Guesses aren't evidence.<<elseif $verdict is "unknown">>For "can't tell yet," pin at least one card pointing each way.<<else>>Pin at least two cards that point toward your verdict.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>Confidence that fits the evidence.</b> <<if $conf is "very" and $verdict isnot "unknown">>The evidence points both ways, so "very sure" is too sure.<<elseif $verdict is "unknown" and $conf is "very">>Interesting: very sure that nobody can tell? Fair, but try "fairly sure."<<elseif _s2>>Your confidence matches how strong your evidence is.<<else>>"Fairly sure" needs pinned evidence that backs you up. Otherwise it's a hunch.<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>Looked at the other side.</b> <<if _s3>>You collected evidence pointing the other way, too.<<else>>You never found a clue pointing the other way. Good detectives look for evidence that could prove them wrong.<</if>></li>
+</ul>
+<p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal"><<for _id range $notebook>><<set _t to _lean(_id)>><div @class="'card ' + _t"><span class="tag"><<print setup.cards[_id].type === "deduction" ? "Deduction · " + setup.typeLabel[_t] : setup.typeLabel[_t]>></span><span class="card-title"><<print setup.cards[_id].title>></span><<if $pinned.includes(_id)>><span class="pinned-mark">You pinned this</span><</if>></div><</for>></div><</if>>
+<div class="actions">[[What really happened|RealHistory]]</div>
+
+
+:: RealHistory [nobar]
+<h2>What really happened</h2>
+<p>The beach money was the only ransom money ever found. The geologist's sand layers showed it arrived after the 1974 dredging, and nobody has ever explained exactly how it got there.</p>
+<p>The FBI looked at more than 800 suspects. Many agents believed Cooper didn't survive the jump: the weather, his clothes and his parachute choice were all against him, and the money was never spent. But no body or parachute was ever found. In 2016, after 45 years, the FBI stopped actively working the case.</p>
+<p>The search hasn't stopped. In 2017, volunteer scientists found tiny bits of rare metals, like pure titanium, on Cooper's clip-on tie. Back in 1971, metals like that were used in only a few kinds of factories, such as aircraft plants. Maybe that's a clue to his job. Maybe the tie was secondhand.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>A new clue can answer one question and raise three more.</li>
+<li>Your confidence should be only as strong as your evidence.</li>
+<li>"We can't tell yet" is an honest answer, not a failure.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the river scientist, the skydiving instructor, and the interview wording. Everything else is based on the real case.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<run setup.reportResult()>>
+<div class="stamp solved big">Case closed</div>
+<h2>Case 001, Part 2 complete</h2>
+<p>Detective rating: <b><<print $stars>> of 3</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
+<p>Tell Rocky your verdict, how sure you were, and which clues convinced you.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>

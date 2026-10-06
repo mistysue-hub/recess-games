@@ -1,0 +1,265 @@
+:: StoryInterface
+<div id="frame">
+  <header id="tabbar" data-passage="Tabbar"></header>
+  <main id="passages"></main>
+</div>
+
+
+
+
+:: Tabbar
+<<if not tags().includes("nobar")>>
+<div class="tab-row">
+<span class="leads">Leads left: <b><<print $leads>></b> of <<print setup.leadsTotal>></span>
+<span class="nb-count">Clues: <b><<print $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; }).length>></b> · Deductions: <b><<print $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>></b> of <<print setup.dedTotal>></span>
+</div>
+<details class="notebook">
+<summary>Open case notebook</summary>
+<<if $notebook.length is 0>><p class="empty">No clues yet. Visit a location to find some.</p><<else>>
+<div class="cards"><<for _id range $notebook>><div @class="'card ' + (setup.cards[_id].type === 'deduction' ? 'deduction' : '')"><span class="card-title"><<print setup.cards[_id].title>></span><span class="card-text"><<print setup.cards[_id].text>></span></div><</for>></div>
+<</if>>
+</details>
+<</if>>
+
+
+
+
+:: widgets [widget]
+<<widget "clue">>
+<<set _isNew to not $notebook.includes($args[0])>>
+<<if _isNew>><<run $notebook.push($args[0])>><</if>>
+<div @class="'card new ' + (setup.cards[$args[0]].type === 'deduction' ? 'deduction' : '') + (_isNew ? '' : ' seen')"><span class="pin" aria-hidden="true"></span><span class="card-label"><<if not _isNew>>Already in your notebook<<elseif setup.cards[$args[0]].type === "deduction">>New deduction<<else>>New clue<</if>></span><span class="card-title"><<print setup.cards[$args[0]].title>></span><span class="card-text"><<print setup.cards[$args[0]].text>></span></div>
+<</widget>>
+
+<<widget "maplink">>
+<<set _dest to $args[0]>><<set _label to $args[1]>>
+<<if $visited.includes(_dest)>><<capture _dest>><span class="opt revisit"><<link _label>><<goto _dest>><</link>><em>Visited · going back is free</em></span><</capture>>
+<<else>><<capture _dest>><<link _label>><<set $leads to $leads - 1>><<run $visited.push(_dest)>><<goto _dest>><</link>><</capture>>
+<</if>>
+<</widget>>
+
+<<widget "tomap">>
+<div class="actions">[[Back to the map|Hub]]<<link "Deduction board">><<set $return to passage()>><<goto "Board">><</link>></div>
+<</widget>>
+
+<<widget "pastanswers">>
+<<set _pw to $args[0]>>
+<<for _pi range $asked[_pw]>><div class="exchange"><p class="asked"><<print setup.interviews[_pw][_pi].q>></p><p class="quote"><<print setup.interviews[_pw][_pi].a>></p><<if setup.interviews[_pw][_pi].clue>><<clue setup.interviews[_pw][_pi].clue>><</if>></div><</for>>
+<</widget>>
+
+<<widget "interview">>
+<<set _who to $args[0]>>
+<<set _left to 2 - $asked[_who].length>>
+<<if _left gt 0>>
+<p class="meta">You have time for <<print _left>> more <<print _left is 1 ? "question" : "questions">>.</p>
+<div class="choices">
+<<for _i to 0; _i lt setup.interviews[_who].length; _i++>>
+<<if not $asked[_who].includes(_i)>>
+<<capture _who, _i>><span class="opt"><<link setup.interviews[_who][_i].q>><<run $asked[_who].push(_i)>><<append "#ans">><div class="exchange"><p class="asked"><<print setup.interviews[_who][_i].q>></p><p class="quote"><<print setup.interviews[_who][_i].a>></p><<if setup.interviews[_who][_i].clue>><<clue setup.interviews[_who][_i].clue>><</if>></div><</append>><<replace "#iv">><<interview _who>><</replace>><<run $(document).trigger(":interview-done")>><</link>></span><</capture>>
+<</if>>
+<</for>>
+</div>
+<<else>>
+<p class="meta">You've used both questions here. Your answers are above.</p>
+<</if>>
+<</widget>>
+
+
+
+
+:: Board
+<h2>Deduction board</h2>
+<p class="meta">Pick two clues that fit together, then connect them. Wrong guesses cost nothing.</p>
+<<set _plain to $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; })>>
+<<if _plain.length lt 2>><p class="note">You need at least two clues first.</p>
+<<else>><div id="board"><<include "BoardCards">></div><</if>>
+<<set _made to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; })>>
+<<if _made.length gt 0>><h3>Your deductions</h3><div class="cards"><<for _id range _made>><div class="card deduction"><span class="card-title"><<print setup.cards[_id].title>></span><span class="card-text"><<print setup.cards[_id].text>></span></div><</for>></div><</if>>
+<div class="actions"><<link "Back">><<goto $return>><</link>></div>
+
+
+
+
+:: BoardCards
+<<set _plain to $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; })>>
+<p class="meta">Selected: <<print $sel.length>> of 2</p>
+<div class="cards pinboard">
+<<for _id range _plain>><<capture _id>><span @class="$sel.includes(_id) ? 'opt pinned' : 'opt'"><<link setup.cards[_id].title>><<if $sel.includes(_id)>><<run $sel.delete(_id)>><<elseif $sel.length lt 2>><<run $sel.push(_id)>><</if>><<set $boardmsg to "">><<replace "#board">><<include "BoardCards">><</replace>><</link>></span><</capture>><</for>>
+</div>
+<<if $sel.length is 2>><div class="actions"><<link "Connect these two clues">>
+<<set _hit to setup.recipes.find(function(r){ return ($sel[0] === r.a && $sel[1] === r.b) || ($sel[0] === r.b && $sel[1] === r.a); })>>
+<<if _hit and $notebook.includes(_hit.id)>><<set $boardmsg to "already">><<elseif _hit>><<set $boardmsg to _hit.id>><<else>><<set $boardmsg to "miss">><</if>>
+<<set $sel to []>><<replace "#board">><<include "BoardCards">><</replace>>
+<</link>></div><</if>>
+<div id="boardmsg" role="status">
+<<if $boardmsg is "miss">><p class="note">These two don't connect into anything new. Try a different pair.</p>
+<<elseif $boardmsg is "already">><p class="note">You've already worked that one out.</p>
+<<elseif $boardmsg isnot "">><<clue $boardmsg>><<set $boardmsg to "">><</if>>
+</div>
+
+
+
+
+:: StoryScript [script]
+Config.history.maxStates = 1;
+Config.saves.slots = 0;
+Config.ui.stowBarInitially = true;
+Config.passages.nobr = true;
+
+/* Result hook for a future Recess integration: posts the outcome to the host page.
+   Harmless when nothing is listening. Each game fills setup.resultFields(). */
+setup.reportResult = function () {
+  var v = State.variables;
+  var result = { type: "cold-case-result", module: setup.moduleRef, stars: v.stars, pinned: (v.pinned || []).slice() };
+  if (typeof setup.resultFields === "function") { Object.assign(result, setup.resultFields()); }
+  try { if (window.parent && window.parent !== window) { window.parent.postMessage(result, "*"); } } catch (e) {}
+  return result;
+};
+
+/* Keep the notebook counts in the top bar current after in-passage updates. */
+$(document).on(":interview-done", function () { setTimeout(function () { $("#tabbar").empty().wiki(Story.get("Tabbar").processText()); }, 0); });
+
+
+
+
+:: StoryStylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap");
+
+/* Layout: one manila folder, centered, a paper sheet inside; clue cards pinned like index cards. Deliberately single-theme. */
+:root {
+  --desk: #3b2f26;
+  --folder: #d9b979;
+  --paper: #fbf6e8;
+  --ink: #2a2420;
+  --muted: #6b5d4f;
+  --stamp: #a3231d;
+  --pin: #2f5d8a;
+  --evidence: #2f6b3a;
+  --card: #fffdf6;
+  --line: #cdbf9f;
+  --display: "Special Elite", "Courier New", Courier, monospace;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+html, body { background: var(--desk); }
+body { margin: 0; color: var(--ink); font: 17px/1.55 var(--body); }
+#frame { max-width: 720px; margin: 0 auto; padding-block: 24px 48px; padding-inline: 16px; }
+#passages { background: var(--paper); border-top: 18px solid var(--folder); border-radius: 4px 14px 4px 4px; padding: 24px clamp(18px, 4vw, 40px) 32px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.passage { transition: none; }
+
+h1, h2, h3 { font-family: var(--display); font-weight: 400; color: var(--ink); text-wrap: balance; line-height: 1.2; }
+h1 { font-size: 2.2rem; margin: .2em 0 .4em; }
+h2 { font-size: 1.6rem; margin: 0 0 .6em; }
+h3 { font-size: 1.15rem; margin: 1.4em 0 .5em; }
+p { margin: 0 0 1em; max-width: 62ch; }
+.meta { font-family: var(--display); color: var(--muted); font-size: .95rem; letter-spacing: .02em; }
+.quote { border-left: 3px solid var(--line); padding-left: 14px; font-style: italic; }
+.how, .note { color: var(--muted); }
+.note.warn { color: var(--stamp); font-style: normal; }
+
+.stamp { display: inline-block; font-family: var(--display); text-transform: uppercase; letter-spacing: .12em; color: var(--stamp); border: 3px solid var(--stamp); padding: 4px 12px; border-radius: 4px; transform: rotate(-3deg); margin-bottom: 10px; }
+.stamp.solved { color: var(--evidence); border-color: var(--evidence); }
+.stamp.big { font-size: 1.6rem; padding: 6px 18px; }
+
+a, .macro-link { color: var(--pin); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
+.actions a, .actions .macro-link, .choices a, .map a {
+  display: inline-block; text-decoration: none; background: var(--ink); color: var(--paper);
+  font-family: var(--display); padding: 11px 16px; border-radius: 6px; min-height: 44px; box-sizing: border-box; cursor: pointer;
+}
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+a:focus-visible, .macro-link:focus-visible, summary:focus-visible { outline: 3px solid var(--pin); outline-offset: 3px; }
+
+.map { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.map a { display: block; background: var(--card); color: var(--ink); border: 2px solid var(--line); }
+.map a:hover { border-color: var(--ink); }
+.place { display: block; padding: 11px 16px; border: 2px dashed var(--line); border-radius: 6px; color: var(--muted); font-family: var(--display); }
+.place em { display: block; font-family: var(--body); font-style: normal; font-size: .85rem; margin-top: 2px; }
+.place.done { text-decoration: line-through; text-decoration-color: var(--line); }
+.place.done em { text-decoration: none; display: inline; margin-left: 6px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 10px 0; }
+.card { position: relative; display: flex; flex-direction: column; gap: 4px; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--pin); padding: 14px 12px 12px; border-radius: 3px; box-shadow: 0 2px 6px rgba(60,40,20,.15); min-width: 0; }
+.card.new { max-width: 420px; margin: 14px 0; transform: rotate(-.6deg); }
+.pin { position: absolute; top: -10px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--stamp); box-shadow: 0 2px 2px rgba(0,0,0,.3); }
+.card-label { font-family: var(--display); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.card-title { font-weight: 700; }
+.card-text { font-size: .92rem; color: var(--muted); }
+
+.choices { display: grid; gap: 8px; }
+.opt { display: block; min-width: 0; }
+.choices a { display: block; }
+.choices a { background: var(--card); color: var(--ink); border: 2px solid var(--line); font-family: var(--body); }
+.choices .chosen a { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pinboard a { display: block; background: var(--card); color: var(--ink); text-decoration: none; border: 2px solid var(--line); padding: 12px; border-radius: 3px; min-height: 44px; box-sizing: border-box; font-weight: 700; }
+.pinboard .pinned a { border-color: var(--stamp); box-shadow: inset 0 0 0 2px var(--stamp); }
+.pinboard .pinned a::before { content: "📌 "; }
+
+.stars { list-style: none; padding: 0; display: grid; gap: 8px; }
+.stars li { padding: 10px 12px; border-radius: 6px; background: var(--card); border: 1px solid var(--line); }
+.stars li span { color: #b8860b; font-size: 1.2rem; }
+.stars li.off span { color: var(--muted); }
+
+.reveal .card.evidence { border-top-color: var(--evidence); }
+.reveal .card.assumption { border-top-color: var(--stamp); }
+.tag { font-family: var(--display); font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; }
+.card.evidence .tag { color: var(--evidence); }
+.card.assumption .tag { color: var(--stamp); }
+.pinned-mark { font-size: .8rem; color: var(--muted); }
+
+.lesson { background: var(--card); border: 1px solid var(--line); padding: 4px 18px 10px; border-radius: 4px; }
+
+#tabbar { color: var(--paper); font-family: var(--display); margin-bottom: 10px; }
+#tabbar:empty { display: none; }
+.tab-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 0 2px 8px; }
+.notebook { background: var(--folder); color: var(--ink); border-radius: 6px; padding: 8px 12px; }
+.notebook summary { cursor: pointer; font-family: var(--display); min-height: 28px; }
+.notebook .empty { margin: 8px 0 4px; }
+
+#ui-bar, #ui-dialog-backdrop, #ui-overlay { display: none !important; }
+#story { margin: 0 !important; }
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  h1 { font-size: 1.8rem; }
+  .cards { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+.card.deduction, .reveal .card.deduction { border-top-color: #b8860b; background: #fff8e1; }
+.card.deduction .tag { color: #8a6508; }
+.pinboard .ded a { background: #fff8e1; }
+.headline { background: var(--card); border: 1px solid var(--line); padding: 10px 14px; margin: 0 0 16px; font-family: var(--display); font-size: 1.05rem; line-height: 1.3; }
+.headline .paper { display: block; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.quote.chief { border-left-color: var(--stamp); }
+.exchange { margin: 10px 0 14px; }
+.asked { font-weight: 700; margin-bottom: 4px; }
+.asked::before { content: "You: "; color: var(--muted); font-weight: 400; }
+.how ul { margin: 0 0 1em; padding-left: 1.2em; }
+.lesson ul { padding-left: 1.2em; }
+
+.opt.revisit { display: block; }
+.opt.revisit a { display: block; }
+.map .opt.revisit em, .opt.revisit em { display: block; font-family: var(--body); font-style: normal; font-size: .82rem; color: var(--muted); margin: 4px 2px 0; }
+.card.seen { transform: none; opacity: .92; }
+.card.seen .pin { background: var(--muted); }
+.roster { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 12px; margin: 14px 0; overflow-x: auto; }
+.roster-title { font-family: var(--display); text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; color: var(--muted); margin: 0 0 8px; }
+.roster table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+.roster th { text-align: left; font-family: var(--display); font-weight: 400; border-bottom: 2px solid var(--line); padding: 6px 8px 6px 0; }
+.roster td { border-bottom: 1px solid var(--line); padding: 8px 8px 8px 0; vertical-align: top; }
+.roster td:first-child { font-weight: 700; white-space: nowrap; }
+@media (max-width: 480px) { .roster td:first-child { white-space: normal; } }
+
+.card.single .tag, .tag.single { color: #8a5a00; }
+.reveal .card.single { border-top-color: #c98a00; }
+.card.survived .tag { color: #2f5d8a; } .reveal .card.survived { border-top-color: #2f5d8a; }
+.card.didnt .tag { color: #6b3f8a; } .reveal .card.didnt { border-top-color: #6b3f8a; }
+.card.neither .tag { color: var(--muted); } .reveal .card.neither { border-top-color: var(--muted); }
+.timeline { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; counter-reset: step; }
+.timeline li { counter-increment: step; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--pin); border-radius: 4px; padding: 10px 12px 10px 44px; position: relative; }
+.timeline li::before { content: counter(step); position: absolute; left: 12px; top: 9px; font-family: var(--display); font-size: 1.1rem; color: var(--pin); }
+.timeline li.wrong { border-left-color: var(--stamp); }
+.slot-empty { color: var(--muted); font-style: italic; }
+.passage ul.stars, .passage ul.timeline { margin-left: 0; padding-left: 0; }
