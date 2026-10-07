@@ -3,6 +3,7 @@
 **Case name:** Money on the Riverbank
 **Place:** The forests of southwest Washington, and a beach on the Columbia River
 **Dates:** 1971 to today
+**Real name of the hijacker:** ████████ UNKNOWN
 **Status:** UNSOLVED
 
 ---
@@ -27,6 +28,10 @@ They found no body. No parachute. No money.
 
 Remember the microfilm? The FBI had a record of the serial numbers on all 10,000 ransom bills. They sent the list to banks and businesses everywhere. If anyone ever spent one of those bills, it could be traced.
 
+> **BULLETIN · TO ALL BANKS** (as it might have read)
+> WATCH FOR $20 BILLS ON THE ATTACHED LIST OF 10,000 SERIAL NUMBERS.
+> REPORT ANY MATCH TO THE FBI AT ONCE.
+
 Weeks passed. Then months. Then years.
 
 **Not a single bill turned up.**
@@ -38,6 +43,8 @@ Meanwhile, the FBI looked into more than 800 suspects over the years. Some peopl
 ## Part 3: A Clue in the Woods
 
 In 1978, a deer hunter walking in the forest north of Lake Merwin found a small metal sign. It was an instruction placard from a Boeing 727, explaining how to lower the back stairs.
+
+**EXHIBIT E: The placard**
 
 It was found right under Flight 305's path, and investigators believed it came from the plane's back stairs that night. It proved the plane had flown over that area with its stairs down, but it didn't say anything about the hijacker himself.
 
@@ -51,6 +58,8 @@ An eight-year-old named **Brian Ingram** was smoothing out the sand to make a ca
 
 There was about **$5,800**.
 
+**EXHIBIT F: The beach money**
+
 The family called the FBI. Agents checked the serial numbers against their 1971 list.
 
 **It was the ransom money.** It was the first, and still the only, ransom money ever found.
@@ -63,11 +72,17 @@ Finding the money should have answered questions. Instead, it created new ones. 
 
 **Idea 1: It floated down a river.** Maybe Cooper landed near water, the money washed into a stream, and the stream carried it to the Columbia. But there was a problem. If paper money in rubber bands drifts in water for a long time, the rubber bands rot and the bills scatter. These bundles were still together.
 
+**Status of Idea 1:** doesn't fit the rubber bands.
+
 **Idea 2: It came with the sand from a dredging boat.** In 1974, a boat dredged mud and sand from the bottom of the river and spread it on Tena Bar. Maybe the money was buried in the river bottom and got dumped on the beach along with the sand.
 
 A geologist named Leonard Palmer dug careful trenches at Tena Bar to check. He found the layers of sand and clay from the 1974 dredging. But the money was sitting *above* them, with more layers of natural river sand in between. That meant the money arrived on the beach **after** 1974, years after the hijacking. It didn't come with the dredge.
 
+**Status of Idea 2:** ruled out.
+
 **Idea 3: Somebody buried it there.** Nothing proves this. But nothing rules it out, either.
+
+**Status of Idea 3:** still possible.
 
 To this day, nobody has a full explanation that fits every clue.
 

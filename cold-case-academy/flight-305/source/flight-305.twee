@@ -39,13 +39,16 @@ Flight 305
   "route":    { title: "Where they were", text: "The plane was flying south on an airway called Victor 23, over the forests of southwest Washington, between Seattle and Portland.", type: "evidence" },
   "estimates":{ title: "Two jump-spot estimates", text: "The FBI's first computer estimate put the jump near Ariel and Lake Merwin, north of the Lewis River. The co-pilot later thought it was farther south, near Portland's northern suburbs.", type: "evidence" },
   "gone":     { title: "Gone in Reno", text: "When the plane landed in Reno late that night, the back stairs were down and the man was gone. So was the money.", type: "evidence" },
-  "leftbehind":{ title: "What he left", text: "A black clip-on tie with a mother-of-pearl tie clip, and eight cigarette butts.", type: "evidence" },
+  "tie":      { title: "The clip-on tie", text: "On his seat: a thin black clip-on tie with a mother-of-pearl tie clip. Bag it. Someday, science may find something on it.", type: "evidence" },
+  "butts":    { title: "Eight cigarette butts", text: "Eight cigarette butts in the ashtray by his seat in the last row.", type: "evidence" },
+  "prints":   { title: "66 fingerprints", text: "Agents lifted 66 fingerprints from the plane. Hundreds of people use a plane, so nobody knows which, if any, are his.", type: "evidence" },
   "chutes":   { title: "The parachutes", text: "He took one main and one reserve. He left one main, and a reserve with some of its cords cut out. One reserve he was given was a classroom dummy, sewn shut, and it was never found on the plane.", type: "evidence" },
   "escort":   { title: "The chase planes saw nothing", text: "Two fighter jets and a training plane followed the airliner, but in the dark clouds they never saw anyone jump.", type: "evidence" },
   "weather":  { title: "A terrible night", text: "It was dark and stormy, with sleet. At 10,000 feet it was well below freezing.", type: "evidence" },
   "name":     { title: "Why “D.B.”?", text: "He called himself Dan Cooper. A reporter rushing to meet a deadline mixed him up with another name and wrote “D.B. Cooper.” It stuck.", type: "evidence" },
   "pro":      { title: "“He must be a paratrooper”", text: "A newspaper says only a trained army paratrooper would dare jump like that.", type: "assumption" },
   "escaped":  { title: "“He landed and drove away”", text: "Another paper says he surely had a car waiting below.", type: "assumption" },
+  "seattlejump":{ title: "“He jumped over Seattle”", text: "A caller to the newsroom swears the hijacker jumped out over Seattle before the plane ever landed.", type: "assumption" },
 
   "d_agree":  { title: "Two witnesses agree", text: "Both flight attendants, who spent the most time near him, describe the same man. That's stronger than one witness alone.", type: "deduction" },
   "d_unsure": { title: "The description isn't certain", text: "Witnesses don't all agree on his height or build. Any sketch is a best guess.", type: "deduction" },
@@ -72,7 +75,9 @@ Flight 305
   { id: "t5", need: "takeoff", text: "The plane takes off again, heading south." },
   { id: "t6", need: "light",   text: "A cockpit light shows the back stairs are open." },
   { id: "t7", need: "bump",    text: "The tail jumps upward (about 8:13 p.m.)." },
-  { id: "t8", need: "gone",    text: "The plane lands in Reno. He's gone." }
+  { id: "t8", need: "gone",    text: "The plane lands in Reno. He's gone." },
+  { id: "x1", need: "seattlejump", text: "He jumps out over Seattle, before the plane lands.", fake: true },
+  { id: "x2", need: "escaped", text: "He lands and drives off in a car waiting below.", fake: true }
 ]>>
 <<set setup.interviews = {
   "schaffner": [
@@ -115,6 +120,9 @@ Flight 305
 <<set $tl to []>>
 <<set $tlOk to false>>
 <<set $desc to "">>
+<<set $ph to "">>
+<<set $pa to "">>
+<<set $pe to "">>
 <<set $zone to "">>
 <<set $pinned to []>>
 <<set $return to "Hub">>
@@ -132,6 +140,7 @@ Flight 305
 <li>Visiting a new place uses one lead. Going back is free.</li>
 <li>Interviews: two questions each. Witnesses won't always agree.</li>
 <li>Cards marked <b>One witness</b> rest on a single person's memory. Two witnesses agreeing is stronger.</li>
+<li>Newspaper rumors aren't evidence. Keep them off your timeline.</li>
 <li>Build the night in order on the <b>timeline board</b>. Connect clues on the <b>deduction board</b>. Both are free.</li>
 </ul>
 </div>
@@ -176,7 +185,7 @@ Flight 305
 
 :: TimelineCards
 <<set _have to setup.timeline.filter(function(t){ return $notebook.includes(t.need); })>>
-<<set _left to _have.filter(function(t){ return !$tl.includes(t.id); })>>
+<<set _left to _have.filter(function(t){ return !$tl.includes(t.id); }).sort(function(a,b){ return a.text.localeCompare(b.text); })>>
 <h3>Your timeline</h3>
 <<if $tl.length is 0>><p class="slot-empty">Nothing placed yet.</p>
 <<else>><ol class="timeline"><<for _id range $tl>><li><<print setup.timeline.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
@@ -238,8 +247,12 @@ Flight 305
 <h2>The plane in Reno</h2>
 <p>The Boeing 727 sits on the runway in Reno, its back stairs still hanging down. Agents are dusting every surface for fingerprints.</p>
 <<clue "gone">>
-<<clue "leftbehind">>
 <<clue "chutes">>
+<p>Left behind on and around his seat in the last row:</p>
+<<clue "tie">>
+<<clue "butts">>
+<<clue "prints">>
+<p class="note">Everything you collect is bagged for your evidence locker.</p>
 <<tomap>>
 
 
@@ -268,6 +281,7 @@ Flight 305
 <p class="quote">"Only an army paratrooper would jump like that," one reporter says. "Bet he had a car waiting in the woods," says another.</p>
 <<clue "pro">>
 <<clue "escaped">>
+<<clue "seattlejump">>
 <<clue "name">>
 <<tomap>>
 
@@ -281,7 +295,8 @@ Flight 305
 <<if $tl.length is 0>><p class="note">You haven't built a timeline. You can still go back to the board.</p><<else>><ol class="timeline"><<for _id range $tl>><li><<print setup.timeline.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
 <div class="actions secondary"><<link "Edit the timeline">><<set $return to "Report">><<goto "Timeline">><</link>></div>
 
-<h3>2. The description for the wanted poster</h3>
+<h3>2. Build the wanted poster</h3>
+<p class="meta">Pick one line for each part of the description.</p>
 <div id="descs"><<include "DescList">></div>
 
 <h3>3. Where should the searchers go?</h3>
@@ -291,8 +306,15 @@ Flight 305
 
 
 :: DescList
-<<set _opts to [["attendants","Use the description both flight attendants agree on"],["mitchell","Use Bill Mitchell's description: shorter and slimmer"],["mix","Average all three together"],["range","Give the attendants' description, but say witnesses differ"]]>>
-<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$desc is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $desc to _o[0]>><<replace "#descs">><<include "DescList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+<<set _parts to [
+  ["ph", "Height and build", [["att","About 5 ft 10 to 6 ft (both flight attendants)"],["mitch","About 5 ft 9 and slim (Bill Mitchell)"],["range","5 ft 9 to 6 ft: witnesses differ"]]],
+  ["pa", "Age", [["mid","Mid-forties (both flight attendants)"],["young","Late twenties: only a young daredevil would jump"]]],
+  ["pe", "Hair and eyes", [["brown","Dark hair, brown eyes (both flight attendants)"],["skip","Leave hair and eyes off the poster"]]]
+]>>
+<div class="poster"><p class="poster-head">WANTED · FBI</p>
+<<for _p range _parts>><<capture _p>><p class="poster-part"><<print _p[1]>></p>
+<div class="choices"><<for _o range _p[2]>><<capture _o>><span @class="State.variables[_p[0]] === _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<run State.variables[_p[0]] = _o[0]>><<set $desc to $ph + "," + $pa + "," + $pe>><<replace "#descs">><<include "DescList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+<</capture>><</for>></div>
 
 
 :: ZoneList
@@ -301,16 +323,19 @@ Flight 305
 
 
 :: ReportButton
-<<if $desc is "" or $zone is "">><p class="note">Choose a description and a search area to file your report.</p>
+<<if $ph is "" or $pa is "" or $pe is "" or $zone is "">><p class="note">Finish the wanted poster and choose a search area to file your report.</p>
 <<else>><div class="actions">[[File my report|Verdict]]</div><</if>>
 
 
 :: Verdict [nobar]
-<<set _order to setup.timeline.map(function(t){ return t.id; })>>
+<<set _order to setup.timeline.filter(function(t){ return !t.fake; }).map(function(t){ return t.id; })>>
+<<set _hasFake to $tl.some(function(id){ return _order.indexOf(id) < 0; })>>
 <<set _inOrder to $tl.every(function(id, i){ return i === 0 || _order.indexOf(id) > _order.indexOf($tl[i-1]); })>>
-<<set $tlOk to _inOrder and $tl.length gte 6>>
+<<set $tlOk to _inOrder and not _hasFake and $tl.length gte 6>>
 <<set _s1 to $tlOk>>
-<<set _s2 to $desc is "attendants" or $desc is "range">>
+<<set _twoAgree to $notebook.includes("descS") and $notebook.includes("descM")>>
+<<set _posterOk to ($ph is "att" or $ph is "range") and $pa is "mid" and $pe is "brown">>
+<<set _s2 to _posterOk and _twoAgree>>
 <<set _hasWindow to $notebook.includes("d_window") or ($notebook.includes("bump") and ($notebook.includes("route") or $notebook.includes("estimates")))>>
 <<set _goodZone to $zone is "ariel" or $zone is "south">>
 <<set _s3 to _goodZone and _hasWindow>>
@@ -319,8 +344,8 @@ Flight 305
 <<if $stars is 3>><div class="stamp solved">Report accepted</div><<else>><div class="stamp">Report filed</div><</if>>
 <h2>Detective rating: <<print $stars>> of 3 stars</h2>
 <ul class="stars">
-<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The night, in order.</b> <<if _s1>>Your timeline has <<print $tl.length>> events, all in the right order.<<elseif $tl.length lt 6>>Your timeline has only <<print $tl.length>> events. Searchers need more of the night pieced together.<<else>>Some events are out of order. Check when the passengers got off compared with the circling.<</if>></li>
-<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>A fair description.</b> <<if $desc is "attendants">>You trusted the two witnesses who agree and spent the most time with him.<<elseif $desc is "range">>You used the strongest description and were honest that witnesses differ. Real detectives do exactly this.<<elseif $desc is "mitchell">>You trusted one witness over two who agree.<<else>>Averaging mixes good and weak memories together. Two witnesses who agree are stronger.<</if>></li>
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The night, in order.</b> <<if _s1>>Your timeline has <<print $tl.length>> events, all in the right order.<<elseif _hasFake>>Your timeline includes a rumor that no evidence backs up. Rumors don't go on the timeline.<<elseif $tl.length lt 6>>Your timeline has only <<print $tl.length>> events. Searchers need more of the night pieced together.<<else>>Some events are out of order. Check when the passengers got off compared with the circling.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>A fair wanted poster.</b> <<if _s2>><<if $ph is "range">>You used what two witnesses agree on, and were honest that the height is uncertain. Real detectives do exactly this.<<else>>Every line on your poster is backed by two witnesses who agree.<</if>><<elseif not _twoAgree>>You never heard from both flight attendants, so you can't know their descriptions agree.<<elseif $pa is "young">>Nobody who saw him said "late twenties." That came from a newspaper guess.<<elseif $ph is "mitch">>You trusted one witness's height over two who agree.<<else>>Two witnesses agree on his dark hair and brown eyes. That's worth putting on the poster.<</if>></li>
 <li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>A search area backed by evidence.</b> <<if _s3>>You used the bump time and the route to pick a spot along the flight path.<<elseif _goodZone>>That spot is on the flight path, but you didn't collect the clues that prove it: the bump time and where the plane was.<<else>>He couldn't have jumped there. The bump came long after Seattle and long before Reno.<</if>></li>
 </ul>
 <p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
@@ -349,8 +374,10 @@ Flight 305
 
 :: CaseClosed [nobar]
 <<run setup.reportResult()>>
+<<run setup.lockerSave("001", $notebook)>>
 <div class="stamp solved big">Case closed</div>
 <h2>Case 001, Part 1 complete</h2>
+<p>Your evidence has been bagged for Part 2.</p>
 <p>Detective rating: <b><<print $stars>> of 3</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
 <p>Tell Rocky where you sent the searchers and which clues told you to.</p>
 <div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>

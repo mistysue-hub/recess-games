@@ -3,6 +3,7 @@
 **Case name:** The Man in the Last Row
 **Place:** Northwest Orient Flight 305, from Portland, Oregon, to Seattle, Washington
 **Date of crime:** Wednesday, November 24, 1971 (the night before Thanksgiving)
+**Suspect's name:** "Dan Cooper" · **Real name:** ████████ UNKNOWN
 **Status:** UNSOLVED
 
 ---
@@ -31,6 +32,8 @@ He leaned toward her. She had better look at that note, he told her. He had a bo
 
 He opened his briefcase just enough for her to see inside: wires, red sticks, and a large battery. Then he told her his demands, and she wrote them down:
 
+**EXHIBIT A: The demands**
+
 - **$200,000** in $20 bills
 - **Four parachutes**: two main parachutes and two reserves
 - **Fuel trucks** waiting when the plane landed in Seattle
@@ -44,6 +47,8 @@ Schaffner carried the message to the cockpit. The captain, William Scott, radioe
 The plane did not land right away. For more than two hours, Flight 305 circled over Seattle while people on the ground rushed to gather the money and parachutes.
 
 Most of the passengers never knew anything was wrong. The pilot told them there was a small mechanical problem, and they would circle for a while. One passenger, a college student named Bill Mitchell, was sitting across the aisle from the hijacker. He was mostly bored.
+
+**EXHIBIT B: The microfilm**
 
 On the ground, the FBI did something very smart. Before handing over the money, agents photographed **every single bill** on microfilm. That meant they had a record of all 10,000 serial numbers. If any of those bills ever showed up again, anywhere, they would know it came from the hijacker.
 
@@ -91,7 +96,7 @@ Late that night, Flight 305 landed in Reno with its back stairs still hanging do
 
 The hijacker was gone. So was the money.
 
-What he left behind:
+**EXHIBIT C: What he left behind**
 
 - his black clip-on tie, with a mother-of-pearl tie clip
 - eight cigarette butts
@@ -103,6 +108,8 @@ One more strange thing: one of the reserve parachutes he'd been given was a **cl
 ---
 
 ## Part 7: Who Was He?
+
+**EXHIBIT D: The witnesses**
 
 The FBI interviewed everyone who had seen him. The two flight attendants, who had spent the most time near him, described him the same way: a man in his mid-forties, about 5 feet 10 inches to 6 feet tall, with dark hair and brown eyes. But Bill Mitchell, the passenger across the aisle, remembered a smaller, slimmer man, about 5 feet 9. The FBI's wanted poster had to be a best guess.
 
@@ -117,6 +124,12 @@ The FBI now had to decide where to send searchers. They used the facts: how fast
 The FBI's first computer estimate pointed to thick forest near the small town of **Ariel** and **Lake Merwin**, north of the Lewis River in southwest Washington. Soldiers, police officers and volunteers searched there for weeks. The co-pilot, Bill Rataczak, later thought the jump happened farther south, closer to Portland.
 
 The search found nothing at all.
+
+---
+
+**FLIGHT 305 · NOVEMBER 24, 1971**
+
+`Afternoon` cash ticket in Portland → `Soon after takeoff` the note → `5:40 p.m.` landing in Seattle, passengers off → `7:40 p.m.` takeoff, heading south → `About 8:00 p.m.` stairs light → `About 8:13 p.m.` the bump → `Late that night` Reno: gone
 
 ---
 

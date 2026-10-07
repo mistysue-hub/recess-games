@@ -116,6 +116,16 @@ setup.reportResult = function () {
   return result;
 };
 
+/* Evidence locker: lets Part 2 of a case remember what the player bagged in Part 1.
+   All games share one website, so they share browser storage. If storage is blocked,
+   the locker is simply empty and every game still works on its own. */
+setup.lockerSave = function (key, ids) {
+  try { localStorage.setItem("cca-locker-" + key, JSON.stringify(ids || [])); } catch (e) {}
+};
+setup.lockerGet = function (key) {
+  try { var v = JSON.parse(localStorage.getItem("cca-locker-" + key) || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+};
+
 /* Keep the notebook counts in the top bar current after in-passage updates. */
 $(document).on(":interview-done", function () { setTimeout(function () { $("#tabbar").empty().wiki(Story.get("Tabbar").processText()); }, 0); });
 
@@ -262,4 +272,34 @@ a:focus-visible, .macro-link:focus-visible, summary:focus-visible { outline: 3px
 .timeline li::before { content: counter(step); position: absolute; left: 12px; top: 9px; font-family: var(--display); font-size: 1.1rem; color: var(--pin); }
 .timeline li.wrong { border-left-color: var(--stamp); }
 .slot-empty { color: var(--muted); font-style: italic; }
-.passage ul.stars, .passage ul.timeline { margin-left: 0; padding-left: 0; }
+.passage ul.stars, .passage ul.timeline, .passage ol.timeline { margin-left: 0; padding-left: 0; }
+
+.card.made .tag { color: #2f5d8a; } .reveal .card.made { border-top-color: #2f5d8a; }
+.card.drowned .tag { color: #6b3f8a; } .reveal .card.drowned { border-top-color: #6b3f8a; }
+.sortrow { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 12px; margin: 0 0 12px; }
+.sortrow p { margin: 0 0 6px; }
+.choices.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.choices.three a { padding: 10px 6px; text-align: center; font-size: .9rem; }
+@media (max-width: 380px) { .choices.three { grid-template-columns: 1fr; } }
+
+.choices.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.choices.two a { text-align: center; padding: 10px 6px; }
+.dig-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 8px 0; background: #e8d9b0; padding: 8px; border-radius: 6px; }
+.dig a, .dig.done, .dig.off { display: flex; flex-direction: column; justify-content: center; min-height: 64px; box-sizing: border-box; padding: 6px; border-radius: 4px; font-size: .82rem; text-align: center; text-decoration: none; }
+.dig a { background: #f3e7c4; color: var(--ink); border: 2px dashed #b89b5e; }
+.dig.done { background: #cbb98c; color: var(--ink); border: 2px solid #8a7444; }
+.dig.done em { font-style: normal; font-weight: 700; font-size: .75rem; margin-top: 2px; }
+.dig.off { background: #efe3c0; color: var(--muted); border: 2px solid transparent; }
+.rivermap { margin: 10px 0 14px; background: #f4ecd6; border: 1px solid var(--line); border-radius: 6px; padding: 6px; }
+.rivermap svg { display: block; width: 100%; height: auto; font-family: var(--body); }
+.folder { background: #f3e2b3; border: 1px solid #c9a95e; border-radius: 0 8px 6px 6px; padding: 10px 12px 12px; margin: 22px 0 12px; position: relative; }
+.folder-tab { position: absolute; top: -20px; left: -1px; margin: 0; background: #f3e2b3; border: 1px solid #c9a95e; border-bottom: none; border-radius: 6px 6px 0 0; padding: 2px 12px; font-family: var(--display); font-size: .95rem; }
+.folder ul { margin: 6px 0 10px; padding-left: 1.1em; font-size: .93rem; }
+.folder li { margin-bottom: 4px; }
+.passage .theory-key { list-style: none; margin: 8px 0 14px; padding: 0; display: grid; gap: 8px; }
+.theory-key li { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--evidence); border-radius: 4px; padding: 8px 10px; font-size: .93rem; }
+.theory-key li.no { border-left-color: var(--stamp); }
+
+.poster { background: #f6efd9; border: 2px solid var(--ink); border-radius: 4px; padding: 10px 12px 12px; }
+.poster-head { font-family: var(--display); font-size: 1.4rem; letter-spacing: .2em; text-align: center; margin: 0 0 6px; border-bottom: 2px solid var(--ink); }
+.poster-part { font-family: var(--display); font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 10px 0 6px; }

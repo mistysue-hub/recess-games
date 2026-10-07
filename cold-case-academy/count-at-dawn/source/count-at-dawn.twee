@@ -1,0 +1,343 @@
+:: StoryTitle
+Count at Dawn
+
+
+:: StoryData
+{
+  "ifid": "C4D1A7E3-2B5F-4E8A-9C16-7F3A0B2D5E91",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M04">>
+<<set setup.leadsTotal to 6>>
+<<set setup.dedTotal to 6>>
+<<set setup.typeLabel to { evidence: "Fact", single: "One witness", assumption: "Guess", deduction: "Deduction" }>>
+<<set setup.cards = {
+  "hole":      { title: "The hole behind the sink", text: "Under the sink in each empty cell, the small air vent has been dug out wide enough for a man to squeeze through. The concrete around it is chipped and crumbly.", type: "evidence" },
+  "cardboard": { title: "A fake vent cover", text: "Leaning in Morris's cell: a piece of cardboard painted to look like the metal vent grille. From the doorway it looked real.", type: "evidence" },
+  "tools":     { title: "Spoons and saw blades", text: "Metal spoons from the dining hall, worn down at the edges, and pieces of old saw blades.", type: "evidence" },
+  "drill":     { title: "A homemade drill", text: "A drill built from the motor of a broken vacuum cleaner.", type: "evidence" },
+  "head":      { title: "The fake heads", text: "Three dummy heads made from soap, toothpaste, concrete dust and toilet paper, painted, with real human hair.", type: "evidence" },
+  "hair":      { title: "The barbershop floor", text: "The barbershop floor is swept every day. The hair on the fake heads is real human hair, like the clippings that land here.", type: "evidence" },
+  "accordion": { title: "Music hour", text: "Every day during music hour, Frank Morris played his accordion. It was loud.", type: "evidence" },
+  "corridor":  { title: "The utility corridor", text: "Behind the cells runs a narrow, dark corridor full of pipes and wires. From inside it, you could climb the pipes all the way to the top of the cellblock.", type: "evidence" },
+  "workshop":  { title: "The rooftop workshop", text: "At the unused top of the cellblock: blankets hung up to hide a work area, scraps of raincoat, and tools.", type: "evidence" },
+  "extras":    { title: "What was left in the workshop", text: "An unfinished float, a plywood paddle, three life vests and a partly finished extra raft, all left behind.", type: "evidence" },
+  "roofvent":  { title: "The roof vent, broken open", text: "A ventilation shaft leads from the workshop up to the roof. Its cover has been forced open. A guard remembers hearing a loud crash in the night.", type: "evidence" },
+  "pipe":      { title: "The kitchen vent pipe", text: "A pipe runs about 50 feet down the outside wall from the roof to the ground. Investigators concluded the men slid down it to the ground.", type: "evidence" },
+  "fences":    { title: "Two fences", text: "Between the cellhouse and the water are two 12-foot fences topped with barbed wire. The men got over both.", type: "evidence" },
+  "shore":     { title: "The northeast shore", text: "A rocky spot near the power plant, out of sight of the searchlights and gun towers.", type: "evidence" },
+  "raincoats": { title: "Missing raincoats", text: "More than 50 prison raincoats can't be accounted for. Their rubbery cloth is perfect for something that floats.", type: "evidence" },
+  "glue":      { title: "Liquid plastic and steam pipes", text: "Liquid plastic from the prison shops is missing. Seams in the raincoat scraps were glued with it and set with heat from the hot steam pipes.", type: "evidence" },
+  "magazine":  { title: "A how-to magazine", text: "A popular science and how-to magazine. Investigators matched the men's vest and raft ideas to its articles.", type: "evidence" },
+  "lightsout": { title: "Lights out: 9:30 p.m.", text: "On June 11, lights went out at 9:30 p.m. The three men were in their cells then.", type: "evidence" },
+  "count":     { title: "Every count, all present", text: "All night, guards checked the cells and marked every man present. Each time, they saw what looked like a sleeping man.", type: "evidence" },
+  "found":     { title: "7:00 a.m.", text: "At about 7:00 a.m. on June 12, a guard reached in to wake Clarence Anglin. The head fell onto the floor.", type: "evidence" },
+  "plan":      { title: "West: the plan", text: "Allen West says they planned to paddle to Angel Island, cross to the mainland, steal clothes and a car, and split up.", type: "single" },
+  "jam":       { title: "West: why he stayed", text: "West says cement he'd used to hold his loose vent cover in place hardened. His vent jammed, and by the time he broke through, the others were gone.", type: "single" },
+  "tunnel":    { title: "“They tunneled under the floor”", text: "A reporter is sure they dug a tunnel under the cellhouse.", type: "assumption" },
+  "inside":    { title: "“Someone inside helped them”", text: "Another reporter says they must have had help from a guard.", type: "assumption" },
+
+  "d_months": { title: "Months of quiet work", text: "Holes dug with spoons, hidden behind painted cardboard: this took months, not one night.", type: "deduction" },
+  "d_noise":  { title: "Hiding the noise", text: "A vacuum-motor drill is loud. Morris's accordion during music hour covered the sound.", type: "deduction" },
+  "d_heads":  { title: "The heads bought them hours", text: "Every count all night found a “sleeping man.” The fake heads gave them a head start until morning.", type: "deduction" },
+  "d_raft":   { title: "A raft from a magazine", text: "Missing raincoats and a how-to magazine: they built their boat from an idea in print.", type: "deduction" },
+  "d_four":   { title: "The plan was for four", text: "Extra vests and an extra raft left in the workshop, and West's jammed vent: four men planned to go, but only three made it out.", type: "deduction" },
+  "d_blind":  { title: "They picked a blind spot", text: "Over the fences to the one stretch of shore the searchlights and towers couldn't see.", type: "deduction" }
+}>>
+<<set setup.recipes = [
+  { a: "hole", b: "cardboard", id: "d_months" },
+  { a: "tools", b: "cardboard", id: "d_months" },
+  { a: "drill", b: "accordion", id: "d_noise" },
+  { a: "head", b: "count", id: "d_heads" },
+  { a: "raincoats", b: "magazine", id: "d_raft" },
+  { a: "extras", b: "jam", id: "d_four" },
+  { a: "fences", b: "shore", id: "d_blind" }
+]>>
+<<set setup.route = [
+  { id: "r1", need: "hole",     text: "Squeeze out through the hole behind the sink", why: "They had to get out of their cells first." },
+  { id: "r2", need: "corridor", text: "Crawl into the utility corridor", why: "The corridor is only reachable through the vent holes." },
+  { id: "r3", need: "workshop", text: "Climb the pipes to the rooftop workshop", why: "The workshop is at the top of the corridor." },
+  { id: "r4", need: "roofvent", text: "Break out through the roof vent", why: "The roof vent leads up from the workshop." },
+  { id: "r5", need: "pipe",     text: "Slide down the kitchen vent pipe", why: "The pipe runs down from the roof." },
+  { id: "r6", need: "fences",   text: "Climb the two fences", why: "The fences are between the building and the water." },
+  { id: "r7", need: "shore",    text: "Blow up the raft and push off from the northeast shore", why: "The shore is past the fences." }
+]>>
+<<set setup.fakeRoute = [
+  { id: "f1", need: "tunnel", text: "Crawl through a tunnel under the floor", why: "No tunnel was ever found. There's no evidence for this step." },
+  { id: "f2", need: "inside", text: "A guard unlocks a door for them", why: "No evidence shows anyone helped from inside. Every door was still locked." }
+]>>
+<<set setup.interviews = {
+  "west": [
+    { q: "Where were they going?", a: "“Angel Island first. Then across to the mainland, grab some clothes and a car, and split up.”", clue: "plan" },
+    { q: "Why are you still here?", a: "“I'd cemented my vent cover so it wouldn't fall off. The cement set hard. By the time I chipped through, they were gone.”", clue: "jam" },
+    { q: "Where did the raincoats go?", a: "“Up to the workshop. We stitched and glued them together. It took forever.”", clue: "raincoats" },
+    { q: "Who made the heads?", a: "“Each of us made his own. Soap, toilet paper, concrete dust. The hair came from the barbershop floor.”", clue: "hair" }
+  ]
+}>>
+<<set setup.events = [
+  { at: 5, id: "e1", kind: "chief", text: "The warden storms in: “Three men gone from Alcatraz. I want to know how, and I want to know how long they've been gone.”" },
+  { at: 3, id: "e2", kind: "headline", text: "THREE CONVICTS ESCAPE ‘ESCAPE-PROOF’ ALCATRAZ" },
+  { at: 1, id: "e3", kind: "chief", text: "The warden again: “The FBI is on the dock. Wrap it up.”" }
+]>>
+<<set setup.resultFields = function () { var v = State.variables; return { routeComplete: v.routeOk, routeMistakes: v.rmiss, headStart: v.head, westTrust: v.trust }; }>>
+<<set $leads to 6>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to { west: [] }>>
+<<set $events to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $rt to []>>
+<<set $rmiss to 0>>
+<<set $rmsg to "">>
+<<set $routeOk to false>>
+<<set $head to "">>
+<<set $trust to "">>
+<<set $pinned to []>>
+<<set $return to "Hub">>
+
+
+:: Start [nobar]
+<div class="stamp">Case file 002</div>
+<p class="meta">Alcatraz Federal Penitentiary · Tuesday, June 12, 1962 · 7:00 a.m.</p>
+<h1>Count at Dawn</h1>
+<p>The siren is still wailing across the island. You're the investigator on duty, and the warden is standing in the doorway of Clarence Anglin's cell, staring at a head on the floor.</p>
+<p>It's made of soap.</p>
+<p class="quote chief">"Three cells. Three fake heads. Morris and both Anglin brothers are gone, and nobody saw a thing. Find out how they got out, and how long they've been gone. You have six leads before the FBI takes over."</p>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new place uses one lead. Going back is free.</li>
+<li>Nobody saw the escape. The evidence will tell you the story.</li>
+<li>Allen West, the man left behind, will answer two questions. He's <b>one witness</b>, and he wasn't there for the end.</li>
+<li>Put the escape in order on the <b>route board</b>. Connect clues on the <b>deduction board</b>. Both are free.</li>
+</ul>
+</div>
+<div class="actions">[[Start investigating|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<<set _ev to setup.events.filter(function(e){ return $leads <= e.at && !$events.includes(e.id); })>>
+<<for _e range _ev>><<run $events.push(_e.id)>>
+<<if _e.kind is "headline">><div class="headline"><span class="paper">San Francisco Chronicle</span><<print _e.text>></div>
+<<else>><p class="quote chief"><<print _e.text>></p><</if>>
+<</for>>
+<h2>Where to?</h2>
+<p class="meta">New places cost a lead. Places you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Cells" "The three empty cells">></li>
+<li><<maplink "West" "Interview Allen West, the man left behind">></li>
+<li><<maplink "Corridor" "The utility corridor behind the cells">></li>
+<li><<maplink "Roof" "The top of the cellblock and the roof">></li>
+<li><<maplink "Shore" "Outside: the wall, the fences and the shore">></li>
+<li><<maplink "Shops" "The prison shops and supply room">></li>
+<li><<maplink "Music" "The music room and the barbershop">></li>
+<li><<maplink "Guards" "The guards' office: last night's count sheets">></li>
+<li><<maplink "Dock" "The dock, where reporters are gathering">></li>
+</ul>
+<div class="actions secondary"><<link "Route board (free)">><<set $return to "Hub">><<goto "Route">><</link>><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to report|Report]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"Time's up," the warden says. "The FBI is here. Let's hear your report."</p>
+<div class="actions"><<link "One last look at the route board">><<set $return to "OutOfLeads">><<goto "Route">><</link>><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Make your report|Report]]</div>
+
+
+:: Route
+<h2>Route board</h2>
+<p class="meta">Tap the steps of the escape in the order they happened. You can only use steps you have evidence for. If a step couldn't have happened yet, the board will tell you why.</p>
+<div id="rtboard"><<include "RouteCards">></div>
+<div class="actions"><<link "Back">><<goto $return>><</link>></div>
+
+
+:: RouteCards
+<<set _all to setup.route.concat(setup.fakeRoute)>>
+<<set _have to _all.filter(function(t){ return $notebook.includes(t.need); })>>
+<<set _left to _have.filter(function(t){ return !$rt.includes(t.id); }).sort(function(a,b){ return a.text.localeCompare(b.text); })>>
+<h3>The escape route so far</h3>
+<<if $rt.length is 0>><p class="slot-empty">Nothing placed yet.</p>
+<<else>><ol class="timeline"><<for _id range $rt>><li><<print _all.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
+<<if $rmsg isnot "">><p class="note warn" role="status"><<print $rmsg>></p><</if>>
+<<if _have.length is 0>><p class="note">You don't have any route evidence yet. The cells are a good place to start.</p>
+<<elseif _left.length gt 0>>
+<h3>Place next</h3>
+<div class="choices">
+<<for _t range _left>><<capture _t>><span class="opt"><<link _t.text>>
+<<set _next to setup.route[$rt.length]>>
+<<if _t.id.startsWith("f")>><<set $rmiss to $rmiss + 1>><<set $rmsg to "That step doesn't fit. " + _t.why>>
+<<elseif _next and _t.id is _next.id>><<run $rt.push(_t.id)>><<set $rmsg to "">>
+<<else>><<set $rmiss to $rmiss + 1>><<set $rmsg to "Not yet. " + _next.why + " What comes before “" + _t.text.toLowerCase() + "”?">><</if>>
+<<replace "#rtboard">><<include "RouteCards">><</replace>><</link>></span><</capture>><</for>>
+</div>
+<<else>><p class="note">Every step you have evidence for is placed.</p><</if>>
+<p class="meta">Steps placed: <<print $rt.length>> of <<print setup.route.length>> · Wrong tries: <<print $rmiss>></p>
+
+
+:: Cells
+<h2>The three empty cells</h2>
+<p>Three cells a few doors apart on the same row. Each is about five feet wide and nine feet deep: a bed, a sink, a toilet, a shelf. In each bed, under the blanket, is a fake head. Behind each sink, low on the back wall, is a dark hole.</p>
+<<clue "hole">>
+<<clue "cardboard">>
+<<clue "head">>
+<<clue "magazine">>
+<<tomap>>
+
+
+:: West
+<h2>Interview: Allen West</h2>
+<p>Allen West's cell is next to the others. His vent cover is half chipped away. He looks tired and nervous, and he's decided to talk.</p>
+<div id="ans"><<pastanswers "west">></div>
+<div id="iv"><<interview "west">></div>
+<<tomap>>
+
+
+:: Corridor
+<h2>The utility corridor</h2>
+<p>A guard unlocks a steel door at the end of the cellblock. Behind the cells runs a narrow, dark corridor, three stories tall, crammed with water pipes, electric wires and air ducts. From in here, you can see the back of every vent hole.</p>
+<<clue "corridor">>
+<<clue "tools">>
+<<clue "drill">>
+<<tomap>>
+
+
+:: Roof
+<h2>The top of the cellblock</h2>
+<p>You climb a ladder to the very top of the cellblock, where nobody goes. Someone has been very busy up here.</p>
+<<clue "workshop">>
+<<clue "extras">>
+<<clue "roofvent">>
+<<tomap>>
+
+
+:: Shore
+<h2>Outside: the wall, the fences and the shore</h2>
+<p>Cold wind off the bay. You follow the marks from the roof to the ground, across the yard, and down to the rocks. The water is gray and fast.</p>
+<<clue "pipe">>
+<<clue "fences">>
+<<clue "shore">>
+<<tomap>>
+
+
+:: Shops
+<h2>The prison shops and supply room</h2>
+<p>The supply officer is checking his lists for the third time.</p>
+<p class="quote">"Raincoats. More than fifty of them, and I can't find any. And somebody's been helping himself to liquid plastic from the shops."</p>
+<<clue "raincoats">>
+<<clue "glue">>
+<<tomap>>
+
+
+:: Music
+<h2>The music room and the barbershop</h2>
+<p>Next to each other on the same hall. The music room still has an accordion case in the corner. In the barbershop, the barber is sweeping up.</p>
+<<clue "accordion">>
+<<clue "hair">>
+<<tomap>>
+
+
+:: Guards
+<h2>The guards' office</h2>
+<p>Last night's count sheets are on the desk. The night guards look miserable.</p>
+<<clue "lightsout">>
+<<clue "count">>
+<<clue "found">>
+<<tomap>>
+
+
+:: Dock
+<h2>The dock</h2>
+<p>Boats full of reporters are already circling the island, shouting questions.</p>
+<p class="quote">"Bet they dug a tunnel under the whole building," one yells. "No way they did it alone. Somebody inside helped," shouts another.</p>
+<<clue "tunnel">>
+<<clue "inside">>
+<<tomap>>
+
+
+:: Report [nobar]
+<div class="stamp">Report</div>
+<h2>Your report to the warden</h2>
+<p class="quote chief">"Three things," the warden says. "How they got out, how long they've been gone, and where they were headed."</p>
+
+<h3>1. The route</h3>
+<<if $rt.length is 0>><p class="note">You haven't built the route. You can still go back to the board.</p><<else>><ol class="timeline"><<for _id range $rt>><li><<print setup.route.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
+<div class="actions secondary"><<link "Edit the route">><<set $return to "Report">><<goto "Route">><</link>></div>
+
+<h3>2. How big a head start did they have?</h3>
+<div id="heads"><<include "HeadList">></div>
+
+<h3>3. Where were they headed?</h3>
+<div id="trusts"><<include "TrustList">></div>
+
+<div id="file"><<include "ReportButton">></div>
+
+
+:: HeadList
+<<set _opts to [["two","About 2 hours"],["five","About 5 hours"],["nine","About 9 and a half hours"],["unknown","There's no way to tell"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$head is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $head to _o[0]>><<replace "#heads">><<include "HeadList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: TrustList
+<<set _opts to [["certain","Angel Island. West told us, so that's certain."],["oneWitness","West says Angel Island, but he's one witness and wasn't there at the end."],["guess","Mexico. That's where escapers always go."]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$trust is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $trust to _o[0]>><<replace "#trusts">><<include "TrustList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ReportButton
+<<if $head is "" or $trust is "">><p class="note">Choose a head start and where they were headed to file your report.</p>
+<<else>><div class="actions">[[File my report|Verdict]]</div><</if>>
+
+
+:: Verdict [nobar]
+<<set $routeOk to $rt.length is setup.route.length>>
+<<set _s1 to $routeOk and $rmiss lte 2>>
+<<set _s2 to $head is "nine" and $notebook.includes("lightsout") and $notebook.includes("found")>>
+<<set _s3 to $trust is "oneWitness" and $notebook.includes("plan")>>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0)>>
+<<set $deductions to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<if $stars is 3>><div class="stamp solved">Report accepted</div><<else>><div class="stamp">Report filed</div><</if>>
+<h2>Detective rating: <<print $stars>> of 3 stars</h2>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The route, step by step.</b> <<if _s1>>All seven steps, in order<<if $rmiss gt 0>>, with only <<print $rmiss>> wrong <<print $rmiss is 1 ? "try" : "tries">><</if>>.<<elseif $routeOk>>All seven steps, but it took <<print $rmiss>> wrong tries. Ask "what had to happen first?" before each step.<<else>>Your route has <<print $rt.length>> of 7 steps. Some parts of the building were never searched.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>The head start.</b> <<if _s2>>Lights out at 9:30 p.m., head found at 7:00 a.m.: about nine and a half hours.<<elseif $head is "nine">>Right number, but you never collected the count sheets that prove it.<<else>>Check the count sheets: when did the lights go out, and when was the head found?<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>Trusting the witness the right amount.</b> <<if _s3>>West's word is useful, but it's one witness, and he never saw the ending.<<elseif $trust is "certain">>West is one witness, and he never left his cell that night. Useful, but not certain.<<elseif $trust is "guess">>Nothing in the evidence points to Mexico. That's a guess.<<else>>You picked the careful answer, but you never asked West where they were going.<</if>></li>
+</ul>
+<p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal"><<for _id range $notebook>><div @class="'card ' + setup.cards[_id].type"><span class="tag"><<print setup.typeLabel[setup.cards[_id].type]>></span><span class="card-title"><<print setup.cards[_id].title>></span></div><</for>></div><</if>>
+<div class="actions">[[What really happened|RealHistory]]</div>
+
+
+:: RealHistory [nobar]
+<h2>What really happened</h2>
+<p>Investigators pieced the escape together exactly the way you did: from the holes, the tools, the workshop and the heads. Nobody saw any of it happen.</p>
+<p>The three men left their cells after lights out at 9:30 p.m. Nobody knows the exact minute they pushed off from the shore. Allen West told investigators everything he knew, but he never saw the ending.</p>
+<p>Within hours, boats and planes were searching the bay. What they found, and what they didn't, is your next case.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>When nobody saw it happen, the evidence tells the story.</li>
+<li>Each step depends on the one before. Ask "what had to happen first?"</li>
+<li>A witness can be useful and still not be certain.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the warden's, supply officer's and reporters' words, and West's exact wording. The evidence and the events are based on the real case.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<run setup.reportResult()>>
+<<run setup.lockerSave("002", $notebook)>>
+<div class="stamp solved big">Case closed</div>
+<h2>Case 002, Part 1 complete</h2>
+<p>Detective rating: <b><<print $stars>> of 3</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
+<p>Your evidence has been bagged for Part 2.</p>
+<p>Tell Rocky the route you found, how big a head start they had, and your detective rating.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>

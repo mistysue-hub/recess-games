@@ -1,7 +1,7 @@
 ---
 ref: M03
 title: "Case 001, Part 2: Money on the Riverbank"
-estimatedMinutes: 30
+estimatedMinutes: 35
 skill: "Weighing evidence for competing theories"
 widgetFlavor: "Game"
 materializationStatus: authored
@@ -21,9 +21,9 @@ No violence. The possibility that the hijacker died in the jump is discussed in 
 
 ## Estimated time
 
-Estimated time: 30 minutes
+Estimated time: 35 minutes
 
-Reading is about 1,050 words (about 7 minutes at 150 words a minute). The hook and talk-back add about 5 minutes, and the game takes about 15–20. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point.
+Reading is about 1,050 words (about 7 minutes at 150 words a minute). The hook and talk-back add about 5 minutes, and the game takes about 20–25, including the suspect drawer. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point.
 
 **Finished-too-fast check:** under 5 minutes of reading. That's 75% of the reading time.
 
@@ -41,7 +41,7 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 
 **This case is unsolved, and that's the point of this module.** Never say whether Cooper survived, never imply one side is the right answer, and never call any verdict wrong. Praise reasoning that fits evidence, including "we can't tell yet." Gently question confidence that's stronger than the evidence.
 
-**What happens in this case (for Rocky only — never read it out, and never share it before the learner has read the file):** After the 1971 jump, soldiers, police and volunteers searched the forest near Ariel and Lake Merwin for weeks and found no body, parachute or money. The FBI gave banks its list of the 10,000 microfilmed serial numbers; none ever turned up in circulation. The FBI looked into more than 800 suspects. In 1978 a deer hunter found a Boeing 727 aft-stair instruction placard north of Lake Merwin, under the flight path. On February 10, 1980, eight-year-old Brian Ingram, smoothing sand for a campfire with his family at Tena Bar on the Columbia River (about 9 miles downstream of Vancouver, Washington, about 20 miles southwest of Ariel), found three bundles of decayed $20 bills, still in rubber bands, about $5,800; the serial numbers matched. It remains the only ransom money ever found. Theories: washed down a river (but intact rubber bands suggest it didn't drift long); came with 1974 dredge spoils spread on the beach (but geologist Leonard Palmer found the money above the dredge layer with natural sand between, so it arrived after 1974); buried by someone (unproven). Didn't-survive clues: dark, freezing, stormy night over forest; suit, raincoat and street shoes; an older military-style chute that's harder to steer; the reserve he took was a sewn-shut classroom dummy; money never spent. Survived clues: careful planning (four chutes, low and slow, stairs ready); knowledge of planes and the area; no body or parachute ever found. In 2016 the FBI stopped actively investigating but will still examine physical evidence related to the parachutes or money. In 2017 volunteer scientists found particles of rare metals, including pure titanium, on the tie, possibly linked to aircraft-type factories, or the tie may have been secondhand. In the game (not the reading), a made-up river scientist also notes that the Lewis River joins the Columbia downstream of Tena Bar; if the learner asks, say it's a map clue the game raises and that experts still argue about where he landed.
+**What happens in this case (for Rocky only — never read it out, and never share it before the learner has read the file):** After the 1971 jump, soldiers, police and volunteers searched the forest near Ariel and Lake Merwin for weeks and found no body, parachute or money. The FBI gave banks its list of the 10,000 microfilmed serial numbers; none ever turned up in circulation. The FBI looked into more than 800 suspects. In 1978 a deer hunter found a Boeing 727 aft-stair instruction placard north of Lake Merwin, under the flight path. On February 10, 1980, eight-year-old Brian Ingram, smoothing sand for a campfire with his family at Tena Bar on the Columbia River (about 9 miles downstream of Vancouver, Washington, about 20 miles southwest of Ariel), found three bundles of decayed $20 bills, still in rubber bands, about $5,800; the serial numbers matched. It remains the only ransom money ever found. Theories: washed down a river (but intact rubber bands suggest it didn't drift long); came with 1974 dredge spoils spread on the beach (but geologist Leonard Palmer found the money above the dredge layer with natural sand between, so it arrived after 1974); buried by someone (unproven). Didn't-survive clues: dark, freezing, stormy night over forest; suit, raincoat and street shoes; an older military-style chute that's harder to steer; the reserve he took was a sewn-shut classroom dummy; money never spent. Survived clues: careful planning (four chutes, low and slow, stairs ready); knowledge of planes and the area; no body or parachute ever found. In 2016 the FBI stopped actively investigating but will still examine physical evidence related to the parachutes or money. In 2017 volunteer scientists found particles of rare metals, including pure titanium, on the tie, possibly linked to aircraft-type factories, or the tie may have been secondhand. In the game (not the reading), a river map shows that the Lewis River, which runs past Ariel, joins the Columbia downstream of Tena Bar, while the Washougal joins upstream; if the learner asks, say it's a map clue the game raises and that experts still argue about where he landed. The game then jumps to today: the FBI got a partial DNA profile from the tie in 2001 (a weak sample, and the tie may have been secondhand); a volunteer team has studied rare-metal particles on the tie since 2009; the eight cigarette butts were destroyed in 1998 while in FBI storage; 66 fingerprints were lifted from the plane. The suspect drawer holds five real suspects, none ever charged: Richard McCoy Jr. (pulled a similar hijacking in April 1972; FBI says he didn't match the description and was home in Utah for Thanksgiving dinner the next day); Kenneth Christiansen (Northwest Orient employee and former paratrooper, mid-forties, about 5'8"; Schaffner said his photos were the closest match but couldn't confirm; died 1994); Robert Rackstraw (paratrooper and pilot, about 28 in 1971, cleared by the FBI in the 1970s; died 2019); Duane Weber (claimed on his deathbed in 1995 to be Cooper; ruled out by the tie DNA); Sheridan Peterson (former Boeing worker and skydiver; blue eyes, not brown; said he was in Nepal). Talk about these men only as the game and these notes do: who investigators looked at and what the evidence shows. Never say any of them was Cooper.
 
 **Content notes (for the tutor and guardian; never read them out):** No violence. The reading and game discuss, in general terms, whether the hijacker may have died in the jump; no bodies or injuries are described.
 
@@ -73,12 +73,15 @@ Keep it light and about what happened. Never write a card, header, or label anyw
 **Activity 1 — the game, *The Tena Bar Riddle*:** open https://mistysue-hub.github.io/recess-games/cold-case-academy/tena-bar-riddle/ (a Twine detective game on an outside webpage; you can't see inside it). Tell the learner once before they start:
 - they're an FBI agent in February 1980, called to Tena Bar, with 7 leads to spend;
 - a new place costs one lead, and going back to a place they've visited is free;
-- interviews allow only two questions;
+- the interview with the geologist allows only two questions, and they can dig two test holes on the beach;
 - the deduction board (free) joins two clues into a new idea;
-- at the end they choose a verdict (survived, didn't survive, or can't tell yet), say how sure they are, and pin up to 3 cards as evidence;
+- before the verdict, they decide which of four theories about the money can be ruled out;
+- then they choose a verdict (survived, didn't survive, or can't tell yet), say how sure they are, and pin up to 3 cards as evidence;
+- finally, they jump to today and open a drawer of five real suspects, deciding which ones the evidence rules out;
+- if they played *Flight 305* on this device, evidence they bagged there shows up in Part 2;
 - there's no answer key: the stars are for how well they use evidence, not for "winning."
 
-Don't tell them which verdict to choose or which way a card points. If they're stuck, you may ask, "Have you found any clue that points the other way?" or "Which two clues might fit together?" The game ends on a green "Case closed" stamp. Then ask, one at a time: their verdict, how sure they were, which clues convinced them, and their detective rating (stars out of 3). If they chose "very sure," ask gently what evidence would change their mind. The game's own last screens explain what's known today; don't repeat them, but answer questions about them from the Rocky-only notes above.
+Don't tell them which verdict to choose or which way a card points. If they're stuck, you may ask, "Have you found any clue that points the other way?", "Which two clues might fit together?" or, in the suspect drawer, "Does he match what the two flight attendants said?" The game ends on a green "Case closed" stamp. Then ask, one at a time: their verdict, how sure they were, which clues convinced them, which suspect they couldn't rule out, and their detective rating (stars out of 5). If they chose "very sure," ask gently what evidence would change their mind. The game's own last screens explain what's known today; don't repeat them, but answer questions about them from the Rocky-only notes above.
 
 **Activity 2 — only when the activity count is two (see AGENTS.md for which one):**
 
@@ -125,5 +128,5 @@ On session end, Rocky writes:
 
 - **state/sessions.jsonl** — one line: date, minutes, minutes spent reading this module's case file, whether the module was completed, where the learner paused if they did.
 - **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status.
-- **state/module_completions.jsonl** — on completion only: ref M03, date, hook answer, talk-back answers, their verdict and confidence, their detective rating (stars out of 3), and which Activity 2 ran (if any).
+- **state/module_completions.jsonl** — on completion only: ref M03, date, hook answer, talk-back answers, their verdict and confidence, which suspects they ruled out, their detective rating (stars out of 5), and which Activity 2 ran (if any).
 - **state/student_profile.md** — durable observations only: whether the learner enjoys debating, which interests landed in the interest activity, which kinds of cases grab them, and whether they tend to be overconfident or cautious with verdicts.
