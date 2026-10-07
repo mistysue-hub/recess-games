@@ -76,11 +76,52 @@ SMILE_BANNER = SVG_OPEN.format(label="A tall Louvre gallery wall crowded with go
 <path d="M286 22 L354 22 L348 30 L292 30 Z" fill="#f3ead2" opacity=".35"/>
 </svg>'''
 
+GARDNER_NIGHT = SVG_OPEN.format(label="A Venetian-style palace museum at night, with two men in police caps waiting by a side door under a streetlight.") + '''
+<rect width="640" height="220" fill="#141b2b"/>
+<g fill="#ffffff" opacity=".7"><circle cx="60" cy="24" r="1.2"/><circle cx="150" cy="40" r="1"/><circle cx="560" cy="30" r="1.3"/><circle cx="610" cy="56" r="1"/></g>
+<rect x="150" y="54" width="360" height="146" fill="#c9a98a"/>
+<g fill="#2a2a3c"><rect x="176" y="76" width="34" height="44" rx="16"/><rect x="236" y="76" width="34" height="44" rx="16"/><rect x="296" y="76" width="34" height="44" rx="16"/><rect x="356" y="76" width="34" height="44" rx="16"/><rect x="416" y="76" width="34" height="44" rx="16"/></g>
+<g fill="#ffd98a" opacity=".85"><rect x="236" y="140" width="34" height="40" rx="16"/></g>
+<g fill="#2a2a3c"><rect x="176" y="140" width="34" height="40" rx="16"/><rect x="296" y="140" width="34" height="40" rx="16"/><rect x="356" y="140" width="34" height="40" rx="16"/></g>
+<rect x="420" y="146" width="34" height="54" fill="#5a3a2a"/><circle cx="447" cy="174" r="2" fill="#e8c35a"/>
+<rect y="200" width="640" height="20" fill="#2a2a2a"/>
+<rect x="540" y="96" width="5" height="104" fill="#3a3a3a"/><circle cx="542" cy="94" r="9" fill="#fff2b0"/><path d="M542 100 L500 200 L590 200 Z" fill="#fff2b0" opacity=".18"/>
+<g fill="#1d2433"><rect x="478" y="160" width="14" height="40" rx="5"/><circle cx="485" cy="152" r="8"/><rect x="476" y="143" width="18" height="5" rx="2"/><rect x="500" y="158" width="14" height="42" rx="5"/><circle cx="507" cy="150" r="8"/><rect x="498" y="141" width="18" height="5" rx="2"/></g>
+<g fill="#e8c35a"><circle cx="485" cy="146" r="1.6"/><circle cx="507" cy="144" r="1.6"/></g>
+</svg>'''
+
+GARDNER_FRAMES = SVG_OPEN.format(label="A museum wall of green silk with ornate gold frames; two of the frames hang empty.") + '''
+<rect width="640" height="220" fill="#3f5a4a"/>
+<g fill="#46634f" opacity=".7"><circle cx="40" cy="40" r="10"/><circle cx="120" cy="90" r="10"/><circle cx="200" cy="40" r="10"/><circle cx="280" cy="90" r="10"/><circle cx="360" cy="40" r="10"/><circle cx="440" cy="90" r="10"/><circle cx="520" cy="40" r="10"/><circle cx="600" cy="90" r="10"/><circle cx="40" cy="140" r="10"/><circle cx="200" cy="140" r="10"/><circle cx="360" cy="140" r="10"/><circle cx="520" cy="140" r="10"/></g>
+<rect y="196" width="640" height="24" fill="#3a2a1c"/>
+<g><rect x="40" y="40" width="150" height="120" fill="#c9a043" stroke="#8a6a12" stroke-width="3"/><rect x="56" y="56" width="118" height="88" fill="#3f5a4a"/>
+<rect x="250" y="30" width="140" height="150" fill="#c9a043" stroke="#8a6a12" stroke-width="3"/><rect x="266" y="46" width="108" height="118" fill="#2c3f4f"/><path d="M276 150 C300 120 320 100 340 76 L360 150 Z" fill="#41617a"/><path d="M300 110 L330 70 L334 112 Z" fill="#e8dcc0"/>
+<rect x="450" y="50" width="150" height="110" fill="#c9a043" stroke="#8a6a12" stroke-width="3"/><rect x="466" y="66" width="118" height="78" fill="#3f5a4a"/></g>
+<text x="115" y="104" text-anchor="middle" font-family="Special Elite, Courier New, monospace" font-size="11" fill="#c9a043">?</text><text x="525" y="109" text-anchor="middle" font-family="Special Elite, Courier New, monospace" font-size="11" fill="#c9a043">?</text>
+</svg>'''
+
+TOWER_BANNER = SVG_OPEN.format(label="The White Tower of the Tower of London at dusk, with its four corner turrets above the River Thames.") + '''
+<defs><linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3355"/><stop offset="1" stop-color="#d8a07a"/></linearGradient></defs>
+<rect width="640" height="220" fill="url(#sky5)"/>
+<rect y="176" width="640" height="44" fill="#4a5a6a"/>
+<g stroke="#c9d6e0" stroke-width="2" opacity=".4"><line x1="40" y1="194" x2="110" y2="194"/><line x1="300" y1="204" x2="380" y2="204"/><line x1="520" y1="190" x2="590" y2="190"/></g>
+<rect x="60" y="150" width="520" height="28" fill="#6f6355"/>
+<g fill="#6f6355"><rect x="60" y="142" width="14" height="10"/><rect x="90" y="142" width="14" height="10"/><rect x="530" y="142" width="14" height="10"/><rect x="560" y="142" width="14" height="10"/></g>
+<rect x="230" y="70" width="180" height="84" fill="#d8ccb4"/>
+<g fill="#d8ccb4"><rect x="222" y="44" width="26" height="30"/><rect x="392" y="44" width="26" height="30"/><rect x="222" y="44" width="26" height="30"/><rect x="304" y="54" width="22" height="20"/></g>
+<g fill="#4a4060"><path d="M222 44 Q235 28 248 44 Z"/><path d="M392 44 Q405 28 418 44 Z"/><path d="M304 54 Q315 40 326 54 Z"/></g>
+<g fill="#4a4a58"><rect x="250" y="94" width="10" height="18" rx="5"/><rect x="290" y="94" width="10" height="18" rx="5"/><rect x="340" y="94" width="10" height="18" rx="5"/><rect x="380" y="94" width="10" height="18" rx="5"/><rect x="270" y="124" width="10" height="16" rx="5"/><rect x="360" y="124" width="10" height="16" rx="5"/></g>
+<path d="M410 30 L410 14 L428 18 L410 22" fill="#a3231d" stroke="#3a3040" stroke-width="1.5"/>
+</svg>'''
+
 SCENES = {
  "flight-305": ("Plane", '<svg class="art scene" viewBox="0 0 640 160" role="img" aria-label="The tail of the jet on the runway in Reno, its back stairs hanging down to the ground."><rect width="640" height="160" fill="#2c3e55"/><rect y="128" width="640" height="32" fill="#3b3b3b"/><g stroke="#e8d36a" stroke-width="4" stroke-dasharray="26 18"><line x1="0" y1="146" x2="640" y2="146"/></g><path d="M40 70 L420 70 C450 70 470 78 480 88 C470 98 450 104 420 104 L40 104 Z" fill="#c9d3dd"/><path d="M400 70 L440 10 L470 10 L456 70 Z" fill="#aab6c2"/><rect x="418" y="58" width="44" height="14" rx="7" fill="#8e9aa7"/><path d="M430 104 L478 128 L486 126 L446 104 Z" fill="#7d8996"/><g stroke="#5c6875" stroke-width="2"><line x1="440" y1="110" x2="452" y2="108"/><line x1="452" y1="116" x2="464" y2="114"/><line x1="464" y1="122" x2="476" y2="120"/></g><g fill="#ffe9a8"><rect x="80" y="80" width="8" height="8" rx="1"/><rect x="104" y="80" width="8" height="8" rx="1"/><rect x="128" y="80" width="8" height="8" rx="1"/><rect x="152" y="80" width="8" height="8" rx="1"/></g><circle cx="560" cy="40" r="6" fill="#e74c3c"/><circle cx="590" cy="40" r="6" fill="#3498db"/></svg>'),
  "tena-bar-riddle": ("Geologist", '<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="A cutaway of the beach like a layer cake: ordinary sand on top with the money in it, natural river sand below, then the gray clay from the 1974 dredge at the bottom."><rect width="640" height="170" fill="#f4ecd6"/><rect x="40" y="20" width="560" height="40" fill="#e3c98f"/><rect x="40" y="60" width="560" height="44" fill="#d2b77a"/><rect x="40" y="104" width="560" height="50" fill="#9a9a94"/><g fill="#7e9b6a"><rect x="300" y="32" width="30" height="12" rx="2"/><rect x="326" y="36" width="30" height="12" rx="2"/></g><g font-family="Atkinson Hyperlegible, sans-serif" font-size="14" fill="#2a2420"><text x="56" y="46">Beach sand (money found here)</text><text x="56" y="88">Natural river sand</text><text x="56" y="134" fill="#fff">Gray clay from the 1974 dredge</text></g><path d="M380 38 L470 38" stroke="#a3231d" stroke-width="2"/><text x="476" y="43" font-family="Atkinson Hyperlegible, sans-serif" font-size="13" fill="#a3231d">the money</text></svg>'),
  "count-at-dawn": ("Cells", '<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="Inside a narrow cell: a bed with a fake head on the pillow under a blanket, and a dark hole behind the sink."><rect width="640" height="170" fill="#bfb8aa"/><g stroke="#6b6458" stroke-width="6"><line x1="20" y1="0" x2="20" y2="170"/><line x1="60" y1="0" x2="60" y2="170"/><line x1="100" y1="0" x2="100" y2="170"/></g><rect y="140" width="640" height="30" fill="#8f877a"/><rect x="170" y="96" width="250" height="40" rx="4" fill="#6f7b86"/><rect x="170" y="88" width="250" height="16" rx="6" fill="#55626e"/><ellipse cx="200" cy="88" rx="26" ry="14" fill="#f2efe6"/><circle cx="214" cy="80" r="15" fill="#e5c8a8"/><path d="M200 70 C210 62 228 64 230 76 C224 72 212 72 204 76 Z" fill="#5a3b25"/><rect x="480" y="70" width="70" height="30" rx="4" fill="#e8e4da" stroke="#9a9384" stroke-width="2"/><rect x="510" y="56" width="6" height="16" fill="#9a9384"/><rect x="494" y="112" width="40" height="26" fill="#2a2420"/><g stroke="#7a7266" stroke-width="2"><line x1="494" y1="120" x2="534" y2="120"/><line x1="494" y1="128" x2="534" y2="128"/></g></svg>'),
  "the-missing-smile": ("Wall", '<svg class="art scene" viewBox="0 0 640 150" role="img" aria-label="Close-up of the gap on the wallpaper: four bare iron hooks around a brighter rectangle where the painting used to hang."><rect width="640" height="150" fill="#6e2a33"/><rect x="250" y="16" width="140" height="118" fill="#8f4550"/><g fill="#2a2420"><path d="M264 30 l0 10 l6 0" stroke="#2a2420" stroke-width="4" fill="none"/><path d="M376 30 l0 10 l-6 0" stroke="#2a2420" stroke-width="4" fill="none"/><path d="M264 120 l0 -10 l6 0" stroke="#2a2420" stroke-width="4" fill="none"/><path d="M376 120 l0 -10 l-6 0" stroke="#2a2420" stroke-width="4" fill="none"/></g><rect x="60" y="30" width="130" height="90" fill="#c9a043"/><rect x="70" y="40" width="110" height="70" fill="#556b55"/><rect x="450" y="30" width="130" height="90" fill="#c9a043"/><rect x="460" y="40" width="110" height="70" fill="#4f5d73"/></svg>'),
+ "sensor-log": ("Security", '<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="A long paper printout from the motion detectors, listing rooms and times; the Blue Room line shows no movement."><rect width="640" height="170" fill="#5a4a3e"/><g transform="rotate(-2 320 85)"><rect x="70" y="14" width="500" height="146" fill="#f6f3e8"/><g fill="#e3e8f0"><rect x="70" y="34" width="500" height="18"/><rect x="70" y="70" width="500" height="18"/><rect x="70" y="106" width="500" height="18"/><rect x="70" y="142" width="500" height="18"/></g><g fill="#2a2420" font-family="Courier New, monospace" font-size="13"><text x="90" y="48">01:48  DUTCH ROOM ........ MOTION</text><text x="90" y="84">  ...  SHORT GALLERY ..... MOTION</text><text x="90" y="120">  ...  BLUE ROOM ......... (none)</text><text x="90" y="156">02:45  LAST TRIP OUT</text></g><rect x="84" y="108" width="380" height="16" fill="none" stroke="#a3231d" stroke-width="2"/></g></svg>'),
+ "frame-by-frame": ("Frames", '<svg class="art scene" viewBox="0 0 640 160" role="img" aria-label="Close-up of one ornate gold frame hanging empty on green silk wallpaper."><rect width="640" height="160" fill="#3f5a4a"/><rect x="230" y="16" width="180" height="128" fill="#c9a043" stroke="#8a6a12" stroke-width="4"/><rect x="250" y="34" width="140" height="92" fill="#3f5a4a" stroke="#8a6a12" stroke-width="2"/><g fill="#d4b25a"><circle cx="240" cy="26" r="5"/><circle cx="400" cy="26" r="5"/><circle cx="240" cy="134" r="5"/><circle cx="400" cy="134" r="5"/></g></svg>'),
+ "tower-ledger": ("Mancini", '<svg class="art scene" viewBox="0 0 640 150" role="img" aria-label="An old handwritten page with a quill pen and a wax seal on a library table."><rect width="640" height="150" fill="#6b4f3a"/><g transform="rotate(-3 300 75)"><rect x="170" y="16" width="290" height="120" fill="#efe3c4"/><g stroke="#8a7a5a" stroke-width="2"><line x1="190" y1="40" x2="440" y2="40"/><line x1="190" y1="56" x2="430" y2="56"/><line x1="190" y1="72" x2="440" y2="72"/><line x1="190" y1="88" x2="400" y2="88"/><line x1="190" y1="104" x2="420" y2="104"/></g><circle cx="420" cy="118" r="10" fill="#a3231d"/></g><path d="M480 30 C520 40 540 90 530 130 L526 130 C532 92 512 50 478 34 Z" fill="#f4efe2" stroke="#b8ad95"/></svg>'),
  "marshals-file": ("Search", '<svg class="art scene" viewBox="0 0 640 160" role="img" aria-label="Evidence photos laid out on a table: a homemade wooden paddle, a life vest made of raincoat cloth, and a small packet wrapped in plastic."><rect width="640" height="160" fill="#8a6a4f"/><g transform="rotate(-3 160 80)"><rect x="40" y="20" width="200" height="120" fill="#fbf6e8"/><rect x="52" y="32" width="176" height="88" fill="#ddd3bf"/><path d="M70 76 L170 76 L210 62 L214 90 L170 84 L70 84 Z" fill="#8a5a33"/></g><g transform="rotate(2 330 80)"><rect x="230" y="18" width="190" height="124" fill="#fbf6e8"/><rect x="242" y="30" width="166" height="92" fill="#ddd3bf"/><path d="M290 40 L360 40 L372 110 L278 110 Z" fill="#4c4c4c"/><path d="M325 40 L325 110" stroke="#2a2420" stroke-width="3"/><g stroke="#c9b26b" stroke-width="3"><line x1="284" y1="62" x2="366" y2="62"/><line x1="282" y1="86" x2="368" y2="86"/></g></g><g transform="rotate(-2 520 80)"><rect x="430" y="24" width="180" height="116" fill="#fbf6e8"/><rect x="442" y="36" width="156" height="84" fill="#ddd3bf"/><rect x="480" y="56" width="80" height="44" rx="6" fill="#c9dbe6" stroke="#8fb0c4" stroke-width="3"/><rect x="494" y="66" width="52" height="24" fill="#f4ecd6"/></g></svg>'),
 }
 
@@ -90,6 +131,9 @@ THEMES = {
  "count-at-dawn": "#c0664a",
  "marshals-file": "#b8860b",
  "the-missing-smile": "#8e2a3a",
+ "sensor-log": "#3b4a7a",
+ "frame-by-frame": "#4f7a5a",
+ "tower-ledger": "#5b4a7a",
 }
 
 ICONS = {
@@ -101,6 +145,12 @@ ICONS = {
  "Cells": "🛏️", "West": "🗣️", "Corridor": "🔦", "Roof": "🏚️", "Shore": "🌊", "Shops": "🧰", "Music": "🪗", "Guards": "📋", "Dock": "📰",
  # The Missing Smile
  "Wall": "🖼️", "Stairwell": "🚪", "Photographers": "📷", "Records": "🗂️", "Staff": "📋", "Newspaper": "📰", "Cafe": "☕", "Workers": "🔨",
+ # Sensor Log
+ "Guard": "🗣️", "Partner": "🗣️", "Security": "🖨️", "Dutch": "🖼️", "Short": "🦅", "Blue": "🎩", "Third": "🪜", "Street": "🚓",
+ # Frame by Frame
+ "Frames": "🖼️", "Reward": "💰", "Letter": "✉️", "Warehouse": "🔦", "FBI": "🕵️", "Connecticut": "🏚️", "Sketches": "✏️", "GuardFile": "📁", "Lawyers": "⚖️",
+ # Tower Ledger
+ "Tower": "🏰", "Mancini": "📜", "Law": "📜", "More": "📖", "Suspects": "👑", "Warbeck": "✉️", "Bones": "⚱️", "Exam": "🔬", "Langley": "📚", "Giftshop": "🛍️",
  # Marshals
  "Search": "🛶", "WestFile": "📄", "Bay": "⚓", "Memo": "📁", "Widner": "🗣️", "Roderick": "⭐", "Hut": "💻", "Tests": "🎬",
 }
@@ -120,7 +170,7 @@ svg.art {{ display: block; width: 100%; height: auto; border-radius: 6px; margin
 svg.art.scene {{ margin: 6px 0 14px; }}
 '''
 
-for game, banner in [("flight-305", FLIGHT_BANNER), ("tena-bar-riddle", TENA_BANNER), ("count-at-dawn", DAWN_BANNER), ("marshals-file", MARSHALS_BANNER), ("the-missing-smile", SMILE_BANNER)]:
+for game, banner in [("flight-305", FLIGHT_BANNER), ("tena-bar-riddle", TENA_BANNER), ("count-at-dawn", DAWN_BANNER), ("marshals-file", MARSHALS_BANNER), ("the-missing-smile", SMILE_BANNER), ("sensor-log", GARDNER_NIGHT), ("frame-by-frame", GARDNER_FRAMES), ("tower-ledger", TOWER_BANNER)]:
     p = G / game / f"{game}.twee"
     if not p.exists(): p = G / f"{game}.twee"
     s = p.read_text()

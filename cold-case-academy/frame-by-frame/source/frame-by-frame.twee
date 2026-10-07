@@ -1,0 +1,356 @@
+:: StoryTitle
+Frame by Frame
+
+
+:: StoryData
+{
+  "ifid": "B2E8F4A6-1C3D-4E57-9A80-6D1F2C4B8E93",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M07">>
+<<set setup.leadsTotal to 7>>
+<<set setup.dedTotal to 5>>
+<<set setup.typeLabel to { evidence: "Fact", claim: "Claim", single: "One witness", opinion: "Expert opinion", assumption: "Guess", deduction: "Deduction" }>>
+<<set setup.cards = {
+  "frames":   { title: "The empty frames", text: "Isabella Stewart Gardner's will says nothing can be moved, sold or replaced, so the empty frames hang right where the paintings used to be.", type: "evidence" },
+  "reward":   { title: "The $10 million reward", text: "$1 million in 1990, $5 million in 1997, $10 million since 2017, for information that leads directly to getting the art back in good condition.", type: "evidence" },
+  "eagle":    { title: "$100,000 for the eagle", text: "A separate reward is offered just for the bronze eagle from the Napoleonic flag.", type: "evidence" },
+  "letter":   { title: "The 1994 letter", text: "An anonymous writer said the art was safe in another country and asked for $2.6 million and a promise of no arrests. The museum answered in a coded newspaper message. The writer went silent.", type: "claim" },
+  "warehouse":{ title: "The 1997 warehouse", text: "A man showed a reporter, by flashlight, a rolled-up canvas that looked like Rembrandt's Storm in a Brooklyn warehouse.", type: "claim" },
+  "chips":    { title: "The paint chips", text: "Experts said the paint chips he handed over were from Rembrandt's time, but they didn't match the Storm.", type: "evidence" },
+  "raid":     { title: "The warehouse search", text: "When the FBI searched the warehouse later, nothing was there.", type: "evidence" },
+  "fbi2013":  { title: "The FBI's 2013 statement", text: "The FBI said it believed, “with a high degree of confidence,” it knew who the thieves were: members of a criminal group based in the mid-Atlantic states and New England.", type: "evidence" },
+  "fbi2015":  { title: "Both thieves are dead", text: "In 2015, the FBI said both thieves had died. It never named them in public.", type: "evidence" },
+  "philly":   { title: "Connecticut and Philadelphia", text: "The FBI said the art was taken to Connecticut and Philadelphia after the theft, and that someone tried to sell some of it around 2002.", type: "evidence" },
+  "shed":     { title: "The empty hiding place", text: "Agents searched an older Connecticut man's house and yard. Under a shed they found a hiding place. It was empty.", type: "evidence" },
+  "sketch":   { title: "The police sketches", text: "People walking by before the theft saw two men in police uniforms in a car. Police drew sketches from their descriptions.", type: "single" },
+  "relatives":{ title: "A painting on a bedroom wall", text: "Relatives of one man who resembled a sketch later said they remembered a painting like the Manet in his room. He died in 1991.", type: "claim" },
+  "guardfacts":{ title: "The night guard", text: "He opened the side door before the thieves came, and the only Blue Room footsteps were his. He always denied any part in the theft, was never charged, and died in 2024.", type: "evidence" },
+  "limit":    { title: "Too late to charge", text: "The time limit for charging the theft ran out in 1995.", type: "evidence" },
+  "noCharge": { title: "Maybe safe to return it", text: "Prosecutors have said they would consider not charging someone who returns the art.", type: "evidence" },
+  "survive":  { title: "Thieves rarely destroy art", text: "The museum's head of security says history shows thieves almost never destroy famous art. They hide it.", type: "opinion" },
+  "fire":     { title: "“It all burned in a fire”", text: "A caller to a radio show is sure the paintings were burned years ago.", type: "assumption" },
+  "vault":    { title: "“A billionaire's secret vault”", text: "A reporter says some rich collector ordered the theft and keeps the paintings in a hidden room.", type: "assumption" },
+
+  "d_whowhere":{ title: "Who isn't where", text: "The FBI says it knows who the thieves were, and that they're dead. That still doesn't say where the art is.", type: "deduction" },
+  "d_dead":   { title: "No one left to punish", text: "The thieves are dead and the time limit ran out in 1995. The only goal left is getting the art back.", type: "deduction" },
+  "d_glimpse":{ title: "A glimpse isn't proof", text: "A canvas seen by flashlight, chips that don't match, and an empty warehouse: the 1997 lead proved nothing.", type: "deduction" },
+  "d_trail":  { title: "A trail that went cold", text: "The art reportedly went to Connecticut and Philadelphia, and the Connecticut hiding place was empty when agents finally looked.", type: "deduction" },
+  "d_waiting":{ title: "Why the frames wait", text: "The will keeps the frames on the wall, and experts think the art still exists. The frames are waiting for something real.", type: "deduction" }
+}>>
+<<set setup.recipes = [
+  { a: "fbi2013", b: "fbi2015", id: "d_whowhere" },
+  { a: "fbi2015", b: "limit", id: "d_dead" },
+  { a: "warehouse", b: "chips", id: "d_glimpse" },
+  { a: "warehouse", b: "raid", id: "d_glimpse" },
+  { a: "philly", b: "shed", id: "d_trail" },
+  { a: "frames", b: "survive", id: "d_waiting" }
+]>>
+<<set setup.theories = [
+  { id: "tBack", text: "The art has already been returned", answer: "out", needs: ["frames","d_waiting"], why: "The frames on the wall are still empty." },
+  { id: "tShed", text: "It's hidden under the shed in Connecticut", answer: "out", needs: ["shed","d_trail"], why: "Agents found that hiding place, and it was empty." },
+  { id: "tWarehouse", text: "It's in the Brooklyn warehouse", answer: "out", needs: ["raid","d_glimpse"], why: "The FBI searched the warehouse and found nothing." },
+  { id: "tHidden", text: "It's hidden somewhere, waiting to surface", answer: "possible", needs: [], why: "Nobody can prove or disprove it, and experts think it's likely." },
+  { id: "tFire", text: "It was destroyed long ago", answer: "possible", needs: [], why: "Experts doubt it, but nobody can rule it out." }
+]>>
+<<set setup.suspects = [
+  { id: "guard", name: "The night guard", facts: ["Let the fake police officers in.", "Opened the side door briefly earlier that night.", "The only footsteps recorded in the Blue Room that night were his, from his rounds.", "Always said he had nothing to do with it. Never charged. Died in 2024.", "In 2026, the former lead FBI agent wrote that he thinks the guard could have been charged."], keys: [["Reporters called it an inside job", false], ["The door and the Blue Room record", true], ["He was young and worked nights", false]], note: "The motion record and the door can actually be checked. A reporter's opinion and his age can't tell you anything about the theft. Even checkable evidence only made investigators suspicious; it never proved anything." },
+  { id: "sketchman", name: "A man who resembled a sketch", facts: ["Looked like one of the police sketches of the thieves.", "Investigators looked hard at him and men he knew.", "After he died in 1991, relatives said they remembered a painting like the Manet in his room.", "Never charged."], keys: [["How closely he matched the sketch", true], ["His relatives' memory of a painting", false], ["He knew people in the criminal world", false]], note: "A sketch can be compared with photos. A memory from years later can't be checked anymore, and who someone knows isn't evidence of what they did." },
+  { id: "ctman", name: "An older man in Connecticut", facts: ["The FBI believed for years that he knew where some of the art went.", "He always denied knowing anything about it.", "Agents searched his house and yard and found a hiding place under a shed. It was empty.", "Never charged with the theft. He died in 2021."], keys: [["The FBI believed he knew something", false], ["The search, and the empty hiding place", true], ["He was old", false]], note: "A belief isn't evidence. The search is: it was checked, and it found nothing." }
+]>>
+<<set setup.resultFields = function () { var v = State.variables; return { theories: v.th, suspects: v.key, whoWhere: v.ww, nextLead: v.lead }; }>>
+<<set $leads to 7>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to {}>>
+<<set $events to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $pinned to []>>
+<<set $th to {}>>
+<<set $key to {}>>
+<<set $sus to {}>>
+<<set $ww to "">>
+<<set $lead to "">>
+<<set $locker to setup.lockerGet("003")>>
+<<set $return to "Hub">>
+
+
+:: Start [nobar]
+<<include "Banner">>
+<div class="stamp">Case file 003</div>
+<p class="meta">Isabella Stewart Gardner Museum · Boston · today</p>
+<h1>Frame by Frame</h1>
+<p>It's your first day as the museum's new security investigator. The director walks you into the Dutch Room and stops in front of an empty gold frame.</p>
+<p class="quote chief">"Thirteen works, gone since 1990. People keep asking me two questions: who did it, and where is the art now? Go through the file. Tell me what we really know, and which lead is worth following. Seven leads."</p>
+<<if $locker.includes("blueSilent")>><div class="card"><span class="card-label">From your evidence locker</span><span class="card-title">Your sensor log</span><span class="card-text">You found the motion-detector record in Part 1. The silent Blue Room is still in your notebook of puzzles.</span></div><</if>>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new place uses one lead. Going back is free.</li>
+<li>Some clues are facts. Some are <b>claims</b> nobody could check. Some are just guesses.</li>
+<li>Before your report, you'll sort theories about where the art is and review three real suspects. None was ever charged, so we don't print their names.</li>
+</ul>
+</div>
+<div class="actions">[[Open the file|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<h2>Where to?</h2>
+<p class="meta">New places cost a lead. Places you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Frames" "🖼️ The Dutch Room today">></li>
+<li><<maplink "Reward" "💰 The reward office">></li>
+<li><<maplink "Letter" "✉️ The 1994 letter">></li>
+<li><<maplink "Warehouse" "🔦 The 1997 warehouse report">></li>
+<li><<maplink "FBI" "🕵️ The FBI's statements">></li>
+<li><<maplink "Connecticut" "🏚️ The Connecticut search file">></li>
+<li><<maplink "Sketches" "✏️ The police sketches and witnesses">></li>
+<li><<maplink "GuardFile" "📁 The night guard's file">></li>
+<li><<maplink "Lawyers" "⚖️ The prosecutors' office">></li>
+<li><<maplink "Newsroom" "📰 A radio call-in show">></li>
+</ul>
+<div class="actions secondary"><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to report|Theories]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"That's the whole file," the director says. "What do we know?"</p>
+<div class="actions"><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Make your report|Theories]]</div>
+
+
+:: Frames
+<h2>The Dutch Room today</h2>
+<<include "Scene">>
+<p>Visitors stand quietly in front of the frames. Inside each one: nothing but the old silk wallpaper.</p>
+<<clue "frames">>
+<<clue "survive">>
+<<tomap>>
+
+
+:: Reward
+<h2>The reward office</h2>
+<p>A poster on the wall shows all 13 missing works, with a number to call.</p>
+<<clue "reward">>
+<<clue "eagle">>
+<<tomap>>
+
+
+:: Letter
+<h2>The 1994 letter</h2>
+<p>A photocopy of a typed, unsigned letter, and a clipping of the Boston Globe with a strange coded message in it.</p>
+<<clue "letter">>
+<<tomap>>
+
+
+:: Warehouse
+<h2>The 1997 warehouse report</h2>
+<p>A reporter's notes, a lab report, and an FBI search report, all clipped together.</p>
+<<clue "warehouse">>
+<<clue "chips">>
+<<clue "raid">>
+<<tomap>>
+
+
+:: FBI
+<h2>The FBI's statements</h2>
+<p>Press releases from 2013 and 2015.</p>
+<<clue "fbi2013">>
+<<clue "fbi2015">>
+<<clue "philly">>
+<<tomap>>
+
+
+:: Connecticut
+<h2>The Connecticut search file</h2>
+<p>Photos of a backyard, a shed, and a hole under its floor.</p>
+<<clue "shed">>
+<<tomap>>
+
+
+:: Sketches
+<h2>The police sketches and witnesses</h2>
+<p>Two pencil drawings of men in police caps, from 1990.</p>
+<<clue "sketch">>
+<<clue "relatives">>
+<<tomap>>
+
+
+:: GuardFile
+<h2>The night guard's file</h2>
+<p>Interview notes from 1990 and a copy of the motion-detector record.</p>
+<<clue "guardfacts">>
+<<tomap>>
+
+
+:: Lawyers
+<h2>The prosecutors' office</h2>
+<p>A lawyer explains what the law can and can't do now.</p>
+<<clue "limit">>
+<<clue "noCharge">>
+<<tomap>>
+
+
+:: Newsroom
+<h2>A radio call-in show</h2>
+<p>Every anniversary, people call in with theories.</p>
+<p class="quote">"It all burned in a fire years ago," says one caller. "No way," says the next. "Some billionaire has them in a secret vault."</p>
+<<clue "fire">>
+<<clue "vault">>
+<<tomap>>
+
+
+:: Theories [nobar]
+<div class="stamp">Theory board</div>
+<h2>Where is the art now?</h2>
+<p>Five theories. For each one, can your evidence <b>rule it out</b>, or is it <b>still possible</b>?</p>
+<div id="thlist"><<include "TheoryList">></div>
+<div id="thgo"><<include "TheoryGo">></div>
+
+
+:: TheoryList
+<<for _t range setup.theories>><<capture _t>>
+<div class="sortrow"><p class="card-title"><<print _t.text>></p>
+<div class="choices two"><<for _k range [["out","Ruled out"],["possible","Still possible"]]>><<capture _k>><span @class="$th[_t.id] is _k[0] ? 'opt chosen' : 'opt'"><<link _k[1]>><<set $th[_t.id] to _k[0]>><<replace "#thlist">><<include "TheoryList">><</replace>><<replace "#thgo">><<include "TheoryGo">><</replace>><</link>></span><</capture>><</for>></div></div>
+<</capture>><</for>>
+
+
+:: TheoryGo
+<<if Object.keys($th).length lt setup.theories.length>><p class="note">Decide all five theories to go on.</p>
+<<else>><div class="actions">[[Open the suspect files|Suspects]]</div><</if>>
+
+
+:: Suspects [nobar]
+<h2>Three suspect files</h2>
+<p>Investigators looked at many people. None was ever charged with the theft, so we don't print their names here. For each one, pick the evidence that could actually be checked.</p>
+<div id="suslist"><<include "SuspectList">></div>
+<div id="susgo"><<include "SuspectGo">></div>
+
+
+:: SuspectList
+<<for _s range setup.suspects>><<capture _s>>
+<div class="folder"><p class="folder-tab"><<print _s.name>></p>
+<ul><<for _f range _s.facts>><li><<print _f>></li><</for>></ul>
+<p class="poster-part">The evidence that could be checked</p>
+<div class="choices"><<for _ki, _kv range _s.keys>><<capture _ki, _kv>><span @class="$key[_s.id] === _ki ? 'opt chosen' : 'opt'"><<link _kv[0]>><<set $key[_s.id] to _ki>><<replace "#suslist">><<include "SuspectList">><</replace>><<replace "#susgo">><<include "SuspectGo">><</replace>><</link>></span><</capture>><</for>></div></div>
+<</capture>><</for>>
+
+
+:: SuspectGo
+<<if Object.keys($key).length lt setup.suspects.length>><p class="note">Pick the checkable evidence for all three to go on.</p>
+<<else>><div class="actions">[[On to my report|Report]]</div><</if>>
+
+
+:: Report [nobar]
+<div class="stamp">Report</div>
+<h2>Your report to the director</h2>
+<h3>1. Who, and where?</h3>
+<div id="wws"><<include "WWList">></div>
+<h3>2. Which lead is worth following next?</h3>
+<div id="leadlist"><<include "LeadList">></div>
+<div id="file"><<include "ReportButton">></div>
+
+
+:: WWList
+<<set _opts to [["split","The FBI says it knows who did it, but nobody knows where the art is"],["soon","The FBI knows who did it, so the art will turn up soon"],["nothing","Nobody has any idea who did it"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$ww is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $ww to _o[0]>><<replace "#wws">><<include "WWList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: LeadList
+<<set _opts to [["philly","The attempted sale around 2002 that the FBI mentioned"],["letter","Find the 1994 letter-writer"],["vault","Search for the billionaire's secret vault"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$lead is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $lead to _o[0]>><<replace "#leadlist">><<include "LeadList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ReportButton
+<<if $ww is "" or $lead is "">><p class="note">Answer both questions to file your report.</p>
+<<else>><div class="actions">[[File my report|Verdict]]</div><</if>>
+
+
+:: Verdict [nobar]
+<<set _thOk to setup.theories.map(function(t){ return $th[t.id] === t.answer && (t.answer !== "out" || t.needs.some(function(n){ return $notebook.includes(n); })); })>>
+<<set _s1 to _thOk.every(function(x){ return x; })>>
+<<set _susOk to setup.suspects.map(function(s){ return s.keys[$key[s.id]][1]; })>>
+<<set _s2 to _susOk.every(function(x){ return x; })>>
+<<set _s3 to $ww is "split" and $notebook.includes("fbi2013")>>
+<<set _s4 to $lead is "philly" and $notebook.includes("philly")>>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0) + (_s4 ? 1 : 0)>>
+<<set $deductions to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<if $stars is 4>><div class="stamp solved">Report accepted</div><<else>><div class="stamp">Report filed</div><</if>>
+<h2>Detective rating: <<print $stars>> of 4 stars</h2>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The theory board.</b> <<if _s1>>You ruled out three theories with evidence, and kept two that nobody can rule out.<<else>>Here's how the evidence sorts them:<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>Checkable evidence.</b> <<if _s2>>For every suspect, you picked evidence that could actually be checked.<<else>>Some of your picks were beliefs or memories that can't be checked. See below.<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>Who vs. where.</b> <<if _s3>>Exactly: knowing who isn't the same as knowing where.<<elseif $ww is "split">>Right idea, but you never read the FBI's statement that backs it up.<<elseif $ww is "soon">>The FBI said that in 2013, and the art still hasn't turned up. Knowing who doesn't tell you where.<<else>>The FBI says it does know who. It just hasn't found the art.<</if>></li>
+<li @class="_s4 ? 'on' : 'off'"><span aria-hidden="true"><<print _s4 ? '★' : '☆'>></span> <b>The next lead.</b> <<if _s4>>The most recent real trail the FBI has described. That's where the art was last thought to be.<<elseif $lead is "philly">>Good pick, but you never found the FBI statement about it.<<elseif $lead is "letter">>That writer went silent in 1994 and never came back. It's a cold trail.<<else>>That's a guess from a radio caller, not a lead.<</if>></li>
+</ul>
+<<if not _s1>><ul class="theory-key"><<for _i to 0; _i lt setup.theories.length; _i++>><<set _t to setup.theories[_i]>><li @class="_thOk[_i] ? 'ok' : 'no'"><b><<print _t.text>>:</b> <<print _t.answer is "out" ? "ruled out" : "still possible">>. <<print _t.why>><<if _t.answer is "out" and $th[_t.id] is "out" and not _thOk[_i]>> (You didn't collect the clue that proves it.)<</if>></li><</for>></ul><</if>>
+<ul class="theory-key"><<for _i to 0; _i lt setup.suspects.length; _i++>><<set _s to setup.suspects[_i]>><li @class="_susOk[_i] ? 'ok' : 'no'"><b><<print _s.name>>:</b> you picked “<<print _s.keys[$key[_s.id]][0]>>.” <<print _s.note>></li><</for>></ul>
+<p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal"><<for _id range $notebook>><div @class="'card ' + (setup.cards[_id].type === 'claim' ? 'single' : setup.cards[_id].type)"><span class="tag"><<print setup.typeLabel[setup.cards[_id].type]>></span><span class="card-title"><<print setup.cards[_id].title>></span></div><</for>></div><</if>>
+<div class="actions">[[What's known today|RealHistory]]</div>
+
+
+:: RealHistory [nobar]
+<h2>What's known today</h2>
+<p>The 13 works have never been found. The museum still offers $10 million for information that brings them back, and the empty frames still hang in their places.</p>
+<p>The FBI says it knows who the thieves were and that both are dead, but it has never officially named them. In 2026, the FBI agent who led the case for more than 20 years published a book naming the men he believes were involved. He believes the art still exists and will surface someday.</p>
+<p>The real investigators are in the same spot you are: a good idea of who, and no idea of where.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>"Who did it?" and "Where is it?" are different questions.</li>
+<li>A claim nobody can check isn't proof, and neither is suspicion.</li>
+<li>Rule things out with evidence. What's left is still possible, not proven.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the director, the lawyer and the radio callers. The suspects, statements, letter, warehouse, reward and searches are based on the real case.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<include "Banner">>
+<<run setup.reportResult()>>
+<div class="stamp solved big">Case closed</div>
+<h2>Case 003, Part 2 complete</h2>
+<p>Detective rating: <b><<print $stars>> of 4</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
+<p>Tell Rocky where you think the art is, how sure you are, and your detective rating.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>
+
+
+:: Banner [art]
+<svg class="art" viewBox="0 0 640 220" role="img" aria-label="A museum wall of green silk with ornate gold frames; two of the frames hang empty." preserveAspectRatio="xMidYMid slice">
+<rect width="640" height="220" fill="#3f5a4a"/>
+<g fill="#46634f" opacity=".7"><circle cx="40" cy="40" r="10"/><circle cx="120" cy="90" r="10"/><circle cx="200" cy="40" r="10"/><circle cx="280" cy="90" r="10"/><circle cx="360" cy="40" r="10"/><circle cx="440" cy="90" r="10"/><circle cx="520" cy="40" r="10"/><circle cx="600" cy="90" r="10"/><circle cx="40" cy="140" r="10"/><circle cx="200" cy="140" r="10"/><circle cx="360" cy="140" r="10"/><circle cx="520" cy="140" r="10"/></g>
+<rect y="196" width="640" height="24" fill="#3a2a1c"/>
+<g><rect x="40" y="40" width="150" height="120" fill="#c9a043" stroke="#8a6a12" stroke-width="3"/><rect x="56" y="56" width="118" height="88" fill="#3f5a4a"/>
+<rect x="250" y="30" width="140" height="150" fill="#c9a043" stroke="#8a6a12" stroke-width="3"/><rect x="266" y="46" width="108" height="118" fill="#2c3f4f"/><path d="M276 150 C300 120 320 100 340 76 L360 150 Z" fill="#41617a"/><path d="M300 110 L330 70 L334 112 Z" fill="#e8dcc0"/>
+<rect x="450" y="50" width="150" height="110" fill="#c9a043" stroke="#8a6a12" stroke-width="3"/><rect x="466" y="66" width="118" height="78" fill="#3f5a4a"/></g>
+<text x="115" y="104" text-anchor="middle" font-family="Special Elite, Courier New, monospace" font-size="11" fill="#c9a043">?</text><text x="525" y="109" text-anchor="middle" font-family="Special Elite, Courier New, monospace" font-size="11" fill="#c9a043">?</text>
+</svg>
+
+
+:: Scene [art]
+<svg class="art scene" viewBox="0 0 640 160" role="img" aria-label="Close-up of one ornate gold frame hanging empty on green silk wallpaper."><rect width="640" height="160" fill="#3f5a4a"/><rect x="230" y="16" width="180" height="128" fill="#c9a043" stroke="#8a6a12" stroke-width="4"/><rect x="250" y="34" width="140" height="92" fill="#3f5a4a" stroke="#8a6a12" stroke-width="2"/><g fill="#d4b25a"><circle cx="240" cy="26" r="5"/><circle cx="400" cy="26" r="5"/><circle cx="240" cy="134" r="5"/><circle cx="400" cy="134" r="5"/></g></svg>
+
+
+:: CaseTheme [stylesheet]
+:root { --accent: #4f7a5a; }
+#passages { border-top-color: var(--accent); }
+h1 { color: var(--accent); }
+.map a { border-left: 6px solid var(--accent); }
+.map .opt.revisit a { border-left-color: var(--line); }
+.actions a, .actions .macro-link { background: var(--accent); }
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--accent); border-color: var(--accent); }
+.headline { border-left: 6px solid var(--accent); }
+.card { border-top-color: var(--accent); }
+svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+svg.art.scene { margin: 6px 0 14px; }

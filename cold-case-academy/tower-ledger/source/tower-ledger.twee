@@ -1,0 +1,392 @@
+:: StoryTitle
+The Tower Ledger
+
+
+:: StoryData
+{
+  "ifid": "D4F1A9C3-7E2B-4B86-A5D0-8C3E6F1B2A47",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M08">>
+<<set setup.leadsTotal to 7>>
+<<set setup.dedTotal to 5>>
+<<set setup.kindLabel to { time: "Written at the time", later: "Written later", modern: "Modern", fact: "Physical evidence", assumption: "Guess", deduction: "Deduction" }>>
+<<set setup.leanLabel to { richard: "Points to: Richard III", buck: "Points to: Buckingham", henry: "Points to: Henry VII", survived: "Points to: they survived", neither: "Doesn't decide" }>>
+<<set setup.cards = {
+  "palace":   { title: "A palace, too", text: "In 1483 the Tower of London was a royal home as well as a fortress. New kings often stayed there before being crowned.", type: "fact", lean: "neither" },
+  "control":  { title: "In their uncle's care", text: "Both boys were in the Tower under the control of their uncle Richard, who was in charge of the kingdom.", type: "fact", lean: "richard" },
+  "titulus":  { title: "The Titulus Regius, 1484", text: "Parliament's law said the boys' parents were never properly married, so the boys couldn't be kings. It says nothing about where the boys were.", type: "time", lean: "neither" },
+  "mancini":  { title: "Mancini's report, 1483", text: "An Italian visitor wrote that summer that the boys were seen less and less, then not at all. People feared they were dead. He admitted he didn't know.", type: "time", lean: "neither" },
+  "neverShown":{ title: "Never shown in public", text: "As rumors spread, King Richard III never brought the boys out to prove they were alive.", type: "fact", lean: "richard" },
+  "more":     { title: "Thomas More's history, about 1513", text: "Written about 30 years later, while the new Tudor kings ruled: Richard III ordered the boys killed. More was a small child in 1483 and named no sources.", type: "later", lean: "richard" },
+  "play":     { title: "Shakespeare's play, 1590s", text: "Shakespeare's Richard III follows More's story and makes Richard a villain. It's a play, written more than 100 years later.", type: "later", lean: "richard" },
+  "buckDoc":  { title: "Documents naming Buckingham", text: "A few old documents, some written years later, blame the Duke of Buckingham, Richard's powerful ally.", type: "later", lean: "buck" },
+  "buckAccess":{ title: "Could Buckingham get in?", text: "Historians point out Buckingham would have had a hard time reaching the boys without Richard knowing.", type: "fact", lean: "neither" },
+  "henry":    { title: "Henry VII's motive", text: "Henry Tudor became king in 1485. If the boys were still alive then, they'd have been a threat to him too. Nobody accused him at the time.", type: "fact", lean: "henry" },
+  "warbeck":  { title: "Perkin Warbeck's claim", text: "From 1491, a young man said he was the younger prince, escaped. Some foreign rulers backed him.", type: "time", lean: "survived" },
+  "confession":{ title: "Warbeck's confession, 1497", text: "After he was captured, Warbeck confessed that he wasn't the prince. Most historians believe the confession.", type: "time", lean: "neither" },
+  "bones":    { title: "The box under the stairs, 1674", text: "Workmen found two children's skeletons in a wooden box, ten feet under an old staircase at the Tower.", type: "fact", lean: "neither" },
+  "urn":      { title: "The urn in Westminster Abbey", text: "King Charles II had the bones placed in an urn in Westminster Abbey in 1678, as the princes.", type: "fact", lean: "neither" },
+  "exam":     { title: "The 1933 examination", text: "Scientists said the bones were two children of about the right ages, but couldn't tell if they were boys or girls, or how old the bones were.", type: "modern", lean: "neither" },
+  "nodna":    { title: "No DNA test", text: "Nobody has been given permission to test the bones with modern science like DNA.", type: "modern", lean: "neither" },
+  "langley":  { title: "Langley's documents, 2023–2025", text: "Researcher Philippa Langley published old documents, in 2023 and again in 2025, that she says show both boys survived and escaped to Europe.", type: "modern", lean: "survived" },
+  "critics":  { title: "Historians on Langley", text: "Many historians say the documents are interesting but don't prove the boys survived.", type: "modern", lean: "neither" },
+  "ghosts":   { title: "“Their ghosts walk the Tower”", text: "A tour guide's spooky story. Fun, but it isn't evidence of anything.", type: "assumption", lean: "neither" },
+  "swap":     { title: "“They were swapped at birth”", text: "A website claims the real princes were secretly swapped with other boys.", type: "assumption", lean: "neither" },
+
+  "d_control":{ title: "Means and motive", text: "The boys were under Richard's control, stood between him and the crown, and he never showed them alive. That's why most historians suspect him.", type: "deduction", lean: "richard" },
+  "d_bias":   { title: "Written under the winners", text: "More wrote 30 years later, while the kings who replaced Richard ruled, and named no sources. Useful, but handle with care.", type: "deduction", lean: "neither" },
+  "d_unknownBones":{ title: "Bones that can't decide", text: "Two children's skeletons, never sexed, never dated, never DNA-tested: they fit the story, but they can't prove it.", type: "deduction", lean: "neither" },
+  "d_pretender":{ title: "A claim, then a confession", text: "Warbeck said he was the prince, then confessed he wasn't. A claim taken back isn't strong evidence.", type: "deduction", lean: "neither" },
+  "d_notproof":{ title: "Interesting isn't proof", text: "New documents can open a question again without settling it.", type: "deduction", lean: "neither" }
+}>>
+<<set setup.recipes = [
+  { a: "control", b: "neverShown", id: "d_control" },
+  { a: "more", b: "mancini", id: "d_bias" },
+  { a: "more", b: "play", id: "d_bias" },
+  { a: "bones", b: "exam", id: "d_unknownBones" },
+  { a: "exam", b: "nodna", id: "d_unknownBones" },
+  { a: "warbeck", b: "confession", id: "d_pretender" },
+  { a: "langley", b: "critics", id: "d_notproof" }
+]>>
+<<set setup.ledger = [
+  { id: "l1", need: "mancini", text: "Mancini's report (1483)" },
+  { id: "l2", need: "titulus", text: "The Titulus Regius (1484)" },
+  { id: "l3", need: "confession", text: "Warbeck's confession (1497)" },
+  { id: "l4", need: "more", text: "Thomas More's history (about 1513)" },
+  { id: "l5", need: "play", text: "Shakespeare's play (1590s)" },
+  { id: "l6", need: "bones", text: "The box under the stairs (1674)" },
+  { id: "l7", need: "exam", text: "The bone examination (1933)" },
+  { id: "l8", need: "langley", text: "Langley's documents (2023–2025)" }
+]>>
+<<set setup.sortOrder to ["mancini","more","titulus","exam","play","langley","warbeck","confession"]>>
+<<set setup.resultFields = function () { var v = State.variables; return { verdict: v.verdict, confidence: v.conf, ledgerPlaced: v.lg.length, ledgerMistakes: v.lmiss, sortedRight: v.sortRight }; }>>
+<<set $leads to 7>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to {}>>
+<<set $events to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $pinned to []>>
+<<set $lg to []>>
+<<set $lmiss to 0>>
+<<set $lmsg to "">>
+<<set $sort to {}>>
+<<set $sortRight to 0>>
+<<set $verdict to "">>
+<<set $conf to "">>
+<<set $return to "Hub">>
+
+
+:: Start [nobar]
+<<include "Banner">>
+<div class="stamp">Case file 004</div>
+<p class="meta">A library archive · London · today</p>
+<h1>The Tower Ledger</h1>
+<p>The archivist leads you down to a quiet reading room and sets a heavy box on the table. Inside: copies of old letters, laws, histories and reports, some more than 500 years old.</p>
+<p class="quote chief">"Two princes. One tower. 1483. Everyone has an opinion, and most of them got it from a play. I want yours, built on the sources. Mind who wrote each one, and when. Seven leads."</p>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new shelf uses one lead. Going back is free.</li>
+<li>Put the sources in the order they were written on the <b>ledger board</b>. Connect clues on the <b>deduction board</b>. Both are free.</li>
+<li>Before your verdict, you'll mark each key source: written at the time, written later, or modern.</li>
+<li><b>This case has no answer key.</b> "We can't tell yet" is a real verdict.</li>
+</ul>
+</div>
+<div class="actions">[[Open the box|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<h2>Which shelf?</h2>
+<p class="meta">New shelves cost a lead. Shelves you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Tower" "🏰 The Tower of London guidebook">></li>
+<li><<maplink "Mancini" "📜 An Italian visitor's report, 1483">></li>
+<li><<maplink "Law" "📜 Parliament's records, 1484">></li>
+<li><<maplink "More" "📖 Thomas More's history">></li>
+<li><<maplink "Suspects" "👑 The suspects shelf">></li>
+<li><<maplink "Warbeck" "✉️ The pretender's file">></li>
+<li><<maplink "Bones" "⚱️ The 1674 discovery">></li>
+<li><<maplink "Exam" "🔬 The 1933 examination">></li>
+<li><<maplink "Langley" "📚 The 2023 research">></li>
+<li><<maplink "Giftshop" "🛍️ The museum gift shop">></li>
+</ul>
+<div class="actions secondary"><<link "Ledger board (free)">><<set $return to "Hub">><<goto "Ledger">><</link>><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to decide|Sort]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"The library's closing," the archivist says. "Your verdict?"</p>
+<div class="actions"><<link "One last look at the ledger board">><<set $return to "OutOfLeads">><<goto "Ledger">><</link>><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Make your call|Sort]]</div>
+
+
+:: Ledger
+<h2>Ledger board</h2>
+<p class="meta">Tap the sources in the order they were written, oldest first. You can only place sources you've found. If one couldn't come next, the board will tell you.</p>
+<div id="lgboard"><<include "LedgerCards">></div>
+<div class="actions"><<link "Back">><<goto $return>><</link>></div>
+
+
+:: LedgerCards
+<<set _have to setup.ledger.filter(function(t){ return $notebook.includes(t.need); })>>
+<<set _left to _have.filter(function(t){ return !$lg.includes(t.id); }).sort(function(a,b){ return a.text.localeCompare(b.text); })>>
+<h3>Your ledger so far</h3>
+<<if $lg.length is 0>><p class="slot-empty">Nothing placed yet.</p>
+<<else>><ol class="timeline"><<for _id range $lg>><li><<print setup.ledger.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
+<<if $lmsg isnot "">><p class="note warn" role="status"><<print $lmsg>></p><</if>>
+<<if _have.length is 0>><p class="note">You haven't found any sources yet.</p>
+<<elseif _left.length gt 0>>
+<h3>Place next</h3>
+<div class="choices">
+<<for _t range _left>><<capture _t>><span class="opt"><<link _t.text>>
+<<set _next to _have.filter(function(h){ return !$lg.includes(h.id); }).sort(function(a,b){ return setup.ledger.indexOf(a) - setup.ledger.indexOf(b); })[0]>>
+<<if _t.id is _next.id>><<run $lg.push(_t.id)>><<set $lmsg to "">>
+<<else>><<set $lmiss to $lmiss + 1>><<set $lmsg to "Not yet. Something you've found was written before that. Check the dates.">><</if>>
+<<replace "#lgboard">><<include "LedgerCards">><</replace>><</link>></span><</capture>><</for>>
+</div>
+<<else>><p class="note">Every source you've found is placed.</p><</if>>
+<p class="meta">Sources placed: <<print $lg.length>> of <<print _have.length>> found · Wrong tries: <<print $lmiss>></p>
+
+
+:: Tower
+<h2>The Tower of London guidebook</h2>
+<p>A thick guidebook with a map of the Tower: walls, towers, the great White Tower in the middle, and the royal rooms.</p>
+<<clue "palace">>
+<<clue "control">>
+<<tomap>>
+
+
+:: Mancini
+<h2>An Italian visitor's report</h2>
+<<include "Scene">>
+<p>A copy of a report by Dominic Mancini, an Italian who was in London in the spring and summer of 1483. He finished it before the end of that year.</p>
+<<clue "mancini">>
+<<tomap>>
+
+
+:: Law
+<h2>Parliament's records</h2>
+<p>A copy of a long law in old-fashioned English, from early 1484.</p>
+<<clue "titulus">>
+<<clue "neverShown">>
+<<tomap>>
+
+
+:: More
+<h2>Thomas More's history</h2>
+<p>A printed history of Richard III, and next to it, a copy of a famous play.</p>
+<<clue "more">>
+<<clue "play">>
+<<tomap>>
+
+
+:: Suspects
+<h2>The suspects shelf</h2>
+<p>Three folders: the uncle who became king, his powerful ally, and the man who took the crown from him.</p>
+<<clue "buckDoc">>
+<<clue "buckAccess">>
+<<clue "henry">>
+<<tomap>>
+
+
+:: Warbeck
+<h2>The pretender's file</h2>
+<p>Letters from foreign courts, and a confession.</p>
+<<clue "warbeck">>
+<<clue "confession">>
+<<tomap>>
+
+
+:: Bones
+<h2>The 1674 discovery</h2>
+<p>A drawing of an old staircase, and a note about an urn designed for Westminster Abbey.</p>
+<<clue "bones">>
+<<clue "urn">>
+<<tomap>>
+
+
+:: Exam
+<h2>The 1933 examination</h2>
+<p>A scientific report with photographs of measuring tools.</p>
+<<clue "exam">>
+<<clue "nodna">>
+<<tomap>>
+
+
+:: Langley
+<h2>The 2023 research</h2>
+<p>A new book, a documentary, and a stack of reviews from historians.</p>
+<<clue "langley">>
+<<clue "critics">>
+<<tomap>>
+
+
+:: Giftshop
+<h2>The museum gift shop</h2>
+<p>Ghost-tour flyers, postcards and a rack of paperbacks with dramatic covers.</p>
+<<clue "ghosts">>
+<<clue "swap">>
+<<tomap>>
+
+
+:: Sort [nobar]
+<<set _pool to setup.sortOrder.filter(function(id){ return $notebook.includes(id); }).slice(0, 6)>>
+<div class="stamp">Sort the sources</div>
+<h2>When was it written?</h2>
+<p>For each key source, decide: was it <b>written at the time</b> (1483 to the 1490s), <b>written later</b> (decades or centuries later), or <b>modern</b> (the last hundred years)?</p>
+<<if _pool.length is 0>><p class="note">You don't have any key sources to sort. You'll go straight to your verdict.</p>
+<<else>><div id="sortlist"><<include "SortList">></div><</if>>
+<div class="actions">[[On to my verdict|Accusation]]</div>
+
+
+:: SortList
+<<set _pool to setup.sortOrder.filter(function(id){ return $notebook.includes(id); }).slice(0, 6)>>
+<<for _id range _pool>><<capture _id>>
+<div class="sortrow"><p class="card-title"><<print setup.cards[_id].title>></p>
+<div class="choices three"><<for _k range ["time","later","modern"]>><<capture _k>><span @class="$sort[_id] is _k ? 'opt chosen' : 'opt'"><<link setup.kindLabel[_k]>><<set $sort[_id] to _k>><<replace "#sortlist">><<include "SortList">><</replace>><</link>></span><</capture>><</for>></div></div>
+<</capture>><</for>>
+
+
+:: Accusation [nobar]
+<div class="stamp">Verdict</div>
+<h2>"What happened to the princes?"</h2>
+<p class="quote chief">"Your verdict, how sure you are, and up to three sources that back it up."</p>
+<h3>1. Your verdict</h3>
+<div id="verdicts"><<include "VerdictList">></div>
+<h3>2. How sure are you?</h3>
+<div id="confs"><<include "ConfList">></div>
+<h3>3. Pin up to 3 cards as evidence</h3>
+<<if $notebook.length is 0>><p class="note">Your notebook is empty.</p>
+<<else>><div id="pins"><<include "PinList">></div><</if>>
+<div id="file"><<include "FileButton">></div>
+
+
+:: VerdictList
+<<set _opts to [["richard","Richard III was responsible"],["buck","The Duke of Buckingham was responsible"],["henry","Henry VII was responsible"],["survived","They survived"],["unknown","We can't tell yet"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$verdict is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $verdict to _o[0]>><<replace "#verdicts">><<include "VerdictList">><</replace>><<replace "#file">><<include "FileButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ConfList
+<<set _opts to [["hunch","Just a hunch"],["fairly","Fairly sure"],["very","Very sure"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$conf is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $conf to _o[0]>><<replace "#confs">><<include "ConfList">><</replace>><<replace "#file">><<include "FileButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: PinList
+<p class="meta">Pinned: <<print $pinned.length>> of 3. Tap a card to pin or unpin it.</p>
+<div class="cards pinboard">
+<<for _id range $notebook>><<capture _id>><span @class="($pinned.includes(_id) ? 'opt pinned' : 'opt') + (setup.cards[_id].type === 'deduction' ? ' ded' : '')"><<link setup.cards[_id].title>><<if $pinned.includes(_id)>><<run $pinned.delete(_id)>><<elseif $pinned.length lt 3>><<run $pinned.push(_id)>><</if>><<replace "#pins">><<include "PinList">><</replace>><</link>></span><</capture>><</for>>
+</div>
+
+
+:: FileButton
+<<if $verdict is "" or $conf is "">><p class="note">Choose a verdict and how sure you are.</p>
+<<else>><div class="actions">[[File my verdict|Verdict]]</div><</if>>
+
+
+:: Verdict [nobar]
+<<set _have to setup.ledger.filter(function(t){ return $notebook.includes(t.need); })>>
+<<set _s1 to $lg.length gte 5 and $lg.length is _have.length and $lmiss lte 2>>
+<<set _pool to setup.sortOrder.filter(function(id){ return $notebook.includes(id); }).slice(0, 6)>>
+<<set $sortRight to _pool.filter(function(id){ return $sort[id] === setup.cards[id].type; }).length>>
+<<set _s2 to _pool.length gte 3 and $sortRight gte _pool.length - 1>>
+<<set _leans to $pinned.map(function(id){ return setup.cards[id].lean; })>>
+<<set _nG to $pinned.filter(function(id){ return setup.cards[id].type === "assumption"; }).length>>
+<<set _distinct to _leans.filter(function(x, i){ return x !== "neither" && _leans.indexOf(x) === i; }).length>>
+<<if $verdict is "unknown">><<set _s3 to _distinct gte 2 and _nG is 0>>
+<<else>><<set _s3 to _leans.filter(function(x){ return x === $verdict; }).length gte 2 and _nG is 0>><</if>>
+<<if $verdict is "unknown">><<set _s4 to $conf isnot "very">>
+<<elseif $conf is "very">><<set _s4 to false>>
+<<elseif $conf is "fairly">><<set _s4 to _s3>>
+<<else>><<set _s4 to true>><</if>>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0) + (_s4 ? 1 : 0)>>
+<<set $deductions to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<switch $verdict>>
+<<case "richard">><div class="stamp">Verdict: Richard III</div>
+<<case "buck">><div class="stamp">Verdict: Buckingham</div>
+<<case "henry">><div class="stamp">Verdict: Henry VII</div>
+<<case "survived">><div class="stamp">Verdict: they survived</div>
+<<default>><div class="stamp solved">Verdict: can't tell yet</div>
+<</switch>>
+<h2>Detective rating: <<print $stars>> of 4 stars</h2>
+<p class="meta">Nobody knows the true answer, so these stars measure how well you used the sources, not whether you "won."</p>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The ledger.</b> <<if _s1>>Your sources are in the order they were written.<<elseif $lg.length lt 5>>You placed <<print $lg.length>> sources. Find and place at least five.<<elseif $lg.length lt _have.length>>Some sources you found are still off the ledger.<<else>>All placed, but it took <<print $lmiss>> wrong tries. Check each date before you tap.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>At the time, or later?</b> <<if _pool.length lt 3>>You didn't find enough key sources to sort.<<else>>You sorted <<print $sortRight>> of <<print _pool.length>> correctly.<<if not _s2>> Ask: was the writer alive and nearby in 1483?<</if>><</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>Evidence that fits your verdict.</b> <<if _s3>>The cards you pinned back up what you said.<<elseif _nG gt 0>>You pinned a gift-shop story. That's not evidence.<<elseif $verdict is "unknown">>For "can't tell yet," pin cards that point in at least two different directions.<<else>>Pin at least two cards that point toward your verdict.<</if>></li>
+<li @class="_s4 ? 'on' : 'off'"><span aria-hidden="true"><<print _s4 ? '★' : '☆'>></span> <b>Confidence that fits the evidence.</b> <<if $conf is "very" and $verdict isnot "unknown">>After 540 years, with untested bones and sources written for kings, "very sure" is too sure.<<elseif $verdict is "unknown" and $conf is "very">>Very sure nobody can tell? Fair, but "fairly sure" fits better.<<elseif _s4>>Your confidence matches how strong your evidence is.<<else>>"Fairly sure" needs pinned evidence that backs you up. Otherwise it's a hunch.<</if>></li>
+</ul>
+<p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal"><<for _id range $notebook>><<set _c to setup.cards[_id]>><div @class="'card ' + (_c.type === 'deduction' ? 'deduction' : _c.type === 'assumption' ? 'assumption' : 'evidence')"><span class="tag"><<print setup.kindLabel[_c.type]>><<if _c.type isnot "assumption">> · <<print setup.leanLabel[_c.lean]>><</if>></span><span class="card-title"><<print _c.title>></span><<if $pinned.includes(_id)>><span class="pinned-mark">You pinned this</span><</if>></div><</for>></div><</if>>
+<div class="actions">[[What's known today|RealHistory]]</div>
+
+
+:: RealHistory [nobar]
+<h2>What's known today</h2>
+<p>Most historians think Richard III was most likely responsible: the boys were in his care, they stood between him and the crown, and he never showed them alive. But the only report written at the time admits it didn't know what happened, and the most famous account was written decades later, while the kings who replaced him ruled.</p>
+<p>The bones in Westminster Abbey have never been tested with DNA. In 2023 and 2025, new research argued the boys survived, and historians are still debating it.</p>
+<p>More than 540 years later, the case is still open.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>Ask who wrote it, when, and who they were writing for.</li>
+<li>A report from the time beats a story told decades later.</li>
+<li>Old cases can stay open forever, and that's OK.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the archivist and the gift-shop stories. The sources, dates, people and the bones are real.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<include "Banner">>
+<<run setup.reportResult()>>
+<div class="stamp solved big">Case closed</div>
+<h2>Case 004 complete</h2>
+<p>Detective rating: <b><<print $stars>> of 4</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
+<p>Tell Rocky your verdict, how sure you were, and which source you trusted most.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>
+
+
+:: Banner [art]
+<svg class="art" viewBox="0 0 640 220" role="img" aria-label="The White Tower of the Tower of London at dusk, with its four corner turrets above the River Thames." preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3355"/><stop offset="1" stop-color="#d8a07a"/></linearGradient></defs>
+<rect width="640" height="220" fill="url(#sky5)"/>
+<rect y="176" width="640" height="44" fill="#4a5a6a"/>
+<g stroke="#c9d6e0" stroke-width="2" opacity=".4"><line x1="40" y1="194" x2="110" y2="194"/><line x1="300" y1="204" x2="380" y2="204"/><line x1="520" y1="190" x2="590" y2="190"/></g>
+<rect x="60" y="150" width="520" height="28" fill="#6f6355"/>
+<g fill="#6f6355"><rect x="60" y="142" width="14" height="10"/><rect x="90" y="142" width="14" height="10"/><rect x="530" y="142" width="14" height="10"/><rect x="560" y="142" width="14" height="10"/></g>
+<rect x="230" y="70" width="180" height="84" fill="#d8ccb4"/>
+<g fill="#d8ccb4"><rect x="222" y="44" width="26" height="30"/><rect x="392" y="44" width="26" height="30"/><rect x="222" y="44" width="26" height="30"/><rect x="304" y="54" width="22" height="20"/></g>
+<g fill="#4a4060"><path d="M222 44 Q235 28 248 44 Z"/><path d="M392 44 Q405 28 418 44 Z"/><path d="M304 54 Q315 40 326 54 Z"/></g>
+<g fill="#4a4a58"><rect x="250" y="94" width="10" height="18" rx="5"/><rect x="290" y="94" width="10" height="18" rx="5"/><rect x="340" y="94" width="10" height="18" rx="5"/><rect x="380" y="94" width="10" height="18" rx="5"/><rect x="270" y="124" width="10" height="16" rx="5"/><rect x="360" y="124" width="10" height="16" rx="5"/></g>
+<path d="M410 30 L410 14 L428 18 L410 22" fill="#a3231d" stroke="#3a3040" stroke-width="1.5"/>
+</svg>
+
+
+:: Scene [art]
+<svg class="art scene" viewBox="0 0 640 150" role="img" aria-label="An old handwritten page with a quill pen and a wax seal on a library table."><rect width="640" height="150" fill="#6b4f3a"/><g transform="rotate(-3 300 75)"><rect x="170" y="16" width="290" height="120" fill="#efe3c4"/><g stroke="#8a7a5a" stroke-width="2"><line x1="190" y1="40" x2="440" y2="40"/><line x1="190" y1="56" x2="430" y2="56"/><line x1="190" y1="72" x2="440" y2="72"/><line x1="190" y1="88" x2="400" y2="88"/><line x1="190" y1="104" x2="420" y2="104"/></g><circle cx="420" cy="118" r="10" fill="#a3231d"/></g><path d="M480 30 C520 40 540 90 530 130 L526 130 C532 92 512 50 478 34 Z" fill="#f4efe2" stroke="#b8ad95"/></svg>
+
+
+:: CaseTheme [stylesheet]
+:root { --accent: #5b4a7a; }
+#passages { border-top-color: var(--accent); }
+h1 { color: var(--accent); }
+.map a { border-left: 6px solid var(--accent); }
+.map .opt.revisit a { border-left-color: var(--line); }
+.actions a, .actions .macro-link { background: var(--accent); }
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--accent); border-color: var(--accent); }
+.headline { border-left: 6px solid var(--accent); }
+.card { border-top-color: var(--accent); }
+svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+svg.art.scene { margin: 6px 0 14px; }

@@ -1,0 +1,353 @@
+:: StoryTitle
+The Sensor Log
+
+
+:: StoryData
+{
+  "ifid": "A7D3C2E1-4B9F-4F28-8E61-2C5B9D0A7F34",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M06">>
+<<set setup.leadsTotal to 7>>
+<<set setup.dedTotal to 5>>
+<<set setup.typeLabel to { evidence: "Fact", single: "One witness", assumption: "Guess", deduction: "Deduction" }>>
+<<set setup.cards = {
+  "buzzer":   { title: "1:24 a.m.: the buzzer", text: "Two men in police uniforms buzzed the side door and said they were answering a disturbance call. The guard let them in.", type: "single" },
+  "alarm":    { title: "Away from the alarm", text: "The men told the guard he looked familiar, as if there might be a warrant for him, and got him to step away from the desk, where the only alarm button was.", type: "single" },
+  "basement": { title: "Both guards in the basement", text: "Both guards were handcuffed and left in the basement until morning. Neither was badly hurt.", type: "evidence" },
+  "tapes":    { title: "The camera tapes are gone", text: "The thieves took the tapes from the security cameras.", type: "evidence" },
+  "sensors":  { title: "The motion-detector record", text: "About 60 motion detectors recorded every movement in the galleries, with the time. The thieves took the paper printouts, but the same record was saved on a computer they never touched.", type: "evidence" },
+  "first":    { title: "1:48 a.m.: first movement", text: "The detectors first recorded the thieves moving in the galleries at about 1:48 a.m.", type: "evidence" },
+  "dutch":    { title: "Movement in the Dutch Room", text: "The detectors recorded movement in the Dutch Room, upstairs.", type: "evidence" },
+  "short":    { title: "Movement in the Short Gallery", text: "The detectors recorded movement in the Short Gallery, a long narrow hall upstairs.", type: "evidence" },
+  "blueSilent":{ title: "No movement in the Blue Room", text: "While the thieves were inside, the detectors recorded no movement at all in the Blue Room, downstairs.", type: "evidence" },
+  "blueEarlier":{ title: "Earlier footsteps in the Blue Room", text: "The only movement recorded in the Blue Room that night was earlier, during the guard's rounds.", type: "evidence" },
+  "leave":    { title: "2:45 a.m.: gone", text: "The thieves made two trips out to their car and left for good at 2:45 a.m.", type: "evidence" },
+  "dutchLoss":{ title: "Missing from the Dutch Room", text: "Vermeer's The Concert, three Rembrandts (two paintings and a tiny etching), a Flinck landscape, and a 3,000-year-old Chinese bronze cup.", type: "evidence" },
+  "cut":      { title: "Cut from the frames", text: "Two Rembrandt paintings were cut out of their frames with a blade. Others, like the Vermeer, were pulled out of theirs. Glass lies smashed on the marble floor.", type: "evidence" },
+  "panel":    { title: "The Rembrandt they left", text: "A large Rembrandt self-portrait was taken down, then left leaning against a cabinet. It's painted on a heavy wooden panel, not canvas.", type: "evidence" },
+  "shortLoss":{ title: "Missing from the Short Gallery", text: "Five small Degas drawings, and a bronze eagle from the top of a Napoleonic flagpole.", type: "evidence" },
+  "blueLoss": { title: "Missing from the Blue Room", text: "Manet's Chez Tortoni, a small painting of a man in a top hat at a café table.", type: "evidence" },
+  "titian":   { title: "The third floor, untouched", text: "Upstairs on the third floor, a famous Titian painting, one of the most valuable in the museum, is still on the wall. The detectors show nobody went up there.", type: "evidence" },
+  "sidedoor": { title: "The side door, earlier", text: "Earlier that night, the guard opened the side door for a moment and closed it again. He says it was part of checking that it was locked.", type: "single" },
+  "car":      { title: "Two men in a car", text: "People walking home from parties saw two men in police uniforms sitting in a hatchback near the museum before the theft.", type: "single" },
+  "inside":   { title: "“It was an inside job”", text: "A reporter is sure one of the guards was in on it.", type: "assumption" },
+  "genius":   { title: "“Expert art thieves”", text: "Another reporter says only expert art thieves would pick such famous paintings.", type: "assumption" },
+
+  "d_81":     { title: "81 minutes", text: "From the buzzer at 1:24 a.m. to leaving at 2:45 a.m.: 81 minutes inside the museum.", type: "deduction" },
+  "d_record": { title: "A witness they missed", text: "The thieves took the camera tapes and the printouts, but missed the copy saved on the computer. It became the best witness of the night.", type: "deduction" },
+  "d_odd":    { title: "The fact that doesn't fit", text: "A painting is missing from the Blue Room, but the detectors recorded nobody there while the thieves were inside.", type: "deduction" },
+  "d_notexperts":{ title: "Not picky experts", text: "They cut paintings from their frames, took a cheap bronze eagle, and never went near the Titian. That's not how expert art thieves usually work.", type: "deduction" },
+  "d_trick":  { title: "A trick, not a break-in", text: "Police uniforms, a fake story about a warrant, and getting the guard away from the alarm: they talked their way in.", type: "deduction" }
+}>>
+<<set setup.recipes = [
+  { a: "buzzer", b: "leave", id: "d_81" },
+  { a: "tapes", b: "sensors", id: "d_record" },
+  { a: "blueSilent", b: "blueLoss", id: "d_odd" },
+  { a: "cut", b: "titian", id: "d_notexperts" },
+  { a: "shortLoss", b: "titian", id: "d_notexperts" },
+  { a: "buzzer", b: "alarm", id: "d_trick" }
+]>>
+<<set setup.rooms = [
+  { id: "dutch", name: "Dutch Room (upstairs)", answer: "yes", need: "dutch" },
+  { id: "short", name: "Short Gallery (upstairs)", answer: "yes", need: "short" },
+  { id: "blue", name: "Blue Room (downstairs)", answer: "no", need: "blueSilent" },
+  { id: "third", name: "Third-floor gallery", answer: "no", need: "titian" }
+]>>
+<<set setup.interviews = {
+  "guard": [
+    { q: "Why did you let them in?", a: "“They were police. They said there was a disturbance. The rule was nobody comes in at night, but… they were police.”", clue: "buzzer" },
+    { q: "What happened at the desk?", a: "“One of them said I looked familiar, like there might be a warrant for me. He told me to come out from behind the desk. That's where the alarm button was.”", clue: "alarm" },
+    { q: "Why did you open the side door earlier?", a: "“I always checked it. I opened it and shut it, to make sure it locked. That's all.”", clue: "sidedoor" },
+    { q: "Were you in the Blue Room tonight?", a: "“Sure, on my rounds, earlier. I walked through every room on the first floor.”", clue: "blueEarlier" }
+  ],
+  "partner": [
+    { q: "What happened to you?", a: "“The other guard called me over. Next thing I knew, I was in handcuffs, and they took us both down to the basement.”", clue: "basement" },
+    { q: "Did you see where they went?", a: "“No. We were in the basement the whole time.”", clue: null },
+    { q: "Was anyone outside before?", a: "“I didn't see anything. Ask the people on the street. It was St. Patrick's Day, lots of folks walking home.”", clue: null }
+  ]
+}>>
+<<set setup.events = [
+  { at: 6, id: "e1", kind: "headline", text: "THIEVES DRESSED AS POLICE ROB GARDNER MUSEUM" },
+  { at: 4, id: "e2", kind: "chief", text: "Your lieutenant calls: “The FBI's on the way. I need the timeline, the rooms, and anything that smells wrong.”" },
+  { at: 2, id: "e3", kind: "headline", text: "MASTERPIECES WORTH MILLIONS VANISH IN THE NIGHT" }
+]>>
+<<set setup.resultFields = function () { var v = State.variables; return { minutes: v.mins, rooms: v.rm, oddity: v.odd }; }>>
+<<set $leads to 7>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to { guard: [], partner: [] }>>
+<<set $events to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $pinned to []>>
+<<set $rm to {}>>
+<<set $mins to "">>
+<<set $odd to "">>
+<<set $return to "Hub">>
+
+
+:: Start [nobar]
+<<include "Banner">>
+<div class="stamp">Case file 003</div>
+<p class="meta">Boston · Sunday, March 18, 1990 · morning</p>
+<h1>The Sensor Log</h1>
+<p>Your phone rings before breakfast. Something has happened at the Isabella Stewart Gardner Museum, the palace full of art on the Fenway.</p>
+<p class="quote chief">"Two guards were found handcuffed in the basement. A whole wall of paintings is gone. The thieves were dressed as cops. Get over there. I need to know how long they were inside, where they went, and what doesn't add up. Seven leads."</p>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new place uses one lead. Going back is free.</li>
+<li>Interviews: two questions each.</li>
+<li>The museum has a machine that recorded movement in every room. Find it, and it becomes your best witness.</li>
+<li>Mark the rooms on the <b>sensor board</b>. Connect clues on the <b>deduction board</b>. Both are free.</li>
+</ul>
+</div>
+<div class="actions">[[Start investigating|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<<set _ev to setup.events.filter(function(e){ return $leads <= e.at && !$events.includes(e.id); })>>
+<<for _e range _ev>><<run $events.push(_e.id)>>
+<<if _e.kind is "headline">><div class="headline"><span class="paper">The Boston Globe</span><<print _e.text>></div>
+<<else>><p class="quote chief"><<print _e.text>></p><</if>>
+<</for>>
+<h2>Where to?</h2>
+<p class="meta">New places cost a lead. Places you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Guard" "🗣️ Interview the guard who opened the door">></li>
+<li><<maplink "Partner" "🗣️ Interview the second guard">></li>
+<li><<maplink "Security" "🖨️ The security office">></li>
+<li><<maplink "Dutch" "🖼️ The Dutch Room, upstairs">></li>
+<li><<maplink "Short" "🦅 The Short Gallery, upstairs">></li>
+<li><<maplink "Blue" "🎩 The Blue Room, downstairs">></li>
+<li><<maplink "Third" "🪜 The third floor">></li>
+<li><<maplink "Street" "🚓 The street outside: witnesses">></li>
+<li><<maplink "Newsroom" "📰 A newspaper office">></li>
+</ul>
+<div class="actions secondary"><<link "Sensor board (free)">><<set $return to "Hub">><<goto "Sensors">><</link>><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to report|Report]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"The FBI's here," your lieutenant says. "Let's hear it."</p>
+<div class="actions"><<link "One last look at the sensor board">><<set $return to "OutOfLeads">><<goto "Sensors">><</link>><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Make your report|Report]]</div>
+
+
+:: Sensors
+<h2>Sensor board</h2>
+<p class="meta">For each room, mark whether the motion detectors recorded the thieves there. You can only mark rooms you have evidence about.</p>
+<div id="sens"><<include "SensorRows">></div>
+<div class="actions"><<link "Back">><<goto $return>><</link>></div>
+
+
+:: SensorRows
+<div class="floorplan">
+<<for _r range setup.rooms>><<capture _r>>
+<div @class="'roomcard ' + ($rm[_r.id] === 'yes' ? 'on' : $rm[_r.id] === 'no' ? 'off' : '')"><p class="card-title"><<print _r.name>></p>
+<<if $notebook.includes(_r.need)>>
+<div class="choices two"><<for _k range [["yes","Thieves recorded"],["no","Nobody recorded"]]>><<capture _k>><span @class="$rm[_r.id] is _k[0] ? 'opt chosen' : 'opt'"><<link _k[1]>><<set $rm[_r.id] to _k[0]>><<replace "#sens">><<include "SensorRows">><</replace>><</link>></span><</capture>><</for>></div>
+<<else>><p class="note">No evidence about this room yet.</p><</if>>
+</div>
+<</capture>><</for>>
+</div>
+
+
+:: Guard
+<h2>Interview: the guard who opened the door</h2>
+<p>He's 23 and works the night shift. He's been answering questions for hours and looks exhausted.</p>
+<div id="ans"><<pastanswers "guard">></div>
+<div id="iv"><<interview "guard">></div>
+<<tomap>>
+
+
+:: Partner
+<h2>Interview: the second guard</h2>
+<p>He's 25, and last night was his first night shift at the museum.</p>
+<div id="ans"><<pastanswers "partner">></div>
+<div id="iv"><<interview "partner">></div>
+<<tomap>>
+
+
+:: Security
+<h2>The security office</h2>
+<<include "Scene">>
+<p>The tape players for the cameras are empty, and the motion-detector printouts are gone too. But the computer in the corner kept its own copy: every movement in every room, with the time.</p>
+<<clue "tapes">>
+<<clue "sensors">>
+<<clue "first">>
+<<clue "leave">>
+<p>You run your finger down the printout, room by room.</p>
+<<clue "dutch">>
+<<clue "short">>
+<<clue "blueSilent">>
+<<tomap>>
+
+
+:: Dutch
+<h2>The Dutch Room</h2>
+<p>A tall room hung with dark Dutch paintings. Broken glass crunches under your shoes. Some frames hang empty; others lie on the floor.</p>
+<<clue "dutchLoss">>
+<<clue "cut">>
+<<clue "panel">>
+<<tomap>>
+
+
+:: Short
+<h2>The Short Gallery</h2>
+<p>A long, narrow hall lined with small drawings and cases. Someone has tried to unscrew the case holding an old silk flag.</p>
+<<clue "shortLoss">>
+<<tomap>>
+
+
+:: Blue
+<h2>The Blue Room</h2>
+<p>A quiet room downstairs with blue walls. On one wall: a small, empty space.</p>
+<<clue "blueLoss">>
+<<tomap>>
+
+
+:: Third
+<h2>The third floor</h2>
+<p>You climb to the top floor. Everything here is exactly as it should be.</p>
+<<clue "titian">>
+<<tomap>>
+
+
+:: Street
+<h2>The street outside</h2>
+<p>A police officer has a list of people who walked past the museum after St. Patrick's Day parties.</p>
+<<clue "car">>
+<<tomap>>
+
+
+:: Newsroom
+<h2>A newspaper office</h2>
+<p>Reporters are already writing the biggest art story of the year.</p>
+<p class="quote">"It was an inside job, you watch," says one. "No," says another. "These were experts."</p>
+<<clue "inside">>
+<<clue "genius">>
+<<tomap>>
+
+
+:: Report [nobar]
+<div class="stamp">Report</div>
+<h2>Your report</h2>
+<p class="quote chief">"Three things," your lieutenant says. "How long, where, and what doesn't fit."</p>
+<h3>1. How long were the thieves inside?</h3>
+<div id="mins"><<include "MinList">></div>
+<h3>2. The rooms</h3>
+<<set _marked to setup.rooms.filter(function(r){ return $rm[r.id]; })>>
+<<if _marked.length is 0>><p class="note">You haven't marked any rooms. You can still go back to the sensor board.</p>
+<<else>><ul class="theory-key"><<for _r range _marked>><li @class="$rm[_r.id] is 'yes' ? 'ok' : ''"><b><<print _r.name>>:</b> <<print $rm[_r.id] is "yes" ? "thieves recorded" : "nobody recorded">></li><</for>></ul><</if>>
+<div class="actions secondary"><<link "Edit the sensor board">><<set $return to "Report">><<goto "Sensors">><</link>></div>
+<h3>3. What doesn't fit?</h3>
+<div id="odds"><<include "OddList">></div>
+<div id="file"><<include "ReportButton">></div>
+
+
+:: MinList
+<<set _opts to [["15","About 15 minutes"],["81","About 81 minutes"],["5h","About 5 hours"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$mins is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $mins to _o[0]>><<replace "#mins">><<include "MinList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: OddList
+<<set _opts to [["blue","A painting is missing from the Blue Room, but the detectors recorded nobody there while the thieves were inside"],["titian","The thieves didn't take the Titian"],["inside","The guards must have been in on it"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$odd is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $odd to _o[0]>><<replace "#odds">><<include "OddList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ReportButton
+<<if $mins is "" or $odd is "">><p class="note">Choose how long, and what doesn't fit, to file your report.</p>
+<<else>><div class="actions">[[File my report|Verdict]]</div><</if>>
+
+
+:: Verdict [nobar]
+<<set _s1 to $mins is "81" and $notebook.includes("buzzer") and $notebook.includes("leave")>>
+<<set _right to setup.rooms.filter(function(r){ return $rm[r.id] === r.answer; }).length>>
+<<set _wrong to setup.rooms.filter(function(r){ return $rm[r.id] && $rm[r.id] !== r.answer; }).length>>
+<<set _s2 to _right gte 3 and _wrong is 0>>
+<<set _s3 to $odd is "blue" and $notebook.includes("blueSilent") and $notebook.includes("blueLoss")>>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0)>>
+<<set $deductions to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<if $stars is 3>><div class="stamp solved">Report accepted</div><<else>><div class="stamp">Report filed</div><</if>>
+<h2>Detective rating: <<print $stars>> of 3 stars</h2>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>How long.</b> <<if _s1>>From the buzzer at 1:24 to leaving at 2:45: 81 minutes.<<elseif $mins is "81">>Right number, but you never pinned down both ends: when they arrived and when they left.<<else>>Check the clock: when did the buzzer ring, and when did they leave?<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>The rooms.</b> <<if _s2>>Your sensor board matches the record.<<elseif _wrong gt 0>>Some rooms don't match the motion-detector record. The printout in the security office is the witness here.<<else>>You didn't mark enough rooms. The printout and the third floor would help.<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>What doesn't fit.</b> <<if _s3>>A missing painting, and a room where the detectors recorded nobody. That's the riddle investigators still argue about.<<elseif $odd is "blue">>That's the riddle, but you didn't collect both clues that prove it: the silent printout and the missing Manet.<<elseif $odd is "inside">>That's a guess from a newspaper, not evidence. Nobody was ever charged.<<else>>Strange, yes, but it's explained: the thieves never went up there. Something else doesn't fit at all.<</if>></li>
+</ul>
+<p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal"><<for _id range $notebook>><div @class="'card ' + setup.cards[_id].type"><span class="tag"><<print setup.typeLabel[setup.cards[_id].type]>></span><span class="card-title"><<print setup.cards[_id].title>></span></div><</for>></div><</if>>
+<div class="actions">[[What investigators know|RealHistory]]</div>
+
+
+:: RealHistory [nobar]
+<h2>What investigators know</h2>
+<p>The real investigators rebuilt the night the same way you did, from the motion-detector record. The thieves spent 81 minutes inside and took 13 works of art.</p>
+<p>The silent Blue Room has never been explained. Investigators looked closely at the night guard, partly because of it. He always said he had nothing to do with the theft, he was never charged, and he died in 2024. In 2026, the former lead FBI agent wrote that he thinks the guard could have been charged.</p>
+<p>The paintings were never found. That's your next case.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>A machine can be a witness. Look for records nobody thought to erase.</li>
+<li>What thieves leave behind tells you as much as what they take.</li>
+<li>When one fact doesn't fit, don't ignore it. Don't jump to blame, either.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the guards' exact words, the lieutenant and the reporters. The times, rooms, missing works and the motion-detector record are based on the real case.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<include "Banner">>
+<<run setup.reportResult()>>
+<<run setup.lockerSave("003", $notebook)>>
+<div class="stamp solved big">Case closed</div>
+<h2>Case 003, Part 1 complete</h2>
+<p>Detective rating: <b><<print $stars>> of 3</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
+<p>Your evidence has been bagged for Part 2.</p>
+<p>Tell Rocky how long the thieves were inside, what didn't fit, and your detective rating.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>
+
+
+:: Banner [art]
+<svg class="art" viewBox="0 0 640 220" role="img" aria-label="A Venetian-style palace museum at night, with two men in police caps waiting by a side door under a streetlight." preserveAspectRatio="xMidYMid slice">
+<rect width="640" height="220" fill="#141b2b"/>
+<g fill="#ffffff" opacity=".7"><circle cx="60" cy="24" r="1.2"/><circle cx="150" cy="40" r="1"/><circle cx="560" cy="30" r="1.3"/><circle cx="610" cy="56" r="1"/></g>
+<rect x="150" y="54" width="360" height="146" fill="#c9a98a"/>
+<g fill="#2a2a3c"><rect x="176" y="76" width="34" height="44" rx="16"/><rect x="236" y="76" width="34" height="44" rx="16"/><rect x="296" y="76" width="34" height="44" rx="16"/><rect x="356" y="76" width="34" height="44" rx="16"/><rect x="416" y="76" width="34" height="44" rx="16"/></g>
+<g fill="#ffd98a" opacity=".85"><rect x="236" y="140" width="34" height="40" rx="16"/></g>
+<g fill="#2a2a3c"><rect x="176" y="140" width="34" height="40" rx="16"/><rect x="296" y="140" width="34" height="40" rx="16"/><rect x="356" y="140" width="34" height="40" rx="16"/></g>
+<rect x="420" y="146" width="34" height="54" fill="#5a3a2a"/><circle cx="447" cy="174" r="2" fill="#e8c35a"/>
+<rect y="200" width="640" height="20" fill="#2a2a2a"/>
+<rect x="540" y="96" width="5" height="104" fill="#3a3a3a"/><circle cx="542" cy="94" r="9" fill="#fff2b0"/><path d="M542 100 L500 200 L590 200 Z" fill="#fff2b0" opacity=".18"/>
+<g fill="#1d2433"><rect x="478" y="160" width="14" height="40" rx="5"/><circle cx="485" cy="152" r="8"/><rect x="476" y="143" width="18" height="5" rx="2"/><rect x="500" y="158" width="14" height="42" rx="5"/><circle cx="507" cy="150" r="8"/><rect x="498" y="141" width="18" height="5" rx="2"/></g>
+<g fill="#e8c35a"><circle cx="485" cy="146" r="1.6"/><circle cx="507" cy="144" r="1.6"/></g>
+</svg>
+
+
+:: Scene [art]
+<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="A long paper printout from the motion detectors, listing rooms and times; the Blue Room line shows no movement."><rect width="640" height="170" fill="#5a4a3e"/><g transform="rotate(-2 320 85)"><rect x="70" y="14" width="500" height="146" fill="#f6f3e8"/><g fill="#e3e8f0"><rect x="70" y="34" width="500" height="18"/><rect x="70" y="70" width="500" height="18"/><rect x="70" y="106" width="500" height="18"/><rect x="70" y="142" width="500" height="18"/></g><g fill="#2a2420" font-family="Courier New, monospace" font-size="13"><text x="90" y="48">01:48  DUTCH ROOM ........ MOTION</text><text x="90" y="84">  ...  SHORT GALLERY ..... MOTION</text><text x="90" y="120">  ...  BLUE ROOM ......... (none)</text><text x="90" y="156">02:45  LAST TRIP OUT</text></g><rect x="84" y="108" width="380" height="16" fill="none" stroke="#a3231d" stroke-width="2"/></g></svg>
+
+
+:: CaseTheme [stylesheet]
+:root { --accent: #3b4a7a; }
+#passages { border-top-color: var(--accent); }
+h1 { color: var(--accent); }
+.map a { border-left: 6px solid var(--accent); }
+.map .opt.revisit a { border-left-color: var(--line); }
+.actions a, .actions .macro-link { background: var(--accent); }
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--accent); border-color: var(--accent); }
+.headline { border-left: 6px solid var(--accent); }
+.card { border-top-color: var(--accent); }
+svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+svg.art.scene { margin: 6px 0 14px; }

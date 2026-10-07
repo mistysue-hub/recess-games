@@ -15,6 +15,13 @@ A Recess course on real heists, escapes and disappearances from history, for age
 - **The Marshals' File** (M05, Alcatraz Part 2):
   https://mistysue-hub.github.io/recess-games/cold-case-academy/marshals-file/
 
+- **The Sensor Log** (M06, Gardner heist Part 1):
+  https://mistysue-hub.github.io/recess-games/cold-case-academy/sensor-log/
+- **Frame by Frame** (M07, Gardner heist Part 2):
+  https://mistysue-hub.github.io/recess-games/cold-case-academy/frame-by-frame/
+- **The Tower Ledger** (M08, Princes in the Tower, optional):
+  https://mistysue-hub.github.io/recess-games/cold-case-academy/tower-ledger/
+
 Evidence locker: Part 1 of each case saves the player's notebook in the browser, and Part 2 reads it (same device, same browser). If storage is blocked, Part 2 still works on its own.
 
 ## Folders
