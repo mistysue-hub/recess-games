@@ -1,3 +1,4 @@
+Item key: lesson:3f56a400351a0612ba9346b09d04b488
 ---
 ref: M04
 title: "Case 002, Part 1: Spoons, Soap and Fake Heads"
@@ -24,7 +25,6 @@ A prison escape; nobody was hurt during it.
 Estimated time: 30 minutes
 
 The hook and talk-back add about 5 minutes, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,080 words, about 7 more minutes if the learner reads it.
-
 
 ## Learning targets
 
@@ -53,8 +53,6 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 > C) Other prisoners who swapped cells
 
 If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
-
-
 
 **Look back at the vote — one line, once the learner reaches the "Case closed" screen:** remind them what they voted and say in one sentence whether the case bore it out (the answer is B). No lecture.
 
@@ -95,7 +93,7 @@ Don't tell them the order of the route or the head start. If they're stuck, you 
 
 **Case file — optional, at the very end:** after the book suggestion, offer it in one line: it's the real detective file behind the game, with extra details, and they can read it now, later, or skip it. If they want it, open `resources/M04Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
 
-When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module is complete.
+When the activity (or both activities) is finished, the book has been suggested, the case file has been offered, and the learner confirms they're done, the module is complete.
 
 ## Resources and surfaces
 

@@ -1,3 +1,4 @@
+Item key: lesson:14fd59212075c86804e76d30f5704092
 ---
 ref: M01
 title: "Training Case: The Vanishing Mona Lisa"
@@ -25,7 +26,6 @@ Estimated time: 30 minutes
 
 The hook and talk-back add about 5 minutes, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,280 words, about 9 more minutes if the learner reads it.
 
-
 ## Learning targets
 
 After this module the learner can:
@@ -36,7 +36,7 @@ After this module the learner can:
 
 ## Tutor guidance
 
-Read AGENTS.md first; it outranks this section and sets the fixed session flow for every module in this course: **hook → reading → talk-back → activity (one or two) → complete**.
+Read AGENTS.md first; it outranks this section and sets the fixed session flow for every module in this course: **hook → game → look back → talk-back (→ Activity 2) → book suggestion → optional case file → complete**.
 
 **Rocky's role in this course:** Rocky is the senior detective at Cold Case Academy, and the learner is a trainee. Keep the detective framing light and fun ("Detective, your first case file"). Never be spooky or scary.
 
@@ -53,8 +53,6 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 > C) A handyman who used to work at the museum
 
 If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
-
-
 
 **Look back at the vote — one line, once the learner reaches the "Case closed" screen:** remind them what they voted and say in one sentence whether the case bore it out (the answer is C). If they guessed A or B, point out lightly that they guessed just like the 1911 police did. No lecture.
 
@@ -95,7 +93,7 @@ Don't name a suspect, point them to Peruggia's room, or say which cards are assu
 
 **Case file — optional, at the very end:** after the book suggestion, offer it in one line: it's the real detective file behind the game, with extra details, and they can read it now, later, or skip it. If they want it, open `resources/M01Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
 
-When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module is complete.
+When the activity (or both activities) is finished, the book has been suggested, the case file has been offered, and the learner confirms they're done, the module is complete.
 
 ## Resources and surfaces
 
@@ -116,7 +114,7 @@ This module file is for Rocky only and is never shown to the learner.
 
 ## Completion criteria
 
-The module is complete when the learner has answered the hook vote, worked through the talk-back (if on), played the game through to its "Case closed" screen and told Rocky who they named and why, finished Activity 2 if the activity count is two, and confirmed they're done.
+The module is complete when the learner has answered the hook vote, worked through the talk-back (if on), played the game through to its "Case closed" screen and told Rocky who they named and why, finished Activity 2 if the activity count is two, been offered the optional case file, and confirmed they're done.
 
 ## State updates
 

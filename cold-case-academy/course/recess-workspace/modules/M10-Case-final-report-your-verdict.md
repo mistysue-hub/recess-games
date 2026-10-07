@@ -25,7 +25,6 @@ Estimated time: 30 minutes
 
 The hook and talk-back add about 5 minutes, the report builder takes about 10–15, and reading the report to Rocky and talking it over takes about 5. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The briefing is optional: about 580 words, about 4 more minutes if the learner reads it.
 
-
 ## Learning targets
 
 After this module the learner can:
@@ -59,8 +58,6 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 > C) It sounds very confident
 
 If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
-
-
 
 **Look back at the vote — one line, once the learner reaches the "Case closed" screen:** remind them what they voted and say in one sentence whether the report builder bore it out (the answer is B). No lecture.
 
@@ -100,7 +97,7 @@ Don't tell them which cards are facts or which support which theory. If they're 
 
 **Briefing — optional, at the very end:** after the book suggestion, offer it in one line: it explains the five parts of a case report and shows a sample report on the training case, and they can read it now, later, or skip it. If they want it, open `resources/M10Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
 
-When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module and the course are complete.
+When the activity (or both activities) is finished, the book has been suggested, the briefing has been offered, and the learner confirms they're done, the module and the course are complete.
 
 ## Resources and surfaces
 

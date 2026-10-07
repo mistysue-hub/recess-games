@@ -1,3 +1,4 @@
+Item key: lesson:f308c1b613bcec7db170e7d889e18371
 ---
 ref: M03
 title: "Case 001, Part 2: Money on the Riverbank"
@@ -24,7 +25,6 @@ No violence. The possibility that the hijacker died in the jump is discussed in 
 Estimated time: 35 minutes
 
 The hook and talk-back add about 5 minutes, and the game takes about 20–25, including the suspect drawer. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,050 words, about 7 more minutes if the learner reads it.
-
 
 ## Learning targets
 
@@ -53,8 +53,6 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 > C) Just one $20 bill
 
 If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
-
-
 
 **Look back at the vote — one line, once the learner reaches the "Case closed" screen:** remind them what they voted and say in one sentence whether the case bore it out (the answer is B). No lecture.
 
@@ -98,7 +96,7 @@ Don't tell them which verdict to choose or which way a card points. If they're s
 
 **Case file — optional, at the very end:** after the book suggestion, offer it in one line: it's the real detective file behind the game, with extra details, and they can read it now, later, or skip it. If they want it, open `resources/M03Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
 
-When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module is complete.
+When the activity (or both activities) is finished, the book has been suggested, the case file has been offered, and the learner confirms they're done, the module is complete.
 
 ## Resources and surfaces
 
