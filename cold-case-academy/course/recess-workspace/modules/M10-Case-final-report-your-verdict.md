@@ -11,7 +11,7 @@ sourceText: "Original text written for this course (no copied material)"
 
 # Final Report: Your Verdict
 
-**Start here:** (1) Say the hook vote below, word for word, before opening anything. (2) Open `resources/M10Case.md` as a manila case-file folder and let the learner read it whole. (3) When they say they're done, check their reading time against the finished-too-fast check (Estimated time) and push back once if it's too short; then look back at the vote in one line, then ask the two talk-back questions, one at a time. (4) Open the report builder, *The Final Report*, at https://mistysue-hub.github.io/recess-games/cold-case-academy/final-report/ and let the learner build their report to the "Case closed" screen. (5) Have them read their report to you, and respond to it as a senior detective.
+**Start here:** (1) Say the hook vote below, word for word. (2) Right away, open the report builder, *The Final Report*, at https://mistysue-hub.github.io/recess-games/cold-case-academy/final-report/ and let the learner build their report to the "Case closed" screen. (3) Have them read their report to you, and respond to it as a senior detective. (4) Look back at the vote in one line, then ask the two talk-back questions, one at a time. (5) At the very end, after any Activity 2 and the book suggestion, offer the briefing, `resources/M10Case.md` as an optional extra; open it only if the learner wants it, and they can read as much or as little of it as they like.
 
 ## Summary
 
@@ -23,9 +23,8 @@ No new crime is described. The cases are the ones the learner has already read.
 
 Estimated time: 30 minutes
 
-Reading is about 580 words (about 4 minutes at 150 words a minute). The hook and talk-back add about 5 minutes, the report builder takes about 10–15, and reading the report to Rocky and talking it over takes about 5. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point.
+The hook and talk-back add about 5 minutes, the report builder takes about 10–15, and reading the report to Rocky and talking it over takes about 5. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The briefing is optional: about 580 words, about 4 more minutes if the learner reads it.
 
-**Finished-too-fast check:** under 3 minutes of reading. That's 75% of the reading time.
 
 ## Learning targets
 
@@ -43,7 +42,7 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 
 **The builder has no answer key for the theory.** Every theory offered is one real investigators or historians have argued for. Never tell the learner their theory is wrong. Praise reasoning that fits the evidence; gently question confidence that's stronger than the evidence ("What would make you more sure?"). Never call any of these five cases solved (AGENTS.md rule 4).
 
-**How the builder scores (for Rocky only — never read it out, and never share it before the learner has finished):** four stars. (1) All three "facts" are actually facts; each deck also holds a claim, an expert opinion and a guess that look like facts. (2) Both "for" cards really support the chosen theory. (3) The "against" card really cuts against it. (4) Confidence isn't "certain" — "probably" and "can't tell yet" both earn the star. The game's last screen shows which cards were facts, claims, opinions and guesses.
+**How the builder scores (for Rocky only — never read it out, and never share it before the learner has finished the game):** four stars. (1) All three "facts" are actually facts; each deck also holds a claim, an expert opinion and a guess that look like facts. (2) Both "for" cards really support the chosen theory. (3) The "against" card really cuts against it. (4) Confidence isn't "certain" — "probably" and "can't tell yet" both earn the star. The game's last screen shows which cards were facts, claims, opinions and guesses.
 
 **After the builder:** the game shows the finished report and offers a "Copy my report" button so the learner can paste it into the chat. Ask them to read or paste it to you. Then respond as the senior detective, in this order: name one thing they did well (be specific: a strong fact, a fair piece of evidence against); ask one follow-up question about their verdict ("What would make you more sure?" or "What evidence would change your mind?"); then congratulate them on graduating from Cold Case Academy. Keep it short and warm. Don't grade it again or repeat the game's stars.
 
@@ -59,20 +58,18 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 > B) It sticks to evidence, including the evidence against its own theory
 > C) It sounds very confident
 
-If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the reading. Do not react to the vote either way.
+If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
 
-**Reading — open `resources/M10Case.md` whole, exactly as written.** Open the reading as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as in the file. Do not summarise it, condense it, or narrate it from memory. Tell the learner, before they start, that they can say if they need to pause and come back later, and to say when they're done with the file. Ask no questions while they're reading.
 
-**Finished too fast? — check before the look-back:** when the learner says they're done, add up their reading time on this module (since the reading opened, plus any earlier sessions on this module in `state/sessions.jsonl`). If it's under 3 minutes, push back once, kindly: say this briefing usually takes about 4 minutes to read, and ask them to go back and finish it — they can pause and come back later if they're tired. Don't reveal the vote's answer yet. If they say they really did read it all, take their word and go on.
 
-**Look back at the vote — one line, once the learner has finished reading:** remind them what they voted and say in one sentence whether the briefing bore it out (the answer is B). No lecture.
+**Look back at the vote — one line, once the learner reaches the "Case closed" screen:** remind them what they voted and say in one sentence whether the report builder bore it out (the answer is B). No lecture.
 
-**Talk-back — at most two questions, one at a time (skip entirely if the tutor turned talk-back off):**
+**Talk-back — at most two questions, one at a time (skip entirely if the tutor turned talk-back off):** Ask them after the game. The learner can answer from what they found in the game; they don't need the briefing.
 
 1. Why should a report include evidence against the detective's own theory?
    *(What a good answer mentions: it shows the detective is being honest and fair, and it shows what still doesn't fit or could change the answer.)*
-2. Why could the sample report say "certain," when your report probably shouldn't?
-   *(What a good answer mentions: the Mona Lisa case was solved, with the painting found, an admission and a court verdict; the other cases have never been proven.)*
+2. Why is "certain" a risky verdict for the cases in this academy?
+   *(What a good answer mentions: none of these cases has been proven or closed; nobody found the hijacker, no court decided what happened to the escapers or the princes, and the Gardner art and Louvre jewels are still missing.)*
 
 Keep it light. Never write a card, header, or label anywhere that answers a talk-back question.
 
@@ -101,13 +98,15 @@ Don't tell them which cards are facts or which support which theory. If they're 
 
 **Book suggestion — always offer, never require:** once the activities are done, suggest *CSI Expert! Forensic Science for Kids* by Karen K. Schulz, full of hands-on activities with fingerprints, handwriting and evidence, for a learner who wants to keep detecting. If they'd rather read about real crime labs, mention *Scene of the Crime* by HP Newquist instead (a grown-up should preview it first, since it covers real cases). Say it's just for fun if they want more; don't assign it or check on it later.
 
+**Briefing — optional, at the very end:** after the book suggestion, offer it in one line: it explains the five parts of a case report and shows a sample report on the training case, and they can read it now, later, or skip it. If they want it, open `resources/M10Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
+
 When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module and the course are complete.
 
 ## Resources and surfaces
 
 | Surface | Where | Status |
 |---|---|---|
-| Learner reading (original briefing, open whole) | resources/M10Case.md | Ready |
+| Optional briefing (offered at the very end; open whole if wanted) | resources/M10Case.md | Ready |
 | Report builder (Activity 1): *The Final Report* | https://mistysue-hub.github.io/recess-games/cold-case-academy/final-report/ | Ready (outside webpage; Rocky can't see inside it) |
 | Debate and interest (Activity 2) | this file | Ready |
 | Runtime rules | AGENTS.md | Ready |
@@ -122,13 +121,13 @@ This module file is for Rocky only and is never shown to the learner.
 
 ## Completion criteria
 
-The module is complete when the learner has answered the hook vote, read the briefing in full, worked through the talk-back (if on), built a report through to the "Case closed" screen, read or pasted it to Rocky and answered Rocky's follow-up question, finished Activity 2 if the activity count is two, heard the book suggestion, and confirmed they're done.
+The module is complete when the learner has answered the hook vote, worked through the talk-back (if on), built a report through to the "Case closed" screen, read or pasted it to Rocky and answered Rocky's follow-up question, finished Activity 2 if the activity count is two, been offered the optional briefing, heard the book suggestion, and confirmed they're done.
 
 ## State updates
 
 On session end, Rocky writes:
 
-- **state/sessions.jsonl** — one line: date, minutes, minutes spent reading this module's briefing, whether the module was completed, where the learner paused if they did.
+- **state/sessions.jsonl** — one line: date, minutes, whether they opened the optional briefing (and minutes reading it, if so), whether the module was completed, where the learner paused if they did.
 - **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status (and course complete, once M10 is complete).
 - **state/module_completions.jsonl** — on completion only: ref M10, date, hook answer, talk-back answers, the case they chose, their theory, their verdict and confidence, their answer to Rocky's follow-up question, their detective rating (stars out of 4), and which Activity 2 ran (if any).
 - **state/student_profile.md** — durable observations only: which case they chose for the final report, whether they tend to be overconfident or cautious with verdicts, and how well they handle evidence against their own ideas.

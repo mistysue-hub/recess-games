@@ -11,7 +11,7 @@ sourceText: "Original text written for this course (no copied material)"
 
 # Case 004: Two Princes, One Tower (optional)
 
-**Start here:** (0) This case is optional (see Tutor guidance). (1) Say the hook vote below, word for word, before opening anything. (2) Open `resources/M08Case.md` as a manila case-file folder and let the learner read it whole. (3) When they say they're done, check their reading time against the finished-too-fast check (Estimated time) and push back once if it's too short; then look back at the vote in one line, then ask the two talk-back questions, one at a time. (4) Open the case game, *The Tower Ledger*, at https://mistysue-hub.github.io/recess-games/cold-case-academy/tower-ledger/ and let the learner play it to the "Case closed" screen.
+**Start here:** (0) This case is optional (see Tutor guidance). (1) Say the hook vote below, word for word. (2) Right away, open the case game, *The Tower Ledger*, at https://mistysue-hub.github.io/recess-games/cold-case-academy/tower-ledger/ and let the learner play it to the "Case closed" screen. (3) Look back at the vote in one line, then ask the two talk-back questions, one at a time. (4) At the very end, after any Activity 2 and the book suggestion, offer the case file, `resources/M08Case.md` as an optional extra; open it only if the learner wants it, and they can read as much or as little of it as they like.
 
 ## Summary
 
@@ -23,9 +23,8 @@ The oldest case in the academy. In 1483, 12-year-old King Edward V and his 9-yea
 
 Estimated time: 30 minutes
 
-Reading is about 1,000 words (about 7 minutes at 150 words a minute). The hook and talk-back add about 5 minutes, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point.
+The hook and talk-back add about 5 minutes, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,000 words, about 7 more minutes if the learner reads it.
 
-**Finished-too-fast check:** under 5 minutes of reading. That's 75% of the reading time.
 
 ## Learning targets
 
@@ -43,27 +42,25 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 
 **This case is unsolved.** Never say what happened to the boys as fact. Never describe how they might have died; if the learner asks, say that one later writer claimed they were killed on Richard III's orders, that nobody knows how or even for certain whether it happened, and move back to the evidence. Never call any verdict wrong.
 
-**What happens in this case (for Rocky only — never read it out, and never share it before the learner has read the file):** Edward IV died on April 9, 1483. His son Edward V was 12; his younger son Richard was 9. Their uncle Richard, Duke of Gloucester, was named protector, took charge of Edward on the road to London (arresting several men in his escort, including relatives of the boys' mother), and lodged him in the Tower (from May 19), then a royal residence as well as a fortress; young Richard joined him in June. A sermon and a gathering of lords and leaders declared the boys illegitimate (their father's supposed earlier promise to marry Lady Eleanor Talbot) and asked Richard to take the throne on June 25; Richard was crowned Richard III on July 6, 1483; the 1484 act Titulus Regius made it law. Dominic Mancini, an Italian in London, wrote before the end of 1483 that the boys were seen less and less and then not at all, that people feared they were dead, and that he didn't know their fate. There are no confirmed sightings after summer 1483. Thomas More (born 1478) wrote around 1513, while the Tudors ruled (he left it unfinished), that Richard ordered the killing and named the men responsible; he gave no sources; Shakespeare's play follows him. Perkin Warbeck claimed from 1491 to 1497 to be young Richard, had foreign backers, and confessed after his capture that he wasn't; most historians accept that. In 1674, workmen found two children's skeletons in a wooden box about ten feet under a staircase at the Tower; Charles II had them placed in an urn in Westminster Abbey. In 1933, an examination said they were children of about the right ages, but it couldn't determine sex or date; no DNA testing has been allowed. Suspects: Richard III (most historians' view: control, motive, never showed the boys alive); the Duke of Buckingham (named in a few documents, but unlikely to have acted without Richard's knowledge); Henry VII (king from 1485; never accused at the time). In 2023, and again in 2025, Philippa Langley published documents she says show both boys survived; many historians say the documents fall short of proof.
+**What happens in this case (for Rocky only — never read it out, and never share it before the learner has finished the game):** Edward IV died on April 9, 1483. His son Edward V was 12; his younger son Richard was 9. Their uncle Richard, Duke of Gloucester, was named protector, took charge of Edward on the road to London (arresting several men in his escort, including relatives of the boys' mother), and lodged him in the Tower (from May 19), then a royal residence as well as a fortress; young Richard joined him in June. A sermon and a gathering of lords and leaders declared the boys illegitimate (their father's supposed earlier promise to marry Lady Eleanor Talbot) and asked Richard to take the throne on June 25; Richard was crowned Richard III on July 6, 1483; the 1484 act Titulus Regius made it law. Dominic Mancini, an Italian in London, wrote before the end of 1483 that the boys were seen less and less and then not at all, that people feared they were dead, and that he didn't know their fate. There are no confirmed sightings after summer 1483. Thomas More (born 1478) wrote around 1513, while the Tudors ruled (he left it unfinished), that Richard ordered the killing and named the men responsible; he gave no sources; Shakespeare's play follows him. Perkin Warbeck claimed from 1491 to 1497 to be young Richard, had foreign backers, and confessed after his capture that he wasn't; most historians accept that. In 1674, workmen found two children's skeletons in a wooden box about ten feet under a staircase at the Tower; Charles II had them placed in an urn in Westminster Abbey. In 1933, an examination said they were children of about the right ages, but it couldn't determine sex or date; no DNA testing has been allowed. Suspects: Richard III (most historians' view: control, motive, never showed the boys alive); the Duke of Buckingham (named in a few documents, but unlikely to have acted without Richard's knowledge); Henry VII (king from 1485; never accused at the time). In 2023, and again in 2025, Philippa Langley published documents she says show both boys survived; many historians say the documents fall short of proof.
 
 **Content notes (for the tutor and guardian; never read them out):** The likely deaths of two children, discussed in general terms only. No methods or injuries are described.
 
 **Hook — present word for word, exactly as below, before anything else:**
 
-> Quick vote before you read. In 1483, two young princes disappeared from the Tower of London. What do you think happened to them?
+> Quick vote before you start. In 1483, two young princes disappeared from the Tower of London. What do you think happened to them?
 >
 > A) Their uncle, the new king, got rid of them
 > B) They escaped and lived in secret
 > C) Nobody can know for sure
 
-If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the reading. Do not react to the vote either way.
+If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
 
-**Reading — open `resources/M08Case.md` whole, exactly as written.** Open the reading as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as in the file. Do not summarise it, condense it, or narrate it from memory. Tell the learner, before they start, that they can say if they need to pause and come back later, and to say when they're done with the file. Ask no questions while they're reading.
 
-**Finished too fast? — check before the look-back:** when the learner says they're done, add up their reading time on this case (since the reading opened, plus any earlier sessions on this module in `state/sessions.jsonl`). If it's under 5 minutes, push back once, kindly: say this case file usually takes about 7 minutes to read, and ask them to go back and finish it — they can pause and come back later if they're tired. Don't reveal anything about the case yet. If they say they really did read it all, take their word and go on.
 
-**Look back at the vote — one line, once the learner has finished reading:** this is an opinion vote with no right answer. Remind them what they voted and ask, in one sentence, whether the case file changed their mind. No lecture.
+**Look back at the vote — one line, once the learner reaches the "Case closed" screen:** this is an opinion vote with no right answer. Remind them what they voted and ask, in one sentence, whether the case changed their mind. No lecture.
 
-**Talk-back — at most two questions, one at a time (skip entirely if the tutor turned talk-back off):**
+**Talk-back — at most two questions, one at a time (skip entirely if the tutor turned talk-back off):** Ask them after the game. The learner can answer from what they found in the game; they don't need the case file.
 
 1. Why is Dominic Mancini's report more useful to detectives than Thomas More's history?
    *(What a good answer mentions: Mancini wrote in 1483, at the time; More wrote about 30 years later, for the new Tudor kings, and didn't say where his information came from.)*
@@ -98,13 +95,15 @@ Don't tell them the order of the sources or which verdict to choose. If they're 
 
 **Book suggestion — always offer, never require:** once the activities are done, suggest *The Little Princes in the Tower* by William W. Lace, a short history for young readers with family trees and a timeline (it's older, so it may need a library request). Say it's just for fun if they want more; don't assign it or check on it later. If the guardian asked to keep this case light, skip the book suggestion.
 
+**Case file — optional, at the very end:** after the book suggestion, offer it in one line: it's the real detective file behind the game, with extra details, and they can read it now, later, or skip it. If they want it, open `resources/M08Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
+
 When the activity (or both activities) is finished, the book has been suggested, and the learner confirms they're done, the module is complete.
 
 ## Resources and surfaces
 
 | Surface | Where | Status |
 |---|---|---|
-| Learner reading (original case file, open whole) | resources/M08Case.md | Ready |
+| Optional case file (offered at the very end; open whole if wanted) | resources/M08Case.md | Ready |
 | Game (Activity 1): *The Tower Ledger* | https://mistysue-hub.github.io/recess-games/cold-case-academy/tower-ledger/ | Ready (outside webpage; Rocky can't see inside it) |
 | Debate and interest (Activity 2) | this file | Ready |
 | Runtime rules | AGENTS.md | Ready |
@@ -119,13 +118,13 @@ This module file is for Rocky only and is never shown to the learner.
 
 ## Completion criteria
 
-The module is complete when the learner has answered the hook vote, read the case file in full, worked through the talk-back (if on), played the game through to its "Case closed" screen and told Rocky their verdict, how sure they were, and which source they trusted most, finished Activity 2 if the activity count is two, heard the book suggestion, and confirmed they're done. If the case was skipped (see Tutor guidance), it counts as skipped, not completed.
+The module is complete when the learner has answered the hook vote, worked through the talk-back (if on), played the game through to its "Case closed" screen and told Rocky their verdict, how sure they were, and which source they trusted most, finished Activity 2 if the activity count is two, been offered the optional case file, heard the book suggestion, and confirmed they're done. If the case was skipped (see Tutor guidance), it counts as skipped, not completed.
 
 ## State updates
 
 On session end, Rocky writes:
 
-- **state/sessions.jsonl** — one line: date, minutes, minutes spent reading this module's case file, whether the module was completed or skipped, where the learner paused if they did.
+- **state/sessions.jsonl** — one line: date, minutes, whether they opened the optional case file (and minutes reading it, if so), whether the module was completed or skipped, where the learner paused if they did.
 - **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status (and M08 marked skipped if it was).
 - **state/module_completions.jsonl** — on completion only: ref M08, date, hook answer (and whether the file changed their mind), talk-back answers, their verdict and confidence, their most-trusted source, their detective rating (stars out of 4), and which Activity 2 ran (if any).
 - **state/student_profile.md** — durable observations only: whether the learner enjoys debating, which interests landed in the interest activity, which kinds of cases grab them, and whether they tend to be overconfident or cautious with verdicts.

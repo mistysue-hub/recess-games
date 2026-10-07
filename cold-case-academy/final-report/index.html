@@ -279,6 +279,26 @@ a:focus-visible, .macro-link:focus-visible, summary:focus-visible { outline: 3px
 .roomcard.off { border: 2px solid var(--muted); }
 .roomcard .card-title { margin: 0 0 8px; }
 @media (max-width: 420px) { .floorplan { grid-template-columns: 1fr; } }
+
+/* Case map: a drawn map with tappable pins on the Where-to screen */
+.casemap { position: relative; margin: 6px 0 4px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.casemap-art svg { display: block; width: 100%; height: auto; }
+.mpin { position: absolute; transform: translate(-50%, -24px); text-align: center; z-index: 2; }
+.mpin a, .mpin > .mpin-dot { text-decoration: none; color: var(--ink); }
+.mpin a { display: flex; flex-direction: column; align-items: center; background: none !important; border: none !important; padding: 0 !important; min-height: 0 !important; }
+.mpin-dot { display: flex; align-items: center; justify-content: center; margin: 0 auto; width: 34px; height: 34px; border-radius: 50%; background: var(--card); border: 3px solid var(--stamp); box-shadow: 0 2px 4px rgba(0,0,0,.35); font-size: 17px; line-height: 1; }
+.mpin-label { display: block; margin-top: 2px; background: rgba(255,253,246,.94); border-radius: 3px; padding: 1px 5px; font: 700 .72rem/1.25 var(--body); color: var(--ink); white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.mpin a:hover .mpin-dot { transform: scale(1.1); }
+.mpin a:focus-visible { outline: none; }
+.mpin a:focus-visible .mpin-dot { outline: 3px solid var(--pin); outline-offset: 2px; }
+.mpin.done .mpin-dot { border-color: var(--evidence); background: #eef6ee; }
+.mpin.locked { opacity: .75; }
+.mpin.locked .mpin-dot { border-color: var(--muted); }
+.maplegend { margin: 4px 0 10px; font-size: .82rem; }
+details.maplist { margin: 0 0 12px; }
+details.maplist summary { cursor: pointer; font-family: var(--display); color: var(--muted); min-height: 32px; }
+details.maplist ul.map { margin-top: 8px; }
+@media (max-width: 480px) { .mpin-dot { width: 28px; height: 28px; font-size: 14px; border-width: 2px; } .mpin { transform: translate(-50%, -20px); } .mpin-label { font-size: .6rem; padding: 0 3px; } }
 /* twine-user-stylesheet #2: "CaseTheme" */
 :root { --accent: #2f6b3a; }
 #passages { border-top-color: var(--accent); }
@@ -376,6 +396,16 @@ setup.copyReport = function () {
 &lt;&lt;if $visited.includes(_dest)&gt;&gt;&lt;&lt;capture _dest&gt;&gt;&lt;span class=&quot;opt revisit&quot;&gt;&lt;&lt;link _label&gt;&gt;&lt;&lt;goto _dest&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;em&gt;Visited · going back is free&lt;/em&gt;&lt;/span&gt;&lt;&lt;/capture&gt;&gt;
 &lt;&lt;else&gt;&gt;&lt;&lt;capture _dest&gt;&gt;&lt;&lt;link _label&gt;&gt;&lt;&lt;set $leads to $leads - 1&gt;&gt;&lt;&lt;run $visited.push(_dest)&gt;&gt;&lt;&lt;goto _dest&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;/capture&gt;&gt;
 &lt;&lt;/if&gt;&gt;
+&lt;&lt;/widget&gt;&gt;
+
+&lt;&lt;widget &quot;casemap&quot;&gt;&gt;
+&lt;div class=&quot;casemap&quot;&gt;
+&lt;div class=&quot;casemap-art&quot;&gt;&lt;&lt;include &quot;MapArt&quot;&gt;&gt;&lt;/div&gt;
+&lt;&lt;for _mp range setup.mapPins&gt;&gt;&lt;&lt;capture _mp&gt;&gt;&lt;&lt;set _mpLocked to _mp.lock and not $notebook.includes(_mp.lock)&gt;&gt;&lt;&lt;set _mpDone to $visited.includes(_mp.dest)&gt;&gt;
+&lt;span @class=&quot;&#39;mpin&#39; + (_mpDone ? &#39; done&#39; : &#39;&#39;) + (_mpLocked ? &#39; locked&#39; : &#39;&#39;)&quot; @style=&quot;&#39;left:&#39; + _mp.x + &#39;%;top:&#39; + _mp.y + &#39;%&#39;&quot;&gt;&lt;&lt;if _mpLocked&gt;&gt;&lt;span class=&quot;mpin-dot&quot; aria-hidden=&quot;true&quot;&gt;🔒&lt;/span&gt;&lt;span class=&quot;mpin-label&quot;&gt;&lt;&lt;print _mp.label&gt;&gt; (locked)&lt;/span&gt;&lt;&lt;else&gt;&gt;&lt;&lt;link `&#39;&lt;span class=&quot;mpin-dot&quot; aria-hidden=&quot;true&quot;&gt;&#39; + _mp.icon + &#39;&lt;/span&gt;&lt;span class=&quot;mpin-label&quot;&gt;&#39; + _mp.label + (_mpDone ? &#39; ✓&#39; : &#39;&#39;) + &#39;&lt;/span&gt;&#39;`&gt;&gt;&lt;&lt;if not $visited.includes(_mp.dest)&gt;&gt;&lt;&lt;set $leads to $leads - 1&gt;&gt;&lt;&lt;run $visited.push(_mp.dest)&gt;&gt;&lt;&lt;/if&gt;&gt;&lt;&lt;goto _mp.dest&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+&lt;&lt;/capture&gt;&gt;&lt;&lt;/for&gt;&gt;
+&lt;/div&gt;
+&lt;p class=&quot;meta maplegend&quot;&gt;Tap a pin to go there. ✓ = visited (free to go back).&lt;/p&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;tomap&quot;&gt;&gt;

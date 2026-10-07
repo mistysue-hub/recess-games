@@ -38,6 +38,16 @@
 <</if>>
 <</widget>>
 
+<<widget "casemap">>
+<div class="casemap">
+<div class="casemap-art"><<include "MapArt">></div>
+<<for _mp range setup.mapPins>><<capture _mp>><<set _mpLocked to _mp.lock and not $notebook.includes(_mp.lock)>><<set _mpDone to $visited.includes(_mp.dest)>>
+<span @class="'mpin' + (_mpDone ? ' done' : '') + (_mpLocked ? ' locked' : '')" @style="'left:' + _mp.x + '%;top:' + _mp.y + '%'"><<if _mpLocked>><span class="mpin-dot" aria-hidden="true">🔒</span><span class="mpin-label"><<print _mp.label>> (locked)</span><<else>><<link `'<span class="mpin-dot" aria-hidden="true">' + _mp.icon + '</span><span class="mpin-label">' + _mp.label + (_mpDone ? ' ✓' : '') + '</span>'`>><<if not $visited.includes(_mp.dest)>><<set $leads to $leads - 1>><<run $visited.push(_mp.dest)>><</if>><<goto _mp.dest>><</link>><</if>></span>
+<</capture>><</for>>
+</div>
+<p class="meta maplegend">Tap a pin to go there. ✓ = visited (free to go back).</p>
+<</widget>>
+
 <<widget "tomap">>
 <div class="actions">[[Back to the map|Hub]]<<link "Deduction board">><<set $return to passage()>><<goto "Board">><</link>></div>
 <</widget>>
@@ -311,3 +321,23 @@ a:focus-visible, .macro-link:focus-visible, summary:focus-visible { outline: 3px
 .roomcard.off { border: 2px solid var(--muted); }
 .roomcard .card-title { margin: 0 0 8px; }
 @media (max-width: 420px) { .floorplan { grid-template-columns: 1fr; } }
+
+/* Case map: a drawn map with tappable pins on the Where-to screen */
+.casemap { position: relative; margin: 6px 0 4px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.casemap-art svg { display: block; width: 100%; height: auto; }
+.mpin { position: absolute; transform: translate(-50%, -24px); text-align: center; z-index: 2; }
+.mpin a, .mpin > .mpin-dot { text-decoration: none; color: var(--ink); }
+.mpin a { display: flex; flex-direction: column; align-items: center; background: none !important; border: none !important; padding: 0 !important; min-height: 0 !important; }
+.mpin-dot { display: flex; align-items: center; justify-content: center; margin: 0 auto; width: 34px; height: 34px; border-radius: 50%; background: var(--card); border: 3px solid var(--stamp); box-shadow: 0 2px 4px rgba(0,0,0,.35); font-size: 17px; line-height: 1; }
+.mpin-label { display: block; margin-top: 2px; background: rgba(255,253,246,.94); border-radius: 3px; padding: 1px 5px; font: 700 .72rem/1.25 var(--body); color: var(--ink); white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.mpin a:hover .mpin-dot { transform: scale(1.1); }
+.mpin a:focus-visible { outline: none; }
+.mpin a:focus-visible .mpin-dot { outline: 3px solid var(--pin); outline-offset: 2px; }
+.mpin.done .mpin-dot { border-color: var(--evidence); background: #eef6ee; }
+.mpin.locked { opacity: .75; }
+.mpin.locked .mpin-dot { border-color: var(--muted); }
+.maplegend { margin: 4px 0 10px; font-size: .82rem; }
+details.maplist { margin: 0 0 12px; }
+details.maplist summary { cursor: pointer; font-family: var(--display); color: var(--muted); min-height: 32px; }
+details.maplist ul.map { margin-top: 8px; }
+@media (max-width: 480px) { .mpin-dot { width: 28px; height: 28px; font-size: 14px; border-width: 2px; } .mpin { transform: translate(-50%, -20px); } .mpin-label { font-size: .6rem; padding: 0 3px; } }

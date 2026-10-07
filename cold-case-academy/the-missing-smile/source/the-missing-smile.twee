@@ -13,6 +13,7 @@ The Missing Smile
 
 
 :: StoryInit
+<<set setup.mapPins to [{"dest": "Wall", "label": "Empty wall", "icon": "🖼️", "x": 12, "y": 17}, {"dest": "Stairwell", "label": "Stairwell", "icon": "🚪", "x": 35, "y": 17}, {"dest": "Staff", "label": "Staff office", "icon": "🗂️", "x": 58, "y": 17}, {"dest": "Guards", "label": "Guards", "icon": "📋", "x": 12, "y": 41}, {"dest": "Photographers", "label": "Photo studio", "icon": "📷", "x": 35, "y": 41}, {"dest": "Cafe", "label": "Artists' café", "icon": "☕", "x": 84, "y": 12}, {"dest": "Records", "label": "Records office", "icon": "🗂️", "x": 82, "y": 52}, {"dest": "Newspaper", "label": "Newspaper", "icon": "📰", "x": 58, "y": 76}, {"dest": "Workers", "label": "A worker", "icon": "🔨", "x": 16, "y": 76, "lock": "workers"}]>>
 <<set setup.cards = {
   "hooks":      { title: "Four empty hooks", text: "The painting was lifted straight off the wall. No forced locks, no broken windows.", type: "evidence" },
   "genius":     { title: "“A genius did it”", text: "People keep saying only a master thief could pull this off.", type: "assumption" },
@@ -131,6 +132,16 @@ The Missing Smile
 <</if>>
 <</widget>>
 
+<<widget "casemap">>
+<div class="casemap">
+<div class="casemap-art"><<include "MapArt">></div>
+<<for _mp range setup.mapPins>><<capture _mp>><<set _mpLocked to _mp.lock and not $notebook.includes(_mp.lock)>><<set _mpDone to $visited.includes(_mp.dest)>>
+<span @class="'mpin' + (_mpDone ? ' done' : '') + (_mpLocked ? ' locked' : '')" @style="'left:' + _mp.x + '%;top:' + _mp.y + '%'"><<if _mpLocked>><span class="mpin-dot" aria-hidden="true">🔒</span><span class="mpin-label"><<print _mp.label>> (locked)</span><<else>><<link `'<span class="mpin-dot" aria-hidden="true">' + _mp.icon + '</span><span class="mpin-label">' + _mp.label + (_mpDone ? ' ✓' : '') + '</span>'`>><<if not $visited.includes(_mp.dest)>><<set $leads to $leads - 1>><<run $visited.push(_mp.dest)>><</if>><<goto _mp.dest>><</link>><</if>></span>
+<</capture>><</for>>
+</div>
+<p class="meta maplegend">Tap a pin to go there. ✓ = visited (free to go back).</p>
+<</widget>>
+
 <<widget "tomap">>
 <div class="actions">[[Back to the map|Hub]]<<link "Deduction board">><<set $return to passage()>><<goto "Board">><</link>></div>
 <</widget>>
@@ -184,7 +195,12 @@ The Missing Smile
 <<else>><p class="quote chief"><<print _e.text>></p><</if>>
 <</for>>
 <h2>Where to?</h2>
-<p class="meta">The map of Paris. New places cost a lead. Places you've visited are free to revisit.</p>
+<p class="meta">New places cost a lead. Places you've visited are free to revisit.</p>
+<<casemap>>
+<div class="actions">
+<<if $notebook.includes("pprints") and $notebook.includes("print") and not $compared>><<link "Take Peruggia's prints to the records office">><<set $leads to $leads - 1>><<set $compared to true>><<goto "Compare">><</link>>
+<<elseif $compared>><span class="opt revisit"><<link "Comparing prints">><<goto "Compare">><</link>><em>Visited · going back is free</em></span><</if>></div>
+<details class="maplist"><summary>Show the places as a list</summary>
 <ul class="map">
 <li><<maplink "Wall" "🖼️ The empty wall in the Salon Carré">></li>
 <li><<maplink "Stairwell" "🚪 The back stairwell">></li>
@@ -195,9 +211,8 @@ The Missing Smile
 <li><<maplink "Newspaper" "📰 A newspaper office">></li>
 <li><<maplink "Cafe" "☕ The café where artists meet">></li>
 <li><<if $notebook.includes("workers")>><<maplink "Workers" "🔨 Visit a worker from the staff list">><<else>><span class="place locked">Visit a worker <em>Locked: you need the staff list first.</em></span><</if>></li>
-<<if $notebook.includes("pprints") and $notebook.includes("print") and not $compared>><li><<link "Take Peruggia's prints to the records office">><<set $leads to $leads - 1>><<set $compared to true>><<goto "Compare">><</link>></li>
-<<elseif $compared>><li><span class="opt revisit"><<link "Comparing prints">><<goto "Compare">><</link>><em>Visited · going back is free</em></span></li><</if>>
 </ul>
+</details>
 <div class="actions secondary"><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to name a suspect|Accusation]]</div>
 
 
@@ -676,3 +691,29 @@ h1 { color: var(--accent); }
 .card { border-top-color: var(--accent); }
 svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
 svg.art.scene { margin: 6px 0 14px; }
+
+
+:: MapArt [art]
+<svg viewBox='0 0 400 260' role='img' aria-label='A hand-drawn map of Paris in 1911: the long Louvre palace beside the Seine, the Île de la Cité in the river, and the hill of Montmartre. Map of Paris, 1911' preserveAspectRatio='xMidYMid slice'><rect width='400' height='260' fill='#f3ead2'/><path d='M0 150 C80 135 150 165 230 150 S340 130 400 145 L400 175 C340 160 300 180 230 180 S90 165 0 182 Z' fill='#9cc3d9'/><ellipse cx='330' cy='158' rx='38' ry='11' fill='#e8dcc0' stroke='#b8a77f'/><rect x='18' y='18' width='250' height='118' rx='4' fill='#e9dcb8' stroke='#a58f5f' stroke-width='2'/><rect x='30' y='30' width='226' height='94' fill='none' stroke='#c9b58a' stroke-dasharray='4 3'/><text x='143' y='132' font-family='Special Elite, Courier New, monospace' font-size='9' fill='#5a4a3a' text-anchor='middle' >THE LOUVRE (closed Mondays)</text><path d='M290 10 Q330 -10 395 20 L395 60 Q340 50 290 60 Z' fill='#d6c9a4'/><text x='345' y='48' font-family='Special Elite, Courier New, monospace' font-size='9' fill='#5a4a3a' text-anchor='middle' >Montmartre</text><g stroke='#c8b994' stroke-width='1'><line x1='0' y1='205' x2='400' y2='205'/><line x1='120' y1='182' x2='120' y2='260'/><line x1='270' y1='182' x2='270' y2='260'/></g><text x='200' y='168' font-family='Special Elite, Courier New, monospace' font-size='10' fill='#4f7895' text-anchor='middle' >~ the Seine ~</text><text x='330' y='176' font-family='Special Elite, Courier New, monospace' font-size='8' fill='#5a4a3a' text-anchor='middle' >Île de la Cité</text><circle cx='370' cy='230' r='6' fill='#6f8f5a'/><circle cx='377' cy='233' r='5' fill='#6f8f5a'/><circle cx='30' cy='240' r='6' fill='#6f8f5a'/><circle cx='37' cy='243' r='5' fill='#6f8f5a'/><circle cx='200' cy='245' r='6' fill='#6f8f5a'/><circle cx='207' cy='248' r='5' fill='#6f8f5a'/></svg>
+
+
+:: CaseMapStyle [stylesheet]
+/* Case map: a drawn map with tappable pins on the Where-to screen */
+.casemap { position: relative; margin: 6px 0 4px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.casemap-art svg { display: block; width: 100%; height: auto; }
+.mpin { position: absolute; transform: translate(-50%, -24px); text-align: center; z-index: 2; }
+.mpin a, .mpin > .mpin-dot { text-decoration: none; color: var(--ink); }
+.mpin a { display: flex; flex-direction: column; align-items: center; background: none !important; border: none !important; padding: 0 !important; min-height: 0 !important; }
+.mpin-dot { display: flex; align-items: center; justify-content: center; margin: 0 auto; width: 34px; height: 34px; border-radius: 50%; background: var(--card); border: 3px solid var(--stamp); box-shadow: 0 2px 4px rgba(0,0,0,.35); font-size: 17px; line-height: 1; }
+.mpin-label { display: block; margin-top: 2px; background: rgba(255,253,246,.94); border-radius: 3px; padding: 1px 5px; font: 700 .72rem/1.25 var(--body); color: var(--ink); white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.mpin a:hover .mpin-dot { transform: scale(1.1); }
+.mpin a:focus-visible { outline: none; }
+.mpin a:focus-visible .mpin-dot { outline: 3px solid var(--pin); outline-offset: 2px; }
+.mpin.done .mpin-dot { border-color: var(--evidence); background: #eef6ee; }
+.mpin.locked { opacity: .75; }
+.mpin.locked .mpin-dot { border-color: var(--muted); }
+.maplegend { margin: 4px 0 10px; font-size: .82rem; }
+details.maplist { margin: 0 0 12px; }
+details.maplist summary { cursor: pointer; font-family: var(--display); color: var(--muted); min-height: 32px; }
+details.maplist ul.map { margin-top: 8px; }
+@media (max-width: 480px) { .mpin-dot { width: 28px; height: 28px; font-size: 14px; border-width: 2px; } .mpin { transform: translate(-50%, -20px); } .mpin-label { font-size: .6rem; padding: 0 3px; } }
