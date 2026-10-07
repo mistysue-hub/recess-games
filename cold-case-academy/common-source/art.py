@@ -64,10 +64,23 @@ MARSHALS_BANNER = SVG_OPEN.format(label="A deputy marshal's star badge on a desk
 <g transform="translate(330 186)"><path d="M0 -34 L9 -12 L33 -12 L14 3 L21 26 L0 12 L-21 26 L-14 3 L-33 -12 L-9 -12 Z" fill="#d4a62a" stroke="#8a6a12" stroke-width="2"/><circle r="10" fill="#e8c35a" stroke="#8a6a12" stroke-width="1.5"/></g>
 </svg>'''
 
+SMILE_BANNER = SVG_OPEN.format(label="A tall Louvre gallery wall crowded with gold-framed paintings, with an empty space and four bare iron hooks where the Mona Lisa used to hang.") + '''
+<rect width="640" height="220" fill="#6e2a33"/>
+<rect y="196" width="640" height="24" fill="#4a2a1c"/>
+<g fill="#7d343e" opacity=".6"><rect x="0" y="0" width="640" height="10"/></g>
+<g><rect x="30" y="34" width="120" height="86" fill="#c9a043"/><rect x="40" y="44" width="100" height="66" fill="#5b6e5a"/><rect x="38" y="130" width="70" height="52" fill="#c9a043"/><rect x="46" y="138" width="54" height="36" fill="#7a5a3a"/>
+<rect x="470" y="30" width="140" height="100" fill="#c9a043"/><rect x="480" y="40" width="120" height="80" fill="#4f5d73"/><rect x="520" y="140" width="90" height="46" fill="#c9a043"/><rect x="528" y="148" width="74" height="30" fill="#8a6a4a"/></g>
+<rect x="262" y="48" width="116" height="140" fill="#8a3c47" stroke="#5a2129" stroke-width="2" stroke-dasharray="6 6"/>
+<g fill="#2a2420"><circle cx="276" cy="60" r="4"/><circle cx="364" cy="60" r="4"/><circle cx="276" cy="176" r="4"/><circle cx="364" cy="176" r="4"/></g>
+<g fill="#3a2a22"><rect x="180" y="150" width="14" height="46" rx="6"/><circle cx="187" cy="140" r="11"/><rect x="430" y="152" width="14" height="44" rx="6"/><circle cx="437" cy="142" r="11"/></g>
+<path d="M286 22 L354 22 L348 30 L292 30 Z" fill="#f3ead2" opacity=".35"/>
+</svg>'''
+
 SCENES = {
  "flight-305": ("Plane", '<svg class="art scene" viewBox="0 0 640 160" role="img" aria-label="The tail of the jet on the runway in Reno, its back stairs hanging down to the ground."><rect width="640" height="160" fill="#2c3e55"/><rect y="128" width="640" height="32" fill="#3b3b3b"/><g stroke="#e8d36a" stroke-width="4" stroke-dasharray="26 18"><line x1="0" y1="146" x2="640" y2="146"/></g><path d="M40 70 L420 70 C450 70 470 78 480 88 C470 98 450 104 420 104 L40 104 Z" fill="#c9d3dd"/><path d="M400 70 L440 10 L470 10 L456 70 Z" fill="#aab6c2"/><rect x="418" y="58" width="44" height="14" rx="7" fill="#8e9aa7"/><path d="M430 104 L478 128 L486 126 L446 104 Z" fill="#7d8996"/><g stroke="#5c6875" stroke-width="2"><line x1="440" y1="110" x2="452" y2="108"/><line x1="452" y1="116" x2="464" y2="114"/><line x1="464" y1="122" x2="476" y2="120"/></g><g fill="#ffe9a8"><rect x="80" y="80" width="8" height="8" rx="1"/><rect x="104" y="80" width="8" height="8" rx="1"/><rect x="128" y="80" width="8" height="8" rx="1"/><rect x="152" y="80" width="8" height="8" rx="1"/></g><circle cx="560" cy="40" r="6" fill="#e74c3c"/><circle cx="590" cy="40" r="6" fill="#3498db"/></svg>'),
  "tena-bar-riddle": ("Geologist", '<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="A cutaway of the beach like a layer cake: ordinary sand on top with the money in it, natural river sand below, then the gray clay from the 1974 dredge at the bottom."><rect width="640" height="170" fill="#f4ecd6"/><rect x="40" y="20" width="560" height="40" fill="#e3c98f"/><rect x="40" y="60" width="560" height="44" fill="#d2b77a"/><rect x="40" y="104" width="560" height="50" fill="#9a9a94"/><g fill="#7e9b6a"><rect x="300" y="32" width="30" height="12" rx="2"/><rect x="326" y="36" width="30" height="12" rx="2"/></g><g font-family="Atkinson Hyperlegible, sans-serif" font-size="14" fill="#2a2420"><text x="56" y="46">Beach sand (money found here)</text><text x="56" y="88">Natural river sand</text><text x="56" y="134" fill="#fff">Gray clay from the 1974 dredge</text></g><path d="M380 38 L470 38" stroke="#a3231d" stroke-width="2"/><text x="476" y="43" font-family="Atkinson Hyperlegible, sans-serif" font-size="13" fill="#a3231d">the money</text></svg>'),
  "count-at-dawn": ("Cells", '<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="Inside a narrow cell: a bed with a fake head on the pillow under a blanket, and a dark hole behind the sink."><rect width="640" height="170" fill="#bfb8aa"/><g stroke="#6b6458" stroke-width="6"><line x1="20" y1="0" x2="20" y2="170"/><line x1="60" y1="0" x2="60" y2="170"/><line x1="100" y1="0" x2="100" y2="170"/></g><rect y="140" width="640" height="30" fill="#8f877a"/><rect x="170" y="96" width="250" height="40" rx="4" fill="#6f7b86"/><rect x="170" y="88" width="250" height="16" rx="6" fill="#55626e"/><ellipse cx="200" cy="88" rx="26" ry="14" fill="#f2efe6"/><circle cx="214" cy="80" r="15" fill="#e5c8a8"/><path d="M200 70 C210 62 228 64 230 76 C224 72 212 72 204 76 Z" fill="#5a3b25"/><rect x="480" y="70" width="70" height="30" rx="4" fill="#e8e4da" stroke="#9a9384" stroke-width="2"/><rect x="510" y="56" width="6" height="16" fill="#9a9384"/><rect x="494" y="112" width="40" height="26" fill="#2a2420"/><g stroke="#7a7266" stroke-width="2"><line x1="494" y1="120" x2="534" y2="120"/><line x1="494" y1="128" x2="534" y2="128"/></g></svg>'),
+ "the-missing-smile": ("Wall", '<svg class="art scene" viewBox="0 0 640 150" role="img" aria-label="Close-up of the gap on the wallpaper: four bare iron hooks around a brighter rectangle where the painting used to hang."><rect width="640" height="150" fill="#6e2a33"/><rect x="250" y="16" width="140" height="118" fill="#8f4550"/><g fill="#2a2420"><path d="M264 30 l0 10 l6 0" stroke="#2a2420" stroke-width="4" fill="none"/><path d="M376 30 l0 10 l-6 0" stroke="#2a2420" stroke-width="4" fill="none"/><path d="M264 120 l0 -10 l6 0" stroke="#2a2420" stroke-width="4" fill="none"/><path d="M376 120 l0 -10 l-6 0" stroke="#2a2420" stroke-width="4" fill="none"/></g><rect x="60" y="30" width="130" height="90" fill="#c9a043"/><rect x="70" y="40" width="110" height="70" fill="#556b55"/><rect x="450" y="30" width="130" height="90" fill="#c9a043"/><rect x="460" y="40" width="110" height="70" fill="#4f5d73"/></svg>'),
  "marshals-file": ("Search", '<svg class="art scene" viewBox="0 0 640 160" role="img" aria-label="Evidence photos laid out on a table: a homemade wooden paddle, a life vest made of raincoat cloth, and a small packet wrapped in plastic."><rect width="640" height="160" fill="#8a6a4f"/><g transform="rotate(-3 160 80)"><rect x="40" y="20" width="200" height="120" fill="#fbf6e8"/><rect x="52" y="32" width="176" height="88" fill="#ddd3bf"/><path d="M70 76 L170 76 L210 62 L214 90 L170 84 L70 84 Z" fill="#8a5a33"/></g><g transform="rotate(2 330 80)"><rect x="230" y="18" width="190" height="124" fill="#fbf6e8"/><rect x="242" y="30" width="166" height="92" fill="#ddd3bf"/><path d="M290 40 L360 40 L372 110 L278 110 Z" fill="#4c4c4c"/><path d="M325 40 L325 110" stroke="#2a2420" stroke-width="3"/><g stroke="#c9b26b" stroke-width="3"><line x1="284" y1="62" x2="366" y2="62"/><line x1="282" y1="86" x2="368" y2="86"/></g></g><g transform="rotate(-2 520 80)"><rect x="430" y="24" width="180" height="116" fill="#fbf6e8"/><rect x="442" y="36" width="156" height="84" fill="#ddd3bf"/><rect x="480" y="56" width="80" height="44" rx="6" fill="#c9dbe6" stroke="#8fb0c4" stroke-width="3"/><rect x="494" y="66" width="52" height="24" fill="#f4ecd6"/></g></svg>'),
 }
 
@@ -76,6 +89,7 @@ THEMES = {
  "tena-bar-riddle": "#2f7f79",
  "count-at-dawn": "#c0664a",
  "marshals-file": "#b8860b",
+ "the-missing-smile": "#8e2a3a",
 }
 
 ICONS = {
@@ -85,6 +99,8 @@ ICONS = {
  "Beach": "🏖️", "Lab": "🔬", "Geologist": "🪨", "RiverMap": "🗺️", "Chutes": "🪂", "Weather": "🌧️", "Files": "🗂️",
  # Count at Dawn
  "Cells": "🛏️", "West": "🗣️", "Corridor": "🔦", "Roof": "🏚️", "Shore": "🌊", "Shops": "🧰", "Music": "🪗", "Guards": "📋", "Dock": "📰",
+ # The Missing Smile
+ "Wall": "🖼️", "Stairwell": "🚪", "Photographers": "📷", "Records": "🗂️", "Staff": "📋", "Newspaper": "📰", "Cafe": "☕", "Workers": "🔨",
  # Marshals
  "Search": "🛶", "WestFile": "📄", "Bay": "⚓", "Memo": "📁", "Widner": "🗣️", "Roderick": "⭐", "Hut": "💻", "Tests": "🎬",
 }
@@ -104,16 +120,17 @@ svg.art {{ display: block; width: 100%; height: auto; border-radius: 6px; margin
 svg.art.scene {{ margin: 6px 0 14px; }}
 '''
 
-for game, banner in [("flight-305", FLIGHT_BANNER), ("tena-bar-riddle", TENA_BANNER), ("count-at-dawn", DAWN_BANNER), ("marshals-file", MARSHALS_BANNER)]:
+for game, banner in [("flight-305", FLIGHT_BANNER), ("tena-bar-riddle", TENA_BANNER), ("count-at-dawn", DAWN_BANNER), ("marshals-file", MARSHALS_BANNER), ("the-missing-smile", SMILE_BANNER)]:
     p = G / game / f"{game}.twee"
+    if not p.exists(): p = G / f"{game}.twee"
     s = p.read_text()
     # strip anything this script added before, so it can be re-run
     s = re.split(r"\n\n:: Banner \[art\]", s)[0].rstrip() + "\n"
     s = s.replace('<<include "Banner">>\n', "").replace('<<include "Scene">>\n', "")
     scene_passage, scene_svg = SCENES[game]
     # Banner on Start and CaseClosed
-    s = re.sub(r'(:: Start \[nobar\]\n)', r'\1<<include "Banner">>\n', s, count=1)
-    s = re.sub(r'(:: CaseClosed \[nobar\]\n)', r'\1<<include "Banner">>\n', s, count=1)
+    s = re.sub(r'(:: Start(?: \[nobar\])?\n)', r'\1<<include "Banner">>\n', s, count=1)
+    s = re.sub(r'(:: CaseClosed(?: \[nobar\])?\n)', r'\1<<include "Banner">>\n', s, count=1)
     # Scene under the heading of one location
     s = re.sub(r'(:: %s\n<h2>[^\n]*</h2>\n)' % scene_passage, r'\1<<include "Scene">>\n', s, count=1)
     # Map icons (idempotent: skip labels that already start with an icon)

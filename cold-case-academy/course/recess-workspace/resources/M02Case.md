@@ -123,6 +123,8 @@ The FBI now had to decide where to send searchers. They used the facts: how fast
 
 The FBI's first computer estimate pointed to thick forest near the small town of **Ariel** and **Lake Merwin**, north of the Lewis River in southwest Washington. Soldiers, police officers and volunteers searched there for weeks. The co-pilot, Bill Rataczak, later thought the jump happened farther south, closer to Portland.
 
+![Map of Flight 305's path south from Seattle past Tacoma toward Portland, with the first search area circled north of the Lewis River near Ariel and Lake Merwin](resources/images/M02-flight-path.png)
+
 The search found nothing at all.
 
 ---
