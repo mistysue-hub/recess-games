@@ -1,0 +1,436 @@
+:: StoryTitle
+First Day on the Job
+
+:: StoryData
+{
+  "ifid": "7C1E4B52-3D8A-4F0B-9E2A-6B1F5A2C9D41",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+<<set $trust to 50>>
+<<set $job to "">>
+<<set $texted to false>>
+<<set $textedLate to false>>
+<<set $ownedMistake to false>>
+<<set $boundary to "">>
+<<set $calmCustomer to false>>
+<<set $paycheckFixed to false>>
+<<set $moments to 0>>
+<<set $next to "">>
+<<set $lessons to []>>
+
+:: Story JavaScript [script]
+UIBar.destroy();
+Config.history.controls = false;
+Config.cleanupWikifierOutput = true;
+Config.history.maxStates = 40;
+Config.saves.maxSlotSaves = 0;
+Config.saves.maxAutoSaves = 0;
+
+:: Story Stylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap");
+:root{--paper:#f4ecd6;--ink:#2b2a24;--forest:#2f6b45;--trail:#c8553d;--wood:#8a5a2b;--sky:#2f6fb0;--sun:#e8a33d}
+html,body{background:#e9dfc2;color:var(--ink)}
+body{font:18px/1.6 Nunito,"Trebuchet MS",system-ui,sans-serif}
+#story{margin:0 auto;padding:0;max-width:680px}
+.passage p{margin:.55em 0}
+#passages{background:var(--paper);box-shadow:0 0 0 1px #d6c79d,0 10px 30px rgba(0,0,0,.12);padding:22px 22px 30px;margin:16px 12px;border-radius:14px}
+.passage{transition:opacity .25s}
+h1,h2,h3{font-family:Fredoka,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;color:var(--forest);line-height:1.2}
+h1{font-size:30px;margin:.2em 0 .4em}
+h2{font-size:23px;margin:.3em 0 .5em;display:inline-block;background:#fff8e6;border:3px solid var(--forest);border-radius:8px;padding:2px 12px;transform:rotate(-.6deg)}
+strong{color:#7a2e1f}
+.choices{display:flex;flex-direction:column;gap:10px;margin:18px 0 6px}
+.choices a,.next a{display:block;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.choices a:hover,.next a:hover,.choices a:focus,.next a:focus{background:#eaf2fb;outline:none}
+.next{margin-top:18px}
+.next a{border-color:var(--forest);color:#fff;background:var(--forest);text-align:center}
+.next a:hover,.next a:focus{background:#24563a}
+.msg{background:#fff;border-radius:14px;padding:10px 14px;margin:10px 0;border:2px solid #d6c79d}
+.msg.me{background:#e3f0e6;border-color:#9cc6a7;margin-left:24px}
+.msg.them{margin-right:24px}
+.msg b{display:block;font-size:13px;color:var(--wood);text-transform:uppercase;letter-spacing:.06em}
+.tip{background:#fff3cf;border:3px dashed var(--sun);border-radius:12px;padding:10px 14px;margin:14px 0}
+.tip::before{content:"🥾 Trail tip: ";font-weight:800;color:#8a5a00}
+.callback{background:#e7f0fb;border-left:6px solid var(--sky);border-radius:8px;padding:10px 14px;margin:12px 0}
+.callback::before{content:"🔁 Remember earlier? ";font-weight:800;color:#1d4a78}
+.meter{position:sticky;top:0;z-index:5;background:#fff8e6;border:2px solid var(--wood);border-radius:12px;padding:8px 12px;margin:0 0 14px;font-weight:700;font-size:15px}
+.meter .bar{height:14px;background:#e6dcc0;border-radius:8px;overflow:hidden;margin-top:5px}
+.meter .fill{height:100%;background:linear-gradient(90deg,#e8a33d,#2f6b45);border-radius:8px;transition:width .5s}
+.delta{font-weight:800;padding:2px 10px;border-radius:20px;display:inline-block;margin:4px 0}
+.up{background:#dff0e3;color:#24563a}.down{background:#fbe2dc;color:#8e3626}.same{background:#eee6d2;color:#5a4a2a}
+table.stub{width:100%;border-collapse:collapse;background:#fffaf0;border-radius:10px;overflow:hidden;font-size:16px;margin:10px 0}
+table.stub td{padding:7px 10px;border-bottom:1px dashed #d9c7a3}
+table.stub td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.stub tr.total td{background:#eef6e9;font-weight:800;border-bottom:none}
+table.stub tr.flag td{background:#fbe2dc}
+ul.lessons li{margin:6px 0}
+.small{font-size:15px;color:#5a5446}
+@media (max-width:520px){body{font-size:17px}#passages{margin:8px 6px;padding:16px 14px 24px}h1{font-size:26px}}
+
+:: PassageReady
+<<set $trust to Math.clamp($trust, 0, 100)>>
+
+:: PassageHeader
+<<if $job neq "" and not tags().includes("nometer")>><div class="meter">🤝 Manager's Trust Meter: <<print $trust>> / 100<div class="bar"><div class="fill" @style="'width:' + $trust + '%'"></div></div></div><</if>>
+
+:: widgets [widget]
+<<widget "delta">><<if _args[0] gt 0>><span class="delta up">Trust +<<print _args[0]>></span><<elseif _args[0] lt 0>><span class="delta down">Trust <<print _args[0]>></span><<else>><span class="delta same">Trust unchanged</span><</if>><</widget>>
+<<widget "onward">><<set $next to _args[0]>><<if $trust lt 35>><div class="next">[[Keep going →|Learning Moment]]</div><<else>><div class="next"><<link "Keep going →" _args[0]>><</link>></div><</if>><</widget>>
+<<widget "learn">><<set $lessons.push(_args[0])>><</widget>>
+<<widget "place">><<if $job is "cafe">>the café<<elseif $job is "hardware">>the hardware store<<else>>the pet supply shop<</if>><</widget>>
+<<widget "item">><<if $job is "cafe">>pastry case<<elseif $job is "hardware">>paint aisle<<else>>dog food shelves<</if>><</widget>>
+
+:: Start [nometer]
+<h1>🧑‍💼 First Day on the Job</h1>
+You're 16, homeschooled, and you just got your first job. 🎉
+
+Your manager's name is <strong>Dana</strong>. Dana is busy, fair, and notices everything. Over the next few weeks, your choices will raise or lower Dana's <strong>Trust Meter</strong>. Trust gets you good shifts, flexibility, and bigger responsibilities.
+
+There are no game-overs. Every choice teaches you something. (And some choices come back later. Just saying.)
+
+<strong>Where did you get hired?</strong>
+<div class="choices">[[☕ The Daily Grind café|Scene 1][$job to "cafe"]]
+[[🔨 Bolt & Board hardware store|Scene 1][$job to "hardware"]]
+[[🐾 Pawsitive Pet Supply|Scene 1][$job to "pet"]]</div>
+
+:: Scene 1
+<h2>Scene 1 · The bus is late</h2>
+It's 7:48 a.m. Your shift at <<place>> starts at 8:00. You're at the bus stop, and the app says:
+
+<div class="msg them"><b>Bus tracker</b>Route 12 · Delayed 20 minutes 🙃</div>
+
+You're going to be late. What do you do?
+<div class="choices">[[Text Dana right now: "Hi Dana, my bus is running about 20 minutes late. I'm on my way and should be there by 8:20. Sorry about this!"|Scene 1 Text Now][$texted to true; $trust += 15]]
+[[Say nothing, rush in, and hope Dana doesn't notice.|Scene 1 Sneak In][$trust -= 15]]
+[[Wait until you get there, then explain.|Scene 1 Explain Later][$textedLate to true; $trust -= 5]]</div>
+
+:: Scene 1 Text Now
+<div class="msg me"><b>You · 7:49 a.m.</b>Hi Dana, my bus is running about 20 minutes late. I'm on my way and should be there by 8:20. Sorry about this!</div>
+<div class="msg them"><b>Dana · 7:51 a.m.</b>Thanks for the heads-up! I'll cover the register till you get here.</div>
+
+<<delta 15>>
+
+You walk in at 8:19. Dana waves. No drama. Just a manager who knew exactly what was going on.
+
+<div class="tip">Being late happens to everyone. What matters is telling your manager <strong>before</strong> your shift starts, with when you'll arrive. Your manager can plan around a problem they know about.</div>
+<<learn "Late? Tell your manager before your shift, with when you'll arrive.">>
+<<onward "Scene 2">>
+
+:: Scene 1 Sneak In
+You slip in at 8:21 and quietly put on your name tag. Dana is behind the counter, already doing your job *and* hers.
+
+"Oh. You're here," Dana says. "I was about to call you. I wasn't sure if you were coming at all."
+
+<<delta -15>>
+
+<div class="tip">Hoping nobody notices almost never works. Your manager worried, scrambled to cover for you, and now wonders if you'll show up next time. A 10-second text would have changed everything.</div>
+<<learn "Late? Tell your manager before your shift, with when you'll arrive.">>
+<<onward "Scene 2">>
+
+:: Scene 1 Explain Later
+You arrive at 8:20 and go straight to Dana. "Sorry, my bus was 20 minutes late."
+
+"Okay," Dana says. "Next time, can you text me before your shift? I didn't know if I should call someone else in."
+
+<<delta -5>>
+
+<div class="tip">Explaining is good. Explaining <strong>before</strong> is much better. Your manager needs time to plan.</div>
+<<learn "Late? Tell your manager before your shift, with when you'll arrive.">>
+<<onward "Scene 2">>
+
+:: Scene 2
+<h2>Scene 2 · Oops at the register</h2>
+It's your third day. At closing, you count your register drawer.
+
+It's <strong>$10 short</strong>.
+
+You think back... and remember. A customer paid with a $20 for a $5 purchase, and you think you handed back $25 instead of $15. Ugh.
+
+What do you do?
+<div class="choices">[[Tell Dana right away what happened and how you'll avoid it next time.|Scene 2 Own It][$ownedMistake to true; $trust += 15]]
+[[Say nothing. Maybe nobody will notice $10.|Scene 2 Hide It][$trust -= 20]]
+[[Tell Dana the register must be broken.|Scene 2 Blame][$trust -= 10]]</div>
+
+:: Scene 2 Own It
+"Dana, my drawer is $10 short. I think I gave a customer change from $30 instead of $20. I'm really sorry. From now on I'll count the change back out loud, so I catch it."
+
+Dana nods slowly. "Thank you for telling me. Honestly? Counting change out loud is exactly the right fix. Everybody makes a register mistake in their first week."
+
+<<delta 15>>
+
+<div class="tip">Owning a mistake, plus a plan to fix it, is one of the fastest ways to earn trust. Managers know mistakes happen. What they need to know is that you'll be honest.</div>
+<<learn "Made a mistake? Own it, say what happened, and share your fix.">>
+<<onward "Scene 3">>
+
+:: Scene 2 Hide It
+You close the drawer and go home.
+
+The next morning, Dana calls you over. "The drawer from your register was $10 short last night. Do you know anything about it?"
+
+Your face turns the color of a tomato. "I... think I gave someone the wrong change."
+
+"I wish you'd told me last night," Dana says. "Now I've spent an hour recounting everything."
+
+<<delta -20>>
+
+<div class="tip">Registers get counted. Mistakes usually come out, and hiding one turns a small $10 problem into a big trust problem.</div>
+<<learn "Made a mistake? Own it, say what happened, and share your fix.">>
+<<onward "Scene 3">>
+
+:: Scene 2 Blame
+"I think the register is broken," you say. "It must have counted wrong."
+
+Dana checks the register's record. Every sale adds up perfectly. "The register looks fine," Dana says. "It's okay if it was a change mistake. That happens. I just need to know the real reason so we can fix it."
+
+<<delta -10>>
+
+<div class="tip">Blaming a machine (or a coworker) usually gets checked, and it hurts trust more than the mistake. "I think I gave the wrong change" would have been totally fine.</div>
+<<learn "Made a mistake? Own it, say what happened, and share your fix.">>
+<<onward "Scene 3">>
+
+:: Scene 3
+<h2>Scene 3 · Feedback time</h2>
+At the end of your second week, Dana pulls you aside.
+
+"You're great with customers. People love you. One thing to work on: the <<item>> keeps running low. Try to restock during quiet times, not just when something's empty."
+
+How do you respond?
+<div class="choices">[["Thanks! I'll do that. Could you show me which shelves to check first?"|Scene 3 Curious][$trust += 10]]
+[["But Tyler doesn't restock either!"|Scene 3 Defensive][$trust -= 10]]
+[[Nod, say nothing, feel crushed, and keep doing things the same way.|Scene 3 Crushed][$trust -= 5]]</div>
+
+:: Scene 3 Curious
+"Of course," Dana says, and spends two minutes showing you what sells fastest. The next week, the <<item>> is never empty. Dana notices. (Dana notices everything.)
+
+<<delta 10>>
+
+<div class="tip">Feedback isn't a punishment. It's free coaching. Say thanks, ask a question, and try it. Bonus: you just showed Dana you're easy to coach, which is a big deal to managers.</div>
+<<learn "Feedback is free coaching: say thanks, ask a question, try it.">>
+<<onward "Scene 4">>
+
+:: Scene 3 Defensive
+Dana's eyebrows go up. "I'm talking with you about your work right now. I'll talk with Tyler about his."
+
+The conversation ends awkwardly.
+
+<<delta -10>>
+
+<div class="tip">When feedback stings, it's natural to point at someone else. But it makes managers less likely to coach you. Try "Thanks, I'll work on that," even if it stings a little.</div>
+<<learn "Feedback is free coaching: say thanks, ask a question, try it.">>
+<<onward "Scene 4">>
+
+:: Scene 3 Crushed
+You go home feeling awful and replay it all night. The next week, the <<item>> runs low again.
+
+<<delta -5>>
+
+<div class="tip">It's completely normal for feedback to sting, especially from your first boss. But remember the first half: "People love you!" Dana gave you feedback <em>because</em> you're worth coaching. Next time, try asking a question, then try the fix.</div>
+<<learn "Feedback is free coaching: say thanks, ask a question, try it.">>
+<<onward "Scene 4">>
+
+:: Scene 4
+<h2>Scene 4 · Can you cover my shift... again?</h2>
+Your coworker Tyler texts you on Thursday night.
+
+<div class="msg them"><b>Tyler · 9:14 p.m.</b>heyyy can u cover my saturday shift?? pleeease 🙏 i'll owe u big</div>
+
+This is the <strong>third time</strong> this month. And this Saturday is your cousin's birthday party, which you've been looking forward to all week.
+
+What do you do?
+<div class="choices">[[Say no kindly: "I can't this Saturday, I have family plans. Have you asked Dana about the swap list?"|Scene 4 Boundary][$boundary to "kind"; $trust += 5]]
+[[Say yes again and skip the party. You don't want Tyler to be upset.|Scene 4 Yes Again][$boundary to "yes"]]
+[[Say "sure!" to avoid the awkward conversation... then don't show up.|Scene 4 Ghost][$boundary to "ghost"; $trust -= 25]]</div>
+
+:: Scene 4 Boundary
+<div class="msg me"><b>You · 9:20 p.m.</b>I can't this Saturday, I have family plans. Have you asked Dana about the swap list?</div>
+<div class="msg them"><b>Tyler · 9:22 p.m.</b>ok fair. i'll ask dana 👍</div>
+
+You go to the party. Your cousin is thrilled. Tyler finds someone else through Dana.
+
+<<delta 5>>
+
+<div class="tip">You can be a great teammate <em>and</em> say no. A kind, clear "I can't this time" plus a helpful idea is a healthy boundary. Also, shift swaps usually need your <strong>manager's</strong> okay, so always loop them in.</div>
+<<learn "It's okay to say no kindly. Shift swaps go through your manager.">>
+<<onward "Scene 5">>
+
+:: Scene 4 Yes Again
+You work Saturday. Dana appreciates the help. But you miss the party, and when you see the photos, your stomach sinks. Next week, Tyler asks again.
+
+<<delta 0>>
+
+<div class="tip">Helping out sometimes is great. Saying yes every time, even when it costs you things you care about, leads to burnout. Coworkers will respect a kind "not this time." (And make sure every swap is okayed by your manager.)</div>
+<<learn "It's okay to say no kindly. Shift swaps go through your manager.">>
+<<onward "Scene 5">>
+
+:: Scene 4 Ghost
+Saturday morning, Tyler sleeps in because you said you'd cover. You go to the party. Nobody opens the store on time. Customers wait outside.
+
+Dana calls you on Monday. "Tyler said you agreed to cover Saturday. What happened?"
+
+<<delta -25>>
+
+<div class="tip">Saying yes and then not showing up is the biggest trust-breaker at any job. If you can't do something, say so clearly at the start. An honest "no" is a thousand times better than a broken "yes."</div>
+<<learn "It's okay to say no kindly. Shift swaps go through your manager.">>
+<<onward "Scene 5">>
+
+:: Scene 5
+<h2>Scene 5 · The time-off request, then a tough customer</h2>
+First, some news: your best friend's homeschool graduation is next Friday, and you're scheduled to work. You ask Dana if you can swap.
+
+<<if $texted>><div class="callback">Back in Scene 1, you texted Dana before your shift when your bus was late.</div>
+"Sure," Dana says right away. "You always give me a heads-up, so I trust you to work it out. Put it on the swap list and I'll approve it."
+<<else>>Dana hesitates. "I'll see what I can do. It's hard for me to plan when I'm not always sure where people are." <<if $textedLate>><div class="callback">In Scene 1, you explained your late bus after you arrived, not before.</div><<else>><div class="callback">In Scene 1, you came in late without saying anything.</div><</if>>Dana does approve it eventually, but it takes a while.
+<</if>>
+
+Now, back to work. A customer storms up to the counter.
+
+"I've been waiting <strong>forever</strong>! This is ridiculous! Do you people even know what you're doing?"
+
+You've been working as fast as you can. What do you do?
+<div class="choices">[[Stay calm: "I'm sorry about the wait. Let me help you right now." If it gets worse, get Dana.|Scene 5 Calm][$calmCustomer to true; $trust += 10]]
+[[Snap back: "I'm going as fast as I can! You're not the only customer here."|Scene 5 Snap][$trust -= 15]]
+[[Turn around and walk into the back room without saying anything.|Scene 5 Walk Away][$trust -= 10]]</div>
+
+:: Scene 5 Calm
+You take a breath. "I'm sorry about the wait. Let me help you right now."
+
+The customer's shoulders drop a little. "...Okay. Thanks." By the time they leave, they're almost smiling.
+
+Dana saw the whole thing. "That was really well handled."
+
+<<delta 10>>
+
+<div class="tip">Most upset customers are frustrated with the situation, not with you. Stay calm, apologize for the problem, and help. If someone becomes threatening or won't calm down, getting your manager is the right move, not a failure.</div>
+<<learn "Upset customer? Stay calm, apologize for the problem, help, and get your manager if needed.">>
+<<onward "Scene 6">>
+
+:: Scene 5 Snap
+The customer's face goes red. "I want to speak to your manager!"
+
+Dana comes over, apologizes to the customer, and fixes it. Afterward, Dana says quietly, "I know they were rude. But we can't argue with customers. Next time, come get me."
+
+<<delta -15>>
+
+<div class="tip">It's natural to want to defend yourself. But arguing makes things bigger. Staying calm protects you, your coworkers and your job.</div>
+<<learn "Upset customer? Stay calm, apologize for the problem, help, and get your manager if needed.">>
+<<onward "Scene 6">>
+
+:: Scene 5 Walk Away
+You disappear into the back room. The customer is now even angrier, and there's nobody at the counter.
+
+Dana finds you. "Hey, are you okay? I get it, that was a lot. But you can't leave the counter empty. If someone's too much, come tell me and I'll take over."
+
+<<delta -10>>
+
+<div class="tip">Needing a moment is human. Walking away without a word leaves your team stuck. Instead, say "Let me get my manager for you," then go get help.</div>
+<<learn "Upset customer? Stay calm, apologize for the problem, help, and get your manager if needed.">>
+<<onward "Scene 6">>
+
+:: Scene 6
+<h2>Scene 6 · Payday! 💵</h2>
+Your first real paycheck arrives. Here's your pay stub. (Made-up numbers, but real-looking ones.)
+
+<table class="stub">
+<tr class="flag"><td>Hours worked (at $15 an hour)</td><td>27.00</td></tr>
+<tr><td><strong>Gross pay</strong></td><td>$405.00</td></tr>
+<tr><td>Social Security (6.2%)</td><td>−$25.11</td></tr>
+<tr><td>Medicare (1.45%)</td><td>−$5.87</td></tr>
+<tr><td>Federal income tax</td><td>−$10.00</td></tr>
+<tr><td>State income tax</td><td>−$7.00</td></tr>
+<tr class="total"><td>Net pay (take-home)</td><td>$357.02</td></tr>
+</table>
+
+Wait. You've been writing down your hours, and you worked <strong>30</strong> hours. The stub says <strong>27</strong>. That's 3 hours missing: <strong>$45</strong> before taxes.
+
+What do you do?
+<div class="choices">[[Calmly tell Dana, and show your written record of your hours.|Scene 6 Calm Ask][$paycheckFixed to true; $trust += 10]]
+[[Say nothing. It's awkward, and it's only three hours.|Scene 6 Say Nothing]]
+[[Post an angry rant about the company online.|Scene 6 Rant][$trust -= 20]]</div>
+
+:: Scene 6 Calm Ask
+"Hi Dana, I think my paycheck is missing 3 hours. Here's my record: I worked 30 hours, but the stub says 27. Could you check?"
+
+Dana looks it up. "You're right. One of your shifts didn't get entered. I'll fix it, and it'll be added to your next check. Thanks for keeping track."
+
+<<delta 10>>
+
+<div class="tip">Paycheck mistakes happen. Keeping your own record of hours and asking calmly is the professional fix. And always check your pay stub!</div>
+<<learn "Check every pay stub, keep your own record of hours, and ask calmly about mistakes.">>
+<div class="next">[[Keep going →|Final Callback]]</div>
+
+:: Scene 6 Say Nothing
+You let it go. It feels easier... but that's $45 of your work you never get back. (That's three hours of your life, paid for in "awkward.")
+
+<<delta 0>>
+
+<div class="tip">Asking about your own pay isn't rude. It's your money and your right. A calm "Could you check my hours?" is completely normal.</div>
+<<learn "Check every pay stub, keep your own record of hours, and ask calmly about mistakes.">>
+<div class="next">[[Keep going →|Final Callback]]</div>
+
+:: Scene 6 Rant
+You post: "WORST JOB EVER, THEY STOLE MY MONEY 😡😡😡"
+
+A coworker shows Dana. When you finally ask about it, the fix takes 30 seconds: one shift wasn't entered. But now the rant is out there, and Dana is hurt that you didn't just ask.
+
+<<delta -20>>
+
+<div class="tip">Always try the direct, calm route first. Most problems are honest mistakes. And remember: future employers can find what you post (M08!).</div>
+<<learn "Check every pay stub, keep your own record of hours, and ask calmly about mistakes.">>
+<div class="next">[[Keep going →|Final Callback]]</div>
+
+:: Final Callback
+<<if $ownedMistake>><div class="callback">Back in Scene 2, you owned your register mistake and came up with a fix.</div>
+One more thing before payday is over. Dana catches you on your way out.
+
+"We've got a new hire starting next week. Would you train them on the register? You're careful, and you're honest when something goes wrong. That's exactly who I want teaching them."
+
+<<set $trust += 10>><<delta 10>>
+
+You just got your first bit of <strong>responsibility</strong>. That's how promotions start.
+<div class="next">[[See how your first month went →|The End]]</div>
+<<else>><<if $trust lt 35>><div class="next">[[Keep going →|Learning Moment]]</div><<set $next to "The End">><<else>><div class="next">[[See how your first month went →|The End]]</div><</if>>
+<</if>>
+
+:: Learning Moment [nometer]
+<h2>🌱 A learning moment</h2>
+Dana asks you to stay for a minute after your shift. You brace yourself.
+
+But Dana smiles. "Hey. It's been a bumpy start, and that's okay. Everybody's first job is bumpy. Can I tell you the secret to trust at work?"
+
+"Trust is built in small moments. Tell me <strong>before</strong> something goes wrong when you can. Tell me <strong>right away</strong> when it already has. Ask questions. And if you say you'll do something, do it. That's honestly 90% of it."
+
+What do you say?
+<div class="choices">[["Thanks for telling me. I'll work on it, starting tomorrow."|Learning Moment After][$moments += 1; $trust += 15]]
+[["Can you tell me one thing I could do better this week?"|Learning Moment After][$moments += 1; $trust += 15]]</div>
+
+:: Learning Moment After [nometer]
+Dana nods. "That's all I need to hear."
+
+<<delta 15>>
+
+<div class="tip">Trust can always be rebuilt. It takes a little time and a lot of small, reliable actions. A rough start is not the end of the story.</div>
+<<learn "Trust can be rebuilt with small, reliable actions over time.">>
+<div class="next"><<link "Keep going →" $next>><</link>></div>
+
+:: The End [nometer]
+<h1>🏁 Your first month</h1>
+<div class="meter">🤝 Final Trust Meter: <<print $trust>> / 100<div class="bar"><div class="fill" @style="'width:' + $trust + '%'"></div></div></div>
+<<if $trust gte 85>><h2>⭐ Trusted Teammate</h2>
+Dana trusts you with real responsibility. You're the person the team counts on. Seriously impressive for a first job.
+<<elseif $trust gte 60>><h2>🌟 Rising Star</h2>
+You're becoming someone Dana relies on. A few more weeks like this and you'll be training the new hires.
+<<else>><h2>🌱 Growing Fast</h2>
+Your first month had some bumps, and that's how everybody learns. You now know exactly what builds trust, and you can start doing it tomorrow.
+<</if>>
+
+<strong>What you learned:</strong>
+<ul class="lessons"><<for _l range $lessons.filter(function (v, i, a) { return a.indexOf(v) === i; })>><li><<print _l>></li><</for>></ul>
+
+<div class="tip">Go back to Rocky and tell him: which choice surprised you most, and what's one thing you'd do on your real first day?</div>
+
+<div class="choices"><<link "🔁 Play again with different choices">><<run Engine.restart()>><</link>></div>
+<p class="small">A What Comes Next? game for Recess. Names, places and numbers are made up.</p>
