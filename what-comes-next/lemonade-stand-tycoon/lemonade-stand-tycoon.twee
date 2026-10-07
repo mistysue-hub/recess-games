@@ -1,0 +1,263 @@
+:: StoryTitle
+Lemonade Stand Tycoon
+
+:: StoryData
+{
+  "ifid": "8237E034-A84D-477D-A1D3-2A9DEE0A2F39",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+<<set $biz to "">>
+<<set $week to 1>>
+<<set $resolved to 0>>
+<<set $stars to 2>>
+<<set $cash to 20>>
+<<set $revTotal to 0>>
+<<set $costTotal to 0>>
+<<set $upgradeSpend to 0>>
+<<set $upgrades to []>>
+<<set $taxJar to 0>>
+<<set $jarWeeks to 0>>
+<<set $priceIdx to 1>>
+<<set $priceLog to []>>
+<<set $last to {}>>
+
+:: Story JavaScript [script]
+UIBar.destroy();
+Config.history.controls = false;
+Config.history.maxStates = 40;
+Config.saves.maxSlotSaves = 0;
+Config.saves.maxAutoSaves = 0;
+Config.cleanupWikifierOutput = true;
+setup.money = function (n) { return "$" + (Math.round(n * 100) / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+setup.starText = function (n) { return "★".repeat(n) + "☆".repeat(5 - n); };
+setup.cfgs = {
+  lemon: {
+    name: "Sunny Side Lemonade", emoji: "🍋", unit: 0.5, unitWord: "cups", oneWord: "cup",
+    what: "cups of lemonade", base: 40, prices: [1, 2, 3],
+    priceNotes: ["Cheap and cheerful", "The usual neighborhood price", "Fancy lemonade"],
+    upgrades: [
+      { name: "a big, bright sign", cost: 25 },
+      { name: "real lemons instead of powder", cost: 35 },
+      { name: "a shady umbrella and a cooler of ice", cost: 45 }
+    ],
+    events: [
+      { title: "Opening week!", text: "Your stand opens on a warm, sunny week. Neighbors are curious.", factor: 1, bonus: 0, protect: false },
+      { title: "Rainy week 🌧️", text: "The forecast says rain almost every day. Fewer people want cold lemonade.", factor: 0.5, bonus: 0, protect: false },
+      { title: "Big order! 🎉", text: "A neighbor is throwing a block party and orders 60 extra cups at your price.", factor: 1, bonus: 60, protect: false },
+      { title: "A competitor appears 😬", text: "Another kid opens a lemonade stand across the street. Customers have a choice now.", factor: 0.7, bonus: 0, protect: true }
+    ]
+  },
+  dog: {
+    name: "Happy Tails Dog Walking", emoji: "🐕", unit: 1, unitWord: "walks", oneWord: "walk",
+    what: "dog walks", base: 6, prices: [8, 12, 18],
+    priceNotes: ["Bargain walks", "A typical neighborhood price", "Premium walks"],
+    upgrades: [
+      { name: "a second leash, so you can walk two dogs at once", cost: 25 },
+      { name: "business cards for every mailbox", cost: 35 },
+      { name: "a pet first-aid kit and a treat pouch", cost: 45 }
+    ],
+    events: [
+      { title: "Opening week!", text: "You tell the neighbors you're open for business. A few dog owners sign up.", factor: 1, bonus: 0, protect: false },
+      { title: "Heat wave 🥵", text: "It's way too hot for long walks. Some owners cancel for the week.", factor: 0.7, bonus: 0, protect: false },
+      { title: "Big order! 🎉", text: "A family going on vacation books 10 extra walks for their two dogs.", factor: 1, bonus: 10, protect: false },
+      { title: "A competitor appears 😬", text: "A dog-walking app starts advertising in your neighborhood.", factor: 0.7, bonus: 0, protect: true }
+    ]
+  },
+  case: {
+    name: "Case Closed Phone Case Designs", emoji: "📱", unit: 6, unitWord: "cases", oneWord: "case",
+    what: "custom phone cases", base: 5, prices: [12, 18, 28],
+    priceNotes: ["Budget designs", "A fair price for custom art", "Collector's edition"],
+    upgrades: [
+      { name: "better printing settings and sharper colors", cost: 25 },
+      { name: "great photos of your best designs", cost: 35 },
+      { name: "eco-friendly packaging with a thank-you note", cost: 45 }
+    ],
+    events: [
+      { title: "Opening week!", text: "You post your first designs. Friends and family are your first customers.", factor: 1, bonus: 0, protect: false },
+      { title: "You went viral! 📈", text: "A friend's post about your cases gets shared a lot. Orders jump this week.", factor: 1.6, bonus: 0, protect: false },
+      { title: "Big order! 🎉", text: "A local club orders 8 extra matching cases at your price.", factor: 1, bonus: 8, protect: false },
+      { title: "A competitor appears 😬", text: "Super-cheap mass-made cases start showing up online.", factor: 0.7, bonus: 0, protect: true }
+    ]
+  }
+};
+
+:: Story Stylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap");
+:root{--paper:#f4ecd6;--ink:#2b2a24;--forest:#2f6b45;--trail:#c8553d;--wood:#8a5a2b;--sky:#2f6fb0;--sun:#e8a33d}
+html,body{background:#e9dfc2;color:var(--ink)}
+body{font:18px/1.6 Nunito,"Trebuchet MS",system-ui,sans-serif}
+#story{margin:0 auto;padding:0;max-width:680px}
+.passage p{margin:.55em 0}
+#passages{background:var(--paper);box-shadow:0 0 0 1px #d6c79d,0 10px 30px rgba(0,0,0,.12);padding:22px 22px 30px;margin:16px 12px;border-radius:14px}
+.passage{transition:opacity .25s}
+h1,h2,h3{font-family:Fredoka,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;color:var(--forest);line-height:1.2}
+h1{font-size:30px;margin:.2em 0 .4em}
+h2{font-size:23px;margin:.3em 0 .5em;display:inline-block;background:#fff8e6;border:3px solid var(--forest);border-radius:8px;padding:2px 12px;transform:rotate(-.6deg)}
+strong{color:#7a2e1f}
+.choices{display:flex;flex-direction:column;gap:10px;margin:18px 0 6px}
+.choices a,.next a{display:block;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.choices a:hover,.next a:hover,.choices a:focus,.next a:focus{background:#eaf2fb;outline:none}
+.next{margin-top:18px}
+.next a{border-color:var(--forest);color:#fff;background:var(--forest);text-align:center}
+.next a:hover,.next a:focus{background:#24563a}
+.msg{background:#fff;border-radius:14px;padding:10px 14px;margin:10px 0;border:2px solid #d6c79d}
+.msg.me{background:#e3f0e6;border-color:#9cc6a7;margin-left:24px}
+.msg.them{margin-right:24px}
+.msg b{display:block;font-size:13px;color:var(--wood);text-transform:uppercase;letter-spacing:.06em}
+.tip{background:#fff3cf;border:3px dashed var(--sun);border-radius:12px;padding:10px 14px;margin:14px 0}
+.tip::before{content:"🥾 Trail tip: ";font-weight:800;color:#8a5a00}
+.callback{background:#e7f0fb;border-left:6px solid var(--sky);border-radius:8px;padding:10px 14px;margin:12px 0}
+.callback::before{content:"🔁 Remember earlier? ";font-weight:800;color:#1d4a78}
+.meter{position:sticky;top:0;z-index:5;background:#fff8e6;border:2px solid var(--wood);border-radius:12px;padding:8px 12px;margin:0 0 14px;font-weight:700;font-size:15px}
+.meter .bar{height:14px;background:#e6dcc0;border-radius:8px;overflow:hidden;margin-top:5px}
+.meter .fill{height:100%;background:linear-gradient(90deg,#e8a33d,#2f6b45);border-radius:8px;transition:width .5s}
+.delta{font-weight:800;padding:2px 10px;border-radius:20px;display:inline-block;margin:4px 0}
+.up{background:#dff0e3;color:#24563a}.down{background:#fbe2dc;color:#8e3626}.same{background:#eee6d2;color:#5a4a2a}
+table.stub{width:100%;border-collapse:collapse;background:#fffaf0;border-radius:10px;overflow:hidden;font-size:16px;margin:10px 0}
+table.stub td{padding:7px 10px;border-bottom:1px dashed #d9c7a3}
+table.stub td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.stub tr.total td{background:#eef6e9;font-weight:800;border-bottom:none}
+table.stub tr.flag td{background:#fbe2dc}
+ul.lessons li{margin:6px 0}
+.small{font-size:15px;color:#5a5446}
+@media (max-width:520px){body{font-size:17px}#passages{margin:8px 6px;padding:16px 14px 24px}h1{font-size:26px}}
+.stars{color:#e8a33d;letter-spacing:2px;font-size:20px}
+.stat span.stars{background:none;border:0;padding:0;font-size:17px}
+.card{background:#fff;border:3px solid var(--sun);border-radius:14px;padding:10px 14px;margin:12px 0}
+.card b{display:block;font-family:Fredoka,"Trebuchet MS",sans-serif;color:#8a5a00;font-size:18px}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
+.stat span{background:#fff8e6;border:2px solid #d6c79d;border-radius:20px;padding:2px 10px;font-weight:700;font-size:15px}
+
+
+:: PassageReady
+<<if $biz neq "">><<set _c to setup.cfgs[$biz]>><</if>>
+
+:: PassageHeader
+<<if $biz neq "" and not tags().includes("nometer")>><div class="meter"><<print _c.emoji>> <<print _c.name>> · Week <<print Math.min($week,4)>> of 4<div class="stat"><span>💵 Cash: <<print setup.money($cash)>></span><span>⭐ <span class="stars"><<print setup.starText($stars)>></span></span><<if $taxJar gt 0>><span>🫙 Tax jar: <<print setup.money($taxJar)>></span><</if>></div></div><</if>>
+
+:: Start [nometer]
+<h1>🍋 Lemonade Stand Tycoon</h1>
+It's summer, and you're starting a small business. You have <strong>$20</strong> of your own savings, <strong>four weeks</strong>, and big dreams.
+
+Every week you'll set your price, see how sales go, and decide what to do with your profit. Your <strong>star rating</strong> (from customers) brings in more business, and you can raise it by reinvesting.
+
+And at the end of summer? A letter arrives about <strong>taxes</strong>. (Dun dun dun.)
+
+<strong>Pick your business:</strong>
+<div class="choices">[[🍋 A lemonade stand|Week Start][$biz to "lemon"]]
+[[🐕 Dog walking|Week Start][$biz to "dog"]]
+[[📱 Custom phone case designs|Week Start][$biz to "case"]]</div>
+<p class="small">All businesses, prices and numbers in this game are made up, but the math works like the real thing.</p>
+
+:: Week Start
+<<set _e to _c.events[$week - 1]>>
+<h2>Week <<print $week>></h2>
+<div class="card"><b><<print _e.title>></b><<print _e.text>></div>
+<<if $week is 1>>Each of your <<print _c.unitWord>> costs you <strong><<print setup.money(_c.unit)>></strong> in supplies. Price matters: lower prices bring more customers, but you earn less on each one.<<elseif _e.protect>>Tip: loyal customers stick with businesses that have great ratings.<<else>>What price will you charge this week?<</if>>
+
+<strong>Set your price per <<print _c.oneWord>>:</strong>
+<div class="choices"><<for _i to 0; _i lt 3; _i++>><<capture _i>><<link `setup.money(_c.prices[_i]) + " · " + _c.priceNotes[_i]` "Week Result">><<set $priceIdx to _i>><</link>><</capture>><</for>></div>
+
+:: Week Result
+<<set _e to _c.events[$week - 1]>>
+<<if $resolved lt $week>>
+<<set _pf to [1.3, 1.0, 0.6][$priceIdx]>>
+<<set _f to _e.factor>>
+<<set _protected to false>>
+<<if _e.protect and $stars gte 4>><<set _f to 0.95>><<set _protected to true>><</if>>
+<<set _cust to Math.round($stars * _c.base * _pf * _f) + _e.bonus>>
+<<set _price to _c.prices[$priceIdx]>>
+<<set _rev to _cust * _price>>
+<<set _cost to _cust * _c.unit>>
+<<set $last to { cust: _cust, price: _price, rev: _rev, cost: _cost, profit: _rev - _cost, protected: _protected }>>
+<<set $revTotal += _rev>><<set $costTotal += _cost>><<set $cash += _rev - _cost>>
+<<set $priceLog.push({ week: $week, price: _price, profit: _rev - _cost })>>
+<<set $resolved to $week>>
+<</if>>
+<h2>Week <<print $week>> results</h2>
+<table class="stub">
+<tr><td><<print _c.unitWord.toUpperFirst()>> sold</td><td><<print $last.cust>></td></tr>
+<tr><td>Price each</td><td><<print setup.money($last.price)>></td></tr>
+<tr><td>Money in (revenue)</td><td><<print setup.money($last.rev)>></td></tr>
+<tr><td>Supplies (costs)</td><td>−<<print setup.money($last.cost)>></td></tr>
+<tr class="total"><td>Profit this week</td><td><<print setup.money($last.profit)>></td></tr>
+</table>
+<<if $last.protected>><div class="callback">Your upgrades paid off! Thanks to your <<print setup.starText($stars)>> rating, most of your regulars stayed loyal when the competitor showed up.</div><<elseif _e.protect>><div class="tip">The competitor took a big bite out of your sales. Businesses with a 4-star rating or higher keep more of their regulars.</div><</if>>
+<<if $priceIdx is 0>><div class="tip">Lots of customers, but a thin profit on each one. Cheapest isn't always best.</div><<elseif $priceIdx is 2>><div class="tip">You earned more on each sale, but fewer people bought. Compare this week with others to find your sweet spot.</div><</if>>
+
+<strong>Money for taxes:</strong> When you work for yourself, nobody takes taxes out of your pay for you. Want to put 15% of this week's profit (<<print setup.money($last.profit * 0.15)>>) in your tax jar?
+<div class="choices">[[🫙 Yes, put it in the tax jar|Week Invest][$taxJar += Math.round($last.profit * 15) / 100; $cash -= Math.round($last.profit * 15) / 100; $jarWeeks += 1]]
+[[💸 No, keep it all for now|Week Invest]]</div>
+
+:: Week Invest
+<<if $week lt 4 and $upgrades.length lt 3>>
+<<set _u to _c.upgrades[$upgrades.length]>>
+<h2>Keep it or reinvest?</h2>
+You can spend <strong><<print setup.money(_u.cost)>></strong> on <strong><<print _u.name>></strong>. Happier customers would raise your rating to <span class="stars"><<print setup.starText($stars + 1)>></span>, which brings more business in the weeks ahead.
+<<if $cash gte _u.cost>>
+<div class="choices">[[🛠️ Reinvest in the upgrade|Week End][$cash -= setup.cfgs[$biz].upgrades[$upgrades.length].cost; $upgradeSpend += setup.cfgs[$biz].upgrades[$upgrades.length].cost; $upgrades.push(setup.cfgs[$biz].upgrades[$upgrades.length].name); $stars += 1]]
+[[💰 Keep the profit|Week End]]</div>
+<<else>>
+You don't have enough cash for it right now.
+<div class="next">[[Keep going →|Week End]]</div>
+<</if>>
+<<else>>
+<<if $week is 4>>That's the last week of summer! Time to see how you did.<<else>>You've made every upgrade. Your business is looking amazing.<</if>>
+<div class="next">[[Keep going →|Week End]]</div>
+<</if>>
+
+:: Week End
+<<set $week += 1>>
+<<if $week gt 4>><<goto "Summer End">><<else>><<goto "Week Start">><</if>>
+
+:: Summer End [nometer]
+<<set _profit to $revTotal - $costTotal>>
+<<set _taxable to Math.max(0, _profit - $upgradeSpend)>>
+<<set _bill to (_taxable gte 400 ? Math.round(_taxable * 0.9235 * 0.153) : 0)>>
+<h1>📬 The end of summer</h1>
+<table class="stub">
+<tr><td>Money in (revenue)</td><td><<print setup.money($revTotal)>></td></tr>
+<tr><td>Supplies</td><td>−<<print setup.money($costTotal)>></td></tr>
+<tr><td>Upgrades (business expenses)</td><td>−<<print setup.money($upgradeSpend)>></td></tr>
+<tr class="total"><td>Net profit</td><td><<print setup.money(_taxable)>></td></tr>
+</table>
+A letter arrives. It's about <strong>self-employment tax</strong>: the Social Security and Medicare taxes you pay when you work for yourself.
+
+<<if _bill gt 0>>
+Because your net profit was <strong>$400 or more</strong>, you owe it. It's 15.3% of most of your profit, which works out to about 14%: <strong><<print setup.money(_bill)>></strong>.
+<<if $taxJar gte _bill>>
+<div class="callback">You set money aside in your tax jar <<print $jarWeeks>> time<<if $jarWeeks neq 1>>s<</if>>.</div>
+Your tax jar has <strong><<print setup.money($taxJar)>></strong>. You pay the bill, and <strong><<print setup.money($taxJar - _bill)>></strong> is left over and goes back to you. Relief! 😌
+<<else>>
+<<if $taxJar gt 0>>Your tax jar has <strong><<print setup.money($taxJar)>></strong>, which isn't quite enough.<<else>>Your tax jar is empty.<</if>> You have to find <strong><<print setup.money(_bill - $taxJar)>></strong> from the money you thought was yours. Oof. 😬
+<div class="tip">Real business owners set aside part of every payment for taxes, so the bill is never a scary surprise.</div>
+<</if>>
+<<else>>
+Good news: your net profit was under <strong>$400</strong>, so you generally wouldn't owe self-employment tax this year. Still keep records of every dollar, because a bigger summer could cross that line. <<if $taxJar gt 0>>Your tax jar money (<<print setup.money($taxJar)>>) is all yours!<</if>>
+<</if>>
+
+<div class="next">[[See what you learned →|The End]]</div>
+
+:: The End [nometer]
+<<set _best to $priceLog.slice().sort(function (a, b) { return b.profit - a.profit; })[0]>>
+<h1>🏁 <<print _c.name>>: summer report</h1>
+<div class="meter">Final rating: <span class="stars"><<print setup.starText($stars)>></span> · Cash on hand: <<print setup.money($cash)>></div>
+<<if $stars gte 4>><h2>⭐ Neighborhood Legend</h2>Customers love you, and your reinvesting paid off.<<elseif $stars is 3>><h2>🌟 Rising Business Owner</h2>You grew your business and learned a lot about money.<<else>><h2>🌱 First-Summer Founder</h2>You ran a real business for a whole summer. That's huge, and now you know what to try next time.<</if>>
+
+<strong>What you learned:</strong>
+<ul class="lessons">
+<li>Price = costs + time + value. Your best week was week <<print _best.week>>, at <<print setup.money(_best.price)>> each.</li>
+<li>The cheapest price brings lots of customers but thin profits. The highest price can scare people away. The sweet spot is often in between.</li>
+<<if $upgrades.length gt 0>><li>Reinvesting (<<print $upgrades.join(", ")>>) raised your rating, and upgrades are business expenses that lower your taxable profit too.</li><<else>><li>You kept every dollar, but a low rating made the competitor hurt more. Reinvesting a little can pay off later.</li><</if>>
+<li>Working for yourself means setting money aside for taxes. Self-employment tax generally applies once your net profit hits $400 in a year.</li>
+<li>Life happens: rain, heat waves, competitors. A cushion of savings helps you ride out slow weeks.</li>
+</ul>
+
+<div class="tip">Go back to Rocky and tell him: what price worked best, would you reinvest next time, and did your tax jar save you?</div>
+
+<div class="choices"><<link "🔁 Play again (try a different business!)">><<run Engine.restart()>><</link>></div>
+<p class="small">A What Comes Next? game for Recess. Businesses, prices and numbers are made up. For real tax rules, check irs.gov with a parent.</p>
