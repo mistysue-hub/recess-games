@@ -21,6 +21,10 @@ A Recess course on real heists, escapes and disappearances from history, for age
   https://mistysue-hub.github.io/recess-games/cold-case-academy/frame-by-frame/
 - **The Tower Ledger** (M08, Princes in the Tower, optional):
   https://mistysue-hub.github.io/recess-games/cold-case-academy/tower-ledger/
+- **The Apollo Gallery** (M09, the 2025 Louvre crown-jewels theft):
+  https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/
+- **The Final Report** (M10, capstone report builder; works for any of the five cases):
+  https://mistysue-hub.github.io/recess-games/cold-case-academy/final-report/
 
 Evidence locker: Part 1 of each case saves the player's notebook in the browser, and Part 2 reads it (same device, same browser). If storage is blocked, Part 2 still works on its own.
 

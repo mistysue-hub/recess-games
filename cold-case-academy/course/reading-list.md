@@ -69,7 +69,7 @@ Most titles are in public libraries, and several are on Libby/Sora and Epic.
 
 ## M09 — Case 005: Seven Minutes at the Louvre (2025)
 
-This case is too recent for kids' books. Use these instead:
+Still no kids' books on this case (checked October 2026). Rocky suggests *The Mona Lisa Vanishes* (or *The Louvre* if already read). Other resources:
 
 | When | Resource | Notes |
 |---|---|---|
@@ -77,7 +77,7 @@ This case is too recent for kids' books. Use these instead:
 | After | **The Mona Lisa Vanishes** (see M01) | Re-reading the 1911 chapters makes a great compare-and-contrast. Two Louvre thefts, 114 years apart. |
 | After | **The Louvre** by Nicole K. Orr (see M01) | Background on the museum and its treasures. |
 
-*Check for new kids' coverage closer to launch, since books on this case may appear in 2026–27.*
+*Check again for new kids' coverage before launch; books on this case may appear in 2027.*
 
 ---
 

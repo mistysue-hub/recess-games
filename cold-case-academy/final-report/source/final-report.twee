@@ -1,0 +1,355 @@
+:: StoryTitle
+The Final Report
+
+
+:: StoryData
+{
+  "ifid": "D8B3F1A4-6E29-4C75-8B0D-1F5E9A3C7D26",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M10">>
+<<set setup.leadsTotal to 0>>
+<<set setup.dedTotal to 0>>
+<<set setup.cards = {}>>
+<<set setup.typeLabel to { fact: "Fact", claim: "Claim", opinion: "Expert opinion", guess: "Guess" }>>
+<<set setup.confLabel to { certain: "Certain", probably: "Probably", cant: "Can't tell yet" }>>
+<<set setup.order to ["cooper","alcatraz","gardner","princes","louvre"]>>
+<<set setup.decks = {
+  "cooper": { name: "Case 001: D.B. Cooper", short: "D.B. Cooper", year: "1971", icon: "🪂", locker: "001",
+    q: "Did the hijacker survive his jump?",
+    theories: [ { id: "died", text: "He didn't survive the jump" }, { id: "lived", text: "He survived and got away" } ],
+    cards: [
+      { id: "weather", title: "A terrible night", text: "He jumped in the dark, in rain and freezing cold, over thick forest.", type: "fact", sup: ["died"], ag: ["lived"] },
+      { id: "clothes", title: "Dressed for an office", text: "He jumped in a business suit, a raincoat and street shoes. No helmet, no jumpsuit.", type: "fact", sup: ["died"], ag: ["lived"] },
+      { id: "unspent", title: "The money was never spent", text: "The FBI had every serial number. Apart from about $5,800 dug up on a riverbank in 1980, no ransom bill has ever turned up.", type: "fact", sup: ["died"], ag: ["lived"] },
+      { id: "nothing", title: "Nothing found in the woods", text: "Huge searches never found a body, a parachute, or the rest of the money.", type: "fact", sup: ["lived"], ag: ["died"] },
+      { id: "planner", title: "A careful plan", text: "He asked for four parachutes and made the plane fly low and slow with the back stairs ready.", type: "fact", sup: ["lived"], ag: ["died"] },
+      { id: "fbi", title: "What the agents thought", text: "FBI agents on the case came to believe he probably didn't survive.", type: "opinion", sup: ["died"], ag: [] },
+      { id: "relatives", title: "“My uncle was Cooper”", text: "Over the years, several people have said a relative of theirs was the hijacker. None was ever proven.", type: "claim", sup: ["lived"], ag: [] },
+      { id: "mexico", title: "“He's rich in Mexico”", text: "A newspaper story says he's surely on a beach somewhere, spending the money.", type: "guess", sup: [], ag: [] }
+    ] },
+  "alcatraz": { name: "Case 002: The Alcatraz Escape", short: "Alcatraz", year: "1962", icon: "🌊", locker: "002",
+    q: "Did the three escapers make it to shore?",
+    theories: [ { id: "drowned", text: "They drowned in the bay" }, { id: "made", text: "They made it and got away" } ],
+    cards: [
+      { id: "cold", title: "Cold, fast water", text: "The bay is usually in the 50s °F, with strong currents rushing in and out under the Golden Gate Bridge.", type: "fact", sup: ["drowned"], ag: ["made"] },
+      { id: "nobodies", title: "No bodies, ever", text: "In more than 60 years, no body of any of the three men has been found.", type: "fact", sup: ["made"], ag: ["drowned"] },
+      { id: "vests", title: "Two life vests", text: "One homemade life vest washed up outside the Golden Gate. Another was found floating near Alcatraz.", type: "fact", sup: ["drowned"], ag: [] },
+      { id: "nothefts", title: "No matching thefts", text: "The FBI found no reports of stolen clothes or cars near the bay that fit the escape plan.", type: "fact", sup: ["drowned"], ag: ["made"] },
+      { id: "rafts", title: "Raincoat rafts can cross", text: "Different teams have built raincoat rafts and crossed the bay.", type: "fact", sup: ["made"], ag: ["drowned"] },
+      { id: "fbi79", title: "The FBI's verdict, 1979", text: "When the FBI closed its case in 1979, it concluded the men most likely drowned.", type: "opinion", sup: ["drowned"], ag: [] },
+      { id: "letter", title: "The 2013 letter", text: "A letter signed as John Anglin said, “We all made it that night but barely.” Lab tests couldn't prove it real or fake.", type: "claim", sup: ["made"], ag: [] },
+      { id: "boat", title: "“A boat was waiting”", text: "A reporter says someone must have picked them up by boat.", type: "guess", sup: [], ag: [] }
+    ] },
+  "gardner": { name: "Case 003: The Gardner Museum Heist", short: "Gardner", year: "1990", icon: "🖼️", locker: "003",
+    q: "Does the stolen art still exist?",
+    theories: [ { id: "hidden", text: "It's hidden somewhere, waiting to surface" }, { id: "destroyed", text: "It was destroyed long ago" } ],
+    cards: [
+      { id: "nosign", title: "No sign in 35 years", text: "In more than 35 years, not one of the 13 works has been seen for certain.", type: "fact", sup: ["destroyed"], ag: ["hidden"] },
+      { id: "rough", title: "Rough thieves", text: "The thieves cut two paintings out of their frames with a blade and smashed glass on the floor.", type: "fact", sup: ["destroyed"], ag: [] },
+      { id: "sale", title: "An attempted sale, 2002", text: "The FBI said the art was taken to Connecticut and Philadelphia, and that someone tried to sell some of it around 2002.", type: "claim", sup: ["hidden"], ag: ["destroyed"] },
+      { id: "dead", title: "The thieves are dead", text: "The FBI says it knows who the two thieves were, and that both have died. It has never officially named them.", type: "claim", sup: [], ag: [] },
+      { id: "frames", title: "The empty frames", text: "The museum still hangs the empty frames where the paintings used to be.", type: "fact", sup: [], ag: [] },
+      { id: "survive", title: "Thieves rarely destroy art", text: "The museum's head of security says history shows thieves almost never destroy famous art. They hide it.", type: "opinion", sup: ["hidden"], ag: ["destroyed"] },
+      { id: "letter94", title: "The 1994 letter", text: "An unsigned letter said the art was safe in another country. The writer went silent.", type: "claim", sup: ["hidden"], ag: [] },
+      { id: "vault", title: "“A billionaire's vault”", text: "A reporter says a rich collector keeps the paintings in a secret room.", type: "guess", sup: [], ag: [] }
+    ] },
+  "princes": { name: "Case 004: Two Princes, One Tower", short: "the princes", year: "1483", icon: "🏰", locker: "",
+    q: "What happened to the two princes?",
+    theories: [ { id: "richard", text: "Their uncle, Richard III, had them killed" }, { id: "survived", text: "They survived and escaped" } ],
+    cards: [
+      { id: "control", title: "In their uncle's care", text: "Both boys were in the Tower, under the control of their uncle Richard, who took the crown.", type: "fact", sup: ["richard"], ag: [] },
+      { id: "nevershown", title: "Never shown in public", text: "As rumors spread, King Richard III never brought the boys out to prove they were alive.", type: "fact", sup: ["richard"], ag: ["survived"] },
+      { id: "nosight", title: "No sightings after 1483", text: "After the summer of 1483, nobody confirmed seeing either boy ever again.", type: "fact", sup: ["richard"], ag: ["survived"] },
+      { id: "mancini", title: "Mancini didn't know", text: "The main report written at the time says the boys were seen less and less, then not at all. Its writer admitted he didn't know what happened.", type: "fact", sup: [], ag: ["richard"] },
+      { id: "henry", title: "Another king's motive", text: "Henry VII became king in 1485. If the boys were still alive, they'd have been a threat to him too.", type: "fact", sup: [], ag: ["richard"] },
+      { id: "warbeck", title: "Warbeck's confession", text: "Perkin Warbeck said he was the younger prince, then confessed that he wasn't.", type: "fact", sup: [], ag: ["survived"] },
+      { id: "bones", title: "Bones nobody can name", text: "Two children's skeletons were found at the Tower in 1674. Nobody has been allowed to test them with DNA.", type: "fact", sup: ["survived"], ag: [] },
+      { id: "more", title: "Thomas More's story", text: "About 30 years later, while the Tudors ruled, More wrote that Richard ordered the boys killed. He named no sources.", type: "claim", sup: ["richard"], ag: [] },
+      { id: "langley", title: "Langley's documents", text: "In 2023 and 2025, a researcher published documents she says show both boys survived. Many historians say they don't prove it.", type: "claim", sup: ["survived"], ag: [] },
+      { id: "ghosts", title: "“Their ghosts walk the Tower”", text: "A tour guide's spooky story.", type: "guess", sup: [], ag: [] }
+    ] },
+  "louvre": { name: "Case 005: Seven Minutes at the Louvre", short: "the Louvre", year: "2025", icon: "👑", locker: "005",
+    q: "Will the stolen jewels ever come back?",
+    theories: [ { id: "gone", text: "They've been broken up and are gone for good" }, { id: "back", text: "They're hidden and could still come back" } ],
+    cards: [
+      { id: "missing", title: "Still missing", text: "Almost a year after the theft, not one of the eight pieces has been found.", type: "fact", sup: ["gone"], ag: ["back"] },
+      { id: "monalisa", title: "The Mona Lisa came back", text: "The Mona Lisa was stolen from the same museum in 1911. It was found in 1913 and went back on the wall.", type: "fact", sup: ["back"], ag: ["gone"] },
+      { id: "belgium", title: "The search goes on", text: "In 2026, clues on the suspects' phones led investigators to Belgium, looking for people who may have hidden or sold the jewels.", type: "fact", sup: ["back"], ag: [] },
+      { id: "crown", title: "The dropped crown", text: "The crown the thieves dropped was found near the museum, bent but with nearly all its diamonds.", type: "fact", sup: [], ag: [] },
+      { id: "arrests", title: "Four men charged", text: "Four men are charged with the theft. No trial has started yet.", type: "fact", sup: [], ag: [] },
+      { id: "melt", title: "“Broken up and melted”", text: "Some experts fear the stones were pried out and the gold melted, so the pieces could never be recognized.", type: "opinion", sup: ["gone"], ag: ["back"] },
+      { id: "handoff", title: "“We handed them over”", text: "Two of the men say they gave the jewels to the man who hired them, soon after the theft. They won't name him.", type: "claim", sup: [], ag: [] },
+      { id: "billionaire", title: "“A secret collector has them”", text: "A TV guest is sure a rich collector ordered the theft.", type: "guess", sup: [], ag: [] }
+    ] }
+}>>
+<<set setup.deck to function () { return setup.decks[State.variables.cs]; }>>
+<<set setup.card to function (id) { return setup.deck().cards.find(function (c) { return c.id === id; }); }>>
+<<set setup.resultFields = function () { var v = State.variables; return { case: v.cs, facts: v.facts.slice(), theory: v.theory, evidenceFor: v.forc.slice(), evidenceAgainst: v.agc, confidence: v.conf }; }>>
+<<set $cs to "">>
+<<set $facts to []>>
+<<set $theory to "">>
+<<set $forc to []>>
+<<set $agc to "">>
+<<set $conf to "">>
+<<set $pinned to []>>
+<<set $copied to false>>
+
+
+:: Start [nobar]
+<<include "Banner">>
+<div class="stamp">Final assignment</div>
+<p class="meta">Cold Case Academy · graduation day</p>
+<h1>The Final Report</h1>
+<p>You've cracked a training case and worked five real cold cases. Now the academy wants one last thing from you: a <b>case report</b>, the kind real detectives write.</p>
+<p class="quote chief">"Pick any case. Give me three facts, your best theory, the evidence for it, the evidence against it, and your verdict. And Detective? Be honest about how sure you are."</p>
+<div class="how">
+<p><b>How it works</b></p>
+<ul>
+<li>Pick one case. You can switch before you start writing.</li>
+<li>Each step adds one part to your report.</li>
+<li>Read every card carefully. Some are facts, and some only look like facts.</li>
+<li>At the end, you'll get your finished report to read out to Rocky.</li>
+</ul>
+</div>
+<div class="actions">[[Choose a case|Pick]]</div>
+
+
+:: Pick [nobar]
+<h2>Choose your case</h2>
+<p class="meta">Any case works. A 🔖 means you played that case's game on this device.</p>
+<ul class="map">
+<<for _k range setup.order>><<capture _k>><<set _d to setup.decks[_k]>>
+<<set _lbl to _d.icon + " " + _d.name + " (" + _d.year + ")" + (_d.locker && setup.lockerGet(_d.locker).length ? "  🔖" : "")>><li><<link _lbl>><<set $cs to _k>><<set $facts to []>><<set $theory to "">><<set $forc to []>><<set $agc to "">><<set $conf to "">><<goto "Facts">><</link>></li>
+<</capture>><</for>>
+</ul>
+
+
+:: Facts [nobar]
+<<set _d to setup.deck()>>
+<div class="stamp">Step 1 of 5</div>
+<p class="meta"><<print _d.icon>> <<print _d.name>></p>
+<h2>Three facts</h2>
+<p>Every report starts with what's certain. Pick the <b>three cards that are facts</b>: things someone can check. Watch out for claims, opinions and guesses.</p>
+<div id="flist"><<include "FactList">></div>
+<div id="fgo"><<include "FactGo">></div>
+<div class="actions secondary">[[Pick a different case|Pick]]</div>
+
+
+:: FactList
+<<for _c range setup.deck().cards>><<capture _c>>
+<div @class="$facts.includes(_c.id) ? 'sortrow picked' : 'sortrow'"><p class="card-title"><<print _c.title>></p><p class="card-text"><<print _c.text>></p>
+<div class="choices"><span @class="$facts.includes(_c.id) ? 'opt chosen' : 'opt'"><<set _fl to $facts.includes(_c.id) ? "✓ In my report (tap to remove)" : "Add as a fact">><<link _fl>><<if $facts.includes(_c.id)>><<run $facts.delete(_c.id)>><<elseif $facts.length lt 3>><<run $facts.push(_c.id)>><</if>><<replace "#flist">><<include "FactList">><</replace>><<replace "#fgo">><<include "FactGo">><</replace>><</link>></span></div></div>
+<</capture>><</for>>
+
+
+:: FactGo
+<p class="meta">Facts picked: <<print $facts.length>> of 3</p>
+<<if $facts.length is 3>><div class="actions">[[Next: your best theory|Theory]]</div><</if>>
+
+
+:: Theory [nobar]
+<<set _d to setup.deck()>>
+<div class="stamp">Step 2 of 5</div>
+<p class="meta"><<print _d.icon>> <<print _d.name>></p>
+<h2>Your best theory</h2>
+<p>The big question: <b><<print _d.q>></b> Which answer do you think fits the evidence best? There's no answer key here.</p>
+<div id="tlist"><<include "TheoryPick">></div>
+<div class="actions secondary">[[Back to step 1|Facts]]</div>
+
+
+:: TheoryPick
+<div class="choices"><<for _t range setup.deck().theories>><<capture _t>><span @class="$theory is _t.id ? 'opt chosen' : 'opt'"><<link _t.text>><<if $theory isnot _t.id>><<set $forc to []>><<set $agc to "">><</if>><<set $theory to _t.id>><<replace "#tlist">><<include "TheoryPick">><</replace>><</link>></span><</capture>><</for>></div>
+<<if $theory isnot "">><div class="actions">[[Next: evidence for it|For]]</div><</if>>
+
+
+:: For [nobar]
+<<set _d to setup.deck()>>
+<<set _th to _d.theories.find(function(t){ return t.id === $theory; })>>
+<div class="stamp">Step 3 of 5</div>
+<p class="meta">Your theory: <<print _th.text>></p>
+<h2>Evidence for it</h2>
+<p>Pick the <b>two cards</b> that best support your theory.</p>
+<div id="forlist"><<include "ForList">></div>
+<div id="forgo"><<include "ForGo">></div>
+<div class="actions secondary">[[Back to step 2|Theory]]</div>
+
+
+:: ForList
+<div class="cards pinboard"><<for _c range setup.deck().cards>><<capture _c>><span @class="$forc.includes(_c.id) ? 'opt pinned' : 'opt'"><<link _c.title>><<if $forc.includes(_c.id)>><<run $forc.delete(_c.id)>><<elseif $forc.length lt 2>><<run $forc.push(_c.id)>><</if>><<if $agc is _c.id>><<set $agc to "">><</if>><<replace "#forlist">><<include "ForList">><</replace>><<replace "#forgo">><<include "ForGo">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ForGo
+<<if $forc.length gt 0>><div class="cards"><<for _id range $forc>><div class="card"><span class="card-title"><<print setup.card(_id).title>></span><span class="card-text"><<print setup.card(_id).text>></span></div><</for>></div><</if>>
+<p class="meta">Picked: <<print $forc.length>> of 2</p>
+<<if $forc.length is 2>><div class="actions">[[Next: evidence against it|Against]]</div><</if>>
+
+
+:: Against [nobar]
+<<set _d to setup.deck()>>
+<<set _th to _d.theories.find(function(t){ return t.id === $theory; })>>
+<div class="stamp">Step 4 of 5</div>
+<p class="meta">Your theory: <<print _th.text>></p>
+<h2>Evidence against it</h2>
+<p>Good detectives look for what doesn't fit their own theory. Pick the <b>one card</b> that makes your theory harder to believe.</p>
+<div id="aglist"><<include "AgList">></div>
+<div id="aggo"><<include "AgGo">></div>
+<div class="actions secondary">[[Back to step 3|For]]</div>
+
+
+:: AgList
+<<set _rest to setup.deck().cards.filter(function(c){ return !$forc.includes(c.id); })>>
+<div class="cards pinboard"><<for _c range _rest>><<capture _c>><span @class="$agc is _c.id ? 'opt pinned' : 'opt'"><<link _c.title>><<set $agc to _c.id>><<replace "#aglist">><<include "AgList">><</replace>><<replace "#aggo">><<include "AgGo">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: AgGo
+<<if $agc isnot "">><div class="card"><span class="card-title"><<print setup.card($agc).title>></span><span class="card-text"><<print setup.card($agc).text>></span></div><div class="actions">[[Next: your verdict|Confidence]]</div><</if>>
+
+
+:: Confidence [nobar]
+<<set _d to setup.deck()>>
+<<set _th to _d.theories.find(function(t){ return t.id === $theory; })>>
+<div class="stamp">Step 5 of 5</div>
+<h2>Your verdict</h2>
+<p>Your theory: <b><<print _th.text>></b>. How sure are you?</p>
+<div id="clist"><<include "ConfList">></div>
+
+
+:: ConfList
+<<set _opts to [["certain","Certain. The case is closed."],["probably","Probably, but it isn't proven."],["cant","I can't tell yet. The evidence could go either way."]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$conf is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $conf to _o[0]>><<replace "#clist">><<include "ConfList">><</replace>><</link>></span><</capture>><</for>></div>
+<<if $conf isnot "">><div class="actions">[[Type up my report|Report]]</div><</if>>
+
+
+:: Report [nobar]
+<<set _d to setup.deck()>>
+<<set _th to _d.theories.find(function(t){ return t.id === $theory; })>>
+<<set $pinned to $forc.concat([$agc])>>
+<div class="report">
+<p class="report-head">Cold Case Academy · Case report</p>
+<p class="report-case"><<print _d.name>></p>
+<p class="report-q"><b>The question:</b> <<print _d.q>></p>
+<p class="report-part">The facts</p>
+<ol><<for _id range $facts>><li><<print setup.card(_id).text>></li><</for>></ol>
+<p class="report-part">My best theory</p>
+<p><<print _th.text>>.</p>
+<p class="report-part">Evidence for it</p>
+<ul><<for _id range $forc>><li><<print setup.card(_id).text>></li><</for>></ul>
+<p class="report-part">Evidence against it</p>
+<ul><li><<print setup.card($agc).text>></li></ul>
+<p class="report-part">My verdict</p>
+<p><<print _th.text>>. How sure I am: <b><<print setup.confLabel[$conf]>></b>.</p>
+<p class="report-sign">Signed, Trainee Detective</p>
+</div>
+<div class="actions secondary"><<link "Copy my report">><<run setup.copyReport()>><<set $copied to true>><<replace "#copymsg">><p class="note" role="status">Copied. You can paste it into your chat with Rocky.</p><</replace>><</link>>[[Change something|Facts]]</div>
+<div id="copymsg"></div>
+<div class="actions">[[Hand in my report|Verdict]]</div>
+
+
+:: Verdict [nobar]
+<<set _d to setup.deck()>>
+<<set _factOk to $facts.filter(function(id){ return setup.card(id).type === "fact"; }).length>>
+<<set _s1 to _factOk is 3>>
+<<set _forOk to $forc.filter(function(id){ return setup.card(id).sup.includes($theory); }).length>>
+<<set _s2 to _forOk is 2>>
+<<set _s3 to setup.card($agc).ag.includes($theory)>>
+<<set _s4 to $conf isnot "certain">>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0) + (_s4 ? 1 : 0)>>
+<<if $stars is 4>><div class="stamp solved">Report accepted</div><<else>><div class="stamp">Report graded</div><</if>>
+<h2>Detective rating: <<print $stars>> of 4 stars</h2>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The facts.</b> <<if _s1>>All three are facts someone can check.<<else>><<print _factOk>> of your 3 <<print _factOk is 1 ? "is a fact" : "are facts">>. Look at the labels below: claims, opinions and guesses aren't facts, even when they sound sure.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>Evidence for.</b> <<if _s2>>Both cards really do support your theory.<<else>><<print _forOk>> of your 2 cards <<print _forOk is 1 ? "supports" : "support">> your theory. Ask of each card: does this make my theory more likely?<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>Evidence against.</b> <<if _s3>>You found the evidence that works against your own theory. That's the hardest part.<<else>>That card doesn't really cut against your theory. Look for one that would make someone doubt it.<</if>></li>
+<li @class="_s4 ? 'on' : 'off'"><span aria-hidden="true"><<print _s4 ? '★' : '☆'>></span> <b>Honest confidence.</b> <<if $conf is "cant">>"Can't tell yet" is an honest verdict for a case nobody has closed.<<elseif _s4>>"Probably, but not proven" matches evidence that leans one way.<<else>>Nobody has closed this case. "Certain" is stronger than the evidence.<</if>></li>
+</ul>
+<h3>The cards, flipped over</h3>
+<div class="cards reveal"><<for _c range _d.cards>><div @class="'card ' + _c.type"><span class="tag"><<print setup.typeLabel[_c.type]>></span><span class="card-title"><<print _c.title>></span><<if $facts.includes(_c.id)>><span class="pinned-mark">in your facts</span><</if>><<if $forc.includes(_c.id)>><span class="pinned-mark">📌 for your theory</span><</if>><<if $agc is _c.id>><span class="pinned-mark">📌 against your theory</span><</if>></div><</for>></div>
+<div class="lesson">
+<h3>What you've learned at the academy</h3>
+<ul>
+<li>Sort facts from claims, opinions and guesses.</li>
+<li>Look for the evidence against your own idea, not just for it.</li>
+<li>Match how sure you are to how strong the evidence is. "We can't tell yet" is a real answer.</li>
+</ul>
+</div>
+<div class="actions">[[Graduate|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<include "Banner">>
+<<run setup.reportResult()>>
+<div class="stamp solved big">Case closed</div>
+<h2>Final report filed</h2>
+<p>Detective rating: <b><<print $stars>> of 4</b>.</p>
+<p>Congratulations, Detective. You've graduated from Cold Case Academy.</p>
+<p>Now read your report to Rocky: your case, your three facts, your theory, the evidence for and against, and your verdict.</p>
+<div class="actions secondary"><<link "Back to my report">><<goto "Report">><</link>><<link "Write another report">><<run Engine.restart()>><</link>></div>
+
+
+:: ReportScript [script]
+setup.reportText = function () {
+  var v = State.variables, d = setup.decks[v.cs];
+  var th = d.theories.find(function (t) { return t.id === v.theory; });
+  var c = function (id) { return d.cards.find(function (x) { return x.id === id; }).text; };
+  var lines = ["COLD CASE ACADEMY · CASE REPORT", d.name, "The question: " + d.q, "", "THE FACTS"];
+  v.facts.forEach(function (id, i) { lines.push((i + 1) + ". " + c(id)); });
+  lines.push("", "MY BEST THEORY", th.text + ".", "", "EVIDENCE FOR IT");
+  v.forc.forEach(function (id) { lines.push("- " + c(id)); });
+  lines.push("", "EVIDENCE AGAINST IT", "- " + c(v.agc), "", "MY VERDICT", th.text + ". How sure I am: " + setup.confLabel[v.conf] + ".");
+  return lines.join("\n");
+};
+setup.copyReport = function () {
+  var text = setup.reportText();
+  var fallback = function () { try {
+    var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "absolute"; ta.style.left = "-9999px";
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+  } catch (e) {} };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).catch(fallback); return; }
+  } catch (e) {}
+  fallback();
+};
+
+
+:: Banner [art]
+<svg class="art" viewBox="0 0 640 220" role="img" aria-label="A detective's desk with an open manila folder, a typed report, a magnifying glass and a red CASE CLOSED stamp." preserveAspectRatio="xMidYMid slice">
+<rect width="640" height="220" fill="#5a4030"/>
+<g opacity=".25" stroke="#3b2a1f" stroke-width="2"><line x1="0" y1="40" x2="640" y2="44"/><line x1="0" y1="110" x2="640" y2="106"/><line x1="0" y1="178" x2="640" y2="182"/></g>
+<g transform="rotate(-4 250 120)"><rect x="110" y="40" width="300" height="160" rx="6" fill="#d9b979"/><rect x="110" y="30" width="90" height="18" rx="4" fill="#d9b979"/><rect x="130" y="52" width="260" height="140" fill="#fbf6e8"/>
+<g fill="#2a2420" font-family="Courier New, monospace" font-size="11"><text x="144" y="74">CASE REPORT</text><text x="144" y="96">THE FACTS ........</text><text x="144" y="114">MY BEST THEORY ...</text><text x="144" y="132">EVIDENCE FOR .....</text><text x="144" y="150">EVIDENCE AGAINST .</text><text x="144" y="168">MY VERDICT .......</text></g>
+<g transform="rotate(-10 330 160)"><rect x="268" y="142" width="116" height="34" rx="4" fill="none" stroke="#2f6b3a" stroke-width="3"/><text x="326" y="165" text-anchor="middle" font-family="Courier New, monospace" font-size="13" fill="#2f6b3a" font-weight="700">CASE CLOSED</text></g></g>
+<circle cx="500" cy="110" r="44" fill="#cfe3ef" opacity=".55" stroke="#8a6a3a" stroke-width="9"/><line x1="532" y1="142" x2="590" y2="200" stroke="#3b2a1f" stroke-width="14" stroke-linecap="round"/>
+<g><rect x="440" y="24" width="12" height="70" rx="3" fill="#c94a1d" transform="rotate(25 446 59)"/></g>
+</svg>
+
+
+:: CaseTheme [stylesheet]
+:root { --accent: #2f6b3a; }
+#passages { border-top-color: var(--accent); }
+h1 { color: var(--accent); }
+.map a { border-left: 6px solid var(--accent); }
+.actions a, .actions .macro-link { background: var(--accent); }
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--accent); border-color: var(--accent); }
+.card { border-top-color: var(--accent); }
+svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.sortrow.picked { border: 2px solid var(--accent); background: #eef6ee; }
+.sortrow .card-text { display: block; margin: 0 0 8px; }
+.reveal .card.fact { border-top-color: var(--evidence); } .card.fact .tag { color: var(--evidence); }
+.reveal .card.claim { border-top-color: #c98a00; } .card.claim .tag { color: #8a5a00; }
+.reveal .card.opinion { border-top-color: #2f5d8a; } .card.opinion .tag { color: #2f5d8a; }
+.reveal .card.guess { border-top-color: var(--stamp); } .card.guess .tag { color: var(--stamp); }
+.report { background: #fffdf6; border: 1px solid var(--line); border-left: 6px solid var(--accent); padding: 16px 18px; border-radius: 4px; box-shadow: 0 2px 8px rgba(60,40,20,.15); }
+.report p { margin: 0 0 8px; }
+.report ol, .report ul { margin: 0 0 10px; padding-left: 1.3em; }
+.report li { margin-bottom: 4px; }
+.report-head { font-family: var(--display); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-size: .85rem; }
+.report-case { font-family: var(--display); font-size: 1.3rem; }
+.report-part { font-family: var(--display); text-transform: uppercase; letter-spacing: .08em; font-size: .9rem; color: var(--accent); margin-top: 14px !important; border-bottom: 1px solid var(--line); }
+.report-sign { font-family: var(--display); margin-top: 16px !important; }

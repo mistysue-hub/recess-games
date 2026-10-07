@@ -10,7 +10,7 @@
 
 ## Welcome back, Detective
 
-This is the oldest case in the academy, more than 540 years old. There are no fingerprints, no photographs, and no motion detectors. Almost everything we know comes from people who wrote things down, and some of them wrote decades later, for kings who wanted the story told a certain way. Your job in this file: notice **who** wrote each piece of evidence, **when**, and **why**.
+This is the oldest case in the academy, more than 540 years old. There are no fingerprints, no photographs, and no motion detectors. Almost everything we know comes from people who wrote things down, and some of them wrote decades later, when the kings in charge wanted the story told a certain way. Your job in this file: notice **who** wrote each piece of evidence, **when**, and **why**.
 
 ---
 

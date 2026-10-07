@@ -1,0 +1,480 @@
+:: StoryTitle
+The Apollo Gallery
+
+
+:: StoryData
+{
+  "ifid": "C5A1E7D2-3F86-4B19-9D4E-7A2B6C8F1E05",
+  "format": "SugarCube",
+  "format-version": "2.30.0",
+  "start": "Start",
+  "zoom": 1
+}
+
+
+:: StoryInit
+<<set setup.moduleRef to "M09">>
+<<set setup.leadsTotal to 8>>
+<<set setup.dedTotal to 6>>
+<<set setup.typeLabel to { evidence: "Fact", single: "One witness", claim: "Claim", opinion: "Expert opinion", assumption: "Guess", deduction: "Deduction" }>>
+<<set setup.cards = {
+  "lift":     { title: "The furniture lift", text: "A truck with a furniture lift, a long ladder with a metal basket on top, parked on the riverside street. Its basket reached a balcony of the Apollo Gallery.", type: "evidence" },
+  "vests":    { title: "Bright safety vests", text: "The men wore yellow and orange safety vests. To people walking by, they looked like ordinary workers.", type: "evidence" },
+  "fire":     { title: "The truck that didn't burn", text: "The thieves tried to set the lift truck on fire before they fled, but they were stopped before it could burn.", type: "evidence" },
+  "window":   { title: "The cut window", text: "The balcony window was cut open with a power tool called a disc cutter. The alarms went off.", type: "evidence" },
+  "cases":    { title: "Two cut display cases", text: "Two glass display cases were cut open and emptied.", type: "evidence" },
+  "regent":   { title: "The Regent Diamond, untouched", text: "In the same gallery sat the Regent Diamond, one of the most valuable diamonds in the world. The thieves never touched it.", type: "evidence" },
+  "times":    { title: "The camera times", text: "About 9:30 a.m.: the basket rises to the balcony. About 9:38: the thieves are gone. They were inside the gallery for about four minutes.", type: "evidence" },
+  "scooters": { title: "Two scooters, four people", text: "Two more members of the team waited below on two scooters. The thieves rode the basket down and sped off with them.", type: "evidence" },
+  "camera":   { title: "One camera of two", text: "An inquiry found that only one of the two cameras near the break-in spot was working that morning.", type: "evidence" },
+  "crown":    { title: "The crown on the ground", text: "Empress Eugénie's crown was found on the ground near the museum, dropped during the escape. Bent, but nearly all its 1,300-plus diamonds were still there.", type: "evidence" },
+  "left":     { title: "What they left behind", text: "A helmet, gloves, a walkie-talkie, a blanket, power tools, a blowtorch and a can of gasoline.", type: "evidence" },
+  "dna":      { title: "DNA matches", text: "Out of more than 150 forensic samples, DNA turned up on the getaway scooter, on a display case, and in the basket of the lift.", type: "evidence" },
+  "list":     { title: "Eight pieces missing", text: "Tiaras, necklaces, earrings and brooches that belonged to two queens and two empresses, including Napoleon's gift to Empress Marie-Louise. Worth about 88 million euros.", type: "evidence" },
+  "melt":     { title: "“Broken up and melted”", text: "Some experts fear the stones have already been pried out and the gold melted, so the jewels could never be recognized again.", type: "opinion" },
+  "unsellable":{ title: "The prosecutor's warning", text: "The Paris prosecutor said the jewels can't be sold as they are, and anyone who buys them is breaking the law. She asked for them to be given back.", type: "opinion" },
+  "arrests":  { title: "Four men charged", text: "Two men were arrested six days later, one at the airport about to fly out of France. By late November, four men were charged, and a woman was charged with helping.", type: "evidence" },
+  "charged":  { title: "Charged isn't guilty", text: "Being charged means a court will decide. As of October 2026, no trial has started.", type: "evidence" },
+  "notpros":  { title: "Not movie masterminds", text: "The prosecutor said the men charged don't look like the big bosses of organized crime. Most were known to police for smaller crimes.", type: "opinion" },
+  "handoff":  { title: "“We handed them over”", text: "Two of the men say they were hired only days before, and handed the jewels to the man who hired them, in a parking garage. They won't name him. Camera footage suggests it was less than an hour after the theft.", type: "claim" },
+  "belgium":  { title: "Phones point to Belgium", text: "In 2026, clues on the suspects' phones led French investigators to Belgium, looking for people who may have helped hide or sell the jewels.", type: "evidence" },
+  "missing":  { title: "Still missing", text: "As of October 2026, not one of the eight pieces has been found. Nobody knows who planned the theft.", type: "evidence" },
+  "monalisa": { title: "1911: the Mona Lisa", text: "The Mona Lisa was stolen from this same museum in 1911. It was found in 1913, when the thief tried to sell it.", type: "evidence" },
+  "inside":   { title: "“A guard switched off the alarms”", text: "A TV guest is sure someone inside the museum helped.", type: "assumption" },
+  "movie":    { title: "“A genius gang, like in the movies”", text: "Another guest says only world-class master thieves could pull this off.", type: "assumption" },
+
+  "d_disguise":{ title: "Hiding in plain sight", text: "A lift truck and work vests: they looked like movers, so nobody on the street stopped them.", type: "deduction" },
+  "d_hurry":  { title: "In a big hurry", text: "Four minutes inside, and so rushed they dropped a crown on the way out.", type: "deduction" },
+  "d_trail":  { title: "A trail of DNA", text: "Things they wore, touched and dropped carried DNA, and DNA led police to names.", type: "deduction" },
+  "d_fire":   { title: "Why they wanted a fire", text: "Burning the truck would have destroyed the DNA in the lift basket. It didn't burn, and that DNA led to an arrest.", type: "deduction" },
+  "d_split":  { title: "Caught isn't found", text: "If the men are telling the truth, the jewels left their hands within an hour. Catching them didn't bring the jewels back.", type: "deduction" },
+  "d_before": { title: "It has happened before", text: "The Mona Lisa came home two years after it was stolen, because it couldn't be sold. Famous treasures are hard to sell, but these could be broken up.", type: "deduction" }
+}>>
+<<set setup.recipes = [
+  { a: "lift", b: "vests", id: "d_disguise" },
+  { a: "times", b: "crown", id: "d_hurry" },
+  { a: "left", b: "dna", id: "d_trail" },
+  { a: "arrests", b: "dna", id: "d_trail" },
+  { a: "fire", b: "dna", id: "d_fire" },
+  { a: "handoff", b: "missing", id: "d_split" },
+  { a: "handoff", b: "arrests", id: "d_split" },
+  { a: "monalisa", b: "melt", id: "d_before" },
+  { a: "monalisa", b: "unsellable", id: "d_before" }
+]>>
+<<set setup.route = [
+  { id: "r1", need: "lift",     text: "A truck with a furniture lift parks below the museum", why: "The thieves needed a way up to the window first." },
+  { id: "r2", need: "times",    text: "Two men ride the basket up to the balcony (about 9:30)", why: "They had to reach the balcony before they could do anything else." },
+  { id: "r3", need: "window",   text: "They cut through the window, and the alarms go off", why: "The window was their way into the gallery." },
+  { id: "r4", need: "cases",    text: "They cut open two display cases", why: "They had to be inside the gallery to reach the cases." },
+  { id: "r5", need: "scooters", text: "Down the lift and off on two scooters (about 9:38)", why: "They had to get the jewels before they ran." },
+  { id: "r6", need: "crown",    text: "The crown is dropped near the museum", why: "The crown was dropped during the escape." },
+  { id: "r7", need: "arrests",  text: "Six days later, the first two arrests", why: "Police needed the evidence from the escape first." }
+]>>
+<<set setup.fakeRoute = [
+  { id: "f1", need: "inside", text: "A guard switches off the alarms", why: "The alarms did go off, and no evidence shows any guard helped." },
+  { id: "f2", need: "movie",  text: "They swap the jewels for fakes and stroll out the front door", why: "The cases were cut open and emptied, and they left through the window." }
+]>>
+<<set setup.traces = [
+  { id: "t1", need: "dna",     text: "DNA in the lift basket", answer: "who" },
+  { id: "t2", need: "vests",   text: "The safety-vest disguise", answer: "how" },
+  { id: "t3", need: "times",   text: "The camera times, 9:30 to 9:38", answer: "how" },
+  { id: "t4", need: "left",    text: "The helmet left on the escape route", answer: "who" },
+  { id: "t5", need: "window",  text: "The disc-cutter marks on the window", answer: "how" },
+  { id: "t6", need: "belgium", text: "The clues on the suspects' phones", answer: "who" }
+]>>
+<<set setup.meter = [
+  { id: "m1", q: "How did they do it?", answer: "known", need: ["lift","times","scooters"], why: "The cameras, the lift truck and the evidence show how, minute by minute." },
+  { id: "m2", q: "Who did the stealing?", answer: "charged", need: ["arrests","charged"], why: "Four men are charged, but no court has decided yet." },
+  { id: "m3", q: "Who planned it?", answer: "unknown", need: ["handoff","missing"], why: "The men say someone else hired them, and won't say who." },
+  { id: "m4", q: "Where are the jewels?", answer: "unknown", need: ["missing"], why: "Not one of the eight pieces has been found." }
+]>>
+<<set setup.interviews = {
+  "guard": [
+    { q: "What did you notice first?", a: "“A terrible grinding noise at the window. Then the alarms, everywhere.”", clue: "window" },
+    { q: "What did they do inside?", a: "“They went straight to two cases and cut them open. When we came close, they waved the cutters at us. We got the visitors out of the way.”", clue: "cases" },
+    { q: "How did they get away?", a: "“Back out the window, onto that lift. From the window I saw scooters waiting below.”", clue: "scooters" },
+    { q: "Was the camera watching?", a: "“I thought so. Later I found out only one of the two cameras on that spot was working.”", clue: "camera" }
+  ]
+}>>
+<<set setup.events = [
+  { at: 6, id: "e1", kind: "chief", text: "Your commander leans in: “Remember, charged isn't the same as guilty. Write down what we know, and be honest about what we don't.”" },
+  { at: 4, id: "e2", kind: "headline", text: "ONE YEAR ON, FRANCE'S CROWN JEWELS STILL MISSING" },
+  { at: 2, id: "e3", kind: "chief", text: "The commander again: “The anniversary report is due tonight.”" }
+]>>
+<<set setup.resultFields = function () { var v = State.variables; return { timelineComplete: v.routeOk, timelineMistakes: v.rmiss, traces: v.tr, meter: v.mt, solved: v.solved, comeBack: v.back, reason: v.reason }; }>>
+<<set $leads to 8>>
+<<set $notebook to []>>
+<<set $visited to []>>
+<<set $asked to { guard: [] }>>
+<<set $events to []>>
+<<set $sel to []>>
+<<set $boardmsg to "">>
+<<set $rt to []>>
+<<set $rmiss to 0>>
+<<set $rmsg to "">>
+<<set $routeOk to false>>
+<<set $tr to {}>>
+<<set $mt to {}>>
+<<set $solved to "">>
+<<set $back to "">>
+<<set $reason to "">>
+<<set $pinned to []>>
+<<set $return to "Hub">>
+
+
+:: Start [nobar]
+<<include "Banner">>
+<div class="stamp">Case file 005</div>
+<p class="meta">Paris · October 2026 · one year later</p>
+<h1>The Apollo Gallery</h1>
+<p>A year ago, thieves rode a furniture lift up the side of the Louvre and came down with eight pieces of the French Crown Jewels. Police have charged the people they think did it. The jewels have never been seen again.</p>
+<p>Your commander drops the whole file on your desk.</p>
+<p class="quote chief">"Everybody keeps asking me if this case is solved. I want a straight answer. Rebuild the theft, sort what we know from what we don't, and tell me. Eight leads."</p>
+<div class="how">
+<p><b>How to investigate</b></p>
+<ul>
+<li>Visiting a new place uses one lead. Going back is free.</li>
+<li>The guard will answer two questions.</li>
+<li>Put the theft in order on the <b>timeline board</b>. Connect clues on the <b>deduction board</b>. Both are free.</li>
+<li>Before your report, you'll sort the evidence and fill in the <b>solved meter</b>.</li>
+</ul>
+</div>
+<div class="actions">[[Open the file|Hub]]</div>
+
+
+:: Hub
+<<if $leads lte 0>><<goto "OutOfLeads">><</if>>
+<<set _ev to setup.events.filter(function(e){ return $leads <= e.at && !$events.includes(e.id); })>>
+<<for _e range _ev>><<run $events.push(_e.id)>>
+<<if _e.kind is "headline">><div class="headline"><span class="paper">Paris morning paper</span><<print _e.text>></div>
+<<else>><p class="quote chief"><<print _e.text>></p><</if>>
+<</for>>
+<h2>Where to?</h2>
+<p class="meta">New places cost a lead. Places you've visited are free to revisit.</p>
+<ul class="map">
+<li><<maplink "Gallery" "👑 The Apollo Gallery">></li>
+<li><<maplink "Quay" "🚚 The riverside street below the window">></li>
+<li><<maplink "Control" "🎥 The security control room">></li>
+<li><<maplink "Guard" "🗣️ Interview a gallery guard">></li>
+<li><<maplink "Escape" "🛵 The escape route">></li>
+<li><<maplink "Lab" "🧪 The forensics lab">></li>
+<li><<maplink "Curator" "💎 The curator's office">></li>
+<li><<maplink "Prosecutor" "⚖️ The prosecutor's office">></li>
+<li><<maplink "Update" "📂 The latest updates, 2026">></li>
+<li><<maplink "Archive" "📜 The museum archive: 1911">></li>
+<li><<maplink "TV" "📺 A TV talk show">></li>
+</ul>
+<div class="actions secondary"><<link "Timeline board (free)">><<set $return to "Hub">><<goto "Route">><</link>><<link "Deduction board (free)">><<set $return to "Hub">><<goto "Board">><</link>>[[I'm ready to report|Traces]]</div>
+
+
+:: OutOfLeads
+<h2>Out of leads</h2>
+<p class="quote chief">"That's everything we've got," the commander says. "Let's hear it."</p>
+<div class="actions"><<link "One last look at the timeline board">><<set $return to "OutOfLeads">><<goto "Route">><</link>><<link "One last look at the deduction board">><<set $return to "OutOfLeads">><<goto "Board">><</link>>[[Make your report|Traces]]</div>
+
+
+:: Route
+<h2>Timeline board</h2>
+<p class="meta">Tap the steps in the order they happened. You can only use steps you have evidence for. If a step couldn't have happened yet, the board will tell you why.</p>
+<div id="rtboard"><<include "RouteCards">></div>
+<div class="actions"><<link "Back">><<goto $return>><</link>></div>
+
+
+:: RouteCards
+<<set _all to setup.route.concat(setup.fakeRoute)>>
+<<set _have to _all.filter(function(t){ return $notebook.includes(t.need); })>>
+<<set _left to _have.filter(function(t){ return !$rt.includes(t.id); }).sort(function(a,b){ return a.text.localeCompare(b.text); })>>
+<h3>The timeline so far</h3>
+<<if $rt.length is 0>><p class="slot-empty">Nothing placed yet.</p>
+<<else>><ol class="timeline"><<for _id range $rt>><li><<print _all.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
+<<if $rmsg isnot "">><p class="note warn" role="status"><<print $rmsg>></p><</if>>
+<<if _have.length is 0>><p class="note">You don't have any timeline evidence yet. The street below the window is a good place to start.</p>
+<<elseif _left.length gt 0>>
+<h3>Place next</h3>
+<div class="choices">
+<<for _t range _left>><<capture _t>><span class="opt"><<link _t.text>>
+<<set _next to setup.route[$rt.length]>>
+<<if _t.id.startsWith("f")>><<set $rmiss to $rmiss + 1>><<set $rmsg to "That step doesn't fit. " + _t.why>>
+<<elseif _next and _t.id is _next.id>><<run $rt.push(_t.id)>><<set $rmsg to "">>
+<<else>><<set $rmiss to $rmiss + 1>><<set $rmsg to "Not yet. " + _next.why + " What comes before “" + _t.text.toLowerCase() + "”?">><</if>>
+<<replace "#rtboard">><<include "RouteCards">><</replace>><</link>></span><</capture>><</for>>
+</div>
+<<else>><p class="note">Every step you have evidence for is placed.</p><</if>>
+<p class="meta">Steps placed: <<print $rt.length>> of <<print setup.route.length>> · Wrong tries: <<print $rmiss>></p>
+
+
+:: Gallery
+<h2>The Apollo Gallery</h2>
+<p>A long golden hall with a painted ceiling, reopened this summer. The display cases have been taken out; the jewels that weren't stolen were moved somewhere safer. A guide shows you where the window was replaced.</p>
+<<clue "window">>
+<<clue "cases">>
+<<clue "regent">>
+<<tomap>>
+
+
+:: Quay
+<h2>The riverside street</h2>
+<<include "Scene">>
+<p>Cars and bikes rush past along the river. Photos in the file show a truck parked right here, its ladder stretched up to a balcony on the museum wall.</p>
+<<clue "lift">>
+<<clue "vests">>
+<<clue "fire">>
+<<tomap>>
+
+
+:: Control
+<h2>The security control room</h2>
+<p>Screens line the walls. A technician pulls up last year's footage and the time stamps.</p>
+<<clue "times">>
+<<clue "scooters">>
+<<clue "camera">>
+<<tomap>>
+
+
+:: Guard
+<h2>Interview: a gallery guard</h2>
+<p>She was on duty in the Apollo Gallery that Sunday morning. She still works here.</p>
+<div id="ans"><<pastanswers "guard">></div>
+<div id="iv"><<interview "guard">></div>
+<<tomap>>
+
+
+:: Escape
+<h2>The escape route</h2>
+<p>A map with red dots: everything found along the path the thieves took away from the museum.</p>
+<<clue "crown">>
+<<clue "left">>
+<<tomap>>
+
+
+:: Lab
+<h2>The forensics lab</h2>
+<p>Shelves of sealed evidence bags, each with a number. A scientist explains how a single hair or a smear of skin can carry a person's DNA.</p>
+<<clue "dna">>
+<<tomap>>
+
+
+:: Curator
+<h2>The curator's office</h2>
+<p>Photographs of every missing piece are pinned to the wall: blue sapphires, green emeralds, pearls and thousands of diamonds.</p>
+<<clue "list">>
+<<clue "melt">>
+<<tomap>>
+
+
+:: Prosecutor
+<h2>The prosecutor's office</h2>
+<p>A lawyer walks you through the arrests, and reminds you what the law says about them.</p>
+<<clue "arrests">>
+<<clue "charged">>
+<<clue "notpros">>
+<<clue "unsellable">>
+<<tomap>>
+
+
+:: Update
+<h2>The latest updates, 2026</h2>
+<p>A thin folder marked "2026." It's the newest part of the file.</p>
+<<clue "handoff">>
+<<clue "belgium">>
+<<clue "missing">>
+<<tomap>>
+
+
+:: Archive
+<h2>The museum archive: 1911</h2>
+<p>A yellowed newspaper with a photo of an empty wall and four iron hooks. You've seen this case before.</p>
+<<clue "monalisa">>
+<<tomap>>
+
+
+:: TV
+<h2>A TV talk show</h2>
+<p>For the anniversary, a TV show has invited guests to argue about the theft.</p>
+<p class="quote">"Someone inside switched off the alarms," says one guest. "Please," says another. "This was a genius gang, straight out of a movie."</p>
+<<clue "inside">>
+<<clue "movie">>
+<<tomap>>
+
+
+:: Traces [nobar]
+<div class="stamp">Evidence sort</div>
+<h2>Can it lead to a name?</h2>
+<p>Some evidence can point to a <b>person</b>. Some only shows <b>how</b> the theft was done. Sort what you've found.</p>
+<div id="trlist"><<include "TraceList">></div>
+<div id="trgo"><<include "TraceGo">></div>
+
+
+:: TraceList
+<<for _t range setup.traces>><<capture _t>>
+<div class="sortrow"><p class="card-title"><<print _t.text>></p>
+<<if $notebook.includes(_t.need)>>
+<div class="choices two"><<for _k range [["who","Can point to a person"],["how","Shows how, not who"]]>><<capture _k>><span @class="$tr[_t.id] is _k[0] ? 'opt chosen' : 'opt'"><<link _k[1]>><<set $tr[_t.id] to _k[0]>><<replace "#trlist">><<include "TraceList">><</replace>><<replace "#trgo">><<include "TraceGo">><</replace>><</link>></span><</capture>><</for>></div>
+<<else>><p class="note">You didn't find this evidence.</p><</if>></div>
+<</capture>><</for>>
+
+
+:: TraceGo
+<<set _avail to setup.traces.filter(function(t){ return $notebook.includes(t.need); })>>
+<<if _avail.some(function(t){ return !$tr[t.id]; })>><p class="note">Sort every piece you found to go on.</p>
+<<else>><div class="actions">[[On to the solved meter|Meter]]</div><</if>>
+
+
+:: Meter [nobar]
+<div class="stamp">Solved meter</div>
+<h2>What does the case really know?</h2>
+<p>For each question, is the answer <b>known</b>, <b>charged but not yet proven in court</b>, or <b>unknown</b>?</p>
+<div id="mtlist"><<include "MeterList">></div>
+<div id="mtgo"><<include "MeterGo">></div>
+
+
+:: MeterList
+<<for _m range setup.meter>><<capture _m>>
+<div class="sortrow"><p class="card-title"><<print _m.q>></p>
+<div class="choices three"><<for _k range [["known","Known"],["charged","Charged, not proven"],["unknown","Unknown"]]>><<capture _k>><span @class="$mt[_m.id] is _k[0] ? 'opt chosen' : 'opt'"><<link _k[1]>><<set $mt[_m.id] to _k[0]>><<replace "#mtlist">><<include "MeterList">><</replace>><<replace "#mtgo">><<include "MeterGo">><</replace>><</link>></span><</capture>><</for>></div></div>
+<</capture>><</for>>
+<div class="meterbar" aria-hidden="true"><<for _m range setup.meter>><span @class="'seg ' + ($mt[_m.id] || 'blank')"></span><</for>></div>
+
+
+:: MeterGo
+<<if Object.keys($mt).length lt setup.meter.length>><p class="note">Answer all four to go on.</p>
+<<else>><div class="actions">[[On to my report|Report]]</div><</if>>
+
+
+:: Report [nobar]
+<div class="stamp">Report</div>
+<h2>Your report to the commander</h2>
+<h3>1. The timeline</h3>
+<<if $rt.length is 0>><p class="note">You haven't built the timeline. You can still go back to the board.</p><<else>><ol class="timeline"><<for _id range $rt>><li><<print setup.route.find(function(t){ return t.id === _id; }).text>></li><</for>></ol><</if>>
+<div class="actions secondary"><<link "Edit the timeline">><<set $return to "Report">><<goto "Route">><</link>></div>
+<h3>2. Is the case solved?</h3>
+<div id="solv"><<include "SolvedList">></div>
+<h3>3. Your best reason</h3>
+<p class="meta">Pin the one card that best backs up your answer.</p>
+<div id="reas"><<include "ReasonList">></div>
+<h3>4. Will the jewels ever come back?</h3>
+<p class="meta">There's no right answer. It's your prediction.</p>
+<div id="backs"><<include "BackList">></div>
+<div id="file"><<include "ReportButton">></div>
+
+
+:: SolvedList
+<<set _opts to [["yes","Yes, it's solved"],["partly","Partly solved"],["no","No, it's not solved"]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$solved is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $solved to _o[0]>><<replace "#solv">><<include "SolvedList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ReasonList
+<<set _plain to $notebook.filter(function(id){ return setup.cards[id].type !== "deduction"; })>>
+<<if _plain.length is 0>><p class="note">You have no cards to pin.</p>
+<<else>><div class="cards pinboard"><<for _id range _plain>><<capture _id>><span @class="$reason is _id ? 'opt pinned' : 'opt'"><<link setup.cards[_id].title>><<set $reason to _id>><<set $pinned to [_id]>><<replace "#reas">><<include "ReasonList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div><</if>>
+
+
+:: BackList
+<<set _opts to [["no","Probably not. They've been broken up."],["maybe","Maybe someday, like the Mona Lisa."],["cant","I can't tell yet."]]>>
+<div class="choices"><<for _o range _opts>><<capture _o>><span @class="$back is _o[0] ? 'opt chosen' : 'opt'"><<link _o[1]>><<set $back to _o[0]>><<replace "#backs">><<include "BackList">><</replace>><<replace "#file">><<include "ReportButton">><</replace>><</link>></span><</capture>><</for>></div>
+
+
+:: ReportButton
+<<if $solved is "" or $back is "" or $reason is "">><p class="note">Answer the questions and pin a reason to file your report.</p>
+<<else>><div class="actions">[[File my report|Verdict]]</div><</if>>
+
+
+:: Verdict [nobar]
+<<set $routeOk to $rt.length is setup.route.length>>
+<<set _s1 to $routeOk and $rmiss lte 2>>
+<<set _trDone to setup.traces.filter(function(t){ return $tr[t.id]; })>>
+<<set _trWrong to _trDone.filter(function(t){ return $tr[t.id] !== t.answer; })>>
+<<set _s2 to _trDone.length gte 4 and _trWrong.length is 0>>
+<<set _mtOk to setup.meter.map(function(m){ return $mt[m.id] === m.answer && m.need.some(function(n){ return $notebook.includes(n); }); })>>
+<<set _s3 to _mtOk.every(function(x){ return x; })>>
+<<set _unknowns to setup.meter.filter(function(m){ return $mt[m.id] === "unknown"; }).length>>
+<<set _reasonType to setup.cards[$reason].type>>
+<<set _consistent to not ($solved is "yes" and _unknowns gt 0)>>
+<<set _s4 to _consistent and _reasonType isnot "assumption">>
+<<set $stars to (_s1 ? 1 : 0) + (_s2 ? 1 : 0) + (_s3 ? 1 : 0) + (_s4 ? 1 : 0)>>
+<<set $deductions to $notebook.filter(function(id){ return setup.cards[id].type === "deduction"; }).length>>
+<<if $stars is 4>><div class="stamp solved">Report accepted</div><<else>><div class="stamp">Report filed</div><</if>>
+<h2>Detective rating: <<print $stars>> of 4 stars</h2>
+<ul class="stars">
+<li @class="_s1 ? 'on' : 'off'"><span aria-hidden="true"><<print _s1 ? '★' : '☆'>></span> <b>The timeline.</b> <<if _s1>>All seven steps, in order<<if $rmiss gt 0>>, with only <<print $rmiss>> wrong <<print $rmiss is 1 ? "try" : "tries">><</if>>.<<elseif $routeOk>>All seven steps, but it took <<print $rmiss>> wrong tries. Ask "what had to happen first?" before each step.<<else>>Your timeline has <<print $rt.length>> of 7 steps. Some places in the file were never visited.<</if>></li>
+<li @class="_s2 ? 'on' : 'off'"><span aria-hidden="true"><<print _s2 ? '★' : '☆'>></span> <b>Who vs. how.</b> <<if _s2>>You can tell evidence that leads to a person from evidence that only shows how.<<elseif _trWrong.length gt 0>>Some sorts don't fit. DNA and phone records can lead to people. Times, tools and disguises show how it was done.<<else>>You didn't find enough of the evidence to sort.<</if>></li>
+<li @class="_s3 ? 'on' : 'off'"><span aria-hidden="true"><<print _s3 ? '★' : '☆'>></span> <b>The solved meter.</b> <<if _s3>>Exactly right: how is known, the stealing is charged but not proven, and the planner and the jewels are unknown.<<else>>Here's how the evidence fills it in:<</if>></li>
+<li @class="_s4 ? 'on' : 'off'"><span aria-hidden="true"><<print _s4 ? '★' : '☆'>></span> <b>Your verdict.</b> <<if _s4>>Your answer matches your own meter, and your reason is real evidence.<<elseif not _consistent>>You called it solved, but your own meter says some answers are still unknown.<<else>>Your verdict fits, but you pinned a guess from TV as your reason. Pin evidence instead.<</if>></li>
+</ul>
+<<if not _s3>><ul class="theory-key"><<for _i to 0; _i lt setup.meter.length; _i++>><<set _m to setup.meter[_i]>><li @class="_mtOk[_i] ? 'ok' : 'no'"><b><<print _m.q>></b> <<print _m.answer is "known" ? "Known" : _m.answer is "charged" ? "Charged, not proven" : "Unknown">>. <<print _m.why>><<if $mt[_m.id] is _m.answer and not _mtOk[_i]>> (You didn't collect the clue that shows it.)<</if>></li><</for>></ul><</if>>
+<p class="meta">Deductions worked out: <<print $deductions>> of <<print setup.dedTotal>></p>
+<h3>Your notebook, flipped over</h3>
+<<if $notebook.length is 0>><p class="note">You didn't collect any cards.</p><<else>>
+<div class="cards reveal"><<for _id range $notebook>><div @class="'card ' + (setup.cards[_id].type === 'claim' ? 'single' : setup.cards[_id].type)"><span class="tag"><<print setup.typeLabel[setup.cards[_id].type]>></span><span class="card-title"><<print setup.cards[_id].title>></span><<if _id is $reason>><span class="pinned-mark">📌 your reason</span><</if>></div><</for>></div><</if>>
+<div class="actions">[[What's known today|RealHistory]]</div>
+
+
+:: RealHistory [nobar]
+<h2>What's known today</h2>
+<p>As of October 2026, four men have been charged with the theft, and a woman with helping them. No trial has started, so no court has decided whether they're guilty.</p>
+<p>The eight pieces have not been found. Two of the men say they handed the jewels to the man who hired them soon after the theft, and investigators are still looking for whoever planned it, including in Belgium.</p>
+<p>Empress Eugénie's crown, the piece the thieves dropped, is being repaired. The Apollo Gallery is open again, but its display cases are gone and no jewels are shown.</p>
+<p>So is the case solved? Real detectives would say: partly. That's a hard, honest answer.</p>
+<div class="lesson">
+<h3>Your lesson as a trainee</h3>
+<ul>
+<li>A case has many questions. Some can be answered while others stay open.</li>
+<li>Charged isn't the same as guilty. A court decides.</li>
+<li>DNA can lead to a person. It can't tell you where the treasure went.</li>
+</ul>
+</div>
+<p class="note">Made up for this game: the commander, the guard's exact words, the lawyer, the scientist and the TV guests. The times, the lift, the evidence, the arrests and the missing jewels are based on the real case, as reported up to October 2026.</p>
+<div class="actions">[[Finish case|CaseClosed]]</div>
+
+
+:: CaseClosed [nobar]
+<<include "Banner">>
+<<run setup.reportResult()>>
+<<run setup.lockerSave("005", $notebook)>>
+<div class="stamp solved big">Case closed</div>
+<h2>Case 005 complete</h2>
+<p>Detective rating: <b><<print $stars>> of 4</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
+<p>Tell Rocky whether you think the case is solved, whether the jewels will come back, and your detective rating.</p>
+<div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>
+
+
+:: Banner [art]
+<svg class="art" viewBox="0 0 640 220" role="img" aria-label="The long stone wall of a palace museum beside a river in the morning, with a truck's ladder lift stretched up to a balcony window and two scooters waiting below." preserveAspectRatio="xMidYMid slice">
+<rect width="640" height="220" fill="#bcd3e6"/>
+<circle cx="560" cy="44" r="22" fill="#fff4c9"/>
+<rect x="0" y="40" width="640" height="150" fill="#d9c9a3"/>
+<rect x="0" y="34" width="640" height="10" fill="#7a8a99"/>
+<g fill="#5b6f86"><rect x="30" y="64" width="26" height="44" rx="2"/><rect x="100" y="64" width="26" height="44" rx="2"/><rect x="170" y="64" width="26" height="44" rx="2"/><rect x="380" y="64" width="26" height="44" rx="2"/><rect x="450" y="64" width="26" height="44" rx="2"/><rect x="520" y="64" width="26" height="44" rx="2"/><rect x="590" y="64" width="26" height="44" rx="2"/></g>
+<g fill="#5b6f86"><rect x="30" y="128" width="26" height="40" rx="2"/><rect x="100" y="128" width="26" height="40" rx="2"/><rect x="170" y="128" width="26" height="40" rx="2"/><rect x="380" y="128" width="26" height="40" rx="2"/><rect x="450" y="128" width="26" height="40" rx="2"/><rect x="520" y="128" width="26" height="40" rx="2"/><rect x="590" y="128" width="26" height="40" rx="2"/></g>
+<rect x="266" y="58" width="44" height="52" rx="3" fill="#2a3a52"/><path d="M270 62 L306 106 M306 62 L270 106" stroke="#e8f0f8" stroke-width="2" opacity=".8"/>
+<rect x="254" y="110" width="68" height="8" fill="#8a7a5a"/><g stroke="#8a7a5a" stroke-width="2"><line x1="258" y1="118" x2="258" y2="128"/><line x1="270" y1="118" x2="270" y2="128"/><line x1="282" y1="118" x2="282" y2="128"/><line x1="294" y1="118" x2="294" y2="128"/><line x1="306" y1="118" x2="306" y2="128"/><line x1="318" y1="118" x2="318" y2="128"/></g>
+<rect y="190" width="640" height="30" fill="#5a5a5a"/><rect y="204" width="640" height="16" fill="#3d6e8f"/>
+<rect x="150" y="160" width="120" height="34" rx="4" fill="#e6e6e6"/><rect x="226" y="146" width="46" height="34" rx="4" fill="#d0d0d0"/><circle cx="176" cy="196" r="9" fill="#222"/><circle cx="246" cy="196" r="9" fill="#222"/>
+<line x1="190" y1="160" x2="288" y2="122" stroke="#c94a1d" stroke-width="7" stroke-linecap="round"/><line x1="190" y1="160" x2="288" y2="122" stroke="#e8743b" stroke-width="3" stroke-linecap="round"/>
+<rect x="276" y="112" width="26" height="14" fill="#9aa6b2" stroke="#4a5562" stroke-width="2"/>
+<g fill="#f2b705"><rect x="281" y="98" width="7" height="14" rx="2"/><rect x="291" y="99" width="7" height="13" rx="2"/></g><g fill="#2a2a2a"><circle cx="284.5" cy="94" r="4"/><circle cx="294.5" cy="95" r="4"/></g>
+<g><rect x="380" y="180" width="36" height="8" rx="4" fill="#1d1d1d"/><circle cx="384" cy="192" r="5" fill="#1d1d1d"/><circle cx="412" cy="192" r="5" fill="#1d1d1d"/><rect x="408" y="168" width="4" height="14" fill="#1d1d1d"/><rect x="430" y="180" width="36" height="8" rx="4" fill="#1d1d1d"/><circle cx="434" cy="192" r="5" fill="#1d1d1d"/><circle cx="462" cy="192" r="5" fill="#1d1d1d"/><rect x="458" y="168" width="4" height="14" fill="#1d1d1d"/></g>
+</svg>
+
+
+:: Scene [art]
+<svg class="art scene" viewBox="0 0 640 170" role="img" aria-label="Close-up of a mover's truck with a long ladder lift reaching up a stone wall to a balcony, its metal basket at the top."><rect width="640" height="170" fill="#d9c9a3"/><rect y="150" width="640" height="20" fill="#5a5a5a"/><rect x="420" y="20" width="70" height="60" rx="3" fill="#2a3a52"/><rect x="404" y="80" width="102" height="8" fill="#8a7a5a"/><rect x="100" y="112" width="170" height="40" rx="5" fill="#e6e6e6"/><rect x="214" y="96" width="60" height="40" rx="5" fill="#d0d0d0"/><circle cx="134" cy="154" r="11" fill="#222"/><circle cx="240" cy="154" r="11" fill="#222"/><line x1="150" y1="112" x2="430" y2="86" stroke="#c94a1d" stroke-width="10" stroke-linecap="round"/><g stroke="#f2e2d0" stroke-width="2"><line x1="190" y1="104" x2="192" y2="114"/><line x1="240" y1="100" x2="242" y2="110"/><line x1="290" y1="95" x2="292" y2="105"/><line x1="340" y1="91" x2="342" y2="101"/><line x1="390" y1="86" x2="392" y2="96"/></g><rect x="412" y="66" width="44" height="22" fill="#9aa6b2" stroke="#4a5562" stroke-width="3"/></svg>
+
+
+:: CaseTheme [stylesheet]
+:root { --accent: #7a5c0e; }
+#passages { border-top-color: var(--accent); }
+h1 { color: var(--accent); }
+.map a { border-left: 6px solid var(--accent); }
+.map .opt.revisit a { border-left-color: var(--line); }
+.actions a, .actions .macro-link { background: var(--accent); }
+.actions.secondary a, .actions.secondary .macro-link { background: transparent; color: var(--accent); border-color: var(--accent); }
+.headline { border-left: 6px solid var(--accent); }
+.card { border-top-color: var(--accent); }
+svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+svg.art.scene { margin: 6px 0 14px; }
+.meterbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 6px 0 14px; }
+.meterbar .seg { height: 14px; border-radius: 3px; background: #e8e0cc; border: 1px solid var(--line); }
+.meterbar .seg.known { background: #2f6b3a; }
+.meterbar .seg.charged { background: #c98a00; }
+.meterbar .seg.unknown { background: #a3231d; }
