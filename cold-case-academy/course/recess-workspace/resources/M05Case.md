@@ -22,7 +22,7 @@ By the morning of June 12, 1962, boats, planes and police were searching the bay
 
 - **A paddle**, floating about 200 yards off the southern shore of **Angel Island**, a big island north of Alcatraz.
 - **A packet wrapped in plastic**, holding the names, addresses and photos of the Anglin brothers' friends and relatives.
-- **A homemade life vest**, washed up on a beach nearly three miles outside the Golden Gate Bridge.
+- **A homemade life vest**, washed up on Cronkhite Beach, outside the Golden Gate Bridge.
 - **Another life vest**, floating just off Alcatraz, its strings still knotted at the back.
 
 No raft was confirmed. No bodies were ever found.
@@ -43,7 +43,7 @@ The bay is cold, usually in the 50s °F. Its tides rush in and out under the Gol
 
 Before 1962, more than 30 men had tried to escape Alcatraz. Most were caught. Some drowned. Some were never found, and were believed drowned.
 
-Then, six months after this escape, in December 1962, a prisoner named **John Paul Scott** got out and swam for it, using rubber gloves he'd blown up like balloons to help him float. He made it all the way to the shore near the Golden Gate Bridge. He was found there, exhausted and dangerously cold, and taken straight back.
+Then, six months after this escape, in December 1962, a prisoner named **John Paul Scott** got out and swam for it, using rubber gloves he'd blown up like balloons to help him float. He made it all the way to the shore near the Golden Gate Bridge. He was found there, exhausted and dangerously cold, treated in a hospital, and taken back to Alcatraz.
 
 So a person *could* reach the shore. But it nearly killed him.
 
@@ -96,11 +96,11 @@ These experiments show the escape was **possible**. They don't show that it **ha
 
 ## Part 7: The Case Today
 
-In 2022, the U.S. Marshals released computer-made pictures showing what the three men might look like as very old men. A marshal on the case once explained the rule: the Marshals keep hunting a fugitive until he is caught, proven dead, or would be about 99 years old.
+In 2022, the U.S. Marshals released computer-made pictures showing what the three men might look like as very old men.
 
-Frank Morris was born in 1926, so he would now be about 100. The Anglin brothers would be in their 90s.
+How long does the hunt last? A marshal once explained the rule: until the fugitive is caught, proven dead, or would be about 99 years old. Other reports say the Marshals keep the warrants until each man would turn 100.
 
-When this file was written, in October 2026, we couldn't find any announcement that the case had closed.
+Frank Morris would have turned 100 on September 1, 2026. John Anglin would turn 100 in 2030, and Clarence in 2031. When this file was written, in October 2026, we couldn't find any public announcement about the case.
 
 ---
 

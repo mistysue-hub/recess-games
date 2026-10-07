@@ -78,13 +78,13 @@ The Tena Bar Riddle
   { id: "tBuried", text: "Someone buried it there", answer: "possible", needs: [], why: "Nothing proves it, and nothing rules it out." }
 ]>>
 <<set setup.suspects = [
-  { id: "mccoy", name: "Richard McCoy Jr.", facts: ["In April 1972, five months after Flight 305, he hijacked a different plane, collected $500,000 and parachutes, and jumped over Utah. He was caught within days and sent to prison.", "An Army veteran and helicopter pilot, in his late twenties in 1971.", "The FBI says he didn't match the flight attendants' description, and that he was at home in Utah having Thanksgiving dinner with his family the day after the Cooper hijacking.", "His family still argues he was Cooper. The FBI hasn't changed its view."], answer: "out", why: "Too young for the mid-forties description, and the FBI says he was home for Thanksgiving dinner the next day. Copying a crime isn't proof of committing the first one." },
-  { id: "christiansen", name: "Kenneth Christiansen", facts: ["Worked for Northwest Orient, the same airline as Flight 305, and had trained as an Army paratrooper.", "He was in his mid-forties in 1971, which fits the description.", "He was about 5 feet 8: shorter than the flight attendants described, closer to what passenger Bill Mitchell remembered.", "Shown his photos years later, Florence Schaffner said he looked more like the hijacker than the other suspects, but she couldn't say for sure it was him. He died in 1994 and was never charged."], answer: "possible", why: "His age fits and Schaffner said his photos were the closest match, but his height doesn't fit two witnesses. Not enough to rule him in or out." },
-  { id: "rackstraw", name: "Robert Rackstraw", facts: ["An Army paratrooper and pilot who served in Vietnam.", "He was about 28 in 1971.", "The FBI looked at him and cleared him in the 1970s. A flight attendant couldn't identify him from his photo.", "Years later he joked that he was Cooper, then said he'd made it up. He died in 2019."], answer: "out", why: "Far younger than the mid-forties man two witnesses described, cleared by the FBI, and not recognized by a witness. A joke isn't a confession." },
-  { id: "weber", name: "Duane Weber", facts: ["Shortly before he died in 1995, he told his wife, “I'm Dan Cooper.”", "The FBI compared his DNA with the partial DNA profile from Cooper's tie. It didn't match, and the FBI ruled him out.", "But the FBI also says the tie DNA isn't a strong sample, and the tie might have been secondhand."], answer: "either", why: "The FBI ruled him out with DNA. But the tie DNA might not even be Cooper's, so careful detectives can call it either way." },
-  { id: "peterson", name: "Sheridan Peterson", facts: ["Had worked for Boeing on 727 manuals, so he knew about the back stairs. An experienced skydiver.", "His eyes were blue. Both flight attendants said the hijacker's eyes were brown.", "He said he was in Nepal at the time of the hijacking. Nobody has proven or disproven that."], answer: "either", why: "His know-how fits, but his eye color doesn't match two witnesses, and his alibi is unproven. Reasonable detectives disagree." }
+  { id: "mccoy", name: "Richard McCoy Jr.", facts: ["In April 1972, five months after Flight 305, he hijacked a different plane, collected $500,000 and parachutes, and jumped over Utah. He was arrested two days later and sent to prison.", "An Army veteran and helicopter pilot, about 28 in 1971.", "The FBI says he didn't match the flight attendants' description, and that he was at home in Utah having Thanksgiving dinner with his family the day after the Cooper hijacking.", "His family still argues he was Cooper. The FBI has never formally cleared him."], keys: [["He pulled a similar hijacking five months later", false], ["His age, and where the FBI says he was on Thanksgiving", true], ["His family believes it was him", false]], note: "Copying a crime isn't proof of committing the first one, and a family's belief isn't evidence. His age and the Thanksgiving alibi are the evidence that can actually be checked." },
+  { id: "christiansen", name: "Kenneth Christiansen", facts: ["Worked for Northwest Orient, the same airline as Flight 305, and had trained as an Army paratrooper.", "He was 45 in 1971, which fits the mid-forties description.", "He was about 5 feet 8 and slim: shorter and lighter than the flight attendants described. That's why the FBI dismissed him.", "Shown his photos years later, Florence Schaffner said he looked more like the hijacker than the other suspects, but she couldn't say for sure it was him. He died in 1994 and was never charged."], keys: [["He worked for the same airline", false], ["His height and build, compared with two witnesses", true], ["Schaffner's reaction to his photos", true]], note: "Working for the airline only shows he could have known about planes. His height and Schaffner's reaction are real evidence, and they point in different directions." },
+  { id: "rackstraw", name: "Robert Rackstraw", facts: ["An Army paratrooper and pilot who served in Vietnam.", "He was about 28 in 1971.", "The FBI looked at him and cleared him in the 1970s. A flight attendant couldn't identify him from his photo.", "Years later he hinted that he was Cooper, then said he'd made it up. He died in 2019."], keys: [["He hinted that he was Cooper", false], ["His age, compared with the mid-forties description", true], ["He was a paratrooper", false]], note: "A hint or a joke isn't a confession, and lots of people were paratroopers. His age is checkable, and it doesn't fit two witnesses." },
+  { id: "weber", name: "Duane Weber", facts: ["Shortly before he died in 1995, he told his wife, “I'm Dan Cooper.”", "The FBI compared his DNA with the partial DNA profile from Cooper's tie. It didn't match, and the FBI ruled him out.", "But the FBI also says the tie DNA isn't a strong sample, and the tie might have been secondhand."], keys: [["What he said before he died", false], ["The tie DNA didn't match", true]], note: "Words aren't proof. The DNA test is the real evidence, even with its weaknesses." },
+  { id: "peterson", name: "Sheridan Peterson", facts: ["Worked for Boeing as a technical editor, and was an expert skydiver and smokejumper.", "His eyes were blue. The flight attendants described the hijacker's eyes as brown.", "He said he was in Nepal at the time of the hijacking. Nobody has proven or disproven that."], keys: [["His skydiving skill", false], ["His eye color, compared with the witnesses", true], ["He said he was in Nepal", false]], note: "Skill shows he could have done it, not that he did, and an unchecked alibi doesn't settle anything. Eye color is something witnesses saw." }
 ]>>
-<<set setup.resultFields = function () { var v = State.variables; return { verdict: v.verdict, confidence: v.conf, theories: v.th, suspects: v.sus }; }>>
+<<set setup.resultFields = function () { var v = State.variables; return { verdict: v.verdict, confidence: v.conf, theories: v.th, suspects: v.sus, suspectEvidence: v.key }; }>>
 <<set $leads to 7>>
 <<set $notebook to []>>
 <<set $visited to []>>
@@ -97,6 +97,7 @@ The Tena Bar Riddle
 <<set $conf to "">>
 <<set $th to {}>>
 <<set $sus to {}>>
+<<set $key to {}>>
 <<set $dug to []>>
 <<set $digsLeft to 2>>
 <<set $riv to []>>
@@ -365,7 +366,7 @@ The Tena Bar Riddle
 
 :: Today [nobar]
 <div class="stamp">Cold case room · today</div>
-<h2>Forty-five years later</h2>
+<h2>Today</h2>
 <p>Fast-forward. You're in today's cold case room, and the Cooper file has grown to fill a whole wall. Science can now test things nobody could test in 1971.</p>
 <<if $locker.includes("tie")>><div class="card"><span class="card-label">From your evidence locker</span><span class="card-title">The tie you bagged in 1971</span><span class="card-text">You bagged Cooper's clip-on tie in Part 1. Look what the lab found on it.</span></div>
 <<else>><p class="note">You didn't bag the tie in Part 1, but luckily another agent did.</p><</if>>
@@ -373,13 +374,14 @@ The Tena Bar Riddle
 <div class="card"><span class="card-label">Volunteer scientists, 2009 onward</span><span class="card-title">Specks of rare metal</span><span class="card-text">Under powerful microscopes, a volunteer team found tiny bits of rare metals on the tie, including pure titanium. In 1971, metals like that were used in only a few kinds of places, like aircraft factories.</span></div>
 <<if $locker.includes("butts")>><div class="card"><span class="card-label">From your evidence locker</span><span class="card-title">The cigarette butts you bagged</span><span class="card-text">Bad news. The eight cigarette butts were destroyed in 1998 while in FBI storage. They might have held DNA. Lesson: evidence has to be protected, or it's gone forever.</span></div><</if>>
 <<if $locker.includes("prints")>><div class="card"><span class="card-label">From your evidence locker</span><span class="card-title">The fingerprints you bagged</span><span class="card-text">Investigators lifted 66 fingerprints from the plane. Nobody has ever proven that any of them belonged to the hijacker.</span></div><</if>>
-<p class="quote chief">"Over the years we've looked at more than 800 suspects," says the agent on duty. "Here are five of the most famous. For each one, can the evidence rule him out?"</p>
+<p class="quote chief">"Over the years, investigators have looked at hundreds of suspects, more than 800 by many counts," says the agent on duty. "Here are five of the most famous. For each one, can the evidence rule him out?"</p>
 <div class="actions">[[Open the suspect drawer|Suspects]]</div>
 
 
 :: Suspects [nobar]
 <h2>The suspect drawer</h2>
-<p>Compare each suspect with the evidence: the description from two flight attendants (mid-forties, about 5 feet 10 to 6 feet, dark hair, <b>brown eyes</b>), the tie DNA, and any alibi. Then decide.</p>
+<p>Compare each suspect with the evidence: the description from two flight attendants (mid-forties, about 5 feet 10 to 6 feet, dark hair, brown eyes), the tie DNA, and any alibi. For each one, pick the evidence that matters most, then decide whether it rules him out.</p>
+<p class="meta">Nobody knows who Cooper was. There's no right answer about guilt here. The star is for picking evidence that can actually be checked.</p>
 <div id="suslist"><<include "SuspectList">></div>
 <div id="susgo"><<include "SuspectGo">></div>
 
@@ -388,26 +390,29 @@ The Tena Bar Riddle
 <<for _s range setup.suspects>><<capture _s>>
 <div class="folder"><p class="folder-tab"><<print _s.name>></p>
 <ul><<for _f range _s.facts>><li><<print _f>></li><</for>></ul>
+<p class="poster-part">The evidence that matters most</p>
+<div class="choices"><<for _ki, _kv range _s.keys>><<capture _ki, _kv>><span @class="$key[_s.id] === _ki ? 'opt chosen' : 'opt'"><<link _kv[0]>><<set $key[_s.id] to _ki>><<replace "#suslist">><<include "SuspectList">><</replace>><<replace "#susgo">><<include "SuspectGo">><</replace>><</link>></span><</capture>><</for>></div>
+<p class="poster-part">Does it rule him out?</p>
 <div class="choices two"><<for _k range [["out","Ruled out"],["possible","Can't rule out"]]>><<capture _k>><span @class="$sus[_s.id] is _k[0] ? 'opt chosen' : 'opt'"><<link _k[1]>><<set $sus[_s.id] to _k[0]>><<replace "#suslist">><<include "SuspectList">><</replace>><<replace "#susgo">><<include "SuspectGo">><</replace>><</link>></span><</capture>><</for>></div></div>
 <</capture>><</for>>
 
 
 :: SuspectGo
-<<if Object.keys($sus).length lt setup.suspects.length>><p class="note">Decide all five suspects to go on.</p>
+<<if Object.keys($sus).length lt setup.suspects.length or Object.keys($key).length lt setup.suspects.length>><p class="note">Pick the key evidence and decide for all five suspects to go on.</p>
 <<else>><div class="actions">[[Close the drawer|SuspectResults]]</div><</if>>
 
 
 :: SuspectResults [nobar]
-<<set _ok to setup.suspects.map(function(s){ return s.answer === "either" || $sus[s.id] === s.answer; })>>
+<<set _ok to setup.suspects.map(function(s){ return s.keys[$key[s.id]][1]; })>>
 <<set $s4 to _ok.every(function(x){ return x; })>>
 <<set $stars to $stars + ($s4 ? 1 : 0)>>
 <div @class="$s4 ? 'stamp solved' : 'stamp'">Suspects reviewed</div>
 <h2>Detective rating: <<print $stars>> of 5 stars</h2>
 <ul class="stars">
-<li @class="$s4 ? 'on' : 'off'"><span aria-hidden="true"><<print $s4 ? '★' : '☆'>></span> <b>Judging suspects by evidence.</b> <<if $s4>>Every call you made fits the evidence.<<else>>Some of your calls don't fit the evidence. See below.<</if>></li>
+<li @class="$s4 ? 'on' : 'off'"><span aria-hidden="true"><<print $s4 ? '★' : '☆'>></span> <b>Judging suspects by evidence.</b> <<if $s4>>For every suspect, you picked evidence that can actually be checked.<<else>>Some of your picks were things that can't be checked. See below.<</if>></li>
 </ul>
-<ul class="theory-key"><<for _i to 0; _i lt setup.suspects.length; _i++>><<set _s to setup.suspects[_i]>><li @class="_ok[_i] ? 'ok' : 'no'"><b><<print _s.name>>:</b> you said <<print $sus[_s.id] is "out" ? "ruled out" : "can't rule out">>. <<print _s.why>></li><</for>></ul>
-<p class="note">None of these men was ever charged with the Cooper hijacking. Investigators have looked at more than 800 people.</p>
+<ul class="theory-key"><<for _i to 0; _i lt setup.suspects.length; _i++>><<set _s to setup.suspects[_i]>><li @class="_ok[_i] ? 'ok' : 'no'"><b><<print _s.name>>:</b> you picked “<<print _s.keys[$key[_s.id]][0]>>” and said <<print $sus[_s.id] is "out" ? "ruled out" : "can't rule out">>. <<print _s.note>></li><</for>></ul>
+<p class="note">None of these men was ever charged with the Cooper hijacking.</p>
 <div class="actions">[[What's known today|RealHistory]]</div>
 
 
