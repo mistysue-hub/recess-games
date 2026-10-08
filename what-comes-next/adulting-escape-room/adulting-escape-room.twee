@@ -1,0 +1,285 @@
+:: StoryTitle
+Adulting Escape Room
+
+:: StoryData
+{
+  "ifid": "8B3D1F6C-4E2A-4C9B-9F71-5D0A2E7C3B18",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+<<set $items to []>>
+<<set $slips to 0>>
+<<set $qid to "">>
+<<set $fb to "">>
+<<set $fbok to false>>
+<<set $lastReward to "">>
+
+:: Story JavaScript [script]
+UIBar.destroy();
+Config.history.controls = false;
+Config.history.maxStates = 60;
+Config.saves.maxSlotSaves = 0;
+Config.saves.maxAutoSaves = 0;
+Config.cleanupWikifierOutput = true;
+
+/* Keys you can earn. Rooms unlock with keys from earlier rooms, in the order real life usually goes. */
+setup.keys = {
+  id:     { icon: "🪪", name: "State ID" },
+  bank:   { icon: "🏦", name: "Bank account" },
+  credit: { icon: "📈", name: "Credit plan" },
+  adult:  { icon: "🎂", name: "Grown-Up Key" },
+  pay:    { icon: "💵", name: "First paycheck" }
+};
+setup.rooms = [
+  { id: "id",     door: "🪪 Room 1: The ID Office",              first: "id1", needs: [] },
+  { id: "bank",   door: "🏦 Room 2: The Bank",                    first: "b1",  needs: ["id"] },
+  { id: "credit", door: "💳 Room 3: The Credit Card Offer",       first: "c1",  needs: ["bank"] },
+  { id: "adult",  door: "🎂 Room 4: The \"You're 18!\" Room",      first: "e1",  needs: ["id"] },
+  { id: "pay",    door: "⭐ Bonus: First Job Paperwork",          first: "j1",  needs: ["id", "bank"] }
+];
+setup.exitNeeds = ["id", "bank", "credit", "adult"];
+setup.has = function (k) { return State.variables.items.includes(k); };
+setup.missing = function (list) { return list.filter(function (k) { return !setup.has(k); }); };
+setup.keyLabel = function (k) { return setup.keys[k].icon + " " + setup.keys[k].name; };
+
+setup.Q = {
+  id1: { room: "🪪 The ID Office",
+    intro: "A clerk with a very large stamp looks up. \"State ID? I need three things: proof of who you are, proof of your Social Security number, and proof of where you live (for a REAL ID, usually two pieces). Every state's list is a little different, but here's what we take today.\"",
+    prompt: "First: prove who you are. Which document do you hand over?",
+    options: [
+      { t: "📚 Your library card", ok: false, fb: "Library cards are great for books, but they don't prove who you are. Try something official." },
+      { t: "📄 Your birth certificate (or your passport)", ok: true, fb: "STAMP! A birth certificate or passport proves who you are. Every DMV posts its exact list online, so check yours before you go." },
+      { t: "🏆 Your soccer trophy with your name on it", ok: false, fb: "Very impressive trophy. Not an ID document, though." }
+    ], next: "id2" },
+  id2: { room: "🪪 The ID Office",
+    prompt: "Next: prove your Social Security number.",
+    options: [
+      { t: "📝 A sticky note where you wrote the number", ok: false, fb: "Anyone can write a number on a sticky note. Offices need an official document." },
+      { t: "🗣️ Just say it really confidently", ok: false, fb: "Confidence is great! Paperwork is still required." },
+      { t: "🗂️ Your Social Security card", ok: true, fb: "STAMP! (Some offices accept other documents that show the number, like a W-2.) Afterward, keep the card somewhere safe at home, not in your wallet." }
+    ], next: "id3" },
+  id3: { room: "🪪 The ID Office",
+    prompt: "Last one: prove where you live.",
+    options: [
+      { t: "🍕 A pizza box with your name on it", ok: false, fb: "Delicious, but not official. Try mail from a bank, a utility company or a government office." },
+      { t: "✉️ A bank statement or utility bill with your name and address", ok: true, fb: "STAMP! Official mail usually works, and for a REAL ID you'll often need two pieces. If the bills at home are in a parent's name, ask the office what it accepts for people who live with family." },
+      { t: "📸 A selfie in front of your house", ok: false, fb: "Great lighting! But offices need official mail or documents with your address." }
+    ], reward: "id" },
+
+  b1: { room: "🏦 The Bank",
+    intro: "Your new State ID gets you through the door. A banker slides two brochures across the desk.",
+    prompt: "You need a checking account for paying bills and getting paid. Which one do you pick?",
+    options: [
+      { t: "🅰️ Account A: no monthly fee if you set up direct deposit; overdraft coverage stays off unless you turn it on", ok: true, fb: "Smart pick. No monthly fee, and with overdraft coverage off, a debit card purchase or ATM withdrawal that would overdraw your account usually just gets declined. (Automatic bill payments can still bounce, so keep an eye on your balance.)" },
+      { t: "🅱️ Account B: $12 monthly fee unless you keep $1,500 in it; $35 fee every time you overdraw", ok: false, fb: "Read the fine print! $12 a month is $144 a year, and $35 overdraft fees add up fast. Look for an account without those." }
+    ], next: "b2" },
+  b2: { room: "🏦 The Bank",
+    prompt: "Your new debit card arrives with a PIN. Who should know your PIN?",
+    options: [
+      { t: "📱 The friendly person who texted saying they're from your bank", ok: false, fb: "Banks don't text you asking for your PIN. That's a scam (remember M23?). Never share it." },
+      { t: "🙊 Only you", ok: true, fb: "Exactly. Your PIN is yours alone. Not even the bank will ask for it." },
+      { t: "👥 Your friends, in case you forget it", ok: false, fb: "Good friends, risky plan. Anyone with your card and PIN can spend your money." }
+    ], next: "b3" },
+  b3: { room: "🏦 The Bank",
+    prompt: "Where should your emergency savings live?",
+    options: [
+      { t: "🧦 In a sock under your bed", ok: false, fb: "The sock doesn't earn interest and isn't protected if something happens. Try a bank." },
+      { t: "🐖 In a separate savings account, with a little moved in every payday", ok: true, fb: "Yes! Accounts at FDIC-insured banks (or NCUA-insured credit unions) are protected, and automatic transfers make saving easy." },
+      { t: "🛒 In your checking account, mixed in with everything else", ok: false, fb: "It's safe there, but it's easy to spend by accident. A separate savings account keeps it for emergencies." }
+    ], reward: "bank" },
+
+  c1: { room: "💳 The Credit Card Offer",
+    intro: "A shiny envelope is waiting on a table. Inside:<div class=\"offer\"><b>✨ SPARKLE CARD: YOU'RE PRE-APPROVED! ✨</b>0% interest for 3 months!<br>Then 29.99% APR<br>$95 annual fee<br>$40 late fee<br>Minimum payment: just $25!<br><small>Terms apply.</small></div>",
+    prompt: "What's the biggest catch in this offer?",
+    options: [
+      { t: "\"0% interest for 3 months!\"", ok: false, fb: "That part is the bait. Read what comes after the 3 months." },
+      { t: "\"Then 29.99% APR\"", ok: true, fb: "That's the big one. After 3 months, any balance you carry grows by almost 30% a year. The $95 annual fee and the $40 late fee are catches too." },
+      { t: "\"Terms apply.\"", ok: false, fb: "Always read the terms, but there's a bigger catch printed right there in the offer." }
+    ], next: "c2" },
+  c2: { room: "💳 The Credit Card Offer",
+    prompt: "Say you spend $500 on the card and only pay the $25 minimum each month after the 3 months are up. What happens?",
+    options: [
+      { t: "It's paid off in 20 months, no problem", ok: false, fb: "Not quite. Interest gets added every month, so paying only the minimum takes longer and costs more than $500." },
+      { t: "The interest piles up, so it takes longer and costs more than $500", ok: true, fb: "Exactly. Paying only the minimum is how small balances turn into big debt. Pay the full balance whenever you can." },
+      { t: "The bank forgets about it", ok: false, fb: "Banks never forget. Ever." }
+    ], next: "c3" },
+  c3: { room: "💳 The Credit Card Offer",
+    prompt: "You want to start building credit safely. What's the best first step?",
+    options: [
+      { t: "🛍️ Open three store cards in one day to get the discounts", ok: false, fb: "Opening lots of cards at once can hurt your score and tempt you to overspend." },
+      { t: "✨ Take the Sparkle Card and pay it off \"eventually\"", ok: false, fb: "\"Eventually\" plus 29.99% interest is a scary combo." },
+      { t: "🔒 A secured card with a small deposit and no annual fee, paid in full every month", ok: true, fb: "Great start. Paying on time, every time, matters most for your credit score. (Under 21? Card companies usually need proof of your own income or a co-signer.)" }
+    ], reward: "credit" },
+
+  e1: { room: "🎂 The \"You're 18!\" Room",
+    intro: "A door with a birthday balloon taped to it swings open. A sign says: \"Happy 18th! Some things just changed. Match each situation with the right step. (Rules and forms vary by state and by school, so families check their own.)\"",
+    prompt: "You're at college. Your mom wants to call the college about your grades. What makes that possible?",
+    options: [
+      { t: "👩 She just calls. She's your mom!", ok: false, fb: "Moms are amazing, but colleges generally need your permission first, even for parents." },
+      { t: "📝 You sign the college's form giving permission to share your records", ok: true, fb: "Right. Once you turn 18 or start college, you generally control your own education records, so the college needs your permission." },
+      { t: "🎈 Nothing. Parents can see everything until you're 21", ok: false, fb: "Nope. Those rights generally shift to you at 18, or when you start college at any age." }
+    ], next: "e2" },
+  e2: { room: "🎂 The \"You're 18!\" Room",
+    prompt: "You're sick at college and want your dad to be able to talk with your doctor. What helps?",
+    options: [
+      { t: "🏥 A signed medical permission form (often called a HIPAA authorization)", ok: true, fb: "Yes. At 18, your health information is private, even from your parents, unless you say it's okay. A signed form makes it simple." },
+      { t: "📞 Your dad explains he's your dad, very loudly", ok: false, fb: "Loud dads are a classic, but doctors generally need your okay first. A signed form makes it simple." },
+      { t: "🪪 You show the doctor your State ID", ok: false, fb: "Your ID proves who you are, but it doesn't give anyone permission to see your health information." }
+    ], next: "e3" },
+  e3: { room: "🎂 The \"You're 18!\" Room",
+    prompt: "What if there's an emergency and you can't speak for yourself?",
+    options: [
+      { t: "🤞 Hope it never happens", ok: false, fb: "Hoping is nice. Planning is better." },
+      { t: "📱 A note in your phone that says \"call Mom\"", ok: false, fb: "Better than nothing, but hospitals usually need an official signed form to let someone make decisions for you." },
+      { t: "📜 A health care proxy (or medical power of attorney) naming someone you trust", ok: true, fb: "That's the one. Many families set this up around 18. The forms and rules vary by state." }
+    ], next: "e4" },
+  e4: { room: "🎂 The \"You're 18!\" Room",
+    prompt: "Last question. Which of these is true about Selective Service?",
+    options: [
+      { t: "Registering means you're being drafted", ok: false, fb: "Nope. Registering puts a name on a list. It isn't the same as being drafted." },
+      { t: "Young men are required to be registered, and that's not the same as being drafted", ok: true, fb: "Right. Almost all young men living in the US must be registered within 30 days of turning 18. Registration is switching to automatic, but until it does, you sign up yourself at sss.gov." },
+      { t: "It's only for people joining the military", ok: false, fb: "Not quite. It applies to young men generally, whether or not they plan to serve." }
+    ], reward: "adult" },
+
+  j1: { room: "⭐ First Job Paperwork",
+    intro: "You got the job! 🎉 Someone from HR hands you a stack of forms and a pen that says \"Welcome to the team!\"",
+    prompt: "Which form proves you're allowed to work in the US?",
+    options: [
+      { t: "W-4", ok: false, fb: "The W-4 tells your employer how much tax to hold back from your paychecks. Try again." },
+      { t: "I-9 (you show documents proving who you are and that you can work)", ok: true, fb: "Yes! On the I-9, you show documents proving who you are and that you can work in the US. Your State ID from Room 1 plus your Social Security card usually does it (or a US passport by itself)." },
+      { t: "A permission slip", ok: false, fb: "So close to field-trip energy. But no." }
+    ], next: "j2" },
+  j2: { room: "⭐ First Job Paperwork",
+    prompt: "Which form tells your employer how much tax to take out of each paycheck?",
+    options: [
+      { t: "I-9", ok: false, fb: "The I-9 proves you can work in the US. The tax one is different." },
+      { t: "The Form Monster", ok: false, fb: "He's flattered, but no." },
+      { t: "W-4", ok: true, fb: "Right. If you're not sure how to fill it out, ask a parent, or use the IRS's free withholding estimator." }
+    ], next: "j3" },
+  j3: { room: "⭐ First Job Paperwork",
+    prompt: "To get paid by direct deposit, what do you need?",
+    options: [
+      { t: "🏦 Your bank account and routing numbers", ok: true, fb: "Your bank account from Room 2 unlocked this! Payday goes straight into your account." },
+      { t: "🔢 Your debit card PIN", ok: false, fb: "Never give anyone your PIN. Direct deposit needs your account and routing numbers instead." },
+      { t: "📦 Nothing. They'll mail you a box of cash", ok: false, fb: "That would be fun. It's also not a thing." }
+    ], reward: "pay" }
+};
+
+:: Story Stylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap");
+:root{--paper:#f4ecd6;--ink:#2b2a24;--forest:#2f6b45;--trail:#c8553d;--wood:#8a5a2b;--sky:#2f6fb0;--sun:#e8a33d}
+html,body{background:#e9dfc2;color:var(--ink)}
+body{font:18px/1.6 Nunito,"Trebuchet MS",system-ui,sans-serif}
+#story{margin:0 auto;padding:0;max-width:680px}
+.passage p{margin:.55em 0}
+#passages{background:var(--paper);box-shadow:0 0 0 1px #d6c79d,0 10px 30px rgba(0,0,0,.12);padding:22px 22px 30px;margin:16px 12px;border-radius:14px}
+h1,h2,h3{font-family:Fredoka,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;color:var(--forest);line-height:1.2}
+h1{font-size:30px;margin:.2em 0 .4em}
+h2{font-size:23px;margin:.3em 0 .5em;display:inline-block;background:#fff8e6;border:3px solid var(--forest);border-radius:8px;padding:2px 12px;transform:rotate(-.6deg)}
+strong{color:#7a2e1f}
+.choices{display:flex;flex-direction:column;gap:10px;margin:18px 0 6px}
+.choices a,.next a{display:block;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.choices a:hover,.next a:hover,.choices a:focus,.next a:focus{background:#eaf2fb;outline:none}
+.next{margin-top:18px}
+.next a{border-color:var(--forest);color:#fff;background:var(--forest);text-align:center}
+.next a:hover,.next a:focus{background:#24563a}
+.tip{background:#fff3cf;border:3px dashed var(--sun);border-radius:12px;padding:10px 14px;margin:14px 0}
+.tip::before{content:"🙈 Oops! ";font-weight:800;color:#8a5a00}
+.good{background:#e3f0e6;border-left:6px solid var(--forest);border-radius:8px;padding:10px 14px;margin:12px 0}
+.good::before{content:"✅ ";}
+.meter{position:sticky;top:0;z-index:5;background:#fff8e6;border:2px solid var(--wood);border-radius:12px;padding:8px 12px;margin:0 0 14px;font-weight:700;font-size:15px}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
+.stat span{background:#fff;border:2px solid #d6c79d;border-radius:20px;padding:2px 10px;font-weight:700;font-size:15px}
+.card{background:#fff;border:3px solid var(--sun);border-radius:14px;padding:10px 14px;margin:12px 0}
+.card b{display:block;font-family:Fredoka,"Trebuchet MS",sans-serif;color:#8a5a00;font-size:18px}
+.offer{background:linear-gradient(135deg,#fff,#fdf1ff);border:3px solid #b05cc8;border-radius:14px;padding:12px 14px;margin:10px 0;font-weight:700;line-height:1.5}
+.offer b{display:block;margin-bottom:4px;color:#7b2c94;font-family:Fredoka,"Trebuchet MS",sans-serif}
+.offer small{font-weight:600;font-size:13px;color:#6b6352}
+.locked{display:block;background:#f1ece0;border:3px dashed #cbbd9b;color:#6b6352;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.locked small{font-weight:600;font-size:14px}
+.donedoor{display:block;background:#e3f0e6;border:3px solid #9cc6a7;color:#24563a;border-radius:12px;padding:11px 14px;font-weight:700}
+.prize{font-size:52px;text-align:center;margin:6px 0}
+ul.lessons li{margin:6px 0}
+.small{font-size:15px;color:#5a5446}
+@media (max-width:520px){body{font-size:17px}#passages{margin:8px 6px;padding:16px 14px 24px}h1{font-size:26px}}
+
+:: PassageHeader
+<<if not tags().includes("nometer")>><div class="meter">🗝️ Adulting Escape Room<div class="stat"><span>🎒 Keys: <<if $items.length is 0>>none yet<<else>><<print $items.map(function (k) { return setup.keys[k].icon; }).join(" ")>><</if>></span><span>🙈 Oopsies: <<print $slips>></span></div></div><</if>>
+
+:: Start [nometer]
+<h1>🗝️ Adulting Escape Room</h1>
+You open a door marked <strong>"Office of Grown-Up Stuff"</strong> and it clicks shut behind you. A sign on the wall says:
+
+<div class="card"><b>📋 Welcome, future adult!</b>To escape, collect four keys: a 🪪 <strong>State ID</strong>, a 🏦 <strong>Bank account</strong>, a 📈 <strong>Credit plan</strong> and the 🎂 <strong>Grown-Up Key</strong>.<br><br>Some rooms only open with keys from other rooms, because that's how real life works. (You need an ID to open a bank account. Trust us on this.)</div>
+
+There's no timer and no game over. Wrong answers just count as "oopsies," and you get to try again.
+<div class="next">[[Enter the lobby →|Lobby]]</div>
+<p class="small">A What Comes Next? game for Recess. Rules, forms and documents vary by state and change over time, so always check the official site for your state.</p>
+
+:: Lobby
+<h2>🚪 The Lobby</h2>
+<<if setup.missing(setup.exitNeeds).length is 0>>The EXIT sign is glowing green. You did it!<<else>>Five doors. One way out. Pick a door.<</if>>
+<<nobr>><div class="choices">
+<<for _r range setup.rooms>><<capture _r>>
+<<if setup.has(_r.id)>><span class="donedoor">✅ <<print _r.door>> <small>(done)</small></span>
+<<elseif setup.missing(_r.needs).length gt 0>><span class="locked">🔒 <<print _r.door>><br><small>Needs: <<print setup.missing(_r.needs).map(setup.keyLabel).join(" + ")>></small></span>
+<<else>><<link `_r.door` "Question">><<set $qid to _r.first>><<set $fb to "">><<set $fbok to false>><</link>>
+<</if>>
+<</capture>><</for>>
+<<if setup.missing(setup.exitNeeds).length is 0>><<link "🚪 EXIT: Escape the Office of Grown-Up Stuff!" "Escaped">><</link>>
+<<else>><span class="locked">🔒 🚪 EXIT<br><small>Needs: <<print setup.missing(setup.exitNeeds).map(setup.keyLabel).join(" + ")>></small></span><</if>>
+</div><</nobr>>
+
+:: Question
+<<set _q to setup.Q[$qid]>>
+<h2><<print _q.room>></h2>
+<<if _q.intro>><div><<print _q.intro>></div><</if>>
+<p><strong><<print _q.prompt>></strong></p>
+<<if $fbok>>
+<div class="good"><<print $fb>></div>
+<<if _q.next>><div class="next"><<link "Next →" "Question">><<set $qid to _q.next>><<set $fb to "">><<set $fbok to false>><</link>></div>
+<<else>><div class="next"><<link "Collect your key →" "Key">><<if not $items.includes(_q.reward)>><<set $items.push(_q.reward)>><</if>><<set $lastReward to _q.reward>><<set $fb to "">><<set $fbok to false>><</link>></div><</if>>
+<<else>>
+<<if $fb isnot "">><div class="tip"><<print $fb>></div><</if>>
+<<nobr>><div class="choices">
+<<for _o range _q.options>><<capture _o>>
+<<link `_o.t` "Question">><<set $fb to _o.fb>><<set $fbok to _o.ok>><<if not _o.ok>><<set $slips += 1>><</if>><</link>>
+<</capture>><</for>>
+</div><</nobr>>
+<</if>>
+
+:: Key
+<<set _k to setup.keys[$lastReward]>>
+<h2>🗝️ Key collected!</h2>
+<div class="prize"><<print _k.icon>></div>
+<p style="text-align:center"><strong>You got: <<print _k.name>></strong></p>
+<<if $lastReward is "id">>Now you can prove who you are. That opens new doors (literally). Keep the original documents safe at home.
+<<elseif $lastReward is "bank">>You've got a place to keep your money safe, get paid, and save for emergencies.
+<<elseif $lastReward is "credit">>You can spot a credit card trap from across the room, and you know how to build credit the safe way.
+<<elseif $lastReward is "adult">>You know what changes at 18, and which forms let your family keep helping you.
+<<elseif $lastReward is "pay">>Bonus key! You know your first-job forms, and payday goes straight to your bank account.<</if>>
+<div class="next">[[Back to the lobby →|Lobby]]</div>
+
+:: Escaped [nometer]
+<h1>🎉 You escaped!</h1>
+<div class="meter">🎒 Keys: <<print $items.map(function (k) { return setup.keys[k].icon; }).join(" ")>> · 🙈 Oopsies: <<print $slips>></div>
+<<if $slips lte 2>><h2>🏆 Certified Grown-Up</h2>Hardly an oopsie in sight. The Office of Grown-Up Stuff is impressed (and a little intimidated).
+<<elseif $slips lte 6>><h2>⭐ Adulting Apprentice</h2>A few oopsies, and you learned from every one. That's exactly how adulting works.
+<<else>><h2>🌱 Adulting in Progress</h2>Lots of oopsies, lots of learning. Nobody gets this right the first time. Try again and watch your number drop.<</if>>
+<<if setup.has("pay")>><p>⭐ <strong>Bonus:</strong> you finished the First Job Paperwork room too!</p><<else>><p class="small">⭐ You skipped the bonus room. Play again to try First Job Paperwork.</p><</if>>
+
+<strong>What you learned:</strong>
+<ul class="lessons">
+<li>🪪 A State ID takes proof of who you are, your Social Security number, and where you live (often two proofs for a REAL ID). Check your DMV's list first.</li>
+<li>🏦 Pick a bank account without surprise fees, keep your PIN to yourself, and keep savings separate.</li>
+<li>📈 Read the fine print on credit offers. Pay in full, pay on time, and start small.</li>
+<li>🎂 At 18, your records and health information become yours. Permission forms let your family keep helping.</li>
+<li>🔁 Real life has an order: ID, then bank account, then direct deposit.</li>
+</ul>
+
+<div class="card"><b>🗺️ Tell Rocky</b>Which room was the trickiest, and Which "18" form does your family want to look into?</div>
+<div class="choices"><<link "🔁 Play again">><<run Engine.restart()>><</link>></div>
+<p class="small">A What Comes Next? game for Recess. Rules and forms vary by state and change over time. Always check official sources.</p>
