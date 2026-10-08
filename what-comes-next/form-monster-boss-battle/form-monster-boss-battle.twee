@@ -1,0 +1,223 @@
+:: StoryTitle
+Form Monster Boss Battle
+
+:: StoryData
+{
+  "ifid": "5C2E8F4A-9B1D-4E7A-A3C6-2F8D7B1E4A90",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+<<set $week to 1>>
+<<set $energy to 3>>
+<<set $done to {}>>
+<<set $doneWeek to {}>>
+<<set $missed to []>>
+<<set $beaten to []>>
+<<set $log to []>>
+<<set $resolvedWeek to 0>>
+
+:: Story JavaScript [script]
+UIBar.destroy();
+Config.history.controls = false;
+Config.history.maxStates = 60;
+Config.saves.maxSlotSaves = 0;
+Config.saves.maxAutoSaves = 0;
+Config.cleanupWikifierOutput = true;
+
+/* Every task: cost in energy points, what it needs first, and (for deadline tasks) the last week to finish it.
+   "wait" tasks hand something to another person; the result comes back after a delay. */
+setup.tasks = [
+  { id: "satReg", icon: "📝", name: "Register for the SAT", cost: 1, deadline: 2, needs: [],
+    why: "Registration closes before test day. Miss it and you wait for the next test date." },
+  { id: "recs", icon: "🙋", name: "Pick two recommenders", cost: 1, needs: [],
+    why: "You can't ask for letters until you know who to ask." },
+  { id: "askRec", icon: "✉️", name: "Ask your recommenders for letters", cost: 1, needs: ["recs"], wait: 2, waitName: "Recommendation letters",
+    why: "Letter writers need about two weeks. The letters come back two weeks after you ask." },
+  { id: "parentInfo", icon: "👪", name: "Ask your parents to add their part of the FAFSA", cost: 1, needs: [], wait: 1, waitName: "Your parents' FAFSA section",
+    why: "Your parents need about a week to gather their information." },
+  { id: "fafsa", icon: "💵", name: "Finish and submit the FAFSA", cost: 2, deadline: 4, needs: ["parentInfo:ready"],
+    why: "The priority deadline is the end of week 4. Some aid runs out after that." },
+  { id: "essay", icon: "✍️", name: "Write your scholarship essay", cost: 2, deadline: 5, needs: [],
+    why: "A good essay takes a big chunk of energy, so plan a week for it." },
+  { id: "transcript", icon: "📜", name: "Ask your parents to finalize your transcript", cost: 1, needs: [], wait: 1, waitName: "Your final transcript",
+    why: "Your parents need about a week to finish and sign it." },
+  { id: "app", icon: "🎓", name: "Submit your application", cost: 2, deadline: 6, needs: ["askRec:ready", "transcript:ready"],
+    why: "The application is due at the end of week 6, with your letters and transcript attached." }
+];
+setup.task = function (id) { return setup.tasks.find(function (t) { return t.id === id; }); };
+setup.isReady = function (id) {
+  var v = State.variables;
+  var t = setup.task(id);
+  if (!v.done[id]) { return false; }
+  if (!t.wait) { return true; }
+  return v.week >= v.doneWeek[id] + t.wait;
+};
+setup.needsMet = function (t) {
+  var v = State.variables;
+  return t.needs.every(function (n) {
+    var parts = n.split(":");
+    return parts[1] === "ready" ? setup.isReady(parts[0]) : !!v.done[parts[0]];
+  });
+};
+setup.blockedReason = function (t) {
+  var missing = t.needs.filter(function (n) {
+    var parts = n.split(":");
+    return parts[1] === "ready" ? !setup.isReady(parts[0]) : !State.variables.done[parts[0]];
+  }).map(function (n) {
+    var src = setup.task(n.split(":")[0]);
+    return n.indexOf(":ready") > -1 && State.variables.done[src.id] ? src.waitName + " (still on its way)" : src.name;
+  });
+  return "Needs: " + missing.join(" + ");
+};
+setup.deadlineTasks = function () { return setup.tasks.filter(function (t) { return t.deadline; }); };
+setup.weekEnergy = function (w) { return w === 3 ? 2 : 3; };
+
+:: Story Stylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap");
+:root{--paper:#f4ecd6;--ink:#2b2a24;--forest:#2f6b45;--trail:#c8553d;--wood:#8a5a2b;--sky:#2f6fb0;--sun:#e8a33d}
+html,body{background:#e9dfc2;color:var(--ink)}
+body{font:18px/1.6 Nunito,"Trebuchet MS",system-ui,sans-serif}
+#story{margin:0 auto;padding:0;max-width:680px}
+.passage p{margin:.55em 0}
+#passages{background:var(--paper);box-shadow:0 0 0 1px #d6c79d,0 10px 30px rgba(0,0,0,.12);padding:22px 22px 30px;margin:16px 12px;border-radius:14px}
+.passage{transition:opacity .25s}
+h1,h2,h3{font-family:Fredoka,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;color:var(--forest);line-height:1.2}
+h1{font-size:30px;margin:.2em 0 .4em}
+h2{font-size:23px;margin:.3em 0 .5em;display:inline-block;background:#fff8e6;border:3px solid var(--forest);border-radius:8px;padding:2px 12px;transform:rotate(-.6deg)}
+strong{color:#7a2e1f}
+.choices{display:flex;flex-direction:column;gap:10px;margin:18px 0 6px}
+.choices a,.next a{display:block;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.choices a:hover,.next a:hover,.choices a:focus,.next a:focus{background:#eaf2fb;outline:none}
+.next{margin-top:18px}
+.next a{border-color:var(--forest);color:#fff;background:var(--forest);text-align:center}
+.next a:hover,.next a:focus{background:#24563a}
+.msg{background:#fff;border-radius:14px;padding:10px 14px;margin:10px 0;border:2px solid #d6c79d}
+.msg.me{background:#e3f0e6;border-color:#9cc6a7;margin-left:24px}
+.msg.them{margin-right:24px}
+.msg b{display:block;font-size:13px;color:var(--wood);text-transform:uppercase;letter-spacing:.06em}
+.tip{background:#fff3cf;border:3px dashed var(--sun);border-radius:12px;padding:10px 14px;margin:14px 0}
+.tip::before{content:"🥾 Trail tip: ";font-weight:800;color:#8a5a00}
+.callback{background:#e7f0fb;border-left:6px solid var(--sky);border-radius:8px;padding:10px 14px;margin:12px 0}
+.callback::before{content:"🔁 Remember earlier? ";font-weight:800;color:#1d4a78}
+.meter{position:sticky;top:0;z-index:5;background:#fff8e6;border:2px solid var(--wood);border-radius:12px;padding:8px 12px;margin:0 0 14px;font-weight:700;font-size:15px}
+.meter .bar{height:14px;background:#e6dcc0;border-radius:8px;overflow:hidden;margin-top:5px}
+.meter .fill{height:100%;background:linear-gradient(90deg,#e8a33d,#2f6b45);border-radius:8px;transition:width .5s}
+.delta{font-weight:800;padding:2px 10px;border-radius:20px;display:inline-block;margin:4px 0}
+.up{background:#dff0e3;color:#24563a}.down{background:#fbe2dc;color:#8e3626}.same{background:#eee6d2;color:#5a4a2a}
+table.stub{width:100%;border-collapse:collapse;background:#fffaf0;border-radius:10px;overflow:hidden;font-size:16px;margin:10px 0}
+table.stub td{padding:7px 10px;border-bottom:1px dashed #d9c7a3}
+table.stub td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.stub tr.total td{background:#eef6e9;font-weight:800;border-bottom:none}
+table.stub tr.flag td{background:#fbe2dc}
+ul.lessons li{margin:6px 0}
+.small{font-size:15px;color:#5a5446}
+@media (max-width:520px){body{font-size:17px}#passages{margin:8px 6px;padding:16px 14px 24px}h1{font-size:26px}}
+.stars{color:#e8a33d;letter-spacing:2px;font-size:20px}
+.stat span.stars{background:none;border:0;padding:0;font-size:17px}
+.card{background:#fff;border:3px solid var(--sun);border-radius:14px;padding:10px 14px;margin:12px 0}
+.card b{display:block;font-family:Fredoka,"Trebuchet MS",sans-serif;color:#8a5a00;font-size:18px}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
+.stat span{background:#fff8e6;border:2px solid #d6c79d;border-radius:20px;padding:2px 10px;font-weight:700;font-size:15px}
+.locked{display:block;background:#f1ece0;border:3px dashed #cbbd9b;color:#6b6352;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.locked small{font-weight:600;font-size:14px}
+.arrive{background:#e3f0e6;border-left:6px solid var(--forest);border-radius:8px;padding:10px 14px;margin:12px 0}
+.arrive::before{content:"📬 ";}
+
+:: PassageHeader
+<<if not tags().includes("nometer")>><div class="meter">👹 Form Monster Boss Battle · Week <<print Math.min($week,6)>> of 6<div class="stat"><span>⚡ Energy left: <<print "⚡".repeat($energy)>><<if $energy is 0>>none<</if>></span><span>🏆 Deadlines beaten: <<print $beaten.length>></span><span>👹 Monster wins: <<print $missed.length>></span></div></div><</if>>
+
+:: Start [nometer]
+<h1>👹 Form Monster Boss Battle</h1>
+The <strong>Form Monster</strong> has arrived. It's not evil. It's just hungry, and it eats deadlines for breakfast.
+
+You have <strong>six weeks</strong> to get everything done for your next step: an application, a scholarship, financial aid and a test. But you only have <strong>3 energy points ⚡ each week</strong>, because you also have school, a job, sleep, and a life. Small tasks cost 1 ⚡. Big ones cost 2 ⚡.
+
+<strong>The catch:</strong> some tasks need someone else first. Recommenders need time to write. Your parents need time to add their information. Those "waiting on someone" tasks take a week or two to come back.
+
+Beat all <strong>4 deadlines</strong> and the monster goes back to sleep.
+<div class="next">[[Look at the monster's to-do list →|Briefing]]</div>
+<p class="small">A What Comes Next? game for Recess. Deadlines and timings are made up for the game; real ones vary, so always check the official dates.</p>
+
+:: Briefing [nometer]
+<h2>📋 The monster's list</h2>
+<div class="card"><b>The 4 deadlines</b>
+📝 Register for the SAT: end of <strong>week 2</strong><br>
+💵 Submit the FAFSA: end of <strong>week 4</strong><br>
+✍️ Scholarship essay: end of <strong>week 5</strong><br>
+🎓 Submit your application: end of <strong>week 6</strong> (with recommendation letters and your transcript)</div>
+<div class="card"><b>Things that take time</b>
+✉️ Recommendation letters come back <strong>2 weeks</strong> after you ask.<br>
+👪 Your parents need <strong>1 week</strong> for their part of the FAFSA, and 1 week to finish your transcript.<br>
+🙋 You have to pick your recommenders before you can ask them.</div>
+<div class="next">[[Start week 1 →|Week]]</div>
+
+:: Week
+<<if $resolvedWeek lt $week>><<set $energy to setup.weekEnergy($week)>><<set $resolvedWeek to $week>><</if>>
+<h2>Week <<print $week>></h2>
+<<if $week is 3>><div class="card"><b>🤧 Plot twist!</b>You caught a cold. You only have <strong>2 energy</strong> this week. (This is why smart planners leave a cushion.)</div><</if>>
+<<set _arrivals to setup.tasks.filter(function (t) { return t.wait && $done[t.id] && $doneWeek[t.id] + t.wait === $week; })>>
+<<for _a range _arrivals>><div class="arrive"><<print _a.waitName>> came back! You can use it now.</div><</for>>
+<<set _waiting to setup.tasks.filter(function (t) { return t.wait && $done[t.id] && !setup.isReady(t.id); })>>
+<<if _waiting.length gt 0>><p class="small">⏳ Still waiting on: <<print _waiting.map(function (t) { return t.waitName + " (back in week " + ($doneWeek[t.id] + t.wait) + ")"; }).join("; ")>></p><</if>>
+<<set _due to setup.deadlineTasks().filter(function (t) { return !$done[t.id] && t.deadline is $week; })>>
+<<if _due.length gt 0>><div class="tip">Due at the end of THIS week: <<print _due.map(function (t) { return t.icon + " " + t.name; }).join(", ")>></div><</if>>
+<strong>Spend your energy:</strong>
+<<nobr>><div class="choices">
+<<for _t range setup.tasks>><<capture _t>>
+<<if not $done[_t.id]>>
+<<if not setup.needsMet(_t)>><span class="locked"><<print _t.icon>> <<print _t.name>> · <<print _t.cost>>⚡<br><small>🔒 <<print setup.blockedReason(_t)>></small></span>
+<<elseif _t.deadline and _t.deadline lt $week>><span class="locked"><<print _t.icon>> <<print _t.name>><br><small>👹 Deadline passed. The monster ate this one.</small></span>
+<<elseif $energy lt _t.cost>><span class="locked"><<print _t.icon>> <<print _t.name>> · <<print _t.cost>>⚡<br><small>Not enough energy left this week</small></span>
+<<else>><<link `_t.icon + " " + _t.name + " · " + _t.cost + "⚡" + (_t.deadline ? " · due week " + _t.deadline : "")` "Week">><<set $energy -= _t.cost>><<set $done[_t.id] to true>><<set $doneWeek[_t.id] to $week>><<set $log.push({ week: $week, id: _t.id })>><</link>>
+<</if>>
+<</if>>
+<</capture>><</for>>
+</div><</nobr>>
+<<set _doneNow to $log.filter(function (l) { return l.week === $week; })>>
+<<if _doneNow.length gt 0>><p class="small">✅ Done this week: <<print _doneNow.map(function (l) { return setup.task(l.id).name; }).join(", ")>></p><</if>>
+<div class="next"><<link `"End week " + $week + " →"` "Week End">><</link>></div>
+
+:: Week End
+<<set _due to setup.deadlineTasks().filter(function (t) { return t.deadline === $week; })>>
+<<for _t range _due>>
+<<if $done[_t.id]>><<if not $beaten.includes(_t.id)>><<set $beaten.push(_t.id)>><</if>><<else>><<if not $missed.includes(_t.id)>><<set $missed.push(_t.id)>><</if>><</if>>
+<</for>>
+<<set $week += 1>>
+<<if $week gt 6>><<goto "Final">><<else>><<goto "Week Report">><</if>>
+
+:: Week Report
+<h2>End of week <<print $week - 1>></h2>
+<<set _d to setup.deadlineTasks().filter(function (t) { return t.deadline === $week - 1; })>>
+<<if _d.length is 0>>No deadlines this week. The monster paces and grumbles.
+<<else>><<for _t range _d>><<if $done[_t.id]>><div class="callback"><<print _t.icon>> <<print _t.name>>: done on time! 🏆 The monster howls in frustration.</div><<else>><div class="tip">👹 CHOMP. <<print _t.name>> missed its deadline. <<print _t.why>></div><</if>><</for>><</if>>
+<<if $week is 4 and not $done["askRec"]>><div class="tip">Heads-up: letters take 2 weeks. If you don't ask your recommenders by week 4, they won't arrive before the application is due.</div><</if>>
+<<if $week is 5 and not $done["fafsa"]>><div class="tip">The FAFSA deadline has passed, but you can still file it late. Some aid is first come, first served, so sooner is better.</div><</if>>
+<div class="next"><<link `"Start week " + $week + " →"` "Week">><</link>></div>
+
+:: Final [nometer]
+<h1>🏁 Six weeks later...</h1>
+<div class="meter">🏆 Deadlines beaten: <<print $beaten.length>> of 4 · 👹 Monster wins: <<print $missed.length>></div>
+<<if $beaten.length is 4>><h2>🏆 Form Monster Defeated!</h2>The monster yawns, curls up on a pile of finished forms, and goes to sleep. You beat every deadline, even with a cold. Legendary.
+<<elseif $beaten.length gte 2>><h2>⚔️ Close Battle!</h2>You beat <<print $beaten.length>> of 4 deadlines. The monster got a snack, but you're learning its tricks.
+<<else>><h2>🌱 The Monster Won This Round</h2>That's okay. This is exactly why we practice with a game first. Try again with the tips below, and you'll beat it.<</if>>
+
+<strong>What happened:</strong>
+<ul class="lessons">
+<<for _t range setup.deadlineTasks()>><li><<print _t.icon>> <<print _t.name>>: <<if $beaten.includes(_t.id)>>✅ on time<<else>>❌ missed<</if>></li><</for>>
+</ul>
+
+<strong>Boss-battle lessons:</strong>
+<ul class="lessons">
+<<if $done["askRec"] and $doneWeek["askRec"] lte 2>><li>You asked for letters early. That's the #1 move: start the "waiting on someone" tasks first.</li><<else>><li>Start the "waiting on someone" tasks first. Asking recommenders and parents early gives them time while you work on other things.</li><</if>>
+<li>Work backward from each deadline to find your "do date," and leave a cushion. (Remember that cold in week 3?)</li>
+<li>Big tasks, like an essay, need a week with enough energy. Plan them on purpose.</li>
+<li>Some tasks unlock others. You can't ask for letters until you've picked recommenders.</li>
+</ul>
+
+<div class="tip">Go back to Rocky and tell him: how many deadlines did you beat, and which task would you start first next time?</div>
+
+<div class="choices"><<link "🔁 Battle again">><<run Engine.restart()>><</link>></div>
+<p class="small">A What Comes Next? game for Recess. Real deadlines and wait times vary, so always check the official dates and put them on your calendar (M19).</p>
