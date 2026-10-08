@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cover Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap">
+<style>
+/* Layout: a sketchbook on a painter's table. One page per step, Rocky talks in the margin, paint-chip cards carry the rules. */
+:root{
+  --paper:#f6f3fb; --sheet:#ffffff; --ink:#241b3a; --muted:#6a5f80; --line:#e3dcef;
+  --rocky:#8b5cf6; --rocky-2:#ec4899; --tomato:#ff6b57; --sun:#ffc53d; --teal:#14b8a6; --sky:#3b82f6;
+  --chip-ink:#ffffff; --shadow:0 1px 0 rgba(36,27,58,.06),0 12px 30px -14px rgba(36,27,58,.28);
+  --display:"Bricolage Grotesque",ui-rounded,"Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --hand:"Caveat","Comic Sans MS","Segoe Print",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#16121e; --sheet:#211b2d; --ink:#eee9f7; --muted:#b2a8c6; --line:#3a3150;
+  --rocky:#a78bfa; --rocky-2:#f472b6; --tomato:#ff7a68; --sun:#ffd166; --teal:#2dd4bf; --sky:#60a5fa;
+  --chip-ink:#1a1424; --shadow:0 1px 0 rgba(0,0,0,.3),0 14px 34px -16px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#16121e; --sheet:#211b2d; --ink:#eee9f7; --muted:#b2a8c6; --line:#3a3150;
+  --rocky:#a78bfa; --rocky-2:#f472b6; --tomato:#ff7a68; --sun:#ffd166; --teal:#2dd4bf; --sky:#60a5fa;
+  --chip-ink:#1a1424; --shadow:0 1px 0 rgba(0,0,0,.3),0 14px 34px -16px rgba(0,0,0,.7); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;
+  background-image:radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--sun) 18%,transparent) 0 120px,transparent 121px),
+                   radial-gradient(circle at 92% 30%,color-mix(in srgb,var(--rocky) 16%,transparent) 0 160px,transparent 161px),
+                   radial-gradient(circle at 6% 88%,color-mix(in srgb,var(--teal) 14%,transparent) 0 140px,transparent 141px);
+  background-attachment:fixed}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;gap:22px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;letter-spacing:-.01em}
+p{margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--rocky);outline-offset:3px;border-radius:10px}
+
+/* masthead */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mast .kicker{font-family:var(--hand);font-size:1.6rem;color:var(--rocky);transform:rotate(-2deg);display:inline-block}
+.mast h1 span{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--sun) 70%,transparent) 62%);padding:0 .1em}
+
+/* step tabs as paint swatches */
+.tabs{display:flex;gap:10px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.tab{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 8px;border-radius:999px;border:2px solid var(--line);background:var(--sheet);cursor:pointer;font-weight:700;font-size:.95rem;color:var(--muted);transition:transform .15s,border-color .15s}
+.tab .dab{width:26px;height:26px;border-radius:50% 46% 52% 48%/48% 52% 46% 50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;color:var(--chip-ink);font-size:.85rem}
+.tab[aria-current="step"]{border-color:var(--ink);color:var(--ink);transform:translateY(-2px)}
+.tab.done .dab::after{content:"✓"}
+.tab.done .dab span{display:none}
+
+/* the sketchbook sheet */
+.sheet{background:var(--sheet);border-radius:22px;box-shadow:var(--shadow);padding:clamp(18px,4vw,36px);display:grid;gap:24px;position:relative;overflow:hidden}
+.sheet::before{content:"";position:absolute;inset:0 auto 0 0;width:10px;background:repeating-linear-gradient(var(--line) 0 10px,transparent 10px 22px)}
+.step{display:grid;gap:22px}
+.step[hidden]{display:none}
+
+/* Rocky */
+.rocky{display:flex;gap:14px;align-items:flex-start}
+.orb{flex:0 0 auto;width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 7%,transparent 8%),radial-gradient(circle at 40% 38%,var(--rocky-2),var(--rocky) 62%,color-mix(in srgb,var(--rocky) 60%,#1b1030));box-shadow:0 0 0 6px color-mix(in srgb,var(--rocky) 18%,transparent),0 0 28px color-mix(in srgb,var(--rocky-2) 55%,transparent);animation:glow 3.2s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--rocky) 12%,transparent),0 0 40px color-mix(in srgb,var(--rocky-2) 70%,transparent)}}
+.bubble{position:relative;background:color-mix(in srgb,var(--rocky) 10%,var(--sheet));border:2px solid color-mix(in srgb,var(--rocky) 40%,transparent);border-radius:18px 18px 18px 6px;padding:12px 16px;max-width:60ch;min-width:0}
+.bubble b{font-family:var(--display)}
+.bubble .who{display:block;font-family:var(--hand);font-size:1.25rem;color:var(--rocky);line-height:1}
+
+/* step 1 */
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px;align-items:center}
+.field label{display:block;font-weight:800;margin-bottom:8px}
+.field input[type=text]{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-size:1.15rem;font-weight:700}
+.field input[type=text]:focus{border-color:var(--rocky);outline:none}
+.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.examples button{border:1.5px dashed var(--line);background:none;border-radius:999px;padding:4px 12px;cursor:pointer;font-size:.9rem;color:var(--muted)}
+.tag{margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tagcard{position:relative;display:inline-flex;align-items:center;gap:10px;background:var(--sun);color:#2a1d00;padding:10px 16px 10px 30px;border-radius:8px 14px 14px 8px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-weight:700;font-size:1rem;word-break:break-all;transform:rotate(-1.5deg);box-shadow:var(--shadow);max-width:100%}
+.tagcard::before{content:"";position:absolute;left:10px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--sheet);box-shadow:inset 0 0 0 2px #2a1d0040}
+.ext{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.ext button{border:0;background:none;padding:6px 12px;cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted)}
+.ext button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.copy{border:2px solid var(--ink);background:none;border-radius:999px;padding:6px 14px;font-weight:800;cursor:pointer;font-size:.9rem}
+
+/* the challenge card preview */
+.cardwrap{display:grid;justify-items:center;gap:10px}
+.cover{position:relative;width:min(100%,300px);aspect-ratio:1/1;max-width:100%}
+.cover .square{position:absolute;inset:0;border-radius:6px;overflow:hidden;background:var(--paper)}
+.cover .square img,.cover .square svg{width:100%;height:100%;object-fit:cover;display:block}
+.cover .cut{position:absolute;inset:0;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 55%,transparent) 0 6px,color-mix(in srgb,var(--ink) 35%,transparent) 6px 12px);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,11% 20%,11% 80%,36% 98%,64% 98%,89% 80%,89% 20%,64% 2%,36% 2%,11% 20%);opacity:0;transition:opacity .35s}
+.cover.showcut .cut{opacity:1}
+.cover .frame{position:absolute;inset:0;clip-path:polygon(36% 2%,64% 2%,89% 20%,89% 80%,64% 98%,36% 98%,11% 80%,11% 20%);transition:filter .3s}
+.cover .frame .art{position:absolute;inset:0}
+.cover .frame .art img,.cover .frame .art svg{width:100%;height:100%;object-fit:cover;display:block}
+.cover .name{position:absolute;left:30%;right:30%;bottom:9%;background:rgba(20,14,32,.82);color:#fff;border-radius:8px;text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(.6rem,2.6vw,.8rem);padding:4px 6px;line-height:1.15;overflow-wrap:anywhere}
+.cover.cardmode .square{opacity:0}
+.cover .square{transition:opacity .35s}
+.cardcap{font-family:var(--hand);font-size:1.3rem;color:var(--muted);text-align:center}
+
+/* paint chips */
+.chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.chip{border-radius:16px;overflow:hidden;background:var(--sheet);border:2px solid var(--line);display:grid;grid-template-rows:auto 1fr;transform:rotate(var(--r,0deg));transition:transform .2s}
+.chip:hover{transform:rotate(0) translateY(-3px)}
+.chip .swatch{background:var(--c);color:var(--chip-ink);padding:18px 16px 14px;display:grid;gap:6px;min-height:150px;align-content:end}
+.chip .swatch .big{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,4vw,2.1rem);line-height:1;letter-spacing:-.01em}
+.chip .swatch .lab{font-weight:800;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.chip .swatch svg{width:44px;height:44px}
+.chip .meta{padding:12px 16px;display:grid;gap:2px}
+.chip .meta .cname{font-family:var(--hand);font-size:1.35rem;line-height:1}
+.chip .meta small{color:var(--muted);font-size:.9rem}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.rules li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--paper)}
+.rules .mk{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--chip-ink)}
+
+/* step 3 */
+.place{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center}
+.toggle{display:inline-flex;gap:0;border:2px solid var(--ink);border-radius:999px;overflow:hidden;justify-self:start}
+.toggle button{border:0;background:none;padding:8px 16px;font-weight:800;cursor:pointer}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.tips{display:grid;gap:12px;list-style:none;margin:0;padding:0}
+.tips li{display:flex;gap:12px;align-items:flex-start}
+.tips .dot{flex:0 0 14px;height:14px;margin-top:6px;border-radius:50%}
+.upload{display:grid;gap:8px;padding:14px;border:2px dashed var(--line);border-radius:16px}
+.upload label{font-weight:800;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-self:start;background:var(--rocky);color:#fff;padding:8px 16px;border-radius:999px}
+.upload input{position:absolute;left:-9999px}
+.upload small{color:var(--muted)}
+
+/* step 4 */
+.send{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center}
+.recap{display:grid;gap:10px;list-style:none;margin:0;padding:0}
+.recap li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--paper);font-weight:700;min-width:0}
+.recap li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.9rem;word-break:break-all;background:color-mix(in srgb,var(--sun) 40%,transparent);padding:1px 6px;border-radius:6px}
+.recap .n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;color:var(--chip-ink)}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;background:linear-gradient(135deg,var(--rocky),var(--rocky-2));color:#fff;font-family:var(--display);font-weight:800;font-size:1.3rem;padding:16px 28px;border-radius:18px;box-shadow:0 10px 24px -10px var(--rocky-2);transition:transform .15s}
+.go:hover{transform:translateY(-2px) rotate(-1deg)}
+.after{font-family:var(--hand);font-size:1.45rem;color:var(--muted);line-height:1.2}
+.urltext{font-size:.85rem;color:var(--muted);word-break:break-all;user-select:all}
+
+/* nav */
+.nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.btn{border:2px solid var(--ink);background:var(--ink);color:var(--sheet);border-radius:14px;padding:12px 20px;font-weight:800;cursor:pointer;font-size:1rem}
+.btn.ghost{background:none;color:var(--ink)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+
+@media (max-width:760px){
+  .grid2,.place,.send{grid-template-columns:minmax(0,1fr)}
+  .chips{grid-template-columns:minmax(0,1fr)}
+  .rules{grid-template-columns:minmax(0,1fr)}
+  .chip{--r:0deg !important}
+  .chip .swatch{min-height:110px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <span class="kicker">Rocky's art department</span>
+      <h1>Make a <span>Challenge Cover</span></h1>
+    </div>
+  </header>
+
+  <ol class="tabs" id="tabs" aria-label="Steps">
+    <li><button class="tab" data-go="0" aria-current="step"><span class="dab" style="background:var(--tomato)"><span>1</span></span>Pick a challenge</button></li>
+    <li><button class="tab" data-go="1"><span class="dab" style="background:var(--sky)"><span>2</span></span>The file rules</button></li>
+    <li><button class="tab" data-go="2"><span class="dab" style="background:var(--teal)"><span>3</span></span>Where art goes</button></li>
+    <li><button class="tab" data-go="3"><span class="dab" style="background:var(--rocky)"><span>4</span></span>Send it</button></li>
+  </ol>
+
+  <main class="sheet">
+    <!-- STEP 1 -->
+    <section class="step" data-step="0" aria-labelledby="h1s">
+      <div class="rocky"><div class="orb" aria-hidden="true"></div>
+        <p class="bubble"><span class="who">Rocky</span>Hmph, most challenge cards got their pictures from a robot. Yours is getting a real one, made by <b>you</b>. Which challenge is it for?</p></div>
+      <div class="grid2">
+        <div>
+          <h2 id="h1s">Which challenge?</h2>
+          <div class="field" style="margin-top:14px">
+            <label for="chal">Type the challenge's name</label>
+            <input type="text" id="chal" autocomplete="off" placeholder="Contact Juggling" value="Contact Juggling">
+            <div class="examples" aria-label="Examples">
+              <button type="button" data-ex="Beginner Typer">Beginner Typer</button>
+              <button type="button" data-ex="A Short History of Mathematics">A Short History of Mathematics</button>
+              <button type="button" data-ex="Peter Pan">Peter Pan</button>
+            </div>
+          </div>
+          <div class="tag">
+            <span class="tagcard" id="fname">contact-juggling-cover.jpg</span>
+            <span class="ext" role="group" aria-label="File ending">
+              <button type="button" data-ext="jpg" aria-pressed="true">JPG</button>
+              <button type="button" data-ext="png" aria-pressed="false">PNG</button>
+            </span>
+            <button type="button" class="copy" id="copy">Copy name</button>
+          </div>
+          <p style="margin-top:10px;color:var(--muted)">Save your picture with this exact name, so everyone knows which card it's for.</p>
+        </div>
+        <div class="cardwrap">
+          <div class="cover cardmode" id="card1">
+            <div class="square"></div>
+            <div class="frame"><div class="art" data-art></div></div>
+            <div class="name" data-name>Contact Juggling</div>
+          </div>
+          <p class="cardcap">your card, with your name on it</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step" data-step="1" hidden aria-labelledby="h2s">
+      <div class="rocky"><div class="orb" aria-hidden="true"></div>
+        <p class="bubble"><span class="who">Rocky</span>Three numbers, that's all. Get these right and your cover drops onto the card perfectly. Bah, easy.</p></div>
+      <h2 id="h2s">What your file needs</h2>
+      <div class="chips">
+        <article class="chip" style="--c:var(--sky);--r:-1.5deg">
+          <div class="swatch">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="12" height="12" rx="2"/><rect x="16" y="2" width="12" height="12" rx="2" opacity=".55"/><rect x="30" y="2" width="12" height="12" rx="2"/><rect x="2" y="16" width="12" height="12" rx="2" opacity=".55"/><rect x="16" y="16" width="12" height="12" rx="2"/><rect x="30" y="16" width="12" height="12" rx="2" opacity=".55"/><rect x="2" y="30" width="12" height="12" rx="2"/><rect x="16" y="30" width="12" height="12" rx="2" opacity=".55"/><rect x="30" y="30" width="12" height="12" rx="2"/></g></svg>
+            <span class="lab">Image size</span>
+            <span class="big">1024 × 1024</span>
+          </div>
+          <div class="meta"><span class="cname">Pixel Perfect Blue</span><small>pixels, a perfect square</small></div>
+        </article>
+        <article class="chip" style="--c:var(--teal);--r:1deg">
+          <div class="swatch">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M10 3h16l10 10v26a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="currentColor" opacity=".9"/><path d="M26 3v10h10" fill="none" stroke="var(--c)" stroke-width="2.5"/><circle cx="17" cy="23" r="3" fill="var(--c)"/><path d="M12 35l7-8 5 5 3-3 5 6z" fill="var(--c)"/></svg>
+            <span class="lab">Image type</span>
+            <span class="big">JPG or PNG</span>
+          </div>
+          <div class="meta"><span class="cname">Classic File Teal</span><small>name ends in .jpg or .png</small></div>
+        </article>
+        <article class="chip" style="--c:var(--tomato);--r:-.5deg">
+          <div class="swatch">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 6a4 4 0 0 1 4 4h8l6 26H4l6-26h8a4 4 0 0 1 4-4z" fill="currentColor"/><text x="22" y="31" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="var(--c)">2MB</text></svg>
+            <span class="lab">File size</span>
+            <span class="big">Under 2 MB</span>
+          </div>
+          <div class="meta"><span class="cname">Lightweight Tomato</span><small>most covers are a few hundred KB</small></div>
+        </article>
+      </div>
+      <ul class="rules">
+        <li><span class="mk" style="background:var(--sun)">✎</span><span><b>Your own art.</b> A drawing, painting, design, or photo you made. No AI picture makers.</span></li>
+        <li><span class="mk" style="background:var(--tomato)">✕</span><span><b>No words or letters.</b> The card already shows the challenge name.</span></li>
+        <li><span class="mk" style="background:var(--rocky)">✕</span><span><b>No logos or characters</b> from cartoons, movies, or games.</span></li>
+        <li><span class="mk" style="background:var(--teal)">☺</span><span><b>No one else's face</b> unless they and your grown-up say yes.</span></li>
+      </ul>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step" data-step="2" hidden aria-labelledby="h3s">
+      <div class="rocky"><div class="orb" aria-hidden="true"></div>
+        <p class="bubble"><span class="who">Rocky</span>Here's the sneaky part. The card trims the sides of your square, and the name sits along the bottom. Keep your best stuff in the middle, a little high.</p></div>
+      <div class="place">
+        <div class="cardwrap">
+          <div class="cover showcut" id="card2">
+            <div class="square"><div class="art" data-art style="position:absolute;inset:0"></div></div>
+            <div class="cut" aria-hidden="true"></div>
+            <div class="frame"><div class="art" data-art></div></div>
+            <div class="name" data-name>Contact Juggling</div>
+          </div>
+          <div class="toggle" role="group" aria-label="View">
+            <button type="button" data-view="square" aria-pressed="false">Your square</button>
+            <button type="button" data-view="cut" aria-pressed="true">What gets cut</button>
+            <button type="button" data-view="card" aria-pressed="false">On the card</button>
+          </div>
+        </div>
+        <div style="display:grid;gap:18px;min-width:0">
+          <h2 id="h3s">Where your art goes</h2>
+          <ul class="tips">
+            <li><span class="dot" style="background:var(--teal)"></span><span><b>Center, a little high.</b> That's where everyone looks first.</span></li>
+            <li><span class="dot" style="background:var(--tomato)"></span><span><b>Sides and corners get trimmed.</b> Fill them with background, nothing important.</span></li>
+            <li><span class="dot" style="background:var(--sky)"></span><span><b>The bottom gets the challenge name,</b> so leave a little room there.</span></li>
+          </ul>
+          <div class="upload">
+            <label for="peek">Peek at your picture on the card</label>
+            <input type="file" id="peek" accept="image/jpeg,image/png">
+            <small>Optional. Pick your picture to see how it'll look. It stays on your device; nothing is sent.</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step" data-step="3" hidden aria-labelledby="h4s">
+      <div class="rocky"><div class="orb" aria-hidden="true"></div>
+        <p class="bubble"><span class="who">Rocky</span>Ready? Send it through the upload form and a grown-up will swap it onto the real card. Then come tell me you did it.</p></div>
+      <div class="send">
+        <div style="display:grid;gap:16px;min-width:0">
+          <h2 id="h4s">Send your cover</h2>
+          <ul class="recap">
+            <li><span class="n" style="background:var(--tomato)">1</span><span>Challenge: <span data-name>Contact Juggling</span></span></li>
+            <li><span class="n" style="background:var(--sky)">2</span><span>File named <code data-fname>contact-juggling-cover.jpg</code></span></li>
+            <li><span class="n" style="background:var(--teal)">3</span><span>Square 1024 × 1024, JPG or PNG, under 2 MB</span></li>
+          </ul>
+        </div>
+        <div style="display:grid;gap:14px;justify-items:start;min-width:0">
+          <a class="go" href="https://tally.so/r/XxK6jY" target="_blank" rel="noopener">Open the upload form →</a>
+          <span class="urltext">tally.so/r/XxK6jY</span>
+          <p class="after">On the form: the challenge, your name, and your picture. Press Submit. Then tell Rocky "I sent it!" and tap Submit on your todo.</p>
+        </div>
+      </div>
+    </section>
+
+    <nav class="nav">
+      <button class="btn ghost" id="back" type="button">← Back</button>
+      <button class="btn" id="next" type="button">Next →</button>
+    </nav>
+  </main>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const steps=$$('.step'), tabs=$$('.tab');
+  let cur=0, ext='jpg', artURL=null;
+
+  // sample art: a painted juggling scene, centered and a little high
+  const sample=`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="Sample art">
+    <defs><radialGradient id="bg" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#fff4d6"/><stop offset="1" stop-color="#ffd6c2"/></radialGradient></defs>
+    <rect width="400" height="400" fill="url(#bg)"/>
+    <circle cx="200" cy="168" r="120" fill="#ffe7a3" opacity=".7"/>
+    <path d="M120 250 Q200 290 280 250" stroke="#f59e0b" stroke-width="10" fill="none" stroke-linecap="round" opacity=".5"/>
+    <circle cx="200" cy="120" r="34" fill="#8b5cf6"/><circle cx="190" cy="110" r="9" fill="#fff" opacity=".7"/>
+    <circle cx="140" cy="185" r="26" fill="#ff6b57"/><circle cx="133" cy="178" r="7" fill="#fff" opacity=".7"/>
+    <circle cx="262" cy="185" r="26" fill="#14b8a6"/><circle cx="255" cy="178" r="7" fill="#fff" opacity=".7"/>
+    <path d="M140 185 Q170 120 200 120 Q232 120 262 185" stroke="#241b3a" stroke-width="3" stroke-dasharray="4 8" fill="none" opacity=".35"/>
+    <path d="M168 230 q32 30 64 0" stroke="#241b3a" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="20" cy="30" r="40" fill="#bfe3ff" opacity=".7"/><circle cx="385" cy="360" r="60" fill="#c7f0e6" opacity=".8"/>
+  </svg>`;
+
+  function slug(s){return s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')}
+  function fileName(){const s=slug($('#chal').value.trim());return (s||'your-challenge')+'-cover.'+ext}
+  function refresh(){
+    const name=$('#chal').value.trim()||'Your Challenge';
+    $$('[data-name]').forEach(e=>e.textContent=name);
+    const fn=fileName(); $('#fname').textContent=fn; $$('[data-fname]').forEach(e=>e.textContent=fn);
+  }
+  function paintArt(){
+    $$('[data-art]').forEach(el=>{el.innerHTML=artURL?`<img src="${artURL}" alt="Your picture">`:sample});
+  }
+  function show(i){
+    cur=Math.max(0,Math.min(steps.length-1,i));
+    steps.forEach((s,k)=>s.hidden=k!==cur);
+    tabs.forEach((t,k)=>{t.toggleAttribute('aria-current',k===cur); if(k===cur)t.setAttribute('aria-current','step'); t.classList.toggle('done',k<cur)});
+    $('#back').disabled=cur===0;
+    $('#next').hidden=cur===steps.length-1;
+    try{localStorage.setItem('cover-step',cur)}catch(e){}
+  }
+  $('#chal').addEventListener('input',refresh);
+  $$('[data-ex]').forEach(b=>b.addEventListener('click',()=>{$('#chal').value=b.dataset.ex;refresh()}));
+  $$('[data-ext]').forEach(b=>b.addEventListener('click',()=>{ext=b.dataset.ext;$$('[data-ext]').forEach(x=>x.setAttribute('aria-pressed',x===b));refresh()}));
+  $('#copy').addEventListener('click',async()=>{
+    const btn=$('#copy'), t=$('#fname').textContent;
+    try{await navigator.clipboard.writeText(t);btn.textContent='Copied!'}
+    catch(e){const r=document.createRange();r.selectNodeContents($('#fname'));const s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Selected, press copy'}
+    setTimeout(()=>btn.textContent='Copy name',1600);
+  });
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{
+    const v=b.dataset.view, c=$('#card2');
+    $$('[data-view]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    c.classList.toggle('showcut',v==='cut'); c.classList.toggle('cardmode',v==='card');
+    c.querySelector('.name').style.opacity=v==='square'?0:1;
+  }));
+  $('#peek').addEventListener('change',e=>{
+    const f=e.target.files&&e.target.files[0]; if(!f)return;
+    if(artURL)URL.revokeObjectURL(artURL); artURL=URL.createObjectURL(f); paintArt();
+  });
+  tabs.forEach(t=>t.addEventListener('click',()=>show(+t.dataset.go)));
+  $('#next').addEventListener('click',()=>show(cur+1));
+  $('#back').addEventListener('click',()=>show(cur-1));
+  paintArt(); refresh();
+  let start=0; try{start=+localStorage.getItem('cover-step')||0}catch(e){}
+  show(start);
+})();
+</script>
+</body>
+</html>
