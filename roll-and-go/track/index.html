@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designer's Track</title>
+<style>
+  :root{--kraft:#C89B6B;--kraft-dark:#A97A4A;--paper:#FBFAF3;--grid:#D7E7F2;--ink:#2B2118;--red:#E5383B;--sun:#FFC93C;--teal:#1FA2A0;--grape:#7B4FB8;--sky:#3E8EDE;--leaf:#4CAF50}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 16px;
+    font:600 1rem/1.4 "Trebuchet MS","Segoe UI",sans-serif;color:var(--ink);
+    background:radial-gradient(circle at 20% 10%,rgba(255,255,255,.18) 0 2px,transparent 3px) 0 0/22px 22px,var(--kraft)}
+  .lid{width:100%;max-width:760px;border-radius:18px;padding:22px 18px 18px;
+    background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/24px 24px,var(--paper);
+    box-shadow:0 0 0 10px var(--kraft-dark),0 14px 0 10px rgba(60,35,10,.35)}
+  h1{margin:0 0 4px;text-align:center;font:400 clamp(1.7rem,6vw,2.4rem)/1 "Arial Black",Impact,sans-serif;letter-spacing:.02em;color:var(--red);text-shadow:2px 2px 0 var(--sun),4px 4px 0 var(--ink)}
+  .status{text-align:center;margin:10px 0 0;font-size:1.05rem}
+  @media (max-width:520px){.status{font-size:.9rem}}
+  svg{display:block;width:100%;height:auto;margin-top:6px}
+  .label{font:700 19px "Trebuchet MS",sans-serif;fill:var(--ink)}
+  .num{font:700 22px "Arial Black",sans-serif;fill:#fff}
+  .pawn{animation:hop 1.2s ease-in-out infinite}
+  @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .done .star{animation:twinkle 2s ease-in-out infinite}
+  @keyframes twinkle{50%{opacity:.6}}
+  @media (prefers-reduced-motion:reduce){.pawn,.done .star{animation:none}}
+</style>
+</head>
+<body>
+<main class="lid">
+  <h1>Designer's Track</h1>
+  <svg id="track" viewBox="-20 0 780 320" role="img" aria-labelledby="status">
+    <path d="M70 230 C150 230 150 90 240 90 S330 230 380 230 S470 90 520 90 S640 230 660 170" fill="none" stroke="#2B2118" stroke-width="7" stroke-dasharray="2 16" stroke-linecap="round"/>
+    <g id="spaces"></g>
+  </svg>
+  <p class="status" id="status"></p>
+</main>
+<script>
+(function(){
+  var S=[
+    {x:70, y:230,name:"The Idea Spark",  color:"#FFC93C"},
+    {x:240,y:90, name:"The Crossroads",  color:"#1FA2A0"},
+    {x:380,y:230,name:"The Twist Factory",color:"#3E8EDE"},
+    {x:520,y:90, name:"Boss Level:",    name2:"The Playtest", color:"#E5383B"},
+    {x:660,y:170,name:"The Hall",name2:"of Games",color:"#7B4FB8"}
+  ];
+  var lvl=parseInt(new URLSearchParams(location.search).get("level"),10);
+  if(!(lvl>=1&&lvl<=6)) lvl=1;
+  var ns="http://www.w3.org/2000/svg", g=document.getElementById("spaces");
+  function el(t,a,p){var e=document.createElementNS(ns,t);for(var k in a)e.setAttribute(k,a[k]);(p||g).appendChild(e);return e;}
+  function star(cx,cy,r,p){var pts=[];for(var i=0;i<10;i++){var rr=i%2?r*.45:r,an=Math.PI/5*i-Math.PI/2;pts.push((cx+rr*Math.cos(an)).toFixed(1)+","+(cy+rr*Math.sin(an)).toFixed(1));}
+    return el("polygon",{points:pts.join(" "),fill:"#FFC93C",stroke:"#2B2118","stroke-width":3,"stroke-linejoin":"round","class":"star"},p);}
+  S.forEach(function(s,i){
+    var n=i+1, done=n<lvl, here=n===lvl;
+    var grp=el("g",{"class":done?"done":""});
+    el("circle",{cx:s.x,cy:s.y,r:here?40:34,fill:done?"#fff":s.color,stroke:"#2B2118","stroke-width":here?6:4},grp);
+    if(done){ star(s.x,s.y,24,grp); }
+    else { var t=el("text",{x:s.x,y:s.y+8,"text-anchor":"middle","class":"num"},grp); t.textContent=n; }
+    var ly=s.y<150? s.y-(s.name2?72:54) : s.y+66;
+    var t1=el("text",{x:s.x,y:ly,"text-anchor":"middle","class":"label"},grp); t1.textContent=s.name;
+    if(s.name2){var t2=el("text",{x:s.x,y:ly+18,"text-anchor":"middle","class":"label"},grp); t2.textContent=s.name2;}
+    if(here){
+      var p=el("g",{transform:"translate("+(s.x-58)+" "+(s.y-14)+")"},grp);
+      var hop=el("g",{"class":"pawn"},p);
+      el("path",{d:"M-14 22 L14 22 L8 4 A11 11 0 1 0 -8 4 Z",fill:"#E5383B",stroke:"#2B2118","stroke-width":3},hop);
+    }
+  });
+  var msg = lvl===6 ? "Every space has a star. You're a Master Designer!"
+          : "Level "+lvl+": "+S[lvl-1].name+(S[lvl-1].name2?" "+S[lvl-1].name2:"")+(lvl>1?" (stars earned: "+(lvl-1)+")":"");
+  document.getElementById("status").textContent=msg;
+  document.title="Designer's Track — "+(lvl===6?"Master Designer":"Level "+lvl);
+})();
+</script>
+</body>
+</html>
