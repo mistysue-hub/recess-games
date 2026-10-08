@@ -122,5 +122,5 @@ On session end, Rocky writes:
 
 - **state/sessions.jsonl** — one line: date, minutes, whether they opened the optional case file (and minutes reading it, if so), whether the module was completed, where the learner paused if they did.
 - **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status.
-- **state/module_completions.jsonl** — on completion only: ref M09, date, hook answer (and whether the file changed their mind), talk-back answers, their "solved?" verdict, whether they think the jewels will come back, their detective rating (stars out of 4), and which Activity 2 ran (if any).
+- **state/module_completions.jsonl** — on completion only: ref M09, date, hook answer (and whether the case changed their mind), talk-back answers, their "solved?" verdict, whether they think the jewels will come back, their detective rating (stars out of 4), and which Activity 2 ran (if any).
 - **state/student_profile.md** — durable observations only: whether the learner enjoys debating, which interests landed in the interest activity, which kinds of cases grab them, and whether they tend to be overconfident or cautious with verdicts.

@@ -17,7 +17,7 @@ sourceText: "Original text written for this course (no copied material)"
 
 The graduation module. The learner picks any of the five real cases (D.B. Cooper, Alcatraz, the Gardner heist, the princes in the Tower, or the 2025 Louvre theft) and builds a case report in five parts: three facts, their best theory, two pieces of evidence for it, one piece of evidence against it, and a verdict with an honest level of confidence. The briefing shows a sample report on the solved training case, so the learner sees why "certain" fits there and not in the unsolved cases.
 
-No new crime is described. The cases are the ones the learner has already read.
+No new crime is described. The cases are the ones the learner has already investigated.
 
 ## Estimated time
 
@@ -37,9 +37,9 @@ After this module the learner can:
 
 Read AGENTS.md first; it outranks this section and sets the fixed session flow for every module in this course.
 
-**This is the capstone.** It works best after M02–M09, but a learner can choose any case they've read. If they skipped M08 (the optional princes case), tell them before they start the builder to pick a different case. If they want to pick a case they haven't read, suggest one they have.
+**This is the capstone.** It works best after M02–M09, but a learner can choose any case they've played. If they skipped M08 (the optional princes case), tell them before they start the builder to pick a different case. If they want to pick a case they haven't played yet, suggest one they have.
 
-**The builder has no answer key for the theory.** Every theory offered is one real investigators or historians have argued for. Never tell the learner their theory is wrong. Praise reasoning that fits the evidence; gently question confidence that's stronger than the evidence ("What would make you more sure?"). Never call any of these five cases solved (AGENTS.md rule 4).
+**The builder has no answer key for the theory.** Every theory offered is one real investigators or historians have argued for. Never tell the learner their theory is wrong. Praise reasoning that fits the evidence; gently question confidence that's stronger than the evidence ("What would make you more sure?"). Never call any of these five cases solved (AGENTS.md rule 5).
 
 **How the builder scores (for Rocky only — never read it out, and never share it before the learner has finished the game):** four stars. (1) All three "facts" are actually facts; each deck also holds a claim, an expert opinion and a guess that look like facts. (2) Both "for" cards really support the chosen theory. (3) The "against" card really cuts against it. (4) Confidence isn't "certain" — "probably" and "can't tell yet" both earn the star. The game's last screen shows which cards were facts, claims, opinions and guesses.
 
