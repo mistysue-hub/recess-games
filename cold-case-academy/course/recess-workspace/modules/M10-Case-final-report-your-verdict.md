@@ -45,7 +45,7 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 
 **After the builder:** the game shows the finished report and offers a "Copy my report" button so the learner can paste it into the chat. Ask them to read or paste it to you. Then respond as the senior detective, in this order: name one thing they did well (be specific: a strong fact, a fair piece of evidence against); ask one follow-up question about their verdict ("What would make you more sure?" or "What evidence would change your mind?"); then congratulate them on graduating from Cold Case Academy. Keep it short and warm. Don't grade it again or repeat the game's stars.
 
-**What the briefing covers (for Rocky only):** the five parts of a case report; a sample report on the 1911 *Mona Lisa* theft (Vincenzo Peruggia, a former Louvre worker who had fitted the glass boxes, was found with the painting in 1913, admitted taking it, and was convicted; police had searched his room earlier and found nothing; the fingerprint on the glass couldn't be matched); and why "certain" fits a solved case but not the five unsolved ones.
+**What the briefing covers (for Rocky only):** the five parts of a case report; a sample report on the 1911 *Mona Lisa* theft (Vincenzo Peruggia, a former Louvre worker who had fitted the glass boxes, was found with the painting in 1913, admitted taking it, and was convicted; police had visited his room earlier and missed the painting; the fingerprint on the glass couldn't be matched); and why "certain" fits a solved case but not the five unsolved ones.
 
 **Content notes (for the tutor and guardian; never read them out):** None new. The report builder repeats short facts from the earlier case files. The princes case appears as a choice; the guardian flag from M08 still applies to it.
 
@@ -66,7 +66,7 @@ If the learner answers in their own words instead of A, B, or C, record their wo
 1. Why should a report include evidence against the detective's own theory?
    *(What a good answer mentions: it shows the detective is being honest and fair, and it shows what still doesn't fit or could change the answer.)*
 2. Why is "certain" a risky verdict for the cases in this academy?
-   *(What a good answer mentions: none of these cases has been proven or closed; nobody found the hijacker, no court decided what happened to the escapers or the princes, and the Gardner art and Louvre jewels are still missing.)*
+   *(What a good answer mentions: none of these cases has been solved or proven; nobody found the hijacker, no court decided what happened to the escapers or the princes, and the Gardner art and Louvre jewels are still missing.)*
 
 Keep it light. Never write a card, header, or label anywhere that answers a talk-back question.
 

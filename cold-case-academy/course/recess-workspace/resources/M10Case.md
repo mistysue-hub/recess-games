@@ -9,7 +9,7 @@
 
 ## Congratulations, Detective
 
-You've worked a training case and five real cold cases. You followed a hijacker into a storm, three men off an island, thieves through a museum at night, two princes into a tower, and a crew up a ladder at the Louvre.
+You've worked a training case and five real cold cases. You followed a hijacker into a storm, three men off an island, thieves through a museum at night, two princes into a tower, and a crew up a furniture lift at the Louvre.
 
 Now comes the part real detectives do at the end of every case: the **report**. A report isn't a story. It's a careful list of what you know, what you think, and how sure you are.
 
@@ -46,7 +46,7 @@ Here's how a report on your training case might look. Remember, this one was sol
 >
 > **Evidence for it:** He had the painting. He knew the building and how the glass came off, because he had fitted the glass boxes himself.
 >
-> **Evidence against it:** Police searched his room during the investigation and didn't find anything.
+> **Evidence against it:** Police visited his room and questioned him during the investigation, but didn't find the painting.
 >
 > **My verdict:** Peruggia did it. How sure I am: certain. He had the painting, he admitted taking it, and a court found him guilty.
 

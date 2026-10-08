@@ -38,7 +38,7 @@ At about **9:30 a.m.**, two of the men rode the basket up to a balcony on the si
 
 The two men cut through the window with a power tool called a **disc cutter**. Alarms went off.
 
-Inside, they cut open two glass display cases and grabbed the jewels. Guards in the gallery called the police and moved visitors out of the way while the thieves threatened them with their tools.
+Inside, they cut open two glass display cases and grabbed the jewels. Museum staff called the police, and guards moved visitors out of the way while the thieves threatened them with their tools.
 
 Then the two men climbed back out the window, rode the basket down, and jumped onto **two scooters** waiting with two more members of the team. They tried to set the lift truck on fire to destroy the evidence, but were stopped before it could burn.
 
@@ -81,7 +81,7 @@ Forensic scientists collected more than 150 samples from the evidence, looking f
 **EXHIBIT D: The arrests**
 
 - **October 25, 2025:** Six days after the theft, police arrested two men. One was caught at the airport about to board a plane leaving France. Both partly admitted taking part.
-- **October 29:** Police arrested more people. A third man was charged. His DNA had been found in the lift basket.
+- **October 29:** Police arrested more people. A few days later, a third man was charged. His DNA had been found in the lift basket.
 - **November 25:** Police arrested a fourth man, and three days later he was charged. Investigators believe he was the last member of the team of four.
 
 A woman was also charged with helping. Several other people were questioned and let go.
@@ -94,9 +94,9 @@ Being **charged** means a court will decide. It doesn't mean guilty yet. In Fran
 
 None of the eight pieces has been found.
 
-In 2026, two of the men told investigators they had been hired just a few days before the theft, and that they handed the jewels to the man who hired them, in a parking garage near Paris. They wouldn't say who he is. Camera footage suggests the handoff came less than an hour after the theft. Nobody knows who planned the theft or who has the jewels now.
+In 2026, two of the men told investigators that someone else hired them for the job. One of them said he handed the jewels to that man in a parking garage near Paris, soon after the theft. Neither will say who he is, and investigators still aren't sure he exists. Camera footage from that garage shows two of the suspects there with the jewels less than an hour after the theft. Nobody knows who planned the theft or who has the jewels now.
 
-Clues found on the suspects' phones pointed French police to Belgium, where they looked for people who might have helped hide or sell the jewels.
+In June 2026, French newspapers reported a new lead: photos of the Apollo Gallery had turned up on the phones of other suspects in a Belgian investigation. Police looked into whether people there helped hide or sell the jewels. Officials haven't said what the lead turned up.
 
 The jewels are so famous that nobody could sell them as they are. Some experts fear the thieves have already taken out the stones and melted down the gold, so the pieces could never be recognized again. Others think they may still be hidden, waiting.
 
@@ -118,6 +118,6 @@ The Apollo Gallery reopened in July 2026, with new cameras and alarms, but with 
 
 **OCTOBER 19, 2025**
 
-`9:30 a.m.` up the lift → window cut, alarms ring → cases cut open → `about 9:38` down the lift and away on scooters → crown dropped → `Oct 25` first arrests → `Nov 25` fourth man charged → `2026` the jewels are still missing
+`9:30 a.m.` up the lift → window cut, alarms ring → cases cut open → `about 9:38` down the lift and away on scooters → crown dropped → `Oct 25` first arrests → `Nov 28` fourth man charged → `2026` the jewels are still missing
 
 **END OF FILE**
