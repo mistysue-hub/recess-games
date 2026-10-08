@@ -1,0 +1,236 @@
+:: JuiceScript [script]
+/* Cold Case Academy polish layer, shared by every game.
+   1. Location pictures: setup.placeArt[passage] = { color, svg } puts a drawing at the top of each place
+      and tints that place's new clue cards (by place, never by card type, so nothing is given away).
+   2. Reveal screens: card types get bold colors and a legend.
+   3. Long screens (start, verdict, "what's known today") split into short taps with Next.
+   4. "Case closed": the stamp thumps down, confetti falls, and a full rating earns a gold badge. */
+(function () {
+  var REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PAGED = ["Start", "Verdict", "RealHistory", "Today"];
+
+  function words(el) { return (el.textContent || "").trim().split(/\s+/).filter(Boolean).length; }
+
+  function addPlaceArt(content, title) {
+    var pa = setup.placeArt && setup.placeArt[title];
+    if (!pa) { return; }
+    content.classList.add("has-place");
+    content.style.setProperty("--place", pa.color);
+    if (pa.svg && !content.querySelector("svg.art")) {
+      var d = document.createElement("div");
+      d.className = "placeart";
+      d.innerHTML = pa.svg;
+      content.insertBefore(d, content.firstChild);
+    }
+  }
+
+  function addCaseArt(content, title) {
+    var cs = State.variables.cs;
+    if (!setup.caseArt || !cs || !setup.caseArt[cs] || (setup.caseArtPassages || []).indexOf(title) < 0) { return; }
+    var d = document.createElement("div");
+    d.className = "placeart caseart";
+    d.innerHTML = setup.caseArt[cs];
+    content.insertBefore(d, content.firstChild);
+  }
+
+  function addLegends(content) {
+    content.querySelectorAll(".cards.reveal").forEach(function (box) {
+      if (box.previousElementSibling && box.previousElementSibling.classList.contains("legend")) { return; }
+      var seen = {}, order = [];
+      box.querySelectorAll(".card").forEach(function (c) {
+        var tag = c.querySelector(".tag");
+        var t = Array.prototype.find.call(c.classList, function (k) { return ["card", "new", "seen"].indexOf(k) < 0; });
+        if (!t || !tag) { return; }
+        if (!seen[t]) { seen[t] = tag.textContent.trim(); order.push(t); }
+      });
+      if (order.length < 2) { return; }
+      var lg = document.createElement("div");
+      lg.className = "legend";
+      lg.innerHTML = order.map(function (t) { return '<span class="chip t-' + t + '">' + seen[t] + "</span>"; }).join("");
+      box.parentNode.insertBefore(lg, box);
+    });
+  }
+
+  function bigStars(content) {
+    var h = Array.prototype.find.call(content.querySelectorAll("h2, h3"), function (x) { return /Detective rating:\s*\d+\s+of\s+\d+/.test(x.textContent); });
+    if (!h) { return; }
+    var m = h.textContent.match(/(\d+)\s+of\s+(\d+)/);
+    var got = +m[1], max = +m[2], html = "";
+    for (var i = 0; i < max; i++) { html += '<span class="' + (i < got ? "on" : "off") + '" style="animation-delay:' + (0.15 + i * 0.18) + 's">★</span>'; }
+    var d = document.createElement("div");
+    d.className = "bigstars";
+    d.setAttribute("aria-hidden", "true");
+    d.innerHTML = html;
+    h.parentNode.insertBefore(d, h.nextSibling);
+  }
+
+  function addScene(content, title) {
+    if (title !== "RealHistory" || content.querySelector("svg.art") || !Story.has("Scene")) { return; }
+    var d = document.createElement("div");
+    d.className = "pageart";
+    $(d).wiki('<<include "Scene">>');
+    content.insertBefore(d, content.firstChild);
+  }
+
+  function paginate(content, title) {
+    if (PAGED.indexOf(title) < 0 || words(content) < 120) { return; }
+    var kids = Array.prototype.slice.call(content.children);
+    var lastActions = null;
+    for (var i = kids.length - 1; i >= 0; i--) { if (kids[i].classList.contains("actions")) { lastActions = kids[i]; break; } }
+    if (!lastActions) { return; }
+    var body = kids.slice(0, kids.indexOf(lastActions));
+    var tail = kids.slice(kids.indexOf(lastActions) + 1);
+    var pages = [[]], w = 0;
+    var isBreaker = function (el) {
+      return /^H[23]$/.test(el.tagName) || el.classList.contains("lesson") || el.classList.contains("cards") || el.classList.contains("legend");
+    };
+    body.forEach(function (el) {
+      var ew = words(el);
+      var cur = pages[pages.length - 1];
+      var prev = cur[cur.length - 1];
+      var prevIsHead = prev && /^H[1-3]$/.test(prev.tagName);
+      var prevIsLegend = prev && prev.classList.contains("legend");
+      if (cur.length && !prevIsHead && !prevIsLegend && ((w >= 45 && isBreaker(el)) || (w >= 50 && w + ew > 110))) {
+        pages.push([]); w = 0;
+      }
+      pages[pages.length - 1].push(el);
+      w += ew;
+    });
+    if (pages.length > 1 && words({ textContent: pages[pages.length - 1].map(function (e) { return e.textContent; }).join(" ") }) < 18) {
+      var last = pages.pop(); pages[pages.length - 1] = pages[pages.length - 1].concat(last);
+    }
+    if (pages.length < 2) { return; }
+    var wraps = pages.map(function (els, n) {
+      var pg = document.createElement("div");
+      pg.className = "page" + (n === 0 ? " on" : "");
+      els.forEach(function (el) { pg.appendChild(el); });
+      return pg;
+    });
+    var nav = document.createElement("div");
+    nav.className = "pager";
+    nav.innerHTML = '<span class="dots"></span><button type="button" class="next">Next ›</button>';
+    var dots = nav.querySelector(".dots");
+    var btn = nav.querySelector(".next");
+    var at = 0;
+    function show(n) {
+      at = n;
+      wraps.forEach(function (p, k) { p.classList.toggle("on", k === n); });
+      dots.innerHTML = wraps.map(function (p, k) { return '<i class="' + (k === n ? "cur" : (k < n ? "done" : "")) + '"></i>'; }).join("") + '<span class="sr">Page ' + (n + 1) + " of " + wraps.length + "</span>";
+      var lastPage = n === wraps.length - 1;
+      btn.style.display = lastPage ? "none" : "";
+      lastActions.style.display = lastPage ? "" : "none";
+      tail.forEach(function (t) { t.style.display = lastPage ? "" : "none"; });
+    }
+    btn.addEventListener("click", function () {
+      show(Math.min(at + 1, wraps.length - 1));
+      var top = document.getElementById("passages");
+      if (top && top.scrollIntoView) { top.scrollIntoView({ block: "start", behavior: REDUCED ? "auto" : "smooth" }); }
+    });
+    wraps.forEach(function (p) { content.insertBefore(p, lastActions); });
+    content.insertBefore(nav, lastActions);
+    show(0);
+  }
+
+  $(document).on(":passagerender", function (ev) {
+    var content = ev.content, title = ev.passage.title;
+    try { addPlaceArt(content, title); } catch (e) {}
+    try { addCaseArt(content, title); } catch (e) {}
+    try { addLegends(content); } catch (e) {}
+    try { if (title === "Verdict") { bigStars(content); } } catch (e) {}
+    try { addScene(content, title); } catch (e) {}
+    try { paginate(content, title); } catch (e) {}
+  });
+
+  /* Clue cards added later inside a place (interview answers) pick up the place color through CSS. */
+  function confetti() {
+    if (REDUCED) { return; }
+    var colors = ["#e63946", "#f4a261", "#e9c46a", "#2a9d8f", "#457b9d", "#9b5de5", "#f15bb5"];
+    var box = document.createElement("div");
+    box.className = "confetti";
+    box.setAttribute("aria-hidden", "true");
+    for (var i = 0; i < 70; i++) {
+      var s = document.createElement("i");
+      s.style.left = (Math.random() * 100) + "%";
+      s.style.background = colors[i % colors.length];
+      s.style.animationDelay = (Math.random() * 0.9) + "s";
+      s.style.animationDuration = (2.2 + Math.random() * 1.6) + "s";
+      s.style.transform = "rotate(" + Math.floor(Math.random() * 360) + "deg)";
+      if (i % 3 === 0) { s.style.width = "7px"; s.style.height = "7px"; s.style.borderRadius = "50%"; }
+      box.appendChild(s);
+    }
+    document.body.appendChild(box);
+    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } }, 4500);
+  }
+
+  $(document).on(":passagedisplay", function (ev) {
+    if (ev.passage.title !== "CaseClosed") { return; }
+    var content = ev.content || document.querySelector("#passages .passage") || document.getElementById("passages");
+    if (!content) { return; }
+    var stamp = content.querySelector(".stamp");
+    if (stamp) { stamp.classList.add("thump"); }
+    var m = (content.textContent || "").match(/Detective rating:\s*(\d+)\s+of\s+(\d+)/);
+    if (m && +m[1] === +m[2] && stamp && !content.querySelector(".badge")) {
+      var b = document.createElement("div");
+      b.className = "badge";
+      b.innerHTML = '<span class="medal" aria-hidden="true">🏅</span><span><b>Top Detective</b><br>All ' + m[2] + " stars. A perfect report.</span>";
+      stamp.parentNode.insertBefore(b, stamp.nextSibling);
+    }
+    confetti();
+  });
+})();
+
+
+:: JuiceStyle [stylesheet]
+/* 1. Location pictures and place-tinted clue cards */
+.placeart svg, .pageart svg { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 14px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.placeart svg.placepic { aspect-ratio: 640 / 190; }
+.caseart svg.casepic { aspect-ratio: 640 / 140; }
+.has-place .card.new { border-top: 5px solid var(--place); background: color-mix(in srgb, var(--place) 9%, #fffdf6); }
+.has-place .card.new .pin { background: var(--place); }
+.has-place .card.new.deduction { border-top-color: #b8860b; background: #fff8e1; }
+.has-place h2:first-of-type { color: color-mix(in srgb, var(--place) 70%, #2a2420); }
+
+/* 2. Reveal screens: every card type gets its own color, plus a legend */
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.chip, .reveal .card .tag { display: inline-block; font-family: var(--display); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--tc, #6b5d4f); padding: 3px 9px; border-radius: 999px; align-self: flex-start; }
+.reveal .card { border-top: 6px solid var(--tc, #6b5d4f); background: color-mix(in srgb, var(--tc, #6b5d4f) 9%, #fffdf6); }
+.t-evidence, .t-fact, .t-time, .reveal .card.evidence, .reveal .card.fact, .reveal .card.time { --tc: #2f7d46; }
+.t-single, .reveal .card.single { --tc: #1f7a8c; }
+.t-claim, .reveal .card.claim, .t-later, .reveal .card.later { --tc: #c07c00; }
+.t-opinion, .reveal .card.opinion, .t-survived, .reveal .card.survived { --tc: #2f5fa8; }
+.t-assumption, .t-guess, .reveal .card.assumption, .reveal .card.guess { --tc: #b8322a; }
+.t-deduction, .reveal .card.deduction { --tc: #a87905; }
+.t-modern, .reveal .card.modern { --tc: #6b4fa0; }
+.t-didnt, .reveal .card.didnt { --tc: #4a5a6a; }
+.t-neither, .reveal .card.neither { --tc: #8a7f72; }
+.chip { background: var(--tc); }
+.reveal .card .tag { color: #fff !important; }
+
+/* 3. Long screens in short taps */
+.page { display: none; }
+.page.on { display: block; animation: pagein .28s ease-out; }
+@keyframes pagein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 6px; }
+.pager .dots { display: flex; gap: 7px; align-items: center; }
+.pager .dots i { width: 10px; height: 10px; border-radius: 50%; background: #e2d6bb; display: inline-block; }
+.pager .dots i.done { background: #b9a982; }
+.pager .dots i.cur { background: var(--accent, #2a2420); transform: scale(1.25); }
+.pager .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.pager .next { font: 1rem var(--display); background: var(--accent, #2a2420); color: var(--paper, #fbf6e8); border: 0; border-radius: 6px; padding: 11px 20px; min-height: 44px; cursor: pointer; }
+.pager .next:focus-visible { outline: 3px solid var(--pin); outline-offset: 3px; }
+.bigstars { display: flex; gap: 6px; font-size: 2.6rem; line-height: 1; margin: -4px 0 10px; }
+.bigstars span { animation: starpop .45s cubic-bezier(.3,1.6,.5,1) both; }
+.bigstars .on { color: #e0a800; text-shadow: 0 2px 0 #9a6f00; }
+.bigstars .off { color: #d8ccb2; }
+@keyframes starpop { from { transform: scale(0) rotate(-40deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 4. Case closed celebration */
+.stamp.thump { animation: thump .55s cubic-bezier(.2,1.5,.4,1) both; }
+@keyframes thump { 0% { transform: scale(3) rotate(-14deg); opacity: 0; } 60% { transform: scale(.94) rotate(-3deg); opacity: 1; } 100% { transform: scale(1) rotate(-3deg); } }
+.badge { display: flex; align-items: center; gap: 12px; margin: 6px 0 14px; padding: 10px 14px; border-radius: 10px; color: #4a3500;
+  background: linear-gradient(135deg, #fff3c4, #f2c94c); border: 2px solid #c99a1c; box-shadow: 0 3px 10px rgba(160,120,0,.35); animation: starpop .6s .5s cubic-bezier(.3,1.6,.5,1) both; }
+.badge .medal { font-size: 2.2rem; }
+.confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
+.confetti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes fall { to { top: 105%; transform: translateX(40px) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }

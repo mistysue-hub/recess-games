@@ -310,7 +310,62 @@ h1 { color: var(--accent); }
 .headline { border-left: 6px solid var(--accent); }
 .card { border-top-color: var(--accent); }
 svg.art { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
-svg.art.scene { margin: 6px 0 14px; }</style><script role="script" id="twine-user-script" type="text/twine-javascript">Config.history.maxStates = 1;
+svg.art.scene { margin: 6px 0 14px; }
+/* twine-user-stylesheet #3: "JuiceStyle" */
+/* 1. Location pictures and place-tinted clue cards */
+.placeart svg, .pageart svg { display: block; width: 100%; height: auto; border-radius: 6px; margin: 0 0 14px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.placeart svg.placepic { aspect-ratio: 640 / 190; }
+.caseart svg.casepic { aspect-ratio: 640 / 140; }
+.has-place .card.new { border-top: 5px solid var(--place); background: color-mix(in srgb, var(--place) 9%, #fffdf6); }
+.has-place .card.new .pin { background: var(--place); }
+.has-place .card.new.deduction { border-top-color: #b8860b; background: #fff8e1; }
+.has-place h2:first-of-type { color: color-mix(in srgb, var(--place) 70%, #2a2420); }
+
+/* 2. Reveal screens: every card type gets its own color, plus a legend */
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.chip, .reveal .card .tag { display: inline-block; font-family: var(--display); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--tc, #6b5d4f); padding: 3px 9px; border-radius: 999px; align-self: flex-start; }
+.reveal .card { border-top: 6px solid var(--tc, #6b5d4f); background: color-mix(in srgb, var(--tc, #6b5d4f) 9%, #fffdf6); }
+.t-evidence, .t-fact, .t-time, .reveal .card.evidence, .reveal .card.fact, .reveal .card.time { --tc: #2f7d46; }
+.t-single, .reveal .card.single { --tc: #1f7a8c; }
+.t-claim, .reveal .card.claim, .t-later, .reveal .card.later { --tc: #c07c00; }
+.t-opinion, .reveal .card.opinion, .t-survived, .reveal .card.survived { --tc: #2f5fa8; }
+.t-assumption, .t-guess, .reveal .card.assumption, .reveal .card.guess { --tc: #b8322a; }
+.t-deduction, .reveal .card.deduction { --tc: #a87905; }
+.t-modern, .reveal .card.modern { --tc: #6b4fa0; }
+.t-didnt, .reveal .card.didnt { --tc: #4a5a6a; }
+.t-neither, .reveal .card.neither { --tc: #8a7f72; }
+.chip { background: var(--tc); }
+.reveal .card .tag { color: #fff !important; }
+
+/* 3. Long screens in short taps */
+.page { display: none; }
+.page.on { display: block; animation: pagein .28s ease-out; }
+@keyframes pagein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 6px; }
+.pager .dots { display: flex; gap: 7px; align-items: center; }
+.pager .dots i { width: 10px; height: 10px; border-radius: 50%; background: #e2d6bb; display: inline-block; }
+.pager .dots i.done { background: #b9a982; }
+.pager .dots i.cur { background: var(--accent, #2a2420); transform: scale(1.25); }
+.pager .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.pager .next { font: 1rem var(--display); background: var(--accent, #2a2420); color: var(--paper, #fbf6e8); border: 0; border-radius: 6px; padding: 11px 20px; min-height: 44px; cursor: pointer; }
+.pager .next:focus-visible { outline: 3px solid var(--pin); outline-offset: 3px; }
+.bigstars { display: flex; gap: 6px; font-size: 2.6rem; line-height: 1; margin: -4px 0 10px; }
+.bigstars span { animation: starpop .45s cubic-bezier(.3,1.6,.5,1) both; }
+.bigstars .on { color: #e0a800; text-shadow: 0 2px 0 #9a6f00; }
+.bigstars .off { color: #d8ccb2; }
+@keyframes starpop { from { transform: scale(0) rotate(-40deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 4. Case closed celebration */
+.stamp.thump { animation: thump .55s cubic-bezier(.2,1.5,.4,1) both; }
+@keyframes thump { 0% { transform: scale(3) rotate(-14deg); opacity: 0; } 60% { transform: scale(.94) rotate(-3deg); opacity: 1; } 100% { transform: scale(1) rotate(-3deg); } }
+.badge { display: flex; align-items: center; gap: 12px; margin: 6px 0 14px; padding: 10px 14px; border-radius: 10px; color: #4a3500;
+  background: linear-gradient(135deg, #fff3c4, #f2c94c); border: 2px solid #c99a1c; box-shadow: 0 3px 10px rgba(160,120,0,.35); animation: starpop .6s .5s cubic-bezier(.3,1.6,.5,1) both; }
+.badge .medal { font-size: 2.2rem; }
+.confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
+.confetti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes fall { to { top: 105%; transform: translateX(40px) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* twine-user-script #1: "StoryScript" */
+Config.history.maxStates = 1;
 Config.saves.slots = 0;
 Config.ui.stowBarInitially = true;
 Config.passages.nobr = true;
@@ -336,7 +391,189 @@ setup.lockerGet = function (key) {
 };
 
 /* Keep the notebook counts in the top bar current after in-passage updates. */
-$(document).on(":interview-done", function () { setTimeout(function () { $("#tabbar").empty().wiki(Story.get("Tabbar").processText()); }, 0); });</script><tw-passagedata pid="1" name="StoryInterface" tags="" position="100,100" size="100,100">&lt;div id=&quot;frame&quot;&gt;
+$(document).on(":interview-done", function () { setTimeout(function () { $("#tabbar").empty().wiki(Story.get("Tabbar").processText()); }, 0); });
+/* twine-user-script #2: "JuiceScript" */
+/* Cold Case Academy polish layer, shared by every game.
+   1. Location pictures: setup.placeArt[passage] = { color, svg } puts a drawing at the top of each place
+      and tints that place's new clue cards (by place, never by card type, so nothing is given away).
+   2. Reveal screens: card types get bold colors and a legend.
+   3. Long screens (start, verdict, "what's known today") split into short taps with Next.
+   4. "Case closed": the stamp thumps down, confetti falls, and a full rating earns a gold badge. */
+(function () {
+  var REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PAGED = ["Start", "Verdict", "RealHistory", "Today"];
+
+  function words(el) { return (el.textContent || "").trim().split(/\s+/).filter(Boolean).length; }
+
+  function addPlaceArt(content, title) {
+    var pa = setup.placeArt && setup.placeArt[title];
+    if (!pa) { return; }
+    content.classList.add("has-place");
+    content.style.setProperty("--place", pa.color);
+    if (pa.svg && !content.querySelector("svg.art")) {
+      var d = document.createElement("div");
+      d.className = "placeart";
+      d.innerHTML = pa.svg;
+      content.insertBefore(d, content.firstChild);
+    }
+  }
+
+  function addCaseArt(content, title) {
+    var cs = State.variables.cs;
+    if (!setup.caseArt || !cs || !setup.caseArt[cs] || (setup.caseArtPassages || []).indexOf(title) < 0) { return; }
+    var d = document.createElement("div");
+    d.className = "placeart caseart";
+    d.innerHTML = setup.caseArt[cs];
+    content.insertBefore(d, content.firstChild);
+  }
+
+  function addLegends(content) {
+    content.querySelectorAll(".cards.reveal").forEach(function (box) {
+      if (box.previousElementSibling && box.previousElementSibling.classList.contains("legend")) { return; }
+      var seen = {}, order = [];
+      box.querySelectorAll(".card").forEach(function (c) {
+        var tag = c.querySelector(".tag");
+        var t = Array.prototype.find.call(c.classList, function (k) { return ["card", "new", "seen"].indexOf(k) < 0; });
+        if (!t || !tag) { return; }
+        if (!seen[t]) { seen[t] = tag.textContent.trim(); order.push(t); }
+      });
+      if (order.length < 2) { return; }
+      var lg = document.createElement("div");
+      lg.className = "legend";
+      lg.innerHTML = order.map(function (t) { return '<span class="chip t-' + t + '">' + seen[t] + "</span>"; }).join("");
+      box.parentNode.insertBefore(lg, box);
+    });
+  }
+
+  function bigStars(content) {
+    var h = Array.prototype.find.call(content.querySelectorAll("h2, h3"), function (x) { return /Detective rating:\s*\d+\s+of\s+\d+/.test(x.textContent); });
+    if (!h) { return; }
+    var m = h.textContent.match(/(\d+)\s+of\s+(\d+)/);
+    var got = +m[1], max = +m[2], html = "";
+    for (var i = 0; i < max; i++) { html += '<span class="' + (i < got ? "on" : "off") + '" style="animation-delay:' + (0.15 + i * 0.18) + 's">★</span>'; }
+    var d = document.createElement("div");
+    d.className = "bigstars";
+    d.setAttribute("aria-hidden", "true");
+    d.innerHTML = html;
+    h.parentNode.insertBefore(d, h.nextSibling);
+  }
+
+  function addScene(content, title) {
+    if (title !== "RealHistory" || content.querySelector("svg.art") || !Story.has("Scene")) { return; }
+    var d = document.createElement("div");
+    d.className = "pageart";
+    $(d).wiki('<<include "Scene">>');
+    content.insertBefore(d, content.firstChild);
+  }
+
+  function paginate(content, title) {
+    if (PAGED.indexOf(title) < 0 || words(content) < 120) { return; }
+    var kids = Array.prototype.slice.call(content.children);
+    var lastActions = null;
+    for (var i = kids.length - 1; i >= 0; i--) { if (kids[i].classList.contains("actions")) { lastActions = kids[i]; break; } }
+    if (!lastActions) { return; }
+    var body = kids.slice(0, kids.indexOf(lastActions));
+    var tail = kids.slice(kids.indexOf(lastActions) + 1);
+    var pages = [[]], w = 0;
+    var isBreaker = function (el) {
+      return /^H[23]$/.test(el.tagName) || el.classList.contains("lesson") || el.classList.contains("cards") || el.classList.contains("legend");
+    };
+    body.forEach(function (el) {
+      var ew = words(el);
+      var cur = pages[pages.length - 1];
+      var prev = cur[cur.length - 1];
+      var prevIsHead = prev && /^H[1-3]$/.test(prev.tagName);
+      var prevIsLegend = prev && prev.classList.contains("legend");
+      if (cur.length && !prevIsHead && !prevIsLegend && ((w >= 45 && isBreaker(el)) || (w >= 50 && w + ew > 110))) {
+        pages.push([]); w = 0;
+      }
+      pages[pages.length - 1].push(el);
+      w += ew;
+    });
+    if (pages.length > 1 && words({ textContent: pages[pages.length - 1].map(function (e) { return e.textContent; }).join(" ") }) < 18) {
+      var last = pages.pop(); pages[pages.length - 1] = pages[pages.length - 1].concat(last);
+    }
+    if (pages.length < 2) { return; }
+    var wraps = pages.map(function (els, n) {
+      var pg = document.createElement("div");
+      pg.className = "page" + (n === 0 ? " on" : "");
+      els.forEach(function (el) { pg.appendChild(el); });
+      return pg;
+    });
+    var nav = document.createElement("div");
+    nav.className = "pager";
+    nav.innerHTML = '<span class="dots"></span><button type="button" class="next">Next ›</button>';
+    var dots = nav.querySelector(".dots");
+    var btn = nav.querySelector(".next");
+    var at = 0;
+    function show(n) {
+      at = n;
+      wraps.forEach(function (p, k) { p.classList.toggle("on", k === n); });
+      dots.innerHTML = wraps.map(function (p, k) { return '<i class="' + (k === n ? "cur" : (k < n ? "done" : "")) + '"></i>'; }).join("") + '<span class="sr">Page ' + (n + 1) + " of " + wraps.length + "</span>";
+      var lastPage = n === wraps.length - 1;
+      btn.style.display = lastPage ? "none" : "";
+      lastActions.style.display = lastPage ? "" : "none";
+      tail.forEach(function (t) { t.style.display = lastPage ? "" : "none"; });
+    }
+    btn.addEventListener("click", function () {
+      show(Math.min(at + 1, wraps.length - 1));
+      var top = document.getElementById("passages");
+      if (top && top.scrollIntoView) { top.scrollIntoView({ block: "start", behavior: REDUCED ? "auto" : "smooth" }); }
+    });
+    wraps.forEach(function (p) { content.insertBefore(p, lastActions); });
+    content.insertBefore(nav, lastActions);
+    show(0);
+  }
+
+  $(document).on(":passagerender", function (ev) {
+    var content = ev.content, title = ev.passage.title;
+    try { addPlaceArt(content, title); } catch (e) {}
+    try { addCaseArt(content, title); } catch (e) {}
+    try { addLegends(content); } catch (e) {}
+    try { if (title === "Verdict") { bigStars(content); } } catch (e) {}
+    try { addScene(content, title); } catch (e) {}
+    try { paginate(content, title); } catch (e) {}
+  });
+
+  /* Clue cards added later inside a place (interview answers) pick up the place color through CSS. */
+  function confetti() {
+    if (REDUCED) { return; }
+    var colors = ["#e63946", "#f4a261", "#e9c46a", "#2a9d8f", "#457b9d", "#9b5de5", "#f15bb5"];
+    var box = document.createElement("div");
+    box.className = "confetti";
+    box.setAttribute("aria-hidden", "true");
+    for (var i = 0; i < 70; i++) {
+      var s = document.createElement("i");
+      s.style.left = (Math.random() * 100) + "%";
+      s.style.background = colors[i % colors.length];
+      s.style.animationDelay = (Math.random() * 0.9) + "s";
+      s.style.animationDuration = (2.2 + Math.random() * 1.6) + "s";
+      s.style.transform = "rotate(" + Math.floor(Math.random() * 360) + "deg)";
+      if (i % 3 === 0) { s.style.width = "7px"; s.style.height = "7px"; s.style.borderRadius = "50%"; }
+      box.appendChild(s);
+    }
+    document.body.appendChild(box);
+    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } }, 4500);
+  }
+
+  $(document).on(":passagedisplay", function (ev) {
+    if (ev.passage.title !== "CaseClosed") { return; }
+    var content = ev.content || document.querySelector("#passages .passage") || document.getElementById("passages");
+    if (!content) { return; }
+    var stamp = content.querySelector(".stamp");
+    if (stamp) { stamp.classList.add("thump"); }
+    var m = (content.textContent || "").match(/Detective rating:\s*(\d+)\s+of\s+(\d+)/);
+    if (m && +m[1] === +m[2] && stamp && !content.querySelector(".badge")) {
+      var b = document.createElement("div");
+      b.className = "badge";
+      b.innerHTML = '<span class="medal" aria-hidden="true">🏅</span><span><b>Top Detective</b><br>All ' + m[2] + " stars. A perfect report.</span>";
+      stamp.parentNode.insertBefore(b, stamp.nextSibling);
+    }
+    confetti();
+  });
+})();
+/* twine-user-script #3: "PlaceArt" */
+setup.placeArt = {"Schaffner": {"color": "#3d6b8f", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"Rows of airplane seats with the jump seat at the back, where a flight attendant sat beside the last row.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"190\" rx=\"0\" fill=\"#d9dfe4\" /><rect x=\"0\" y=\"0\" width=\"640\" height=\"40\" rx=\"0\" fill=\"#c4ccd3\" /><rect x=\"30\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><rect x=\"120\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><rect x=\"210\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><rect x=\"300\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><rect x=\"390\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><rect x=\"480\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><rect x=\"570\" y=\"14\" width=\"40\" height=\"18\" rx=\"8\" fill=\"#8fb6d0\" /><g transform=\"translate(40 96) scale(1.1 1.1)\"><rect x=\"0\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#3d6b8f\" /><rect x=\"0\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#3d6b8f\" opacity=\".8\"/><rect x=\"4\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /><rect x=\"46\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#3d6b8f\" /><rect x=\"46\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#3d6b8f\" opacity=\".8\"/><rect x=\"50\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /><rect x=\"92\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#3d6b8f\" /><rect x=\"92\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#3d6b8f\" opacity=\".8\"/><rect x=\"96\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /></g><g transform=\"translate(330 96) scale(1.1 1.1)\"><rect x=\"0\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#3d6b8f\" /><rect x=\"0\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#3d6b8f\" opacity=\".8\"/><rect x=\"4\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /><rect x=\"46\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#3d6b8f\" /><rect x=\"46\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#3d6b8f\" opacity=\".8\"/><rect x=\"50\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /></g><g transform=\"translate(540 76) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#2f5d8a\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f5d8a\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f5d8a\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#d9b06a\" /></g><rect x=\"500\" y=\"120\" width=\"100\" height=\"30\" rx=\"4\" fill=\"#9aa3ad\" /></svg>"}, "MoneyRoom": {"color": "#4f6b3a", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"A bank vault table covered in stacks of twenty-dollar bills, with a microfilm camera beside them.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"150\" rx=\"0\" fill=\"#cfd6cf\" /><rect x=\"0\" y=\"150\" width=\"640\" height=\"40\" rx=\"0\" fill=\"#5a5f5a\" /><rect x=\"0\" y=\"146\" width=\"640\" height=\"6\" rx=\"0\" fill=\"#3a3f3a\" /><line x1=\"40\" y1=\"152\" x2=\"10\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"110\" y1=\"152\" x2=\"80\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"180\" y1=\"152\" x2=\"150\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"250\" y1=\"152\" x2=\"220\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"320\" y1=\"152\" x2=\"290\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"390\" y1=\"152\" x2=\"360\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"460\" y1=\"152\" x2=\"430\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"530\" y1=\"152\" x2=\"500\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"600\" y1=\"152\" x2=\"570\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"670\" y1=\"152\" x2=\"640\" y2=\"190\" stroke=\"#3a3f3a\" stroke-width=\"1.5\" opacity=\".35\"/><g transform=\"translate(80 100) scale(1.2 1.2)\"><rect x=\"0\" y=\"0\" width=\"300\" height=\"10\" rx=\"2\" fill=\"#6f7a6f\" /><rect x=\"6\" y=\"10\" width=\"10\" height=\"40\" rx=\"0\" fill=\"#4a504a\" /><rect x=\"284\" y=\"10\" width=\"10\" height=\"40\" rx=\"0\" fill=\"#4a504a\" /><rect x=\"230\" y=\"10\" width=\"54\" height=\"24\" rx=\"2\" fill=\"#4a504a\" /><rect x=\"250\" y=\"20\" width=\"14\" height=\"3\" rx=\"0\" fill=\"#c9a46a\" /></g><g transform=\"translate(130 82) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"54\" height=\"26\" rx=\"2\" fill=\"#86a374\" stroke=\"#4f6b3a\" stroke-width=\"1.5\"/><rect x=\"20\" y=\"0\" width=\"8\" height=\"26\" rx=\"0\" fill=\"#d9c27a\" /><rect x=\"14\" y=\"-8\" width=\"54\" height=\"26\" rx=\"2\" fill=\"#86a374\" stroke=\"#4f6b3a\" stroke-width=\"1.5\"/><rect x=\"34\" y=\"-8\" width=\"8\" height=\"26\" rx=\"0\" fill=\"#d9c27a\" /><rect x=\"28\" y=\"-16\" width=\"54\" height=\"26\" rx=\"2\" fill=\"#86a374\" stroke=\"#4f6b3a\" stroke-width=\"1.5\"/><rect x=\"48\" y=\"-16\" width=\"8\" height=\"26\" rx=\"0\" fill=\"#d9c27a\" /></g><g transform=\"translate(240 82) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"54\" height=\"26\" rx=\"2\" fill=\"#86a374\" stroke=\"#4f6b3a\" stroke-width=\"1.5\"/><rect x=\"20\" y=\"0\" width=\"8\" height=\"26\" rx=\"0\" fill=\"#d9c27a\" /><rect x=\"14\" y=\"-8\" width=\"54\" height=\"26\" rx=\"2\" fill=\"#86a374\" stroke=\"#4f6b3a\" stroke-width=\"1.5\"/><rect x=\"34\" y=\"-8\" width=\"8\" height=\"26\" rx=\"0\" fill=\"#d9c27a\" /><rect x=\"28\" y=\"-16\" width=\"54\" height=\"26\" rx=\"2\" fill=\"#86a374\" stroke=\"#4f6b3a\" stroke-width=\"1.5\"/><rect x=\"48\" y=\"-16\" width=\"8\" height=\"26\" rx=\"0\" fill=\"#d9c27a\" /></g><g transform=\"translate(470 60) scale(0.9 0.9)\"><path d=\"M0 0 L-24 70 M0 0 L24 70 M0 0 L0 72\" fill=\"none\" stroke=\"#5c3b22\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><rect x=\"-26\" y=\"-34\" width=\"52\" height=\"34\" rx=\"3\" fill=\"#7a5234\" /><path d=\"M26 -28 L48 -36 L48 -4 L26 -10 Z\" fill=\"#2f2a26\" /><circle cx=\"52\" cy=\"-20\" r=\"7\" fill=\"#1d1a17\" /><rect x=\"-18\" y=\"-44\" width=\"22\" height=\"10\" rx=\"2\" fill=\"#4a3a2c\" /><path d=\"M-26 -26 L-44 -34 L-44 -14 L-26 -18 Z\" fill=\"#1f1a14\" /></g><g transform=\"translate(560 40) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"60\" height=\"80\" rx=\"4\" fill=\"#7a7f84\" /><circle cx=\"30\" cy=\"40\" r=\"16\" fill=\"#5a5f64\" stroke=\"#aaa\" stroke-width=\"3\"/></g></svg>"}, "Mitchell": {"color": "#7a5234", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"A college student in a sweater sitting in an airplane window seat.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"190\" rx=\"0\" fill=\"#d9dfe4\" /><g transform=\"translate(250 30) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"70\" height=\"50\" rx=\"20\" fill=\"#2c4a6e\" /><rect x=\"8\" y=\"8\" width=\"54\" height=\"34\" rx=\"14\" fill=\"#9fc3e6\" /></g><g transform=\"translate(150 96) scale(1.3 1.3)\"><rect x=\"0\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#7a8a6a\" /><rect x=\"0\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#7a8a6a\" opacity=\".8\"/><rect x=\"4\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /><rect x=\"46\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#7a8a6a\" /><rect x=\"46\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#7a8a6a\" opacity=\".8\"/><rect x=\"50\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /><rect x=\"92\" y=\"0\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#7a8a6a\" /><rect x=\"92\" y=\"30\" width=\"40\" height=\"14\" rx=\"4\" fill=\"#7a8a6a\" opacity=\".8\"/><rect x=\"96\" y=\"4\" width=\"32\" height=\"8\" rx=\"2\" fill=\"#e8eef3\" /></g><g transform=\"translate(300 70) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#8a5a35\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#8a5a35\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#8a5a35\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#4a2a1a\" /></g></svg>"}, "Escort": {"color": "#5f6f7f", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"Two fighter jets and a training plane parked on an air base runway under a gray sky.\" preserveAspectRatio=\"xMidYMid slice\"><defs><linearGradient id=\"esc\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#9aa8b4\"/><stop offset=\"1\" stop-color=\"#d9dfe4\"/></linearGradient></defs><rect x=\"0\" y=\"0\" width=\"640\" height=\"190\" rx=\"0\" fill=\"url(#esc)\" /><rect x=\"0\" y=\"130\" width=\"640\" height=\"60\" rx=\"0\" fill=\"#7a7f74\" /><rect x=\"0\" y=\"140\" width=\"640\" height=\"20\" rx=\"0\" fill=\"#4a4f54\" /><rect x=\"10\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"70\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"130\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"190\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"250\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"310\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"370\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"430\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"490\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"550\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"610\" y=\"148\" width=\"30\" height=\"4\" rx=\"0\" fill=\"#e8e6e0\" /><g transform=\"translate(80 96) scale(1.4 1.4)\"><path d=\"M0 10 L70 6 L90 10 L70 14 Z\" fill=\"#8e9aa7\" /><path d=\"M34 10 L52 -10 L60 -10 L50 10 Z\" fill=\"#6f7b88\" /><path d=\"M34 10 L52 30 L60 30 L50 10 Z\" fill=\"#6f7b88\" /><path d=\"M70 6 L80 -4 L86 -4 L82 8 Z\" fill=\"#6f7b88\" /></g><g transform=\"translate(300 90) scale(1.4 1.4)\"><path d=\"M0 10 L70 6 L90 10 L70 14 Z\" fill=\"#7f8b98\" /><path d=\"M34 10 L52 -10 L60 -10 L50 10 Z\" fill=\"#6f7b88\" /><path d=\"M34 10 L52 30 L60 30 L50 10 Z\" fill=\"#6f7b88\" /><path d=\"M70 6 L80 -4 L86 -4 L82 8 Z\" fill=\"#6f7b88\" /></g><g transform=\"translate(500 30) scale(1 1)\"><path d=\"M0 30 Q-4 10 18 12 Q22 -6 44 2 Q62 -8 72 12 Q92 12 88 30 Z\" fill=\"#c4ccd3\" /></g><g transform=\"translate(470 104) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"40\" rx=\"0\" fill=\"#9a9f94\" /><path d=\"M0 0 L50 -20 L100 0 Z\" fill=\"#7a7f74\" /></g></svg>"}, "Gate": {"color": "#1f2a44", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"An airport check-in counter with a gate sign, a clock and a suitcase waiting in line.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"150\" rx=\"0\" fill=\"#e3ddd0\" /><rect x=\"0\" y=\"150\" width=\"640\" height=\"40\" rx=\"0\" fill=\"#9a9f94\" /><rect x=\"0\" y=\"146\" width=\"640\" height=\"6\" rx=\"0\" fill=\"#7a7f74\" /><line x1=\"40\" y1=\"152\" x2=\"10\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"110\" y1=\"152\" x2=\"80\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"180\" y1=\"152\" x2=\"150\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"250\" y1=\"152\" x2=\"220\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"320\" y1=\"152\" x2=\"290\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"390\" y1=\"152\" x2=\"360\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"460\" y1=\"152\" x2=\"430\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"530\" y1=\"152\" x2=\"500\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"600\" y1=\"152\" x2=\"570\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"670\" y1=\"152\" x2=\"640\" y2=\"190\" stroke=\"#7a7f74\" stroke-width=\"1.5\" opacity=\".35\"/><g transform=\"translate(200 100) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"200\" height=\"50\" rx=\"2\" fill=\"#7a5234\" /><rect x=\"-4\" y=\"-6\" width=\"208\" height=\"8\" rx=\"2\" fill=\"#5c3b22\" /><rect x=\"40\" y=\"-70\" width=\"120\" height=\"30\" rx=\"3\" fill=\"#1f2a44\" /><text x=\"100\" y=\"-50\" font-family=\"Special Elite, Courier New, monospace\" font-size=\"13\" fill=\"#ffd25e\" text-anchor=\"middle\" font-weight=\"400\">GATE 4</text></g><g transform=\"translate(560 40) scale(1 1)\"><circle cx=\"0\" cy=\"0\" r=\"22\" fill=\"#fbf6e8\" stroke=\"#5c3b22\" stroke-width=\"4\"/><path d=\"M0 0 L0 -14 M0 0 L10 4\" fill=\"none\" stroke=\"#2a2420\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /></g><g transform=\"translate(80 76) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#2f3a44\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f3a44\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f3a44\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#2a1a0a\" /></g><g transform=\"translate(120 114) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"50\" height=\"36\" rx=\"4\" fill=\"#8a4a3a\" /><path d=\"M16 0 Q25 -10 34 0\" fill=\"none\" stroke=\"#3a2a1a\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><rect x=\"0\" y=\"16\" width=\"50\" height=\"3\" rx=\"0\" fill=\"#3a2a1a\" /></g><g transform=\"translate(470 76) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#8a3a2a\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#8a3a2a\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#8a3a2a\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#c9a06a\" /></g><g transform=\"translate(80 20) scale(0.8 0.8)\"><rect x=\"-6\" y=\"-6\" width=\"102\" height=\"62\" rx=\"3\" fill=\"#5c3b22\" /><rect x=\"0\" y=\"0\" width=\"90\" height=\"50\" rx=\"0\" fill=\"#bcdff2\" /><path d=\"M0 37.5 L18.0 27.500000000000004 L31.499999999999996 35.0 L49.50000000000001 22.5 L72.0 34.0 L90 27.500000000000004 L90 50 L0 50 Z\" fill=\"#7d8a96\" opacity=\".7\"/><rect x=\"43.0\" y=\"0\" width=\"4\" height=\"50\" rx=\"0\" fill=\"#5c3b22\" /><rect x=\"0\" y=\"23.0\" width=\"90\" height=\"4\" rx=\"0\" fill=\"#5c3b22\" /></g></svg>"}, "Newsroom": {"color": "#2a2420", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"A 1970s newsroom with desks, typewriters, ringing phones and a front page about the hijacking.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"150\" rx=\"0\" fill=\"#d8d2c0\" /><rect x=\"0\" y=\"150\" width=\"640\" height=\"40\" rx=\"0\" fill=\"#6a6f74\" /><rect x=\"0\" y=\"146\" width=\"640\" height=\"6\" rx=\"0\" fill=\"#4a4f54\" /><line x1=\"40\" y1=\"152\" x2=\"10\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"110\" y1=\"152\" x2=\"80\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"180\" y1=\"152\" x2=\"150\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"250\" y1=\"152\" x2=\"220\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"320\" y1=\"152\" x2=\"290\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"390\" y1=\"152\" x2=\"360\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"460\" y1=\"152\" x2=\"430\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"530\" y1=\"152\" x2=\"500\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"600\" y1=\"152\" x2=\"570\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><line x1=\"670\" y1=\"152\" x2=\"640\" y2=\"190\" stroke=\"#4a4f54\" stroke-width=\"1.5\" opacity=\".35\"/><g transform=\"translate(30 100) scale(1.1 1.1)\"><rect x=\"0\" y=\"0\" width=\"210\" height=\"10\" rx=\"2\" fill=\"#6a6f74\" /><rect x=\"6\" y=\"10\" width=\"10\" height=\"40\" rx=\"0\" fill=\"#4a4f54\" /><rect x=\"194\" y=\"10\" width=\"10\" height=\"40\" rx=\"0\" fill=\"#4a4f54\" /><rect x=\"140\" y=\"10\" width=\"54\" height=\"24\" rx=\"2\" fill=\"#4a4f54\" /><rect x=\"160\" y=\"20\" width=\"14\" height=\"3\" rx=\"0\" fill=\"#c9a46a\" /></g><g transform=\"translate(60 70) scale(1 1)\"><path d=\"M0 30 L8 6 L62 6 L70 30 Z\" fill=\"#2f3a44\" /><rect x=\"10\" y=\"-6\" width=\"50\" height=\"12\" rx=\"0\" fill=\"#f6f1e3\" /><rect x=\"4\" y=\"2\" width=\"62\" height=\"6\" rx=\"2\" fill=\"#1f262d\" /><circle cx=\"14\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /><circle cx=\"21\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /><circle cx=\"28\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /><circle cx=\"35\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /><circle cx=\"42\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /><circle cx=\"49\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /><circle cx=\"56\" cy=\"22\" r=\"2.4\" fill=\"#d9d2c4\" /></g><g transform=\"translate(170 78) scale(0.8 0.8)\"><path d=\"M0 20 Q4 4 30 4 Q56 4 60 20 Z\" fill=\"#c0392b\" /><rect x=\"4\" y=\"18\" width=\"52\" height=\"10\" rx=\"4\" fill=\"#c0392b\" /><circle cx=\"30\" cy=\"14\" r=\"7\" fill=\"#e9e2d0\" /><circle cx=\"30\" cy=\"14\" r=\"2\" fill=\"#c0392b\" /><path d=\"M2 4 Q30 -10 58 4\" fill=\"none\" stroke=\"#c0392b\" stroke-width=\"7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /></g><g transform=\"translate(300 30) scale(1.2 1.2)\"><rect x=\"0\" y=\"0\" width=\"90\" height=\"64\" rx=\"1\" fill=\"#f3ecd9\" stroke=\"#bcae8e\"/><text x=\"45\" y=\"15\" font-family=\"Special Elite, Courier New, monospace\" font-size=\"11\" fill=\"#1f1a14\" text-anchor=\"middle\" font-weight=\"400\">HIJACKER!</text><rect x=\"6\" y=\"20\" width=\"78\" height=\"2\" rx=\"0\" fill=\"#1f1a14\" /><rect x=\"6\" y=\"26\" width=\"38\" height=\"30\" rx=\"0\" fill=\"#c9bfa6\" /><rect x=\"48\" y=\"27\" width=\"36\" height=\"2.5\" rx=\"0\" fill=\"#7a6e5c\" /><rect x=\"48\" y=\"33\" width=\"36\" height=\"2.5\" rx=\"0\" fill=\"#7a6e5c\" /><rect x=\"48\" y=\"39\" width=\"36\" height=\"2.5\" rx=\"0\" fill=\"#7a6e5c\" /><rect x=\"48\" y=\"45\" width=\"36\" height=\"2.5\" rx=\"0\" fill=\"#7a6e5c\" /><rect x=\"48\" y=\"51\" width=\"36\" height=\"2.5\" rx=\"0\" fill=\"#7a6e5c\" /></g><g transform=\"translate(440 76) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#f3ead2\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#f3ead2\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#f3ead2\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#2a1a0a\" /></g><g transform=\"translate(520 76) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#2f5d8a\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f5d8a\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f5d8a\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#7a5a3a\" /></g></svg>"}, "Plane": {"color": "#3d6b8f"}, "Mucklow": {"color": "#2f5d8a", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"A flight attendant&#x27;s galley at the back of a plane, with a tray, cups and a call light.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"190\" rx=\"0\" fill=\"#d9dfe4\" /><rect x=\"0\" y=\"0\" width=\"640\" height=\"30\" rx=\"0\" fill=\"#c4ccd3\" /><g transform=\"translate(60 40) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"200\" height=\"110\" rx=\"4\" fill=\"#b9c2ca\" /><rect x=\"10\" y=\"10\" width=\"54\" height=\"40\" rx=\"3\" fill=\"#9aa3ad\" /><rect x=\"74\" y=\"10\" width=\"54\" height=\"40\" rx=\"3\" fill=\"#9aa3ad\" /><rect x=\"138\" y=\"10\" width=\"54\" height=\"40\" rx=\"3\" fill=\"#9aa3ad\" /></g><g transform=\"translate(110 104) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"80\" height=\"6\" rx=\"0\" fill=\"#e8e6e0\" /><rect x=\"10\" y=\"-14\" width=\"12\" height=\"14\" rx=\"0\" fill=\"#fbf6e8\" /><rect x=\"30\" y=\"-14\" width=\"12\" height=\"14\" rx=\"0\" fill=\"#fbf6e8\" /></g><g transform=\"translate(380 76) scale(1 1)\"><rect x=\"-12\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><rect x=\"2\" y=\"40\" width=\"10\" height=\"34\" rx=\"3\" fill=\"#3a3a46\" /><path d=\"M-18 44 L-16 10 Q0 2 16 10 L18 44 Z\" fill=\"#2f5d8a\" /><rect x=\"-24\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f5d8a\" /><rect x=\"17\" y=\"12\" width=\"7\" height=\"28\" rx=\"3\" fill=\"#2f5d8a\" /><circle cx=\"-20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"20\" cy=\"41\" r=\"4\" fill=\"#d9a77c\" /><circle cx=\"0\" cy=\"-6\" r=\"12\" fill=\"#d9a77c\" /><path d=\"M-12 -8 Q0 -24 12 -8 Q8 -14 0 -14 Q-8 -14 -12 -8 Z\" fill=\"#8a5a2a\" /></g><g transform=\"translate(520 50) scale(1 1)\"><circle cx=\"0\" cy=\"0\" r=\"10\" fill=\"#ffd25e\" stroke=\"#c9a14a\" stroke-width=\"3\"/></g></svg>"}, "Cockpit": {"color": "#1f2a44", "svg": "<svg class=\"art placepic\" viewBox=\"0 0 640 190\" role=\"img\" aria-label=\"An airliner cockpit at night: dials glowing on the instrument panel and dark windows ahead.\" preserveAspectRatio=\"xMidYMid slice\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"190\" rx=\"0\" fill=\"#2a2f36\" /><path d=\"M60 20 L300 10 L320 80 L40 90 Z\" fill=\"#14233a\" /><path d=\"M340 10 L580 20 L600 90 L320 80 Z\" fill=\"#14233a\" /><circle cx=\"120\" cy=\"30\" r=\"1.3\" fill=\"#fff\" /><circle cx=\"200\" cy=\"50\" r=\"1.3\" fill=\"#fff\" /><circle cx=\"420\" cy=\"40\" r=\"1.3\" fill=\"#fff\" /><circle cx=\"500\" cy=\"60\" r=\"1.3\" fill=\"#fff\" /><circle cx=\"260\" cy=\"40\" r=\"1.3\" fill=\"#fff\" /><g transform=\"translate(220 110) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"200\" height=\"60\" rx=\"6\" fill=\"#2a2f36\" /><circle cx=\"24\" cy=\"22\" r=\"13\" fill=\"#0d1b24\" stroke=\"#8a9aa8\" stroke-width=\"2\"/><path d=\"M24 22 L30 14\" fill=\"none\" stroke=\"#ffd25e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><circle cx=\"62\" cy=\"22\" r=\"13\" fill=\"#0d1b24\" stroke=\"#8a9aa8\" stroke-width=\"2\"/><path d=\"M62 22 L68 17\" fill=\"none\" stroke=\"#ffd25e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><circle cx=\"100\" cy=\"22\" r=\"13\" fill=\"#0d1b24\" stroke=\"#8a9aa8\" stroke-width=\"2\"/><path d=\"M100 22 L106 20\" fill=\"none\" stroke=\"#ffd25e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><circle cx=\"138\" cy=\"22\" r=\"13\" fill=\"#0d1b24\" stroke=\"#8a9aa8\" stroke-width=\"2\"/><path d=\"M138 22 L144 14\" fill=\"none\" stroke=\"#ffd25e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><circle cx=\"176\" cy=\"22\" r=\"13\" fill=\"#0d1b24\" stroke=\"#8a9aa8\" stroke-width=\"2\"/><path d=\"M176 22 L182 17\" fill=\"none\" stroke=\"#ffd25e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" /><rect x=\"14\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#c0392b\" /><rect x=\"36\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#2f8a5a\" /><rect x=\"58\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#ffd25e\" /><rect x=\"80\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#c0392b\" /><rect x=\"102\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#2f8a5a\" /><rect x=\"124\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#ffd25e\" /><rect x=\"146\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#c0392b\" /><rect x=\"168\" y=\"44\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#2f8a5a\" /></g><g transform=\"translate(70 120) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"120\" height=\"70\" rx=\"10\" fill=\"#3d4a5a\" /></g><g transform=\"translate(450 120) scale(1 1)\"><rect x=\"0\" y=\"0\" width=\"120\" height=\"70\" rx=\"10\" fill=\"#3d4a5a\" /></g></svg>"}};</script><tw-passagedata pid="1" name="StoryInterface" tags="" position="100,100" size="100,100">&lt;div id=&quot;frame&quot;&gt;
   &lt;header id=&quot;tabbar&quot; data-passage=&quot;Tabbar&quot;&gt;&lt;/header&gt;
   &lt;main id=&quot;passages&quot;&gt;&lt;/main&gt;
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Tabbar" tags="" position="225,100" size="100,100">&lt;&lt;if not tags().includes(&quot;nobar&quot;)&gt;&gt;
