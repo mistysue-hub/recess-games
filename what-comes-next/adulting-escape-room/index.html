@@ -162,6 +162,10 @@ setup.rooms = [
   { id: "pay",    door: "⭐ Bonus: First Job Paperwork",          first: "j1",  needs: ["id", "bank"] }
 ];
 setup.exitNeeds = ["id", "bank", "credit", "adult"];
+setup.refs = {
+  offer: "<div class=\"offer\"><b>✨ SPARKLE CARD: YOU'RE PRE-APPROVED! ✨</b>0% interest for 3 months!<br>Then 29.99% APR<br>$95 annual fee<br>$40 late fee<br>Minimum payment: just $25!<br><small>Terms apply. 📌 Kept here for reference.</small></div>",
+  idlist: "<div class=\"card\"><b>📋 The clerk's list</b>1️⃣ Proof of who you are<br>2️⃣ Proof of your Social Security number<br>3️⃣ Proof of where you live (for a REAL ID, usually two pieces)</div>"
+};
 setup.has = function (k) { return State.variables.items.includes(k); };
 setup.missing = function (list) { return list.filter(function (k) { return !setup.has(k); }); };
 setup.keyLabel = function (k) { return setup.keys[k].icon + " " + setup.keys[k].name; };
@@ -176,14 +180,14 @@ setup.Q = {
       { t: "🏆 Your soccer trophy with your name on it", ok: false, fb: "Very impressive trophy. Not an ID document, though." }
     ], next: "id2" },
   id2: { room: "🪪 The ID Office",
-    prompt: "Next: prove your Social Security number.",
+    ref: "idlist", prompt: "Next: prove your Social Security number.",
     options: [
       { t: "📝 A sticky note where you wrote the number", ok: false, fb: "Anyone can write a number on a sticky note. Offices need an official document." },
       { t: "🗣️ Just say it really confidently", ok: false, fb: "Confidence is great! Paperwork is still required." },
       { t: "🗂️ Your Social Security card", ok: true, fb: "STAMP! (Some offices accept other documents that show the number, like a W-2.) Afterward, keep the card somewhere safe at home, not in your wallet." }
     ], next: "id3" },
   id3: { room: "🪪 The ID Office",
-    prompt: "Last one: prove where you live.",
+    ref: "idlist", prompt: "Last one: prove where you live.",
     options: [
       { t: "🍕 A pizza box with your name on it", ok: false, fb: "Delicious, but not official. Try mail from a bank, a utility company or a government office." },
       { t: "✉️ A bank statement or utility bill with your name and address", ok: true, fb: "STAMP! Official mail usually works, and for a REAL ID you'll often need two pieces. If the bills at home are in a parent's name, ask the office what it accepts for people who live with family." },
@@ -221,14 +225,14 @@ setup.Q = {
       { t: "\"Terms apply.\"", ok: false, fb: "Always read the terms, but there's a bigger catch printed right there in the offer." }
     ], next: "c2" },
   c2: { room: "💳 The Credit Card Offer",
-    prompt: "Say you spend $500 on the card and only pay the $25 minimum each month after the 3 months are up. What happens?",
+    ref: "offer", prompt: "Say you spend $500 on the card and only pay the $25 minimum each month after the 3 months are up. What happens?",
     options: [
       { t: "It's paid off in 20 months, no problem", ok: false, fb: "Not quite. Interest gets added every month, so paying only the minimum takes longer and costs more than $500." },
       { t: "The interest piles up, so it takes longer and costs more than $500", ok: true, fb: "Exactly. Paying only the minimum is how small balances turn into big debt. Pay the full balance whenever you can." },
       { t: "The bank forgets about it", ok: false, fb: "Banks never forget. Ever." }
     ], next: "c3" },
   c3: { room: "💳 The Credit Card Offer",
-    prompt: "You want to start building credit safely. What's the best first step?",
+    ref: "offer", prompt: "You want to start building credit safely. What's the best first step?",
     options: [
       { t: "🛍️ Open three store cards in one day to get the discounts", ok: false, fb: "Opening lots of cards at once can hurt your score and tempt you to overspend." },
       { t: "✨ Take the Sparkle Card and pay it off \"eventually\"", ok: false, fb: "\"Eventually\" plus 29.99% interest is a scary combo." },
@@ -313,6 +317,7 @@ There&#39;s no timer and no game over. Wrong answers just count as &quot;oopsies
 &lt;/div&gt;&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="5" name="Question" tags="" position="600,100" size="100,100">&lt;&lt;set _q to setup.Q[$qid]&gt;&gt;
 &lt;h2&gt;&lt;&lt;print _q.room&gt;&gt;&lt;/h2&gt;
 &lt;&lt;if _q.intro&gt;&gt;&lt;div&gt;&lt;&lt;print _q.intro&gt;&gt;&lt;/div&gt;&lt;&lt;/if&gt;&gt;
+&lt;&lt;if _q.ref&gt;&gt;&lt;&lt;print setup.refs[_q.ref]&gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;p&gt;&lt;strong&gt;&lt;&lt;print _q.prompt&gt;&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;&lt;if $fbok&gt;&gt;
 &lt;div class=&quot;good&quot;&gt;&lt;&lt;print $fb&gt;&gt;&lt;/div&gt;
@@ -350,7 +355,7 @@ There&#39;s no timer and no game over. Wrong answers just count as &quot;oopsies
 &lt;li&gt;🔁 Real life has an order: ID, then bank account, then direct deposit.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;card&quot;&gt;&lt;b&gt;🗺️ Tell Rocky&lt;/b&gt;Which room was the trickiest, and Which &quot;18&quot; form does your family want to look into?&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;b&gt;🗺️ Tell Rocky&lt;/b&gt;Which room was the trickiest, and which &quot;18&quot; form does your family want to look into?&lt;/div&gt;
 &lt;div class=&quot;choices&quot;&gt;&lt;&lt;link &quot;🔁 Play again&quot;&gt;&gt;&lt;&lt;run Engine.restart()&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;/div&gt;
 &lt;p class=&quot;small&quot;&gt;A What Comes Next? game for Recess. Rules and forms vary by state and change over time. Always check official sources.&lt;/p&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
