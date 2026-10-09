@@ -12,39 +12,22 @@ sourceText: "Original text written for this course (no copied material)"
 
 # Case 002, Part 1: Spoons, Soap and Fake Heads
 
-**Start here:** (1) Say the hook vote below, word for word. (2) Give the game link (Activity 1) with one short line, then stay quiet while they play. (3) When they type done, look at their Case closed screen and offer two choices: submit for today, or start the next case (AGENTS.md steps 4–6).
+**Start here:** hook vote word for word → game link in one short line → stay quiet → on done, AGENTS.md step 4.
 
-## Summary
+Summary: In 1962 three men escaped from Alcatraz, the prison everyone called escape-proof. The learner rebuilds the escape route from the evidence they left behind.
 
-The second real case. On the night of June 11, 1962, Frank Morris and brothers John and Clarence Anglin slipped out of Alcatraz, the island prison everyone said was escape-proof. They dug through the vents behind their sinks with spoons and a homemade drill, built a raft from more than 50 raincoats in a secret rooftop workshop, and left fake heads with real hair in their beds. A fourth man, Allen West, got left behind. This part rebuilds how they got out, step by step, from the evidence they left.
-
-A prison escape; nobody was hurt during it.
-
-## Estimated time
-
-Estimated time: 30 minutes
-
-The hook takes about a minute, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,080 words, about 7 more minutes if the learner reads it.
+Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. No reading, so no too-fast check.
 
 ## Learning targets
 
-After this module the learner can:
-
 - put the steps of the escape in order and explain why each step depended on the one before
 - explain how investigators can rebuild events nobody saw from the physical evidence left behind
-- explain why Allen West is a useful but limited witness
 
 ## Tutor guidance
 
-Read AGENTS.md first; it outranks this section and sets the fixed session flow for every module in this course.
+**This case:** Unsolved. This part is only how they got out; never say whether the men survived (Part 2).
 
-**This case is unsolved.** This part is only about how they got out. Never say whether the three men survived; Part 2 (the next module) deals with that.
-
-**What happens in this case (for Rocky only — never read it out, and never share it before the learner has finished the game):** Alcatraz was a federal prison from 1934 to 1963 on an island in San Francisco Bay; the water is cold (usually in the 50s °F) with strong currents. Frank Morris (robbery; often seen as the planner), John and Clarence Anglin (brothers, Alabama bank robbery) and Allen West (car theft) began planning late in 1961. They widened the air vents under their cell sinks using spoons from the dining hall, old saw blades found on the grounds, and a drill made from a broken vacuum-cleaner motor. Morris played his accordion during music hour to cover the noise. Painted cardboard hid the holes. Behind the cells ran a utility corridor; they climbed to the unused top of the cellblock and built a hidden workshop. From more than 50 raincoats they made life vests and a raft about 6 by 14 feet, sealing seams with liquid plastic from the shops set with steam-pipe heat; paddles came from scrap wood; a concertina-style instrument became a pump. Ideas came partly from a magazine. Dummy heads were made of soap, toothpaste, concrete dust and toilet paper, painted, with real hair from the barbershop floor. On June 11, lights out was 9:30 p.m.; the three went through the vents, up to the workshop, up a ventilation shaft to the roof, down a kitchen vent pipe about 50 feet, over two barbed-wire fences, and launched from the northeast shore near the power plant, a blind spot for searchlights and towers. The exact launch time isn't known. West's vent jammed because cement he'd used to hold the cover hardened; by the time he got out, they were gone. At about 7:00 a.m. on June 12, a guard reached into Clarence Anglin's cell and the dummy head fell to the floor. Head start: from about 9:30 p.m. to 7:00 a.m., about nine and a half hours.
-
-**Content notes (for the tutor and guardian; never read them out):** A prison escape. The men were in prison for robbery and car theft; no violence is described.
-
-**Hook — present word for word, exactly as below, before anything else:**
+**Hook:**
 
 > Quick vote. In 1962, three prisoners fooled the guards at Alcatraz for an entire night. What did they leave in their beds?
 >
@@ -52,56 +35,28 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 > B) Fake heads with real human hair
 > C) Other prisoners who swapped cells
 
-If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
+Don't react to the vote.
 
-**Activity 1 — the game, *Count at Dawn*:** https://mistysue-hub.github.io/recess-games/cold-case-academy/count-at-dawn/ (an outside webpage). Give the link with one short line and nothing else; the game explains itself. If the learner writes that they're stuck, you may ask, "What would they need to do before they could reach the roof?" or "When did the lights go out, and when was the head found?" Never name a suspect or a verdict. It ends on a green "Case closed" stamp showing their rating and **What you reported** (their answer and the clues they pinned); read that when they type done.
+**Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/count-at-dawn/
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/count-at-dawn/index.html. Stuck? One nudge: “What would they need to do before they could reach the roof?” or “When did the lights go out, and when was the head found?” Never name a suspect or verdict.
 
-**Activity 2 — only when the activity count is two (see AGENTS.md for which one):**
+**Notes** (Rocky only; never on screen): resources/M04CaseNotes.md.
 
-- **Debate (a light chat about the choice):** "Was Alcatraz's old building to blame for the escape, or the guards?"
-  - Side A: The building
-    - The concrete was old and crumbling from salty sea air.
-    - A hidden utility corridor ran right behind every cell.
-    - The roof and the outside pipes were easy to reach once you were in the corridor.
-  - Side B: The guards
-    - The fake heads fooled them all night.
-    - Nobody noticed months of digging, or the noise during music hour.
-    - Nobody checked behind the cardboard vent covers.
-  Run it as the light chat AGENTS.md describes, tied to something the learner cares about. The sides and lines above are only ideas to offer if they're stuck, never your own view. Stay neutral; the learner may pass.
-- **Interest:** skill — Rebuilding events from evidence. The event — Nobody saw the Alcatraz escape, so investigators rebuilt it step by step from the holes, the tools, the workshop and the fake heads. Reframe it in the learner's own interest (from their tutor notes): "Think of something in {interest} where you had to figure out what happened from what was left behind. Which clue did you start with?" Then bring it back to the case: "Which piece of evidence in the cells told investigators the most?"
-
-**Book suggestion — one short sentence, never required:** only when the learner chooses to submit for today, suggest *Unsolved Case Files: Jailbreak at Alcatraz* by Tom Sullivan, a graphic novel that shows the whole escape step by step, with real prison records and photos mixed in. If they'd rather learn about the island itself, mention *Where Is Alcatraz?* by Nico Medina instead. Say it's just for fun if they want more; don't assign it or check on it later.
-
-**Case file — only if the learner asks:** never offer it. If the learner asks for it after the game, open `resources/M04Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
-
-The module is complete when the learner reaches the Case closed screen and types done (and Activity 2 is done, if it was due).
+**Case file:** resources/M04Case.md, only if asked after done.
 
 ## Resources and surfaces
 
-| Surface | Where | Status |
-|---|---|---|
-| Case file (only if the learner asks after the game; open whole) | resources/M04Case.md | Ready |
-| Game (Activity 1): *Count at Dawn* | https://mistysue-hub.github.io/recess-games/cold-case-academy/count-at-dawn/ | Ready (outside webpage; its Case closed screen shows the learner's report) |
-| Debate and interest (Activity 2) | this file | Ready |
-| Runtime rules | AGENTS.md | Ready |
-| Book suggestion (optional for the learner) | Tom Sullivan, *Unsolved Case Files: Jailbreak at Alcatraz*; or Nico Medina, *Where Is Alcatraz?* | One sentence when the learner submits for today; never required |
-
-This module file is for Rocky only and is never shown to the learner.
+Game, notes and case file as above.
 
 ## Completion reference images
 
-- ![Count at Dawn's last screen: a green CASE CLOSED stamp, "Case 002, Part 1 complete" and the detective rating](resources/reference/M04/case-closed.png)
-- ![Count at Dawn's report screen with the detective rating, star reasons and the flipped notebook](resources/reference/M04/verdict-three-stars.png)
+- ![Count at Dawn: Case closed screen with rating and What you reported](resources/reference/M04/case-closed.png)
+- ![Count at Dawn: verdict screen with stars](resources/reference/M04/verdict-three-stars.png)
 
 ## Completion criteria
 
-The module is complete when the learner has answered the hook vote, played the game through to its "Case closed" screen, typed done, and finished Activity 2 if the activity count is two.
+Answered the hook vote, reached Case closed and typed done (plus Activity 2 if due).
 
 ## State updates
 
-On session end, Rocky writes:
-
-- **state/sessions.jsonl** — one line: date, minutes, whether they asked for the case file, whether the module was completed, where the learner paused if they did.
-- **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status.
-- **state/module_completions.jsonl** — on completion only: what they reported (from the Case closed screen), ref M04, date, hook answer, the route and head start they reported, their detective rating (stars out of 3), and which Activity 2 ran (if any).
-- **state/student_profile.md** — durable observations only: whether the learner enjoys debating, which interests landed in the interest activity, which kinds of cases grab them.
+Log the result in state/module_completions.jsonl; update state/progress.json.
