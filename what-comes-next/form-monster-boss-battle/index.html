@@ -146,6 +146,7 @@ ul.lessons li{margin:6px 0}
 .stars{color:#e8a33d;letter-spacing:2px;font-size:20px}
 .stat span.stars{background:none;border:0;padding:0;font-size:17px}
 .card{background:#fff;border:3px solid var(--sun);border-radius:14px;padding:10px 14px;margin:12px 0}
+.card.ref{font-size:15px;line-height:1.5}.card.ref small{display:block;margin-top:4px;color:#5a5446}
 .card b{display:block;font-family:Fredoka,"Trebuchet MS",sans-serif;color:#8a5a00;font-size:18px}
 .stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
 .stat span{background:#fff8e6;border:2px solid #d6c79d;border-radius:20px;padding:2px 10px;font-weight:700;font-size:15px}
@@ -205,6 +206,16 @@ setup.blockedReason = function (t) {
   return "Needs: " + missing.join(" + ");
 };
 setup.deadlineTasks = function () { return setup.tasks.filter(function (t) { return t.deadline; }); };
+setup.refCard = function () {
+  var v = State.variables;
+  var h = '<div class="card ref"><b>📋 The monster\'s list</b>';
+  setup.deadlineTasks().forEach(function (t) {
+    var st = v.done[t.id] ? "✅ done" : (v.missed.includes(t.id) ? "❌ missed" : "due end of week " + t.deadline);
+    h += t.icon + " " + t.name + ": <strong>" + st + "</strong><br>";
+  });
+  h += '<small>⏳ Letters come back 2 weeks after you ask. Your parents need 1 week for the FAFSA part and 1 week for the transcript. Pick recommenders before you ask them.</small></div>';
+  return h;
+};
 setup.weekEnergy = function (w) { return w === 3 ? 2 : 3; };</script><tw-passagedata pid="1" name="StoryInit" tags="" position="100,100" size="100,100">&lt;&lt;set $week to 1&gt;&gt;
 &lt;&lt;set $energy to 3&gt;&gt;
 &lt;&lt;set $done to {}&gt;&gt;
@@ -233,6 +244,7 @@ Beat all &lt;strong&gt;4 deadlines&lt;/strong&gt; and the monster goes back to s
 🙋 You have to pick your recommenders before you can ask them.&lt;/div&gt;
 &lt;div class=&quot;next&quot;&gt;[[Start week 1 →|Week]]&lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name="Week" tags="" position="600,100" size="100,100">&lt;&lt;if $resolvedWeek lt $week&gt;&gt;&lt;&lt;set $energy to setup.weekEnergy($week)&gt;&gt;&lt;&lt;set $resolvedWeek to $week&gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;h2&gt;Week &lt;&lt;print $week&gt;&gt;&lt;/h2&gt;
+&lt;&lt;print setup.refCard()&gt;&gt;
 &lt;&lt;if $week is 3&gt;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;🤧 Plot twist!&lt;/b&gt;You caught a cold. You only have &lt;strong&gt;2 energy&lt;/strong&gt; this week. (This is why smart planners leave a cushion.)&lt;/div&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;set _arrivals to setup.tasks.filter(function (t) { return t.wait &amp;&amp; $done[t.id] &amp;&amp; $doneWeek[t.id] + t.wait === $week; })&gt;&gt;
 &lt;&lt;for _a range _arrivals&gt;&gt;&lt;div class=&quot;arrive&quot;&gt;&lt;&lt;print _a.waitName&gt;&gt; came back! You can use it now.&lt;/div&gt;&lt;&lt;/for&gt;&gt;

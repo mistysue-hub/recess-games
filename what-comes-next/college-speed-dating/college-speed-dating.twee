@@ -1,0 +1,298 @@
+:: StoryTitle
+College Speed Dating
+
+:: StoryData
+{
+  "ifid": "16550EB7-D939-44BE-98BA-47D1EF7BE672",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+<<set $set to "">>
+<<set $db to -1>>
+<<set $di to 0>>
+<<set $out to [null, null, null]>>
+<<set $rating to [0, 0, 0]>>
+<<set $fav to -1>>
+<<set $qi to 0>>
+<<set $slips to 0>>
+<<set $fb to "">>
+<<set $fbok to false>>
+
+:: Story JavaScript [script]
+UIBar.destroy();
+Config.history.controls = false;
+Config.history.maxStates = 60;
+Config.saves.maxSlotSaves = 0;
+Config.saves.maxAutoSaves = 0;
+Config.cleanupWikifierOutput = true;
+
+setup.reset = function (s) {
+  var v = State.variables;
+  v.set = s; v.db = -1; v.di = 0; v.out = [null, null, null]; v.rating = [0, 0, 0];
+  v.fav = -1; v.qi = 0; v.slips = 0; v.fb = ""; v.fbok = false;
+};
+setup.refCard = function (i) {
+  var o = setup.sd[State.variables.set].opts[i];
+  var h = '<div class="profile ref"><div class="ptop"><div class="pic">' + o.name.split(" ")[0] + '</div><div><div class="pname">' + o.name.replace(/^\S+\s/, "") + '</div><div class="ptag">was ' + o.mystery + ' · 📌 for reference</div></div></div><ul>';
+  o.facts.forEach(function (f) { h += '<li>' + f + '</li>'; });
+  return h + '</ul></div>';
+};
+setup.hearts = function (n) { return n ? "❤️".repeat(n) + "🤍".repeat(5 - n) : ""; };
+
+/* All options are made up (from M16). */
+setup.sd = {
+  college: {
+    title: "🎓 Colleges", noun: "school",
+    opts: [
+      { id: "s1", mystery: "Mystery School 1", name: "🌲 Pinecrest College",
+        tagline: "Looking for: someone who wants their professors to know their name.",
+        facts: ["👥 2,000 students", "🏡 Small town", "🪑 Average class: 18 students", "🩺 Strong nursing program", "🔁 First-year retention: 88%", "🎓 Graduation rate: 74%", "🏷️ Sticker price: $68,000 a year", "💸 Average price after aid: $21,000 a year"],
+        reveal: "That scary $68,000 sticker price? The average student pays <strong>$21,000</strong> after aid, only $4,000 more than Big State. Never rule out a school by its sticker price; try its net price calculator with a parent." },
+      { id: "s2", mystery: "Mystery School 2", name: "🏙️ Big State University",
+        tagline: "Looking for: someone who loves options. SO many options.",
+        facts: ["👥 30,000 students", "🌆 Big city", "🎤 Many large lecture classes", "📚 Huge choice of majors", "🔁 First-year retention: 92%", "🎓 Graduation rate: 80%", "🏷️ Sticker price: $28,000 a year", "💸 Average price after aid: $17,000 a year"],
+        reveal: "Lots of choices and strong numbers. In big lecture classes you'll want to sit near the front, go to office hours, and find your people early." },
+      { id: "s3", mystery: "Mystery School 3", name: "🌊 Riverbend Community College",
+        tagline: "Looking for: someone who likes home cooking and a smart plan.",
+        facts: ["🏠 Community college: students live at home", "🎤 Big lecture classes", "🤝 Transfer agreement with the state university", "🔁 First-year retention: 62%", "🎓 Graduation rate: 30% (many students transfer before finishing, which this number doesn't count)", "🏷️ Sticker price: $14,000 a year", "💸 Average price after aid: $6,000 a year"],
+        reveal: "The best price by far. That 30% graduation rate looks low, but it doesn't count the many students who transfer to the state university before finishing. Ask the college for its transfer numbers." }
+    ],
+    db: [
+      { t: "💸 Price after aid over $20,000 a year", out: ["s1"] },
+      { t: "🎓 Graduation rate under 70%", out: ["s3"] },
+      { t: "🎤 Big lecture classes", out: ["s2"] },
+      { t: "✏️ Something else (I'll decide as I go)", out: null }
+    ],
+    quiz: [
+      { show: 0, prompt: "Pinecrest's sticker price is $68,000. What did the average student actually pay after aid?",
+        options: [
+          { t: "$68,000", ok: false, fb: "That's the sticker price. Most students pay less after aid. Look at the last line of the profile." },
+          { t: "$21,000", ok: true, fb: "Right. Sticker price and real price can be miles apart. That's why net price calculators exist." },
+          { t: "$0", ok: false, fb: "That would be nice! But the average student still paid something." }
+        ]},
+      { show: 2, prompt: "Riverbend's graduation rate is 30%. What is that number leaving out?",
+        options: [
+          { t: "Students who transfer to a university before finishing", ok: true, fb: "Yes. At community colleges, lots of students transfer early on purpose. That's a success the graduation rate doesn't count." },
+          { t: "Students who live at home", ok: false, fb: "Living at home doesn't change the graduation rate. Think about where students go next." },
+          { t: "Nothing. It means 70% of students fail", ok: false, fb: "Not quite. Many of those students transferred to a university, which the number doesn't count." }
+        ]},
+      { prompt: "Where can you look up real numbers like these for real colleges?",
+        options: [
+          { t: "📸 The college's social media", ok: false, fb: "Fun for vibes, but it's marketing. Look for official data." },
+          { t: "🏛️ College Navigator or College Scorecard (US Department of Education)", ok: true, fb: "Exactly. Both are free, official and run by the US Department of Education." },
+          { t: "🏆 Whichever ranking list comes up first", ok: false, fb: "Rankings aren't fit. Go to the official data instead." }
+        ]}
+    ]
+  },
+  trade: {
+    title: "🔧 Training programs", noun: "program",
+    opts: [
+      { id: "p1", mystery: "Mystery Program 1", name: "🔥 Riverbend Welding Certificate",
+        tagline: "Looking for: someone who wants to be welding by next summer.",
+        facts: ["🏫 Community college welding certificate", "⏱️ One year", "💸 $5,500 total", "🎓 Completion rate: 70%", "✅ Accredited", "📊 Shows its job placement numbers"],
+        reveal: "Affordable, accredited, and open about its job placement numbers. Green flags all around. 🟢" },
+      { id: "p2", mystery: "Mystery Program 2", name: "⚡ FlashArc Institute",
+        tagline: "Looking for: someone who'll say yes RIGHT NOW. 😉",
+        facts: ["🏢 Private welding institute", "⏱️ Seven months", "💸 $19,000 total", "📣 Says \"95% job placement!\"", "🙊 Won't put that number in writing", "⏰ Wants a deposit today"],
+        reveal: "Red flags! 🚩 A big claim it won't put in writing, plus pressure to pay today. A good program shows its numbers and gives you time to decide. Check accreditation and get every promise in writing." },
+      { id: "p3", mystery: "Mystery Program 3", name: "🔧 Local Pipe Trades Apprenticeship",
+        tagline: "Looking for: someone in it for the long haul.",
+        facts: ["📋 Registered apprenticeship", "⏱️ Four to five years", "💵 Paid from day one, with raises", "📚 Classes included", "🏁 Competitive application"],
+        reveal: "Paid from day one, classes included, and no school debt. The catch: it takes four to five years and getting in is competitive, so plan ahead and apply on time." }
+    ],
+    db: [
+      { t: "💸 Total cost over $10,000", out: ["p2"] },
+      { t: "⏱️ Takes two years or more", out: ["p3"] },
+      { t: "🚫 No pay while I learn", out: ["p1", "p2"] },
+      { t: "🙊 Won't put its results in writing", out: ["p2"] },
+      { t: "✏️ Something else (I'll decide as I go)", out: null }
+    ],
+    quiz: [
+      { show: 1, prompt: "Which of FlashArc's facts is a red flag?",
+        options: [
+          { t: "It's seven months long", ok: false, fb: "Short programs can be great. Length isn't the problem." },
+          { t: "It won't put its placement rate in writing, and it wants a deposit today", ok: true, fb: "Yes! 🚩 Big promises that aren't in writing, plus pressure to pay now, are classic warning signs." },
+          { t: "It teaches welding", ok: false, fb: "Welding is a great trade! Look for the pressure and the missing proof." }
+        ]},
+      { show: 2, prompt: "What's true about a registered apprenticeship?",
+        options: [
+          { t: "You pay big tuition up front", ok: false, fb: "Usually the opposite: little or no tuition." },
+          { t: "You're paid while you learn, with raises as your skills grow", ok: true, fb: "Right. You earn while you learn, and classes are often included." },
+          { t: "Anyone gets in; there's no application", ok: false, fb: "Many apprenticeships are competitive, so apply early and prepare." }
+        ]},
+      { prompt: "Where can you find registered apprenticeships?",
+        options: [
+          { t: "🏛️ Apprenticeship.gov (US Department of Labor)", ok: true, fb: "Exactly. It's the official place to search registered apprenticeships." },
+          { t: "📢 A pop-up ad promising $40 an hour", ok: false, fb: "Too good to be true usually is. Start with official sources." },
+          { t: "📱 Whoever texts you first", ok: false, fb: "Out-of-nowhere texts are a scam warning sign (remember M23?)." }
+        ]}
+    ]
+  }
+};
+
+:: Story Stylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap");
+:root{--paper:#f4ecd6;--ink:#2b2a24;--forest:#2f6b45;--trail:#c8553d;--wood:#8a5a2b;--sky:#2f6fb0;--sun:#e8a33d;--rose:#c2416b}
+html,body{background:#e9dfc2;color:var(--ink)}
+body{font:18px/1.6 Nunito,"Trebuchet MS",system-ui,sans-serif}
+#story{margin:0 auto;padding:0;max-width:680px}
+.passage p{margin:.55em 0}
+#passages{background:var(--paper);box-shadow:0 0 0 1px #d6c79d,0 10px 30px rgba(0,0,0,.12);padding:22px 22px 30px;margin:16px 12px;border-radius:14px}
+h1,h2,h3{font-family:Fredoka,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;color:var(--forest);line-height:1.2}
+h1{font-size:30px;margin:.2em 0 .4em}
+h2{font-size:23px;margin:.3em 0 .5em;display:inline-block;background:#fff8e6;border:3px solid var(--forest);border-radius:8px;padding:2px 12px;transform:rotate(-.6deg)}
+strong{color:#7a2e1f}
+.choices{display:flex;flex-direction:column;gap:10px;margin:18px 0 6px}
+.choices a,.next a{display:block;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.choices a:hover,.next a:hover,.choices a:focus,.next a:focus{background:#eaf2fb;outline:none}
+.next{margin-top:18px}
+.next a{border-color:var(--forest);color:#fff;background:var(--forest);text-align:center}
+.next a:hover,.next a:focus{background:#24563a}
+.rate{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0 4px}
+.rate a{display:block;text-align:center;text-decoration:none;background:#fff;border:3px solid var(--rose);color:var(--rose);border-radius:12px;padding:6px 0;font-weight:800;line-height:1.2}
+.rate a span{display:block;font-size:20px}
+.rate a:hover,.rate a:focus{background:#fdebf1;outline:none}
+.ratelabels{display:flex;justify-content:space-between;font-size:13px;color:#6b6352;font-weight:700}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.yn a{display:block;text-align:center;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:10px 6px;font-weight:800}
+.tip{background:#fff3cf;border:3px dashed var(--sun);border-radius:12px;padding:10px 14px;margin:14px 0}
+.tip::before{content:"🙈 Oops! ";font-weight:800;color:#8a5a00}
+.good{background:#e3f0e6;border-left:6px solid var(--forest);border-radius:8px;padding:10px 14px;margin:12px 0}
+.good::before{content:"✅ ";}
+.meter{position:sticky;top:0;z-index:5;background:#fff8e6;border:2px solid var(--wood);border-radius:12px;padding:8px 12px;margin:0 0 14px;font-weight:700;font-size:15px}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
+.stat span{background:#fff;border:2px solid #d6c79d;border-radius:20px;padding:2px 10px;font-weight:700;font-size:15px}
+.card{background:#fff;border:3px solid var(--sun);border-radius:14px;padding:10px 14px;margin:12px 0}
+.card b{display:block;font-family:Fredoka,"Trebuchet MS",sans-serif;color:#8a5a00;font-size:18px}
+.profile{background:#fff;border:3px solid var(--rose);border-radius:18px;margin:12px 0;overflow:hidden;box-shadow:0 4px 0 #e7b7c6}
+.ptop{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#fdebf1,#fff6e6);padding:10px 14px}
+.pic{font-size:34px;width:58px;height:58px;border-radius:50%;background:#fff;border:3px dashed var(--rose);display:flex;align-items:center;justify-content:center;flex:none}
+.pname{font-family:Fredoka,"Trebuchet MS",sans-serif;font-size:20px;color:var(--rose);line-height:1.2}
+.ptag{font-size:14px;font-style:italic;color:#6b4b55}
+.profile ul{margin:0;padding:8px 14px 10px 14px;list-style:none;font-size:16px}
+.profile li{padding:3px 0;border-bottom:1px dashed #f0d7df}
+.profile li:last-child{border-bottom:0}
+.verdict{padding:8px 14px;font-weight:800;border-top:2px solid #f0d7df}
+.verdict.outv{background:#fbeae5;color:#8f3220}
+.verdict.inv{background:#fdf2f6;color:var(--rose)}
+.revealnote{padding:8px 14px 12px;font-size:16px;border-top:2px solid #f0d7df}
+.fav{background:var(--sun);color:#3d2a00;border-radius:20px;padding:0 8px;font-size:13px;font-weight:800;margin-left:6px}
+.small{font-size:15px;color:#5a5446}
+ul.lessons li{margin:6px 0}
+@media (max-width:520px){body{font-size:17px}#passages{margin:8px 6px;padding:16px 14px 24px}h1{font-size:26px}.profile ul{font-size:15px}}
+
+:: PassageHeader
+<<if not tags().includes("nometer")>><div class="meter">💘 College Speed Dating: <<print setup.sd[$set].title>><div class="stat"><<if $db gte 0>><span>💔 Deal-breaker: <<print setup.sd[$set].db[$db].t>></span><</if>></div></div><</if>>
+
+:: Start [nometer]
+<h1>💘 College Speed Dating</h1>
+Three mystery matches. 🕶️ Names hidden. Logos hidden. No fancy photos of happy students on a lawn. <strong>Just the facts.</strong>
+
+<div class="card"><b>💞 How it works</b>1️⃣ Pick your <strong>deal-breaker</strong>: the one thing that's a hard no.<br>2️⃣ Meet three mystery matches and rate each one 1–5 hearts on your must-haves.<br>3️⃣ Pick a favorite.<br>4️⃣ The big reveal: see who they really are!</div>
+
+<p class="small">All three matches in each set are made up.</p>
+
+<strong>Who are you dating today?</strong>
+<div class="choices">
+<<link "🎓 Colleges" "Dealbreaker">><<run setup.reset("college")>><</link>>
+<<link "🔧 Training programs" "Dealbreaker">><<run setup.reset("trade")>><</link>>
+</div>
+<p class="small">A What Comes Next? game for Recess.</p>
+
+:: Dealbreaker
+<h2>💔 Pick your deal-breaker</h2>
+Before the first date, know your line. A <strong>deal-breaker</strong> is the one thing that's a hard no. If a match breaks it, it's out, no matter how charming it is.
+<<nobr>><div class="choices">
+<<for _i, _d range setup.sd[$set].db>><<capture _i>>
+<<link `_d.t` "Date">><<set $db to _i>><<set $di to 0>><</link>>
+<</capture>><</for>>
+</div><</nobr>>
+
+:: Date
+<<set _s to setup.sd[$set]>><<set _o to _s.opts[$di]>><<set _d to _s.db[$db]>>
+<<if _d.out and $out[$di] is null>><<set $out[$di] to _d.out.includes(_o.id)>><</if>>
+<h2>☕ Date <<print $di + 1>> of 3</h2>
+<<nobr>><div class="profile"><div class="ptop"><div class="pic">❓</div><div><div class="pname"><<print _o.mystery>></div><div class="ptag"><<print _o.tagline>></div></div></div>
+<ul><<for _f range _o.facts>><li><<print _f>></li><</for>></ul>
+<<if $out[$di] is true>><div class="verdict outv">💔 Deal-breaker! This one hits your hard no: "<<print _d.t>>." It's out.</div>
+<<elseif $rating[$di] gt 0>><div class="verdict inv">You rated it: <<print setup.hearts($rating[$di])>></div><</if>>
+</div><</nobr>>
+<<if $out[$di] is null>>
+<p><strong>Does this <<print _s.noun>> break your deal-breaker?</strong></p>
+<<nobr>><div class="yn"><<link "💔 Yes, it's out" "Date">><<set $out[$di] to true>><</link>><<link "👍 No, it passes" "Date">><<set $out[$di] to false>><</link>></div><</nobr>>
+<<elseif $out[$di] is false and $rating[$di] is 0>>
+<p><strong>How well does it match your must-haves?</strong></p>
+<<nobr>><div class="rate"><<for _n range [1,2,3,4,5]>><<capture _n>><<link `'<span>❤️</span>' + _n` "Date">><<set $rating[$di] to _n>><</link>><</capture>><</for>></div><div class="ratelabels"><span>Not for me</span><span>Total match</span></div><</nobr>>
+<<else>>
+<div class="next"><<if $di lt 2>><<link "Next date →" "Date">><<set $di += 1>><</link>><<else>><<link "Pick your favorite →" "Favorite">><</link>><</if>></div>
+<</if>>
+
+:: Favorite
+<<set _s to setup.sd[$set]>>
+<h2>⭐ Pick your favorite</h2>
+<<set _left to [0,1,2].filter(function (i) { return $out[i] is false; })>>
+<<if _left.length is 0>>Plot twist: <strong>all three broke your deal-breaker!</strong> 😱 That happens in real life too. It means it's time to look at more options, or to ask yourself whether it's truly a deal-breaker or a strong wish.
+<div class="next"><<link "The big reveal →" "Reveal">><<set $fav to -1>><</link>></div>
+<<else>>Who's getting a second date?
+<<nobr>><div class="choices">
+<<for _i range _left>><<capture _i>>
+<<link `_s.opts[_i].mystery + "  " + setup.hearts($rating[_i])` "Reveal">><<set $fav to _i>><</link>>
+<</capture>><</for>>
+</div><</nobr>>
+<<if [0,1,2].some(function (i) { return $out[i] is true; })>><p class="small">💔 Out: <<print [0,1,2].filter(function (i) { return $out[i] is true; }).map(function (i) { return _s.opts[i].mystery; }).join(", ")>></p><</if>>
+<</if>>
+
+:: Reveal
+<<set _s to setup.sd[$set]>>
+<h2>🎭 The big reveal!</h2>
+Masks off. Here's who you were dating:
+<<nobr>><<for _i, _o range _s.opts>>
+<div class="profile"><div class="ptop"><div class="pic"><<print _o.name.split(" ")[0]>></div><div><div class="pname"><<print _o.name.replace(/^\S+\s/, "")>><<if $fav is _i>><span class="fav">⭐ your pick</span><</if>></div><div class="ptag">was <<print _o.mystery>></div></div></div>
+<<if $out[_i]>><div class="verdict outv">💔 Out: broke your deal-breaker</div><<else>><div class="verdict inv">Your rating: <<print setup.hearts($rating[_i])>></div><</if>>
+<div class="revealnote"><<print _o.reveal>></div></div>
+<</for>><</nobr>>
+<div class="card"><b>🤔 Think about it</b>Did the reveal change how you feel about any of them?</div>
+<div class="next"><<link "Quick fact check →" "Quiz">><<set $qi to 0>><<set $fb to "">><<set $fbok to false>><</link>></div>
+
+:: Quiz
+<<set _q to setup.sd[$set].quiz[$qi]>>
+<h2>🔍 Fact check <<print $qi + 1>> of <<print setup.sd[$set].quiz.length>></h2>
+<<if _q.show isnot undefined>><<print setup.refCard(_q.show)>><</if>>
+<p><strong><<print _q.prompt>></strong></p>
+<<if $fbok>>
+<div class="good"><<print $fb>></div>
+<div class="next"><<if $qi + 1 lt setup.sd[$set].quiz.length>><<link "Next →" "Quiz">><<set $qi += 1>><<set $fb to "">><<set $fbok to false>><</link>><<else>><<link "See your results →" "End">><</link>><</if>></div>
+<<else>>
+<<if $fb isnot "">><div class="tip"><<print $fb>></div><</if>>
+<<nobr>><div class="choices">
+<<for _o range _q.options>><<capture _o>>
+<<link `_o.t` "Quiz">><<set $fb to _o.fb>><<set $fbok to _o.ok>><<if not _o.ok>><<set $slips += 1>><</if>><</link>>
+<</capture>><</for>>
+</div><</nobr>>
+<</if>>
+
+:: End [nometer]
+<<set _s to setup.sd[$set]>>
+<h1>💘 Speed dating complete!</h1>
+<div class="card"><b>📝 Your results</b>💔 Deal-breaker: <<print _s.db[$db].t>><br><<for _i, _o range _s.opts>><<print _o.name>>: <<if $out[_i]>>💔 out<<else>><<print setup.hearts($rating[_i])>><</if>><<if $fav is _i>> ⭐<</if>><br><</for>><<if $fav gte 0>>⭐ Favorite: <<print _s.opts[$fav].name>><<else>>⭐ Favorite: none (time to find more matches!)<</if>></div>
+
+<strong>What you learned:</strong>
+<ul class="lessons">
+<<if $set is "college">><li>🏷️ Sticker price isn't what most students pay. Look at the price after aid.</li>
+<li>🔢 Numbers need context: a community college's graduation rate doesn't count students who transfer.</li>
+<li>🕶️ Hiding the names helps you judge on facts, not fame.</li>
+<<else>><li>🚩 Big promises that aren't in writing, plus pressure to pay today, are red flags.</li>
+<li>💵 Some paths pay you while you learn.</li>
+<li>⏱️ Every path trades off time, cost and how hard it is to get in.</li><</if>>
+<li>💔 Knowing your deal-breaker makes choosing much easier.</li>
+</ul>
+
+<div class="card"><b>🗺️ Tell Rocky</b>Your deal-breaker, your ratings, your favorite, and whether the reveal changed how you feel. Then Rocky can run speed dating with <strong>your real list</strong>.</div>
+<<nobr>><div class="choices">
+<<if $set is "college">><<link "🔧 Try dating training programs" "Dealbreaker">><<run setup.reset("trade")>><</link>><<else>><<link "🎓 Try dating colleges" "Dealbreaker">><<run setup.reset("college")>><</link>><</if>>
+<<link "🔁 Play again">><<run Engine.restart()>><</link>>
+</div><</nobr>>
+<p class="small">A What Comes Next? game for Recess. All matches are made up. Look up real schools on College Navigator or College Scorecard, and real apprenticeships on Apprenticeship.gov.</p>

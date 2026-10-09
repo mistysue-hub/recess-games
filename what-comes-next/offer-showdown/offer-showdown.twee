@@ -1,0 +1,351 @@
+:: StoryTitle
+Offer Showdown
+
+:: StoryData
+{
+  "ifid": "9E8DEE9F-7644-468E-B4C1-65F5798D49FA",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+<<set $set to "">>
+<<set $si to 0>>
+<<set $sorted to {}>>
+<<set $qi to 0>>
+<<set $slips to 0>>
+<<set $fb to "">>
+<<set $fbok to false>>
+<<set $played to []>>
+
+:: Story JavaScript [script]
+UIBar.destroy();
+Config.history.controls = false;
+Config.history.maxStates = 60;
+Config.saves.maxSlotSaves = 0;
+Config.saves.maxAutoSaves = 0;
+Config.cleanupWikifierOutput = true;
+
+setup.money = function (n) { return "$" + n.toLocaleString("en-US"); };
+setup.kinds = {
+  free:     { icon: "🎁", label: "Free money", cls: "free" },
+  earned:   { icon: "💪", label: "Earned", cls: "earned" },
+  borrowed: { icon: "🔁", label: "Borrowed", cls: "borrowed" }
+};
+
+/* All offers and numbers are made up and simplified (from M24). */
+setup.sets = {
+  college: {
+    title: "🎓 College offers",
+    blurb: "Three made-up colleges, three financial aid offers.",
+    offers: [
+      { name: "🍁 Maple State", costLabel: "Cost of attendance (one year)", cost: 28000, items: [
+        { n: "Federal grant", amt: 4000, kind: "free", fb: "Grants are free money. You never pay them back." },
+        { n: "State grant", amt: 2000, kind: "free", fb: "Another grant, so it's free money too." },
+        { n: "Federal loan", amt: 5500, kind: "borrowed", fb: "A loan is borrowed money. It helps pay the bill now, but you pay it back later, usually with interest." },
+        { n: "Work-study", amt: 2000, kind: "earned", fb: "Work-study is money you earn at a part-time job, paid as you work. It doesn't come off the bill up front." }
+      ]},
+      { name: "🌲 Cedar College", costLabel: "Cost of attendance (one year)", cost: 52000, items: [
+        { n: "Merit scholarship", note: "renews every year with a 3.0 GPA", amt: 30000, kind: "free", fb: "Scholarships are free money. This one renews every year as long as you keep a 3.0 GPA, so know the rules for keeping it." },
+        { n: "College grant", amt: 6000, kind: "free", fb: "A grant from the college itself. Free money." },
+        { n: "Federal loan", amt: 5500, kind: "borrowed", fb: "Borrowed. You pay it back later, usually with interest." }
+      ]},
+      { name: "🌊 Lakeside University", costLabel: "Cost of attendance (one year)", cost: 40000, items: [
+        { n: "First-Year Welcome Grant", note: "first year only", amt: 15000, kind: "free", fb: "Free money! But look closely: <strong>first year only</strong>. Remember that for later... 👀" },
+        { n: "Merit scholarship", note: "renews every year", amt: 8000, kind: "free", fb: "Free money, and it renews every year." },
+        { n: "Outside scholarship", note: "one time", amt: 2000, kind: "free", fb: "Free, but it's <strong>one time</strong> only. 👀" },
+        { n: "Federal loan", amt: 5500, kind: "borrowed", fb: "Borrowed. You pay it back later, usually with interest." }
+      ]}
+    ]
+  },
+  trade: {
+    title: "🔧 Training and job offers",
+    blurb: "Two training programs and one apprenticeship.",
+    offers: [
+      { name: "🔥 Riverbend Welding Certificate", sub: "community college, one year", costLabel: "Total cost", cost: 5500, items: [
+        { n: "Federal grant", amt: 2500, kind: "free", fb: "Grants are free money. You never pay them back." }
+      ]},
+      { name: "⚡ FlashArc Institute", sub: "private, seven months", costLabel: "Total cost", cost: 19000, items: [
+        { n: "\"Scholarship\"", note: "only if you sign today!", amt: 3000, kind: "free", fb: "Technically free money... but \"only if you sign today\" is a pressure move. Hold that thought. 🚩" },
+        { n: "Loan offered", amt: 16000, kind: "borrowed", fb: "Borrowed. You pay it back later, usually with interest." }
+      ]},
+      { name: "🔧 Local Pipe Trades Apprenticeship", sub: "four to five years", costLabel: "Tuition", costText: "Little or none", items: [
+        { n: "Pay from day one", note: "$18 an hour, with raises", amt: null, kind: "earned", fb: "You earn it by working, and it starts on day one." }
+      ]}
+    ]
+  }
+};
+
+setup.flat = function () {
+  var out = [];
+  setup.sets[State.variables.set].offers.forEach(function (o, oi) {
+    o.items.forEach(function (it, ii) { out.push([oi, ii]); });
+  });
+  return out;
+};
+setup.cur = function () {
+  var f = setup.flat()[State.variables.si];
+  return f ? { oi: f[0], ii: f[1], item: setup.sets[State.variables.set].offers[f[0]].items[f[1]] } : null;
+};
+setup.sortOops = function (actual, chosen) {
+  if (actual === "borrowed" && chosen === "free") return "Careful! Loans aren't free. You pay them back, usually with interest.";
+  if (actual === "borrowed" && chosen === "earned") return "You don't work for this one. You borrow it, and you pay it back later.";
+  if (actual === "free" && chosen === "borrowed") return "Good news: you never pay this one back. Grants and scholarships are free money.";
+  if (actual === "free" && chosen === "earned") return "No job needed for this one. Grants and scholarships are gifts.";
+  if (actual === "earned" && chosen === "free") return "Not quite free. You have to work a job to get this money.";
+  return "Not borrowed. You work for this money, and you keep it.";
+};
+
+setup.offerCard = function (oi, opts) {
+  opts = opts || {};
+  var v = State.variables, o = setup.sets[v.set].offers[oi], cur = setup.cur();
+  var h = '<div class="offer"><div class="otitle">' + o.name + (o.sub ? ' <small>(' + o.sub + ')</small>' : '') + '</div>';
+  h += '<div class="row costrow"><span>' + o.costLabel + '</span><span>' + (o.costText || setup.money(o.cost)) + '</span></div>';
+  o.items.forEach(function (it, ii) {
+    var key = oi + "-" + ii, k = v.sorted[key] || (opts.all ? it.kind : null);
+    var now = cur && cur.oi === oi && cur.ii === ii && !opts.all;
+    var cls = "row item" + (k ? " " + setup.kinds[k].cls : "") + (now ? " now" : "");
+    var chip = k ? '<span class="chip ' + setup.kinds[k].cls + '">' + setup.kinds[k].icon + " " + setup.kinds[k].label + '</span>' : (now ? '<span class="chip q">❓ sort me</span>' : '');
+    h += '<div class="' + cls + '"><span>' + it.n + (it.note ? ' <em>(' + it.note + ')</em>' : '') + chip + '</span><span>' + (it.amt === null ? "" : setup.money(it.amt)) + '</span></div>';
+  });
+  return h + '</div>';
+};
+
+/* Questions after sorting. */
+setup.Q = {
+  college: [
+    { round: "Round 2: The real cost", show: [0],
+      intro: "The <strong>real cost</strong> is the cost minus <strong>free money only</strong>. Loans still have to be paid back, and work-study is paid as you work, so they don't count.",
+      prompt: "What's Maple State's real cost for year one?",
+      options: [
+        { t: "$14,500", ok: false, fb: "That subtracts everything, including the loan and work-study. Only free money comes off the real cost." },
+        { t: "$22,000", ok: true, fb: "$28,000 minus $6,000 in grants = <strong>$22,000</strong>. The loan and work-study can help you pay it, but they don't make it cheaper." },
+        { t: "$28,000", ok: false, fb: "That's the full cost. Subtract the free money (the two grants)." }
+      ]},
+    { round: "Round 2: The real cost", show: [1],
+      prompt: "What's Cedar College's real cost for year one?",
+      options: [
+        { t: "$52,000", ok: false, fb: "That's the scary sticker price. Subtract the free money." },
+        { t: "$10,500", ok: false, fb: "Close, but that subtracts the loan too. Loans aren't free." },
+        { t: "$16,000", ok: true, fb: "$52,000 minus $36,000 in free money = <strong>$16,000</strong>. Not so scary after all!" }
+      ]},
+    { round: "Round 2: The real cost", show: [2],
+      prompt: "What's Lakeside University's real cost for year one?",
+      options: [
+        { t: "$15,000", ok: true, fb: "$40,000 minus $25,000 in free money = <strong>$15,000</strong>." },
+        { t: "$9,500", ok: false, fb: "That subtracts the loan too. Loans have to be paid back." },
+        { t: "$40,000", ok: false, fb: "That's the full cost. Subtract the free money." }
+      ]},
+    { round: "Round 2: The real cost",
+      intro: "<div class=\"tally\"><div><span>🍁 Maple State</span><b>$22,000</b></div><div><span>🌲 Cedar College</span><b>$16,000</b></div><div><span>🌊 Lakeside University</span><b>$15,000</b></div><small>Real cost, year one</small></div>",
+      prompt: "Which offer is cheapest for year one?",
+      options: [
+        { t: "🍁 Maple State", ok: false, fb: "Maple has the lowest sticker price, but not the lowest real cost. Check the numbers again." },
+        { t: "🌲 Cedar College", ok: false, fb: "So close! Cedar is second. Look again." },
+        { t: "🌊 Lakeside University", ok: true, fb: "Lakeside wins year one at $15,000. Case closed? Not so fast... 🕵️" }
+      ]},
+    { round: "Round 3: The four-year view", show: [2],
+      intro: "Most college programs last four years, so read the fine print. Some of Lakeside's money is <strong>first year only</strong> or <strong>one time</strong>.",
+      prompt: "In years 2, 3 and 4, Lakeside's Welcome Grant and outside scholarship are gone. What's the real cost each of those years?",
+      options: [
+        { t: "$15,000, same as year one", ok: false, fb: "That's the trap! The $15,000 Welcome Grant and the $2,000 outside scholarship disappear after year one." },
+        { t: "$32,000", ok: true, fb: "$40,000 minus the $8,000 merit scholarship (the only free money that renews) = <strong>$32,000</strong> a year." },
+        { t: "$40,000", ok: false, fb: "Almost! The merit scholarship renews every year, so subtract that $8,000." }
+      ]},
+    { round: "Round 3: The four-year view",
+      intro: "<div class=\"tally\"><div><span>🍁 Maple State</span><b>$22,000 × 4 = $88,000</b></div><div><span>🌲 Cedar College</span><b>$16,000 × 4 = $64,000</b></div><div><span>🌊 Lakeside University</span><b>$15,000 + $32,000 × 3 = $111,000</b></div><small>Real cost, four years (if the renewable money keeps renewing)</small></div>",
+      prompt: "Which offer is cheapest over four years?",
+      options: [
+        { t: "🍁 Maple State", ok: false, fb: "Maple is in the middle. Look again." },
+        { t: "🌲 Cedar College", ok: true, fb: "Cedar! The school with the <strong>scariest sticker price</strong> ($52,000) is the cheapest over four years, as long as you keep that 3.0 GPA. And Lakeside, the year-one winner, is now the most expensive." },
+        { t: "🌊 Lakeside University", ok: false, fb: "Lakeside was cheapest in year one, but its first-year money disappears. Now it's the most expensive." }
+      ]}
+  ],
+  trade: [
+    { round: "Round 2: The real cost", show: [0],
+      intro: "Your <strong>out-of-pocket cost</strong> is the cost minus <strong>free money</strong>. Borrowed money still has to be paid back.",
+      prompt: "What's your out-of-pocket cost at Riverbend?",
+      options: [
+        { t: "$0", ok: false, fb: "The grant helps a lot, but it doesn't cover everything." },
+        { t: "$3,000", ok: true, fb: "$5,500 minus the $2,500 grant = <strong>$3,000</strong>." },
+        { t: "$5,500", ok: false, fb: "That's the full cost. Subtract the grant." }
+      ]},
+    { round: "Round 2: The real cost", show: [1],
+      prompt: "Say you sign today and take the loan. How much of FlashArc's cost do you end up paying yourself?",
+      options: [
+        { t: "$0. The loan covers it!", ok: false, fb: "The loan pays the school now, but you pay the loan back later, usually with interest. It's still your money." },
+        { t: "$16,000, and all of it is borrowed", ok: true, fb: "$19,000 minus the $3,000 \"scholarship\" = <strong>$16,000</strong>, every dollar of it borrowed. That's a lot of debt for a seven-month program." },
+        { t: "$3,000", ok: false, fb: "That's the scholarship. Subtract it from the $19,000 total." }
+      ]},
+    { round: "Round 2: The real cost", show: [2],
+      prompt: "What does the apprenticeship cost you?",
+      options: [
+        { t: "$18 an hour", ok: false, fb: "Flip it around! That's what they pay <strong>you</strong>." },
+        { t: "About $0, and you're earning money", ok: true, fb: "Little or no tuition, and you're paid from day one with raises. The trade-off: it takes four to five years, and getting in is competitive." },
+        { t: "There's no way to know", ok: false, fb: "It's right there in the offer: little or no tuition, plus pay from day one." }
+      ]},
+    { round: "Round 3: Spot the red flag", show: [1],
+      prompt: "One line in FlashArc's offer is a red flag. Which one?",
+      options: [
+        { t: "It's only seven months long", ok: false, fb: "Short programs can be great. Length isn't the problem." },
+        { t: "The $3,000 \"scholarship\" only if you sign today", ok: true, fb: "That's the one. 🚩 Real scholarships don't vanish at midnight. Pressure to decide on the spot is a classic warning sign. A good program gives you time to think, compare and ask a parent." },
+        { t: "It offers a loan", ok: false, fb: "Loans themselves aren't red flags (lots of programs offer them). Look for pressure." }
+      ]},
+    { round: "Round 3: Spot the red flag",
+      intro: "<div class=\"tally\"><div><span>🔥 Riverbend Welding</span><b>$3,000</b></div><div><span>⚡ FlashArc</span><b>$16,000 (all borrowed)</b></div><div><span>🔧 Pipe Trades Apprenticeship</span><b>about $0 + a paycheck</b></div><small>Your out-of-pocket cost</small></div>",
+      prompt: "Which offer costs you the least?",
+      options: [
+        { t: "🔥 Riverbend Welding Certificate", ok: false, fb: "Riverbend is a great deal at $3,000, but one offer actually pays you." },
+        { t: "⚡ FlashArc Institute", ok: false, fb: "FlashArc is the most expensive, and it's all borrowed." },
+        { t: "🔧 Local Pipe Trades Apprenticeship", ok: true, fb: "The apprenticeship costs about nothing and pays you. (The cheapest offer isn't automatically the best fit, though. Riverbend is faster, and the apprenticeship is competitive.)" }
+      ]}
+  ]
+};
+
+:: Story Stylesheet [stylesheet]
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap");
+:root{--paper:#f4ecd6;--ink:#2b2a24;--forest:#2f6b45;--trail:#c8553d;--wood:#8a5a2b;--sky:#2f6fb0;--sun:#e8a33d}
+html,body{background:#e9dfc2;color:var(--ink)}
+body{font:18px/1.6 Nunito,"Trebuchet MS",system-ui,sans-serif}
+#story{margin:0 auto;padding:0;max-width:680px}
+.passage p{margin:.55em 0}
+#passages{background:var(--paper);box-shadow:0 0 0 1px #d6c79d,0 10px 30px rgba(0,0,0,.12);padding:22px 22px 30px;margin:16px 12px;border-radius:14px}
+h1,h2,h3{font-family:Fredoka,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;color:var(--forest);line-height:1.2}
+h1{font-size:30px;margin:.2em 0 .4em}
+h2{font-size:23px;margin:.3em 0 .5em;display:inline-block;background:#fff8e6;border:3px solid var(--forest);border-radius:8px;padding:2px 12px;transform:rotate(-.6deg)}
+strong{color:#7a2e1f}
+.choices{display:flex;flex-direction:column;gap:10px;margin:18px 0 6px}
+.choices a,.next a{display:block;text-decoration:none;background:#fff;border:3px solid var(--sky);color:#1d4a78;border-radius:12px;padding:11px 14px;font-weight:700;line-height:1.35}
+.choices a:hover,.next a:hover,.choices a:focus,.next a:focus{background:#eaf2fb;outline:none}
+.next{margin-top:18px}
+.next a{border-color:var(--forest);color:#fff;background:var(--forest);text-align:center}
+.next a:hover,.next a:focus{background:#24563a}
+.sortbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 6px}
+.sortbtns a{display:block;text-align:center;text-decoration:none;border-radius:12px;padding:10px 4px;font-weight:800;line-height:1.25;border:3px solid;background:#fff}
+.sortbtns a span{display:block;font-size:26px}
+.sortbtns a:nth-child(1){border-color:#2f8a4f;color:#1f6a3a}.sortbtns a:nth-child(2){border-color:#2f6fb0;color:#1d4a78}.sortbtns a:nth-child(3){border-color:#c8553d;color:#8f3220}
+.tip{background:#fff3cf;border:3px dashed var(--sun);border-radius:12px;padding:10px 14px;margin:14px 0}
+.tip::before{content:"🙈 Oops! ";font-weight:800;color:#8a5a00}
+.good{background:#e3f0e6;border-left:6px solid var(--forest);border-radius:8px;padding:10px 14px;margin:12px 0}
+.good::before{content:"✅ ";}
+.meter{position:sticky;top:0;z-index:5;background:#fff8e6;border:2px solid var(--wood);border-radius:12px;padding:8px 12px;margin:0 0 14px;font-weight:700;font-size:15px}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
+.stat span{background:#fff;border:2px solid #d6c79d;border-radius:20px;padding:2px 10px;font-weight:700;font-size:15px}
+.card{background:#fff;border:3px solid var(--sun);border-radius:14px;padding:10px 14px;margin:12px 0}
+.card b{display:block;font-family:Fredoka,"Trebuchet MS",sans-serif;color:#8a5a00;font-size:18px}
+.offer{background:#fffdf6;border:2px solid #cbbd9b;border-radius:12px;margin:12px 0;overflow:hidden;font-size:16px;box-shadow:0 3px 0 #d6c79d}
+.otitle{background:var(--forest);color:#fff;font-family:Fredoka,"Trebuchet MS",sans-serif;font-size:18px;padding:6px 12px}
+.otitle small{font-family:Nunito,sans-serif;font-weight:600;font-size:13px;opacity:.9}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 12px;border-top:1px dashed #e0d5b5}
+.row span:last-child{font-weight:800;white-space:nowrap}
+.row em{font-size:13px;color:#6b6352}
+.costrow{background:#f6efdb;font-weight:700}
+.row.now{background:#fff3cf;outline:3px solid var(--sun);outline-offset:-3px}
+.row.free{background:#eaf6ee}.row.earned{background:#eaf2fb}.row.borrowed{background:#fbeae5}
+.chip{display:inline-block;margin-left:6px;font-size:12px;font-weight:800;border-radius:20px;padding:0 8px;vertical-align:1px}
+.chip.free{background:#2f8a4f;color:#fff}.chip.earned{background:#2f6fb0;color:#fff}.chip.borrowed{background:#c8553d;color:#fff}.chip.q{background:var(--sun);color:#3d2a00}
+.tally{background:#fff;border:3px solid var(--sky);border-radius:12px;padding:8px 12px;margin:12px 0}
+.tally div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed #d6e2ef}
+.tally div b{text-align:right}
+.tally.stack div{display:block}.tally.stack div span{display:block}.tally.stack div b{display:block;text-align:left;font-size:16px}
+.tally small{display:block;text-align:center;color:#5a5446;margin-top:4px}
+.prize{font-size:52px;text-align:center;margin:6px 0}
+ul.lessons li{margin:6px 0}
+.small{font-size:15px;color:#5a5446}
+@media (max-width:520px){body{font-size:17px}#passages{margin:8px 6px;padding:16px 14px 24px}h1{font-size:26px}.offer{font-size:15px}}
+
+:: PassageHeader
+<<if not tags().includes("nometer")>><div class="meter">💰 Offer Showdown: <<print setup.sets[$set].title>><div class="stat"><span>🧾 Sorted: <<print Object.keys($sorted).length>> / <<print setup.flat().length>></span><span>🙈 Oopsies: <<print $slips>></span></div></div><</if>>
+
+:: Start [nometer]
+<h1>💰 Offer Showdown</h1>
+Three offers just landed in your inbox. 📬 Each one looks great on the outside. Your mission: find the <strong>real cost</strong> hiding inside each one.
+
+<div class="card"><b>🔎 How it works</b>🧾 <strong>Round 1:</strong> sort the money: 🎁 free, 💪 earned or 🔁 borrowed.<br>🧮 <strong>Round 2:</strong> find the real cost.<br>🕵️ <strong>Round 3:</strong> read the fine print.</div>
+
+<p class="small">Every offer and number here is made up and simplified. Real costs usually rise a little each year.</p>
+
+<strong>Pick your offers:</strong>
+<div class="choices">
+<<link "🎓 College offers" "Sort">><<set $set to "college">><<set $si to 0>><<set $sorted to {}>><<set $qi to 0>><<set $slips to 0>><<set $fb to "">><<set $fbok to false>><</link>>
+<<link "🔧 Training and job offers" "Sort">><<set $set to "trade">><<set $si to 0>><<set $sorted to {}>><<set $qi to 0>><<set $slips to 0>><<set $fb to "">><<set $fbok to false>><</link>>
+</div>
+<p class="small">A What Comes Next? game for Recess.</p>
+
+:: Sort
+<<set _c to setup.cur()>>
+<h2>🧾 Round 1: Sort the money</h2>
+<<if $si is 0 and not $fbok and $fb is "">><p>Every offer mixes three kinds of money. Sort each line:</p>
+<p>🎁 <strong>Free money</strong>: grants and scholarships. Never paid back.<br>💪 <strong>Earned</strong>: money you work for, like work-study or wages.<br>🔁 <strong>Borrowed</strong>: loans. Paid back later, usually with interest.</p><</if>>
+<<print setup.offerCard(_c.oi)>>
+<<if $fbok>>
+<div class="good"><<print $fb>></div>
+<div class="next"><<if $si + 1 lt setup.flat().length>><<link "Next line →" "Sort">><<set $si += 1>><<set $fb to "">><<set $fbok to false>><</link>><<else>><<link "On to Round 2 →" "Question">><<set $si += 1>><<set $fb to "">><<set $fbok to false>><</link>><</if>></div>
+<<else>>
+<p><strong>What kind of money is "<<print _c.item.n>>"?</strong></p>
+<<if $fb isnot "">><div class="tip"><<print $fb>></div><</if>>
+<<nobr>><div class="sortbtns">
+<<for _k range ["free","earned","borrowed"]>><<capture _k>>
+<<link `'<span>' + setup.kinds[_k].icon + '</span>' + setup.kinds[_k].label` "Sort">><<if _k is _c.item.kind>><<set $sorted[_c.oi + "-" + _c.ii] to _k>><<set $fb to _c.item.fb>><<set $fbok to true>><<else>><<set $slips += 1>><<set $fb to setup.sortOops(_c.item.kind, _k)>><</if>><</link>>
+<</capture>><</for>>
+</div><</nobr>>
+<</if>>
+
+:: Question
+<<set _q to setup.Q[$set][$qi]>>
+<h2><<print _q.round>></h2>
+<<if _q.intro>><div><<print _q.intro>></div><</if>>
+<<if _q.show>><<for _oi range _q.show>><<print setup.offerCard(_oi)>><</for>><</if>>
+<p><strong><<print _q.prompt>></strong></p>
+<<if $fbok>>
+<div class="good"><<print $fb>></div>
+<div class="next"><<if $qi + 1 lt setup.Q[$set].length>><<link "Next →" "Question">><<set $qi += 1>><<set $fb to "">><<set $fbok to false>><</link>><<else>><<link "The twist →" "Twist">><<set $fb to "">><<set $fbok to false>><</link>><</if>></div>
+<<else>>
+<<if $fb isnot "">><div class="tip"><<print $fb>></div><</if>>
+<<nobr>><div class="choices">
+<<for _o range _q.options>><<capture _o>>
+<<link `_o.t` "Question">><<set $fb to _o.fb>><<set $fbok to _o.ok>><<if not _o.ok>><<set $slips += 1>><</if>><</link>>
+<</capture>><</for>>
+</div><</nobr>>
+<</if>>
+
+:: Twist
+<h2>🌀 The twist</h2>
+<<if $set is "college">>Plot twist: you can sometimes <strong>ask a college to take another look</strong> at your aid offer. It doesn't always work, but asking politely is normal.<<else>>Plot twist: you can sometimes <strong>ask a program to take another look</strong> at its offer, or ask for more time to decide. It doesn't always work, but asking politely is normal.<</if>>
+<<for _oi range [0,1,2]>><<print setup.offerCard(_oi)>><</for>>
+
+<div class="card"><b>🗺️ Tell Rocky</b>Which offer would you ask to have reconsidered, and what would you bring? (Maybe a better offer from another school, a change in your family's finances, or new grades or awards.)</div>
+<p class="small">Asking is something you and a parent do together, using the school's or program's own process.</p>
+<div class="next"><<link "See your results →" "End">><<if not $played.includes($set)>><<set $played.push($set)>><</if>><</link>></div>
+
+:: End [nometer]
+<h1>🏁 Showdown complete!</h1>
+<div class="meter">🧾 Lines sorted: <<print setup.flat().length>> · 🙈 Oopsies: <<print $slips>></div>
+<<if $slips lte 1>><h2>🏆 Offer Detective</h2>Nothing gets past you. Fine print, beware.
+<<elseif $slips lte 4>><h2>⭐ Money Sleuth</h2>A few oopsies, and you caught every trick in the end. That's how it works in real life too.
+<<else>><h2>🌱 Detective in Training</h2>Lots of oopsies means lots of learning. Play again and watch that number drop.<</if>>
+
+<<if $set is "college">><div class="tally stack"><div><span>🍁 Maple State</span><b>$22,000 a year · $88,000 total</b></div><div><span>🌲 Cedar College</span><b>$16,000 a year · $64,000 total 🏆</b></div><div><span>🌊 Lakeside University</span><b>$15,000, then $32,000 a year · $111,000 total</b></div><small>Real cost over four years</small></div>
+<strong>What you learned:</strong>
+<ul class="lessons">
+<li>🎁 Only <strong>free money</strong> (grants and scholarships) lowers the real cost. Loans get paid back, and work-study is paid as you work.</li>
+<li>👀 Read the fine print: "first year only" and "one time" money disappears.</li>
+<li>📆 Compare all the years, not just year one.</li>
+<li>😱 A scary sticker price can turn into the best deal. Never rule a school out before you see its offer.</li>
+</ul>
+<<else>><div class="tally"><div><span>🔥 Riverbend Welding</span><b>$3,000</b></div><div><span>⚡ FlashArc</span><b>$16,000, all borrowed 🚩</b></div><div><span>🔧 Pipe Trades Apprenticeship</span><b>about $0 + a paycheck</b></div><small>Your out-of-pocket cost</small></div>
+<strong>What you learned:</strong>
+<ul class="lessons">
+<li>🎁 Only <strong>free money</strong> lowers your cost. Loans still have to be paid back.</li>
+<li>🚩 "Sign today or lose it" is a red flag. Good programs give you time to decide.</li>
+<li>💪 Some paths pay <em>you</em> while you learn.</li>
+<li>⚖️ Cheapest isn't automatically best: compare time, pay and how hard it is to get in, too.</li>
+</ul><</if>>
+
+<div class="card"><b>🗺️ Tell Rocky</b>Which trick surprised you most? And which offer would you ask to have reconsidered?</div>
+<<nobr>><div class="choices">
+<<if $set is "college">><<link "🔧 Try the training and job offers" "Sort">><<set $set to "trade">><<set $si to 0>><<set $sorted to {}>><<set $qi to 0>><<set $slips to 0>><<set $fb to "">><<set $fbok to false>><</link>><<else>><<link "🎓 Try the college offers" "Sort">><<set $set to "college">><<set $si to 0>><<set $sorted to {}>><<set $qi to 0>><<set $slips to 0>><<set $fb to "">><<set $fbok to false>><</link>><</if>>
+<<link "🔁 Play again">><<run Engine.restart()>><</link>>
+</div><</nobr>>
+<p class="small">A What Comes Next? game for Recess. All offers are made up. For real aid questions, go to studentaid.gov or the school's financial aid office.</p>
