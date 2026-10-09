@@ -131,6 +131,47 @@
     show(0);
   }
 
+
+  /* "What you reported": when the student files their report, copy their answers so the
+     Case closed screen can show them (Rocky reads that screen). */
+  function captureSummary() {
+    var old = document.querySelector("#passages .passage");
+    if (!old) { return; }
+    var rep = old.querySelector(".report");
+    if (rep) { State.variables.caseSummary = '<div class="report mini">' + rep.innerHTML + "</div>"; return; }
+    var rows = [], cur = null;
+    old.querySelectorAll("h3, .chosen a, .pinned a, ol.timeline li").forEach(function (el) {
+      if (el.tagName === "H3") {
+        cur = { q: el.textContent.replace(/^\s*\d+\.\s*/, "").trim(), a: [], ordered: false };
+        rows.push(cur);
+      } else if (cur) {
+        var t = el.textContent.trim();
+        if (el.tagName === "LI") { cur.ordered = true; }
+        if (t && cur.a.indexOf(t) < 0) { cur.a.push(t); }
+      }
+    });
+    rows = rows.filter(function (r) { return r.a.length; });
+    if (!rows.length) { return; }
+    State.variables.caseSummary = rows.map(function (r) {
+      var list = r.a.map(function (t) { return "<li>" + t + "</li>"; }).join("");
+      return '<div class="cs-row"><p class="cs-q">' + r.q + "</p>" + (r.ordered ? "<ol>" : "<ul>") + list + (r.ordered ? "</ol>" : "</ul>") + "</div>";
+    }).join("");
+  }
+  $(document).on(":passagestart", function (ev) {
+    if (ev.passage.title === "Verdict") { try { captureSummary(); } catch (e) {} }
+  });
+
+  function showSummary(content) {
+    var tell = content.querySelector(".tellrocky");
+    var sum = State.variables.caseSummary;
+    var extra = typeof setup.summaryExtra === "function" ? setup.summaryExtra() : "";
+    if (!tell || (!sum && !extra)) { return; }
+    var d = document.createElement("div");
+    d.className = "casesummary";
+    d.innerHTML = '<p class="cs-head">What you reported</p>' + (sum || "") + (extra || "");
+    tell.parentNode.insertBefore(d, tell);
+  }
+
   $(document).on(":passagerender", function (ev) {
     var content = ev.content, title = ev.passage.title;
     try { addPlaceArt(content, title); } catch (e) {}
@@ -138,6 +179,7 @@
     try { addLegends(content); } catch (e) {}
     try { if (title === "Verdict") { bigStars(content); } } catch (e) {}
     try { addScene(content, title); } catch (e) {}
+    try { if (title === "CaseClosed") { showSummary(content); } } catch (e) {}
     try { paginate(content, title); } catch (e) {}
   });
 
@@ -158,8 +200,9 @@
       if (i % 3 === 0) { s.style.width = "7px"; s.style.height = "7px"; s.style.borderRadius = "50%"; }
       box.appendChild(s);
     }
+    document.documentElement.classList.add("confetti-on");
     document.body.appendChild(box);
-    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } }, 4500);
+    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } document.documentElement.classList.remove("confetti-on"); }, 4500);
   }
 
   $(document).on(":passagedisplay", function (ev) {
@@ -234,3 +277,14 @@
 .confetti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
 @keyframes fall { to { top: 105%; transform: translateX(40px) rotate(540deg); } }
 @media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }
+.tellrocky { margin: 16px 0 8px; padding: 14px 16px; border-radius: 10px; background: var(--accent, #2a2420); color: #fff; font-family: var(--display); font-size: 1.15rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+.tellrocky b { font-size: 1.35rem; letter-spacing: .06em; background: #fff; color: var(--accent, #2a2420); padding: 1px 10px; border-radius: 6px; margin: 0 2px; }
+.casesummary { background: #fffdf6; border: 2px solid var(--accent, #6b5d4f); border-radius: 10px; padding: 10px 14px 4px; margin: 10px 0 6px; }
+.casesummary .cs-head { font-family: var(--display); text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; color: var(--accent, #6b5d4f); margin: 0 0 6px; }
+.casesummary .cs-q { font-weight: 700; margin: 6px 0 2px; font-size: .95rem; }
+.casesummary ul, .casesummary ol { margin: 0 0 6px; padding-left: 1.2em; font-size: .92rem; }
+.casesummary .report.mini { font-size: .9rem; }
+.casesummary .report.mini .report-part { font-weight: 700; margin: 8px 0 2px; }
+.casesummary .report.mini p { margin: 0 0 4px; }
+html.confetti-on, html.confetti-on body { overflow-x: hidden; }
+.confetti { contain: strict; }

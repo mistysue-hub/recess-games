@@ -364,7 +364,18 @@ svg.art.scene { margin: 6px 0 14px; }
 .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
 .confetti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
 @keyframes fall { to { top: 105%; transform: translateX(40px) rotate(540deg); } }
-@media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* twine-user-script #1: "StoryScript" */
+@media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }
+.tellrocky { margin: 16px 0 8px; padding: 14px 16px; border-radius: 10px; background: var(--accent, #2a2420); color: #fff; font-family: var(--display); font-size: 1.15rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+.tellrocky b { font-size: 1.35rem; letter-spacing: .06em; background: #fff; color: var(--accent, #2a2420); padding: 1px 10px; border-radius: 6px; margin: 0 2px; }
+.casesummary { background: #fffdf6; border: 2px solid var(--accent, #6b5d4f); border-radius: 10px; padding: 10px 14px 4px; margin: 10px 0 6px; }
+.casesummary .cs-head { font-family: var(--display); text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; color: var(--accent, #6b5d4f); margin: 0 0 6px; }
+.casesummary .cs-q { font-weight: 700; margin: 6px 0 2px; font-size: .95rem; }
+.casesummary ul, .casesummary ol { margin: 0 0 6px; padding-left: 1.2em; font-size: .92rem; }
+.casesummary .report.mini { font-size: .9rem; }
+.casesummary .report.mini .report-part { font-weight: 700; margin: 8px 0 2px; }
+.casesummary .report.mini p { margin: 0 0 4px; }
+html.confetti-on, html.confetti-on body { overflow-x: hidden; }
+.confetti { contain: strict; }</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* twine-user-script #1: "StoryScript" */
 Config.history.maxStates = 1;
 Config.saves.slots = 0;
 Config.ui.stowBarInitially = true;
@@ -525,6 +536,47 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
     show(0);
   }
 
+
+  /* "What you reported": when the student files their report, copy their answers so the
+     Case closed screen can show them (Rocky reads that screen). */
+  function captureSummary() {
+    var old = document.querySelector("#passages .passage");
+    if (!old) { return; }
+    var rep = old.querySelector(".report");
+    if (rep) { State.variables.caseSummary = '<div class="report mini">' + rep.innerHTML + "</div>"; return; }
+    var rows = [], cur = null;
+    old.querySelectorAll("h3, .chosen a, .pinned a, ol.timeline li").forEach(function (el) {
+      if (el.tagName === "H3") {
+        cur = { q: el.textContent.replace(/^\s*\d+\.\s*/, "").trim(), a: [], ordered: false };
+        rows.push(cur);
+      } else if (cur) {
+        var t = el.textContent.trim();
+        if (el.tagName === "LI") { cur.ordered = true; }
+        if (t && cur.a.indexOf(t) < 0) { cur.a.push(t); }
+      }
+    });
+    rows = rows.filter(function (r) { return r.a.length; });
+    if (!rows.length) { return; }
+    State.variables.caseSummary = rows.map(function (r) {
+      var list = r.a.map(function (t) { return "<li>" + t + "</li>"; }).join("");
+      return '<div class="cs-row"><p class="cs-q">' + r.q + "</p>" + (r.ordered ? "<ol>" : "<ul>") + list + (r.ordered ? "</ol>" : "</ul>") + "</div>";
+    }).join("");
+  }
+  $(document).on(":passagestart", function (ev) {
+    if (ev.passage.title === "Verdict") { try { captureSummary(); } catch (e) {} }
+  });
+
+  function showSummary(content) {
+    var tell = content.querySelector(".tellrocky");
+    var sum = State.variables.caseSummary;
+    var extra = typeof setup.summaryExtra === "function" ? setup.summaryExtra() : "";
+    if (!tell || (!sum && !extra)) { return; }
+    var d = document.createElement("div");
+    d.className = "casesummary";
+    d.innerHTML = '<p class="cs-head">What you reported</p>' + (sum || "") + (extra || "");
+    tell.parentNode.insertBefore(d, tell);
+  }
+
   $(document).on(":passagerender", function (ev) {
     var content = ev.content, title = ev.passage.title;
     try { addPlaceArt(content, title); } catch (e) {}
@@ -532,6 +584,7 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
     try { addLegends(content); } catch (e) {}
     try { if (title === "Verdict") { bigStars(content); } } catch (e) {}
     try { addScene(content, title); } catch (e) {}
+    try { if (title === "CaseClosed") { showSummary(content); } } catch (e) {}
     try { paginate(content, title); } catch (e) {}
   });
 
@@ -552,8 +605,9 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
       if (i % 3 === 0) { s.style.width = "7px"; s.style.height = "7px"; s.style.borderRadius = "50%"; }
       box.appendChild(s);
     }
+    document.documentElement.classList.add("confetti-on");
     document.body.appendChild(box);
-    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } }, 4500);
+    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } document.documentElement.classList.remove("confetti-on"); }, 4500);
   }
 
   $(document).on(":passagedisplay", function (ev) {
@@ -727,6 +781,7 @@ setup.placeArt = {"Lab": {"color": "#2f5d8a", "svg": "<svg class=\"art placepic\
   { id: &quot;weber&quot;, name: &quot;Duane Weber&quot;, facts: [&quot;Shortly before he died in 1995, he told his wife, “I&#39;m Dan Cooper.”&quot;, &quot;The FBI compared his DNA with the partial DNA profile from Cooper&#39;s tie. It didn&#39;t match, and the FBI ruled him out.&quot;, &quot;But the FBI also says the tie DNA isn&#39;t a strong sample, and the tie might have been secondhand.&quot;], keys: [[&quot;What he said before he died&quot;, false], [&quot;The tie DNA didn&#39;t match&quot;, true]], note: &quot;Words aren&#39;t proof. The DNA test is the real evidence, even with its weaknesses.&quot; },
   { id: &quot;peterson&quot;, name: &quot;Sheridan Peterson&quot;, facts: [&quot;Worked for Boeing as a technical editor, and was an expert skydiver and smokejumper.&quot;, &quot;His eyes were blue. The flight attendants described the hijacker&#39;s eyes as brown.&quot;, &quot;He said he was in Nepal at the time of the hijacking. Nobody has proven or disproven that.&quot;], keys: [[&quot;His skydiving skill&quot;, false], [&quot;His eye color, compared with the witnesses&quot;, true], [&quot;He said he was in Nepal&quot;, false]], note: &quot;Skill shows he could have done it, not that he did, and an unchecked alibi doesn&#39;t settle anything. Eye color is something witnesses saw.&quot; }
 ]&gt;&gt;
+&lt;&lt;set setup.summaryExtra = function () { var s = State.variables.sus || {}; if (!Object.keys(s).length) { return &quot;&quot;; } var keep = setup.suspects.filter(function (x) { return s[x.id] === &quot;possible&quot;; }).map(function (x) { return &quot;&lt;li&gt;&quot; + x.name + &quot;&lt;/li&gt;&quot;; }); return &#39;&lt;div class=&quot;cs-row&quot;&gt;&lt;p class=&quot;cs-q&quot;&gt;Suspects you could not rule out&lt;/p&gt;&lt;ul&gt;&#39; + (keep.length ? keep.join(&quot;&quot;) : &quot;&lt;li&gt;None&lt;/li&gt;&quot;) + &quot;&lt;/ul&gt;&lt;/div&gt;&quot;; }&gt;&gt;
 &lt;&lt;set setup.resultFields = function () { var v = State.variables; return { verdict: v.verdict, confidence: v.conf, theories: v.th, suspects: v.sus, suspectEvidence: v.key }; }&gt;&gt;
 &lt;&lt;set $leads to 7&gt;&gt;
 &lt;&lt;set $notebook to []&gt;&gt;
@@ -975,7 +1030,7 @@ setup.placeArt = {"Lab": {"color": "#2f5d8a", "svg": "<svg class=\"art placepic\
 &lt;div class=&quot;stamp solved big&quot;&gt;Case closed&lt;/div&gt;
 &lt;h2&gt;Case 001, Part 2 complete&lt;/h2&gt;
 &lt;p&gt;Detective rating: &lt;b&gt;&lt;&lt;print $stars&gt;&gt; of 5&lt;/b&gt;. Deductions: &lt;b&gt;&lt;&lt;print $deductions&gt;&gt; of &lt;&lt;print setup.dedTotal&gt;&gt;&lt;/b&gt;.&lt;/p&gt;
-&lt;p&gt;Tell Rocky your verdict, how sure you were, which clues convinced you, and which suspect you couldn&#39;t rule out.&lt;/p&gt;
+&lt;div class=&quot;tellrocky&quot;&gt;Go back to Rocky and type &lt;b&gt;done&lt;/b&gt;.&lt;/div&gt;
 &lt;div class=&quot;actions secondary&quot;&gt;&lt;&lt;link &quot;Play again&quot;&gt;&gt;&lt;&lt;run Engine.restart()&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="35" name="Banner" tags="art" position="600,475" size="100,100">&lt;svg class=&quot;art&quot; viewBox=&quot;0 0 640 220&quot; role=&quot;img&quot; aria-label=&quot;A sandy riverbank at dusk, with a small campfire and three bundles of old bills half buried in the sand.&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;&gt;
 &lt;defs&gt;&lt;linearGradient id=&quot;sky2&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#f2c38b&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#f7e2c0&quot;/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;
 &lt;rect width=&quot;640&quot; height=&quot;220&quot; fill=&quot;url(#sky2)&quot;/&gt;

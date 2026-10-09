@@ -364,7 +364,18 @@ svg.art.scene { margin: 6px 0 14px; }
 .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
 .confetti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
 @keyframes fall { to { top: 105%; transform: translateX(40px) rotate(540deg); } }
-@media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* twine-user-script #1: "StoryScript" */
+@media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }
+.tellrocky { margin: 16px 0 8px; padding: 14px 16px; border-radius: 10px; background: var(--accent, #2a2420); color: #fff; font-family: var(--display); font-size: 1.15rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+.tellrocky b { font-size: 1.35rem; letter-spacing: .06em; background: #fff; color: var(--accent, #2a2420); padding: 1px 10px; border-radius: 6px; margin: 0 2px; }
+.casesummary { background: #fffdf6; border: 2px solid var(--accent, #6b5d4f); border-radius: 10px; padding: 10px 14px 4px; margin: 10px 0 6px; }
+.casesummary .cs-head { font-family: var(--display); text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; color: var(--accent, #6b5d4f); margin: 0 0 6px; }
+.casesummary .cs-q { font-weight: 700; margin: 6px 0 2px; font-size: .95rem; }
+.casesummary ul, .casesummary ol { margin: 0 0 6px; padding-left: 1.2em; font-size: .92rem; }
+.casesummary .report.mini { font-size: .9rem; }
+.casesummary .report.mini .report-part { font-weight: 700; margin: 8px 0 2px; }
+.casesummary .report.mini p { margin: 0 0 4px; }
+html.confetti-on, html.confetti-on body { overflow-x: hidden; }
+.confetti { contain: strict; }</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* twine-user-script #1: "StoryScript" */
 Config.history.maxStates = 1;
 Config.saves.slots = 0;
 Config.ui.stowBarInitially = true;
@@ -525,6 +536,47 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
     show(0);
   }
 
+
+  /* "What you reported": when the student files their report, copy their answers so the
+     Case closed screen can show them (Rocky reads that screen). */
+  function captureSummary() {
+    var old = document.querySelector("#passages .passage");
+    if (!old) { return; }
+    var rep = old.querySelector(".report");
+    if (rep) { State.variables.caseSummary = '<div class="report mini">' + rep.innerHTML + "</div>"; return; }
+    var rows = [], cur = null;
+    old.querySelectorAll("h3, .chosen a, .pinned a, ol.timeline li").forEach(function (el) {
+      if (el.tagName === "H3") {
+        cur = { q: el.textContent.replace(/^\s*\d+\.\s*/, "").trim(), a: [], ordered: false };
+        rows.push(cur);
+      } else if (cur) {
+        var t = el.textContent.trim();
+        if (el.tagName === "LI") { cur.ordered = true; }
+        if (t && cur.a.indexOf(t) < 0) { cur.a.push(t); }
+      }
+    });
+    rows = rows.filter(function (r) { return r.a.length; });
+    if (!rows.length) { return; }
+    State.variables.caseSummary = rows.map(function (r) {
+      var list = r.a.map(function (t) { return "<li>" + t + "</li>"; }).join("");
+      return '<div class="cs-row"><p class="cs-q">' + r.q + "</p>" + (r.ordered ? "<ol>" : "<ul>") + list + (r.ordered ? "</ol>" : "</ul>") + "</div>";
+    }).join("");
+  }
+  $(document).on(":passagestart", function (ev) {
+    if (ev.passage.title === "Verdict") { try { captureSummary(); } catch (e) {} }
+  });
+
+  function showSummary(content) {
+    var tell = content.querySelector(".tellrocky");
+    var sum = State.variables.caseSummary;
+    var extra = typeof setup.summaryExtra === "function" ? setup.summaryExtra() : "";
+    if (!tell || (!sum && !extra)) { return; }
+    var d = document.createElement("div");
+    d.className = "casesummary";
+    d.innerHTML = '<p class="cs-head">What you reported</p>' + (sum || "") + (extra || "");
+    tell.parentNode.insertBefore(d, tell);
+  }
+
   $(document).on(":passagerender", function (ev) {
     var content = ev.content, title = ev.passage.title;
     try { addPlaceArt(content, title); } catch (e) {}
@@ -532,6 +584,7 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
     try { addLegends(content); } catch (e) {}
     try { if (title === "Verdict") { bigStars(content); } } catch (e) {}
     try { addScene(content, title); } catch (e) {}
+    try { if (title === "CaseClosed") { showSummary(content); } } catch (e) {}
     try { paginate(content, title); } catch (e) {}
   });
 
@@ -552,8 +605,9 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
       if (i % 3 === 0) { s.style.width = "7px"; s.style.height = "7px"; s.style.borderRadius = "50%"; }
       box.appendChild(s);
     }
+    document.documentElement.classList.add("confetti-on");
     document.body.appendChild(box);
-    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } }, 4500);
+    setTimeout(function () { if (box.parentNode) { box.parentNode.removeChild(box); } document.documentElement.classList.remove("confetti-on"); }, 4500);
   }
 
   $(document).on(":passagedisplay", function (ev) {
@@ -918,7 +972,7 @@ setup.placeArt = {"Hut": {"color": "#2f5d8a", "svg": "<svg class=\"art placepic\
 &lt;div class=&quot;stamp solved big&quot;&gt;Case closed&lt;/div&gt;
 &lt;h2&gt;Case 002, Part 2 complete&lt;/h2&gt;
 &lt;p&gt;Detective rating: &lt;b&gt;&lt;&lt;print $stars&gt;&gt; of 4&lt;/b&gt;. Deductions: &lt;b&gt;&lt;&lt;print $deductions&gt;&gt; of &lt;&lt;print setup.dedTotal&gt;&gt;&lt;/b&gt;.&lt;/p&gt;
-&lt;p&gt;Tell Rocky your verdict, how sure you were, and whether you kept the file open.&lt;/p&gt;
+&lt;div class=&quot;tellrocky&quot;&gt;Go back to Rocky and type &lt;b&gt;done&lt;/b&gt;.&lt;/div&gt;
 &lt;div class=&quot;actions secondary&quot;&gt;&lt;&lt;link &quot;Play again&quot;&gt;&gt;&lt;&lt;run Engine.restart()&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="31" name="Banner" tags="art" position="100,475" size="100,100">&lt;svg class=&quot;art&quot; viewBox=&quot;0 0 640 220&quot; role=&quot;img&quot; aria-label=&quot;A deputy marshal&#39;s star badge on a desk beside an old case folder, with the Golden Gate Bridge in the window.&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;&gt;
 &lt;defs&gt;&lt;linearGradient id=&quot;sky4&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#9fc0d8&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#e8d9bd&quot;/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;
 &lt;rect width=&quot;640&quot; height=&quot;220&quot; fill=&quot;#5b4636&quot;/&gt;

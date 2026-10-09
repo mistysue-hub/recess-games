@@ -12,7 +12,7 @@ sourceText: "Original text written for this course (no copied material)"
 
 # Case 001, Part 1: The Man in the Last Row
 
-**Start here:** (1) Say the hook vote below, word for word. (2) Right away, open the case game, *Flight 305*, at https://mistysue-hub.github.io/recess-games/cold-case-academy/flight-305/ and let the learner play it to the "Case closed" screen. (3) Look back at the vote in one line, then ask the two talk-back questions, one at a time. (4) At the very end, after any Activity 2 and the book suggestion, offer the case file, `resources/M02Case.md` as an optional extra; open it only if the learner wants it, and they can read as much or as little of it as they like.
+**Start here:** (1) Say the hook vote below, word for word. (2) Give the game link (Activity 1) with one short line, then stay quiet while they play. (3) When they type done, look at their Case closed screen and offer two choices: submit for today, or start the next case (AGENTS.md steps 4–6).
 
 ## Summary
 
@@ -24,7 +24,7 @@ A bomb threat and a hijacking; nobody was hurt.
 
 Estimated time: 30 minutes
 
-The hook and talk-back add about 5 minutes, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,250 words, about 8 more minutes if the learner reads it.
+The hook takes about a minute, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,250 words, about 8 more minutes if the learner reads it.
 
 ## Learning targets
 
@@ -54,27 +54,7 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 
 If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
 
-**Look back at the vote — one line, once the learner reaches the "Case closed" screen:** remind them what they voted and say in one sentence whether the case bore it out (the answer is A). No lecture.
-
-**Talk-back — at most two questions, one at a time (skip entirely if the tutor turned talk-back off):** Ask them after the game. The learner can answer from what they found in the game; they don't need the case file.
-
-1. Why did the FBI photograph every single bill before handing over the money?
-   *(What a good answer mentions: so they'd have every serial number, and if any of the money was ever spent or found, they could prove it was the hijacker's.)*
-2. Why does it matter so much exactly when the crew felt the bump in the tail?
-   *(What a good answer mentions: knowing the time, plus how fast and which way the plane was flying, tells searchers roughly where he jumped.)*
-
-Keep it light and about what happened. Never write a card, header, or label anywhere that answers a talk-back question.
-
-**Activity 1 — the game, *Flight 305*:** open https://mistysue-hub.github.io/recess-games/cold-case-academy/flight-305/ (a Twine detective game on an outside webpage; you can't see inside it). Tell the learner once before they start:
-- they're an FBI agent in Seattle on Thanksgiving morning, with 7 leads to spend;
-- a new place costs one lead, and going back to a place they've visited is free;
-- interviews allow only two questions, and witnesses won't always agree;
-- the timeline board (free) is where they put the night's events in order, and newspaper rumors don't belong on it;
-- the deduction board (free) joins two clues into a new idea;
-- at the end they report the timeline, build a wanted poster line by line, and choose where to send the searchers;
-- what they collect is saved to an evidence locker for Part 2 (on the same device).
-
-Don't tell them the order of events, what goes on the poster, or where to search. If they're stuck, you may ask, "Which witness haven't you talked to yet?" or "Do any two witnesses agree?" The game ends on a green "Case closed" stamp. Then ask, one at a time: where they sent the searchers, which clues told them to, and their detective rating (stars out of 3). The game's own last screens explain what the real FBI did; don't repeat them, but answer questions about them from the Rocky-only notes above.
+**Activity 1 — the game, *Flight 305*:** https://mistysue-hub.github.io/recess-games/cold-case-academy/flight-305/ (an outside webpage). Give the link with one short line and nothing else; the game explains itself. If the learner writes that they're stuck, you may ask, "Which witness haven't you talked to yet?" or "Do any two witnesses agree?" Never name a suspect or a verdict. It ends on a green "Case closed" stamp showing their rating and **What you reported** (their answer and the clues they pinned); read that when they type done.
 
 **Activity 2 — only when the activity count is two (see AGENTS.md for which one):**
 
@@ -90,21 +70,21 @@ Don't tell them the order of events, what goes on the poster, or where to search
   Run it as the light chat AGENTS.md describes, tied to something the learner cares about. The sides and lines above are only ideas to offer if they're stuck, never your own view. Stay neutral; the learner may pass.
 - **Interest:** skill — Weighing witnesses. The event — Two flight attendants who sat near the hijacker described him the same way, but a passenger across the aisle remembered someone smaller. Reframe it in the learner's own interest (from their tutor notes): "Think of a moment in {interest} that people remember differently. How would you decide whose memory to trust?" Then bring it back to the case: "Why did the FBI trust the flight attendants' description more than the passenger's?"
 
-**Book suggestion — always offer, never require:** once the activities are done, suggest *Unsolved Case Files: Escape at 10,000 Feet* by Tom Sullivan, a graphic novel that tells this hijacking minute by minute, with real FBI documents and photos mixed in. If they'd like something shorter, mention *The D.B. Cooper Hijacking* by Tom Streissguth instead. Say it's just for fun if they want more; don't assign it or check on it later.
+**Book suggestion — one short sentence, never required:** only when the learner chooses to submit for today, suggest *Unsolved Case Files: Escape at 10,000 Feet* by Tom Sullivan, a graphic novel that tells this hijacking minute by minute, with real FBI documents and photos mixed in. If they'd like something shorter, mention *The D.B. Cooper Hijacking* by Tom Streissguth instead. Say it's just for fun if they want more; don't assign it or check on it later.
 
-**Case file — optional, at the very end:** after the book suggestion, offer it in one line: it's the real detective file behind the game, with extra details, and they can read it now, later, or skip it. If they want it, open `resources/M02Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
+**Case file — only if the learner asks:** never offer it. If the learner asks for it after the game, open `resources/M02Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
 
-When the activity (or both activities) is finished, the book has been suggested, the case file has been offered, and the learner confirms they're done, the module is complete.
+The module is complete when the learner reaches the Case closed screen and types done (and Activity 2 is done, if it was due).
 
 ## Resources and surfaces
 
 | Surface | Where | Status |
 |---|---|---|
-| Optional case file (offered at the very end; open whole if wanted) | resources/M02Case.md | Ready |
-| Game (Activity 1): *Flight 305* | https://mistysue-hub.github.io/recess-games/cold-case-academy/flight-305/ | Ready (outside webpage; Rocky can't see inside it) |
+| Case file (only if the learner asks after the game; open whole) | resources/M02Case.md | Ready |
+| Game (Activity 1): *Flight 305* | https://mistysue-hub.github.io/recess-games/cold-case-academy/flight-305/ | Ready (outside webpage; its Case closed screen shows the learner's report) |
 | Debate and interest (Activity 2) | this file | Ready |
 | Runtime rules | AGENTS.md | Ready |
-| Book suggestion (optional for the learner) | Tom Sullivan, *Unsolved Case Files: Escape at 10,000 Feet*; shorter: Tom Streissguth, *The D.B. Cooper Hijacking* | Rocky always suggests one at the end; never required |
+| Book suggestion (optional for the learner) | Tom Sullivan, *Unsolved Case Files: Escape at 10,000 Feet*; shorter: Tom Streissguth, *The D.B. Cooper Hijacking* | One sentence when the learner submits for today; never required |
 
 This module file is for Rocky only and is never shown to the learner.
 
@@ -115,13 +95,13 @@ This module file is for Rocky only and is never shown to the learner.
 
 ## Completion criteria
 
-The module is complete when the learner has answered the hook vote, worked through the talk-back (if on), played the game through to its "Case closed" screen and told Rocky where they sent the searchers and why, finished Activity 2 if the activity count is two, been offered the optional case file, heard the book suggestion, and confirmed they're done.
+The module is complete when the learner has answered the hook vote, played the game through to its "Case closed" screen, typed done, and finished Activity 2 if the activity count is two.
 
 ## State updates
 
 On session end, Rocky writes:
 
-- **state/sessions.jsonl** — one line: date, minutes, whether they opened the optional case file (and minutes reading it, if so), whether the module was completed, where the learner paused if they did.
+- **state/sessions.jsonl** — one line: date, minutes, whether they asked for the case file, whether the module was completed, where the learner paused if they did.
 - **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status.
-- **state/module_completions.jsonl** — on completion only: ref M02, date, hook answer, talk-back answers, the search area they chose, their detective rating (stars out of 3), and which Activity 2 ran (if any).
+- **state/module_completions.jsonl** — on completion only: what they reported (from the Case closed screen), ref M02, date, hook answer, the search area they chose, their detective rating (stars out of 3), and which Activity 2 ran (if any).
 - **state/student_profile.md** — durable observations only: whether the learner enjoys debating, which interests landed in the interest activity, which kinds of cases grab them.

@@ -1,3 +1,4 @@
+Item key: lesson:e22263cc192ff99ce31b59c9f740a1a3
 ---
 ref: M09
 title: "Case 005: Seven Minutes at the Louvre"
@@ -11,7 +12,7 @@ sourceText: "Original text written for this course (no copied material)"
 
 # Case 005: Seven Minutes at the Louvre
 
-**Start here:** (1) Say the hook vote below, word for word. (2) Right away, open the case game, *The Apollo Gallery*, at https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/ and let the learner play it to the "Case closed" screen. (3) Look back at the vote in one line, then ask the two talk-back questions, one at a time. (4) At the very end, after any Activity 2 and the book suggestion, offer the case file, `resources/M09Case.md` as an optional extra; open it only if the learner wants it, and they can read as much or as little of it as they like.
+**Start here:** (1) Say the hook vote below, word for word. (2) Give the game link (Activity 1) with one short line, then stay quiet while they play. (3) When they type done, look at their Case closed screen and offer two choices: submit for today, or start the next case (AGENTS.md steps 4–6).
 
 ## Summary
 
@@ -23,7 +24,7 @@ A daytime theft; guards were threatened with tools but nobody was hurt.
 
 Estimated time: 30 minutes
 
-The hook and talk-back add about 5 minutes, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,100 words, about 7 more minutes if the learner reads it.
+The hook takes about a minute, and the game takes about 15. A second activity adds about 5–10 more when the activity count is two. A learner can pause at any point. The case file is optional: about 1,100 words, about 7 more minutes if the learner reads it.
 
 ## Learning targets
 
@@ -53,27 +54,7 @@ Read AGENTS.md first; it outranks this section and sets the fixed session flow f
 
 If the learner answers in their own words instead of A, B, or C, record their words as given and go straight to the game. Do not react to the vote either way.
 
-**Look back at the vote — one line, once the learner reaches the "Case closed" screen:** this is an opinion vote with no right answer. Remind them what they voted and ask, in one sentence, whether the case changed their mind. No lecture.
-
-**Talk-back — at most two questions, one at a time (skip entirely if the tutor turned talk-back off):** Ask them after the game. The learner can answer from what they found in the game; they don't need the case file.
-
-1. How did the police find the people they think did it?
-   *(What a good answer mentions: the thieves left things behind, like a helmet, tools and the lift truck, and DNA on the scooter, a display case and the lift basket pointed to them.)*
-2. The suspects have been charged. Does that mean they're guilty?
-   *(What a good answer mentions: no; being charged means a court will decide, and no trial had started yet.)*
-
-Keep it light and about the evidence. Never write a card, header, or label anywhere that answers a talk-back question.
-
-**Activity 1 — the game, *The Apollo Gallery*:** open https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/ (a Twine detective game on an outside webpage; you can't see inside it). Tell the learner once before they start:
-- they're joining the Paris investigation a few weeks after the theft, with 8 leads to spend;
-- a new place costs one lead, and going back to a place they've visited is free;
-- the guard will answer only two questions;
-- the timeline board (free) is where they put the theft in order;
-- the deduction board (free) joins two clues into a new idea;
-- before the report, they sort the evidence into what can point to a person and what only shows how it was done, then fill in the "solved meter";
-- at the end they decide whether the case is solved, and whether they think the jewels will come back.
-
-Don't tell them the order of the theft or how to fill in the meter. If they're stuck, you may ask, "Could that clue lead to a name?" or "Has a court decided that yet?" The game ends on a green "Case closed" stamp. Then ask, one at a time: whether they think the case is solved, whether the jewels will come back, and their detective rating (stars out of 4). The game's own last screens explain what's known today; don't repeat them, but answer questions about them from the Rocky-only notes above.
+**Activity 1 — the game, *The Apollo Gallery*:** https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/ (an outside webpage). Give the link with one short line and nothing else; the game explains itself. If the learner writes that they're stuck, you may ask, "Could that clue lead to a name?" or "Has a court decided that yet?" Never name a suspect or a verdict. It ends on a green "Case closed" stamp showing their rating and **What you reported** (their answer and the clues they pinned); read that when they type done.
 
 **Activity 2 — only when the activity count is two (see AGENTS.md for which one):**
 
@@ -89,21 +70,21 @@ Don't tell them the order of the theft or how to fill in the meter. If they're s
   Run it as the light chat AGENTS.md describes, tied to something the learner cares about. The sides and lines above are only ideas to offer if they're stuck, never your own view. Stay neutral; the learner may pass.
 - **Interest:** skill — Answered and unanswered questions. The event — Police caught the people they believe stole the Louvre jewels, but the jewels are still missing. Reframe it in the learner's own interest (from their tutor notes): "Think of something in {interest} where one part of a problem got fixed but another part didn't. Would you call it solved?" Then bring it back to the case: "What would have to happen for you to call the Louvre case solved?"
 
-**Book suggestion — always offer, never require:** once the activities are done, suggest *The Mona Lisa Vanishes* by Nicholas Day, the true story of the 1911 theft from the same museum (the training case), which is fun to compare with this one: two Louvre thefts, 114 years apart, and only one treasure came home. If they've already read it, suggest *The Louvre* by Nicole K. Orr, a short book about the museum and its treasures. Say it's just for fun if they want more; don't assign it or check on it later.
+**Book suggestion — one short sentence, never required:** only when the learner chooses to submit for today, suggest *The Mona Lisa Vanishes* by Nicholas Day, the true story of the 1911 theft from the same museum (the training case), which is fun to compare with this one: two Louvre thefts, 114 years apart, and only one treasure came home. If they've already read it, suggest *The Louvre* by Nicole K. Orr, a short book about the museum and its treasures. Say it's just for fun if they want more; don't assign it or check on it later.
 
-**Case file — optional, at the very end:** after the book suggestion, offer it in one line: it's the real detective file behind the game, with extra details, and they can read it now, later, or skip it. If they want it, open `resources/M09Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
+**Case file — only if the learner asks:** never offer it. If the learner asks for it after the game, open `resources/M09Case.md` whole, as a manila case-file folder (cream/manila background, typewriter-style monospace headings, a red "CASE FILE" stamp near the top), with every word exactly as written. Do not summarise it, condense it, or narrate it from memory. They can read as much or as little as they like and stop whenever they want. Never require it, quiz on it, or check how long they spent reading.
 
-When the activity (or both activities) is finished, the book has been suggested, the case file has been offered, and the learner confirms they're done, the module is complete.
+The module is complete when the learner reaches the Case closed screen and types done (and Activity 2 is done, if it was due).
 
 ## Resources and surfaces
 
 | Surface | Where | Status |
 |---|---|---|
-| Optional case file (offered at the very end; open whole if wanted) | resources/M09Case.md | Ready |
-| Game (Activity 1): *The Apollo Gallery* | https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/ | Ready (outside webpage; Rocky can't see inside it) |
+| Case file (only if the learner asks after the game; open whole) | resources/M09Case.md | Ready |
+| Game (Activity 1): *The Apollo Gallery* | https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/ | Ready (outside webpage; its Case closed screen shows the learner's report) |
 | Debate and interest (Activity 2) | this file | Ready |
 | Runtime rules | AGENTS.md | Ready |
-| Book suggestion (optional for the learner) | Nicholas Day, *The Mona Lisa Vanishes*; or Nicole K. Orr, *The Louvre* | Rocky always suggests one at the end; never required |
+| Book suggestion (optional for the learner) | Nicholas Day, *The Mona Lisa Vanishes*; or Nicole K. Orr, *The Louvre* | One sentence when the learner submits for today; never required |
 
 This module file is for Rocky only and is never shown to the learner.
 
@@ -114,13 +95,13 @@ This module file is for Rocky only and is never shown to the learner.
 
 ## Completion criteria
 
-The module is complete when the learner has answered the hook vote, worked through the talk-back (if on), played the game through to its "Case closed" screen and told Rocky whether they think the case is solved and whether the jewels will come back, finished Activity 2 if the activity count is two, been offered the optional case file, heard the book suggestion, and confirmed they're done.
+The module is complete when the learner has answered the hook vote, played the game through to its "Case closed" screen, typed done, and finished Activity 2 if the activity count is two.
 
 ## State updates
 
 On session end, Rocky writes:
 
-- **state/sessions.jsonl** — one line: date, minutes, whether they opened the optional case file (and minutes reading it, if so), whether the module was completed, where the learner paused if they did.
+- **state/sessions.jsonl** — one line: date, minutes, whether they asked for the case file, whether the module was completed, where the learner paused if they did.
 - **state/progress.json** — currentModuleRef, modulesCompleted, lastSessionAt, status.
-- **state/module_completions.jsonl** — on completion only: ref M09, date, hook answer (and whether the case changed their mind), talk-back answers, their "solved?" verdict, whether they think the jewels will come back, their detective rating (stars out of 4), and which Activity 2 ran (if any).
+- **state/module_completions.jsonl** — on completion only: what they reported (from the Case closed screen), ref M09, date, hook answer, their "solved?" verdict, whether they think the jewels will come back, their detective rating (stars out of 4), and which Activity 2 ran (if any).
 - **state/student_profile.md** — durable observations only: whether the learner enjoys debating, which interests landed in the interest activity, which kinds of cases grab them, and whether they tend to be overconfident or cautious with verdicts.

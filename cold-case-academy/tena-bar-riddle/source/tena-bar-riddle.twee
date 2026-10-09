@@ -85,6 +85,7 @@ The Tena Bar Riddle
   { id: "weber", name: "Duane Weber", facts: ["Shortly before he died in 1995, he told his wife, “I'm Dan Cooper.”", "The FBI compared his DNA with the partial DNA profile from Cooper's tie. It didn't match, and the FBI ruled him out.", "But the FBI also says the tie DNA isn't a strong sample, and the tie might have been secondhand."], keys: [["What he said before he died", false], ["The tie DNA didn't match", true]], note: "Words aren't proof. The DNA test is the real evidence, even with its weaknesses." },
   { id: "peterson", name: "Sheridan Peterson", facts: ["Worked for Boeing as a technical editor, and was an expert skydiver and smokejumper.", "His eyes were blue. The flight attendants described the hijacker's eyes as brown.", "He said he was in Nepal at the time of the hijacking. Nobody has proven or disproven that."], keys: [["His skydiving skill", false], ["His eye color, compared with the witnesses", true], ["He said he was in Nepal", false]], note: "Skill shows he could have done it, not that he did, and an unchecked alibi doesn't settle anything. Eye color is something witnesses saw." }
 ]>>
+<<set setup.summaryExtra = function () { var s = State.variables.sus || {}; if (!Object.keys(s).length) { return ""; } var keep = setup.suspects.filter(function (x) { return s[x.id] === "possible"; }).map(function (x) { return "<li>" + x.name + "</li>"; }); return '<div class="cs-row"><p class="cs-q">Suspects you could not rule out</p><ul>' + (keep.length ? keep.join("") : "<li>None</li>") + "</ul></div>"; }>>
 <<set setup.resultFields = function () { var v = State.variables; return { verdict: v.verdict, confidence: v.conf, theories: v.th, suspects: v.sus, suspectEvidence: v.key }; }>>
 <<set $leads to 7>>
 <<set $notebook to []>>
@@ -445,7 +446,7 @@ The Tena Bar Riddle
 <div class="stamp solved big">Case closed</div>
 <h2>Case 001, Part 2 complete</h2>
 <p>Detective rating: <b><<print $stars>> of 5</b>. Deductions: <b><<print $deductions>> of <<print setup.dedTotal>></b>.</p>
-<p>Tell Rocky your verdict, how sure you were, which clues convinced you, and which suspect you couldn't rule out.</p>
+<div class="tellrocky">Go back to Rocky and type <b>done</b>.</div>
 <div class="actions secondary"><<link "Play again">><<run Engine.restart()>><</link>></div>
 
 
