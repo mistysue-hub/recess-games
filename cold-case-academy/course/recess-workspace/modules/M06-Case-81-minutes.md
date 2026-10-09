@@ -84,7 +84,7 @@ The module is complete when the learner reaches the Case closed screen and types
 | Game (Activity 1): *The Sensor Log* | https://mistysue-hub.github.io/recess-games/cold-case-academy/sensor-log/ | Ready (outside webpage; its Case closed screen shows the learner's report) |
 | Debate and interest (Activity 2) | this file | Ready |
 | Runtime rules | AGENTS.md | Ready |
-| Book suggestion (optional for the learner) | Tom Sullivan, *Unsolved Case Files: The 500 Million Dollar Heist* | Rocky always suggests it at the end; never required |
+| Book suggestion (optional for the learner) | Tom Sullivan, *Unsolved Case Files: The 500 Million Dollar Heist* | One sentence when the learner submits for today; never required |
 
 This module file is for Rocky only and is never shown to the learner.
 
