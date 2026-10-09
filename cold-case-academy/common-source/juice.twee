@@ -163,13 +163,77 @@
 
   function showSummary(content) {
     var tell = content.querySelector(".tellrocky");
+    if (!tell) { return; }
     var sum = State.variables.caseSummary;
     var extra = typeof setup.summaryExtra === "function" ? setup.summaryExtra() : "";
-    if (!tell || (!sum && !extra)) { return; }
-    var d = document.createElement("div");
-    d.className = "casesummary";
-    d.innerHTML = '<p class="cs-head">What you reported</p>' + (sum || "") + (extra || "");
-    tell.parentNode.insertBefore(d, tell);
+    if (sum || extra) {
+      var d = document.createElement("div");
+      d.className = "casesummary";
+      d.innerHTML = '<p class="cs-head">What you reported</p>' + (sum || "") + (extra || "");
+      tell.parentNode.insertBefore(d, tell);
+    }
+    addCopyButton(tell);
+  }
+
+  /* Plain text of the Case closed screen, for the student to paste to Rocky. Starts with
+     "done" so Rocky knows the case is finished. */
+  function textLines(el, out) {
+    Array.prototype.forEach.call(el.children, function (c) {
+      var tag = c.tagName;
+      if (tag === "UL" || tag === "OL") {
+        Array.prototype.forEach.call(c.children, function (li, i) {
+          out.push((tag === "OL" ? (i + 1) + ". " : "- ") + li.textContent.replace(/\s+/g, " ").trim());
+        });
+      } else if (/^(P|H1|H2|H3|H4|LI)$/.test(tag) || (tag === "DIV" && !c.children.length)) {
+        var t = c.textContent.replace(/\s+/g, " ").trim();
+        if (t) { out.push(t); }
+      } else {
+        textLines(c, out);
+      }
+    });
+  }
+  function resultsText() {
+    var page = document.querySelector("#passages .passage");
+    var out = ["done"];
+    if (!page) { return out.join("\n"); }
+    var h = page.querySelector("h1, h2");
+    if (h) { out.push((document.title ? document.title + ": " : "") + h.textContent.trim()); }
+    Array.prototype.some.call(page.querySelectorAll("p"), function (p) {
+      if (/Detective rating/.test(p.textContent)) { out.push(p.textContent.replace(/\s+/g, " ").trim()); return true; }
+      return false;
+    });
+    var box = page.querySelector(".casesummary");
+    if (box) { out.push(""); textLines(box, out); }
+    return out.join("\n");
+  }
+  function addCopyButton(tell) {
+    tell.innerHTML = 'Tap the button, then go back to Rocky, paste it in the chat and send.' +
+      '<button type="button" class="copyrocky">📋 Copy my results for Rocky</button>' +
+      '<span class="copystatus" role="status"></span>' +
+      '<textarea class="copytext" readonly rows="6" hidden aria-label="Your results for Rocky"></textarea>' +
+      '<span class="copyalt">Can\'t copy? Just type <b>done</b> to Rocky.</span>';
+    var btn = tell.querySelector(".copyrocky"), st = tell.querySelector(".copystatus"), ta = tell.querySelector(".copytext");
+    btn.addEventListener("click", function () {
+      var t = resultsText();
+      ta.value = t;
+      function ok() { st.textContent = "Copied! Now paste it into your chat with Rocky."; btn.textContent = "✓ Copied"; }
+      function manual() {
+        ta.hidden = false; ta.focus(); ta.select();
+        st.textContent = "Copy the text in this box, then paste it into your chat with Rocky.";
+      }
+      function legacy() {
+        try {
+          ta.hidden = false; ta.select();
+          var done = document.execCommand("copy");
+          ta.hidden = true;
+          if (done) { ok(); } else { manual(); }
+        } catch (e) { manual(); }
+      }
+      try {
+        if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(t).then(ok, legacy); return; }
+      } catch (e) {}
+      legacy();
+    });
   }
 
   $(document).on(":passagerender", function (ev) {
@@ -279,6 +343,13 @@
 @media (prefers-reduced-motion: reduce) { .page.on, .bigstars span, .badge, .stamp.thump { animation: none !important; } }
 .tellrocky { margin: 16px 0 8px; padding: 14px 16px; border-radius: 10px; background: var(--accent, #2a2420); color: #fff; font-family: var(--display); font-size: 1.15rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
 .tellrocky b { font-size: 1.35rem; letter-spacing: .06em; background: #fff; color: var(--accent, #2a2420); padding: 1px 10px; border-radius: 6px; margin: 0 2px; }
+.tellrocky .copyrocky { display: block; margin: 12px auto 6px; padding: 12px 18px; min-height: 48px; border: 0; border-radius: 10px; background: #fff; color: var(--accent, #2a2420); font: 700 1.05rem/1.2 var(--body, system-ui); cursor: pointer; box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.tellrocky .copyrocky:active { transform: translateY(1px); }
+.tellrocky .copystatus { display: block; font-size: .95rem; min-height: 1.2em; }
+.tellrocky .copytext { display: block; width: 100%; box-sizing: border-box; margin: 8px 0; font: .85rem/1.35 ui-monospace, monospace; color: #222; text-align: left; }
+.tellrocky .copytext[hidden] { display: none; }
+.tellrocky .copyalt { display: block; margin-top: 6px; font-size: .9rem; opacity: .9; }
+.tellrocky .copyalt b { font-size: 1rem; }
 .casesummary { background: #fffdf6; border: 2px solid var(--accent, #6b5d4f); border-radius: 10px; padding: 10px 14px 4px; margin: 10px 0 6px; }
 .casesummary .cs-head { font-family: var(--display); text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; color: var(--accent, #6b5d4f); margin: 0 0 6px; }
 .casesummary .cs-q { font-weight: 700; margin: 6px 0 2px; font-size: .95rem; }
