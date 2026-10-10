@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planet or Not?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45;
+    min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;text-align:left;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px}
+  .btn:active{transform:translateY(1px)}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.done{border-color:var(--good);background:#eaf5ee;color:var(--good);cursor:default}
+  .btn.miss{animation:shake .3s}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .slots{list-style:none;padding:0;margin:10px 0}
+  .slots li{border-bottom:1px solid var(--line);padding:8px 2px;min-height:42px}
+  .slots li .n{font-family:"Special Elite",monospace;color:var(--soft);margin-right:8px}
+  .slots li .d{color:var(--red);font-family:"Special Elite",monospace;margin-left:6px}
+  .stmt{font-size:20px;font-weight:700;margin:12px 0}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  @media (max-width:480px){.page{padding-left:34px}.page::before{left:18px}h1{font-size:24px}.row{flex-direction:column;gap:0}}
+</style>
+<style>
+  .rulebook{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:10px 14px;margin:10px 0}
+  .rulebook .yr{font-family:"Special Elite",monospace;color:var(--red);font-size:20px}
+  .rulebook ul{margin:6px 0 0;padding-left:20px}
+  .obj{display:flex;align-items:center;gap:14px;margin:10px 0}
+  .obj svg{flex:0 0 auto}
+  .obj .nm{font-family:"Special Elite",monospace;font-size:24px}
+  .obj .fact{font-size:16px;color:var(--soft)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .grid3 .btn{margin:0;text-align:center;font-weight:700}
+  table.sum{width:100%;border-collapse:collapse;background:#fff;font-size:16px}
+  table.sum th,table.sum td{border:1px solid var(--line);padding:6px;text-align:center}
+  .tw{overflow-x:auto}
+  @media (max-width:520px){.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script>
+(function(){
+  var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+  function el(h){ app.innerHTML = h; window.scrollTo(0,0); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;} return a; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function L(core, ext){ return level === 'extended' && ext !== undefined ? ext : core; }
+  function tag(n){ return '<div class="tag">Lab notebook · Module '+n+' · '+(level==='core'?'Core':'Extended')+'</div>'; }
+  function finishScreen(name, text, extraHtml, again){
+    el('<h1>Notebook closed</h1><div class="tag">'+esc(name)+' · '+(level==='core'?'Core':'Extended')+'</div>'+
+      (extraHtml||'')+
+      '<p><b>What you found:</b></p><div class="report">'+esc(text)+'</div>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button><p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      var c = document.getElementById('copied');
+      function ok(){ c.classList.remove('hidden'); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+    };
+    document.getElementById('again').onclick = again;
+  }
+  function choiceButtons(boxId, options, onPick){
+    var box = document.getElementById(boxId);
+    options.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o.label; b.dataset.k=o.k;
+      b.onclick=function(){ onPick(o, b); }; box.appendChild(b); });
+  }
+
+  var OBJECTS = [
+    {k:'earth', n:'Earth', c:'#3b78c4', r:22, fact:'Big, round, orbits the Sun, rules its orbit.'},
+    {k:'jupiter', n:'Jupiter', c:'#c98a3a', r:30, fact:'Giant, round, orbits the Sun, rules its orbit.'},
+    {k:'moon', n:'The Moon', c:'#b9b9b9', r:14, fact:'Round, but it orbits Earth. Known forever.'},
+    {k:'ceres', n:'Ceres', c:'#8d8d8d', r:10, fact:'Found 1801 between Mars and Jupiter. Round. Shares its zone with many asteroids.'},
+    {k:'pluto', n:'Pluto', c:'#d9b38c', r:11, fact:'Found 1930 beyond Neptune. Round. Shares its zone with many icy objects.'},
+    {k:'eris', n:'Eris', c:'#e8e8f0', r:11, fact:'Found 2005, beyond Pluto. Round, about Pluto\'s size. Shares its zone with many icy objects.'}
+  ];
+  var P='planet', N='not', F='notfound';
+  var BOOKS = [
+    {yr:'1810', who:'Astronomers in 1810', rules:['Planets orbit the Sun. Moons orbit planets.','Ceres, found in 1801, is counted as a new planet.'],
+      ans:{earth:P,jupiter:P,moon:N,ceres:P,pluto:F,eris:F},
+      why:{ceres:'In 1810, Ceres was counted as a planet. It stayed on the list for over 50 years.', pluto:'Pluto wasn\'t found until 1930.', eris:'Eris wasn\'t found until 2005.', moon:'The Moon orbits Earth, so it\'s a moon.'}},
+    {yr:'1950', who:'A 1950 textbook', rules:['Nine planets orbit the Sun, Pluto the farthest.','Ceres is one of thousands of asteroids, not a planet.'],
+      ans:{earth:P,jupiter:P,moon:N,ceres:N,pluto:P,eris:F},
+      why:{ceres:'By the 1860s, Ceres was called an asteroid.', pluto:'From 1930 to 2006, Pluto was the ninth planet.', eris:'Eris wasn\'t found until 2005.', moon:'The Moon orbits Earth, so it\'s a moon.'}},
+    {yr:'2006', who:'The IAU rules, 2006', rules:['1. Orbits the Sun.','2. Big enough to pull itself round.','3. Has cleared the neighborhood around its orbit.','Round but not cleared = dwarf planet.'],
+      ans:{earth:P,jupiter:P,moon:N,ceres:N,pluto:N,eris:N},
+      why:{ceres:'Ceres is round but shares its zone with many asteroids: a dwarf planet.', pluto:'Pluto fails rule 3: it shares its zone with many icy objects. A dwarf planet.', eris:'Eris also fails rule 3: a dwarf planet.', moon:'The Moon orbits Earth, not the Sun (rule 1).'}},
+    {yr:'Today', who:'A definition some planetary scientists prefer', ext:true, rules:['Anything big enough to pull itself round counts as a planet, wherever it orbits.'],
+      ans:{earth:P,jupiter:P,moon:P,ceres:P,pluto:P,eris:P},
+      why:{ceres:'Ceres is round, so it counts.', pluto:'Pluto is round, so it counts.', eris:'Eris is round, so it counts.', moon:'The Moon is round, so under this definition it counts too.'}}
+  ].filter(function(b){ return level==='extended' || !b.ext; });
+  var LABEL = {planet:'Planet', not:'Not a planet', notfound:'Not found yet'};
+  var answers = {}, right = 0, total = 0;
+
+  function ball(o){ return '<svg width="70" height="70" viewBox="0 0 70 70" aria-hidden="true"><circle cx="35" cy="35" r="'+o.r+'" fill="'+o.c+'" stroke="#1f2a36" stroke-width="2"/></svg>'; }
+  function book(b){ return '<div class="rulebook"><div class="yr">'+b.yr+': '+esc(b.who)+'</div><ul>'+b.rules.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul></div>'; }
+
+  function intro(){
+    el('<h1>Planet or Not?</h1>'+tag(8)+
+      '<p>Six objects. '+BOOKS.length+' rule books from different times. The objects never change. Do their labels?</p>'+
+      '<div class="sticky">For each rule book, sort every object: <b>Planet</b>, <b>Not a planet</b>, or <b>Not found yet</b>. The rules stay on screen while you sort.</div>'+
+      '<button class="btn main" id="go">Open the first rule book</button>');
+    document.getElementById('go').onclick = function(){ run(0, 0); };
+  }
+  function run(bi, oi){
+    if(bi >= BOOKS.length) return summary();
+    if(oi >= OBJECTS.length) return between(bi);
+    var b = BOOKS[bi], o = OBJECTS[oi], misses = 0;
+    function render(note){
+      el('<h2>Rule book '+(bi+1)+' of '+BOOKS.length+'</h2>'+book(b)+
+        '<div class="obj">'+ball(o)+'<div><div class="nm">'+esc(o.n)+'</div><div class="fact">'+esc(o.fact)+'</div></div></div>'+
+        (note||'')+'<p class="progress">Object '+(oi+1)+' of '+OBJECTS.length+'</p><div class="grid3" id="g"></div>');
+      choiceButtons('g', [{k:P,label:'Planet'},{k:N,label:'Not a planet'},{k:F,label:'Not found yet'}], pick);
+    }
+    function pick(c){
+      var want = b.ans[o.k];
+      if(c.k === want){ if(misses===0) right++; total++; done(true); }
+      else { misses++; if(misses>=2){ total++; done(false); } else render('<div class="feedback wrong"><b class="v">Not under these rules.</b>Check the year and the rules above.</div>'); }
+    }
+    function done(ok){
+      answers[b.yr] = answers[b.yr] || {}; answers[b.yr][o.k] = b.ans[o.k];
+      var why = (b.why && b.why[o.k]) || (b.ans[o.k]===P ? 'It meets every rule in this book.' : '');
+      el('<h2>Rule book '+(bi+1)+' of '+BOOKS.length+'</h2>'+book(b)+
+        '<div class="obj">'+ball(o)+'<div><div class="nm">'+esc(o.n)+'</div></div></div>'+
+        '<div class="feedback'+(ok?'':' wrong')+'"><b class="v">'+(ok?'Yes: ':'Under these rules: ')+LABEL[b.ans[o.k]]+'.</b>'+esc(why)+'</div>'+
+        '<button class="btn main" id="n">Next</button>');
+      document.getElementById('n').onclick = function(){ run(bi, oi+1); };
+    }
+    render();
+  }
+  function between(bi){
+    if(bi >= BOOKS.length-1) return summary();
+    el('<h2>Rule book '+(bi+1)+' done</h2><p>Same six objects. New rules coming.</p><button class="btn main" id="n">Open rule book '+(bi+2)+'</button>');
+    document.getElementById('n').onclick = function(){ run(bi+1, 0); };
+  }
+  function changed(){
+    return OBJECTS.filter(function(o){ var s={}; BOOKS.forEach(function(b){ s[b.ans[o.k]]=1; }); return Object.keys(s).length>1; });
+  }
+  function summary(){
+    var rows = OBJECTS.map(function(o){ return '<tr><th>'+esc(o.n)+'</th>'+BOOKS.map(function(b){ return '<td>'+LABEL[b.ans[o.k]]+'</td>'; }).join('')+'</tr>'; }).join('');
+    var ch = changed();
+    el('<h2>Same objects, different labels</h2><div class="tw"><table class="sum"><tr><th></th>'+BOOKS.map(function(b){return '<th>'+b.yr+'</th>';}).join('')+'</tr>'+rows+'</table></div>'+
+      '<div class="sticky">'+ch.length+' of 6 objects changed labels, and not one of them changed. The word "planet" did.</div>'+
+      '<button class="btn main" id="n">Close the notebook</button>');
+    document.getElementById('n').onclick = function(){
+      var text = ['done — Planet or Not? ('+level+')', 'Sorted right on the first try: '+right+' of '+total,
+        'Objects whose label changed: '+ch.map(function(o){return o.n;}).join(', ')].join('\n');
+      finishScreen('Planet or Not?', text, '', function(){ answers={}; right=0; total=0; intro(); });
+    };
+  }
+  intro();
+})();
+</script>
+</body>
+</html>

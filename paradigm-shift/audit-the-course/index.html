@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit the Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45;
+    min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;text-align:left;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px}
+  .btn:active{transform:translateY(1px)}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.done{border-color:var(--good);background:#eaf5ee;color:var(--good);cursor:default}
+  .btn.miss{animation:shake .3s}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .slots{list-style:none;padding:0;margin:10px 0}
+  .slots li{border-bottom:1px solid var(--line);padding:8px 2px;min-height:42px}
+  .slots li .n{font-family:"Special Elite",monospace;color:var(--soft);margin-right:8px}
+  .slots li .d{color:var(--red);font-family:"Special Elite",monospace;margin-left:6px}
+  .stmt{font-size:20px;font-weight:700;margin:12px 0}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  @media (max-width:480px){.page{padding-left:34px}.page::before{left:18px}h1{font-size:24px}.row{flex-direction:column;gap:0}}
+</style>
+<style>
+  .exhibit{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:12px 14px;margin:10px 0}
+  .exhibit .src{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .exhibit q{display:block;font-size:20px;margin-top:6px;quotes:none}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid2 .btn{margin:0;text-align:center;font-weight:700}
+  .stamp{display:inline-block;font-family:"Special Elite",monospace;border:2px solid var(--red);color:var(--red);padding:2px 8px;transform:rotate(-2deg);margin:6px 0}
+  @media (max-width:520px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script>
+(function(){
+  var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+  function el(h){ app.innerHTML = h; window.scrollTo(0,0); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;} return a; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function L(core, ext){ return level === 'extended' && ext !== undefined ? ext : core; }
+  function tag(n){ return '<div class="tag">Lab notebook · Module '+n+' · '+(level==='core'?'Core':'Extended')+'</div>'; }
+  function finishScreen(name, text, extraHtml, again){
+    el('<h1>Notebook closed</h1><div class="tag">'+esc(name)+' · '+(level==='core'?'Core':'Extended')+'</div>'+
+      (extraHtml||'')+
+      '<p><b>What you found:</b></p><div class="report">'+esc(text)+'</div>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button><p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      var c = document.getElementById('copied');
+      function ok(){ c.classList.remove('hidden'); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+    };
+    document.getElementById('again').onclick = again;
+  }
+  function choiceButtons(boxId, options, onPick){
+    var box = document.getElementById(boxId);
+    options.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o.label; b.dataset.k=o.k;
+      b.onclick=function(){ onPick(o, b); }; box.appendChild(b); });
+  }
+
+  var LABELS = [{k:'fair',label:'Fair'},{k:'simp',label:'Simplified'},{k:'left',label:'Left something out'},{k:'mist',label:'Mistake (fixed)'}];
+  var NAMES = {fair:'Fair', simp:'Simplified', left:'Left something out', mist:'Mistake (fixed)'};
+  var ITEMS = [
+    {src:'Module 1, first draft', text:'In August 1774, Priestley tested his gas on a mouse and named it "dephlogisticated air."', mistake:true,
+      note:'A real mistake, caught by fact-checking. The mouse test and the name came in early 1775. The draft squeezed a messy timeline into one tidy moment, the habit Module 1 warns about.'},
+    {src:'Module 1', text:'Scheele made oxygen first. Priestley made it and told the world first. Lavoisier was the first to understand it as we do today.',
+      note:'The course\'s note: a fair summary, but still three neat sentences about three famous men. Other chemists, assistants and instrument makers aren\'t in it.'},
+    {src:'Module 2, first draft', text:'The first Leyden jars were glass jars coated with metal foil.', mistake:true,
+      note:'A real mistake, caught by fact-checking. The first jars were partly filled with water. Foil linings came in 1747.'},
+    {src:'Module 3', text:'The course picked Halley\'s comet, a prediction that worked, as its example of normal science.',
+      note:'The course\'s note: success stories get retold; failed predictions mostly don\'t. Picking only winners makes normal science look more reliable.'},
+    {src:'Module 4', text:'An experiment with 28 Harvard and Radcliffe students in 1949 shows how expectations shape what scientists see.',
+      note:'The course\'s note: the experiment is real, but 28 students from one place is a small, narrow group to carry such a big idea.'},
+    {src:'Module 6', text:'The module\'s title: "Too Many Circles?"',
+      note:'The course\'s note: the title echoes the "epicycles on epicycles" story, which historians call a myth. The question mark was added after fact-checking.'},
+    {src:'The whole course', text:'Kuhn is the main story. Every other thinker appears as a "Side View" on Kuhn\'s ideas.',
+      note:'The course\'s note: a framing choice. Popper or Longino could have been the main story instead, and then Kuhn would be the side view.'},
+    {src:'The whole course', text:'Almost every example comes from physics, chemistry or astronomy.',
+      note:'The course\'s note: biology and medicine are almost absent, and so is most science outside Europe and the United States.'},
+    {src:'Rocky\'s rules, first draft', text:'Friedrich Bessel was the first person to measure stellar parallax (1838).', mistake:true, ext:true,
+      note:'A real mistake, caught by fact-checking. Bessel was first to publish. Thomas Henderson measured Alpha Centauri\'s parallax in 1832–33 but published later.'},
+    {src:'Module 9', text:'Five models of the atom in a neat table, each one a step up.', ext:true,
+      note:'The course\'s note: a staircase, the very thing Module 1 warned about. Many scientists and abandoned models were left out.'},
+    {src:'Module 10', text:'The 1965 meeting is told as Kuhn versus Popper.', ext:true,
+      note:'The course\'s note: Lakatos, Feyerabend, Watkins, Toulmin and others wrote for the same book, and several disagreed with both.'}
+  ].filter(function(x){ return level==='extended' || !x.ext; });
+  var tally = {fair:0,simp:0,left:0,mist:0}, mistakesFound = 0, mistakeTotal = ITEMS.filter(function(x){return x.mistake;}).length;
+
+  function exhibit(it){ return '<div class="exhibit"><div class="src">'+esc(it.src)+'</div><q>'+esc(it.text)+'</q></div>'; }
+  function intro(){
+    el('<h1>Audit the Course</h1>'+tag(11)+
+      '<p>You\'re the inspector now. Here are real sentences and choices from this course (some summarized). Label each one.</p>'+
+      '<div class="sticky"><b>Fair</b> · <b>Simplified</b> · <b>Left something out</b> · <b>Mistake (fixed)</b><br>Most items have no single right label. It\'s your judgment. After each one you\'ll see the course\'s own note.</div>'+
+      '<button class="btn main" id="go">Start the audit</button>');
+    document.getElementById('go').onclick = function(){ show(0); };
+  }
+  function show(i){
+    if(i>=ITEMS.length) return change();
+    var it = ITEMS[i];
+    el('<h2>Item '+(i+1)+' of '+ITEMS.length+'</h2>'+exhibit(it)+'<p>How would you label it?</p><div class="grid2" id="g"></div>');
+    choiceButtons('g', LABELS, function(o){
+      tally[o.k]++;
+      var head;
+      if(it.mistake){ if(o.k==='mist'){ mistakesFound++; head='<b class="v">You caught it.</b>'; } else head='<b class="v">This one was a real mistake.</b>'; }
+      else head='<b class="v">You said: '+NAMES[o.k]+'.</b>';
+      el('<h2>Item '+(i+1)+' of '+ITEMS.length+'</h2>'+exhibit(it)+(it.mistake?'<span class="stamp">CORRECTED</span>':'')+
+        '<div class="feedback'+(it.mistake && o.k!=='mist' ? ' wrong':'')+'">'+head+esc(it.note)+'</div>'+
+        '<button class="btn main" id="n">'+(i<ITEMS.length-1?'Next item':'Finish the audit')+'</button>');
+      document.getElementById('n').onclick = function(){ show(i+1); };
+    });
+  }
+  function change(){
+    el('<h2>Your first change</h2><p>If you wrote the next edition of this course, what would you change first?</p><div id="c"></div>');
+    choiceButtons('c', [
+      {k:'bio',label:'Add biology and medicine'},{k:'world',label:'Add science from more parts of the world'},
+      {k:'women',label:'Include more women scientists'},{k:'fail',label:'Tell more stories that failed'},
+      {k:'spine',label:'Make someone other than Kuhn the main story'},{k:'other',label:'Something else (I\'ll tell Rocky)'}],
+      function(o){
+        var text = ['done — Audit the Course ('+level+')',
+          'Labels: Fair '+tally.fair+', Simplified '+tally.simp+', Left something out '+tally.left+', Mistake '+tally.mist,
+          'Real mistakes caught: '+mistakesFound+' of '+mistakeTotal, 'First change: '+o.label].join('\n');
+        finishScreen('Audit the Course', text,
+          '<div class="sticky">A course that shows its own mistakes can seem more trustworthy. Is that a reason to trust it, or a clever way to win your trust?</div>',
+          function(){ tally={fair:0,simp:0,left:0,mist:0}; mistakesFound=0; intro(); });
+      });
+  }
+  intro();
+})();
+</script>
+</body>
+</html>

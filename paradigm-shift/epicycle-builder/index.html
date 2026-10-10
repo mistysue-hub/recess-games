@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Epicycle Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45;
+    min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;text-align:left;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px}
+  .btn:active{transform:translateY(1px)}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.done{border-color:var(--good);background:#eaf5ee;color:var(--good);cursor:default}
+  .btn.miss{animation:shake .3s}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .slots{list-style:none;padding:0;margin:10px 0}
+  .slots li{border-bottom:1px solid var(--line);padding:8px 2px;min-height:42px}
+  .slots li .n{font-family:"Special Elite",monospace;color:var(--soft);margin-right:8px}
+  .slots li .d{color:var(--red);font-family:"Special Elite",monospace;margin-left:6px}
+  .stmt{font-size:20px;font-weight:700;margin:12px 0}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  @media (max-width:480px){.page{padding-left:34px}.page::before{left:18px}h1{font-size:24px}.row{flex-direction:column;gap:0}}
+</style>
+<style>
+  .chart{background:#0f1a2b;border-radius:10px;padding:6px;margin:10px 0}
+  .chart svg{display:block;width:100%;height:auto}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .stat{flex:1;min-width:140px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .stat b{display:block;font-family:"Special Elite",monospace;font-size:22px}
+  .stat span{font-size:14px;color:var(--soft)}
+  .toolbox{font-family:"Special Elite",monospace;font-size:15px;color:var(--soft);margin:4px 0}
+  .legend{font-size:14px;color:var(--soft);display:flex;gap:14px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script>
+(function(){
+  var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+  function el(h){ app.innerHTML = h; window.scrollTo(0,0); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;} return a; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function L(core, ext){ return level === 'extended' && ext !== undefined ? ext : core; }
+  function tag(n){ return '<div class="tag">Lab notebook · Module '+n+' · '+(level==='core'?'Core':'Extended')+'</div>'; }
+  function finishScreen(name, text, extraHtml, again){
+    el('<h1>Notebook closed</h1><div class="tag">'+esc(name)+' · '+(level==='core'?'Core':'Extended')+'</div>'+
+      (extraHtml||'')+
+      '<p><b>What you found:</b></p><div class="report">'+esc(text)+'</div>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button><p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      var c = document.getElementById('copied');
+      function ok(){ c.classList.remove('hidden'); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+    };
+    document.getElementById('again').onclick = again;
+  }
+  function choiceButtons(boxId, options, onPick){
+    var box = document.getElementById(boxId);
+    options.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o.label; b.dataset.k=o.k;
+      b.onclick=function(){ onPick(o, b); }; box.appendChild(b); });
+  }
+
+  // ---------- the sky model (simplified, two planets) ----------
+  function kepler(M, e){ var E=M; for(var i=0;i<40;i++){ E = E - (E - e*Math.sin(E) - M)/(1 - e*Math.cos(E)); }
+    var nu = 2*Math.atan2(Math.sqrt(1+e)*Math.sin(E/2), Math.sqrt(1-e)*Math.cos(E/2)); return [nu, 1 - e*Math.cos(E)]; }
+  var D = Math.PI/180;
+  var EARTH = {a:1.0, e:0.0167, T:1.0, w:102.9*D, M0:0.3};
+  var MARS  = {a:1.5237, e:0.0934, T:1.8809, w:336.0*D, M0:1.1};
+  function truth(p){ return function(t){ var M=2*Math.PI*t/p.T + p.M0, k=kepler(M,p.e), th=k[0]+p.w; return [p.a*k[1]*Math.cos(th), p.a*k[1]*Math.sin(th)]; }; }
+  function circle(p, c, q){ return function(t){
+      var M=2*Math.PI*t/p.T + p.M0, ux=Math.cos(p.w), uy=Math.sin(p.w);
+      var cx=-c*p.a*ux, cy=-c*p.a*uy, qx=-q*p.a*ux, qy=-q*p.a*uy, ang=M+p.w, dx=Math.cos(ang), dy=Math.sin(ang);
+      var ox=qx-cx, oy=qy-cy, b=ox*dx+oy*dy, cc=ox*ox+oy*oy-p.a*p.a, s=-b+Math.sqrt(b*b-cc);
+      return [qx+s*dx, qy+s*dy]; }; }
+  function geo(fE, fM){ return function(t){ var e=fE(t), m=fM(t); return ((Math.atan2(m[1]-e[1], m[0]-e[0])/D)%360+360)%360; }; }
+  function single(t){ return (((2*Math.PI*t/MARS.T + MARS.M0 + MARS.w)/D)%360+360)%360; }
+  var T0 = 1.699 - 0.5, STEP = 1/12, N = 13;
+  var TIMES = []; for(var i=0;i<N;i++) TIMES.push(T0 + i*STEP);
+  var OBS = TIMES.map(geo(truth(EARTH), truth(MARS)));
+  var MODELS = [
+    {k:'one',  name:'One big circle', fn: single,
+      add:L('Mars rides on one big circle around Earth.','A single deferent centered on Earth, moving at a steady rate.'),
+      ask:null},
+    {k:'epi',  name:'Add an epicycle', fn: geo(circle(EARTH,0,0), circle(MARS,0,0)),
+      add:L('Mars rides on a small circle (an epicycle) that rides on the big one.','An epicycle carried on the deferent, turning once a year.'),
+      ask:'Will adding an epicycle make the average miss smaller, bigger, or about the same?', expect:'smaller'},
+    {k:'ecc',  name:'Add an eccentric', fn: geo(circle(EARTH,0.0167,0.0167), circle(MARS,0.0934,0.0934)),
+      add:L('Move the center of the big circle a little away from Earth.','Offset the deferent\'s center from Earth (an eccentric).'),
+      ask:'Will moving the big circle\'s center make the miss smaller, bigger, or about the same?', expect:'smaller'},
+    {k:'equ',  name:'Add an equant', fn: geo(circle(EARTH,0.0167,0.0334), circle(MARS,0.0934,0.1868)),
+      add:L('Make Mars\'s speed look steady from a point beside the center (the equant), not from the center.','Ptolemy\'s equant: steady angular motion as seen from a point offset from the center.'),
+      ask:'Will the equant make the miss smaller, bigger, or about the same?', expect:'smaller'},
+    {k:'cop',  name:'Try Copernicus (1543)', fn: geo(circle(EARTH,0.0167,0.0334), circle(MARS,0.0934,0.1868)),
+      add:L('Put the Sun near the center and set Earth moving. Copernicus still used circles and small epicycles.','Sun near the center, Earth in motion; circles and small epicycles kept. In this simplified game it makes the same predictions as Ptolemy\'s best.'),
+      ask:'Compared with Ptolemy\'s best model, will Copernicus\'s model miss by less, more, or about the same?', expect:'same'},
+    {k:'kep',  name:'Try Kepler (1609)', fn: geo(truth(EARTH), truth(MARS)),
+      add:L('Johannes Kepler used Tycho Brahe\'s careful measurements and let Mars move on an ellipse, a stretched circle.','Kepler\'s ellipses with the equal-areas law, fitted to Tycho Brahe\'s observations.'),
+      ask:'Will Kepler\'s ellipse miss by less, more, or about the same as Copernicus?', expect:'smaller'}
+  ];
+  function unwrap(arr){ var out=[arr[0]]; for(var i=1;i<arr.length;i++){ var d=((arr[i]-out[i-1])%360+540)%360-180; out.push(out[i-1]+d); } return out; }
+  var OBSU = unwrap(OBS);
+  function evaluate(m){
+    var errs = TIMES.map(function(t,i){ return Math.abs(((m.fn(t)-OBS[i])%360+540)%360-180); });
+    var avg = errs.reduce(function(a,b){return a+b;},0)/errs.length;
+    var hits = errs.filter(function(e){ return e <= 0.1; }).length;
+    return {errs:errs, avg:avg, hits:hits};
+  }
+  var lo = Math.min.apply(null,OBSU)-45, hi = Math.max.apply(null,OBSU)+45;
+  function chart(m, ev){
+    var W=640,H=300,pl=40,pr=10,pt=12,pb=28;
+    function X(i){ return pl + i*(W-pl-pr)/(N-1); }
+    function Y(v){ return pt + (hi-v)*(H-pt-pb)/(hi-lo); }
+    var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Mars observations and model path">';
+    for(var g=0; g<N; g++) s+='<line x1="'+X(g)+'" x2="'+X(g)+'" y1="'+pt+'" y2="'+(H-pb)+'" stroke="#22324a" stroke-width="1"/>';
+    for(var k=0;k<40;k++){ var sx=(k*97)%W, sy=(k*53)%(H-pb); s+='<circle cx="'+sx+'" cy="'+sy+'" r="1" fill="#44597a"/>'; }
+    if(m){
+      var pts=[], prev=null;
+      for(var j=0;j<=120;j++){ var t=T0 + j*(STEP*(N-1))/120, v=m.fn(t);
+        if(prev===null){ v = v + 360*Math.round((OBSU[0]-v)/360); } else { v = prev + (((v-prev)%360+540)%360-180); }
+        prev=v; pts.push((pl + j*(W-pl-pr)/120).toFixed(1)+','+Y(v).toFixed(1)); }
+      s+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="#f4c430" stroke-width="2.5"/>';
+    }
+    OBSU.forEach(function(v,i){ var ok = ev && ev.errs[i] <= 0.1;
+      s+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="6" fill="'+(ok?'#4caf50':'none')+'" stroke="'+(ok?'#4caf50':'#ff6b6b')+'" stroke-width="2.5"/>'; });
+    for(var mth=0; mth<N; mth+=3) s+='<text x="'+X(mth)+'" y="'+(H-8)+'" fill="#9fb3cc" font-size="13" text-anchor="'+(mth===N-1?'end':(mth===0?'start':'middle'))+'" font-family="Atkinson Hyperlegible,sans-serif">Month '+(mth+1)+'</text>';
+    s+='<text x="12" y="'+(H/2)+'" fill="#9fb3cc" font-size="12" transform="rotate(-90 12 '+(H/2)+')" text-anchor="middle" font-family="Atkinson Hyperlegible,sans-serif">east among the stars →</text>';
+    return '<div class="chart">'+s+'</svg></div>';
+  }
+  var LEG = '<div class="legend"><span><i style="background:#4caf50"></i>observation matched</span><span><i style="border:2px solid #ff6b6b"></i>observation missed</span><span><i style="background:#f4c430;border-radius:2px"></i>your model</span></div>';
+  var log = [], predRight = 0, predTotal = 0;
+  function statBox(ev){
+    return '<div class="stats"><div class="stat"><b>'+ev.avg.toFixed(1)+'°</b><span>average miss</span></div>'+
+      '<div class="stat"><b>'+ev.hits+' of '+N+'</b><span>matched within a tenth of a degree</span></div></div>';
+  }
+
+  function intro(){
+    el('<h1>Epicycle Builder</h1>'+tag(6)+
+      '<p>'+L('These 13 dots are careful measurements of where Mars was among the stars, once a month for a year. See the dip in the middle? That\'s Mars going backward.','Thirteen monthly positions of Mars against the stars, accurate to a few arcminutes, the kind of data Tycho Brahe collected. Note the retrograde dip.')+'</p>'+
+      chart(null,null)+LEG+
+      '<div class="sticky">Your job: build a model that hits the dots. Add Ptolemy\'s tools one at a time, then try Copernicus and Kepler. A dot counts as matched if your model is within a tenth of a degree. (Tycho\'s measurements were even more precise than that.)</div>'+
+      '<button class="btn main" id="go">Start with one circle</button>');
+    document.getElementById('go').onclick = function(){ show(0, null); };
+  }
+
+  function show(i, predicted){
+    var m = MODELS[i], ev = evaluate(m), prevEv = i>0 ? evaluate(MODELS[i-1]) : null;
+    var note = '';
+    if(i>0){
+      var actual = Math.abs(ev.avg - prevEv.avg) < 0.05 ? 'same' : (ev.avg < prevEv.avg ? 'smaller' : 'bigger');
+      var right = predicted === m.expect; predTotal++; if(right) predRight++;
+      note = '<div class="feedback'+(right?'':' wrong')+'"><b class="v">'+(right?'Good prediction.':'Not what you predicted.')+'</b>The miss went from '+prevEv.avg.toFixed(1)+'° to '+ev.avg.toFixed(1)+'°.</div>';
+    }
+    log.push(m.name.replace('Add an ','').replace('Try ','')+': '+ev.avg.toFixed(1)+'° average miss, '+ev.hits+'/'+N+' matched');
+    var extra = '';
+    if(m.k==='one') extra = '<div class="sticky">One steady circle can\'t go backward, so it misses the dip completely.</div>';
+    if(m.k==='equ') extra = '<div class="sticky">This is close to Ptolemy\'s full toolkit, and it\'s very good. It predicted the planets well enough for about 1,400 years.</div>';
+    if(m.k==='cop') extra = '<div class="sticky">'+L('Same matches as Ptolemy\'s best. Copernicus wasn\'t more accurate. What he explained better was why Mars goes backward: Earth passes it.','No gain in accuracy, exactly as Kuhn and historians say. The payoff was explanatory: retrograde motion follows from Earth overtaking Mars.')+'</div>';
+    if(m.k==='kep') extra = '<div class="sticky">'+L('All 13 match. Kepler once threw out a circle model that missed by only about an eighth of a degree, because he trusted Tycho\'s measurements.','All 13 match. Kepler discarded a circle-based Mars model that missed Tycho\'s data by about 8 arcminutes (0.13°). Lakatos would ask: did the ellipse go on to predict anything new?')+'</div>';
+    el('<h2>'+esc(m.name)+'</h2><p class="toolbox">'+esc(m.add)+'</p>'+note+chart(m, ev)+LEG+statBox(ev)+extra+
+      (i < MODELS.length-1 ? '<p>'+esc(MODELS[i+1].ask)+'</p><div class="row" id="p"></div>' : '<button class="btn main" id="end">Close the notebook</button>'));
+    if(i < MODELS.length-1){
+      choiceButtons('p', [{k:'smaller',label:'Smaller'},{k:'same',label:'About the same'},{k:'bigger',label:'Bigger'}], function(o){ show(i+1, o.k); });
+      var nxt = MODELS[i+1].name; document.querySelectorAll('#p .btn').forEach(function(b){ b.setAttribute('aria-label', b.textContent+' (then '+nxt+')'); });
+    } else document.getElementById('end').onclick = finish;
+  }
+
+  function finish(){
+    var text = ['done — Epicycle Builder ('+level+')'].concat(log).concat(['Predictions right: '+predRight+' of '+predTotal]).join('\n');
+    finishScreen('Epicycle Builder', text,
+      '<div class="sticky">Ptolemy\'s tools kept shrinking the miss. Copernicus matched Ptolemy\'s best but didn\'t beat it. Kepler\'s ellipse hit every dot.</div>',
+      function(){ log=[]; predRight=0; predTotal=0; intro(); });
+  }
+  intro();
+})();
+</script>
+</body>
+</html>

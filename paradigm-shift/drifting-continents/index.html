@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Drifting Continents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45;
+    min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;text-align:left;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px}
+  .btn:active{transform:translateY(1px)}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.done{border-color:var(--good);background:#eaf5ee;color:var(--good);cursor:default}
+  .btn.miss{animation:shake .3s}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .slots{list-style:none;padding:0;margin:10px 0}
+  .slots li{border-bottom:1px solid var(--line);padding:8px 2px;min-height:42px}
+  .slots li .n{font-family:"Special Elite",monospace;color:var(--soft);margin-right:8px}
+  .slots li .d{color:var(--red);font-family:"Special Elite",monospace;margin-left:6px}
+  .stmt{font-size:20px;font-weight:700;margin:12px 0}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  @media (max-width:480px){.page{padding-left:34px}.page::before{left:18px}h1{font-size:24px}.row{flex-direction:column;gap:0}}
+</style>
+<style>
+  .year{font-family:"Special Elite",monospace;font-size:34px;color:var(--red);margin:0}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+  .card{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;text-align:left;font:inherit;color:var(--ink);cursor:pointer;min-height:64px}
+  .card.open{border-color:var(--ink);cursor:default}
+  .card b{display:block;font-family:"Special Elite",monospace}
+  .card .more{display:block;margin-top:6px;font-size:16px}
+  .card.obj{border-color:#c98a3a} .card.obj.open{border-color:#8a5a1f}
+  .stripes{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;margin:10px 0}
+  .stripes svg{display:block;width:100%;height:auto}
+  @media (max-width:520px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script id="story" type="application/json">
+{
+  "evidence": [
+    {"t":"The fit", "core":"The edges of South America and Africa fit like puzzle pieces, even better if you match the edges of the shallow sea floor instead of the beaches.", "ext":"Matched along the edges of the continental shelves, South America and Africa fit closely."},
+    {"t":"Fossils", "core":"Fossils of Mesosaurus, a small freshwater reptile, are found in both Brazil and southern Africa. It couldn't swim an ocean.", "ext":"Mesosaurus, a freshwater reptile, occurs in Brazil and southern Africa; the plant Glossopteris is spread across the southern continents."},
+    {"t":"Rocks", "core":"Rock types and formations on one side of the Atlantic match the other side.", "ext":"Rock types and geological structures line up across the Atlantic."},
+    {"t":"Ice and coal", "core":"Scratches from ancient glaciers are found in places that are hot today, like India and Africa. Antarctica has coal made from plants that needed warmth.", "ext":"Glacial deposits in Africa, India and Australia; coal with fossil plants in Antarctica."}
+  ],
+  "objections": [
+    {"t":"What force?", "core":"Wegener can't say what pushes the continents. The forces he suggests are far too weak.", "ext":"Wegener's proposed forces, including a 'flight from the poles' and tidal forces, are far too weak to move continents."},
+    {"t":"Through solid rock?", "core":"How could a continent plow through the hard rock of the ocean floor?", "ext":"Continents plowing through solid oceanic crust makes little physical sense."},
+    {"t":"Too fast", "core":"Wegener's guess for how fast the continents move is far too fast.", "ext":"His estimated drift rate, about 250 cm a year, is far faster than any evidence allows."},
+    {"t":"Land bridges", "core":"Maybe animals crossed on land bridges that later sank into the sea.", "ext":"Sunken land bridges could explain the fossil matches without moving continents."}
+  ]
+}
+</script>
+<script>
+(function(){
+  var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+  function el(h){ app.innerHTML = h; window.scrollTo(0,0); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;} return a; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function L(core, ext){ return level === 'extended' && ext !== undefined ? ext : core; }
+  function tag(n){ return '<div class="tag">Lab notebook · Module '+n+' · '+(level==='core'?'Core':'Extended')+'</div>'; }
+  function finishScreen(name, text, extraHtml, again){
+    el('<h1>Notebook closed</h1><div class="tag">'+esc(name)+' · '+(level==='core'?'Core':'Extended')+'</div>'+
+      (extraHtml||'')+
+      '<p><b>What you found:</b></p><div class="report">'+esc(text)+'</div>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button><p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      var c = document.getElementById('copied');
+      function ok(){ c.classList.remove('hidden'); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+    };
+    document.getElementById('again').onclick = again;
+  }
+  function choiceButtons(boxId, options, onPick){
+    var box = document.getElementById(boxId);
+    options.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o.label; b.dataset.k=o.k;
+      b.onclick=function(){ onPick(o, b); }; box.appendChild(b); });
+  }
+
+  var S = JSON.parse(document.getElementById('story').textContent);
+  var res = {vote1:'', vote2:'', convinced:'', q1:false, q2:false};
+  function cardsHtml(list, cls, opened){
+    return '<div class="cards">'+list.map(function(c,i){
+      var o = opened[i];
+      return '<button class="card '+cls+(o?' open':'')+'" data-i="'+i+'"'+(o?' aria-expanded="true"':' aria-expanded="false"')+'><b>'+esc(c.t)+'</b>'+
+        (o ? '<span class="more">'+esc(L(c.core,c.ext))+'</span>' : '<span class="more">Tap to read</span>')+'</button>'; }).join('')+'</div>';
+  }
+  function reveal(list, cls, title, intro, nextLabel, next){
+    var opened = list.map(function(){return false;});
+    function render(){
+      var all = opened.every(Boolean);
+      el('<p class="year">1926</p><h2>'+title+'</h2><p>'+intro+'</p>'+cardsHtml(list, cls, opened)+
+        (all ? '<button class="btn main" id="n">'+nextLabel+'</button>' : '<p class="progress">Open all '+list.length+' cards to go on.</p>'));
+      app.querySelectorAll('.card').forEach(function(b){ b.onclick=function(){ opened[+b.dataset.i]=true; render(); }; });
+      if(all) document.getElementById('n').onclick = next;
+    }
+    render();
+  }
+  function start(){
+    el('<h1>The Drifting Continents</h1>'+tag(7)+
+      '<p class="year">New York, 1926</p>'+
+      '<p>You\'re a young geologist at a big meeting about Alfred Wegener\'s idea that the continents move. Before anyone votes, look at the case for and against.</p>'+
+      '<button class="btn main" id="go">Look at Wegener\'s evidence</button>');
+    document.getElementById('go').onclick = function(){
+      reveal(S.evidence, 'ev', 'Wegener\'s evidence', 'Tap each card.', 'Hear the objections', function(){
+        reveal(L(S.objections.slice(0,3), S.objections), 'obj', 'The objections', 'Most geologists in the room aren\'t convinced. Tap each card.', 'Time to decide', vote1);
+      });
+    };
+  }
+  var VOTES = [
+    {k:'move', label:'The continents move. Wegener is right.'},
+    {k:'stay', label:'The continents stay put. The objections win.'},
+    {k:'wait', label:'Not sure yet. I need to know what could move them.'}
+  ];
+  function vote1(){
+    el('<p class="year">1926</p><h2>Your vote</h2>'+
+      '<div class="sticky"><b>For:</b> '+S.evidence.map(function(c){return esc(c.t);}).join(', ')+'.<br><b>Against:</b> '+L(S.objections.slice(0,3),S.objections).map(function(c){return esc(c.t);}).join(', ')+'.</div>'+
+      '<p>How do you vote?</p><div id="v"></div>');
+    choiceButtons('v', VOTES, function(o){ res.vote1 = o.label;
+      var why = {
+        move:'You\'re in a small minority. Your evidence is real, but you can\'t answer "what force?" Most of the room thinks you\'re ignoring physics.',
+        stay:'You\'re with most of the room. Your objections are serious: nobody can explain how continents could move. But the fossils and rocks still need an explanation.',
+        wait:'A careful choice. Many scientists did exactly this: the evidence was interesting, but without a mechanism it wasn\'t enough.'
+      }[o.k];
+      el('<p class="year">1926</p><h2>You voted</h2><p><b>'+esc(o.label)+'</b></p><div class="sticky">'+why+' There\'s no wrong vote here: smart scientists voted all three ways.</div>'+
+        '<p>Wegener dies in 1930 on an expedition in Greenland. For years, drift looks like a dead idea.</p>'+
+        '<button class="btn main" id="n">Jump ahead to 1952</button>');
+      document.getElementById('n').onclick = rift;
+    });
+  }
+  function rift(){
+    el('<p class="year">1952</p><h2>A valley under the sea</h2>'+
+      '<p>'+L('Scientists have been measuring the depth of the Atlantic Ocean with sound. Marie Tharp, a geologist and mapmaker, is drawing the data. Down the middle of a huge underwater mountain range, she finds a deep valley.','Marie Tharp, plotting sonar soundings at Columbia University with Bruce Heezen, finds a rift valley running along the crest of the Mid-Atlantic Ridge.')+'</p>'+
+      '<p>What could that valley mean?</p><div id="v"></div>');
+    var opts = shuffle([{k:'apart',label:'The ocean floor is pulling apart there.'},{k:'river',label:'An ancient river carved it.'},{k:'none',label:'It\'s just a random dip.'}]);
+    choiceButtons('v', opts, function(o){ res.q1 = o.k==='apart';
+      el('<p class="year">1952</p><h2>A valley under the sea</h2><div class="feedback'+(res.q1?'':' wrong')+'"><b class="v">'+(res.q1?'That\'s what Tharp thought.':'Tharp thought something else.')+'</b>'+
+        'She thought the valley was a crack where the sea floor was pulling apart. Her research partner Bruce Heezen brushed it off at first. About a year later, the locations of earthquakes lined up along her valley, and he came around.</div>'+
+        '<button class="btn main" id="n">Jump ahead to 1962</button>');
+      document.getElementById('n').onclick = stripes;
+    });
+  }
+  function stripesSvg(){
+    var w=[18,10,22,12,16,14], cols=['#2d5f8b','#e9eef3'], x=320, s='<svg viewBox="0 0 640 120" role="img" aria-label="sea floor magnetic stripes, mirrored on both sides of the ridge">';
+    var left=x, right=x;
+    for(var i=0;i<w.length;i++){ var c=cols[i%2]; left-=w[i]*3; s+='<rect x="'+left+'" y="10" width="'+(w[i]*3)+'" height="80" fill="'+c+'" stroke="#1f2a36" stroke-width=".5"/>';
+      s+='<rect x="'+right+'" y="10" width="'+(w[i]*3)+'" height="80" fill="'+c+'" stroke="#1f2a36" stroke-width=".5"/>'; right+=w[i]*3; }
+    s+='<line x1="320" x2="320" y1="4" y2="96" stroke="#b3261e" stroke-width="4"/><text x="320" y="114" text-anchor="middle" font-size="14" fill="#1f2a36" font-family="Atkinson Hyperlegible,sans-serif">ridge</text></svg>';
+    return '<div class="stripes">'+s+'</div>';
+  }
+  function stripes(){
+    el('<p class="year">1962–1963</p><h2>Spreading sea floor</h2>'+
+      '<p>'+L('Harry Hess suggests that new sea floor forms at the underwater ridges and slowly spreads outward on both sides, like two conveyor belts.','Harry Hess proposes seafloor spreading: new crust forms at mid-ocean ridges and moves away on both sides.')+'</p>'+
+      '<p>'+L('Earth\'s magnetism flips direction every so often. Rocks that form from hot lava record which way it pointed, like a tape recorder.','Earth\'s magnetic field reverses from time to time, and cooling lava records its direction.')+'</p>'+
+      '<p>If new floor spreads out from a ridge, what pattern would the magnetic stripes make?</p><div id="v"></div>');
+    var opts = shuffle([{k:'mirror',label:'The same stripes on both sides, like a mirror'},{k:'random',label:'A random jumble'},{k:'one',label:'Stripes on one side only'}]);
+    choiceButtons('v', opts, function(o){ res.q2 = o.k==='mirror';
+      el('<p class="year">1963</p><h2>The stripes</h2>'+stripesSvg()+
+        '<div class="feedback'+(res.q2?'':' wrong')+'"><b class="v">'+(res.q2?'Yes: a mirror.':'It\'s a mirror.')+'</b>'+
+        L('In 1963, Fred Vine and Drummond Matthews said spreading would make the stripes match on both sides of a ridge. By 1966, ship surveys showed they did.','In 1963 Fred Vine and Drummond Matthews explained the stripes as a record of spreading, predicting mirror images across ridges; ship surveys confirmed it by 1966. Lawrence Morley had the same idea, but journals rejected his paper.')+'</div>'+
+        '<p>Now there\'s a mechanism. By the late 1960s most geologists accept <b>plate tectonics</b>: Earth\'s surface is made of moving plates, and continents ride on them.</p>'+
+        '<button class="btn main" id="n">Vote again</button>');
+      document.getElementById('n').onclick = vote2;
+    });
+  }
+  function vote2(){
+    el('<p class="year">Late 1960s</p><h2>Vote again</h2>'+
+      '<div class="sticky"><b>New since 1926:</b> the rift valley, sea-floor spreading, mirror-image magnetic stripes, earthquakes along the ridges.</div>'+
+      '<p>Do the continents move?</p><div id="v"></div>');
+    choiceButtons('v', VOTES, function(o){ res.vote2 = o.label;
+      el('<p class="year">Late 1960s</p><h2>What convinced you most?</h2><p>Pick one.</p><div id="c"></div>');
+      choiceButtons('c', [
+        {k:'fit',label:'The fit of the continents'},{k:'fossils',label:'The matching fossils'},{k:'rift',label:'Tharp\'s rift valley'},
+        {k:'spread',label:'Sea-floor spreading: finally a mechanism'},{k:'stripes',label:'The mirror-image stripes'}],
+        function(c){ res.convinced = c.label; finish(); });
+    });
+  }
+  function finish(){
+    var text = ['done — The Drifting Continents ('+level+')',
+      '1926 vote: '+res.vote1, 'Late-1960s vote: '+res.vote2, 'Most convincing: '+res.convinced,
+      'Predictions: rift '+(res.q1?'right':'missed')+', stripes '+(res.q2?'right':'missed')].join('\n');
+    finishScreen('The Drifting Continents', text,
+      '<div class="sticky">'+L('The fossils and rocks never changed. What changed was having a mechanism, and a new way of seeing the whole Earth. That\'s a revolution.','The 1926 evidence didn\'t change; what changed was a framework that made it fit. Plate tectonics isn\'t simply Wegener vindicated: continents ride on plates instead of plowing through the sea floor.')+'</div>',
+      function(){ res = {vote1:'', vote2:'', convinced:'', q1:false, q2:false}; start(); });
+  }
+  start();
+})();
+</script>
+</body>
+</html>
