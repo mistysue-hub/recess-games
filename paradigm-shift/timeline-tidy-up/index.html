@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timeline Tidy-Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45;
+    min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;text-align:left;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px}
+  .btn:active{transform:translateY(1px)}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.done{border-color:var(--good);background:#eaf5ee;color:var(--good);cursor:default}
+  .btn.miss{animation:shake .3s}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .slots{list-style:none;padding:0;margin:10px 0}
+  .slots li{border-bottom:1px solid var(--line);padding:8px 2px;min-height:42px}
+  .slots li .n{font-family:"Special Elite",monospace;color:var(--soft);margin-right:8px}
+  .slots li .d{color:var(--red);font-family:"Special Elite",monospace;margin-left:6px}
+  .stmt{font-size:20px;font-weight:700;margin:12px 0}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  @media (max-width:480px){.page{padding-left:34px}.page::before{left:18px}h1{font-size:24px}.row{flex-direction:column;gap:0}}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var level = params.get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+
+  var EVENTS = {
+    core: [
+      {t:'Scheele makes a gas he calls "fire air."', d:'around 1771–72'},
+      {t:'Priestley makes a gas in which a candle burns with a strong flame.', d:'August 1774'},
+      {t:'Priestley tells Lavoisier about his gas in Paris.', d:'October 1774'},
+      {t:'Lavoisier says the gas is an element and names it oxygen.', d:'a few years later'}
+    ],
+    extended: [
+      {t:'Scheele makes a gas he calls "fire air."', d:'around 1771–72'},
+      {t:'Priestley heats a red powder with a lens and collects a gas in which a candle flares.', d:'August 1774'},
+      {t:'Priestley describes his experiments to Lavoisier in Paris.', d:'October 1774'},
+      {t:'Priestley tests the gas on a mouse and calls it "dephlogisticated air."', d:'early 1775'},
+      {t:'Lavoisier argues the gas is an element and names it oxygène, "acid-former."', d:'late 1770s'},
+      {t:'Priestley dies, still defending phlogiston.', d:'1804'}
+    ]
+  };
+
+  var TIDY = [
+    {s:'"Joseph Priestley discovered oxygen in 1774."', a:'tidy',
+     why:'Scheele made the gas first, and Priestley didn\'t think it was a new element. He thought it was air with the phlogiston taken out.'},
+    {s:'"Several chemists made the same gas, and they argued about what it was."', a:'fair',
+     why:'That\'s what happened: Scheele, Priestley and Lavoisier all made it, and Priestley and Lavoisier explained it in completely different ways.'},
+    {s:'"Once Priestley and Lavoisier compared notes, they agreed about oxygen."', a:'tidy',
+     why:'They never agreed. Priestley defended phlogiston for the rest of his life.'},
+    {s:'"Lavoisier understood oxygen better than Priestley did, but he still got part of it wrong."', a:'fair',
+     why:'He thought oxygen is what makes acids acidic, which is why "oxygen" means "acid-maker." Many acids have no oxygen at all.'}
+  ];
+
+  var WHIG = [
+    {s:'"Priestley was close to the truth but too stubborn to see it."', a:'whig',
+     why:'This judges Priestley only by today\'s answer. Inside phlogiston theory, his conclusion made sense.'},
+    {s:'"Inside phlogiston theory, calling the gas \'dephlogisticated air\' was a sensible conclusion."', a:'fair',
+     why:'This reads Priestley on his own terms, the way Kuhn learned to read Aristotle.'},
+    {s:'"Aristotle was simply bad at observing the world."', a:'whig',
+     why:'Kuhn first thought this, then saw that Aristotle was asking different questions. Judging him by Newton\'s questions is Whig history.'},
+    {s:'"Aristotle\'s idea of motion covered more kinds of change than ours does, like growth and decay."', a:'fair',
+     why:'This describes Aristotle\'s own framework without judging it by today\'s.'}
+  ];
+
+  var result = {orderFirstTry:0, orderTotal:EVENTS[level].length, tidyRight:0, tidyTotal:TIDY.length, whigRight:0, whigTotal:WHIG.length};
+
+  function el(html){ app.innerHTML = html; window.scrollTo(0,0); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  function intro(){
+    el('<h1>Timeline Tidy-Up</h1>'+
+      '<div class="tag">Lab notebook · Module 1 · '+(level==='core'?'Core':'Extended')+'</div>'+
+      '<p>Science books like tidy stories. Real history is messier.</p>'+
+      '<div class="sticky">First, put the oxygen story in order. Then decide which history sentences are <b>too tidy</b>.</div>'+
+      '<button class="btn main" id="go">Open the notebook</button>');
+    document.getElementById('go').onclick = orderRound;
+  }
+
+  function orderRound(){
+    var events = EVENTS[level];
+    var order = shuffle(events.map(function(_,i){return i;}));
+    var next = 0, missesHere = 0, firstTry = 0;
+    function render(){
+      var html = '<h2>Round 1: Put it in order</h2>'+
+        '<p class="progress">Tap the event that happened next.</p><ol class="slots">';
+      for(var i=0;i<events.length;i++){
+        html += '<li><span class="n">'+(i+1)+'.</span>'+(i<next? esc(events[i].t)+'<span class="d">'+events[i].d+'</span>' : '')+'</li>';
+      }
+      html += '</ol><div id="choices"></div>';
+      el(html);
+      var box = document.getElementById('choices');
+      order.forEach(function(idx){
+        var b = document.createElement('button');
+        b.className = 'btn' + (idx<next ? ' done' : '');
+        b.textContent = events[idx].t;
+        if(idx<next){ b.disabled = true; b.textContent = '✓ ' + events[idx].t; }
+        else if(missesHere>=2 && idx===next){ b.className += ' hint'; }
+        b.onclick = function(){
+          if(idx<next) return;
+          if(idx===next){
+            if(missesHere===0) firstTry++;
+            next++; missesHere=0;
+            if(next===events.length){ result.orderFirstTry = firstTry; setTimeout(afterOrder, 300); }
+            render();
+          } else {
+            missesHere++;
+            b.classList.add('miss');
+            setTimeout(function(){ render(); var fb=document.createElement('div'); fb.className='feedback wrong';
+              fb.innerHTML = missesHere>=2 ? '<b class="v">Here\'s the one that comes next.</b>It\'s marked with a dashed red border. Check the dates in your reading.' : '<b class="v">Not yet.</b>Something else happened before that.';
+              document.getElementById('choices').before(fb); }, 300);
+          }
+        };
+        box.appendChild(b);
+      });
+    }
+    render();
+  }
+
+  function afterOrder(){
+    el('<h2>Round 1 done</h2>'+
+      '<p>You placed <b>'+result.orderFirstTry+' of '+result.orderTotal+'</b> events on the first try.</p>'+
+      '<div class="sticky">Notice: making the gas took years and three people. A textbook squeezes all of that into one name and one date.</div>'+
+      '<button class="btn main" id="go">Next round</button>');
+    document.getElementById('go').onclick = function(){ judgeRound(TIDY, 'Round 2: Too tidy or fair?', 'tidy', 'Too tidy', 'fair', 'Fair', 'tidyRight', level==='extended' ? whigIntro : finish); };
+  }
+
+  function whigIntro(){
+    el('<h2>Round 3: Whig history</h2>'+
+      '<div class="sticky"><b>Whig history</b> tells the past as a straight road to the present and judges old thinkers only by how close they came to today\'s answers.</div>'+
+      '<p>Sort each sentence: Whig history, or fair history that reads people on their own terms?</p>'+
+      '<button class="btn main" id="go">Start Round 3</button>');
+    document.getElementById('go').onclick = function(){ judgeRound(WHIG, 'Round 3: Whig or fair?', 'whig', 'Whig history', 'fair', 'Fair history', 'whigRight', finish); };
+  }
+
+  function judgeRound(items, title, aKey, aLabel, bKey, bLabel, scoreKey, then){
+    items = shuffle(items);
+    var i = 0;
+    function show(){
+      var it = items[i];
+      el('<h2>'+title+'</h2><p class="progress">Sentence '+(i+1)+' of '+items.length+'</p>'+
+        '<p class="stmt">'+esc(it.s)+'</p>'+
+        '<div class="row"><button class="btn" id="a">'+aLabel+'</button><button class="btn" id="b">'+bLabel+'</button></div>'+
+        '<div id="fb"></div>');
+      document.getElementById('a').onclick = function(){ answer(aKey); };
+      document.getElementById('b').onclick = function(){ answer(bKey); };
+    }
+    function answer(k){
+      var it = items[i], right = (k===it.a);
+      if(right) result[scoreKey]++;
+      var label = it.a===aKey ? aLabel : bLabel;
+      document.getElementById('a').disabled = true; document.getElementById('b').disabled = true;
+      document.getElementById('fb').innerHTML = '<div class="feedback'+(right?'':' wrong')+'"><b class="v">'+(right?'Yes: ':'Not quite. It\'s ')+label+'.</b>'+esc(it.why)+'</div>'+
+        '<button class="btn main" id="next">'+(i<items.length-1?'Next sentence':'Finish round')+'</button>';
+      document.getElementById('next').onclick = function(){ i++; if(i<items.length) show(); else then(); };
+    }
+    show();
+  }
+
+  function finish(){
+    var lines = [
+      'done — Timeline Tidy-Up ('+level+')',
+      'Order: '+result.orderFirstTry+' of '+result.orderTotal+' on the first try',
+      'Too tidy or fair: '+result.tidyRight+' of '+result.tidyTotal
+    ];
+    if(level==='extended') lines.push('Whig or fair: '+result.whigRight+' of '+result.whigTotal);
+    var text = lines.join('\n');
+    el('<h1>Notebook closed</h1>'+
+      '<div class="tag">Timeline Tidy-Up · '+(level==='core'?'Core':'Extended')+'</div>'+
+      '<p><b>What you found:</b></p><div class="report">'+esc(text)+'</div>'+
+      '<p class="anom">Anomaly: this game gave you the events in neat little boxes. Real history doesn\'t come that way.</p>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button>'+
+      '<p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p>'+
+      '<button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      function ok(){ document.getElementById('copied').classList.remove('hidden'); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{document.execCommand('copy'); ok();}catch(e){ document.getElementById('copied').textContent='Copy didn\'t work here. Read the box to Rocky instead.'; document.getElementById('copied').classList.remove('hidden'); } t.remove(); }
+    };
+    document.getElementById('again').onclick = function(){ result.orderFirstTry=0; result.tidyRight=0; result.whigRight=0; intro(); };
+  }
+
+  intro();
+})();
+</script>
+</body>
+</html>

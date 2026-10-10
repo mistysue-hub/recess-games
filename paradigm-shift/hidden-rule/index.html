@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guess the Hidden Rule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+    --c-red:#d64545; --c-blue:#3b78c4; --c-green:#3f9a5a; --c-yellow:#e9b824;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45; min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2,h3{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px} h3{font-size:18px;margin-top:10px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px;text-align:left}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  .btn:disabled{opacity:.6;cursor:default}
+  .piles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pile{background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px}
+  .pile h3{margin:0 0 6px;font-size:16px}
+  .pile.fit h3{color:var(--good)} .pile.no h3{color:var(--red)}
+  .cards{display:flex;flex-wrap:wrap;gap:6px}
+  .card{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:4px 6px;display:inline-flex;gap:2px;align-items:center;min-height:40px}
+  .card.big{padding:12px 16px;min-height:80px;gap:8px;margin:10px 0}
+  .card svg{display:block}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  .key{font-size:14px;color:var(--soft)}
+  @media (max-width:520px){.page{padding-left:34px}.page::before{left:18px}.piles{grid-template-columns:1fr}.row{flex-direction:column;gap:0}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script>
+(function(){
+  var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+  var COLORS = {r:['var(--c-red)','R','red'], b:['var(--c-blue)','B','blue'], g:['var(--c-green)','G','green'], y:['var(--c-yellow)','Y','yellow']};
+  var SHAPES = {c:'circle', s:'square', t:'triangle'};
+
+  // A card is a list of "shape+color" codes, e.g. "cr" = red circle.
+  var SETS = {
+    core: {
+      ruleA: {
+        examplesFit:  [['cr','sb'], ['tg','cy','sb','cg'], ['sy','sg']],
+        examplesNo:   [['cb'], ['tr','cg','sy'], ['sr','cb','tb']],
+        tests: [
+          {card:['ty','sg','cb','cy'], fit:true},
+          {card:['sr'], fit:false},
+          {card:['cg','sb','tr'], fit:false},
+          {card:['tb','tr'], fit:true},
+          {card:['cy','ty'], fit:true},
+          {card:['sg','tg','cr','sy','tb'], fit:false}
+        ],
+        optionsShort: ['An even number of shapes','At least one circle','At least one red shape'],
+        answer: 0,
+        explain: 'Every card that fits has 2 or 4 shapes. Every card that doesn\'t fit has 1, 3 or 5. One fitting card has no circle and another has no red, so those rules can\'t be it.'
+      },
+      ruleB: {
+        tests: [
+          {card:['sb','tb','cb'], fit:true},
+          {card:['cr','sb'], fit:false},
+          {card:['cg','sg','tg','cg'], fit:true},
+          {card:['ty','cb'], fit:false}
+        ],
+        optionsShort: ['Every shape on the card is the same color','An odd number of shapes','No squares on the card'],
+        answer: 0,
+        explain: 'Now every card that fits is all one color, and the cards that don\'t fit mix colors. A 4-shape card fit, so "odd number" can\'t be it, and a fitting card had squares.'
+      }
+    },
+    extended: {
+      ruleA: {
+        examplesFit:  [['cr','sb'], ['tb','tr','cg'], ['sr']],
+        examplesNo:   [['cb','sg'], ['cr','tr','sb'], ['sy','cy','tg','cb']],
+        tests: [
+          {card:['sr','sg'], fit:true},
+          {card:['tr','cr'], fit:false},
+          {card:['cb'], fit:false},
+          {card:['tr','cb','sy','tg'], fit:true},
+          {card:['sg','tb','cy'], fit:false},
+          {card:['cr','ty','ty'], fit:true}
+        ],
+        optionsShort: ['Exactly one red shape','At least one red shape','An odd number of shapes'],
+        answer: 0,
+        explain: 'A card with two reds doesn\'t fit, so "at least one red" is too loose. A 2-shape card fits and a 3-shape card doesn\'t, so it isn\'t about odd numbers. Exactly one red works for every card.'
+      },
+      ruleB: {
+        tests: [
+          {card:['cb','sg','ty'], fit:true},
+          {card:['sr','cb','tb'], fit:false},
+          {card:['cr','sg'], fit:true},
+          {card:['tr','cg','sg'], fit:false}
+        ],
+        optionsShort: ['No color appears twice on the card','Exactly one blue shape','At least three shapes'],
+        answer: 0,
+        explain: 'Every card that fits has all different colors, and the cards that don\'t fit repeat a color. A fitting card had no blue at all, and another had only 2 shapes.'
+      }
+    }
+  };
+  var S = SETS[level];
+  var res = {aRight:0, aTotal:S.ruleA.tests.length, aRuleTries:0, bRight:0, bTotal:S.ruleB.tests.length, bRuleTries:0, noticed:''};
+
+  function el(h){ app.innerHTML = h; window.scrollTo(0,0); }
+  function shapeSvg(code, size){
+    var s = code[0], c = COLORS[code[1]], z = size||28, h = z/2;
+    var inner;
+    if(s==='c') inner = '<circle cx="'+h+'" cy="'+h+'" r="'+(h-2)+'" fill="'+c[0]+'" stroke="#1f2a36" stroke-width="1.5"/>';
+    else if(s==='s') inner = '<rect x="2" y="2" width="'+(z-4)+'" height="'+(z-4)+'" fill="'+c[0]+'" stroke="#1f2a36" stroke-width="1.5"/>';
+    else inner = '<polygon points="'+h+',2 '+(z-2)+','+(z-2)+' 2,'+(z-2)+'" fill="'+c[0]+'" stroke="#1f2a36" stroke-width="1.5"/>';
+    var ty = s==='t' ? z*0.78 : h+5;
+    inner += '<text x="'+h+'" y="'+ty+'" text-anchor="middle" font-size="'+(z*0.38)+'" font-family="Atkinson Hyperlegible,sans-serif" font-weight="700" fill="#fff" stroke="#1f2a36" stroke-width=".6">'+c[1]+'</text>';
+    return '<svg width="'+z+'" height="'+z+'" viewBox="0 0 '+z+' '+z+'" role="img" aria-label="'+c[2]+' '+SHAPES[s]+'">'+inner+'</svg>';
+  }
+  function cardHtml(card, big){ return '<span class="card'+(big?' big':'')+'">'+card.map(function(x){return shapeSvg(x, big?44:26);}).join('')+'</span>'; }
+  function shuffledIdx(n){ var a=[]; for(var i=0;i<n;i++)a.push(i); for(var j=n-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[k];a[k]=t;} return a; }
+
+  function intro(){
+    el('<h1>Guess the Hidden Rule</h1><div class="tag">Lab notebook · Module 2 · '+(level==='core'?'Core':'Extended')+'</div>'+
+      '<p>Scientists learn a lot of their field from examples, not rule books. Let\'s see if you can too.</p>'+
+      '<div class="sticky">Some cards <b>fit</b> a secret rule. Some <b>don\'t</b>. Nobody will tell you the rule. Study the examples, then decide about new cards.</div>'+
+      '<p class="key">Each shape has a letter for its color: R red, B blue, G green, Y yellow.</p>'+
+      '<button class="btn main" id="go">Show me the cards</button>');
+    document.getElementById('go').onclick = function(){ testRound('A'); };
+  }
+
+  function testRound(which){
+    var R = which==='A' ? S.ruleA : S.ruleB;
+    // In round 3 the piles still show the old examples, so the learner predicts with the old rule.
+    var fit = S.ruleA.examplesFit.slice(), no = S.ruleA.examplesNo.slice();
+    var newFit = [], newNo = [];   // only the cards dealt after the rule changed
+    var i = 0;
+    function piles(){
+      return '<div class="piles"><div class="pile fit"><h3>✓ Fits</h3><div class="cards">'+fit.map(function(c){return cardHtml(c);}).join('')+'</div></div>'+
+        '<div class="pile no"><h3>✗ Doesn\'t fit</h3><div class="cards">'+no.map(function(c){return cardHtml(c);}).join('')+'</div></div></div>';
+    }
+    function show(){
+      var t = R.tests[i];
+      el('<h2>'+(which==='A'?'Round 1: New cards':'Round 3: More cards')+'</h2>'+
+        '<p class="progress">Card '+(i+1)+' of '+R.tests.length+'</p>'+ piles() +
+        '<p>Does this card fit the rule?</p>'+cardHtml(t.card, true)+
+        '<div class="row"><button class="btn" id="y">Fits</button><button class="btn" id="n">Doesn\'t fit</button></div><div id="fb"></div>');
+      document.getElementById('y').onclick = function(){ answer(true); };
+      document.getElementById('n').onclick = function(){ answer(false); };
+    }
+    function answer(said){
+      var t = R.tests[i], right = said===t.fit;
+      if(right){ if(which==='A') res.aRight++; else res.bRight++; }
+      document.getElementById('y').disabled = true; document.getElementById('n').disabled = true;
+      (t.fit?fit:no).push(t.card);
+      (t.fit?newFit:newNo).push(t.card);
+      var msg = right ? '<b class="v">Right.</b>It goes in the "'+(t.fit?'Fits':'Doesn\'t fit')+'" pile.' :
+                        '<b class="v">Not this time.</b>It '+(t.fit?'fits':'doesn\'t fit')+'. It\'s been added to that pile so you can study it.';
+      document.getElementById('fb').innerHTML = '<div class="feedback'+(right?'':' wrong')+'">'+msg+'</div><button class="btn main" id="next">'+(i<R.tests.length-1?'Next card':'Continue')+'</button>';
+      document.getElementById('next').onclick = function(){ i++; if(i<R.tests.length) show(); else (which==='A' ? pickRule('A', fit, no) : noticeScreen(newFit, newNo)); };
+    }
+    show();
+  }
+
+  function pickRule(which, fit, no){
+    var R = which==='A' ? S.ruleA : S.ruleB;
+    var order = shuffledIdx(R.optionsShort.length), misses = 0, wrongPicked = {};
+    function show(note){
+      var html = '<h2>'+(which==='A'?'Round 2: Name the rule':'Round 4: Name the new rule')+'</h2>'+
+        '<div class="piles"><div class="pile fit"><h3>✓ Fits</h3><div class="cards">'+fit.map(function(c){return cardHtml(c);}).join('')+'</div></div>'+
+        '<div class="pile no"><h3>✗ Doesn\'t fit</h3><div class="cards">'+no.map(function(c){return cardHtml(c);}).join('')+'</div></div></div>'+
+        '<p>Which rule matches <b>every</b> card in both piles?</p><div id="opts"></div>'+(note||'');
+      el(html);
+      var box = document.getElementById('opts');
+      order.forEach(function(idx){
+        var b = document.createElement('button'); b.className='btn'; b.textContent = R.optionsShort[idx];
+        if(wrongPicked[idx]) b.disabled = true;
+        b.onclick = function(){
+          if(which==='A') res.aRuleTries++; else res.bRuleTries++;
+          if(idx===R.answer){ done(true); }
+          else { misses++; wrongPicked[idx]=true;
+            if(misses>=2) done(false);
+            else show('<div class="feedback wrong"><b class="v">That rule doesn\'t match every card.</b>Find one card it gets wrong, then try again.</div>');
+          }
+        };
+        box.appendChild(b);
+      });
+    }
+    function done(right){
+      var verdict = right ? '<b class="v">That\'s the rule.</b>' : '<b class="v">Here\'s the rule: '+R.optionsShort[R.answer]+'.</b>';
+      el('<h2>'+(which==='A'?'Round 2: Name the rule':'Round 4: Name the new rule')+'</h2>'+
+        '<div class="feedback'+(right?'':' wrong')+'">'+verdict+R.explain+'</div>'+
+        (which==='A' ?
+          '<div class="sticky">Nobody told you the rule. You learned it from examples, the way Kuhn said scientists learn their paradigm.</div><button class="btn main" id="go">Keep going</button>' :
+          '<button class="btn main" id="go">Close the notebook</button>'));
+      document.getElementById('go').onclick = which==='A' ? function(){ testRound('B'); } : finish;
+    }
+    show();
+  }
+
+  function noticeScreen(fit, no){
+    el('<h2>Something changed</h2>'+
+      '<p>You got <b>'+res.bRight+' of '+res.bTotal+'</b> of those cards right.</p>'+
+      '<div class="sticky">Here\'s the secret: partway through, the rule changed. Nobody announced it.</div>'+
+      '<p>When your predictions started missing, what did you think?</p><div id="opts"></div>');
+    var opts = ['I thought I was just making mistakes','I wondered if the rule had changed','I didn\'t notice anything'];
+    var box = document.getElementById('opts');
+    opts.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o;
+      b.onclick=function(){ res.noticed=o;
+        el('<h2>That\'s an anomaly</h2><p class="anom">Anomaly: a result that doesn\'t fit the rules you\'re using.</p>'+
+          '<p>Scientists face the same choice you just did: blame themselves, or start to suspect the rules. You\'ll meet this again in Module 5.</p>'+
+          '<button class="btn main" id="go">Figure out the new rule</button>');
+        document.getElementById('go').onclick = function(){ pickRule('B', fit, no); };
+      }; box.appendChild(b); });
+  }
+
+  function finish(){
+    var text = ['done — Guess the Hidden Rule ('+level+')',
+      'First rule: '+res.aRight+' of '+res.aTotal+' cards right; named it in '+res.aRuleTries+(res.aRuleTries===1?' try':' tries'),
+      'Changed rule: '+res.bRight+' of '+res.bTotal+' cards right; named it in '+res.bRuleTries+(res.bRuleTries===1?' try':' tries'),
+      'When predictions missed: '+res.noticed].join('\n');
+    el('<h1>Notebook closed</h1><div class="tag">Guess the Hidden Rule · '+(level==='core'?'Core':'Extended')+'</div>'+
+      '<p><b>What you found:</b></p><div class="report">'+text.replace(/</g,'&lt;')+'</div>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button><p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      var c = document.getElementById('copied');
+      function ok(){ c.classList.remove('hidden'); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+    };
+    document.getElementById('again').onclick = function(){ res = {aRight:0, aTotal:S.ruleA.tests.length, aRuleTries:0, bRight:0, bTotal:S.ruleB.tests.length, bRuleTries:0, noticed:''}; intro(); };
+  }
+
+  intro();
+})();
+</script>
+</body>
+</html>
