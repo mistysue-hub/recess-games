@@ -604,6 +604,15 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
       }
     });
   }
+  /* One line per star (earned or missed), so Rocky can say why the rating is what it is. */
+  function captureStars(content) {
+    var lis = content.querySelectorAll("ul.stars li");
+    if (!lis.length) { return; }
+    State.variables.starNotes = Array.prototype.map.call(lis, function (li) {
+      var t = li.textContent.replace(/[★☆]/g, "").replace(/\s+/g, " ").trim().replace(/\s*[^.!?]*:$/, "");
+      return (li.classList.contains("on") ? "Earned: " : "Missed: ") + t;
+    });
+  }
   function resultsText() {
     var page = document.querySelector("#passages .passage");
     var out = ["done"];
@@ -614,6 +623,8 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
       if (/Detective rating/.test(p.textContent)) { out.push(p.textContent.replace(/\s+/g, " ").trim()); return true; }
       return false;
     });
+    var notes = State.variables.starNotes;
+    if (notes && notes.length) { out.push(""); out.push("Stars"); notes.forEach(function (n) { out.push("- " + n); }); }
     var box = page.querySelector(".casesummary");
     if (box) { out.push(""); textLines(box, out); }
     return out.join("\n");
@@ -654,6 +665,7 @@ $(document).on(":interview-done", function () { setTimeout(function () { $("#tab
     try { addCaseArt(content, title); } catch (e) {}
     try { addLegends(content); } catch (e) {}
     try { if (title === "Verdict") { bigStars(content); } } catch (e) {}
+    try { if (title === "Verdict") { captureStars(content); } } catch (e) {}
     try { addScene(content, title); } catch (e) {}
     try { if (title === "CaseClosed") { showSummary(content); } } catch (e) {}
     try { paginate(content, title); } catch (e) {}
