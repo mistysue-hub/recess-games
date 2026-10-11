@@ -135,8 +135,8 @@ button,input{font:inherit;color:inherit}
 .go:hover{transform:translateY(-2px) rotate(-1deg)}
 .after{font-family:var(--hand);font-size:1.45rem;color:var(--muted);line-height:1.2}
 .urltext{font-size:.85rem;color:var(--muted);word-break:break-all;user-select:all}
-.formbox{background:var(--sheet);border:2px dashed var(--line);border-radius:20px;padding:6px;min-width:0}
-.formbox iframe{display:block;width:100%;min-height:600px;border:0;border-radius:14px;background:#fff}
+.formbox{display:grid;justify-items:start;min-width:0}
+button.go{border:0;cursor:pointer}
 .fallback{font-size:.9rem;color:var(--muted)}
 .fallback a{color:var(--rocky);font-weight:800}
 .donecode{display:grid;gap:10px;justify-items:center;text-align:center;padding:26px 18px;border-radius:22px;
@@ -303,10 +303,10 @@ button,input{font:inherit;color:inherit}
             <li><span class="n" style="background:var(--teal)">3</span><span>Square 1024 × 1024, JPG or PNG, under 2 MB</span></li>
           </ul>
         </div>
-        <p class="after">On the form: the challenge, your name, and your picture. Press Submit and your code word pops up right here.</p>
+        <p class="after">On the form: the challenge, your name, and your picture. Press Submit, close the form, and your code word is waiting right here.</p>
       </div>
       <div class="formbox" id="formbox">
-        <iframe id="tally" title="Upload form" data-form-src="https://tally.so/embed/XxK6jY?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1"></iframe>
+        <button class="go" id="openform" type="button">Open the upload form →</button>
       </div>
       <p class="fallback" id="fallback">Form not showing up? <a href="https://tally.so/r/XxK6jY" target="_blank" rel="noopener">Open it in its own tab</a> and send it there, then tell Rocky the form wouldn't load here.</p>
       <div class="donecode" id="donecode" hidden role="status" aria-live="polite">
@@ -359,7 +359,6 @@ button,input{font:inherit;color:inherit}
     tabs.forEach((t,k)=>{t.toggleAttribute('aria-current',k===cur); if(k===cur)t.setAttribute('aria-current','step'); t.classList.toggle('done',k<cur)});
     $('#back').disabled=cur===0;
     $('#next').hidden=cur===steps.length-1;
-    if(cur===steps.length-1)loadForm();
     try{localStorage.setItem('cover-step',cur)}catch(e){}
   }
   $('#chal').addEventListener('input',refresh);
@@ -386,12 +385,19 @@ button,input{font:inherit;color:inherit}
   $('#back').addEventListener('click',()=>show(cur-1));
   // Upload form: load when step 4 opens; show the code word only after Tally says the form was submitted.
   const WORDS=['CANVAS','PALETTE','EASEL','SKETCH','DOODLE','PASTEL','STENCIL','CRAYON','SPLATTER','BRUSHSTROKE'];
-  function loadForm(){
-    // Load only once step 4 is on screen, so Tally sizes the form to the box it's in.
-    const f=$('#tally'); if(f.getAttribute('src')||f.dataset.tallySrc)return;
-    f.dataset.tallySrc=f.dataset.formSrc+'&dynamicHeight=1';
-    if(window.Tally&&Tally.loadEmbeds)Tally.loadEmbeds();
-    setTimeout(()=>{if(!f.getAttribute('src'))f.src=f.dataset.formSrc},2500);
+  function openForm(){
+    // The form opens as a Tally pop-up over Cover Studio (fits phones); a plain tab is the backup.
+    if(window.Tally&&Tally.openPopup){
+      Tally.openPopup('XxK6jY',{layout:'modal',width:560,hideTitle:true,onSubmit:gotSubmit});
+    } else {
+      window.open('https://tally.so/r/XxK6jY','_blank','noopener');
+    }
+  }
+  function gotSubmit(){
+    if(!$('#donecode').hidden)return;
+    const word=WORDS[Math.floor(Math.random()*WORDS.length)];
+    try{sessionStorage.setItem('cover-code',word)}catch(err){}
+    showCode(word);
   }
   function showCode(word){
     $('#codeword').textContent=word; $('#donecode').hidden=false;
@@ -402,11 +408,9 @@ button,input{font:inherit;color:inherit}
     if(!/^https:\/\/tally\.so$/.test(e.origin))return;
     let d=e.data; if(typeof d!=='string'||d.indexOf('Tally.FormSubmitted')<0)return;
     try{d=JSON.parse(d)}catch(err){return}
-    if(d.event!=='Tally.FormSubmitted')return;
-    const word=WORDS[Math.floor(Math.random()*WORDS.length)];
-    try{sessionStorage.setItem('cover-code',word)}catch(err){}
-    showCode(word);
+    if(d.event==='Tally.FormSubmitted')gotSubmit();
   });
+  $('#openform').addEventListener('click',openForm);
   paintArt(); refresh();
   let start=0; try{start=+localStorage.getItem('cover-step')||0}catch(e){}
   show(start);
