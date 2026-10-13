@@ -76,7 +76,8 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 .savebox .who{margin:6px 0 14px}
 .restored{margin:0 0 18px -30px}
 .rockybox{background:#f1f7ee;border:2px solid #2f6b45;border-radius:12px;padding:8px 14px 12px;margin:16px 0 10px}
-.rockybox .fnt{color:#24563a}.rb{margin:4px 0 8px;font-size:15px}
+.rockybox .fnt{color:#24563a}
+.kin{background:#fdf6e6;border:2px solid #b07a2a;border-radius:12px;padding:8px 14px 4px;margin:4px 0 14px}.kin .fnt{color:#7a4f12}.kin .who{margin:6px 0 8px}.rb{margin:4px 0 8px;font-size:15px}
 .rockybtn{background:#2f6b45!important}
 #rockytext{width:100%;box-sizing:border-box;margin-top:8px;font:14px/1.45 Nunito,sans-serif;border:2px dashed #2f6b45;border-radius:8px;padding:8px;background:#fff}
 @media print{.rockybox{display:none!important}}
@@ -84,7 +85,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 .example{font-size:15px;color:#5a5446;font-style:italic;margin:2px 0 6px}
 </style></head><body><form id="fn" class="map ws" autocomplete="off"><header class="sign"><div class="board"><small>Mile marker · Module 28 · Reading + Field Notes</small><h1>M28 · Launch Skills 🍁</h1></div><div class="post"></div></header>
 <p><em>This is the Canadian version of M28. Many adult rules (like the age of majority, ID and health cards) are set by your province or territory, so always check your own province's official sites.</em></p>
-<div class="restored" id="restored" hidden>📝 We kept the answers that were typed on this device last time. <button type="button" id="fresh">Not you? Start a blank page</button></div><section class="stop"><span class="pin"><b>1</b></span><h2>The stuff nobody teaches you</h2>
+<div class="restored" id="restored" hidden>📝 We kept the answers that were typed on this device last time. <button type="button" id="fresh">Not you? Switch person</button></div><section class="stop"><span class="pin"><b>1</b></span><h2>The stuff nobody teaches you</h2>
 <p>Nobody hands you a manual when you become an adult. Suddenly there are leases, bank accounts, credit scores and forms with names like "authorization." It can feel like everyone else got the manual and you didn't.</p>
 <p>Good news: <strong>this is the manual.</strong> Today you'll learn the everyday skills that make independent life work, from budgets to IDs to what changes when you become a legal adult. (Rocky has laminated his. He won't say how many times.)</p>
 </section><section class="stop"><span class="pin"><b>2</b></span><h2>Your first budget</h2>
@@ -192,41 +193,119 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 /* Paste the Google Apps Script web app URL here (ends in /exec). */
 var SAVE_URL = "https://script.google.com/macros/s/AKfycbxoX4m3tOko9b-drJp3VP6j2dnKzN66nHuEERJzhI5D3FWf3Zhe-hItQvAZf-yfDmJb/exec";
 var MODULE = "M28CA";
-var f = document.getElementById("fn"), st = document.getElementById("status"), KEY = "wcn-fieldnotes-" + MODULE;
-function data(){ var o = {}; new FormData(f).forEach(function(v,k){ o[k] = v; }); return o; }
-function grow(t){ t.style.height = "auto"; t.style.height = t.scrollHeight + "px"; }
-document.querySelectorAll("textarea").forEach(function(t){ t.addEventListener("input", function(){ grow(t); }); });
-function wipe(){ try { localStorage.removeItem(KEY); } catch (e) {} f.reset(); f.classList.remove("saved"); st.textContent = ""; document.getElementById("restored").hidden = true; document.querySelectorAll("textarea").forEach(grow); window.scrollTo(0, 0); }
-var fr=document.getElementById("fresh"); if(fr) fr.addEventListener("click", wipe);
-document.getElementById("fresh2").addEventListener("click", wipe);
-try { var d = JSON.parse(localStorage.getItem(KEY) || "{}");
-  if (Object.keys(d).some(function(k){ return d[k]; })) document.getElementById("restored").hidden = false;
-  Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
-    if (els.length && els[0] && els[0].type === "radio") { Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); }); }
-    else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } });
-} catch (e) {}
-f.addEventListener("input", function(){ try { localStorage.setItem(KEY, JSON.stringify(data())); } catch (e) {} });
-f.addEventListener("submit", function(ev){
-  ev.preventDefault();
-  var d = data(); d.module = MODULE; d.savedAt = new Date().toISOString();
-  if (!d.studentName) { st.className = "status err"; st.textContent = "Please add your name at the top first."; return; }
-  if (SAVE_URL.indexOf("http") !== 0) { st.className = "status err"; st.textContent = "Not connected yet (preview mode). Your answers are kept on this device."; return; }
-  var b = f.querySelector(".save"); b.disabled = true; st.className = "status"; st.textContent = "Saving...";
-  fetch(SAVE_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(d) })
-    .then(function(){ st.className = "status ok"; st.textContent = "✅ Saved! Your Field Notes are on their way. Print it if you like, then tap \u201cClear this page\u201d if someone else uses this device."; f.classList.add("saved"); try { localStorage.removeItem(KEY); } catch (e) {} })
-    .catch(function(){ st.className = "status err"; st.textContent = "Hmm, that didn't send. Check your internet and try again. Your answers are still here."; })
-    .then(function(){ b.disabled = false; });
-});
+(function(){ var c=document.createElement("style"); c.textContent=".wcn-bar[hidden]{display:none}.wcn-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;background:#eef6ea;border:2px solid #2f6b45;border-radius:12px;padding:8px 12px;margin:0 0 16px;font-weight:700;color:#24563a;font-size:15px}\n.wcn-bar button{border:2px solid #24563a;background:#fff;color:#24563a;border-radius:8px;padding:2px 10px;font-weight:700;cursor:pointer;font-size:14px}\n.wcn-lock,.wcn-lock body{overflow:hidden}\n.wcn-pick{position:fixed;inset:0;z-index:1000;background:rgba(20,30,40,.72);display:flex;align-items:center;justify-content:center;padding:16px}\n.wcn-pick[hidden]{display:none}\n.wcn-card{background:#fffdf6;color:#1d2a33;border:3px solid #2f6b45;border-radius:16px;max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35);font-family:Nunito,\"Trebuchet MS\",sans-serif}\n.wcn-card h2{margin:0 0 4px;font-size:22px;color:#24563a}\n.wcn-sub{margin:0 0 12px;font-size:15px}\n.wcn-list{display:flex;flex-direction:column;gap:8px}\n.wcn-p,.wcn-new,.wcn-go{border:2px solid #2f6b45;background:#fff;color:#1d2a33;border-radius:12px;padding:10px 12px;font:700 17px Nunito,\"Trebuchet MS\",sans-serif;text-align:left;cursor:pointer;width:100%}\n.wcn-p:hover,.wcn-p:focus{background:#eef6ea}\n.wcn-del{border-color:#b3541e;color:#8a3a12}\n.wcn-new{margin-top:10px;border-style:dashed}\n.wcn-newbox{margin-top:10px}.wcn-newbox label{display:block;font-weight:700;font-size:14px;margin-bottom:4px}\n.wcn-newbox input{width:100%;box-sizing:border-box;font:700 18px Nunito,sans-serif;padding:8px;border:2px solid #2f6b45;border-radius:8px;margin-bottom:8px}\n.wcn-go{background:#2f6b45;color:#fff;text-align:center}\n.wcn-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:12px}\n.wcn-foot button{border:0;background:none;color:#2f5f8a;text-decoration:underline;cursor:pointer;font-size:14px;padding:4px 0}\n@media print{.wcn-bar,.wcn-pick{display:none!important}}"; document.head.appendChild(c); })();
+/* Field Notes core: who's working (shared devices), each student's own unsaved answers, and saving. */
+(function(){
+  var f = document.getElementById("fn"), st = document.getElementById("status");
+  var n = document.getElementById("studentName"), e = document.getElementById("studentEmail");
+  var LK = "wcn-students", MAXP = 12, me = null;
+  function get(k, d){ try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (x) { return d; } }
+  function put(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (x) {} }
+  function del(k){ try { localStorage.removeItem(k); } catch (x) {} }
+  function norm(s){ return String(s || "").trim().toLowerCase().replace(/\s+/g, " "); }
+  function dkey(name){ return "wcn-fieldnotes-" + MODULE + "|" + norm(name); }
+  function people(){ var l = get(LK, null);
+    if (!l) { l = []; var o = get("wcn-student", {}); if (o.name) l.push({ name: o.name, email: o.email || "" }); put(LK, l); }
+    return l; }
+  function remember(name, email){ if (!norm(name)) return; var l = people().filter(function(p){ return norm(p.name) !== norm(name); });
+    l.unshift({ name: name.trim(), email: (email || "").trim() }); put(LK, l.slice(0, MAXP)); }
+  function forgetPerson(name){ put(LK, people().filter(function(p){ return norm(p.name) !== norm(name); }));
+    try { var ks = []; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k.indexOf("wcn-fieldnotes-") === 0 && k.slice(k.indexOf("|") + 1) === norm(name)) ks.push(k); } ks.forEach(del); } catch (x) {} }
+  /* Answers typed before this update were saved per page, not per student: hand them to whoever typed them. */
+  (function(){ var old = get("wcn-fieldnotes-" + MODULE, null); if (!old) return; del("wcn-fieldnotes-" + MODULE);
+    var owner = old.studentName || (people()[0] || {}).name || ""; if (!get(dkey(owner), null)) put(dkey(owner), old); })();
+
+  function data(){ var o = {}; new FormData(f).forEach(function(v, k){ o[k] = v; }); return o; }
+  function grow(t){ t.style.height = "auto"; t.style.height = t.scrollHeight + "px"; }
+  document.querySelectorAll("textarea").forEach(function(t){ t.addEventListener("input", function(){ grow(t); }); });
+  function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
+    if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
+    else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
+
+  /* The "working as" bar at the top of the page */
+  var bar = document.createElement("div"); bar.className = "wcn-bar"; bar.hidden = true;
+  bar.innerHTML = '👋 Working as <b></b> <button type="button">Switch person</button>';
+  var anchor = f.querySelector("section"); if (anchor) anchor.parentNode.insertBefore(bar, anchor); else f.insertBefore(bar, f.firstChild);
+  bar.querySelector("button").addEventListener("click", function(){ pick(true); });
+
+  function become(p){ // p = {name,email} or null for "someone new"
+    blank(); me = p;
+    n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
+    var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
+    var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
+    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
+    if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
+    if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }
+  }
+
+  /* The picker: shown before anything else when two or more students have used this device */
+  var ov = document.createElement("div"); ov.className = "wcn-pick"; ov.hidden = true;
+  ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-labelledby", "wcnPickT");
+  document.body.appendChild(ov);
+  function pick(cancelable){
+    var l = people(), editing = false;
+    function draw(){
+      ov.innerHTML = '<div class="wcn-card"><h2 id="wcnPickT">👋 Who\'s working on Field Notes?</h2>' +
+        '<p class="wcn-sub">More than one student uses this device. Pick your name so your answers stay yours.</p><div class="wcn-list"></div>' +
+        '<button type="button" class="wcn-new">➕ I\'m someone new</button>' +
+        '<div class="wcn-newbox" hidden><label for="wcnName">Your first and last name</label><input id="wcnName" type="text" autocomplete="off"><button type="button" class="wcn-go">Start</button></div>' +
+        '<div class="wcn-foot">' + (cancelable && me ? '<button type="button" class="wcn-x">← Back to ' + esc(me.name) + '</button>' : '') +
+        (l.length ? '<button type="button" class="wcn-edit">' + (editing ? 'Done removing' : 'Remove a name from this device') + '</button>' : '') + '</div></div>';
+      var box = ov.querySelector(".wcn-list");
+      l.forEach(function(p){ var b = document.createElement("button"); b.type = "button";
+        b.className = editing ? "wcn-p wcn-del" : "wcn-p"; b.textContent = (editing ? "✕ Remove " : "🧑 ") + p.name;
+        b.addEventListener("click", function(){
+          if (editing) { forgetPerson(p.name); l = people(); if (me && norm(me.name) === norm(p.name)) me = null; if (!l.length) editing = false; draw(); }
+          else { close(); become(p); } });
+        box.appendChild(b); });
+      ov.querySelector(".wcn-new").addEventListener("click", function(){ var nb = ov.querySelector(".wcn-newbox"); nb.hidden = false; ov.querySelector("#wcnName").focus(); });
+      var go = function(){ var v = ov.querySelector("#wcnName").value.trim(); if (!v) { ov.querySelector("#wcnName").focus(); return; }
+        var known = people().filter(function(p){ return norm(p.name) === norm(v); })[0];
+        close(); become(known || { name: v, email: "" }); if (!known) remember(v, ""); };
+      ov.querySelector(".wcn-go").addEventListener("click", go);
+      ov.querySelector("#wcnName").addEventListener("keydown", function(ev){ if (ev.key === "Enter") { ev.preventDefault(); go(); } });
+      var x = ov.querySelector(".wcn-x"); if (x) x.addEventListener("click", close);
+      var ed = ov.querySelector(".wcn-edit"); if (ed) ed.addEventListener("click", function(){ editing = !editing; draw(); });
+      var first = ov.querySelector(".wcn-p, .wcn-new"); if (first) first.focus();
+    }
+    draw(); ov.hidden = false; document.documentElement.classList.add("wcn-lock");
+  }
+  function close(){ ov.hidden = true; document.documentElement.classList.remove("wcn-lock"); }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  /* Start: 2+ students on this device → ask who; 1 → that student (with "Switch person" at top); 0 → blank page */
+  var l0 = people();
+  if (l0.length > 1) { become(null); pick(false); } else become(l0[0] || null);
+
+  /* Typing: keep this student's unsaved answers on this device, under their own name */
+  f.addEventListener("input", function(ev){
+    var nm = n.value.trim(), was = me ? me.name : "";
+    if (norm(nm) !== norm(was)) { del(dkey(was)); me = nm ? { name: nm, email: e.value.trim() } : null; } // the unsaved answers follow the name box
+    else if (me) me.email = e.value.trim();
+    put(dkey(nm), data());
+  });
+  ["fresh", "notme"].forEach(function(id){ var el = document.getElementById(id); if (el) el.addEventListener("click", function(){ pick(true); }); });
+  var done = document.getElementById("fresh2");
+  if (done) done.addEventListener("click", function(){ if (me) del(dkey(me.name)); del(dkey("")); me = null; become(null); window.scrollTo(0, 0); if (people().length) pick(false); });
+
+  f.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var d = data(); d.module = MODULE; d.savedAt = new Date().toISOString();
+    if (!d.studentName) { st.className = "status err"; st.textContent = "Please add your name first."; n.focus(); return; }
+    if (SAVE_URL.indexOf("http") !== 0) { st.className = "status err"; st.textContent = "Not connected yet (preview mode). Your answers are kept on this device."; return; }
+    var b = f.querySelector(".save"); b.disabled = true; st.className = "status"; st.textContent = "Saving...";
+    fetch(SAVE_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(d) })
+      .then(function(){ st.className = "status ok"; st.textContent = "✅ Saved! Your Field Notes are on their way. Print it if you like, then tap “Done! Clear this page” if someone else uses this device.";
+        f.classList.add("saved"); remember(d.studentName, d.studentEmail); me = { name: d.studentName.trim(), email: (d.studentEmail || "").trim() }; del(dkey(d.studentName)); })
+      .catch(function(){ st.className = "status err"; st.textContent = "Hmm, that didn't send. Check your internet and try again. Your answers are still here."; })
+      .then(function(){ b.disabled = false; });
+  });
+})();
 </script><script>
 (function(){
-  var SK="wcn-student", n=document.getElementById("studentName"), e=document.getElementById("studentEmail");
-  try { var me=JSON.parse(localStorage.getItem(SK)||"{}");
-    if(!n.value && me.name) n.value=me.name; if(!e.value && me.email) e.value=me.email;
-    if(me.name){ var w=document.getElementById("whoami"); w.hidden=false; w.querySelector("b").textContent=me.name; } } catch(x){}
-  function keep(){ try{ localStorage.setItem(SK, JSON.stringify({name:n.value.trim(), email:e.value.trim()})); }catch(x){} }
-  n.addEventListener("input",keep); e.addEventListener("input",keep);
-  function forget(){ try{ localStorage.removeItem(SK); }catch(x){} n.value=""; e.value=""; document.getElementById("whoami").hidden=true; }
-  ["fresh","fresh2","notme"].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener("click", forget); });
   var F=document.getElementById("fn"), Q=[["mission1", "1. A starter budget: money in, needs, savings, wants (estimates are fine)."], ["mission2", "2. Three adult-paperwork tasks you'll do this year (like a SIN, photo ID, a bank account or a TFSA), and when."], ["mission3", "3. Your credit plan: how you'll build credit safely (or why you'll wait)."], ["mission4", "4. Your adulthood checklist: your province's age of majority, plus which forms, registrations and conversations you'll take care of."], ["rocky1", "Which adult skill do you feel most ready for? Least ready?"], ["rocky2", "What's one thing you want to learn from your parents before you launch?"], ["theQuestion", "My new answer to The Question"]];
   function val(k){ var el=F.elements[k]; return el ? (el.value||"").trim() : ""; }
   var b=document.getElementById("toRocky"), st=document.getElementById("rstatus"), ta=document.getElementById("rockytext");
