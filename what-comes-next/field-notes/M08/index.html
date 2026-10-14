@@ -110,7 +110,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <li><strong>Middle ring:</strong> people you know a little (a friend's parent, a coach from two years ago).</li>
 <li><strong>Outer ring:</strong> people you'd <em>like</em> to know, like someone who does a career on your "ooh, maybe" list. You may not know them yet, but someone in your inner ring might.</li>
 </ol>
-<p>You don't need to write anything. Just tell Rocky, and he'll keep the map in your profile. (He's very excited about this. He may have already drawn the circles.)</p>
+<p>Type the names on the page, and when you copy your notes to Rocky, he'll keep the map in your profile. (He's very excited about this. He may have already drawn the circles.)</p>
 </section><section class="stop"><span class="pin"><b>4</b></span><h2>The informational interview</h2>
 <p>An <strong>informational interview</strong> is a short conversation (often 15 to 20 minutes) where you ask someone about their work. You are <em>not</em> asking for a job. You're asking for their story. Most people love being asked about their work, because almost nobody ever asks.</p>
 <p><strong>How to ask:</strong> a short, friendly message. Say who you are, how you found them, what you're curious about, and ask for a little of their time. Rocky will help you draft it, but the words should sound like you.</p>
@@ -169,7 +169,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 </ol>
 <p>Your parents' friends, coworkers and old classmates are a huge part of your network. And ask your Recess guides and mentors the same question.</p>
 </section><section class="stop mission"><span class="pin"><b>12</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Your People Map:</strong> at least eight people across the three rings, and what each one does or knows about.<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>One person you'd like an informational interview with</strong> (and who could introduce you, if you don't know them yet).<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>Three questions</strong> you'd ask them.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Then Rocky will help you draft your outreach message, in your words, to send after your parents say okay.</p>
 <p>Bonus: play <strong>The Phone Call</strong> with Rocky.</p>
@@ -211,7 +211,13 @@ var MODULE = "M08";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -225,7 +231,7 @@ var MODULE = "M08";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

@@ -216,7 +216,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 </section><section class="stop"><span class="pin"><b>13</b></span><h2>🚩 Red flags</h2>
 <p>Watch out for: having to <strong>pay to work</strong>, a <strong>vague job description</strong>, people constantly <strong>quitting</strong>, and <strong>pressure to decide on the spot</strong>.</p>
 </section><section class="stop"><span class="pin"><b>14</b></span><h2>🔭 Lane Peek</h2>
-<p>Pick a kind of workplace from the list above that you hadn't considered. What might a day there look like for you? A future artist at a government agency? A future engineer in a union shop? Tell Rocky what surprised you.</p>
+<p>Pick a kind of workplace from the list above that you hadn't considered. What might a day there look like for you? A future artist at a government agency? A future engineer in a union shop? Jot down what surprised you.</p>
 </section><section class="stop"><span class="pin"><b>15</b></span><h2>🍁 In Canada?</h2>
 <p>Your pay stub looks a little different: instead of Social Security and Medicare you'll see <strong>CPP</strong> (the Canada Pension Plan, which starts at 18) and <strong>EI</strong> (Employment Insurance), plus federal and provincial income tax, and you'll fill out a <strong>TD1</strong> form instead of a W-4. Minimum wage, overtime and breaks are set by your province. Health care comes from your provincial plan, and workplace safety claims go to your province's board (like WSIB in Ontario or WorkSafeBC).</p>
 </section><section class="stop ranger"><span class="pin"><b>16</b></span><h2>👪 Ask Your Parents</h2>
@@ -227,7 +227,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <li>If you have a job already: <strong>"Can we look at my pay stub together?"</strong></li>
 </ol>
 </section><section class="stop mission"><span class="pin"><b>17</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Your top three "great to work with" skills</strong> you already have, with an example of each.<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>One skill you want to build.</strong><textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>The kind of workplace</strong> that sounds best for you right now, and why.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>One employer you'd like to research,</strong> and what you found (careers page, reviews pattern, or a person to ask).<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: play <strong>First Day on the Job</strong> with Rocky.</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -268,7 +268,13 @@ var MODULE = "M10";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -282,7 +288,7 @@ var MODULE = "M10";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

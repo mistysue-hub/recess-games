@@ -110,7 +110,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <p><strong>Jobs that train you.</strong> Many companies hire right out of high school and train you, in retail, banking, logistics, manufacturing, customer service and more. Some even help pay for school later.</p>
 <p><strong>The Canadian Armed Forces (CAF).</strong> You can usually apply at <strong>17</strong> (with a parent's consent if you're under 18) if you're a citizen or permanent resident with at least <strong>Grade 10</strong> (Secondary IV in Quebec); some jobs need more. Applying includes an <strong>aptitude test (the CFAT)</strong>, a medical and an interview. Always talk to recruiters with a parent involved, and start at forces.ca.</p>
 <p>The <strong>Reserve Force</strong> is the part-time option, training near home while you work or study. <strong>ROTP</strong> pays for a degree at the <strong>Royal Military College</strong> or a civilian university, then you serve as an officer for a set number of years (RMC looks for about a 75% average).</p>
-<p>⚠️ <strong>Early-deadline paths.</strong> <strong>ROTP</strong> applications open around <strong>September of your final year</strong> and are usually due by <strong>late January</strong>, and pilot and some other air jobs by <strong>mid-December</strong>. Big national scholarships like the <strong>Loran Award</strong> close as early as <strong>mid-October of grade 12</strong>. <strong>Sports:</strong> for Canadian universities (<strong>U SPORTS</strong>) or colleges (<strong>CCAA</strong>), contact coaches by grade 11. If you might play at an <strong>NCAA</strong> Division I or II school in the US, the courses you take from <strong>grade 9</strong> on can count, and homeschoolers register with the <strong>NCAA Eligibility Center</strong> (eligibilitycenter.org). If you're even a little curious about any of these, tell Rocky now.</p>
+<p>⚠️ <strong>Early-deadline paths.</strong> <strong>ROTP</strong> applications open around <strong>September of your final year</strong> and are usually due by <strong>late January</strong>, and pilot and some other air jobs by <strong>mid-December</strong>. Big national scholarships like the <strong>Loran Award</strong> close as early as <strong>mid-October of grade 12</strong>. <strong>Sports:</strong> for Canadian universities (<strong>U SPORTS</strong>) or colleges (<strong>CCAA</strong>), contact coaches by grade 11. If you might play at an <strong>NCAA</strong> Division I or II school in the US, the courses you take from <strong>grade 9</strong> on can count, and homeschoolers register with the <strong>NCAA Eligibility Center</strong> (eligibilitycenter.org). If you're even a little curious about any of these, note it on the page now.</p>
 <p><strong>A planned gap year.</strong> A year between high school and your next step, used on purpose: working, volunteering, traveling or trying a field. With a goal, it makes you a stronger applicant. Without one, it can turn into a very long nap.</p>
 <p><strong>Straight into a job you love.</strong> Many creative, tech, sales and hospitality jobs mostly need skill and a portfolio, not a degree.</p>
 </section><section class="stop"><span class="pin"><b>5</b></span><h2>🛤️ More roads worth knowing</h2>
@@ -151,7 +151,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 </ol>
 <p>Ask a Recess guide or mentor the first question too. Their stories may surprise you.</p>
 </section><section class="stop mission"><span class="pin"><b>12</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Two or three roads</strong> that look exciting to you right now (any lane).<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>One road you'd never heard of</strong> before today.<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>One road you're sure isn't for you,</strong> and why.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>Any early-deadline paths</strong> you're curious about (ROTP, big scholarships like Loran, university or NCAA sports). It's fine to say "none."<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: play <strong>Route Planner</strong> with Rocky. Three travelers, three dreams, and you plan their routes. (Warning: Rocky will add plot twists. He can't help himself.)</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -192,7 +192,13 @@ var MODULE = "M06CA";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -206,7 +212,7 @@ var MODULE = "M06CA";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

@@ -147,7 +147,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <li><strong>"Do we have records of any testing accommodations I might need?"</strong> (Only if it applies to you.)</li>
 </ol>
 </section><section class="stop mission"><span class="pin"><b>11</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Which tests</strong> your lanes and top schools or programs need (or reward), including "none."<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>One date</strong> for each test you'll take, and its registration deadline.<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>Your prep plan:</strong> how and when you'll practice.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>Any credit-by-exam</strong> you're considering, plus the college credit policy you'll check first.<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: play <strong>Which Test?</strong> Rocky describes five students, and you pick the test each one needs.</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -188,7 +188,13 @@ var MODULE = "M18";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -202,7 +208,7 @@ var MODULE = "M18";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

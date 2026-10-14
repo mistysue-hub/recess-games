@@ -106,7 +106,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <li><strong>Schulich Leader Scholarships (STEM):</strong> high schools (and CEGEPs) <strong>nominate</strong> students, around <strong>late January</strong>. Homeschoolers should ask the program early how they can be nominated.</li>
 <li><strong>Sports:</strong> for Canadian universities (U SPORTS) or colleges (CCAA), you usually need to get admitted and keep your marks up, and many athletes start talking with coaches in grades 11 and 12. If you're aiming at an <strong>NCAA</strong> school in the US, courses can count from <strong>grade 9</strong>, so start by grade 9 or 10.</li>
 </ul>
-<p>If any of these interest you even a little, tell Rocky today. Finding out late is the one plot twist we really want to avoid.</p>
+<p>If any of these interest you even a little, note it on the page today. Finding out late is the one plot twist we really want to avoid.</p>
 </section><section class="stop"><span class="pin"><b>4</b></span><h2>Deadlines in every lane</h2>
 <h3>🎓 College and university</h3>
 <ul>
@@ -248,7 +248,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <li><strong>"Are there any family dates (trips, events) I should plan around?"</strong></li>
 </ol>
 </section><section class="stop mission"><span class="pin"><b>11</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Where your one calendar will live</strong> (app, planner or both).<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>Every deadline you know about</strong> for your lanes, tests and goals, including your province's application system. Rocky will help you find the ones you're missing.<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>Three "waiting on someone" tasks</strong> and when you'll start them.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>Any early-deadline paths</strong> you're considering (ROTP, Loran, sports, US schools, or "none").<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: play <strong>Form Monster Boss Battle</strong> and see if you can beat every deadline.</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -289,7 +289,13 @@ var MODULE = "M19CA";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -303,7 +309,7 @@ var MODULE = "M19CA";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

@@ -204,7 +204,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 </ol>
 <p>Every family's situation is different, and that's okay. Whatever your parents share, Rocky will help you find options that fit.</p>
 </section><section class="stop mission"><span class="pin"><b>13</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Your top one or two paths</strong> right now.<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>Rough cost and typical pay</strong> for each path: about what the training, tuition or startup costs, and what a career it leads to usually pays. (Rocky can help you look these up.)<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>Your take:</strong> does each path's cost make sense for its pay? What could make it cheaper?<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>Your money picture:</strong> what you learned from the money talk with your parents (a rough idea, "we'll figure it out," or "we haven't talked yet" all count), and the most you'd feel okay borrowing in total.<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: play <strong>Budget Survival</strong> with Rocky.</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -245,7 +245,13 @@ var MODULE = "M13";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -259,7 +265,7 @@ var MODULE = "M13";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

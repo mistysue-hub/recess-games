@@ -120,7 +120,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <blockquote>
 <p>"What do you think I'm really good at? What do people come to me for?"</p>
 </blockquote>
-<p>Good people to ask: parents, grandparents, a Recess guide or mentor, a co-op teacher, a coach, a boss, a friend. Write down nothing. Just listen, say thanks, and tell Rocky what they said. (Bonus: hearing nice things about yourself is a surprisingly great way to spend an afternoon.)</p>
+<p>Good people to ask: parents, grandparents, a Recess guide or mentor, a co-op teacher, a coach, a boss, a friend. No need to take notes while they talk. Just listen, say thanks, and type what they said on the page afterward. (Bonus: hearing nice things about yourself is a surprisingly great way to spend an afternoon.)</p>
 </section><section class="stop"><span class="pin"><b>4</b></span><h2>🎖️ Optional: the ASVAB Career Exploration Program</h2>
 <p>The <strong>ASVAB Career Exploration Program</strong> is a free aptitude test plus an interest inventory, run by the US Department of Defense. It measures things like word knowledge, math reasoning, mechanical understanding and electronics, and connects your results to careers in every lane: college, trades, apprenticeships, the military, and more.</p>
 <p>A few things to know:</p>
@@ -154,7 +154,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 </ol>
 <p>And one practical item: if you're curious about the <strong>ASVAB Career Exploration Program</strong>, ask them to help you find a local school or homeschool group that offers a testing session. Rocky can help you write a quick note.</p>
 </section><section class="stop mission"><span class="pin"><b>10</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Three strengths:</strong> one piece of knowledge, one skill, and one trait.<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>Your top skills</strong> from the CareerOneStop Skills Matcher (or, if you can't take it today, the three skills you'd rate yourself highest on).<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>What two other people said</strong> you're good at.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>One growth area:</strong> something you're not great at <em>yet</em>.<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">5. <strong>One strength</strong> and how you'd use it in two different lanes.<textarea name="mission5" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: play <strong>Skill Translator</strong> with Rocky. Name three everyday things you do, and he'll help you translate them from Teen into Résumé. ("Played a lot of video games" might become "strategic planning under pressure." Might.)</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -195,7 +195,13 @@ var MODULE = "M03";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -209,7 +215,7 @@ var MODULE = "M03";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }

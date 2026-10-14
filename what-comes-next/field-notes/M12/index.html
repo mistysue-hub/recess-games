@@ -150,7 +150,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <h3>💼 Career</h3>
 <p>Tech jobs at companies of every kind: every bakery, bank and hospital needs tech people.</p>
 </section><section class="stop"><span class="pin"><b>12</b></span><h2>🔭 Lane Peek</h2>
-<p>Pick a lane you weren't considering and imagine how tech skills could help there. A welder who builds a website for their shop? A nurse who designs a health app? Tell Rocky.</p>
+<p>Pick a lane you weren't considering and imagine how tech skills could help there. A welder who builds a website for their shop? A nurse who designs a health app? Jot down your idea.</p>
 </section><section class="stop ranger"><span class="pin"><b>13</b></span><h2>👪 Ask Your Parents</h2>
 <p>Ask your parents:</p>
 <ol>
@@ -159,7 +159,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <li><strong>"Could you help me get proof of homeschool enrollment for GitHub's Student Developer Pack?"</strong></li>
 </ol>
 </section><section class="stop mission"><span class="pin"><b>14</b></span><h2>Your mission 🗺️</h2>
-<p>Type your answers in the blue ✏️ boxes (and talk them through with Rocky):</p>
+<p>Type your answers in the blue ✏️ boxes:</p>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: mission</div><label class="q">1. <strong>Your trail:</strong> web development, game development, design, or something else.<textarea name="mission1" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">2. <strong>One embarrassingly small project</strong> you could finish in two weeks.<textarea name="mission2" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">3. <strong>Your practice schedule:</strong> when and how long.<textarea name="mission3" rows="1" placeholder="(type your answer here)"></textarea></label><label class="q">4. <strong>Your first tool</strong> to start with (or keep going with).<textarea name="mission4" rows="1" placeholder="(type your answer here)"></textarea></label></div>
 <p>Bonus: survive <strong>Scope Creep Showdown</strong>. Rocky plays a very friendly pizza-shop owner who keeps asking for "just one more thing." Can you keep your project (and your weekend) under control?</p>
 <div class="divider">· · · · ·  🥾  · · · · ·</div>
@@ -200,7 +200,13 @@ var MODULE = "M12";
   function fill(d){ Object.keys(d).forEach(function(k){ var els = f.elements[k]; if (!els) return;
     if (els.length && els[0] && els[0].type === "radio") Array.prototype.forEach.call(els, function(r){ r.checked = (r.value === d[k]); });
     else { els.value = d[k]; if (els.tagName === "TEXTAREA") grow(els); } }); }
-  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); }
+  function blank(){ f.reset(); f.classList.remove("saved"); st.textContent = ""; document.querySelectorAll("textarea").forEach(grow); when(); }
+  /* Boxes marked data-when="question:Answer|Other" show only when that answer is picked. */
+  function when(){ document.querySelectorAll("[data-when]").forEach(function(el){
+    var w = el.getAttribute("data-when").split(":"), els = f.elements[w[0]], v = "";
+    if (els) Array.prototype.forEach.call(els.length ? els : [els], function(r){ if (r.checked) v = r.value; });
+    el.hidden = !w[1].split("|").some(function(t){ return v.indexOf(t) > -1; }); }); }
+  f.addEventListener("change", when);
   var banner = document.getElementById("restored"), whoami = document.getElementById("whoami");
 
   /* The "working as" bar at the top of the page */
@@ -214,7 +220,7 @@ var MODULE = "M12";
     n.value = p ? p.name : ""; e.value = p ? (p.email || "") : "";
     var d = p ? get(dkey(p.name), {}) : get(dkey(""), {});
     var had = Object.keys(d).some(function(k){ return d[k] && k !== "studentName" && k !== "studentEmail"; });
-    fill(d); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
+    fill(d); when(); if (p) { n.value = p.name; if (p.email) e.value = p.email; }
     if (banner) { banner.hidden = !had; if (had && p) banner.firstChild.textContent = "📝 Welcome back, " + p.name + "! Your answers from last time on this device are still here. "; }
     if (p) { bar.hidden = false; bar.querySelector("b").textContent = p.name; } else bar.hidden = true;
     if (whoami) { whoami.hidden = !p; if (p) whoami.querySelector("b").textContent = p.name; }
