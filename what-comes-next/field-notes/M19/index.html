@@ -244,7 +244,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <h3>💬 Your new answer to The Question</h3>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: The Question</div><div class="example"><p>Next time someone asks what you're doing after graduation, you can say:</p>
 <p><em>"I've got every deadline on one calendar, and I'm already ahead on the first one."</em></p>
-<p>The Form Monster just felt a chill.</p></div><label class="q">Your answer, in your own words:<textarea name="theQuestion" rows="1" placeholder="(type your answer here)"></textarea></label></div></section><section class="stop savebox"><span class="pin"><b>✓</b></span><h2>💾 Save your Field Notes</h2><p class="whoami" id="whoami" hidden>👋 Saving as <b></b> (remembered on this device). <button type="button" id="notme">Not you?</button></p><div class="who"><div><label for="studentName">🧑 Your name</label><input type="text" id="studentName" name="studentName" required placeholder="first and last name"></div><div><label for="studentEmail">✉️ Email for your copy <span class="hint">(ask a parent first)</span></label><input type="email" id="studentEmail" name="studentEmail" placeholder="you@example.com"></div></div><div class="stamp">✍️ These are <strong>your</strong> words. Nobody grades spelling here.<br>👀 When you save, your Field Notes go to your parents and your Recess guides so they can help you plan, and a PDF copy comes to your email.</div><button class="save" type="submit">💾 Save my Field Notes</button><div class="status" id="status" role="status"></div><div class="rockybox"><div class="fnt">🤖 Send your notes to Rocky</div><p class="rb">So Rocky remembers your answers in later modules, copy them and paste them into your Rocky chat.</p><button class="save rockybtn" type="button" id="toRocky">📋 Copy my notes for Rocky</button><div class="status" id="rstatus" role="status"></div><textarea id="rockytext" readonly rows="6" hidden aria-label="Your notes for Rocky"></textarea></div><button class="printbtn" type="button" onclick="window.print()">🖨️ Print or save as PDF</button><button class="printbtn" type="button" id="fresh2">🧹 Done! Clear this page for the next person</button></section><footer>🏁 End of this stretch of trail. Save your Field Notes, copy them for Rocky, then paste them into your Rocky chat!</footer></form><script>
+<p>The Form Monster just felt a chill.</p></div><label class="q">Your answer, in your own words:<textarea name="theQuestion" rows="1" placeholder="(type your answer here)"></textarea></label></div></section><section class="stop savebox"><span class="pin"><b>✓</b></span><h2>💾 Save your Field Notes</h2><p class="whoami" id="whoami" hidden>👋 Saving as <b></b> (remembered on this device). <button type="button" id="notme">Not you?</button></p><div class="who"><div><label for="studentName">🧑 Your name</label><input type="text" id="studentName" name="studentName" required placeholder="first and last name"></div><div><label for="studentEmail">✉️ Email for your copy <span class="hint">(ask a parent first)</span></label><input type="email" id="studentEmail" name="studentEmail" placeholder="you@example.com"></div></div><div class="stamp">✍️ These are <strong>your</strong> words. Nobody grades spelling here.<br>👀 When you save, your Field Notes go to your parents and your Recess guides so they can help you plan, and a PDF copy comes to your email.</div><button class="save" type="button" id="saveAndCopy">💾 Save &amp; Copy for Rocky</button><div class="status" id="status" role="status"></div><div class="rockybox" id="rockybox" hidden><div class="fnt">🤖 Your notes for Rocky</div><p class="rb">Your notes have been copied. Paste them into your Rocky chat to continue.</p><textarea id="rockytext" readonly rows="6" hidden aria-label="Your notes for Rocky"></textarea></div><button class="printbtn" type="button" onclick="window.print()">🖨️ Print or save as PDF</button><button class="printbtn" type="button" id="fresh2">🧹 Done! Clear this page for the next person</button></section><footer>🏁 End of this stretch of trail. Save your Field Notes, copy them for Rocky, then paste them into your Rocky chat!</footer></form><script>
 /* Paste the Google Apps Script web app URL here (ends in /exec). */
 var SAVE_URL = "https://script.google.com/macros/s/AKfycbxoX4m3tOko9b-drJp3VP6j2dnKzN66nHuEERJzhI5D3FWf3Zhe-hItQvAZf-yfDmJb/exec";
 var MODULE = "M19";
@@ -369,16 +369,26 @@ var MODULE = "M19";
 (function(){
   var F=document.getElementById("fn"), Q=[["mission1", "1. Where your one calendar will live (app, planner or both)."], ["mission2", "2. Every deadline you know about for your lanes, tests and goals. Rocky will help you find the ones you're missing."], ["mission3", "3. Three \"waiting on someone\" tasks and when you'll start them."], ["mission4", "4. Any early-deadline paths you're considering (or \"none\")."], ["rocky1", "Which deadline is closest right now? What's your do date for it?"], ["rocky2", "What's one \"waiting on someone\" task you could start this week?"], ["theQuestion", "My new answer to The Question"]];
   function val(k){ var el=F.elements[k]; return el ? (el.value||"").trim() : ""; }
-  var b=document.getElementById("toRocky"), st=document.getElementById("rstatus"), ta=document.getElementById("rockytext");
-  b.addEventListener("click",function(){
+  var st=document.getElementById("status"), ta=document.getElementById("rockytext");
+
+  function buildRockyNotes(){
     var who=val("studentName"), t="🗒️ My M19 Field Notes"+(who?" from "+who:"")+"\n";
     Q.forEach(function(q){ t+=q[1]+": "+(val(q[0])||"(blank)")+"\n"; });
-    t+="Rocky, please keep these for my plan."; ta.value=t; ta.hidden=false;
-    function ok(){ st.className="status ok"; st.textContent="✅ Copied! Now paste it into your Rocky chat (Ctrl+V, or long-press → Paste) and send."; }
-    function manual(){ ta.focus(); ta.select(); st.className="status"; st.textContent="Select all the text in the box below, copy it, then paste it into your Rocky chat."; }
+    return t+"Rocky, please keep these for my plan.";
+  }
+
+  function copyRockyNotes(){
+    var t=buildRockyNotes();
+    ta.value=t; ta.hidden=false;
+    function ok(){ st.className="status ok"; st.textContent="✅ Saved and copied! Now paste it into your Rocky chat (Ctrl+V, or long-press → Paste) and send."; }
+    function manual(){ ta.focus(); ta.select(); st.className="status"; st.textContent="Select all the text below, copy it, then paste it into your Rocky chat."; }
     if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(ok,function(){ try{ document.execCommand("copy")?ok():manual(); }catch(x){ manual(); } }); ta.select(); }
     else { ta.select(); try{ document.execCommand("copy")?ok():manual(); }catch(x){ manual(); } }
-  });
+  }
+
+  var btn=document.getElementById("saveAndCopy");
+  if(btn) btn.addEventListener("click",function(){ setTimeout(copyRockyNotes,100); });
+
   ["fresh","fresh2"].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener("click",function(){ ta.value=""; ta.hidden=true; st.textContent=""; }); });
 })();
 </script></body></html>
