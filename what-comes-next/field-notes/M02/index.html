@@ -265,18 +265,29 @@ var MODULE = "M02";
   var done = document.getElementById("fresh2");
   if (done) done.addEventListener("click", function(){ if (me) del(dkey(me.name)); del(dkey("")); me = null; become(null); window.scrollTo(0, 0); if (people().length) pick(false); });
 
-  f.addEventListener("submit", function(ev){
-    ev.preventDefault();
-    var d = data(); d.module = MODULE; d.savedAt = new Date().toISOString();
-    if (!d.studentName) { st.className = "status err"; st.textContent = "Please add your name first."; n.focus(); return; }
-    if (SAVE_URL.indexOf("http") !== 0) { st.className = "status err"; st.textContent = "Not connected yet (preview mode). Your answers are kept on this device."; return; }
-    var b = f.querySelector(".save"); b.disabled = true; st.className = "status"; st.textContent = "Saving...";
-    fetch(SAVE_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(d) })
-      .then(function(){ st.className = "status ok"; st.textContent = "✅ Saved! Your Field Notes are on their way. Print it if you like, then tap “Done! Clear this page” if someone else uses this device.";
-        f.classList.add("saved"); remember(d.studentName, d.studentEmail); me = { name: d.studentName.trim(), email: (d.studentEmail || "").trim() }; del(dkey(d.studentName)); })
-      .catch(function(){ st.className = "status err"; st.textContent = "Hmm, that didn't send. Check your internet and try again. Your answers are still here."; })
-      .then(function(){ b.disabled = false; });
-  });
+  var saveAndCopyBtn = document.getElementById("saveAndCopy");
+  if (saveAndCopyBtn) {
+    saveAndCopyBtn.addEventListener("click", function(ev){
+      ev.preventDefault();
+      var d = data(); d.module = MODULE; d.savedAt = new Date().toISOString();
+      if (!d.studentName) { st.className = "status err"; st.textContent = "Please add your name first."; n.focus(); return; }
+      if (SAVE_URL.indexOf("http") !== 0) { st.className = "status err"; st.textContent = "Not connected yet (preview mode). Your answers are kept on this device."; return; }
+      var b = saveAndCopyBtn; b.disabled = true; st.className = "status"; st.textContent = "Saving...";
+      fetch(SAVE_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(d) })
+        .then(function(){
+          st.className = "status ok";
+          st.textContent = "✅ Saved and copied! Paste into your Rocky chat now.";
+          f.classList.add("saved");
+          remember(d.studentName, d.studentEmail);
+          me = { name: d.studentName.trim(), email: (d.studentEmail || "").trim() };
+          del(dkey(d.studentName));
+          var rockyBox = document.getElementById("rockybox");
+          if (rockyBox) rockyBox.hidden = false;
+        })
+        .catch(function(){ st.className = "status err"; st.textContent = "Hmm, that didn't send. Check your internet and try again. Your answers are still here."; })
+        .then(function(){ b.disabled = false; });
+    });
+  }
 })();
 </script><script>
 (function(){
