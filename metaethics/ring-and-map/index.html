@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Ring and Your Map</title>
+<style>/* Debate-card look shared by the Meta-ethics games (copied inline into each page at build). */
+:root{--desk:#3b2a1e;--desk2:#2a1d14;--card:#fbf5e6;--ink:#2b2118;--muted:#6b5b4a;--brass:#b8893a;--brass2:#8a6424;--line:#e4d6b8;--good:#2f6b3a;--goodbg:#e3f0e2;--bad:#8a2f22;--badbg:#f6e2dc;--note:#efe4c8}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at top,var(--desk) 0%,var(--desk2) 100%);min-height:100vh;color:var(--ink);font:17px/1.5 Georgia,"Times New Roman",serif;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:6px;padding:20px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.35);margin-bottom:16px;border-top:4px solid var(--brass)}
+.card.info{background:var(--note);border-top-color:var(--brass2);font-size:15px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:0 0 10px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px;font-family:system-ui,sans-serif}
+.compass{display:block;margin:0 auto 6px;width:34px;height:34px}
+.claim{font-size:20px;margin:6px 0 14px;padding:12px 14px;background:#fff;border-left:4px solid var(--brass);border-radius:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.one{grid-template-columns:1fr}
+button{font:600 16px/1.3 system-ui,sans-serif;padding:14px 12px;border-radius:6px;border:2px solid var(--brass2);background:#fff;color:var(--ink);cursor:pointer;min-height:52px;touch-action:manipulation}
+button:hover{background:#fff8e6}
+button:disabled{opacity:.55;cursor:default}
+button.primary{background:var(--brass2);color:#fff;border-color:var(--brass2)}
+button.picked{outline:3px solid var(--brass)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:6px;font-size:16px;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--goodbg);color:var(--good)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb.neutral{background:#f1ead8;color:var(--ink)}
+.prog{font:13px system-ui,sans-serif;color:var(--muted);margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.view{background:#fff;border-radius:6px;padding:10px 12px;border-left:4px solid var(--brass2);font-size:15px}
+.view b{font-family:system-ui,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--brass2)}
+pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+.hide{display:none}
+dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;font-size:14px;margin-top:6px}dl.bins dd{margin:0 0 0 0}
+@media (max-width:420px){.btns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <svg class="compass" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#b8893a" stroke-width="2"/><path d="M20 4 L24 20 L20 36 L16 20 Z" fill="#b8893a"/><circle cx="20" cy="20" r="2.5" fill="#fbf5e6"/></svg>
+    <h1>The Ring and Your Map</h1>
+    <p class="sub">Is Anything Really Wrong? · Session 6</p>
+    <div id="stage"></div>
+  </div>
+  <div class="card info">
+    <b>Gyges' ring:</b> twist it inward and you're invisible; twist it back and you reappear. Nobody would ever know what you did while wearing it.
+  </div>
+</div>
+<script>
+/* Shared helpers for the Meta-ethics games (inlined into each page at build). */
+const stage=document.getElementById('stage');
+function el(h){stage.innerHTML=h;window.scrollTo(0,0)}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function endp(s){return /[.!?]$/.test(s)?s:s+'.'}
+/* Scored question: two tries, then the answer. o={prog,head,q,opts,a,why,extra,next,cb(firstTry,tries)} */
+function ask(o){
+ let tries=0;
+ el(`${o.prog?`<div class="prog">${o.prog}</div>`:''}${o.head||''}<div class="claim">${esc(o.q)}</div><div class="btns one">${o.opts.map((t,j)=>`<button data-j="${j}">${esc(t)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+ stage.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{
+  const j=+b.dataset.j,fb=document.getElementById('fb');tries++;
+  if(j===o.a||tries>=2){
+   const ok=j===o.a;
+   stage.querySelectorAll('.btns button').forEach(x=>x.disabled=true);
+   b.classList.add('picked');
+   fb.className='fb show '+(ok?'good':'bad');
+   fb.innerHTML=`<b>${ok?'Yes':'The answer'}: ${esc(endp(o.opts[o.a]))}</b> ${o.why}${o.extra||''}<div class="btns one" style="margin-top:12px"><button class="primary" id="nx">${o.next||'Next'}</button></div>`;
+   document.getElementById('nx').onclick=()=>o.cb(ok&&tries===1,ok?tries:0);
+  } else {b.disabled=true;fb.className='fb show bad';fb.innerHTML='<b>Not quite.</b> Think back to the reading and try once more.';}
+ });
+}
+/* Unscored choice with a reveal. o={prog,head,q,opts,reveal(j)->html,next,cb(j)} */
+function choose(o){
+ el(`${o.prog?`<div class="prog">${o.prog}</div>`:''}${o.head||''}${o.q?`<p>${esc(o.q)}</p>`:''}<div class="btns one">${o.opts.map((t,j)=>`<button data-j="${j}">${esc(t)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+ stage.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{
+  const j=+b.dataset.j;
+  if(!o.reveal){o.cb(j);return;}
+  stage.querySelectorAll('.btns button').forEach(x=>x.disabled=true);b.classList.add('picked');
+  const fb=document.getElementById('fb');fb.className='fb show neutral';
+  fb.innerHTML=`${o.reveal(j)}<div class="btns one" style="margin-top:12px"><button class="primary" id="nx">${o.next||'Next'}</button></div>`;
+  document.getElementById('nx').onclick=()=>o.cb(j);
+ });
+}
+function views(v){return `<div class="two">${v.map(p=>`<div class="view"><b>${p[0]}</b><br>${p[1]}</div>`).join('')}</div>`}
+function showResults(text){
+ el(`<h2>Results</h2><pre class="res">${esc(text)}</pre><div class="btns one"><button class="primary" id="cp">Copy my results for Rocky</button></div><p class="sub" style="margin-top:12px">Paste them into your chat with Rocky, then type done.</p><div class="btns one"><button id="again">Play again</button></div>`);
+ document.getElementById('cp').onclick=()=>copyText(text);
+ document.getElementById('again').onclick=()=>location.reload();
+}
+function copyText(t){
+ const b=document.getElementById('cp');
+ let ok=false;const fin=()=>{ok=true;b.textContent='Copied! Now paste it to Rocky';};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
+}
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
+
+let ring=[],path=[],place=null,cScore=0,log=[];
+const RING=[
+ {s:"A store's free-sample tray says \"one per customer.\" You could take ten.",
+  o:["Take one, as the sign says","Be tempted, honestly","Take ten"],
+  g:"With no chance of being caught, anyone would take ten.",p:"Taking what isn't yours lets your appetites run you a little more, seen or unseen."},
+ {s:"Your friends' private group chat is open on a laptop, and they're talking about you.",
+  o:["Walk away without reading","Be tempted, honestly","Read every message"],
+  g:"Anyone would read it if they knew they'd never be found out.",p:"Snooping eats away at the trust that makes friendship good for <i>you</i>."},
+ {s:"Your neighbor's fence is broken. You could fix it secretly, and no one would ever know it was you.",
+  o:["Fix it, even with no credit","Maybe, if I had time","Skip it; nobody would know"],
+  g:"Nobody does good with no chance of reward or praise.",p:"A just person enjoys doing right. If you'd fix it anyway, Glaucon's claim about <i>everyone</i> is false."},
+ {s:"You broke a lamp. Your little brother is about to get blamed, and you're invisible.",
+  o:["Own up anyway","Be tempted to stay quiet","Let him take the blame"],
+  g:"Staying quiet is what anyone would do if they could get away with it.",p:"You'd have to live knowing it, and being at war with yourself is its own punishment."}
+];
+const VIEWS={
+ express:{n:"Expressivist",d:"Moral claims express attitudes or plans, not facts.",obj:"The if-then puzzle: in \"if cheating is wrong...\" nobody is booing, yet the argument works. (Session 5)"},
+ error:{n:"Error theorist",d:"Moral claims try to state facts, but there are none, so they're all false.",obj:"Is it really false that being cruel just for fun is wrong? And Sturgeon: sometimes real wrongness seems to be the best explanation. (Session 3)"},
+ relativist:{n:"Relativist",d:"Moral truth depends on a culture's or a person's standards.",obj:"The reformer problem: Douglass and Anthony would have been mistaken, and ending slavery only a change, not progress. (Session 4)"},
+ natreal:{n:"Naturalist realist",d:"Some moral claims are true for everyone, and moral facts are natural facts science could study.",obj:"Moore's open question: for any natural feature, \"but is that good?\" still seems like a real question. (Session 2)"},
+ nonnat:{n:"Non-naturalist realist",d:"Some moral claims are true for everyone, and moral facts are real but not natural.",obj:"Mackie's queerness: facts that command you, and that no sense can detect, would be very strange. (Session 3)"},
+ unsure:{n:"Still exploring",d:"You haven't settled on a view yet, and that's an honest place to be.",obj:"Try answering Glaucon: would you keep the ring off, and why? Your reason may point toward a view."}
+};
+function intro(){
+ el(`<h2>Part 1: The ring</h2><p>You have Gyges' ring: twist it and you're invisible. For each situation, say honestly what you'd do. Nobody is grading these.</p><p>Part 2 builds your map of where you stand. Part 3 has 2 check questions.</p><div class="btns one"><button class="primary" onclick="rq(0)">Put on the ring</button></div>`);
+}
+function rq(i){
+ const r=RING[i];
+ choose({prog:`Part 1 · Situation ${i+1} of ${RING.length}`,head:`<div class="claim">${esc(r.s)}</div>`,q:"What would you do?",opts:r.o,
+  reveal:j=>views([["Glaucon",r.g],["Plato",r.p]]),next:i<RING.length-1?'Next situation':'On to your map',
+  cb:j=>{ring.push(`S${i+1}: ${r.o[j]}`);i<RING.length-1?rq(i+1):m1();}});
+}
+function m1(){
+ choose({prog:'Part 2 · Your map, question 1',head:`<h2>Where do you stand?</h2>`,q:"When people say \"stealing is wrong,\" are they trying to state a fact?",
+  opts:["Yes, they're stating (or trying to state) a fact","No, they're expressing an attitude or a plan","Not sure yet"],
+  cb:j=>{path.push(["fact","attitude","unsure"][j]);j===1?land('express'):j===2?land('unsure'):m2();}});
+}
+function m2(){
+ choose({prog:'Part 2 · Your map, question 2',q:"Are there any moral facts at all?",opts:["Yes, at least some","No, none"],
+  cb:j=>{path.push(["some facts","no facts"][j]);j===1?land('error'):m3();}});
+}
+function m3(){
+ choose({prog:'Part 2 · Your map, question 3',q:"Are those moral facts the same for everyone, or do they depend on a culture or a person?",opts:["The same for everyone","They depend on a culture or a person"],
+  cb:j=>{path.push(["same for everyone","depends"][j]);j===1?land('relativist'):m4();}});
+}
+function m4(){
+ choose({prog:'Part 2 · Your map, question 4',q:"Could science, in principle, study moral facts?",opts:["Yes, they're natural facts","No, they're a different kind of fact"],
+  cb:j=>{path.push(["natural","not natural"][j]);land(j===0?'natreal':'nonnat');}});
+}
+function land(k){
+ place=VIEWS[k];
+ el(`<h2>Your map says: ${place.n}</h2><div class="claim">${esc(place.d)}</div><div class="fb show neutral"><b>The strongest objection to face:</b> ${esc(place.obj)}</div><p style="margin-top:14px">Every view here has serious defenders, and every one faces a hard objection. Bring this one to Rocky.</p><div class="btns one"><button class="primary" onclick="chk(0)">On to the check questions</button></div>`);
+}
+const CHECK=[
+ {q:"Glaucon tells the story of Gyges to argue that people act justly...",opts:["because it makes them happiest","only because they might get caught","because the gods command it"],a:1,why:"His point is that justice is done \"of necessity\": take away the risk of being caught and people would act unjustly."},
+ {q:"Susan Wolf's \"moral saint\" would...",opts:["ignore morality completely","live the best possible life","have no time for many things that make a life good"],a:2,why:"Wolf argued that a life spent making every act as moral as possible would leave out much that makes a life good, so morality isn't the only thing that matters."}
+];
+function chk(i){
+ const c=CHECK[i];
+ ask({prog:`Part 3 · Check question ${i+1} of ${CHECK.length}`,q:c.q,opts:c.opts,a:c.a,why:c.why,next:i<CHECK.length-1?'Next question':'See my results',
+  cb:(first,tries)=>{if(first)cScore++;log.push(`Q${i+1} ${tries===1?'right first try':tries===2?'right on try 2':'missed twice'}`);i<CHECK.length-1?chk(i+1):finish();}});
+}
+function finish(){
+ showResults(`The Ring and Your Map (Is Anything Really Wrong? M06)
+With the ring I would:
+- ${ring.join('\n- ')}
+My map: ${place.n} (answers: ${path.join(' > ')})
+Objection to face: ${place.obj}
+Check questions: ${cScore} of ${CHECK.length} right first try (${log.join('; ')})`);
+}
+intro();
+</script>
+</body>
+</html>

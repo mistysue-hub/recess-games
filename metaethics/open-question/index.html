@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Open Question Machine</title>
+<style>/* Debate-card look shared by the Meta-ethics games (copied inline into each page at build). */
+:root{--desk:#3b2a1e;--desk2:#2a1d14;--card:#fbf5e6;--ink:#2b2118;--muted:#6b5b4a;--brass:#b8893a;--brass2:#8a6424;--line:#e4d6b8;--good:#2f6b3a;--goodbg:#e3f0e2;--bad:#8a2f22;--badbg:#f6e2dc;--note:#efe4c8}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at top,var(--desk) 0%,var(--desk2) 100%);min-height:100vh;color:var(--ink);font:17px/1.5 Georgia,"Times New Roman",serif;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:6px;padding:20px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.35);margin-bottom:16px;border-top:4px solid var(--brass)}
+.card.info{background:var(--note);border-top-color:var(--brass2);font-size:15px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:0 0 10px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px;font-family:system-ui,sans-serif}
+.compass{display:block;margin:0 auto 6px;width:34px;height:34px}
+.claim{font-size:20px;margin:6px 0 14px;padding:12px 14px;background:#fff;border-left:4px solid var(--brass);border-radius:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.one{grid-template-columns:1fr}
+button{font:600 16px/1.3 system-ui,sans-serif;padding:14px 12px;border-radius:6px;border:2px solid var(--brass2);background:#fff;color:var(--ink);cursor:pointer;min-height:52px;touch-action:manipulation}
+button:hover{background:#fff8e6}
+button:disabled{opacity:.55;cursor:default}
+button.primary{background:var(--brass2);color:#fff;border-color:var(--brass2)}
+button.picked{outline:3px solid var(--brass)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:6px;font-size:16px;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--goodbg);color:var(--good)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb.neutral{background:#f1ead8;color:var(--ink)}
+.prog{font:13px system-ui,sans-serif;color:var(--muted);margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.view{background:#fff;border-radius:6px;padding:10px 12px;border-left:4px solid var(--brass2);font-size:15px}
+.view b{font-family:system-ui,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--brass2)}
+pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+.hide{display:none}
+dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;font-size:14px;margin-top:6px}dl.bins dd{margin:0 0 0 0}
+@media (max-width:420px){.btns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <svg class="compass" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#b8893a" stroke-width="2"/><path d="M20 4 L24 20 L20 36 L16 20 Z" fill="#b8893a"/><circle cx="20" cy="20" r="2.5" fill="#fbf5e6"/></svg>
+    <h1>The Open Question Machine</h1>
+    <p class="sub">Is Anything Really Wrong? · Session 2</p>
+    <div id="stage"></div>
+  </div>
+  <div class="card info">
+    <b>The test:</b> if "good" really <i>meant</i> some feature, then asking "this has the feature, but is it good?" would be pointless, like asking "is this unmarried man a bachelor?" If the question still feels real, the definition might not capture what "good" means.
+  </div>
+</div>
+<script>
+const DEFS=[
+ {k:"pleasure",name:"Pleasure",def:"Good just means: whatever brings the most pleasure.",
+  case:"A crowd gets a lot of real pleasure from laughing at someone who tripped and got hurt. That's plenty of pleasure.",
+  q:"It brought lots of pleasure. Is it still a real question whether laughing was good?",
+  moore:"The question stays open, so \"good\" can't just mean \"pleasant\". Pleasure and goodness are two different ideas, even if they often go together.",
+  nat:"A naturalist could refine it: maybe good means the most pleasure <i>for everyone</i>, counting the hurt person's pain too. The test then has to be run again on the new definition."},
+ {k:"survival",name:"Survival",def:"Good just means: whatever helps us survive.",
+  case:"Hoarding all the town's food would help your family survive the longest, while your neighbours go hungry.",
+  q:"It helps survival. Is it still a real question whether hoarding is good?",
+  moore:"You can sensibly ask whether surviving that way is good, so \"good\" can't just mean \"helps survival\".",
+  nat:"A naturalist might say good means helping a whole <i>community</i> flourish, not one family. That's a natural fact too, and maybe a better candidate."},
+ {k:"approval",name:"Social approval",def:"Good just means: what your society approves of.",
+  case:"A society approves of keeping some children from ever going to school.",
+  q:"Their society approves. Is it still a real question whether it's good?",
+  moore:"People inside and outside that society can sensibly ask whether it's good. If \"good\" meant \"approved\", that question would make no sense.",
+  nat:"A defender might bite the bullet: in that society it <i>is</i> good, and \"is it really good?\" just means \"would <i>we</i> approve?\". You'll meet this view, relativism, in Session 4."},
+ {k:"want",name:"What people want",def:"Good just means: what most people want.",
+  case:"Nearly everyone in a group wants to leave one kid out of every game.",
+  q:"Most people want it. Is it still a real question whether it's good?",
+  moore:"\"Most people want it, but is it good?\" is a real question, so \"good\" can't just mean \"wanted\".",
+  nat:"A naturalist could switch to what people <i>would</i> want if they were calm, informed and fair. Moore's challenge: is <i>that</i> good? Try the test again."}
+];
+const CHECK=[
+ {q:"Which question is pointless, because the answer is already built into the words?",
+  o:["\"Is this pleasant thing good?\"","\"Is this square four-sided?\"","\"Is this popular song good?\""],a:1,
+  why:"\"Square\" already means a four-sided shape, so the answer is in the words. The other two are real questions, which is Moore's point about \"good\"."},
+ {q:"Naturalists think moral facts are...",
+  o:["commands from an authority","feelings with no truth to them","natural facts science could study"],a:2,
+  why:"Naturalism says goodness is a natural feature, like pleasure or flourishing, that science could in principle study."}
+];
+let d=0,verdicts={},ci=0,tries=0,checkScore=0,checkLog=[],stance=null;
+const stage=document.getElementById('stage');
+function el(h){stage.innerHTML=h;window.scrollTo(0,0)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function intro(){
+ el(`<h2>Feed it a definition</h2><p>The machine will test 4 famous definitions of "good". For each one you'll see a case. You decide whether "but is it good?" is still a real question.</p><p>There are no right answers in this part. At the end there are 2 quick check questions.</p><div class="btns one"><button class="primary" onclick="showDef()">Start the machine</button></div>`);
+}
+function showDef(){
+ const x=DEFS[d];
+ el(`<div class="prog">Definition ${d+1} of ${DEFS.length}</div><h2>${x.name}</h2><div class="claim">${x.def}</div><p><b>Test case:</b> ${esc(x.case)}</p><p>${esc(x.q)}</p><div class="btns one"><button onclick="judge('open',this)">Yes, it's still a real question</button><button onclick="judge('closed',this)">No, it's obviously good, so the question is pointless</button></div><div class="fb" id="fb"></div>`);
+}
+function judge(v,btn){
+ const x=DEFS[d];verdicts[x.k]=v;
+ document.querySelectorAll('.btns button').forEach(b=>b.disabled=true);btn.classList.add('picked');
+ const head=v==='open'?`<b>The question stayed open. This definition cracked.</b>`:`<b>You closed the question. This definition survived your test.</b>`;
+ const fb=document.getElementById('fb');fb.className='fb show neutral';
+ fb.innerHTML=`${head}<div class="two"><div class="view"><b>Moore's side</b><br>${x.moore}</div><div class="view"><b>Naturalist's side</b><br>${x.nat}</div></div><div class="btns one" style="margin-top:12px"><button class="primary" onclick="nextDef()">${d<DEFS.length-1?'Next definition':'On to the check questions'}</button></div>`;
+}
+function nextDef(){d++; if(d<DEFS.length)showDef(); else showCheck();}
+function showCheck(){
+ tries=0;const c=CHECK[ci];
+ el(`<div class="prog">Check question ${ci+1} of ${CHECK.length}</div><div class="claim">${esc(c.q)}</div><div class="btns one">${c.o.map((o,j)=>`<button id="o${j}" onclick="answer(${j})">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+}
+function answer(j){
+ const c=CHECK[ci],fb=document.getElementById('fb');tries++;
+ if(j===c.a){
+  if(tries===1)checkScore++;
+  checkLog.push(`Q${ci+1} ${tries===1?'right first try':'right on try 2'}`);
+  done(true);
+ } else if(tries===1){
+  document.getElementById('o'+j).disabled=true;
+  fb.className='fb show bad';fb.innerHTML='<b>Not quite.</b> Think back to the reading and try once more.';
+ } else {
+  checkLog.push(`Q${ci+1} missed twice`);done(false);
+ }
+ function done(ok){
+  document.querySelectorAll('.btns button').forEach(b=>b.disabled=true);
+  fb.className='fb show '+(ok?'good':'bad');
+  fb.innerHTML=`<b>${ok?'Yes':'The answer'}: ${esc(c.o[c.a])}</b> ${esc(c.why)}<div class="btns one" style="margin-top:12px"><button class="primary" onclick="nextCheck()">${ci<CHECK.length-1?'Next question':'Last step'}</button></div>`;
+ }
+}
+function nextCheck(){ci++; if(ci<CHECK.length)showCheck(); else final();}
+function final(){
+ const cracked=DEFS.filter(x=>verdicts[x.k]==='open').length;
+ el(`<h2>Your verdict</h2><p>${cracked} of ${DEFS.length} definitions cracked on your test.</p><p>Moore thought <i>every</i> definition cracks this way. What do you think?</p><div class="btns one"><button onclick="setStance('Good can be defined (some definition will survive)')">Good can be defined; some definition will survive</button><button onclick="setStance('Good cannot be defined (Moore is right)')">Good can't be defined; Moore is right</button><button onclick="setStance('Not sure yet')">Not sure yet</button></div>`);
+}
+function setStance(s){stance=s;results();}
+function resultText(){
+ const lines=DEFS.map(x=>`- ${x.name}: ${verdicts[x.k]==='open'?'cracked (question stayed open)':'survived (question closed)'}`).join('\n');
+ return `Open Question Machine (Is Anything Really Wrong? M02)
+Definitions:
+${lines}
+Check questions: ${checkScore} of ${CHECK.length} right first try (${checkLog.join('; ')})
+My verdict: ${stance}`;
+}
+function results(){
+ el(`<h2>Results</h2><pre class="res">${esc(resultText())}</pre><div class="btns one"><button class="primary" id="cp" onclick="copyRes()">Copy my results for Rocky</button></div><p class="sub" style="margin-top:12px">Paste them into your chat with Rocky, then type done.</p><div class="btns one"><button onclick="restart()">Play again</button></div>`);
+}
+function copyRes(){
+ const t=resultText(),b=document.getElementById('cp');
+ const done=()=>{b.textContent='Copied! Now paste it to Rocky';};
+ let ok=false;const fin=()=>{ok=true;done();};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
+}
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
+function restart(){d=0;verdicts={};ci=0;tries=0;checkScore=0;checkLog=[];stance=null;intro();}
+intro();
+</script>
+</body>
+</html>

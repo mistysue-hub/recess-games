@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claim Sorter</title>
+<style>/* Debate-card look shared by the Meta-ethics games (copied inline into each page at build). */
+:root{--desk:#3b2a1e;--desk2:#2a1d14;--card:#fbf5e6;--ink:#2b2118;--muted:#6b5b4a;--brass:#b8893a;--brass2:#8a6424;--line:#e4d6b8;--good:#2f6b3a;--goodbg:#e3f0e2;--bad:#8a2f22;--badbg:#f6e2dc;--note:#efe4c8}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at top,var(--desk) 0%,var(--desk2) 100%);min-height:100vh;color:var(--ink);font:17px/1.5 Georgia,"Times New Roman",serif;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:6px;padding:20px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.35);margin-bottom:16px;border-top:4px solid var(--brass)}
+.card.info{background:var(--note);border-top-color:var(--brass2);font-size:15px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:0 0 10px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px;font-family:system-ui,sans-serif}
+.compass{display:block;margin:0 auto 6px;width:34px;height:34px}
+.claim{font-size:20px;margin:6px 0 14px;padding:12px 14px;background:#fff;border-left:4px solid var(--brass);border-radius:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.one{grid-template-columns:1fr}
+button{font:600 16px/1.3 system-ui,sans-serif;padding:14px 12px;border-radius:6px;border:2px solid var(--brass2);background:#fff;color:var(--ink);cursor:pointer;min-height:52px;touch-action:manipulation}
+button:hover{background:#fff8e6}
+button:disabled{opacity:.55;cursor:default}
+button.primary{background:var(--brass2);color:#fff;border-color:var(--brass2)}
+button.picked{outline:3px solid var(--brass)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:6px;font-size:16px;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--goodbg);color:var(--good)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb.neutral{background:#f1ead8;color:var(--ink)}
+.prog{font:13px system-ui,sans-serif;color:var(--muted);margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.view{background:#fff;border-radius:6px;padding:10px 12px;border-left:4px solid var(--brass2);font-size:15px}
+.view b{font-family:system-ui,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--brass2)}
+pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+.hide{display:none}
+dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;font-size:14px;margin-top:6px}dl.bins dd{margin:0 0 0 0}
+@media (max-width:420px){.btns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <svg class="compass" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#b8893a" stroke-width="2"/><path d="M20 4 L24 20 L20 36 L16 20 Z" fill="#b8893a"/><circle cx="20" cy="20" r="2.5" fill="#fbf5e6"/></svg>
+    <h1>Claim Sorter</h1>
+    <p class="sub">Is Anything Really Wrong? · Session 1</p>
+    <div id="stage"></div>
+  </div>
+  <div class="card info" id="key">
+    <dl class="bins">
+      <dt>Fact</dt><dd>Says how the world is; true or false. Includes claims about what people believe or do.</dd>
+      <dt>Taste</dt><dd>States a preference.</dd>
+      <dt>Moral</dt><dd>Says right, wrong, good, bad, fair, or should.</dd>
+      <dt>Mixed</dt><dd>More than one kind in one sentence.</dd>
+    </dl>
+  </div>
+</div>
+<script>
+const CLAIMS=[
+ {t:"The Moon has no air to breathe.",a:"Fact",why:"It describes how the world is, and you could check it."},
+ {t:"Board games are more fun than video games.",a:"Taste",why:"It's a preference. Someone who disagrees hasn't made a mistake."},
+ {t:"It's wrong to make fun of someone for how they look.",a:"Moral",why:"It says something is wrong."},
+ {t:"Most people think lying is wrong.",a:"Fact",why:"It's about what people believe. You could check it with a survey, so it's a fact claim, even though it mentions wrongness."},
+ {t:"You ought to keep a promise even when it's inconvenient.",a:"Moral",why:"\"Ought\" tells someone what they should do."},
+ {t:"That movie's ending was boring.",a:"Taste",why:"It's a reaction to the movie, not something anyone could prove."},
+ {t:"Cheating on the test was unfair, and the test had 40 questions.",a:"Mixed",why:"\"Unfair\" is moral; \"40 questions\" is a fact."},
+ {t:"Sound travels faster in water than in air.",a:"Fact",why:"It's about how the world works, and it can be measured."},
+ {t:"Being cruel just for fun is wrong.",a:"Moral",why:"It says something is wrong."},
+ {t:"Blue is the nicest colour, and the sky looks blue because air scatters blue light.",a:"Mixed",why:"\"Nicest colour\" is taste; the reason the sky looks blue is a fact."}
+];
+const BINS=["Fact","Taste","Moral","Mixed"];
+const AUTH={gods:"the gods",law:"the law",people:"most people"};
+let i=0,score=0,missed=[],auth=null,horn=null,after=null;
+const stage=document.getElementById('stage');
+function el(h){stage.innerHTML=h;window.scrollTo(0,0)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function intro(){
+ el(`<h2>Part 1: Sort the claims</h2><p>You'll see 10 claims. Tap the bin each one belongs in. You commit first, then you see the answer.</p><p>Then, in Part 2, you'll face Euthyphro's question.</p><div class="btns one"><button class="primary" onclick="show()">Start</button></div>`);
+}
+function show(){
+ const c=CLAIMS[i];
+ el(`<div class="prog">Claim ${i+1} of ${CLAIMS.length} · Score ${score}</div><div class="claim">${esc(c.t)}</div><div class="btns">${BINS.map(b=>`<button onclick="pick('${b}',this)">${b}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+}
+function pick(b,btn){
+ const c=CLAIMS[i];document.querySelectorAll('.btns button').forEach(x=>x.disabled=true);btn.classList.add('picked');
+ const ok=b===c.a; if(ok)score++; else missed.push(`#${i+1} (picked ${b}, answer ${c.a})`);
+ const fb=document.getElementById('fb');fb.className='fb show '+(ok?'good':'bad');
+ fb.innerHTML=`<b>${ok?'Yes':'Not quite'}: ${c.a}.</b> ${esc(c.why)}<div class="btns one" style="margin-top:12px"><button class="primary" onclick="next()">${i<CLAIMS.length-1?'Next claim':'On to Part 2'}</button></div>`;
+}
+function next(){i++; if(i<CLAIMS.length)show(); else fork1();}
+function fork1(){
+ el(`<h2>Part 2: Euthyphro's fork</h2><p>You scored <b>${score} of ${CLAIMS.length}</b>.</p><div class="fb show neutral"><b>What's a "fork"?</b> A question with two paths, where each path leads to a problem. This one comes from Plato's <i>Euthyphro</i>, written about 2,400 years ago. Socrates asked a man named Euthyphro: is something good <i>because</i> the gods approve of it, or do the gods approve of it <i>because</i> it's already good? It sounds like a small difference, but it decides where right and wrong come from.</div><p style="margin-top:14px">Plato asked about the gods, but you can ask it about any authority. Pick one to think about:</p><div class="btns one"><button onclick="setAuth('gods')">The gods (or God)</button><button onclick="setAuth('law')">The law</button><button onclick="setAuth('people')">What most people think</button></div>`);
+}
+function setAuth(a){auth=a;const A=AUTH[a];
+ el(`<h2>Pick a side</h2><div class="claim">Is something right because ${A} approve${a==='law'?'s':''} of it, or ${a==='law'?'does':'do'} ${A} approve of it because it's already right?</div><div class="btns one"><button onclick="setHorn('A')">A. It's right <i>because</i> ${A} approve${a==='law'?'s':''}.</button><button onclick="setHorn('B')">B. ${A[0].toUpperCase()+A.slice(1)} approve${a==='law'?'s':''} <i>because</i> it's right.</button></div>`);
+}
+function setHorn(h){horn=h;const A=AUTH[auth];
+ const prob=h==='A'
+  ?`<b>The problem with A:</b> if approval is what <i>makes</i> something right, then if ${A} had approved of cruelty, cruelty would have been right. Rightness would depend entirely on whoever is in charge.`
+  :`<b>The problem with B:</b> if ${A} ${auth==='law'?'approves':'approve'} <i>because</i> something is already right, then rightness comes from somewhere else. So where does it come from? ${A[0].toUpperCase()+A.slice(1)} ${auth==='law'?'is':'are'} more like a reliable expert than the source of right and wrong.`;
+ el(`<h2>You picked ${h}</h2><div class="fb show neutral">${prob}</div><p style="margin-top:14px">Knowing that problem, what do you do?</p><div class="btns"><button onclick="setAfter('kept')">Keep ${h}</button><button onclick="setAfter('switched')">Switch to ${h==='A'?'B':'A'}</button></div>`);
+}
+function setAfter(x){after=x;results();}
+function resultText(){
+ return `Claim Sorter (Is Anything Really Wrong? M01)
+Score: ${score} of ${CLAIMS.length}
+Missed: ${missed.length?missed.join('; '):'none'}
+Euthyphro's fork (authority: ${AUTH[auth]}): picked ${horn}; after seeing the problem: ${after}${after==='switched'?' to '+(horn==='A'?'B':'A'):''}`;
+}
+function results(){
+ const t=resultText();
+ el(`<h2>Results</h2><pre class="res" id="res">${esc(t)}</pre><div class="btns one"><button class="primary" id="cp" onclick="copyRes()">Copy my results for Rocky</button></div><p class="sub" style="margin-top:12px">Paste them into your chat with Rocky, then type done.</p><div class="btns one"><button onclick="restart()">Play again</button></div>`);
+}
+function copyRes(){
+ const t=resultText(),b=document.getElementById('cp');
+ const done=()=>{b.textContent='Copied! Now paste it to Rocky';};
+ let ok=false;const fin=()=>{ok=true;done();};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
+}
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
+function restart(){i=0;score=0;missed=[];auth=horn=after=null;intro();}
+intro();
+</script>
+</body>
+</html>

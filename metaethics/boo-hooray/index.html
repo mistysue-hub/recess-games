@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boo/Hooray Translator</title>
+<style>/* Debate-card look shared by the Meta-ethics games (copied inline into each page at build). */
+:root{--desk:#3b2a1e;--desk2:#2a1d14;--card:#fbf5e6;--ink:#2b2118;--muted:#6b5b4a;--brass:#b8893a;--brass2:#8a6424;--line:#e4d6b8;--good:#2f6b3a;--goodbg:#e3f0e2;--bad:#8a2f22;--badbg:#f6e2dc;--note:#efe4c8}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at top,var(--desk) 0%,var(--desk2) 100%);min-height:100vh;color:var(--ink);font:17px/1.5 Georgia,"Times New Roman",serif;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:6px;padding:20px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.35);margin-bottom:16px;border-top:4px solid var(--brass)}
+.card.info{background:var(--note);border-top-color:var(--brass2);font-size:15px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:0 0 10px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px;font-family:system-ui,sans-serif}
+.compass{display:block;margin:0 auto 6px;width:34px;height:34px}
+.claim{font-size:20px;margin:6px 0 14px;padding:12px 14px;background:#fff;border-left:4px solid var(--brass);border-radius:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.one{grid-template-columns:1fr}
+button{font:600 16px/1.3 system-ui,sans-serif;padding:14px 12px;border-radius:6px;border:2px solid var(--brass2);background:#fff;color:var(--ink);cursor:pointer;min-height:52px;touch-action:manipulation}
+button:hover{background:#fff8e6}
+button:disabled{opacity:.55;cursor:default}
+button.primary{background:var(--brass2);color:#fff;border-color:var(--brass2)}
+button.picked{outline:3px solid var(--brass)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:6px;font-size:16px;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--goodbg);color:var(--good)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb.neutral{background:#f1ead8;color:var(--ink)}
+.prog{font:13px system-ui,sans-serif;color:var(--muted);margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.view{background:#fff;border-radius:6px;padding:10px 12px;border-left:4px solid var(--brass2);font-size:15px}
+.view b{font-family:system-ui,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--brass2)}
+pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+.hide{display:none}
+dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;font-size:14px;margin-top:6px}dl.bins dd{margin:0 0 0 0}
+@media (max-width:420px){.btns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <svg class="compass" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#b8893a" stroke-width="2"/><path d="M20 4 L24 20 L20 36 L16 20 Z" fill="#b8893a"/><circle cx="20" cy="20" r="2.5" fill="#fbf5e6"/></svg>
+    <h1>The Boo/Hooray Translator</h1>
+    <p class="sub">Is Anything Really Wrong? · Session 5</p>
+    <div id="stage"></div>
+  </div>
+  <div class="card info">
+    <b>Ayer's emotivism:</b> a moral claim doesn't state a fact. It expresses an attitude. "Stealing is wrong" works like "Stealing: Boo!" and "Helping is good" works like "Helping: Hooray!"
+  </div>
+</div>
+<script>
+/* Shared helpers for the Meta-ethics games (inlined into each page at build). */
+const stage=document.getElementById('stage');
+function el(h){stage.innerHTML=h;window.scrollTo(0,0)}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function endp(s){return /[.!?]$/.test(s)?s:s+'.'}
+/* Scored question: two tries, then the answer. o={prog,head,q,opts,a,why,extra,next,cb(firstTry,tries)} */
+function ask(o){
+ let tries=0;
+ el(`${o.prog?`<div class="prog">${o.prog}</div>`:''}${o.head||''}<div class="claim">${esc(o.q)}</div><div class="btns one">${o.opts.map((t,j)=>`<button data-j="${j}">${esc(t)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+ stage.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{
+  const j=+b.dataset.j,fb=document.getElementById('fb');tries++;
+  if(j===o.a||tries>=2){
+   const ok=j===o.a;
+   stage.querySelectorAll('.btns button').forEach(x=>x.disabled=true);
+   b.classList.add('picked');
+   fb.className='fb show '+(ok?'good':'bad');
+   fb.innerHTML=`<b>${ok?'Yes':'The answer'}: ${esc(endp(o.opts[o.a]))}</b> ${o.why}${o.extra||''}<div class="btns one" style="margin-top:12px"><button class="primary" id="nx">${o.next||'Next'}</button></div>`;
+   document.getElementById('nx').onclick=()=>o.cb(ok&&tries===1,ok?tries:0);
+  } else {b.disabled=true;fb.className='fb show bad';fb.innerHTML='<b>Not quite.</b> Think back to the reading and try once more.';}
+ });
+}
+/* Unscored choice with a reveal. o={prog,head,q,opts,reveal(j)->html,next,cb(j)} */
+function choose(o){
+ el(`${o.prog?`<div class="prog">${o.prog}</div>`:''}${o.head||''}${o.q?`<p>${esc(o.q)}</p>`:''}<div class="btns one">${o.opts.map((t,j)=>`<button data-j="${j}">${esc(t)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+ stage.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{
+  const j=+b.dataset.j;
+  if(!o.reveal){o.cb(j);return;}
+  stage.querySelectorAll('.btns button').forEach(x=>x.disabled=true);b.classList.add('picked');
+  const fb=document.getElementById('fb');fb.className='fb show neutral';
+  fb.innerHTML=`${o.reveal(j)}<div class="btns one" style="margin-top:12px"><button class="primary" id="nx">${o.next||'Next'}</button></div>`;
+  document.getElementById('nx').onclick=()=>o.cb(j);
+ });
+}
+function views(v){return `<div class="two">${v.map(p=>`<div class="view"><b>${p[0]}</b><br>${p[1]}</div>`).join('')}</div>`}
+function showResults(text){
+ el(`<h2>Results</h2><pre class="res">${esc(text)}</pre><div class="btns one"><button class="primary" id="cp">Copy my results for Rocky</button></div><p class="sub" style="margin-top:12px">Paste them into your chat with Rocky, then type done.</p><div class="btns one"><button id="again">Play again</button></div>`);
+ document.getElementById('cp').onclick=()=>copyText(text);
+ document.getElementById('again').onclick=()=>location.reload();
+}
+function copyText(t){
+ const b=document.getElementById('cp');
+ let ok=false;const fin=()=>{ok=true;b.textContent='Copied! Now paste it to Rocky';};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
+}
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
+
+let tScore=0,bScore=0,cScore=0,log=[],argAns=null,oddAns=null;
+const WHY_T="On Ayer's view a moral claim expresses an attitude. The other choices state facts about people, rules or yourself.";
+const TRANS=[
+ {s:"Helping a lost kid find their parents is good.",opts:["Most people like helping lost kids","Helping lost kids find their parents: Hooray!","It's a fact that helping lost kids is good"],a:1},
+ {s:"Cheating on a test is wrong.",opts:["Cheating on tests: Boo!","Cheating on tests is against the rules","Some people dislike cheating"],a:0},
+ {s:"You should keep your promises.",opts:["Promises are usually kept","I am a person who keeps promises","Keeping promises: Hooray!"],a:2}
+];
+const BRK=[
+ {s:"Lying to your friends is wrong.",t:"Lying to friends: Boo!",a:0,why:"A plain moral claim is exactly what the boo theory was built for."},
+ {s:"Is cheating wrong?",t:"Cheating: Boo?",a:1,why:"A question asks; it doesn't boo. Someone asking may have no attitude yet."},
+ {s:"If cheating is wrong, then helping someone cheat is wrong.",t:"If cheating: Boo!, then helping cheaters: Boo!",a:1,why:"Inside an \"if\", nobody is booing. You can say this without disapproving of cheating at all. This is Geach's if-then puzzle."},
+ {s:"Being kind to new kids is good.",t:"Being kind to new kids: Hooray!",a:0,why:"Another plain moral claim, so the hooray fits."},
+ {s:"I'm not sure whether white lies are wrong.",t:"White lies: Boo...?",a:1,why:"Being unsure isn't half a boo. The simple theory has trouble with doubt and uncertainty."}
+];
+const BOPTS=["The translation works","The translation breaks"];
+function intro(){
+ el(`<h2>Translate, then try to break it</h2><p><b>Part 1:</b> turn moral sentences into boos and hoorays.<br><b>Part 2:</b> decide which translations work and which break.<br><b>Part 3:</b> test the boo theory on an argument and an odd sentence.<br><b>Part 4:</b> one check question.</p><div class="btns one"><button class="primary" onclick="tr(0)">Start</button></div>`);
+}
+function tr(i){
+ const x=TRANS[i];
+ ask({prog:`Part 1 · Translate ${i+1} of ${TRANS.length}`,head:`<p>Which is the best boo/hooray translation of this sentence?</p>`,q:x.s,opts:x.opts,a:x.a,why:WHY_T,
+  next:i<TRANS.length-1?'Next sentence':'On to Part 2',
+  cb:(first,tries)=>{if(first)tScore++;log.push(`T${i+1} ${tag(tries)}`);i<TRANS.length-1?tr(i+1):br(0);}});
+}
+function br(i){
+ const x=BRK[i];
+ ask({prog:`Part 2 · Breaker ${i+1} of ${BRK.length}`,head:`<p>Sentence: <b>${esc(x.s)}</b></p><p>Boo/hooray translation:</p>`,q:x.t,opts:BOPTS,a:x.a,why:x.why,
+  next:i<BRK.length-1?'Next sentence':'On to Part 3',
+  cb:(first,tries)=>{if(first)bScore++;log.push(`B${i+1} ${tag(tries)}`);i<BRK.length-1?br(i+1):arg();}});
+}
+function tag(t){return t===1?'right first try':t===2?'right on try 2':'missed twice'}
+function arg(){
+ choose({prog:'Part 3 · The argument',head:`<p>This argument obviously works:</p><div class="claim">1. If cheating is wrong, then helping someone cheat is wrong.<br>2. Cheating is wrong.<br>3. So helping someone cheat is wrong.</div><p>Here it is in boo language:</p><div class="claim">1. If cheating: Boo!, then helping cheaters: Boo!<br>2. Cheating: Boo!<br>3. So helping cheaters: Boo!</div>`,
+  q:"Does the boo version still work as an argument?",opts:["Yes, it still works","No, it falls apart","Not sure"],
+  reveal:j=>`<b>Geach's point (1965):</b> line 1 has no real boo in it, so "wrong" seems to mean something different in lines 1 and 2, and arguments that switch meanings usually fail. Yet the original clearly works.${views([["Expressivist reply","Line 1 expresses a commitment: you can't boo cheating without booing helping someone cheat. Accept lines 1 and 2 and you're committed to line 3."],["Critic","A \"commitment\" is still not a boo. The theory needs more than cheering to explain reasoning."]])}`,
+  next:'Next',cb:j=>{argAns=["yes, still works","no, falls apart","not sure"][j];odd();}});
+}
+function odd(){
+ choose({prog:'Part 3 · Sounds odd?',head:`<div class="claim">"Lying is wrong, but I don't disapprove of lying at all."</div>`,q:"Does that sentence sound strange to you?",opts:["Yes, it sounds strange","No, it sounds fine"],
+  reveal:j=>`Compare: "It's raining, but I don't believe it's raining." That sounds absurd too.${views([["Expressivist","If \"lying is wrong\" <i>expresses</i> disapproval, the sentence expresses disapproval and denies it in one breath. That's why it sounds strange."],["Realist","It's strange because people who believe something is wrong usually disapprove of it. No boo theory needed."]])}`,
+  next:'On to the check question',cb:j=>{oddAns=j===0?'sounds strange':'sounds fine';check();}});
+}
+function check(){
+ ask({prog:'Part 4 · Check question',q:"Allan Gibbard says calling something wrong is less like cheering and more like...",opts:["measuring a distance","making a plan","following a law"],a:1,
+  why:"Gibbard compares it to a plan: \"don't do that, in any situation like this.\" Plans can be consistent or inconsistent, which helps explain moral reasoning.",next:'See my results',
+  cb:(first,tries)=>{if(first)cScore++;log.push(`Check ${tag(tries)}`);finish();}});
+}
+function finish(){
+ const total=TRANS.length+BRK.length+1;
+ showResults(`Boo/Hooray Translator (Is Anything Really Wrong? M05)
+Score: ${tScore+bScore+cScore} of ${total} right first try
+- Translate: ${tScore} of ${TRANS.length}
+- Breaker: ${bScore} of ${BRK.length}
+- Check question: ${cScore} of 1
+Details: ${log.join('; ')}
+Does the boo argument still work? ${argAns}
+"Lying is wrong, but I don't disapprove": ${oddAns}`);
+}
+intro();
+</script>
+</body>
+</html>

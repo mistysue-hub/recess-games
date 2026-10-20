@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two Islands</title>
+<style>/* Debate-card look shared by the Meta-ethics games (copied inline into each page at build). */
+:root{--desk:#3b2a1e;--desk2:#2a1d14;--card:#fbf5e6;--ink:#2b2118;--muted:#6b5b4a;--brass:#b8893a;--brass2:#8a6424;--line:#e4d6b8;--good:#2f6b3a;--goodbg:#e3f0e2;--bad:#8a2f22;--badbg:#f6e2dc;--note:#efe4c8}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at top,var(--desk) 0%,var(--desk2) 100%);min-height:100vh;color:var(--ink);font:17px/1.5 Georgia,"Times New Roman",serif;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:6px;padding:20px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.35);margin-bottom:16px;border-top:4px solid var(--brass)}
+.card.info{background:var(--note);border-top-color:var(--brass2);font-size:15px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:0 0 10px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px;font-family:system-ui,sans-serif}
+.compass{display:block;margin:0 auto 6px;width:34px;height:34px}
+.claim{font-size:20px;margin:6px 0 14px;padding:12px 14px;background:#fff;border-left:4px solid var(--brass);border-radius:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.one{grid-template-columns:1fr}
+button{font:600 16px/1.3 system-ui,sans-serif;padding:14px 12px;border-radius:6px;border:2px solid var(--brass2);background:#fff;color:var(--ink);cursor:pointer;min-height:52px;touch-action:manipulation}
+button:hover{background:#fff8e6}
+button:disabled{opacity:.55;cursor:default}
+button.primary{background:var(--brass2);color:#fff;border-color:var(--brass2)}
+button.picked{outline:3px solid var(--brass)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:6px;font-size:16px;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--goodbg);color:var(--good)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb.neutral{background:#f1ead8;color:var(--ink)}
+.prog{font:13px system-ui,sans-serif;color:var(--muted);margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.view{background:#fff;border-radius:6px;padding:10px 12px;border-left:4px solid var(--brass2);font-size:15px}
+.view b{font-family:system-ui,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--brass2)}
+pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+.hide{display:none}
+dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;font-size:14px;margin-top:6px}dl.bins dd{margin:0 0 0 0}
+@media (max-width:420px){.btns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <svg class="compass" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#b8893a" stroke-width="2"/><path d="M20 4 L24 20 L20 36 L16 20 Z" fill="#b8893a"/><circle cx="20" cy="20" r="2.5" fill="#fbf5e6"/></svg>
+    <h1>Two Islands</h1>
+    <p class="sub">Is Anything Really Wrong? · Session 3</p>
+    <div id="stage"></div>
+  </div>
+  <div class="card info">
+    <b>Two ways to read every case.</b> A <b>realist</b> thinks there are moral facts, so some moral views are right and some are mistaken. An <b>error theorist</b> thinks moral claims try to state facts, but there are no moral facts, so all of them are false.
+  </div>
+</div>
+<script>
+const SEE=[
+ {t:"You see an older kid shove a smaller kid to the ground and take their lunch. You instantly think: that's wrong.",
+  q:"What best explains your reaction?",
+  o:["The shove really was wrong, and I noticed it","My upbringing and feelings; I'd react that way either way"],
+  views:[["Sturgeon (realist)","The wrongness of the act is part of the best explanation, just as a real proton explains the trail in a cloud chamber."],["Harman","Your reaction is fully explained by your upbringing, feelings and beliefs about shoving. No moral fact is needed."]]},
+ {t:"A team keeps losing its best players. Later everyone learns the coach was cruel to them in private.",
+  q:"What best explains why the players left?",
+  o:["The coach really was cruel","Just the things the coach said and did; \"cruel\" is a label we add"],
+  views:[["Sturgeon (realist)","Take away the cruelty and the explanation falls apart. A real moral feature is doing the explaining."],["Harman's side","\"Cruel\" is shorthand for the natural facts: what the coach said and did. Those explain everything without an extra moral fact."]]}
+];
+const ISL=[
+ {t:"North Island thinks it's rude to eat with your left hand. South Island doesn't mind at all."},
+ {t:"North Island allows some people to own other people. South Island says owning people is deeply wrong."},
+ {t:"Two friends disagree. One says small lies to spare someone's feelings are fine. The other says lying is always wrong."}
+];
+const EXP=["One side is mistaken","There's no moral fact to get right","Each side is right for itself","They share values but believe different facts"];
+const ISLV=[
+ [["Realist","Probably not a deep moral disagreement at all. Both sides share a value (show respect at meals) and live with different customs, like the last option."],["Error theorist","Neither side has the moral facts right, because there are none. Customs are just customs."]],
+ [["Realist","One side is mistaken: owning people is wrong whatever any island believes. History is full of people who saw this before their societies did."],["Error theorist","Strictly, \"owning people is wrong\" is false, like every moral claim. But Mackie still thought we have strong practical reasons to make and keep rules against it."]],
+ [["Realist","There is a right answer, though it may be hard to find; maybe it depends on details like how big the lie is."],["Error theorist","Their argument rests on a mistake: neither \"lying is fine\" nor \"lying is wrong\" is true."]]
+];
+const CHECK=[
+ {q:"Harman says we don't need moral facts to explain...",o:["people's moral reactions","how protons move","why laws exist"],a:0,why:"His point was that upbringing, feelings and beliefs explain our moral reactions without any moral fact."},
+ {q:"Mackie's \"queerness\" argument says moral facts would be...",o:["too common to notice","easy to measure with the right tools","too strange to fit with anything else we know"],a:2,why:"A moral fact would somehow demand that you act, whatever you want, and nothing else we know works like that."},
+ {q:"Mackie's first argument against moral facts points to...",o:["how hard it is to define \"good\"","how deeply and lastingly people disagree about morality","how fast science changes its mind"],a:1,why:"He thought moral views come from people's ways of life, which is why the disagreements don't shrink the way scientific ones do."}
+];
+let s=0,seeLog=[],k=0,islLog=[],ci=0,tries=0,checkScore=0,checkLog=[];
+const stage=document.getElementById('stage');
+function el(h){stage.innerHTML=h;window.scrollTo(0,0)}
+function esc(x){return x.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function views(v){return `<div class="two">${v.map(p=>`<div class="view"><b>${p[0]}</b><br>${esc(p[1])}</div>`).join('')}</div>`}
+function intro(){
+ el(`<h2>Part 1: Do we see wrongness?</h2><p>Two cases. Pick the explanation you think works best, then see how each side reads it.</p><p>Part 2 visits two islands that disagree. Part 3 has 3 quick check questions. Only Part 3 has right answers.</p><div class="btns one"><button class="primary" onclick="showSee()">Start</button></div>`);
+}
+function showSee(){
+ const c=SEE[s];
+ el(`<div class="prog">Part 1 · Case ${s+1} of ${SEE.length}</div><div class="claim">${esc(c.t)}</div><p>${esc(c.q)}</p><div class="btns one">${c.o.map((o,j)=>`<button onclick="pickSee(${j},this)">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+}
+function pickSee(j,btn){
+ const c=SEE[s];seeLog.push(`Case ${s+1}: ${j===0?'real moral feature':'no moral fact needed'}`);
+ document.querySelectorAll('.btns button').forEach(b=>b.disabled=true);btn.classList.add('picked');
+ const fb=document.getElementById('fb');fb.className='fb show neutral';
+ fb.innerHTML=`<b>How each side reads it:</b>${views(c.views)}<div class="btns one" style="margin-top:12px"><button class="primary" onclick="nextSee()">${s<SEE.length-1?'Next case':'On to the islands'}</button></div>`;
+}
+function nextSee(){s++; if(s<SEE.length)showSee(); else showIsl();}
+function showIsl(){
+ const c=ISL[k];
+ el(`<div class="prog">Part 2 · Disagreement ${k+1} of ${ISL.length}</div><div class="claim">${esc(c.t)}</div><p>What best explains this disagreement?</p><div class="btns one">${EXP.map((o,j)=>`<button onclick="pickIsl(${j},this)">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+}
+function pickIsl(j,btn){
+ islLog.push(`Disagreement ${k+1}: ${EXP[j]}`);
+ document.querySelectorAll('.btns button').forEach(b=>b.disabled=true);btn.classList.add('picked');
+ const fb=document.getElementById('fb');fb.className='fb show neutral';
+ const rel=j===2?`<p style="margin:10px 0 0">"Each side is right for itself" is <b>relativism</b>, a third view you'll test in Session 4.</p>`:'';
+ fb.innerHTML=`<b>How each side reads it:</b>${views(ISLV[k])}${rel}<div class="btns one" style="margin-top:12px"><button class="primary" onclick="nextIsl()">${k<ISL.length-1?'Next disagreement':'On to the check questions'}</button></div>`;
+}
+function nextIsl(){k++; if(k<ISL.length)showIsl(); else showCheck();}
+function showCheck(){
+ tries=0;const c=CHECK[ci];
+ el(`<div class="prog">Part 3 · Check question ${ci+1} of ${CHECK.length}</div><div class="claim">${esc(c.q)}</div><div class="btns one">${c.o.map((o,j)=>`<button id="o${j}" onclick="answer(${j})">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
+}
+function answer(j){
+ const c=CHECK[ci],fb=document.getElementById('fb');tries++;
+ if(j===c.a){if(tries===1)checkScore++;checkLog.push(`Q${ci+1} ${tries===1?'right first try':'right on try 2'}`);done(true);}
+ else if(tries===1){document.getElementById('o'+j).disabled=true;fb.className='fb show bad';fb.innerHTML='<b>Not quite.</b> Think back to the reading and try once more.';}
+ else{checkLog.push(`Q${ci+1} missed twice`);done(false);}
+ function done(ok){
+  document.querySelectorAll('.btns button').forEach(b=>b.disabled=true);
+  fb.className='fb show '+(ok?'good':'bad');
+  fb.innerHTML=`<b>${ok?'Yes':'The answer'}: ${esc(c.o[c.a])}.</b> ${esc(c.why)}<div class="btns one" style="margin-top:12px"><button class="primary" onclick="nextCheck()">${ci<CHECK.length-1?'Next question':'See my results'}</button></div>`;
+ }
+}
+function nextCheck(){ci++; if(ci<CHECK.length)showCheck(); else results();}
+function resultText(){
+ return `Two Islands (Is Anything Really Wrong? M03)
+Part 1, do we see wrongness?
+- ${seeLog.join('\n- ')}
+Part 2, island disagreements:
+- ${islLog.join('\n- ')}
+Check questions: ${checkScore} of ${CHECK.length} right first try (${checkLog.join('; ')})`;
+}
+function results(){
+ el(`<h2>Results</h2><pre class="res">${esc(resultText())}</pre><div class="btns one"><button class="primary" id="cp" onclick="copyRes()">Copy my results for Rocky</button></div><p class="sub" style="margin-top:12px">Paste them into your chat with Rocky, then type done.</p><div class="btns one"><button onclick="restart()">Play again</button></div>`);
+}
+function copyRes(){
+ const t=resultText(),b=document.getElementById('cp');
+ const done=()=>{b.textContent='Copied! Now paste it to Rocky';};
+ let ok=false;const fin=()=>{ok=true;done();};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
+}
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
+function restart(){s=0;seeLog=[];k=0;islLog=[];ci=0;tries=0;checkScore=0;checkLog=[];intro();}
+intro();
+</script>
+</body>
+</html>
