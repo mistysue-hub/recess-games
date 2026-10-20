@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Last Round</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 12px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .chart{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:120px;border-bottom:2px solid #00e5ff;margin:10px auto;max-width:560px}
+  .col{width:12px;background:#ff2bd6;box-shadow:0 0 4px #ff2bd6}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:16px}
+  .w{color:#39ff14}.l{color:#ff5555}
+  .big{padding:12px 20px;margin:8px}
+</style>
+</head>
+<body>
+<h1>LAST ROUND</h1>
+<p class="note">Two matches of Cooperate or Cheat. Each round you both choose at the same moment.</p>
+<table>
+  <tr><th>You \ Rival</th><th>COOPERATE</th><th>CHEAT</th></tr>
+  <tr><th>COOPERATE</th><td>You 2, Rival 2</td><td>You -1, Rival 3</td></tr>
+  <tr><th>CHEAT</th><td>You 3, Rival -1</td><td>You 0, Rival 0</td></tr>
+</table>
+<div class="bar">
+  <div class="box">MATCH<b id="mn">1/2</b></div>
+  <div class="box">ROUND<b id="rn">1</b></div>
+  <div class="box">YOUR POINTS<b id="pts">0</b></div>
+</div>
+
+<div id="pick">
+  <p class="news" id="news"></p>
+  <p class="rival" id="who"></p>
+  <button class="big" onclick="play('C')">COOPERATE</button>
+  <button class="big" onclick="play('D')">CHEAT</button>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button class="big" id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>FINAL WHISTLE</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var U={CC:[2,2],CD:[-1,3],DC:[3,-1],DD:[0,0]};
+var match=0,round=0,me=[[],[]],them=[[],[]],pts=[0,0],ended=false;
+var NAMES=["Mira","Dex"];
+var TAUNT={CC:["\"Nice doing business.\"","\"Partners!\""],CD:["\"Thanks for the free points!\"","\"Too trusting!\""],DC:["\"Hey! I thought we had a deal.\"","\"I'll remember that.\""],DD:["\"Well, that got us nowhere.\"","\"Zero for everyone.\""]};
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function W(m){return m==="C"?"COOPERATE":"CHEAT"}
+function rivalMove(){
+  if(match===0){ if(round===4)return "D"; return round===0?"C":me[0][round-1]; }
+  return me[1].indexOf("D")>=0?"D":"C";
+}
+function setup(){
+  el("mn").textContent=(match+1)+"/2";
+  el("rn").textContent=match===0?(round+1)+" of 5":(round+1)+" of ???";
+  el("news").textContent=match===0?"MATCH 1: exactly 5 rounds. Everyone knows round 5 is the last.":"MATCH 2: at least 3 rounds. After that, a coin decides after every round if there is another (3 chances in 4 to keep going). Nobody knows which round is last.";
+  el("who").textContent=match===0?"Rival: Mira. She copies whatever you did last round.":"Rival: Dex. He cooperates until you cheat once. Then he never forgives.";
+  show("pick",true);show("result",false);
+}
+function play(m){
+  var r=rivalMove(),k=m+r,p=U[k];
+  me[match].push(m);them[match].push(r);pts[match]+=p[0];
+  el("pts").textContent=pts[0]+pts[1];
+  el("headline").textContent="You: "+W(m)+"   "+NAMES[match]+": ...";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  show("pick",false);show("result",true);
+  var last=(match===0&&round===4);
+  if(match===1){ended=(round>=11)||(round>=2&&rnd(4)===0);}
+  setTimeout(function(){
+    el("headline").textContent="You: "+W(m)+"   "+NAMES[match]+": "+W(r);
+    var t=TAUNT[k][round%2];
+    var tail=match===0?(last?"That was the last round of Match 1.":""):(round<2?"":(ended?"The coin says: MATCH OVER.":"The coin says: ANOTHER ROUND."));
+    el("detail").innerHTML="You +"+p[0]+", "+NAMES[match]+" +"+p[1]+". <span class=\"rival\">"+NAMES[match]+": "+t+"</span><br>"+tail;
+    el("next").textContent=(match===1&&ended)?"SEE FINAL SCORE":((last)?"START MATCH 2":"NEXT ROUND");
+    el("next").style.visibility="visible";
+  },700);
+}
+function nextRound(){
+  if(match===0&&round===4){match=1;round=0;setup();return}
+  if(match===1&&ended){finish();return}
+  round++;setup();
+}
+function finish(){
+  show("result",false);show("pick",false);
+  var a=me[0].join(""),b=me[1].join(""),cheatB=b.indexOf("D"),n=b.length;
+  var lastA=me[0][4];
+  var rank=(cheatB<0&&lastA==="D")?"ENDGAME EXPERT":(cheatB<0?"TRUSTED PARTNER":"BRIDGE BURNER");
+  var coopAll=2*n;
+  el("verdict").innerHTML=
+    "<table><tr><th>Match</th><th>You</th><th>Rival</th><th>Your points</th></tr>"+
+    "<tr><td>1 (5 known rounds)</td><td>"+a+"</td><td>"+them[0].join("")+"</td><td>"+pts[0]+"</td></tr>"+
+    "<tr><td>2 (coin-toss ending, "+n+" rounds)</td><td>"+b+"</td><td>"+them[1].join("")+"</td><td>"+pts[1]+"</td></tr></table>"+
+    "<p class=\"note\">C = cooperate, D = cheat.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Match 1: Mira cheated in round 5 <b>no matter what</b> you did. With nothing left to protect, the last round is a one-shot game. Knowing that, why trust each other in round 4? That is how cooperation <b>unravels from the back</b>.</div>"+
+    "<div class=\"tape\">Match 2: nobody knew which round was last. Cheating Dex once earns 1 extra point now (3 instead of 2), then 0 every round after instead of 2. Cooperating every round of this match would have earned <b>"+coopAll+"</b>.</div>"+
+    "<p class=\"note\">What changed between the two matches: the rival, the payoffs, or knowing when it ends?</p>"+
+    "<div class=\"fact\">Polak played this game with students in front of the class, using these same payoffs. When the last round was known, cooperation broke down at the end.</div>";
+  el("out").value="GT4-M01 | match 1 (5 known rounds): me "+a+", Mira "+them[0].join("")+", my points "+pts[0]+" | match 2 (coin-toss ending, "+n+" rounds): me "+b+", Dex "+them[1].join("")+", my points "+pts[1]+" | rank "+rank;
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

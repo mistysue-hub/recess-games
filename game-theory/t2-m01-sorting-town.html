@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorting Town</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .grids{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+  .grid{display:grid;grid-template-columns:repeat(10,18px);gap:2px;padding:6px;border:2px solid #00e5ff;margin:6px auto}
+  .c{width:18px;height:18px;border-radius:3px;background:#1a1a2a}
+  .c.a{background:#00e5ff;box-shadow:0 0 4px #00e5ff}
+  .c.b{background:#ff2bd6;box-shadow:0 0 4px #ff2bd6}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>SORTING TOWN</h1>
+<p class="note">90 families, 10 empty houses, all mixed up. A family that has too few same-color neighbors packs up and moves. How sorted will your town get?</p>
+<p class="note">Same-color score: the share of a family's neighbors that match it. A mixed-up town starts near 50%.</p>
+<div class="bar">
+  <div class="box">TOWN<b id="rn">1/3</b></div>
+</div>
+
+<div id="pick">
+  <h2>STEP 1: HOW PICKY IS EVERY FAMILY?</h2>
+  <p class="note">"I move unless at least this share of my neighbors match me."</p>
+  <div id="rules"></div>
+  <h2>STEP 2: PREDICT THE FINAL SAME-COLOR SCORE</h2>
+  <div id="preds"></div>
+  <br><button id="go" onclick="play()" disabled>RUN THE TOWN</button>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <div class="grids">
+    <div><p class="note">Before</p><div class="grid" id="g0"></div></div>
+    <div><p class="note">After</p><div class="grid" id="g1"></div></div>
+  </div>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT TOWN</button>
+</div>
+
+<div id="final">
+  <h1>TOWN HALL REPORT</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var N=10,total=3,r=0,log=[],rule=null,pred=null;
+var RULES=[{v:0.25,t:"25% (1 in 4)"},{v:1/3,t:"33% (1 in 3)"},{v:0.5,t:"50% (half)"},{v:0.75,t:"75% (most)"}];
+var PREDS=["UNDER 60%","60% TO 80%","OVER 80%"];
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function draw(id,cells){var h="";for(var i=0;i<N*N;i++)h+="<div class=\"c "+(cells[i]===1?"a":(cells[i]===2?"b":""))+"\"></div>";el(id).innerHTML=h}
+function nb(cells,i){var r0=Math.floor(i/N),c0=i%N,o=[];for(var dr=-1;dr<=1;dr++)for(var dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;var rr=r0+dr,cc=c0+dc;if(rr>=0&&rr<N&&cc>=0&&cc<N&&cells[rr*N+cc])o.push(cells[rr*N+cc])}return o}
+function same(cells,i){var o=nb(cells,i);if(!o.length)return 1;var s=0;for(var k=0;k<o.length;k++)if(o[k]===cells[i])s++;return s/o.length}
+function score(cells){var s=0,n=0;for(var i=0;i<N*N;i++)if(cells[i]&&nb(cells,i).length){s+=same(cells,i);n++}return Math.round(s/n*100)}
+function bucket(x){return x<60?0:(x<=80?1:2)}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;rule=null;pred=null;
+  var h="";RULES.forEach(function(x,i){h+="<button id=\"r"+i+"\" onclick=\"pickRule("+i+")\">"+x.t+"</button>"});el("rules").innerHTML=h;
+  h="";PREDS.forEach(function(x,i){h+="<button id=\"p"+i+"\" onclick=\"pickPred("+i+")\">"+x+"</button>"});el("preds").innerHTML=h;
+  el("go").disabled=true;show("pick",true);show("result",false);
+}
+function pickRule(i){rule=i;RULES.forEach(function(x,k){el("r"+k).className=(k===i?"on":"")});el("go").disabled=(pred===null)}
+function pickPred(i){pred=i;PREDS.forEach(function(x,k){el("p"+k).className=(k===i?"on":"")});el("go").disabled=(rule===null)}
+function play(){
+  var cells=[],i;for(i=0;i<N*N;i++)cells.push(i<45?1:(i<90?2:0));
+  for(i=cells.length-1;i>0;i--){var j=rnd(i+1),t=cells[i];cells[i]=cells[j];cells[j]=t}
+  draw("g0",cells);
+  var th=RULES[rule].v,start=score(cells),moves=0,settled=false;
+  for(;moves<400;moves++){
+    var un=[];for(i=0;i<N*N;i++)if(cells[i]&&same(cells,i)<th-1e-9)un.push(i);
+    if(!un.length){settled=true;break}
+    var a=un[rnd(un.length)],em=[];for(i=0;i<N*N;i++)if(!cells[i])em.push(i);
+    var b=em[rnd(em.length)];cells[b]=cells[a];cells[a]=0;
+  }
+  if(!settled){var un2=0;for(i=0;i<N*N;i++)if(cells[i]&&same(cells,i)<th-1e-9)un2++;settled=(un2===0)}
+  draw("g1",cells);
+  var end=score(cells),hit=bucket(end)===pred;
+  log.push({rule:RULES[rule].t.split(" ")[0],pred:PREDS[pred],start:start,end:end,moves:moves,settled:settled,hit:hit});
+  el("headline").textContent="Picky level "+RULES[rule].t+": score went from "+start+"% to "+end+"%";
+  el("detail").innerHTML=(settled?"Everyone was happy after <b>"+moves+"</b> moves.":"The town never settled: after 400 moves some families still wanted to move.")+
+    "<br>You predicted "+PREDS[pred]+". "+(hit?"<b>Right!</b>":"Not this time.");
+  el("next").textContent=(r===total-1)?"SEE TOWN HALL REPORT":"NEXT TOWN";
+  show("pick",false);show("result",true);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Town</th><th>Picky level</th><th>Predicted</th><th>Start</th><th>End</th><th>Settled?</th></tr>",hits=0;
+  log.forEach(function(x,i){if(x.hit)hits++;rows+="<tr><td>"+(i+1)+"</td><td>"+x.rule+"</td><td>"+x.pred+(x.hit?" ✔":"")+"</td><td>"+x.start+"%</td><td>"+x.end+"%</td><td>"+(x.settled?"yes, "+x.moves+" moves":"no")+"</td></tr>"});
+  var rank=hits===3?"CITY PLANNER":(hits===2?"SHARP OBSERVER":"SURPRISED RESIDENT");
+  el("verdict").innerHTML="<table>"+rows+"</table><p>Predictions right: <b>"+hits+"</b> of 3.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">In test runs of this town, families who only want <b>1 in 3</b> neighbors like them still end up near <b>75%</b> same-color.</div>"+
+    "<div class=\"tape\">At <b>half</b>, towns end near <b>87%</b>. At <b>most</b>, they usually never settle.</div>"+
+    "<p class=\"note\">Nobody in this town wanted to live only with their own color. So where did the sorting come from?</p>"+
+    "<div class=\"fact\">The economist Thomas Schelling built a model like this with coins on a checkerboard. Its lesson: what a whole town looks like can be very different from what any one person wants.</div>";
+  el("out").value="GT2-M01 | "+log.map(function(x,i){return "town "+(i+1)+": picky "+x.rule+", predicted "+x.pred+", start "+x.start+"%, end "+x.end+"%, "+(x.settled?"settled in "+x.moves+" moves":"never settled")}).join(" | ")+" | predictions right: "+hits+" of 3";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hawk-Dove Arena</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 12px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .chart{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:120px;border-bottom:2px solid #00e5ff;margin:10px auto;max-width:560px}
+  .col{width:12px;background:#ff2bd6;box-shadow:0 0 4px #ff2bd6}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>HAWK-DOVE ARENA</h1>
+<p class="note">Birds meet in pairs over a prize worth 4 points. HAWKS always fight. DOVES back off if challenged. Birds with more points raise more chicks, so the mix of hawks and doves changes each generation.</p>
+<table id="grid"></table>
+<div class="bar">
+  <div class="box">ARENA<b id="rn">1/3</b></div>
+  <div class="box">FIGHT COST<b id="cost">6</b></div>
+</div>
+
+<div id="pick">
+  <p class="news" id="news"></p>
+  <h2 id="h1">STEP 1: HOW MANY HAWKS AT THE START?</h2>
+  <div id="starts"></div>
+  <div id="predwrap"><h2>STEP 2: WHERE WILL THE HAWK SHARE END UP?</h2>
+  <div id="preds"></div></div>
+  <br><button id="go" onclick="play()" disabled>RUN 40 GENERATIONS</button>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <p class="note">Hawk share each generation:</p>
+  <div class="chart" id="chart"></div>
+  <p id="detail"></p>
+  <div id="guess" style="display:none"><h2>MYSTERY COST: WHAT WAS THE FIGHT COST?</h2><div id="gbtn"></div></div>
+  <button id="next" onclick="nextRound()">NEXT ARENA</button>
+</div>
+
+<div id="final">
+  <h1>ARENA REPORT</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var V=4,total=3,r=0,log=[],start=null,pred=null;
+var COSTS=[6,6,12],STARTS=[10,50,90],PREDS=[0,33,50,67,100],GUESSES=[6,8,12,16];
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function grid(C,hide){
+  var c=hide?"?":C,hh=hide?"half the prize minus half the mystery cost":(((V-C)/2)+" (half the prize minus half the cost)");
+  el("grid").innerHTML="<tr><th>My points</th><th>vs HAWK</th><th>vs DOVE</th></tr>"+
+  "<tr><th>I am HAWK</th><td>"+hh+"</td><td>"+V+" (take it all)</td></tr>"+
+  "<tr><th>I am DOVE</th><td>0 (back off)</td><td>"+(V/2)+" (share)</td></tr>";
+  el("cost").textContent=c;
+}
+function setup(){
+  var C=COSTS[r];start=null;pred=null;
+  el("rn").textContent=(r+1)+"/"+total;grid(C,r===2);
+  var h="";
+  if(r===1){
+    var forced=log[0].start>=50?0:2;start=forced;
+    el("news").textContent="SAME ARENA, OPPOSITE START: you began at "+log[0].start+"% hawks last time. Now the flock starts at "+STARTS[forced]+"%.";
+    h="<button class=\"on\">"+STARTS[forced]+"% HAWKS</button>";
+  }else{
+    el("news").textContent=(r===0)?"A fight costs each hawk 6 points.":"MYSTERY ARENA: the fight cost is hidden. Run it, watch where the flock settles, then work out the cost.";
+    STARTS.forEach(function(x,i){h+="<button id=\"s"+i+"\" onclick=\"pickStart("+i+")\">"+x+"% HAWKS</button>"});
+  }
+  el("starts").innerHTML=h;
+  if(r===2){el("predwrap").style.display="none";pred=-1}else{el("predwrap").style.display="block";
+    h="";PREDS.forEach(function(x,i){h+="<button id=\"p"+i+"\" onclick=\"pickPred("+i+")\">ABOUT "+x+"%</button>"});el("preds").innerHTML=h;}
+  el("go").disabled=!(start!==null&&pred!==null);show("pick",true);show("result",false);el("guess").style.display="none";
+}
+function pickStart(i){start=i;STARTS.forEach(function(x,k){var b=el("s"+k);if(b)b.className=k===i?"on":""});el("go").disabled=(pred===null)}
+function pickPred(i){pred=i;PREDS.forEach(function(x,k){el("p"+k).className=k===i?"on":""});el("go").disabled=(start===null)}
+function play(){
+  var C=COSTS[r],x=STARTS[start]/100,h=[];
+  for(var g=0;g<40;g++){var fh=5+x*(V-C)/2+(1-x)*V,fd=5+(1-x)*V/2;x=x*fh/(x*fh+(1-x)*fd);h.push(x)}
+  var end=Math.round(x*100),entry={C:C,start:STARTS[start],end:end,pred:null,hit:false,guess:null};
+  if(r<2){var near=PREDS.reduce(function(a,b){return Math.abs(b-end)<Math.abs(a-end)?b:a});entry.pred=PREDS[pred];entry.hit=(PREDS[pred]===near)}
+  log.push(entry);
+  el("chart").innerHTML="";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  el("headline").textContent="Started at "+STARTS[start]+"% hawks. Watching 40 generations...";
+  show("pick",false);show("result",true);
+  var gi=0;(function grow(){
+    if(gi<h.length){el("chart").innerHTML+="<div class=\"col\" style=\"height:"+Math.max(1,Math.round(h[gi]*118))+"px\"></div>";gi++;setTimeout(grow,50);return}
+    el("headline").textContent="Started at "+entry.start+"% hawks. Ended at "+end+"%.";
+    if(r<2){el("detail").innerHTML="You predicted about "+entry.pred+"%. "+(entry.hit?"<b>Right!</b>":"Not this time.");
+      el("next").textContent=(r===1)?"MYSTERY ARENA AHEAD":"NEXT ARENA";el("next").style.visibility="visible";}
+    else{var b="";GUESSES.forEach(function(c){b+="<button onclick=\"guessCost("+c+")\">COST "+c+"</button>"});el("gbtn").innerHTML=b;el("guess").style.display="block";}
+  })();
+}
+function guessCost(c){
+  var e=log[2];e.guess=c;e.hit=(c===COSTS[2]);el("guess").style.display="none";
+  el("detail").innerHTML="You guessed cost "+c+". The real cost was <b>"+COSTS[2]+"</b>. "+(e.hit?"<b>Right!</b> 4 divided by 12 is about 33%.":"The flock settles where hawks are prize divided by cost: 4 / 12 is about 33%.");
+  el("next").textContent="SEE ARENA REPORT";el("next").style.visibility="visible";
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Arena</th><th>Fight cost</th><th>Start</th><th>Your call</th><th>End</th></tr>",hits=0;
+  log.forEach(function(x,i){if(x.hit)hits++;var call=(i<2)?("predicted "+x.pred+"%"):("guessed cost "+x.guess);rows+="<tr><td>"+(i+1)+"</td><td>"+x.C+"</td><td>"+x.start+"%</td><td>"+call+(x.hit?" ✔":"")+"</td><td>"+x.end+"%</td></tr>"});
+  var rank=hits===3?"FLOCK MASTER":(hits===2?"BIRD WATCHER":"FLEDGLING");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Calls right: <b>"+hits+"</b> of 3.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Fight cost 6: from either start, the flock settles near <b>67% hawks</b> (prize 4 divided by cost 6).</div>"+
+    "<div class=\"tape\">Fight cost 12: it settles near <b>33% hawks</b> (4 divided by 12).</div>"+
+    "<p class=\"note\">At the settling point, hawks and doves earn exactly the same. Why does that stop the mix from changing?</p>"+
+    "<div class=\"fact\">Biologists call a stable mix like this a polymorphic population: two kinds living side by side, neither able to push out the other.</div>";
+  el("out").value="GT2-M11 | "+log.map(function(x,i){return "arena "+(i+1)+": cost "+x.C+", start "+x.start+"% hawks, "+(i<2?"predicted "+x.pred+"%":"guessed cost "+x.guess)+", ended "+x.end+"%"}).join(" | ")+" | calls right: "+hits+" of 3";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jar of Coins</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 12px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .chart{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:120px;border-bottom:2px solid #00e5ff;margin:10px auto;max-width:560px}
+  .col{width:12px;background:#ff2bd6;box-shadow:0 0 4px #ff2bd6}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:16px}
+  .w{color:#39ff14}.l{color:#ff5555}
+  .big{padding:12px 20px;margin:8px}
+</style>
+</head>
+<body>
+<h1>JAR OF COINS</h1>
+<p class="note">A jar full of coins is up for auction. Nobody knows exactly how many coins are inside. Everyone, you included, gets a quick look and a guess. Highest bid wins, pays its bid, and keeps the coins.</p>
+<p class="note">Each guess is the true amount plus or minus up to 12 coins. 4 jars.</p>
+<div class="bar">
+  <div class="box">JAR<b id="rn">1/4</b></div>
+  <div class="box">YOUR PROFIT<b id="pf">0</b></div>
+  <div class="box">CURSE COUNT<b id="cc">0</b></div>
+</div>
+<p class="note">Curse count = winners who paid more than the jar was worth.</p>
+
+<div id="pick">
+  <h2 id="est"></h2>
+  <p>Pick your sealed bid:</p>
+  <div id="choices"></div>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <table id="bids"></table>
+  <p id="detail"></p>
+  <button class="big" id="next" onclick="nextRound()">NEXT JAR</button>
+</div>
+
+<div id="final">
+  <h1>AUCTION CLOSED</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var BOTS=[{n:"Oil Baron Ollie",s:0},{n:"Rookie Ray",s:0},{n:"Lucky Lu",s:-3},{n:"Mad Max",s:-6},{n:"Careful Kit",s:-10}];
+var SHADES=[0,-4,-8,-12,-16],total=4,r=0,log=[],pf=0,cc=0,jar=null;
+var TAUNT={botwin:["\"Mine! Worth every coin... right?\"","\"Ha! Outbid you!\""],mewin:["\"You can have it. I had a bad feeling.\"","\"Enjoy your coins, if there are enough.\""]};
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function noise(){return rnd(25)-12}
+function setup(){
+  var V=30+rnd(61);jar={V:V,mine:V+noise(),bots:BOTS.map(function(b){var e=V+noise();return {n:b.n,est:e,bid:Math.max(1,e+b.s)}})};
+  el("rn").textContent=(r+1)+"/"+total;
+  el("est").textContent="Your guess: about "+jar.mine+" coins.";
+  el("choices").innerHTML=SHADES.map(function(s){var b=Math.max(1,jar.mine+s);return "<button onclick=\"play("+s+")\">BID "+b+(s?" ("+s+")":" (my guess)")+"</button>"}).join("");
+  show("pick",true);show("result",false);
+}
+function play(s){
+  var my=Math.max(1,jar.mine+s),all=jar.bots.map(function(b){return {n:b.n,bid:b.bid}});all.push({n:"YOU",bid:my});
+  var top=-1,w=null;all.forEach(function(x){if(x.bid>top||(x.bid===top&&x.n==="YOU")){top=x.bid;w=x}});
+  var profit=jar.V-w.bid,curse=profit<0;if(curse)cc++;
+  var mine=(w.n==="YOU")?profit:0;pf+=mine;
+  log.push({V:jar.V,guess:jar.mine,bid:my,winner:w.n,winBid:w.bid,profit:profit,mine:mine});
+  el("headline").textContent="You bid "+my+". Opening the envelopes...";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  show("pick",false);show("result",true);
+  var sorted=all.slice().sort(function(a,b){return a.bid-b.bid}),k=0,rows=[];
+  (function reveal(){
+    if(k<sorted.length){rows.push("<tr"+(sorted[k].n==="YOU"?" style=\"color:#ffe600\"":"")+"><td>"+sorted[k].n+"</td><td>"+sorted[k].bid+"</td></tr>");
+      el("bids").innerHTML="<tr><th>Bidder</th><th>Bid</th></tr>"+rows.join("");k++;setTimeout(reveal,450);return}
+    el("headline").textContent=w.n+" wins with "+w.bid+". The jar held "+jar.V+" coins!";
+    var t=(w.n==="YOU")?(BOTS[0].n+": "+TAUNT.mewin[r%2]):(w.n+": "+TAUNT.botwin[r%2]);
+    el("detail").innerHTML=(curse?"<b>WINNER'S CURSE!</b> The winner paid "+(-profit)+" coins more than the jar was worth.":"The winner made "+profit+" coins.")+"<br><span class=\"rival\">"+t+"</span>";
+    el("pf").textContent=pf;el("cc").textContent=cc;
+    el("next").textContent=(r===total-1)?"SEE FINAL RESULTS":"NEXT JAR";el("next").style.visibility="visible";
+  })();
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var wins=0,rows="<tr><th>Jar</th><th>Coins inside</th><th>Your guess</th><th>Your bid</th><th>Winner</th><th>Winner's profit</th></tr>";
+  log.forEach(function(x,i){if(x.winner==="YOU")wins++;rows+="<tr><td>"+(i+1)+"</td><td>"+x.V+"</td><td>"+x.guess+"</td><td>"+x.bid+"</td><td>"+x.winner+" ("+x.winBid+")</td><td>"+x.profit+"</td></tr>"});
+  var rank=(pf>0)?"SHREWD BIDDER":(pf===0?"CAUTIOUS COLLECTOR":"CURSED COLLECTOR");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Your profit: <b>"+pf+"</b> coins. Jars won: <b>"+wins+"</b> of 4. Winners who overpaid: <b>"+cc+"</b> of 4.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Everyone's guess is the truth plus some luck. The person who wins is usually the one whose guess was <b>too high</b>. That is the winner's curse.</div>"+
+    "<div class=\"tape\">The fix: bid as if you already know you won, meaning your guess was probably one of the highest. Bid <b>well below</b> your guess.</div>"+
+    "<p class=\"note\">In this game, winning a jar was often bad news. Why can winning an auction be bad news?</p>"+
+    "<div class=\"fact\">Polak auctioned a real jar of coins to his class. The winning bid was well above what the jar held. He links the same curse to oil-drilling rights and pricey sports free agents.</div>";
+  el("out").value="GT4-M12 | "+log.map(function(x,i){return "jar "+(i+1)+": held "+x.V+", my guess "+x.guess+", my bid "+x.bid+", winner "+x.winner+" at "+x.winBid+" (profit "+x.profit+")"}).join(" | ")+" | my profit "+pf+" | winners who overpaid "+cc+" of 4";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

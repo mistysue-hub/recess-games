@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hiring Desk</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 12px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .chart{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:120px;border-bottom:2px solid #00e5ff;margin:10px auto;max-width:560px}
+  .col{width:12px;background:#ff2bd6;box-shadow:0 0 4px #ff2bd6}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:16px}
+  .w{color:#39ff14}.l{color:#ff5555}
+  .big{padding:12px 20px;margin:8px}
+</style>
+</head>
+<body>
+<h1>HIRING DESK</h1>
+<p class="note">You run hiring at Boring Bank. Two job seekers walk in. You can't tell them apart by looking.</p>
+<table>
+  <tr><th></th><th>Worth to the bank</th><th>Cost of 1 year of MBA school</th></tr>
+  <tr><th>GUS (great worker)</th><td>50</td><td>5</td></tr>
+  <tr><th>BO (weaker worker)</th><td>30</td><td>10.01</td></tr>
+</table>
+<p class="note">Your rule: "Anyone with at least N years of MBA gets paid 50. Anyone with less gets paid 30." Each worker gets the MBA only if it leaves them strictly better off than skipping it (50 minus school cost, versus 30). School teaches nothing here: it only sends a signal.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/3</b></div>
+  <div class="box">SORTED RIGHT<b id="sr">0</b></div>
+</div>
+
+<div id="pick">
+  <h2>STEP 1: HOW MANY YEARS OF MBA DOES YOUR RULE ASK FOR?</h2>
+  <div id="rules"></div>
+  <h2>STEP 2: WILL BO FAKE IT AND GET THE MBA TOO?</h2>
+  <div id="preds"></div>
+  <br><button id="go" class="big" onclick="play()" disabled>OPEN THE DOORS</button>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <table id="out1"></table>
+  <p id="detail"></p>
+  <button class="big" id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>HIRING REPORT</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var total=3,r=0,log=[],N=null,pred=null,sorted=0;
+var CG=5,CB=10.01;
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function r2(x){return Math.round(x*100)/100}
+function decide(n){
+  var g=50-CG*n,b=50-CB*n;
+  var gus=(g>=30)?n:0, bo=(b>30)?n:0;
+  return {gus:gus,bo:bo,gNet:gus?r2(g):30,bNet:bo?r2(b):30,gTie:(g===30)};
+}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;N=null;pred=null;
+  var h="";for(var n=1;n<=5;n++)h+="<button id=\"n"+n+"\" onclick=\"pickN("+n+")\">"+n+" YEAR"+(n>1?"S":"")+"</button>";el("rules").innerHTML=h;
+  el("preds").innerHTML="<button id=\"p1\" onclick=\"pickP(1)\">BO FAKES IT</button><button id=\"p0\" onclick=\"pickP(0)\">BO SKIPS IT</button>";
+  el("go").disabled=true;show("pick",true);show("result",false);
+}
+function pickN(n){N=n;for(var k=1;k<=5;k++)el("n"+k).className=(k===n?"on":"");el("go").disabled=(pred===null)}
+function pickP(p){pred=p;el("p1").className=(p===1?"on":"");el("p0").className=(p===0?"on":"");el("go").disabled=(N===null)}
+function play(){
+  var d=decide(N),fake=d.bo>0,hit=(fake===(pred===1));
+  var outcome=(d.gus>0&&!fake)?"SORTED":(fake?"FOOLED":"NOBODY SIGNALS");
+  var waste=d.gus*CG+(fake?r2(d.bo*CB):0);
+  if(outcome==="SORTED")sorted++;
+  log.push({N:N,pred:pred===1?"fake":"skip",fake:fake,hit:hit,outcome:outcome,waste:r2(waste),gus:d.gus,bo:d.bo});
+  el("headline").textContent="Rule: "+N+" year"+(N>1?"s":"")+" of MBA. The workers decide...";
+  el("out1").innerHTML="";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  show("pick",false);show("result",true);
+  setTimeout(function(){
+    el("out1").innerHTML="<tr><th>Worker</th><th>Years of MBA</th><th>Paid</th><th>Pay minus school cost</th></tr>"+
+      "<tr><td>GUS</td><td>"+d.gus+"</td><td>"+(d.gus?50:30)+"</td><td>"+d.gNet+"</td></tr>";
+    setTimeout(function(){
+      el("out1").innerHTML+="<tr><td>BO</td><td>"+d.bo+"</td><td>"+(d.bo?50:30)+"</td><td>"+d.bNet+"</td></tr>";
+      var msg=outcome==="SORTED"?"<b>SORTED!</b> Only Gus got the MBA, so your rule tells them apart.":(outcome==="FOOLED"?"<b>FOOLED!</b> Bo got the MBA too, so you paid a weaker worker 50.":"<b>NOBODY SIGNALS.</b> Even Gus found school not worth it, so you paid a great worker only 30.");
+      if(d.gTie)msg+=" (Gus is exactly even: 50 - 20 = 30, the same as skipping. He goes anyway.)";
+      el("detail").innerHTML=msg+"<br>Years spent in school just to send a signal cost <b>"+r2(waste)+"</b>. You predicted Bo would "+(pred===1?"fake it":"skip it")+": "+(hit?"<b>right!</b>":"not this time.");
+      el("sr").textContent=sorted;
+      el("next").textContent=(r===total-1)?"SEE HIRING REPORT":"NEXT ROUND";el("next").style.visibility="visible";
+    },600);
+  },600);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Round</th><th>Rule</th><th>Result</th><th>School cost</th><th>Bo prediction</th></tr>",hits=0,best=false;
+  log.forEach(function(x,i){if(x.hit)hits++;if(x.N===2)best=true;rows+="<tr><td>"+(i+1)+"</td><td>"+x.N+" yr</td><td>"+x.outcome+"</td><td>"+x.waste+"</td><td>"+x.pred+(x.hit?" ✔":"")+"</td></tr>"});
+  var rank=(best&&sorted>=1)?"HEAD OF HIRING":(sorted>=1?"SHARP RECRUITER":"FOOLED AGAIN");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Rounds sorted right: <b>"+sorted+"</b> of 3. Bo predictions right: <b>"+hits+"</b> of 3.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">1 year: Bo fakes it (50 - 10.01 = 39.99, more than 30). <b>FOOLED.</b></div>"+
+    "<div class=\"tape\">2 years: Bo would end with 29.98, less than 30, so he skips it. Gus still comes out ahead (40). <b>SORTED</b> with the least school.</div>"+
+    "<div class=\"tape\">3 or 4 years still sort them, but Gus wastes more time. 5 years: even Gus gives up.</div>"+
+    "<p class=\"note\">The signal only works because school costs Bo more than it costs Gus. What would happen if school cost them both the same?</p>"+
+    "<div class=\"fact\">These are Polak's own numbers. He calls this a pessimistic model of education: nobody learns anything at school, and the weaker workers end up earning less (30 instead of the average of 32).</div>";
+  el("out").value="GT4-M09 | "+log.map(function(x,i){return "round "+(i+1)+": rule "+x.N+" yr, Gus "+x.gus+" yr, Bo "+x.bo+" yr, "+x.outcome+", school cost "+x.waste+", predicted Bo would "+x.pred}).join(" | ")+" | sorted "+sorted+" of 3";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

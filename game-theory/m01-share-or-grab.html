@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Share or Grab</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:8px 10px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 18px "Courier New",monospace;margin:8px;padding:12px 20px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active{background:#ffe600;color:#07070f}
+  #round,#final{display:none}
+  #out{width:95%;max-width:560px;height:90px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .partner{color:#00e5ff;font-size:18px}
+  .promise{color:#ffe600;font-size:17px}
+  #log td{font-size:13px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:560px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>SHARE OR GRAB</h1>
+<p class="note">5 rounds. A brand-new partner every round. Each one makes you a promise. You will never meet them again.</p>
+<table>
+  <tr><th>You \ Partner</th><th>SHARE</th><th>GRAB</th></tr>
+  <tr><th>SHARE</th><td>You 3, Partner 3</td><td>You 0, Partner 5</td></tr>
+  <tr><th>GRAB</th><td>You 5, Partner 0</td><td>You 1, Partner 1</td></tr>
+</table>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/5</b></div>
+  <div class="box">YOUR SCORE<b id="ms">0</b></div>
+  <div class="box">TEAM SCORE<b id="ts">0</b></div>
+</div>
+<p class="note">Team score = you plus your partner, added up over every round.</p>
+
+<div id="pick">
+  <p class="partner" id="who"></p>
+  <p>Your partner has made a promise. Choose your move:</p>
+  <button onclick="play('SHARE')">SHARE</button>
+  <button onclick="play('GRAB')">GRAB</button>
+</div>
+
+<div id="round">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <table id="log"></table>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var names=["Pixel Pete","Neon Nia","Glitch","Turbo Tam","Zed"];
+var pts={"SHARE|SHARE":[3,3],"SHARE|GRAB":[0,5],"GRAB|SHARE":[5,0],"GRAB|GRAB":[1,1]};
+var total=5,r=0,mine=[],theirs=[],ms=0,ts=0;
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+var keeps=null,promises=["I'll SHARE, promise!","SHARE, I swear. Trust me.","Let's both SHARE, deal?","I always SHARE. Always.","SHARE with me and we both win!"];
+function setup(){
+  if(!keeps){keeps=[true,true,true,false,false];for(var i=4;i>0;i--){var j=rnd5(i+1),t=keeps[i];keeps[i]=keeps[j];keeps[j]=t}}
+  el("rn").textContent=(r+1)+"/"+total;
+  el("who").innerHTML="Partner "+(r+1)+": "+names[r]+"<br><span class=\"promise\">\""+promises[r]+"\"</span><br><span class=\"note\">Promises here can't be enforced.</span>";
+  show("pick",true);show("round",false);
+}
+function rnd5(n){var a=new Uint8Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function rnd(){
+  var a=new Uint8Array(1);
+  (window.crypto||window.msCrypto).getRandomValues(a);
+  return a[0]%2===0?"SHARE":"GRAB";
+}
+function play(me){
+  var g=keeps[r]?"SHARE":"GRAB";
+  var p=pts[me+"|"+g];
+  mine.push(me);theirs.push(g);ms+=p[0];ts+=p[0]+p[1];
+  el("ms").textContent=ms;el("ts").textContent=ts;
+  el("headline").textContent="You: "+me+"   "+names[r]+": ...";
+  el("detail").textContent="";el("next").style.visibility="hidden";
+  el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT ROUND";
+  show("pick",false);show("round",true);
+  var rr=r;
+  setTimeout(function(){
+    el("headline").textContent="You: "+me+"   "+names[rr]+": "+g+(g==="GRAB"?"  (promise BROKEN!)":"  (promise kept)");
+    el("detail").textContent="You scored "+p[0]+". "+names[rr]+" scored "+p[1]+". Team +"+(p[0]+p[1])+".";
+    el("next").style.visibility="visible";
+  },700);
+}
+function nextRound(){
+  r++;
+  if(r>=total){finish();return}
+  setup();
+}
+function finish(){
+  show("round",false);show("pick",false);
+  var rows="<tr><th>Round</th><th>You</th><th>Partner</th><th>You scored</th></tr>";
+  for(var i=0;i<total;i++){
+    var p=pts[mine[i]+"|"+theirs[i]];
+    rows+="<tr><td>"+(i+1)+"</td><td>"+mine[i]+"</td><td>"+theirs[i]+"</td><td>"+p[0]+"</td></tr>";
+  }
+  el("log").innerHTML=rows;
+  var grabs=0,pGrabs=0,allGrab=0,allShare=0;
+  for(var j=0;j<total;j++){
+    if(mine[j]==="GRAB")grabs++;
+    if(theirs[j]==="GRAB")pGrabs++;
+    allGrab+=pts["GRAB|"+theirs[j]][0];
+    allShare+=pts["SHARE|"+theirs[j]][0];
+  }
+  var rank=grabs<=1?"TEAM PLAYER":(grabs<=3?"SWITCH HITTER":"LONE WOLF");
+  el("verdict").innerHTML=
+    "<p>Your total: <b>"+ms+"</b> out of a possible 25. Team total: <b>"+ts+"</b> out of a possible 30.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<p class=\"note\">You grabbed "+grabs+" of 5 times. Promises kept: "+(5-pGrabs)+" of 5. Every partner promised to SHARE. Did the promises change your moves?</p>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<p class=\"note\">Same partners, same moves from them. Only your choices change.</p>"+
+    "<div class=\"tape\">If you had shared every round, you would have scored <b>"+allShare+"</b>.</div>"+
+    "<div class=\"tape\">If you had grabbed every round, you would have scored <b>"+allGrab+"</b>.</div>"+
+    "<div class=\"tape\">You actually scored <b>"+ms+"</b>.</div>"+
+    "<p class=\"note\">Now look at the team score: if every partner and you had shared every round, the team would have scored 30.</p>"+
+    "<div class=\"fact\">The first time Yale's game theory class played a game like this, about 87 of every 100 students went for the greedy move (238 of 274). How did you compare?</div>";
+  el("out").value="GT-M01 | my moves: "+mine.join(", ")+" | partner moves: "+theirs.join(", ")+" | my total: "+ms+" | team total: "+ts+" | my grabs: "+grabs+" | partner grabs: "+pGrabs;
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");
+  t.select();t.setSelectionRange(0,999);
+  var ok=false;
+  function fallback(){
+    try{ok=document.execCommand("copy")}catch(e){}
+    s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky.";
+  }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

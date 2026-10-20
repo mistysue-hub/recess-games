@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Last Stone</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+  .pile{display:inline-block;margin:8px 14px;vertical-align:top}
+  .stones{font-size:22px;letter-spacing:4px;color:#00e5ff;min-height:30px}
+  .pile button{min-width:46px;padding:8px 0;margin:3px}
+
+</style>
+</head>
+<body>
+<h1>LAST STONE</h1>
+<p class="note">Two piles of stones. On your turn, pick ONE pile and take as many stones from it as you like (at least 1). Whoever takes the very last stone wins. Your rival, Pebble, never makes a mistake when she can win.</p>
+<div class="bar">
+  <div class="box">MATCH<b id="rn">1/3</b></div>
+  <div class="box">WINS<b id="wn">0</b></div>
+</div>
+<div id="pick">
+  <p class="news" id="news"></p>
+  <p>Look at the piles first. Do you want to go first or second?</p>
+  <button onclick="choose(true)">I GO FIRST</button>
+  <button onclick="choose(false)">PEBBLE GOES FIRST</button>
+</div>
+<div id="board" style="display:none">
+  <h2 id="turn"></h2>
+  <div id="piles"></div>
+  <p class="rival" id="say"></p>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT MATCH</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var STARTS=[[5,3],[4,4],[7,2]],total=3,r=0,log=[],wins=0,P=null,iFirst=null,moves=[];
+var SAY=["Pebble: \"Your move. Choose wisely.\"","Pebble: \"Hmm. Interesting.\"","Pebble: \"I see where this is going.\""];
+function setup(){
+  P=STARTS[r].slice();moves=[];
+  el("rn").textContent=(r+1)+"/"+total;
+  el("news").textContent="Piles: "+P[0]+" and "+P[1]+".";
+  show("pick",true);show("board",false);show("result",false);
+}
+function draw(myTurn){
+  var h="";for(var i=0;i<2;i++){
+    h+="<div class=\"pile\"><p>PILE "+(i?"B":"A")+": "+P[i]+"</p><div class=\"stones\">"+Array(P[i]+1).join("● ")+"</div>";
+    if(myTurn&&P[i]>0){for(var k=1;k<=P[i];k++)h+="<button onclick=\"take("+i+","+k+")\">-"+k+"</button>"}
+    h+="</div>";
+  }
+  el("piles").innerHTML=h;
+}
+function choose(first){iFirst=first;show("pick",false);show("board",true);if(first){el("turn").textContent="YOUR TURN";el("say").textContent=SAY[0];draw(true)}else pebble()}
+function over(){return P[0]===0&&P[1]===0}
+function take(i,k){
+  P[i]-=k;moves.push("me "+(i?"B":"A")+"-"+k);
+  if(over()){end(true);return}
+  el("turn").textContent="PEBBLE IS THINKING...";draw(false);setTimeout(pebble,700);
+}
+function pebble(){
+  var i,k;
+  if(P[0]!==P[1]){i=P[0]>P[1]?0:1;k=Math.abs(P[0]-P[1])}
+  else{i=P[0]>0?0:1;k=1}
+  P[i]-=k;moves.push("Pebble "+(i?"B":"A")+"-"+k);
+  if(over()){end(false);return}
+  el("turn").textContent="YOUR TURN";el("say").textContent="Pebble took "+k+" from pile "+(i?"B":"A")+". "+SAY[(moves.length)%3];draw(true);
+}
+function end(won){
+  var s=STARTS[r],smart=(s[0]!==s[1]);if(won)wins++;
+  log.push({s:s,first:iFirst,smart:(iFirst===smart),won:won,moves:moves.length});
+  show("board",false);show("result",true);el("wn").textContent=wins;
+  el("headline").innerHTML=won?"<span class=\"good\">YOU TOOK THE LAST STONE!</span>":"<span class=\"bad\">Pebble took the last stone.</span>";
+  el("detail").innerHTML="Piles "+s[0]+" and "+s[1]+": the player who can win for sure is the one who goes <b>"+(smart?"FIRST":"SECOND")+"</b>. You chose to go "+(iFirst?"first":"second")+".";
+  el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT MATCH";
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);show("board",false);
+  var rows="<tr><th>Piles</th><th>You went</th><th>Winning choice</th><th>Result</th></tr>",smart=0;
+  log.forEach(function(x){if(x.smart)smart++;rows+="<tr><td>"+x.s[0]+" and "+x.s[1]+"</td><td>"+(x.first?"first":"second")+"</td><td>"+(x.s[0]!==x.s[1]?"first":"second")+(x.smart?" ✔":"")+"</td><td>"+(x.won?"WIN":"loss")+"</td></tr>"});
+  var rank=wins===3?"STONE COLD":(wins>=1?"PILE PRO":"PEBBLED");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Wins: <b>"+wins+"</b> of 3. Smart choice of who goes first: <b>"+smart+"</b> of 3.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Pebble's secret: make the two piles <b>equal</b>, then copy every move. The player facing equal piles always loses.</div>"+
+    "<div class=\"tape\">So: unequal piles, go <b>first</b> and even them up. Equal piles, go <b>second</b>.</div>"+
+    "<p class=\"note\">In a game like this, with no luck and no hidden moves, one player can always force a win (or at least a tie). Which kind of games does that cover?</p>"+
+    "<div class=\"fact\">Ben Polak's class played this same two-pile game. A mathematician named Zermelo proved that games like it, even chess, have a solution. Nobody knows what chess's solution is.</div>";
+  el("out").value="GT3-M08 | "+log.map(function(x){return "piles "+x.s[0]+"-"+x.s[1]+": went "+(x.first?"first":"second")+(x.smart?" (smart)":" (not smart)")+", "+(x.won?"won":"lost")}).join(" | ")+" | wins "+wins+" of 3";
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>

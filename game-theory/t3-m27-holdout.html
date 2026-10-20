@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holdout</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+
+</style>
+</head>
+<body>
+<h1>HOLDOUT</h1>
+<p class="note">You and Stubborn Stan both want a prize worth <b>100 coins</b>. Each round you both choose at the same moment: FIGHT or QUIT. If one of you quits, the other wins the prize. If you both fight, you each pay <b>75 coins</b> and go another round. If you both quit, nobody gets the prize. After 5 rounds of fighting, the prize is gone.</p>
+<div class="bar">
+  <div class="box">MATCH<b id="rn">1/3</b></div>
+  <div class="box">ROUND<b id="rd">1</b></div>
+  <div class="box">SPENT THIS MATCH<b id="sp">0</b></div>
+  <div class="box">TOTAL COINS<b id="tc">0</b></div>
+</div>
+<div id="pick">
+  <p class="rival" id="say"></p>
+  <button onclick="play(true)">FIGHT</button><button onclick="play(false)">QUIT</button>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT MATCH</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var V=100,C=75,PSTAR=V/(V+C),total=3,m=0,round=1,spent=0,tc=0,log=[],moves=[],stanSpent=0;
+var TAUNT=["Stan: \"I never back down. Probably.\"","Stan: \"You blinked first last time. Or did you?\"","Stan: \"I've got deep pockets.\"","Stan: \"Still here? Me too.\"","Stan: \"Last chance to walk away.\""];
+function setup(){round=1;spent=0;stanSpent=0;moves=[];el("rn").textContent=(m+1)+"/"+total;el("rd").textContent=1;el("sp").textContent=0;el("say").textContent=TAUNT[m%TAUNT.length];show("pick",true);show("result",false)}
+function play(fight){
+  var stan=rnd(1000)<PSTAR*1000;moves.push((fight?"F":"Q")+"/"+(stan?"F":"Q"));
+  el("say").textContent="You: "+(fight?"FIGHT":"QUIT")+". Stan: ...";
+  setTimeout(function(){
+    if(fight&&stan){spent+=C;stanSpent+=C;round++;el("sp").textContent=spent;
+      if(round>5){endMatch(0,"Five rounds of fighting. The prize is gone. You both just paid and paid.");return}
+      el("rd").textContent=round;el("say").textContent="You both FIGHT! Each of you pays 75. "+TAUNT[(round)%TAUNT.length];return}
+    var prize=(fight&&!stan)?V:0,msg=(fight&&!stan)?"Stan QUITS. You win the prize!":((!fight&&stan)?"Stan FIGHTS. He wins the prize.":"You both quit. Nobody gets the prize.");
+    endMatch(prize,msg);
+  },700);
+}
+function endMatch(prize,msg){
+  var net=prize-spent;tc+=net;el("tc").textContent=tc;
+  log.push({rounds:moves.length,moves:moves.join(" "),spent:spent,prize:prize,net:net});
+  show("pick",false);show("result",true);
+  el("headline").innerHTML=msg;
+  el("detail").innerHTML="Prize: "+prize+". Spent fighting: "+spent+". Net this match: <b class=\""+(net>=0?"good":"bad")+"\">"+net+"</b>.";
+  el("next").textContent=(m===total-1)?"SEE FINAL SCORE":"NEXT MATCH";
+}
+function nextRound(){m++;if(m>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Match</th><th>Moves (you/Stan)</th><th>Spent</th><th>Prize</th><th>Net</th></tr>";
+  log.forEach(function(x,i){rows+="<tr><td>"+(i+1)+"</td><td>"+x.moves+"</td><td>"+x.spent+"</td><td>"+x.prize+"</td><td>"+x.net+"</td></tr>"});
+  var rank=tc>=100?"COOL HEAD":(tc>=0?"SURVIVOR":"SUNK BY COSTS");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Total over 3 matches: <b>"+tc+"</b> coins.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Stan fought each round with chance about <b>57%</b> (100 divided by 100 + 75). At that mix, fighting and quitting are worth the SAME to you, so on average nobody comes out ahead: about <b>0</b>.</div>"+
+    "<div class=\"tape\">Coins already spent are gone whatever you do next. Only the prize ahead and the next 75 matter.</div>"+
+    "<p class=\"note\">Even two perfectly sensible players can end up in a long, costly fight. Can you think of a real one?</p>"+
+    "<div class=\"fact\">Ben Polak's class played this for a $1 prize at 75 cents a round. One pair kept fighting until their costs were higher than the prize.</div>";
+  el("out").value="GT3-M27 | "+log.map(function(x,i){return "match "+(i+1)+": "+x.moves+", spent "+x.spent+", prize "+x.prize+", net "+x.net}).join(" | ")+" | total "+tc;
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>

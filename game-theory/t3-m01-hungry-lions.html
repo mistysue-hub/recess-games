@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hungry Lions</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+
+</style>
+</head>
+<body>
+<h1>HUNGRY LIONS</h1>
+<p class="note">A pride of lions finds a sheep. Only the biggest lion may eat it. But a lion that eats falls asleep, and then the next biggest lion may eat HIM. Every lion would rather stay hungry than be eaten.</p>
+<div class="bar">
+  <div class="box">PRIDE<b id="rn">1/5</b></div>
+  <div class="box">RIGHT CALLS<b id="sc">0</b></div>
+</div>
+<div id="pick">
+  <p class="news" id="news"></p>
+  <p>You are the biggest lion. Do you eat the sheep?</p>
+  <button onclick="play(true)">EAT</button>
+  <button onclick="play(false)">DON'T EAT</button>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <div id="chain" style="text-align:left;display:inline-block"></div>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT PRIDE</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var PRIDES=[2,3,4,7,10],total=5,r=0,log=[],sc=0;
+var RANGER=["Ranger Rae: \"Big lion, big decision.\"","Ranger Rae: \"Look down the line before you leap.\"","Ranger Rae: \"Count carefully, king.\"","Ranger Rae: \"Seven lions. Hungry yet?\"","Ranger Rae: \"Ten lions. Good luck.\""];
+function shouldEat(n){return n%2===1}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;
+  el("news").textContent="This pride has "+PRIDES[r]+" lions. "+RANGER[r];
+  show("pick",true);show("result",false);
+}
+function play(eat){
+  var n=PRIDES[r],right=(eat===shouldEat(n));if(right)sc++;
+  log.push({n:n,eat:eat,right:right});
+  el("headline").textContent="You chose to "+(eat?"EAT":"WAIT")+". Let's reason from the smallest lion up...";
+  el("chain").innerHTML="";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  show("pick",false);show("result",true);
+  var k=1;
+  (function step(){
+    if(k<=n){
+      var line;
+      if(k===1)line="Lion #"+n+" (smallest): nobody can eat him, so he eats if he gets the chance.";
+      else line="Lion #"+(n-k+1)+": if he eats, the lion below him "+(shouldEat(k-1)?"WOULD":"would NOT")+" eat him, so he "+(shouldEat(k)?"<span class=\"good\">EATS</span>":"<span class=\"bad\">WAITS</span>")+".";
+      if(k===n)line+=(k===1?"":"")+" <b>(that's you)</b>";
+      el("chain").innerHTML+="<p>"+line+"</p>";k++;setTimeout(step,650);return;
+    }
+    el("detail").innerHTML=(right?"<b class=\"good\">RIGHT CALL!</b>":"<b class=\"bad\">WRONG CALL.</b>")+" With "+n+" lions, the biggest lion should "+(shouldEat(n)?"EAT.":"NOT eat.");
+    el("sc").textContent=sc;el("next").style.visibility="visible";
+    el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT PRIDE";
+  })();
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Lions</th><th>You</th><th>Smart move</th></tr>";
+  log.forEach(function(x){rows+="<tr><td>"+x.n+"</td><td>"+(x.eat?"EAT":"WAIT")+"</td><td>"+(shouldEat(x.n)?"EAT":"WAIT")+(x.right?" ✔":"")+"</td></tr>"});
+  var rank=sc===5?"KING OF THE PRIDE":(sc>=3?"SHARP CLAWS":"CUB");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Right calls: <b>"+sc+"</b> of 5.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Start from the <b>smallest</b> lion, the one nobody can eat. He always eats. So the lion above him waits, the next one eats, and so on: <b>eat, wait, eat, wait</b>.</div>"+
+    "<div class=\"tape\">Odd number of lions: the biggest lion eats. Even number: he waits.</div>"+
+    "<p class=\"note\">Starting at the top got you nowhere. Starting at the end of the story solved it. That trick is called backward induction.</p>"+
+    "<div class=\"fact\">When Ben Polak's Yale class first tried this, students guessed the top lion gets a free lunch. Polak's reply: there are no free lunches in economics.</div>";
+  el("out").value="GT3-M01 | "+log.map(function(x){return x.n+" lions: "+(x.eat?"eat":"wait")+(x.right?" (right)":" (wrong)")}).join(" | ")+" | right calls: "+sc+" of 5";
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>

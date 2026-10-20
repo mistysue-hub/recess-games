@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invest or Wait</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+
+</style>
+</head>
+<body>
+<h1>INVEST OR WAIT</h1>
+<p class="note">You run Firm A. You and Firm B both make steel and compete on how much to make. Price per ton = 2 minus a third of the total tons (in millions of dollars). Right now each ton costs both firms $1 to make, and each of you earns about <b>$0.33 million</b> a year.</p>
+<p class="note">A new machine would cut YOUR cost to $0.50 a ton. Only you can rent it. Firm B will see it and change how much it makes.</p>
+<div class="bar">
+  <div class="box">OFFER<b id="rn">1/3</b></div>
+  <div class="box">RIGHT CALLS<b id="sc">0</b></div>
+</div>
+<div id="pick">
+  <p class="news" id="news"></p>
+  <table id="adv"></table>
+  <h2>STEP 1: IF YOU RENT, WHAT WILL FIRM B DO?</h2>
+  <div><button id="b0" onclick="pickB(0)">MAKE MORE</button><button id="b1" onclick="pickB(1)">MAKE THE SAME</button><button id="b2" onclick="pickB(2)">MAKE LESS</button></div>
+  <h2>STEP 2: YOUR CALL</h2>
+  <button id="go1" onclick="play(true)" disabled>RENT IT</button><button id="go2" onclick="play(false)" disabled>SKIP IT</button>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <table id="out1"></table>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT OFFER</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var RENTS=[0.7,1.2,0.85],total=3,r=0,log=[],sc=0,bp=null;
+function cournot(cA,cB){var qA=2-2*cA+cB,qB=2-2*cB+cA,P=2-(qA+qB)/3;return {qA:qA,qB:qB,P:P,pA:(P-cA)*qA,pB:(P-cB)*qB}}
+var BASE=cournot(1,1),NEW=cournot(0.5,1);
+function m(x){return "$"+(Math.round(x*100)/100).toFixed(2)+"M"}
+function setup(){
+  bp=null;el("rn").textContent=(r+1)+"/"+total;el("news").textContent="Rent for the machine: "+m(RENTS[r])+" a year.";
+  el("adv").innerHTML="<tr><th>Advisor</th><th>Says the machine is worth</th></tr><tr><td>The Accountant: \"Same output, cheaper tons.\"</td><td>"+m(0.5)+" a year</td></tr><tr><td>The Economist: \"You'll also make more tons.\"</td><td>"+m(0.69)+" a year</td></tr><tr><td>The Game Theorist: \"Don't forget Firm B reacts.\"</td><td>"+(r===0?"??? (she won't say until you decide)":m(NEW.pA-BASE.pA)+" a year (you learned this last time)")+"</td></tr>";
+  ["b0","b1","b2"].forEach(function(id){el(id).className=""});el("go1").disabled=true;el("go2").disabled=true;
+  show("pick",true);show("result",false);
+}
+function pickB(i){bp=i;["b0","b1","b2"].forEach(function(id,k){el(id).className=k===i?"on":""});el("go1").disabled=false;el("go2").disabled=false}
+function play(rent){
+  var gain=NEW.pA-BASE.pA,smart=gain>RENTS[r],right=(rent===smart);if(right)sc++;
+  var mine=rent?NEW.pA-RENTS[r]:BASE.pA;
+  log.push({rent:RENTS[r],choice:rent,right:right,bguess:["more","same","less"][bp],mine:mine});
+  el("headline").textContent="You "+(rent?"rented":"skipped")+" the machine. Firm B reacts...";el("out1").innerHTML="";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  show("pick",false);show("result",true);
+  setTimeout(function(){
+    el("headline").textContent="You "+(rent?"rented":"skipped")+" the machine.";
+    el("out1").innerHTML="<tr><th></th><th>Skip</th><th>Rent</th></tr><tr><th>Your tons</th><td>"+BASE.qA.toFixed(2)+"M</td><td>"+NEW.qA.toFixed(2)+"M</td></tr><tr><th>Firm B's tons</th><td>"+BASE.qB.toFixed(2)+"M</td><td>"+NEW.qB.toFixed(2)+"M</td></tr><tr><th>Your profit (after any rent)</th><td>"+m(BASE.pA)+"</td><td>"+m(NEW.pA-RENTS[r])+"</td></tr>";
+    el("detail").innerHTML=(right?"<b class=\"good\">RIGHT CALL.</b>":"<b class=\"bad\">WRONG CALL.</b>")+" With the machine, Firm B makes <b>less</b> (you guessed "+["more","the same","less"][bp]+"). The machine is really worth "+m(gain)+" a year to you.";
+    el("sc").textContent=sc;el("next").style.visibility="visible";el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT OFFER";
+  },800);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Rent</th><th>You</th><th>Smart call</th><th>Firm B guess</th></tr>";
+  log.forEach(function(x){rows+="<tr><td>"+m(x.rent)+"</td><td>"+(x.choice?"rent":"skip")+"</td><td>"+(NEW.pA-BASE.pA>x.rent?"rent":"skip")+(x.right?" ✔":"")+"</td><td>"+x.bguess+"</td></tr>"});
+  var rank=sc===3?"STRATEGIST":(sc===2?"ANALYST":"BEAN COUNTER");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Right calls: <b>"+sc+"</b> of 3.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">The Accountant (<b>$0.50M</b>) and the Economist (<b>$0.69M</b>) would both turn down a $0.70M machine.</div>"+
+    "<div class=\"tape\">But once you have it, Firm B makes less steel (0.5M tons instead of 1M), so you sell more at a better price. Real value: <b>$1.00M</b>. Renting at $0.70M pays.</div>"+
+    "<p class=\"note\">Solve what happens AFTER the investment first, then decide. Who forgot to do that?</p>"+
+    "<div class=\"fact\">These are Ben Polak's own numbers from his Yale lecture on strategic investment.</div>";
+  el("out").value="GT3-M24 | "+log.map(function(x){return "rent "+m(x.rent)+": "+(x.choice?"rented":"skipped")+(x.right?" (right)":" (wrong)")+", guessed B makes "+x.bguess}).join(" | ")+" | right calls "+sc+" of 3";
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>

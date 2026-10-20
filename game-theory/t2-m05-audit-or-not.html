@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit or Not</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:4px;padding:10px 0;min-width:56px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active{background:#ffe600;color:#07070f}
+  button.big{padding:12px 20px;margin:8px}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>AUDIT OR NOT</h1>
+<p class="note">You run the tax office for a town of 100 taxpayers. Each owes 10 coins. Each year you pick what share of taxpayers to audit. Every audit costs you 3 coins.</p>
+<table>
+  <tr><th>Honest taxpayer</th><td>pays 10</td></tr>
+  <tr><th>Cheater, not audited</th><td>pays 0</td></tr>
+  <tr><th>Cheater, audited</th><td>pays 10 plus the fine</td></tr>
+</table>
+<p class="note">Taxpayers know your audit rate (give or take a little) and cheat when they think it's worth the risk. Years 1-2: fine 20. Then a new law arrives.</p>
+<div class="bar">
+  <div class="box">YEAR<b id="rn">1/4</b></div>
+  <div class="box">FINE<b id="fn">20</b></div>
+  <div class="box">TOTAL BUDGET<b id="tb">0</b></div>
+</div>
+
+<div id="pick">
+  <p class="news" id="news"></p>
+  <h2>WHAT SHARE WILL YOU AUDIT?</h2>
+  <div id="choices"></div>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button class="big" id="next" onclick="nextRound()">NEXT YEAR</button>
+</div>
+
+<div id="final">
+  <h1>BOOKS CLOSED</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var total=4,r=0,log=[],tb=0;
+var CROOKS=["Shady Steve","Sneaky Sal","Dodgy Dee","Fibbing Phil","Crafty Cass","Wily Will"];
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function fine(){return r<2?20:50}
+function year(p,F){
+  var cheat=0;for(var i=0;i<100;i++){var pe=p+(i/99-0.5)*0.2;if(pe*(10+F)<10)cheat++}
+  var honest=100-cheat,caught=Math.round(cheat*p);
+  var budget=10*honest+(10+F)*caught-Math.round(3*100*p);
+  return {cheat:cheat,caught:caught,budget:budget};
+}
+function bestFor(F){var b=-1e9,bp=0;for(var k=0;k<=10;k++){var x=year(k/10,F).budget;if(x>b){b=x;bp=k*10}}return {p:bp,b:b}}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;el("fn").textContent=fine();
+  el("news").textContent=(r<2)?"The fine for getting caught is 20 coins.":(r===2?"NEW LAW: the fine for getting caught jumps to 50 coins!":"The fine is still 50 coins.");
+  var c="";for(var k=0;k<=10;k++)c+="<button onclick=\"play("+(k*10)+")\">"+(k*10)+"%</button>";
+  el("choices").innerHTML=c;show("pick",true);show("result",false);
+}
+function play(pct){
+  var F=fine(),y=year(pct/100,F),best=bestFor(F);
+  log.push({pct:pct,F:F,cheat:y.cheat,caught:y.caught,budget:y.budget,best:best});
+  tb+=y.budget;el("tb").textContent=tb;
+  el("headline").textContent="You audited "+pct+"%. "+y.cheat+" of 100 taxpayers cheated.";
+  var nm=CROOKS[r%CROOKS.length];
+  el("detail").innerHTML="You caught "+y.caught+" cheaters"+(y.caught>0?" (including "+nm+"!)":(y.cheat>0?". "+nm+" got away with it.":""))+". Budget this year: <b>"+y.budget+"</b> coins.";
+  el("next").textContent=(r===total-1)?"SEE THE BOOKS":(r===1?"NEW LAW AHEAD":"NEXT YEAR");
+  show("pick",false);show("result",true);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Year</th><th>Fine</th><th>Audit rate</th><th>Cheaters</th><th>Budget</th><th>Best rate</th></tr>",hits=0;
+  log.forEach(function(x,i){var hit=x.pct===x.best.p;if(hit)hits++;rows+="<tr><td>"+(i+1)+"</td><td>"+x.F+"</td><td>"+x.pct+"%</td><td>"+x.cheat+"</td><td>"+x.budget+"</td><td>"+x.best.p+"%"+(hit?" ✔":"")+"</td></tr>"});
+  var rank=hits>=3?"MASTER AUDITOR":(hits>=2?"SHARP EYE":"ROOKIE CLERK");
+  var b20=bestFor(20),b50=bestFor(50);
+  el("verdict").innerHTML="<table>"+rows+"</table><p>Total budget: <b>"+tb+"</b>. Best rate hit in <b>"+hits+"</b> of 4 years.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Fine 20: auditing below about 1 in 3 makes cheating worth it. Best rate here: <b>"+b20.p+"%</b>, budget <b>"+b20.b+"</b>.</div>"+
+    "<div class=\"tape\">Fine 50: cheating stops being worth it at about 1 in 6. Best rate: <b>"+b50.p+"%</b>, budget <b>"+b50.b+"</b>.</div>"+
+    "<p class=\"note\">The bigger fine didn't need more audits. It let you audit LESS. Why?</p>"+
+    "<div class=\"fact\">Polak uses tax audits to show a surprise of mixed strategies: changing one side's payoffs can change what the OTHER side does in equilibrium.</div>";
+  el("out").value="GT2-M05 | "+log.map(function(x,i){return "year "+(i+1)+": fine "+x.F+", audit "+x.pct+"%, cheaters "+x.cheat+", budget "+x.budget}).join(" | ")+" | total "+tb+" | best rate hit "+hits+" of 4";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

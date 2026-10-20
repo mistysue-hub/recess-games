@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penalty Kick</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:7px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 18px "Courier New",monospace;margin:8px;padding:12px 20px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active{background:#ffe600;color:#07070f}
+  #round,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .goalie{color:#00e5ff;font-size:18px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .goal{color:#39ff14}.save{color:#ff5555}
+  #net{font-size:15px;letter-spacing:2px;color:#ffe600}
+</style>
+</head>
+<body>
+<h1>PENALTY KICK</h1>
+<p class="note">10 kicks. Pick LEFT or RIGHT. The goalie dives at the same moment, so neither of you can wait and see.</p>
+<table>
+  <tr><th>Chance you score</th><th>Goalie dives LEFT</th><th>Goalie dives RIGHT</th></tr>
+  <tr><th>You kick LEFT</th><td>55%</td><td>90%</td></tr>
+  <tr><th>You kick RIGHT</th><td>85%</td><td>45%</td></tr>
+</table>
+<div class="bar">
+  <div class="box">KICK<b id="rn">1/10</b></div>
+  <div class="box">GOALS<b id="gs">0</b></div>
+</div>
+
+<div id="pick">
+  <p class="goalie" id="who"></p>
+  <button onclick="play('L')">KICK LEFT</button>
+  <button onclick="play('R')">KICK RIGHT</button>
+</div>
+
+<div id="round">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT KICK</button>
+</div>
+
+<div id="final">
+  <h1>FULL TIME</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var total=10,half=5,r=0,mine=[],dives=[],goals=[],gs=0;
+var chance={"L|L":55,"L|R":90,"R|L":85,"R|R":45};
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function word(s){return s==="L"?"LEFT":"RIGHT"}
+function goalieDive(){
+  if(r<half){return rnd(100)<80?"L":"R"}
+  var l=0,rr=0,i;
+  for(i=0;i<r;i++){if(mine[i]==="L")l++;else rr++}
+  if(l===rr)return rnd(2)?"L":"R";
+  return l>rr?"L":"R";
+}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;
+  el("who").textContent=(r<half)
+    ?"Goalie: Wall-E. Scouting report: dives LEFT most of the time."
+    :"Goalie: Scout. Dives the way you have kicked most often.";
+  show("pick",true);show("round",false);
+}
+function play(me){
+  var d=goalieDive();
+  var p=chance[me+"|"+d];
+  var scored=rnd(100)<p;
+  mine.push(me);dives.push(d);goals.push(scored?1:0);
+  if(scored)gs++;
+  el("gs").textContent=gs;
+  el("headline").innerHTML="You kicked "+word(me)+". Goalie dove "+word(d)+". "+(scored?"<span class=\"goal\">GOAL!</span>":"<span class=\"save\">SAVED.</span>");
+  el("detail").textContent="That kick had a "+p+"% chance of going in.";
+  el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT KICK";
+  show("pick",false);show("round",true);
+}
+function nextRound(){
+  r++;
+  if(r>=total){finish();return}
+  setup();
+}
+function count(arr,from,to,v){var c=0;for(var i=from;i<to;i++)if(arr[i]===v)c++;return c}
+function sum(arr,from,to){var c=0;for(var i=from;i<to;i++)c+=arr[i];return c}
+function finish(){
+  show("round",false);show("pick",false);
+  var g1=sum(goals,0,half),g2=sum(goals,half,total);
+  var l1=count(mine,0,half,"L"),l2=count(mine,half,total,"L");
+  var scouted=0;
+  for(var i=half;i<total;i++){
+    var prevL=count(mine,0,i,"L"),prevR=i-prevL;
+    if(prevL!==prevR&&((prevL>prevR&&mine[i]==="L")||(prevR>prevL&&mine[i]==="R")))scouted++;
+  }
+  var rank=(l2>=2&&l2<=3&&scouted<=3)?"UNREADABLE":(scouted>=4?"OPEN BOOK":"HARD TO PIN DOWN");
+  var rows="<tr><th>Kick</th><th>You</th><th>Goalie</th><th>Result</th></tr>";
+  for(var j=0;j<total;j++){
+    rows+="<tr><td>"+(j+1)+(j<half?"":" (Scout)")+"</td><td>"+word(mine[j])+"</td><td>"+word(dives[j])+"</td><td>"+(goals[j]?"GOAL":"SAVED")+"</td></tr>";
+  }
+  el("verdict").innerHTML=
+    "<table>"+rows+"</table>"+
+    "<p>Goals: <b>"+gs+"</b> out of 10. Kicks 1-5 (Wall-E): <b>"+g1+"</b>. Kicks 6-10 (Scout): <b>"+g2+"</b>.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<p class=\"note\">Against Scout you kicked LEFT "+l2+" of 5 times. You kicked the side Scout had already seen most often on "+scouted+" of 5 kicks.</p>"+
+    "<h2>REPLAY THE TAPE</h2>"+"<div class=\"tape\">Against Wall-E (dives LEFT 80% of the time), kicking RIGHT scores about <b>77%</b> and LEFT only <b>62%</b>. You kicked RIGHT "+(5-l1)+" of 5 times. Kicking RIGHT is the best response to a known habit.</div>"+
+    "<div class=\"tape\">If you always kicked LEFT, Scout would soon always dive LEFT: only <b>55%</b> go in.</div>"+
+    "<div class=\"tape\">If you always kicked RIGHT, Scout would soon always dive RIGHT: only <b>45%</b> go in.</div>"+
+    "<div class=\"tape\">The best plan is to mix: kick LEFT about <b>53%</b> of the time. Then every dive gives about <b>69%</b>.</div>"+
+    "<p class=\"note\">Notice what happened to your choices once Scout started reading you.</p>"+
+    "<div class=\"fact\">Professional kickers and goalies in real leagues choose sides close to this kind of mix. Why would a mixed plan be the only plan that can't be exploited?</div>";
+  el("out").value="GT-M07 | kicks: "+mine.join("")+" | goalie dives: "+dives.join("")+" | goals: "+goals.join("")+
+    " | total goals: "+gs+" | goals vs Wall-E: "+g1+" | goals vs Scout: "+g2+" | right kicks vs Wall-E: "+(5-l1)+" of 5 | left kicks vs Scout: "+l2+" of 5 | rank: "+rank;
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");
+  t.select();t.setSelectionRange(0,999);
+  var ok=false;
+  function fallback(){
+    try{ok=document.execCommand("copy")}catch(e){}
+    s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky.";
+  }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

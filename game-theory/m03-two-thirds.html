@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two-Thirds of the Average</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  tr.win td{color:#39ff14;border-color:#39ff14}
+  tr.me td{color:#ffe600}
+  .disp{font:bold 28px "Courier New",monospace;width:110px;margin:6px auto;text-align:center;background:#0e0e1c;color:#ffe600;border:3px solid #ffe600;padding:8px}
+  .pad button{min-width:64px;margin:4px;padding:10px 0}
+  button{font:bold 18px "Courier New",monospace;margin:8px;padding:12px 20px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active{background:#ffe600;color:#07070f}
+  #result,#final{display:none}
+  #out{width:95%;max-width:600px;height:110px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .err{color:#ff5555;min-height:20px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>TWO-THIRDS OF THE AVERAGE</h1>
+<p class="note">Pick a whole number from 1 to 100. Five classmates pick too. The winner is whoever is closest to two-thirds of the average of all six numbers.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/2</b></div>
+</div>
+
+<div id="pick">
+  <p>Lock in your number before you see anyone else's.</p>
+  <div id="g" class="disp">--</div>
+  <div class="pad">
+    <button onclick="key(1)">1</button><button onclick="key(2)">2</button><button onclick="key(3)">3</button><br>
+    <button onclick="key(4)">4</button><button onclick="key(5)">5</button><button onclick="key(6)">6</button><br>
+    <button onclick="key(7)">7</button><button onclick="key(8)">8</button><button onclick="key(9)">9</button><br>
+    <button onclick="clr()">CLEAR</button><button onclick="key(0)">0</button>
+  </div>
+  <button onclick="lock()">LOCK IT IN</button>
+  <div class="err" id="err"></div>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <table id="tbl"></table>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var names=["Ada","Bo","Cy","Di","Eli"];
+var levelSets=[[0,1,2,3,4],[1,2,3,4,5]];
+var r=0,data=[];
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function botNum(level){
+  if(level===0)return 1+rnd(100);
+  var v=50*Math.pow(2/3,level);
+  var j=Math.max(1,Math.round(v*0.08));
+  var n=Math.round(v)+rnd(2*j+1)-j;
+  return Math.min(100,Math.max(1,n));
+}
+function r2(x){return Math.round(x*100)/100}
+function levelOf(g){
+  if(g>=42)return 0;if(g>=28)return 1;if(g>=19)return 2;if(g>=13)return 3;if(g>=9)return 4;if(g>=6)return 5;return 6;
+}
+var entry="";
+function key(d){if(entry.length>=3)return;if(entry===""&&d===0)return;entry+=String(d);el("g").textContent=entry}
+function clr(){entry="";el("g").textContent="--"}
+function lock(){
+  var g=Number(entry);
+  if(!(g>=1&&g<=100)||Math.floor(g)!==g){el("err").textContent="Pick a whole number from 1 to 100.";return}
+  el("err").textContent="";
+  var lv=levelSets[r],bots=[],i;
+  for(i=0;i<5;i++)bots.push(botNum(lv[i]));
+  var sum=g;for(i=0;i<5;i++)sum+=bots[i];
+  var avg=sum/6,target=avg*2/3;
+  var all=[{n:"YOU",v:g,lv:levelOf(g),me:true}];
+  for(i=0;i<5;i++)all.push({n:names[i],v:bots[i],lv:lv[i],me:false});
+  var best=1e9;all.forEach(function(p){p.d=Math.abs(p.v-target);if(p.d<best)best=p.d});
+  var winners=all.filter(function(p){return Math.abs(p.d-best)<1e-9}).map(function(p){return p.n});
+  data.push({g:g,bots:bots,avg:avg,target:target,winners:winners,all:all});
+  var rows="<tr><th>Player</th><th>Number</th><th>Distance from target</th></tr>";
+  all.forEach(function(p){
+    var w=winners.indexOf(p.n)>=0;
+    rows+="<tr class=\""+(w?"win":(p.me?"me":""))+"\"><td>"+p.n+"</td><td>"+p.v+"</td><td>"+r2(p.d)+"</td></tr>";
+  });
+  el("tbl").innerHTML=rows;
+  el("headline").textContent=winners.indexOf("YOU")>=0?"YOU WIN THIS ROUND!":"Winner: "+winners.join(" and ");
+  el("detail").innerHTML="Average of all six: <b>"+r2(avg)+"</b>. Two-thirds of that: <b>"+r2(target)+"</b>."+
+    "<br><span class=\"note\">"+(r===0?"Round 2 is next. Same classmates. Will they think harder this time?":"")+"</span>";
+  el("next").textContent=(r===1)?"SEE FINAL SCORE":"NEXT ROUND";
+  show("pick",false);show("result",true);
+}
+function nextRound(){
+  r++;
+  if(r>=2){finish();return}
+  el("rn").textContent=(r+1)+"/2";
+  clr();
+  show("result",false);show("pick",true);
+}
+function finish(){
+  show("result",false);show("pick",false);
+  var a=data[0],b=data[1];
+  var youWon=(a.winners.indexOf("YOU")>=0?1:0)+(b.winners.indexOf("YOU")>=0?1:0);
+  var rank=youWon>0?"MIND READER":(b.g<=a.g?"QUICK LEARNER":"STUBBORN THINKER");
+  var lv=levelOf(b.g);
+  el("verdict").innerHTML=
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<p class=\"note\">Rounds won: "+youWon+" of 2.</p>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Round 1: you picked <b>"+a.g+"</b>. The winning target was <b>"+r2(a.target)+"</b>.</div>"+
+    "<div class=\"tape\">Round 2: you picked <b>"+b.g+"</b>. The winning target was <b>"+r2(b.target)+"</b>.</div>"+
+    "<h2>THE SECRET: THINKING LEVELS</h2><p class=\"note\">Each classmate thinks a set number of steps ahead. Level 0 picks at random. Level 1 assumes everyone else is Level 0 (average 50, so guess about 33). Level 2 assumes everyone is Level 1 (guess about 22), and so on. In round 1 your classmates were Levels 0 to 4. In round 2 each one thought one level deeper (Levels 1 to 5).</p>"+"<p class=\"note\">The average moved from "+r2(a.avg)+" to "+r2(b.avg)+" because the classmates thought one level deeper. Your round 2 number sits at about Level "+(lv>=6?"6+":lv)+".</p>"+
+    "<div class=\"fact\">If everyone picked at random, the average would be near 50 and the target near 33. Real classes, Ben Polak's included, land far below that. Why might the lowest possible guess still not win?</div>";
+  el("out").value="GT-M03 | r1 my guess: "+a.g+", classmates: "+a.bots.join(", ")+", average: "+r2(a.avg)+", target: "+r2(a.target)+", winner: "+a.winners.join("+")+
+    " | r2 my guess: "+b.g+", classmates: "+b.bots.join(", ")+", average: "+r2(b.avg)+", target: "+r2(b.target)+", winner: "+b.winners.join("+");
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");
+  t.select();t.setSelectionRange(0,999);
+  var ok=false;
+  function fallback(){
+    try{ok=document.execCommand("copy")}catch(e){}
+    s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky.";
+  }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+</script>
+</body>
+</html>

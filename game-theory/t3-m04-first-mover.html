@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First Mover</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+
+</style>
+</head>
+<body>
+<h1>FIRST MOVER</h1>
+<p class="note">Rematch with Rusty's Robots! Same toy market as before: price per crate = 14 minus the total crates made, and each crate costs 2. Profit = (price minus 2) x your crates. This time the ORDER of moves changes.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/4</b></div>
+  <div class="box">YOUR PROFIT<b id="ms">0</b></div>
+</div>
+<div id="pick">
+  <p class="news" id="news"></p>
+  <p>How many crates will you make?</p>
+  <div id="choices"></div>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var total=4,r=0,log=[],ms=0,maxQ=9;
+var MODES=["lead","lead","follow","sealed"];
+var NEWS=["YOU MOVE FIRST: you build your crates, Rusty sees the number, then he picks his.","YOU MOVE FIRST again. Can you squeeze out more profit?","RUSTY MOVES FIRST: he already built 6 crates. Now you pick.","SEALED ROUND: you both pick at the same moment. Rusty can't see your number."];
+var TAUNTS={lead:"Rusty: \"You went first? Fine. I'll work around you.\"",follow:"Rusty: \"Six crates, already built. Your move.\"",sealed:"Rusty: \"No peeking this time.\""};
+function price(q,qr){return Math.max(0,14-q-qr)}
+function profit(q,qr){return (price(q,qr)-2)*q}
+function bestReply(q){var m=-1e9,b=0;for(var x=0;x<=maxQ;x++){var p=profit(x,q);if(p>=m){m=p;b=x}}return b}
+function bestLead(){var m=-1e9,b=0;for(var q=1;q<=maxQ;q++){var p=profit(q,bestReply(q));if(p>m){m=p;b=q}}return {q:b,p:m}}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;el("news").textContent=NEWS[r];
+  var c="";for(var q=1;q<=maxQ;q++)c+="<button onclick=\"play("+q+")\">"+q+"</button>";el("choices").innerHTML=c;
+  show("pick",true);show("result",false);
+}
+function play(q){
+  var mode=MODES[r],qr,best;
+  if(mode==="lead"){qr=bestReply(q);var bl=bestLead();best={q:bl.q,p:bl.p}}
+  else if(mode==="follow"){qr=6;var b=bestReply(6);best={q:b,p:profit(b,6)}}
+  else{qr=4;var b2=bestReply(4);best={q:b2,p:profit(b2,4)}}
+  var mine=profit(q,qr),his=profit(qr,q);ms+=mine;
+  log.push({mode:mode,q:q,qr:qr,mine:mine,his:his,best:best,hit:mine===best.p});
+  el("headline").textContent="You made "+q+". Rusty "+(mode==="lead"?"replies with":"made")+" ...";
+  el("detail").innerHTML="";el("next").style.visibility="hidden";show("pick",false);show("result",true);
+  setTimeout(function(){
+    el("headline").textContent="You made "+q+". Rusty "+(mode==="lead"?"replied with ":"made ")+qr+". Price: "+price(q,qr)+".";
+    el("detail").innerHTML="Your profit: <b>"+mine+"</b>. Rusty's: <b>"+his+"</b>.<br><span class=\"rival\">"+TAUNTS[mode]+"</span>";
+    el("ms").textContent=ms;el("next").style.visibility="visible";
+    el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT ROUND";
+  },700);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var NAME={lead:"You first",follow:"Rusty first",sealed:"Same time"};
+  var rows="<tr><th>Round</th><th>Order</th><th>You</th><th>Rusty</th><th>Your profit</th><th>Best possible</th></tr>",hits=0;
+  log.forEach(function(x,i){if(x.hit)hits++;rows+="<tr><td>"+(i+1)+"</td><td>"+NAME[x.mode]+"</td><td>"+x.q+"</td><td>"+x.qr+"</td><td>"+x.mine+"</td><td>"+x.best.p+" (make "+x.best.q+")"+(x.hit?" ✔":"")+"</td></tr>"});
+  var rank=hits>=3?"MARKET LEADER":(hits===2?"FAST FOLLOWER":"LATE TO MARKET");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Total profit: <b>"+ms+"</b>. Best possible in <b>"+hits+"</b> of 4 rounds.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Moving first, making <b>6</b> forces Rusty down to 3. You earn <b>18</b>.</div>"+
+    "<div class=\"tape\">Moving second against Rusty's 6, your best is 3, worth only <b>9</b>.</div>"+
+    "<div class=\"tape\">At the same time, it's back to 4 each and <b>16</b>, like Factory Output.</div>"+
+    "<p class=\"note\">Going first only helped because Rusty could SEE your crates already built. A promise alone wouldn't have worked. Why not?</p>"+
+    "<div class=\"fact\">Economists call this the Stackelberg model. Ben Polak shows the leader makes more, the follower makes less, and total output goes up.</div>";
+  el("out").value="GT3-M04 | "+log.map(function(x,i){return "round "+(i+1)+" ("+NAME[x.mode]+"): me "+x.q+", Rusty "+x.qr+", profit "+x.mine}).join(" | ")+" | total "+ms+" | best possible in "+hits+" of 4";
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ultimatum</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+
+</style>
+</head>
+<body>
+<h1>ULTIMATUM</h1>
+<p class="note">Four deals, 100 coins each. The proposer offers a split. The other side says YES (the deal happens) or NO (the deal fails).</p>
+<div class="bar">
+  <div class="box">DEAL<b id="rn">1/4</b></div>
+  <div class="box">YOUR COINS<b id="cs">0</b></div>
+</div>
+<div id="pick">
+  <p class="news" id="news"></p>
+  <p id="ask"></p>
+  <div id="choices"></div>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT DEAL</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var total=4,r=0,log=[],cs=0,thr=20+rnd(21);
+var OFFERS=[0,10,16,20,30,40,50,60,70,80,90];
+var NEWS=["DEAL 1: You propose to Judge Jules, a regular person. If Jules says NO, you both get 0.",
+"DEAL 2: Greedy Gus proposes to you. Gus offers you 10 coins and keeps 90. If you say NO, you both get 0.",
+"DEAL 3: Two rounds with Cool Carla, who never makes a mistake. You offer first. If Carla says NO, the pot shrinks to 80 and SHE makes the final offer.",
+"DEAL 4: Three rounds with Cool Carla. You offer first (100). If she says NO, she offers (pot 80). If you say NO to that, you make the final offer (pot 64)."];
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;el("news").textContent=NEWS[r];
+  var c="";
+  if(r===1){el("ask").textContent="Do you take Gus's 10?";c="<button onclick=\"respond(true)\">YES, TAKE 10</button><button onclick=\"respond(false)\">NO WAY</button>";}
+  else{el("ask").textContent="How many coins do you offer?";OFFERS.forEach(function(o){c+="<button onclick=\"offer("+o+")\">"+o+"</button>"})}
+  el("choices").innerHTML=c;show("pick",true);show("result",false);
+}
+function reveal(head,det){
+  el("headline").textContent="Waiting for an answer...";el("detail").innerHTML="";el("next").style.visibility="hidden";
+  show("pick",false);show("result",true);
+  setTimeout(function(){el("headline").innerHTML=head;el("detail").innerHTML=det;el("cs").textContent=cs;el("next").style.visibility="visible";el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT DEAL"},800);
+}
+function respond(yes){
+  var got=yes?10:0;cs+=got;log.push({deal:2,choice:yes?"took 10":"said no",got:got,best:10});
+  reveal(yes?"You took 10. Gus keeps 90.":"You said NO. Nobody gets anything.",yes?"Gus: \"Pleasure doing business.\"":"Gus: \"Ouch! Fine, I guess I deserved that.\"");
+}
+function offer(o){
+  var got,txt,best;
+  if(r===0){var yes=o>=thr;got=yes?100-o:0;best=null;
+    txt=yes?"Jules says YES. You keep "+(100-o)+".":"Jules says NO! \"That's insulting.\" You both get 0.";}
+  else if(r===2){var yes2=o>=80;got=yes2?100-o:0;best=20;
+    txt=yes2?"Carla says YES. You keep "+(100-o)+".":"Carla says NO. The pot shrinks to 80, and Carla offers you 0. Take it or leave it, you get 0.";}
+  else{var yes3=o>=16;got=yes3?100-o:64;best=84;
+    txt=yes3?"Carla says YES. You keep "+(100-o)+".":"Carla says NO. Pot 80: she offers you 64 (she knows you'd get 64 in the last round). You take it.";}
+  cs+=got;log.push({deal:r+1,choice:"offered "+o,got:got,best:best});
+  reveal(txt,r===0?"Jules needed at least "+thr+" to say yes.":"Carla only says yes to an offer worth at least what she'd get by saying no.");
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Deal</th><th>You</th><th>You got</th><th>Best vs a perfect player</th></tr>",hits=0;
+  log.forEach(function(x){var b=x.deal===1?"-":(x.deal===2?"take the 10":(x.deal===3?"offer 80, keep 20":"offer 16, keep 84"));var hit=(x.deal===2&&x.got===10)||(x.best!==null&&x.deal>2&&x.got===x.best);if(hit)hits++;rows+="<tr><td>"+x.deal+"</td><td>"+x.choice+"</td><td>"+x.got+"</td><td>"+b+(hit?" ✔":"")+"</td></tr>"});
+  var rank=hits===3?"DEAL MAKER":(hits===2?"HAGGLER":"PUSHOVER");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Total coins: <b>"+cs+"</b>.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Look backward from the LAST offer. In deal 3, Carla's last offer gives her all 80, so she needs 80 from you now. You keep only <b>20</b>.</div>"+
+    "<div class=\"tape\">In deal 4, you have the last offer (64), so Carla can only get 16 in round 2. Offer her 16 and keep <b>84</b>.</div>"+
+    "<div class=\"tape\">Real people (like Jules) often turn down offers that feel unfair, even though 1 coin beats 0.</div>"+
+    "<p class=\"note\">Who has the power in a bargain: the one who moves first, or the one with the last word?</p>"+
+    "<div class=\"fact\">When Ben Polak's Yale class played the one-round version for a dollar, a 1-cent offer and a 30-cent offer were both turned down.</div>";
+  el("out").value="GT3-M14 | "+log.map(function(x){return "deal "+x.deal+": "+x.choice+", got "+x.got}).join(" | ")+" | total "+cs;
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>

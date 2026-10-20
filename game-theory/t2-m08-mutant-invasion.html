@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mutant Invasion</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .chart{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:120px;border-bottom:2px solid #00e5ff;margin:10px auto;max-width:560px}
+  .col{width:14px;background:#ff2bd6;box-shadow:0 0 4px #ff2bd6}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>MUTANT INVASION</h1>
+<p class="note">A species of beetles meets in random pairs. Each beetle is born with one strategy and earns points from each meeting. Beetles with more points have more babies. You pick which strategy the whole species starts with. Then 5% mutants with the other strategy appear. Will they take over or die out?</p>
+<div class="bar">
+  <div class="box">WORLD<b id="rn">1/3</b></div>
+</div>
+
+<div id="pick">
+  <h2 id="wname"></h2>
+  <table id="grid"></table>
+  <h2>STEP 1: THE SPECIES</h2>
+  <div id="nat"></div>
+  <h2>STEP 2: PREDICT THE MUTANTS</h2>
+  <div id="preds"></div>
+  <br><button id="go" onclick="play()" disabled>RUN 30 GENERATIONS</button>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <p class="note">Mutant share each generation:</p>
+  <div class="chart" id="chart"></div>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT WORLD</button>
+</div>
+
+<div id="final">
+  <h1>NATURE REPORT</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var WORLDS=[
+  {name:"WORLD 1: SHARE OR GRAB",s:["SHARE","GRAB"],P:[[3,0],[5,1]],lock:0},
+  {name:"WORLD 2: LEFT OR RIGHT",s:["LEFT","RIGHT"],P:[[2,0],[0,1]],lock:null},
+  {name:"WORLD 3: PLAIN OR FANCY",s:["PLAIN","FANCY"],P:[[1,1],[1,3]],lock:0}
+];
+var total=3,r=0,log=[],nat=null,pred=null,PREDS=["TAKE OVER","DIE OUT"];
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function setup(){
+  var w=WORLDS[r];nat=null;pred=null;
+  el("rn").textContent=(r+1)+"/"+total;el("wname").textContent=w.name;
+  el("grid").innerHTML="<tr><th>My points</th><th>meeting "+w.s[0]+"</th><th>meeting "+w.s[1]+"</th></tr>"+
+    "<tr><th>I am "+w.s[0]+"</th><td>"+w.P[0][0]+"</td><td>"+w.P[0][1]+"</td></tr><tr><th>I am "+w.s[1]+"</th><td>"+w.P[1][0]+"</td><td>"+w.P[1][1]+"</td></tr>";
+  if(w.lock===null){el("nat").innerHTML="<button id=\"n0\" onclick=\"pickNat(0)\">ALL "+w.s[0]+"</button><button id=\"n1\" onclick=\"pickNat(1)\">ALL "+w.s[1]+"</button>";}
+  else{el("nat").innerHTML="<p class=\"note\">This world's species is ALL "+w.s[w.lock]+". The mutants are "+w.s[1-w.lock]+".</p><button id=\"n0\" style=\"display:none\"></button><button id=\"n1\" style=\"display:none\"></button>";nat=w.lock;}
+  el("preds").innerHTML="<button id=\"p0\" onclick=\"pickPred(0)\">MUTANTS TAKE OVER</button><button id=\"p1\" onclick=\"pickPred(1)\">MUTANTS DIE OUT</button>";
+  el("go").disabled=true;show("pick",true);show("result",false);
+}
+function pickNat(i){nat=i;el("n0").className=i===0?"on":"";el("n1").className=i===1?"on":"";el("go").disabled=(pred===null)}
+function pickPred(i){pred=i;el("p0").className=i===0?"on":"";el("p1").className=i===1?"on":"";el("go").disabled=(nat===null)}
+function play(){
+  var w=WORLDS[r],P=w.P,m=1-nat,x=0.05,h=[];
+  for(var g=0;g<30;g++){
+    var fm=1+(1-x)*P[m][nat]+x*P[m][m],fn=1+(1-x)*P[nat][nat]+x*P[nat][m];
+    x=x*fm/(x*fm+(1-x)*fn);h.push(x);
+  }
+  var end=Math.round(x*100),outcome=end>5?0:1,hit=outcome===pred;
+  el("chart").innerHTML="";el("next").style.visibility="hidden";el("detail").style.visibility="hidden";
+  var gi=0;(function grow(){if(gi<h.length){el("chart").innerHTML+="<div class=\"col\" style=\"height:"+Math.max(1,Math.round(h[gi]*118))+"px\"></div>";gi++;setTimeout(grow,60);return}el("next").style.visibility="visible";el("detail").style.visibility="visible";el("headline").textContent=window._hl;})();
+  log.push({w:r+1,nat:w.s[nat],mut:w.s[m],pred:PREDS[pred],end:end,outcome:PREDS[outcome],hit:hit});
+  window._hl="ALL "+w.s[nat]+" vs "+w.s[m]+" mutants: "+(outcome===0?"MUTANTS GROW":"MUTANTS DIE OUT");
+  if(gi>=h.length)el("headline").textContent=window._hl;else el("headline").textContent="Watching 30 generations...";
+  el("detail").innerHTML="Mutants went from 5% to <b>"+end+"%</b> after 30 generations. You predicted "+PREDS[pred]+". "+(hit?"<b>Right!</b>":"Not this time.");
+  el("next").textContent=(r===total-1)?"SEE NATURE REPORT":"NEXT WORLD";
+  show("pick",false);show("result",true);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>World</th><th>Species</th><th>Mutants</th><th>Predicted</th><th>Mutants after 30</th></tr>",hits=0;
+  log.forEach(function(x){if(x.hit)hits++;rows+="<tr><td>"+x.w+"</td><td>"+x.nat+"</td><td>"+x.mut+"</td><td>"+x.pred+(x.hit?" ✔":"")+"</td><td>"+x.end+"%</td></tr>"});
+  var rank=hits===3?"NATURALIST":(hits===2?"FIELD SCIENTIST":"BUG WATCHER");
+  el("verdict").innerHTML="<table>"+rows+"</table><p>Predictions right: <b>"+hits+"</b> of 3.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">World 1: an all-SHARE species is invaded by GRAB. All-GRAB can't be invaded.</div>"+
+    "<div class=\"tape\">World 2: whichever side the species starts on, a few mutants die out. Both are stable.</div>"+
+    "<div class=\"tape\">World 3: in all-PLAIN, FANCY mutants score the same against PLAIN, but better against each other, so they creep in and then <b>take over</b>.</div>"+
+    "<p class=\"note\">A strategy that can't be invaded by a few mutants is called evolutionarily stable. Which ones were?</p>"+
+    "<div class=\"fact\">Biologists use this same idea to explain behavior in animals that never \"think\" about strategy at all.</div>";
+  el("out").value="GT2-M08 | "+log.map(function(x){return "world "+x.w+": all "+x.nat+" vs "+x.mut+" mutants, predicted "+x.pred+", mutants "+x.end+"% after 30"}).join(" | ")+" | predictions right: "+hits+" of 3";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

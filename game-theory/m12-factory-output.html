@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Factory Output</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 18px "Courier New",monospace;margin:5px;padding:10px 0;min-width:52px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button.big{padding:12px 20px;margin:8px}
+  #round,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:18px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+</head>
+<body>
+<h1>FACTORY OUTPUT</h1>
+<p class="note">You and Rusty's Robots are the only two toy factories in town. Each round you both choose how many crates to make, at the same moment.</p>
+<table>
+  <tr><th>Price per crate</th><td>14 minus the total crates made by both factories</td></tr>
+  <tr><th>Cost per crate</th><td>2 coins</td></tr>
+  <tr><th>Your profit</th><td>(price minus 2) times your crates</td></tr>
+</table>
+<p class="note">More crates means more to sell, but every extra crate lowers the price for both of you.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/4</b></div>
+  <div class="box">YOUR PROFIT<b id="ms">0</b></div>
+</div>
+
+<div id="pick">
+  <p class="rival" id="who"></p>
+  <h2>STEP 1: PREDICT RUSTY'S CRATES</h2>
+  <div id="preds"></div>
+  <div id="step2" style="display:none">
+    <table id="prow"></table>
+    <h2>STEP 2: HOW MANY CRATES WILL YOU MAKE?</h2>
+    <div id="choices"></div>
+  </div>
+</div>
+
+<div id="round">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button class="big" id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>FACTORY CLOSED</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var total=4,r=0,log=[],ms=0,maxQ=9;
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function price(q,qr){return Math.max(0,14-q-qr)}
+function profit(q,qr){return (price(q,qr)-2)*q}
+function bestList(qr){
+  var m=-1e9,list=[];
+  for(var q=0;q<=maxQ;q++){var x=profit(q,qr);if(x>m){m=x;list=[q]}else if(x===m)list.push(q)}
+  return {profit:m,qs:list};
+}
+function rivalQ(){
+  if(r===0)return 6;
+  return bestList(log[r-1].q).qs[0];
+}
+function setup(){
+  el("rn").textContent=(r+1)+"/"+total;
+  el("who").textContent=(r===0)?"Rusty plans a big first batch.":"Rusty is planning around what you made last round.";
+  var c="",d="";
+  for(var q=1;q<=maxQ;q++){c+="<button onclick=\"play("+q+")\">"+q+"</button>";d+="<button id=\"pr"+q+"\" onclick=\"predict("+q+")\">"+q+"</button>"}
+  el("choices").innerHTML=c;el("preds").innerHTML=d;pred=null;
+  el("step2").style.display="none";
+  show("pick",true);show("round",false);
+}
+var pred=null;
+var TAUNTS={win:["Rusty: \"Lucky batch. Won't happen again.\"","Rusty: \"Hmph. My robots need a tune-up.\""],lose:["Rusty: \"Better luck next batch!\"","Rusty: \"My robots never sleep.\""],tie:["Rusty: \"Even split. Boring, but fair.\""]};
+function predict(q){
+  pred=q;for(var k=1;k<=maxQ;k++)el("pr"+k).className=(k===q?"on":"");
+  var h="<tr><th>If Rusty makes "+q+" and you make</th>";for(var m=1;m<=maxQ;m++)h+="<th>"+m+"</th>";
+  h+="</tr><tr><th>your profit</th>";for(m=1;m<=maxQ;m++)h+="<td>"+profit(m,q)+"</td>";
+  el("prow").innerHTML=h+"</tr>";el("step2").style.display="block";
+}
+function play(q){
+  var qr=rivalQ(),p=price(q,qr),mine=profit(q,qr),his=profit(qr,q),b=bestList(qr);
+  log.push({q:q,qr:qr,p:p,mine:mine,his:his,best:b,hit:mine===b.profit,pred:pred});
+  var tk=mine>his?"win":(mine<his?"lose":"tie"),tl=TAUNTS[tk][r%TAUNTS[tk].length];
+  ms+=mine;
+  el("ms").textContent=ms;
+  el("headline").textContent="You made "+q+". Rusty made "+qr+". Price: "+p+" coins.";
+  el("detail").innerHTML="You predicted "+pred+(pred===qr?" (spot on!)":"")+". Your profit: <b>"+mine+"</b>. Rusty's profit: <b>"+his+"</b>.<br><span class=\"rival\">"+tl+"</span><br><span class=\"note\">Your best reply to "+qr+" crates was "+b.qs.join(" or ")+" ("+b.profit+" coins).</span>";
+  el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT ROUND";
+  show("pick",false);show("round",true);
+}
+function nextRound(){
+  r++;
+  if(r>=total){finish();return}
+  setup();
+}
+function finish(){
+  show("round",false);show("pick",false);
+  var rows="<tr><th>Round</th><th>You</th><th>Rusty</th><th>Price</th><th>Your profit</th><th>Best reply</th></tr>";
+  var hits=0,i;
+  for(i=0;i<total;i++){
+    var x=log[i];if(x.hit)hits++;
+    rows+="<tr><td>"+(i+1)+"</td><td>"+x.q+"</td><td>"+x.qr+"</td><td>"+x.p+"</td><td>"+x.mine+"</td><td>"+x.best.qs.join(" or ")+(x.hit?" ✔":"")+"</td></tr>";
+  }
+  var rank=hits>=3?"PLANT MANAGER":(hits===2?"SHIFT BOSS":"NEW HIRE");
+  el("verdict").innerHTML=
+    "<table>"+rows+"</table>"+
+    "<p>Total profit: <b>"+ms+"</b>. Best reply in <b>"+hits+"</b> of 4 rounds.</p>"+
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">If you both make <b>4</b>: price 6, each earns <b>16</b>. Neither can do better by changing alone.</div>"+
+    "<div class=\"tape\">If you both make <b>3</b>: price 8, each earns <b>18</b>. Better for both!</div>"+
+    "<div class=\"tape\">But if Rusty makes 3, your best reply is 4 or 5, worth <b>20</b>. So the 3-and-3 deal falls apart.</div>"+
+    "<p class=\"note\">Look at Rusty's numbers round by round. Where were they heading?</p>"+
+    "<div class=\"fact\">Real companies that share a market face this same pull. Why might a deal to make less be hard to keep without a contract?</div>";
+  el("out").value="GT-M12 | my crates: "+log.map(function(x){return x.q}).join(", ")+
+    " | my predictions of Rusty: "+log.map(function(x){return x.pred}).join(", ")+
+    " | Rusty crates: "+log.map(function(x){return x.qr}).join(", ")+
+    " | prices: "+log.map(function(x){return x.p}).join(", ")+
+    " | my profits: "+log.map(function(x){return x.mine}).join(", ")+" (total "+ms+")"+
+    " | best reply in "+hits+" of 4";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");
+  t.select();t.setSelectionRange(0,999);
+  var ok=false;
+  function fallback(){
+    try{ok=document.execCommand("copy")}catch(e){}
+    s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky.";
+  }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+setup();
+</script>
+</body>
+</html>

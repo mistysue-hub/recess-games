@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Duel</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active,button.on{background:#ffe600;color:#07070f}
+  button:disabled{opacity:.35}
+  #result,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .rival{color:#00e5ff;font-size:17px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+  .lane{font-size:20px;letter-spacing:2px;margin:10px 0;white-space:nowrap;overflow:hidden}
+  .lane .me{color:#ffe600}.lane .op{color:#ff2bd6}
+
+</style>
+</head>
+<body>
+<h1>THE DUEL</h1>
+<p class="note">Wet-sponge duel! You and a rival start 10 steps apart, each with ONE sponge. Take turns: THROW, or STEP one step closer. A hit wins. A miss loses, because the other player just walks up and drops their sponge on your head. The closer you get, the better your aim.</p>
+<div class="bar">
+  <div class="box">DUEL<b id="rn">1/3</b></div>
+  <div class="box">WINS<b id="wn">0</b></div>
+</div>
+<div id="pick">
+  <p class="news" id="news"></p>
+  <div class="lane" id="lane"></div>
+  <table id="odds"></table>
+  <p class="rival" id="say"></p>
+  <div id="btns"><button onclick="act(true)">THROW</button><button onclick="act(false)">STEP CLOSER</button></div>
+</div>
+<div id="result">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT DUEL</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+var RIVALS=[{n:"Deadeye Dana",k:13,t:"a better shot than you"},{n:"Wobbly Walt",k:8,t:"a worse shot than you"},{n:"Even Steven",k:10,t:"exactly as good as you"}];
+var ME=10,total=3,r=0,log=[],wins=0,d=10,turn="me",calls=0,smart=0,steps=[];
+function p(k,dd){return Math.max(0,Math.min(1,1-dd/k))}
+function pm(dd){return p(ME,dd)}function po(dd){return p(RIVALS[r].k,dd)}
+// W(dd,who): chance the player to move wins with best play
+function W(dd,who){var mine=who==="me"?pm(dd):po(dd);if(dd===0)return 1;return Math.max(mine,1-W(dd-1,who==="me"?"op":"me"))}
+function bestThrow(dd,who){var mine=who==="me"?pm(dd):po(dd);if(dd===0)return true;return mine>=1-W(dd-1,who==="me"?"op":"me")-1e-9}
+function pct(x){return Math.round(x*100)+"%"}
+function setup(){
+  d=10;turn=(r%2===0)?"me":"op";calls=0;smart=0;steps=[];
+  el("rn").textContent=(r+1)+"/"+total;
+  el("news").textContent="Rival: "+RIVALS[r].n+", "+RIVALS[r].t+". "+(turn==="me"?"You move first.":RIVALS[r].n+" moves first.");
+  show("pick",true);show("result",false);
+  if(turn==="op"){el("btns").style.visibility="hidden";draw();setTimeout(opMove,700)}else{el("btns").style.visibility="visible";draw()}
+}
+function draw(){
+  var gap=Array(d+1).join(" . ");el("lane").innerHTML="<span class=\"me\">YOU</span>"+gap+"<span class=\"op\">"+RIVALS[r].n.split(" ")[1].toUpperCase()+"</span>";
+  el("odds").innerHTML="<tr><th>Distance</th><td>"+d+" steps</td></tr><tr><th>Your hit chance now</th><td>"+pct(pm(d))+"</td></tr><tr><th>"+RIVALS[r].n+"'s hit chance one step closer</th><td>"+pct(po(Math.max(0,d-1)))+"</td></tr>";
+}
+function act(thr){
+  var ok=(thr===bestThrow(d,"me"))||(Math.abs(pm(d)-(1-W(d-1,"op")))<1e-9);calls++;if(ok)smart++;
+  steps.push((thr?"T":"S")+d);
+  el("btns").style.visibility="hidden";
+  if(thr){var hit=rnd(1000)<pm(d)*1000;el("say").textContent="You throw from "+d+" steps...";setTimeout(function(){finishDuel(hit,"You threw from "+d+" steps and "+(hit?"HIT!":"missed."))},700);return}
+  d--;draw();el("say").textContent="You step closer.";setTimeout(opMove,700);
+}
+function opMove(){
+  var thr=bestThrow(d,"op");
+  if(thr){var hit=rnd(1000)<po(d)*1000;el("say").textContent=RIVALS[r].n+" throws from "+d+" steps...";setTimeout(function(){finishDuel(!hit,RIVALS[r].n+" threw from "+d+" steps and "+(hit?"HIT you.":"MISSED!"))},700);return}
+  d--;draw();el("say").textContent=RIVALS[r].n+" steps closer. Your turn.";el("btns").style.visibility="visible";
+}
+function finishDuel(won,msg){
+  if(won)wins++;el("wn").textContent=wins;
+  var star=null;for(var dd=10;dd>=0;dd--){var who=((10-dd)%2===0)===(r%2===0)?"me":"op";if(bestThrow(dd,who)){star={d:dd,who:who};break}}
+  log.push({rival:RIVALS[r].n,won:won,calls:calls,smart:smart,steps:steps.join(" "),star:star});
+  show("pick",false);show("result",true);
+  el("headline").innerHTML=(won?"<span class=\"good\">YOU WIN!</span> ":"<span class=\"bad\">SPONGED.</span> ")+msg;
+  el("detail").innerHTML="Smart calls this duel: "+smart+" of "+calls+". With perfect play, the first throw should come at <b>"+star.d+" steps</b>, by "+(star.who==="me"?"you":RIVALS[r].n)+".";
+  el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT DUEL";
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("result",false);show("pick",false);
+  var rows="<tr><th>Rival</th><th>Result</th><th>Smart calls</th><th>Best first throw</th></tr>",sc=0,tc=0;
+  log.forEach(function(x){sc+=x.smart;tc+=x.calls;rows+="<tr><td>"+x.rival+"</td><td>"+(x.won?"WIN":"loss")+"</td><td>"+x.smart+" of "+x.calls+"</td><td>"+x.star.d+" steps</td></tr>"});
+  var rank=(sc===tc)?"COOL HAND":(sc>=tc-2?"STEADY AIM":"TRIGGER HAPPY");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Wins: <b>"+wins+"</b> of 3. Smart calls: <b>"+sc+"</b> of "+tc+".</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">The rule: throw when <b>your chance now + your rival's chance one step closer is at least 100%</b>. Before that, step closer.</div>"+
+    "<div class=\"tape\">Throwing early wastes your only sponge. Waiting too long hands your rival the throw.</div>"+
+    "<p class=\"note\">Notice: better shot or worse shot, nobody should throw before that magic distance. Why not?</p>"+
+    "<div class=\"fact\">Ben Polak ran this duel with wet sponges in his Yale class. He says players usually throw too early and miss.</div>";
+  el("out").value="GT3-M11 | "+log.map(function(x){return "vs "+x.rival+": "+(x.won?"won":"lost")+", smart calls "+x.smart+"/"+x.calls+", moves "+x.steps}).join(" | ")+" | wins "+wins+" of 3";
+  show("final",true);
+}
+setup();
+
+</script>
+</body>
+</html>
