@@ -1,0 +1,1 @@
+Welcome to Game Theory 2: Keep Them Guessing, the second of five Game Theory templates built on Yale's course! This time you'll learn why the smartest plan is sometimes to be unpredictable. Each lecture starts with a quick game, then a clip from a real Yale class, then a rematch with a twist. Longer lectures come in short parts. Open the scoreboard card to start.

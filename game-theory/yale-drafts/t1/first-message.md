@@ -1,0 +1,1 @@
+Welcome to Game Theory 1: Outsmart Them, the first of five Game Theory templates built on Yale's course! Each lecture starts with a quick strategy game, then a clip from a real Yale class to see why it worked, then a rematch with a twist. Longer lectures come in short parts. Open the scoreboard card to start.

@@ -1,0 +1,1 @@
+Welcome to Game Theory 4: Play It Again, the last of five Game Theory templates built on Yale's course! This time: games played again and again, secret information, and auctions. Each lecture starts with a quick game, then a clip from a real Yale class, then a rematch with a twist. Longer lectures come in short parts. Open the scoreboard card to start.
