@@ -49,10 +49,10 @@
 </style>
 <style>
   .deck{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:10px}
-  .card{width:150px;height:215px;border-radius:14px;position:relative;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.55);
+  .card{width:150px;height:250px;border-radius:14px;position:relative;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.55);
    background:#fff8e7;color:#1b1b1b;border:3px solid #fff;overflow:hidden;font-family:"Rubik",system-ui,sans-serif}
   .card .front,.card .bk{position:absolute;inset:0;padding:10px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .card .bk{display:none;background:#fff8e7;font-size:13px;text-align:left;justify-content:flex-start}
+  .card .bk{display:none;background:#fff8e7;font-size:12px;overflow-y:auto;text-align:left;justify-content:flex-start}
   .card.flip .front{display:none}.card.flip .bk{display:flex}
   .card .bk p{margin:6px 0;line-height:1.3}
   .card .ex{color:#7a1020;font-style:italic}
@@ -72,7 +72,12 @@
   .card.glow{animation:glowc 1.4s ease-in-out infinite}
   @keyframes glowc{0%,100%{box-shadow:0 0 0 0 rgba(247,201,72,.0),0 6px 14px rgba(0,0,0,.55)}50%{box-shadow:0 0 22px 6px rgba(247,201,72,.9),0 6px 14px rgba(0,0,0,.55)}}
   .newbanner{display:inline-block;margin:6px auto 4px;padding:8px 14px;border-radius:10px;background:#0a0a0a;border:2px solid #ffd84d;color:#ffd84d;font:14px "Bungee","Arial Black",sans-serif;letter-spacing:1px}
-  @media (prefers-reduced-motion:reduce){.card.glow{animation:none}}
+  .card.foil{border-color:#f7c948 !important;background:linear-gradient(120deg,#fff3c4 0%,#f7c948 30%,#fffbe6 48%,#e0a91c 66%,#fff3c4 100%) !important;background-size:220% 220% !important;animation:foilsh 3s linear infinite}
+  .card.foil .rar{background:#b8860b !important;color:#fff !important}
+  .foiltag{margin-top:4px;font:11px "Bungee","Arial Black",sans-serif;letter-spacing:2px;color:#7a5200}
+  @keyframes foilsh{0%{background-position:0% 50%}100%{background-position:220% 50%}}
+  .use{font-weight:600;color:#1b4d2e}
+  @media (prefers-reduced-motion:reduce){.card.glow,.card.foil{animation:none}}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
@@ -151,33 +156,35 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 </div>
 <script>
 var CARDS=[
- {n:"The Four Parts",e:"🧩",r:"COMMON",d:"Every game has players, the moves they can make, the payoffs they care about, and what each player knows.",x:"Rock-paper-scissors: 2 players, 3 moves, win/lose/tie, and nobody sees the other hand first."},
- {n:"Dominant Move",e:"💪",r:"COMMON",d:"A move that is your best choice no matter what anyone else does.",x:"In Share or Grab, Grab always scores you more, whatever your partner picks."},
- {n:"Nash Lock",e:"🔒",r:"RARE",d:"A set of moves where nobody can do better by changing only their own move.",x:"Two friends both waiting at the same mall entrance: neither wants to walk away alone."},
- {n:"Level Up",e:"🧠",r:"RARE",d:"Figure out how many steps ahead other people are thinking, then stay one step ahead of them.",x:"If everyone else guesses 33, the smart guess is 22."},
- {n:"Median Magnet",e:"🍦",r:"RARE",d:"When rivals pick a spot on a line, they get pulled toward the middle.",x:"Two ice-cream trucks end up parked side by side in the middle of the beach."},
- {n:"Keep 'Em Guessing",e:"🎲",r:"EPIC",d:"Mix your moves on purpose so a smart opponent can't take advantage of you.",x:"A kicker who always shoots left gets saved; a kicker who mixes scores more."},
- {n:"Price War",e:"⚔️",r:"EPIC",d:"When rivals keep undercutting each other, prices fall until nobody earns much.",x:"Two lemonade stands keep dropping prices until a cup barely covers the lemons."},
- {n:"Strategist",e:"👑",r:"LEGENDARY",d:"You beat the Dealer: you can spot the game, find each player's best moves, and predict where it settles.",x:"Next time your group can't agree where to eat, you'll know exactly why."}
+ {n:"The Four Parts",e:"🧩",r:"COMMON",d:"Every game has players, the moves they can make, the payoffs they care about, and what each player knows.",u:"a situation feels confusing: name the players, moves, payoffs and who knows what.",x:"Rock-paper-scissors: 2 players, 3 moves, win/lose/tie, and nobody sees the other hand first."},
+ {n:"Dominant Move",e:"💪",r:"COMMON",d:"A move that is your best choice no matter what anyone else does.",u:"one move beats the others no matter what anyone else does: just take it.",x:"In Share or Grab, Grab always scores you more, whatever your partner picks."},
+ {n:"Nash Lock",e:"🔒",r:"RARE",d:"A set of moves where nobody can do better by changing only their own move.",u:"you need to predict where a group will settle: look for the spot nobody wants to leave alone.",x:"Two friends both waiting at the same mall entrance: neither wants to walk away alone."},
+ {n:"Level Up",e:"🧠",r:"RARE",d:"Figure out how many steps ahead other people are thinking, then stay one step ahead of them.",u:"you're guessing what others will do: ask how many steps ahead they think, then go one more.",x:"If everyone else guesses 33, the smart guess is 22."},
+ {n:"Median Magnet",e:"🍦",r:"RARE",d:"When rivals pick a spot on a line, they get pulled toward the middle.",u:"you're picking a spot, a price or an opinion against rivals: the middle pulls everyone in.",x:"Two ice-cream trucks end up parked side by side in the middle of the beach."},
+ {n:"Keep 'Em Guessing",e:"🎲",r:"EPIC",d:"Mix your moves on purpose so a smart opponent can't take advantage of you.",u:"a smart opponent is studying your habits: mix it up so they can't read you.",x:"A kicker who always shoots left gets saved; a kicker who mixes scores more."},
+ {n:"Price War",e:"⚔️",r:"EPIC",d:"When rivals keep undercutting each other, prices fall until nobody earns much. Loyal fans or a different product soften the war.",u:"a rival keeps cutting prices: compete on something besides price, like loyal fans or a different product.",x:"Two lemonade stands keep dropping prices until a cup barely covers the lemons."},
+ {n:"Strategist",e:"👑",r:"LEGENDARY",d:"You beat the Dealer: you can spot the game, find each player's best moves, and predict where it settles.",u:"any choice depends on what other people choose: spot the game, find best moves, predict where it settles.",x:"Next time your group can't agree where to eat, you'll know exactly why."}
 ];
 function el(i){return document.getElementById(i)}
 var got=[];
 try{var raw=localStorage.getItem("gn1deck");if(raw)got=JSON.parse(raw)||[]}catch(e){got=[]}
-var fresh=null;
-try{var m=/[?&]card=(\d+)/.exec(location.search);if(m){var k=parseInt(m[1],10);if(k>=1&&k<=8){fresh=k;if(got.indexOf(k)<0)got.push(k)}}}catch(e){}
+var fresh=null,foil=[];
+try{var fr=localStorage.getItem("gn1foil");if(fr)foil=JSON.parse(fr)||[]}catch(e){foil=[]}
+try{var m=/[?&]card=(\d+)/.exec(location.search);if(m){var k=parseInt(m[1],10);if(k>=1&&k<=8){fresh=k;if(got.indexOf(k)<0)got.push(k);if(/[?&]foil=1(&|$)/.test(location.search)&&foil.indexOf(k)<0)foil.push(k)}}}catch(e){}
+try{localStorage.setItem("gn1foil",JSON.stringify(foil))}catch(e){}
 try{localStorage.setItem("gn1deck",JSON.stringify(got))}catch(e){}
 function draw(){
   var h="";
   CARDS.forEach(function(c,i){
-    var n=i+1,open=got.indexOf(n)>=0;
+    var n=i+1,open=got.indexOf(n)>=0,isFoil=foil.indexOf(n)>=0;
     if(!open){h+="<div class=\"card back\"><div class=\"backpat\">♠♥<br>♣♦</div><div class=\"cn\">CARD "+n+"</div><div class=\"lockd\">LOCKED</div></div>";return}
-    h+="<div class=\"card "+c.r.toLowerCase()+(n===fresh?" glow":"")+"\" onclick=\"this.classList.toggle('flip')\">"+
-      "<div class=\"front\"><div class=\"cn\">CARD "+n+"</div><div class=\"emo\">"+c.e+"</div><div class=\"name\">"+c.n+"</div><div class=\"rar\">"+c.r+"</div><div class=\"hint\">tap to flip</div></div>"+
-      "<div class=\"bk\"><div class=\"name\">"+c.n+"</div><p>"+c.d+"</p><p class=\"ex\">Example: "+c.x+"</p></div></div>";
+    h+="<div class=\"card "+c.r.toLowerCase()+(isFoil?" foil":"")+(n===fresh?" glow":"")+"\" onclick=\"this.classList.toggle('flip')\">"+
+      "<div class=\"front\"><div class=\"cn\">CARD "+n+"</div><div class=\"emo\">"+c.e+"</div><div class=\"name\">"+c.n+"</div><div class=\"rar\">"+c.r+"</div>"+(isFoil?"<div class=\"foiltag\">GOLD FOIL</div>":"")+"<div class=\"hint\">tap to flip</div></div>"+
+      "<div class=\"bk\"><div class=\"name\">"+c.n+"</div><p>"+c.d+"</p><p class=\"use\">Use it when "+c.u+"</p><p class=\"ex\">Example: "+c.x+"</p></div></div>";
   });
   el("deck").innerHTML=h;
   el("count").textContent="CARDS COLLECTED: "+got.length+" OF 8";
-  if(fresh){var c=CARDS[fresh-1];el("newcard").innerHTML="<div class=\"newbanner\">NEW CARD UNLOCKED: "+c.e+" "+c.n.toUpperCase()+"</div>"}
+  if(fresh){var c=CARDS[fresh-1];el("newcard").innerHTML="<div class=\"newbanner\">"+(foil.indexOf(fresh)>=0?"NEW GOLD FOIL CARD: ":"NEW CARD UNLOCKED: ")+c.e+" "+c.n.toUpperCase()+"</div>"}
 }
 draw();
 </script>
@@ -198,9 +205,9 @@ draw();
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
-    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
-      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
-    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
 </script>

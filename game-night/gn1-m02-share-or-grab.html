@@ -128,7 +128,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 
 <div id="final">
   <h1>GAME OVER</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Dominant Move<br><a href="gn1-deck.html?card=2">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Dominant Move<br><a id="decklink" href="gn1-deck.html?card=2">See your deck</a></div>
 
   <table id="log"></table>
   <div id="verdict"></div>
@@ -146,9 +146,10 @@ function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 var keeps=null,promises=["I'll SHARE, promise!","SHARE, I swear. Trust me.","Let's both SHARE, deal?","I always SHARE. Always.","SHARE with me and we both win!"];
 function setup(){
-  if(!keeps){keeps=[true,true,true,false,false];for(var i=4;i>0;i--){var j=rnd5(i+1),t=keeps[i];keeps[i]=keeps[j];keeps[j]=t}}
+  if(!keeps){keeps=[true,true,true,false];for(var i=3;i>0;i--){var j=rnd5(i+1),t=keeps[i];keeps[i]=keeps[j];keeps[j]=t}}
   el("rn").textContent=(r+1)+"/"+total;
-  el("who").innerHTML="Partner "+(r+1)+": "+names[r]+"<br><span class=\"promise\">\""+promises[r]+"\"</span><br><span class=\"note\">Promises here can't be enforced.</span>";
+  var twist=(r===4)?"<br><span class=\"note\"><b>TWIST:</b> Partner 5 heard about your last four games. Word gets around...</span>":"";
+  el("who").innerHTML="Partner "+(r+1)+": "+names[r]+"<br><span class=\"promise\">\""+promises[r]+"\"</span><br><span class=\"note\">Promises here can't be enforced.</span>"+twist;
   show("pick",true);show("round",false);
 }
 function rnd5(n){var a=new Uint8Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
@@ -157,8 +158,9 @@ function rnd(){
   (window.crypto||window.msCrypto).getRandomValues(a);
   return a[0]%2===0?"SHARE":"GRAB";
 }
+function grabsSoFar(){var c=0;for(var i=0;i<4&&i<mine.length;i++)if(mine[i]==="GRAB")c++;return c}
 function play(me){
-  var g=keeps[r]?"SHARE":"GRAB";
+  var g=(r<4)?(keeps[r]?"SHARE":"GRAB"):(grabsSoFar()>=3?"GRAB":"SHARE");
   var p=pts[me+"|"+g];
   mine.push(me);theirs.push(g);ms+=p[0];ts+=p[0]+p[1];
   el("ms").textContent=ms;el("ts").textContent=ts;
@@ -169,7 +171,7 @@ function play(me){
   var rr=r;
   setTimeout(function(){
     el("headline").textContent="You: "+me+"   "+names[rr]+": "+g+(g==="GRAB"?"  (promise BROKEN!)":"  (promise kept)");
-    el("detail").textContent="You scored "+p[0]+". "+names[rr]+" scored "+p[1]+". Team +"+(p[0]+p[1])+".";
+    el("detail").innerHTML="You scored "+p[0]+". "+names[rr]+" scored "+p[1]+". Team +"+(p[0]+p[1])+"."+(rr===4?"<br><span class=\"note\">"+names[rr]+" heard you grabbed "+grabsSoFar()+" of your first 4 games, so "+(g==="GRAB"?"they grabbed first.":"they trusted you.")+"</span>":"");
     el("next").style.visibility="visible";
   },700);
 }
@@ -190,22 +192,24 @@ function finish(){
   for(var j=0;j<total;j++){
     if(mine[j]==="GRAB")grabs++;
     if(theirs[j]==="GRAB")pGrabs++;
-    allGrab+=pts["GRAB|"+theirs[j]][0];
-    allShare+=pts["SHARE|"+theirs[j]][0];
+    var tG=(j<4)?theirs[j]:"GRAB",tS=(j<4)?theirs[j]:"SHARE";
+    allGrab+=pts["GRAB|"+tG][0];
+    allShare+=pts["SHARE|"+tS][0];
   }
   var rank=grabs<=1?"TEAM PLAYER":(grabs<=3?"SWITCH HITTER":"LONE WOLF");
   el("verdict").innerHTML=
     "<p>Your total: <b>"+ms+"</b> out of a possible 25. Team total: <b>"+ts+"</b> out of a possible 30.</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
-    "<p class=\"note\">You grabbed "+grabs+" of 5 times. Promises kept: "+(5-pGrabs)+" of 5. Every partner promised to SHARE. Did the promises change your moves?</p>"+
+    "<p class=\"note\">You grabbed "+grabs+" of 5 times. Promises kept: "+(5-pGrabs)+" of 5. Partner 5 "+(theirs[4]==="GRAB"?"grabbed because of your reputation":"shared because your reputation was good")+". Every partner promised to SHARE. Did the promises change your moves?</p>"+
     "<h2>REPLAY THE TAPE</h2>"+
-    "<p class=\"note\">Same partners, same moves from them. Only your choices change.</p>"+
+    "<p class=\"note\">Same partners 1 to 4. Partner 5 heard about your record: if you grabbed 3 or more of your first 4 games, Partner 5 grabbed; otherwise Partner 5 shared.</p>"+
     "<div class=\"tape\">If you had shared every round, you would have scored <b>"+allShare+"</b>.</div>"+
     "<div class=\"tape\">If you had grabbed every round, you would have scored <b>"+allGrab+"</b>.</div>"+
     "<div class=\"tape\">You actually scored <b>"+ms+"</b>.</div>"+
     "<p class=\"note\">Now look at the team score: if every partner and you had shared every round, the team would have scored 30.</p>"+
     "<div class=\"fact\">When a college game theory class at Yale played a game like this, 238 of 274 students (about 87 in 100) went for the greedy move. How did you compare?</div>";
-  el("out").value="GN1-M02 | my moves: "+mine.join(", ")+" | partner moves: "+theirs.join(", ")+" | my total: "+ms+" | team total: "+ts+" | my grabs: "+grabs+" | partner grabs: "+pGrabs;
+  el("out").value="GN1-M02 | my moves: "+mine.join(", ")+" | partner moves: "+theirs.join(", ")+" | my total: "+ms+" | team total: "+ts+" | my grabs: "+grabs+" | partner grabs: "+pGrabs+" | partner 5 (reputation): "+theirs[4];
+  if(rank==="TEAM PLAYER"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
   show("final",true);
 }
 function copyIt(){
@@ -244,9 +248,9 @@ setup();
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
-    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
-      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
-    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
 </script>

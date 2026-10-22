@@ -121,7 +121,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 
 <div id="final">
   <h1>FOUND EACH OTHER?</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: The Four Parts<br><a href="gn1-deck.html?card=1">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: The Four Parts<br><a id="decklink" href="gn1-deck.html?card=1">See your deck</a></div>
   <div id="verdict"></div>
   <p>Copy your results, then paste them to Rocky in the chat.</p>
   <textarea id="out" readonly></textarea><br>
@@ -170,7 +170,8 @@ function play(me){
   var rr=r;
   setTimeout(function(){
     el("headline").innerHTML="You: "+R.opts[me]+"   Jordan: "+R.opts[jo]+"  "+(hit?"<span class=\"good\">MATCH!</span>":"<span class=\"bad\">MISSED!</span>");
-    el("detail").textContent=hit?"You found each other. +1 for both of you.":"No luck this time. 0 for both of you.";
+    var f=fav(R),crowd="CROWD SPLIT: "+R.crowd[f]+"% of people pick "+R.opts[f]+(me!==f?"; only "+R.crowd[me]+"% pick "+R.opts[me]+".":". You went with the crowd.");
+    el("detail").innerHTML=(hit?"You found each other. +1 for both of you.":"No luck this time. 0 for both of you.")+"<br><span class=\"note\">"+crowd+"</span>";
     el("mt").textContent=mt;
     el("grid").innerHTML=grid(R,me,jo);
     el("gridnote").textContent="Payoff grid: you both get 1 if you match and 0 if you don't. The gold box is what happened.";
@@ -192,6 +193,7 @@ function finish(){
     "<div class=\"parts tape\"><b>Players:</b> you and Jordan.<br><b>Moves:</b> the places, times, numbers and coin sides you could pick.<br><b>Payoffs:</b> 1 each if you match, 0 if you don't.<br><b>Information:</b> no talking, until the text in round 5.</div>"+
     "<div class=\"fact\">In his 1960 book <i>The Strategy of Conflict</i>, economist Thomas Schelling asked students where and when they would meet someone in New York if they couldn't talk. The most common answer: noon, at Grand Central Terminal. A choice that stands out like that is now called a focal point.</div>";
   el("out").value="GN1-M01 | "+log.map(function(x,i){return "r"+(i+1)+" "+x.tag.toLowerCase()+": you "+x.me+", Jordan "+x.jo+(x.hit?" (match)":" (miss)")}).join(" | ")+" | matches "+mt+"/5";
+  if(rank==="MIND MELD"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
   show("final",true);
 }
 function copyIt(){
@@ -219,9 +221,9 @@ setup();
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
-    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
-      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
-    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
 </script>

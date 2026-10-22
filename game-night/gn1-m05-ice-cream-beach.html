@@ -14,9 +14,12 @@
   table{margin:10px auto;border-collapse:collapse}
   td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
   th{color:#ff2bd6}
-  .line{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin:10px 0}
-  .spot{width:48px;border:2px solid #00e5ff;padding:4px 0;font-size:13px}
-  .spot b{display:block;font-size:18px}
+  .line{display:flex;justify-content:center;gap:2px;flex-wrap:nowrap;margin:10px 0}
+  .spot{flex:0 0 34px;width:34px;box-sizing:border-box;border:2px solid #00e5ff;border-radius:6px;padding:4px 0;font-size:9px;min-height:48px;background:rgba(0,0,0,.25);overflow:hidden}
+  .spot b{display:block;font-size:16px}
+  .spot.tap{cursor:pointer;border-color:#ffe600;color:#ffe600;box-shadow:0 0 6px #ffe60066}
+  .spot.tap:active{background:#ffe600;color:#07070f}
+  .squeeze{color:#ffd84d;font-weight:700}
   .spot.rival{border-color:#ff2bd6;color:#ff2bd6}
   .spot.you{border-color:#ffe600;color:#ffe600}
   .v{height:14px;margin-top:3px}
@@ -106,17 +109,17 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 </head>
 <body>
 <h1>ICE CREAM BEACH</h1>
-<p class="note">A long beach has 10 spots, 1 (left end) to 10 (right end). Beachgoers are spread out evenly: 10% of them sit at each spot. You and your rival, Frosty Fran, each park an ice cream truck. Everyone walks to the nearer truck. If both trucks are the same distance away, those customers split half and half.</p>
+<p class="note">A long beach has 10 spots, 1 (left end) to 10 (right end). Beachgoers are spread out evenly: 10% of them sit at each spot. You and your rival, Frosty Fran, each park an ice cream truck. Everyone walks to the nearer truck. If both trucks are the same distance away, those customers split half and half. Each round you score 1 point for every 1% of the beach you win.</p>
 <div class="bar">
-  <div class="box">ROUND<b id="rn">1/3</b></div>
-  <div class="box">CUSTOMERS SO FAR<b id="tv">0</b></div>
+  <div class="box">ROUND<b id="rn">1/4</b></div>
+  <div class="box">BEACH SHARE POINTS<b id="tv">0</b></div>
 </div>
 
 <div id="pick">
   <h2 id="who"></h2>
   <div class="line" id="rival"></div>
-  <p>Where will you park your truck? Tap a spot.</p>
-  <div id="choices"></div>
+  <p id="ask">Where will you park your truck? Tap a spot on the beach.</p>
+  <p class="msg" id="wait"></p>
 </div>
 
 <div id="result">
@@ -129,7 +132,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 
 <div id="final">
   <h1>GAME OVER</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Median Magnet<br><a href="gn1-deck.html?card=5">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Median Magnet<br><a id="decklink" href="gn1-deck.html?card=5">See your deck</a></div>
 
   <table id="log"></table>
   <div id="verdict"></div>
@@ -140,8 +143,8 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 </div>
 
 <script>
-var rivals=[3,8,5];
-var r=0,rows=[],tvTotal=0;
+var rivals=[3,8,5,null];
+var r=0,rows=[],tvTotal=0,busy=false;
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function share(me,opp){
@@ -152,78 +155,95 @@ function share(me,opp){
   }
   return s;
 }
+function franAnswer(me){
+  var left=me-1,right=10-me;
+  if(right>left)return me+1;
+  if(left>right)return me-1;
+  return me<5.5?me+1:me-1;
+}
 function best(opp){
   var m=-1,list=[];
   for(var s=1;s<=10;s++){
-    var x=share(s,opp);
+    var x=(opp===null)?share(s,franAnswer(s)):share(s,opp);
     if(x>m){m=x;list=[s]}else if(x===m){list.push(s)}
   }
   return {share:m,spots:list};
 }
-function drawLine(target,me,opp,color){
+function drawLine(target,me,opp,color,tap){
   var h="";
   for(var s=1;s<=10;s++){
-    var cls="spot"+(s===opp?" rival":"")+(s===me?" you":"");
+    var cls="spot"+(s===opp?" rival":"")+(s===me?" you":"")+(tap&&s!==opp?" tap":"");
     var v="";
     if(color){
       var dm=Math.abs(s-me),dr=Math.abs(s-opp);
       v="<div class=\"v "+(dm<dr?"y":(dm===dr?"t":"rv"))+"\"></div>";
     }
-    h+="<div class=\""+cls+"\"><b>"+s+"</b>"+(s===opp?"F":"")+(s===me?"YOU":"")+v+"</div>";
+    h+="<div class=\""+cls+"\""+(tap&&s!==opp?" onclick=\"play("+s+")\"":"")+"><b>"+s+"</b>"+(s===opp?"FRAN":"")+(s===me?"YOU":"")+v+"</div>";
   }
   el(target).innerHTML=h;
 }
 function setup(){
-  el("rn").textContent=(r+1)+"/3";
-  el("who").textContent=(r===2)?"Final round: Fran's spot is HIDDEN until you lock in. Where is the safest place to park?":"Fran parks at spot "+rivals[r];
-  drawLine("rival",0,(r===2)?0:rivals[r],false);
-  var c="";
-  for(var s=1;s<=10;s++)c+="<button onclick=\"play("+s+")\">"+s+"</button>";
-  el("choices").innerHTML=c;
+  busy=false;
+  el("rn").textContent=(r+1)+"/4";
+  var msg=["Fran parks at spot 3.","Fran parks at spot 8.","Round 3: Fran's spot is HIDDEN until you lock in. Where is the safest place to park?","Round 4: this time YOU park first. Fran watches, then parks in her best spot against you."][r];
+  el("who").textContent=msg;el("wait").textContent="";
+  drawLine("rival",0,(r>=2)?0:rivals[r],false,true);
   show("pick",true);show("result",false);
 }
 function play(me){
-  var opp=rivals[r];
-  var got=share(me,opp),b=best(opp);
+  if(busy)return;busy=true;
+  if(r===3){
+    drawLine("rival",me,0,false,false);
+    el("wait").textContent="You park at spot "+me+"... Fran is watching...";
+    setTimeout(function(){reveal(me,franAnswer(me))},1100);
+  } else reveal(me,rivals[r]);
+}
+function reveal(me,opp){
+  var got=share(me,opp),b=best(rivals[r]);
   rows.push({me:me,opp:opp,got:got,best:b});
   tvTotal+=got;
   el("tv").textContent=tvTotal;
-  drawLine("votes",me,opp,true);
+  drawLine("votes",me,opp,true,false);
   el("headline").textContent="You: spot "+me+"   Fran: spot "+opp+(r===2?" (revealed!)":"");
-  el("detail").textContent="You got "+got+"% of the customers. Fran got "+(100-got)+"%.";
-  el("next").textContent=(r===2)?"SEE FINAL SCORE":"NEXT ROUND";
+  var d="You got "+got+"% of the beach. Fran got "+(100-got)+"%.";
+  if(r===3){var side=opp>me?"right":"left";
+    d="<span class=\"squeeze\">SQUEEZE! Fran parked right next to you on your "+side+", the bigger side of the beach.</span><br>"+d;}
+  el("detail").innerHTML=d;
+  el("next").textContent=(r===3)?"SEE FINAL SCORE":"NEXT ROUND";
   show("pick",false);show("result",true);
 }
 function nextRound(){
   r++;
-  if(r>=3){finish();return}
+  if(r>=4){finish();return}
   setup();
 }
 function finish(){
   show("result",false);show("pick",false);
   var h="<tr><th>Round</th><th>Fran</th><th>You</th><th>Your share</th><th>Best spot</th><th>Best share</th></tr>";
   var hits=0,i;
-  for(i=0;i<3;i++){
+  for(i=0;i<4;i++){
     var x=rows[i],isBest=x.got===x.best.share;
     if(isBest)hits++;
-    h+="<tr><td>"+(i+1)+"</td><td>"+x.opp+"</td><td>"+x.me+"</td><td>"+x.got+"%</td><td>"+x.best.spots.join(" or ")+"</td><td>"+x.best.share+"%"+(isBest?" ✔":"")+"</td></tr>";
+    h+="<tr><td>"+(i+1)+"</td><td>"+x.opp+(i===3?" (after you)":"")+"</td><td>"+x.me+"</td><td>"+x.got+"%</td><td>"+x.best.spots.join(" or ")+"</td><td>"+x.best.share+"%"+(isBest?" ✔":"")+"</td></tr>";
   }
   el("log").innerHTML=h;
-  var rank=hits===3?"BEACH BOSS":(hits===2?"SCOOP HUNTER":"NEW TRUCK");
-  var fromMid=0;for(i=0;i<3;i++)fromMid+=Math.abs(rows[i].me-5.5);
-  el("verdict").innerHTML=
+  var rank=hits===4?"BEACH BOSS":(hits===3?"SCOOP HUNTER":(hits===2?"SUNNY SELLER":"NEW TRUCK"));
+    el("verdict").innerHTML=
     "<div class=\"rank\">RANK: "+rank+"</div>"+
-    "<p class=\"note\">Best spot in "+hits+" of 3 rounds. Total customers: "+tvTotal+" out of a possible 190 (70 + 70 + 50).</p>"+
+    "<p class=\"note\">Best spot in "+hits+" of 4 rounds. Beach share points: "+tvTotal+" out of a possible 240 (70 + 70 + 50 + 50).</p>"+
     "<h2>REPLAY THE TAPE</h2>"+
     "<div class=\"tape\">In round 1 the best spot against Fran at 3 was <b>"+best(3).spots.join(" or ")+"</b>, worth <b>"+best(3).share+"%</b>.</div>"+
     "<div class=\"tape\">In round 2 the best spot against Fran at 8 was <b>"+best(8).spots.join(" or ")+"</b>, worth <b>"+best(8).share+"%</b>.</div>"+
     "<div class=\"tape\">In round 3 the best you could do against Fran at 5 was only <b>"+best(5).share+"%</b>.</div>"+
+    "<div class=\"tape\">In round 4 Fran parked right beside you on the bigger side. The best you could do was spot <b>"+best(null).spots.join(" or ")+"</b>, worth <b>"+best(null).share+"%</b>: from the middle, neither side is bigger for her to steal.</div>"+
     "<p class=\"note\">Notice which way the best spot moved each time Fran moved.</p>"+
     "<div class=\"fact\">The same pull to the middle shows up in real life: rival shops often open right next to each other, and candidates in an election often sound alike. Can you think of a reason a truck might NOT park in the middle?</div>";
   el("out").value="GN1-M05 | r1 rival 3, my spot "+rows[0].me+", my share "+rows[0].got+", best "+rows[0].best.share+
     " | r2 rival 8, my spot "+rows[1].me+", my share "+rows[1].got+", best "+rows[1].best.share+
     " | r3 rival 5, my spot "+rows[2].me+", my share "+rows[2].got+", best "+rows[2].best.share+
-    " | best spot in "+hits+" of 3 | total customers "+tvTotal;
+    " | r4 I parked first at "+rows[3].me+", Fran answered "+rows[3].opp+", my share "+rows[3].got+", best "+rows[3].best.share+
+    " | best spot in "+hits+" of 4 | beach share points "+tvTotal+" of 240 | rank "+rank;
+  if(rank==="BEACH BOSS"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
   show("final",true);
 }
 function copyIt(){
@@ -262,9 +282,9 @@ setup();
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
-    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
-      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
-    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
 </script>

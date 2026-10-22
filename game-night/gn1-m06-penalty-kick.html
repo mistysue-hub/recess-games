@@ -115,6 +115,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
   <p class="goalie" id="who"></p>
   <button onclick="play('L')">KICK LEFT</button>
   <button onclick="play('R')">KICK RIGHT</button>
+  <p id="wait" style="min-height:22px;color:#ffe9a8;font-weight:600"></p>
 </div>
 
 <div id="round">
@@ -125,7 +126,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 
 <div id="final">
   <h1>FULL TIME</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Keep 'Em Guessing<br><a href="gn1-deck.html?card=6">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Keep 'Em Guessing<br><a id="decklink" href="gn1-deck.html?card=6">See your deck</a></div>
 
   <div id="verdict"></div>
   <p>Copy your results, then paste them to Rocky in the chat.</p>
@@ -143,19 +144,27 @@ function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRan
 function word(s){return s==="L"?"LEFT":"RIGHT"}
 function goalieDive(){
   if(r<half){return rnd(100)<80?"L":"R"}
-  var l=0,rr=0,i;
-  for(i=0;i<r;i++){if(mine[i]==="L")l++;else rr++}
-  if(l===rr)return rnd(2)?"L":"R";
-  return l>rr?"L":"R";
+  var l=0,i;
+  for(i=0;i<r;i++){if(mine[i]==="L")l++}
+  var pct=l*100/r;
+  if(pct>=40&&pct<=60)return rnd(2)?"L":"R";
+  return pct>60?"L":"R";
 }
 function setup(){
   el("rn").textContent=(r+1)+"/"+total;
   el("who").textContent=(r<half)
-    ?"Goalie: Wall-E. Scouting report: dives LEFT most of the time."
-    :"Goalie: Scout. Dives the way you have kicked most often.";
+    ?"Goalie: Lefty. Scouting report: dives LEFT most of the time."
+    :"Goalie: Scout. Studies every kick you have taken. If you lean to one side, Scout dives there.";
   show("pick",true);show("round",false);
 }
+var busy=false;
+function an(n){var t=String(n);return (t.charAt(0)==="8"||t==="11"||t==="18")?"an":"a"}
 function play(me){
+  if(busy)return;busy=true;
+  el("wait").textContent="You kick "+word(me)+"... the keeper dives...";
+  setTimeout(function(){busy=false;el("wait").textContent="";resolve(me)},900);
+}
+function resolve(me){
   var d=goalieDive();
   var p=chance[me+"|"+d];
   var scored=rnd(100)<p;
@@ -163,7 +172,7 @@ function play(me){
   if(scored)gs++;
   el("gs").textContent=gs;
   el("headline").innerHTML="You kicked "+word(me)+". Goalie dove "+word(d)+". "+(scored?"<span class=\"goal\">GOAL!</span>":"<span class=\"save\">SAVED.</span>");
-  el("detail").textContent="That kick had a "+p+"% chance of going in.";
+  el("detail").textContent="That kick had "+an(p)+" "+p+"% chance of going in.";
   el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT KICK";
   show("pick",false);show("round",true);
 }
@@ -180,8 +189,8 @@ function finish(){
   var l1=count(mine,0,half,"L"),l2=count(mine,half,total,"L");
   var scouted=0;
   for(var i=half;i<total;i++){
-    var prevL=count(mine,0,i,"L"),prevR=i-prevL;
-    if(prevL!==prevR&&((prevL>prevR&&mine[i]==="L")||(prevR>prevL&&mine[i]==="R")))scouted++;
+    var pct=count(mine,0,i,"L")*100/i;
+    if((pct>60&&mine[i]==="L")||(pct<40&&mine[i]==="R"))scouted++;
   }
   var rank=(l2>=2&&l2<=3&&scouted<=3)?"UNREADABLE":(scouted>=4?"OPEN BOOK":"HARD TO PIN DOWN");
   var rows="<tr><th>Kick</th><th>You</th><th>Goalie</th><th>Result</th></tr>";
@@ -190,17 +199,19 @@ function finish(){
   }
   el("verdict").innerHTML=
     "<table>"+rows+"</table>"+
-    "<p>Goals: <b>"+gs+"</b> out of 10. Kicks 1-5 (Wall-E): <b>"+g1+"</b>. Kicks 6-10 (Scout): <b>"+g2+"</b>.</p>"+
+    "<p>Goals: <b>"+gs+"</b> out of 10. Kicks 1-5 (Lefty): <b>"+g1+"</b>. Kicks 6-10 (Scout): <b>"+g2+"</b>.</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
-    "<p class=\"note\">Against Scout you kicked LEFT "+l2+" of 5 times. You kicked the side Scout had already seen most often on "+scouted+" of 5 kicks.</p>"+
-    "<h2>REPLAY THE TAPE</h2>"+"<div class=\"tape\">Against Wall-E (dives LEFT 80% of the time), kicking RIGHT scores about <b>77%</b> and LEFT only <b>62%</b>. You kicked RIGHT "+(5-l1)+" of 5 times. Kicking RIGHT is the best response to a known habit.</div>"+
+    "<p class=\"note\">Against Scout you kicked LEFT "+l2+" of 5 times. You kicked the side Scout was expecting (when you had been leaning one way) on "+scouted+" of 5 kicks.</p>"+
+    "<h2>REPLAY THE TAPE</h2>"+"<div class=\"tape\">Against Lefty (dives LEFT 80% of the time), kicking RIGHT scores about <b>77%</b> and LEFT only <b>62%</b>. You kicked RIGHT "+(5-l1)+" of 5 times. Kicking RIGHT is the best response to a known habit.</div>"+
     "<div class=\"tape\">If you always kicked LEFT, Scout would soon always dive LEFT: only <b>55%</b> go in.</div>"+
     "<div class=\"tape\">If you always kicked RIGHT, Scout would soon always dive RIGHT: only <b>45%</b> go in.</div>"+
     "<div class=\"tape\">The best plan is to mix: kick LEFT about <b>53%</b> of the time. Then every dive gives about <b>69%</b>.</div>"+
+    "<div class=\"tape\">Scout's secret: if <b>40% to 60%</b> of your kicks so far went LEFT, Scout can't read you and dives at random. Lean further one way and Scout dives that way.</div>"+
     "<p class=\"note\">Notice what happened to your choices once Scout started reading you.</p>"+
     "<div class=\"fact\">Studies of real penalty kicks in pro soccer leagues in France and Italy found that kickers and goalies mix their sides in roughly this way. Why is a mixed plan the only plan that can't be exploited?</div>";
   el("out").value="GN1-M06 | kicks: "+mine.join("")+" | goalie dives: "+dives.join("")+" | goals: "+goals.join("")+
-    " | total goals: "+gs+" | goals vs Wall-E: "+g1+" | goals vs Scout: "+g2+" | right kicks vs Wall-E: "+(5-l1)+" of 5 | left kicks vs Scout: "+l2+" of 5 | rank: "+rank;
+    " | total goals: "+gs+" | goals vs Lefty: "+g1+" | goals vs Scout: "+g2+" | right kicks vs Lefty: "+(5-l1)+" of 5 | left kicks vs Scout: "+l2+" of 5 | rank: "+rank;
+  if(rank==="UNREADABLE"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
   show("final",true);
 }
 function copyIt(){
@@ -239,9 +250,9 @@ setup();
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
-    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
-      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
-    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
 </script>

@@ -25,6 +25,13 @@
   .gwrap{max-width:100%;overflow-x:auto}
   .grid td{min-width:0;padding:5px 4px}
   .grid th{padding:5px 4px;font-size:12px}
+  .slot{display:block;margin:3px auto;padding:6px 4px;min-height:36px;border:2px dashed rgba(247,201,72,.6);border-radius:8px;cursor:pointer;font-size:12px;color:#f3d38a}
+  .slot b{font-size:20px;color:#fff;margin-left:4px}
+  .slot.sel{border:3px solid #ffd84d;background:rgba(255,216,77,.22);box-shadow:0 0 10px rgba(255,216,77,.6)}
+  .chips{margin:6px auto}
+  .chips button{min-width:44px !important;padding:8px 0 !important;margin:5px 3px !important}
+  .grid.nash td{height:48px;min-width:56px}
+  .grid.nash td.act{cursor:pointer}
   .step{display:flex;align-items:center;justify-content:center;gap:4px;margin:3px 0}
   .step .who{font-size:10px;min-width:30px;text-align:right;color:#f3d38a}
   .step b{display:inline-block;min-width:18px;font-size:18px;color:#fff}
@@ -171,23 +178,31 @@ function gridStart(){
   W(h);
 }
 function gridPick(i){
-  var s=STORIES[i];G={s:s,cur:[[[0,0],[0,0]],[[0,0],[0,0]]],tries:[[0,0],[0,0]],done:[[false,false],[false,false]],first:0,br:[],brRight:0,dom:{}};
+  var s=STORIES[i];G={sel:[0,0,0],s:s,cur:[[[0,0],[0,0]],[[0,0],[0,0]]],tries:[[0,0],[0,0]],done:[[false,false],[false,false]],first:0,br:[],brRight:0,dom:{}};
   gridDraw("");
 }
 function cellHTML(r,c){
   var s=G.s,v=G.cur[r][c],d=G.done[r][c];
   if(d)return "<td class=\"locked\"><b>"+v[0]+"</b>, <b>"+v[1]+"</b><br><span class=\"tiny\">✔</span></td>";
-  return "<td><div class=\"step\"><span class=\"who\">"+s.row+"</span><button class=\"mini\" onclick=\"bump("+r+","+c+",0,-1)\">−</button><b>"+v[0]+"</b><button class=\"mini\" onclick=\"bump("+r+","+c+",0,1)\">+</button></div>"+
-   "<div class=\"step\"><span class=\"who\">"+s.col+"</span><button class=\"mini\" onclick=\"bump("+r+","+c+",1,-1)\">−</button><b>"+v[1]+"</b><button class=\"mini\" onclick=\"bump("+r+","+c+",1,1)\">+</button></div></td>";
+  function slot(k){var on=G.sel[0]===r&&G.sel[1]===c&&G.sel[2]===k;return "<span class=\"slot"+(on?" sel":"")+"\" onclick=\"selSlot("+r+","+c+","+k+")\">"+(k?s.col:s.row)+"<b>"+v[k]+"</b></span>"}
+  return "<td>"+slot(0)+slot(1)+"</td>";
 }
+function selSlot(r,c,k){G.sel=[r,c,k];gridDraw("")}
+function nextSlot(){
+  var order=[];for(var r=0;r<2;r++)for(var c=0;c<2;c++)for(var k=0;k<2;k++)if(!G.done[r][c])order.push([r,c,k]);
+  if(!order.length)return;
+  var i=0;for(var j=0;j<order.length;j++){var o=order[j];if(o[0]===G.sel[0]&&o[1]===G.sel[1]&&o[2]===G.sel[2]){i=j+1;break}}
+  G.sel=order[i%order.length];
+}
+function setVal(n){var x=G.sel;if(G.done[x[0]][x[1]])return;G.cur[x[0]][x[1]][x[2]]=n;nextSlot();gridDraw("")}
 function gridDraw(msg){
-  var s=G.s,h="<h2>"+s.name.toUpperCase()+"</h2><p class=\"story\">"+s.text+"</p><p class=\"note\">Step 1: set each box to the points the story gives. First number: "+s.row+". Second number: "+s.col+".</p>";
+  var s=G.s,h="<h2>"+s.name.toUpperCase()+"</h2><p class=\"story\">"+s.text+"</p><p class=\"note\">Step 1: tap a box, then tap a number chip. First number: "+s.row+". Second number: "+s.col+".</p>";
   h+="<div class=\"gwrap\"><table class=\"grid\"><tr><th>"+s.row+" \\ "+s.col+"</th><th>"+s.m[0]+"</th><th>"+s.m[1]+"</th></tr>";
   for(var r=0;r<2;r++){h+="<tr><th>"+s.m[r]+"</th>"+cellHTML(r,0)+cellHTML(r,1)+"</tr>"}
-  h+="</table></div><p class=\"msg\">"+msg+"</p><button class=\"big\" onclick=\"gridCheck()\">CHECK MY GRID</button>";
+  h+="</table></div><div class=\"chips\">";for(var n=0;n<=6;n++)h+="<button onclick=\"setVal("+n+")\">"+n+"</button>";
+  h+="</div><p class=\"msg\">"+msg+"</p><button class=\"big\" onclick=\"gridCheck()\">CHECK MY GRID</button>";
   W(h);
 }
-function bump(r,c,k,d){var v=G.cur[r][c][k]+d;if(v<0)v=0;if(v>6)v=6;G.cur[r][c][k]=v;gridDraw("")}
 function gridCheck(){
   var wrong=0,shown=0;
   for(var r=0;r<2;r++)for(var c=0;c<2;c++){
@@ -199,6 +214,7 @@ function gridCheck(){
     else wrong++;
   }
   var all=G.done[0][0]&&G.done[0][1]&&G.done[1][0]&&G.done[1][1];
+  if(!all&&G.done[G.sel[0]][G.sel[1]])nextSlot();
   if(all){gridBR(0,shown?"Grid complete! ("+shown+" box"+(shown>1?"es were":" was")+" filled in for you.)":"Grid complete!");return}
   gridDraw(wrong+" box"+(wrong>1?"es are":" is")+" off. Reread the story and try again.");
 }
@@ -274,7 +290,7 @@ function nashDraw(msg){
   var prompt="";
   if(N.phase==="row")prompt="If Column picks <b>"+L.c[N.k]+"</b>, tap Row's best box in that column.";
   else if(N.phase==="col")prompt="If Row picks <b>"+L.r[N.k]+"</b>, tap Column's best box in that row.";
-  else prompt="Boxes with BOTH numbers circled are locked in. How many Nash locks does this game have?";
+  else prompt="Boxes with BOTH numbers circled are locked in. How many Nash locks does this game have, without mixing?";
   h+="<p class=\"note\">First number = Row's points. Second = Column's points.</p><div class=\"gwrap\"><table class=\"grid nash\"><tr><th>Row \\ Col</th>";
   L.c.forEach(function(x){h+="<th>"+x+"</th>"});h+="</tr>";
   for(var r=0;r<L.r.length;r++){h+="<tr><th>"+L.r[r]+"</th>";
@@ -322,10 +338,15 @@ var RUNGS=[
  {q:"Now imagine everyone is perfectly logical, and everyone knows it, forever. Each level keeps taking two-thirds. Where does it end up (guesses go from 1 to 100)?",ch:[1,10,33,50],a:1}
 ];
 var LV={};
-function lvStart(){LV={i:0,right:0,tries:0};lvDraw("")}
+var CROWD=["LEVEL 0 (about 50)","LEVEL 1 (about 33)","LEVEL 2 (about 22)","LEVEL 3 OR MORE (15 or less)"];
+function lvStart(){LV={i:0,right:0,tries:0,guess:null};
+  var h="<h2>LEVEL-UP LADDER</h2><p class=\"note\">The game: everyone picks 1 to 100. Closest to two-thirds of the average wins.</p><p><b>Before you climb, lock in a guess:</b> when a real crowd plays this, how many levels deep do most people think? What will the crowd pick?</p>";
+  CROWD.forEach(function(t,i){h+="<button onclick=\"lvGuess("+i+")\">"+t+"</button>"});W(h);
+}
+function lvGuess(i){LV.guess=i;lvDraw("Guess locked in: "+CROWD[i]+". Now climb the ladder.")}
 function ladder(){var h="<div class=\"ladder\">";for(var i=RUNGS.length-1;i>=0;i--){var d=i<LV.i;h+="<div class=\"rung"+(d?" on":"")+"\">"+(i===4?"ALL THE WAY":"LEVEL "+(i+1))+": "+(d?RUNGS[i].a:"?")+"</div>"}h+="<div class=\"rung on\">LEVEL 0: about 50</div></div>";return h}
 function lvDraw(msg){
-  if(LV.i>=RUNGS.length){lvOpinion();return}
+  if(LV.i>=RUNGS.length){lvDone(LV.guess);return}
   var R=RUNGS[LV.i],h="<h2>LEVEL-UP LADDER</h2><p class=\"note\">The game: everyone picks 1 to 100. Closest to two-thirds of the average wins.</p>"+ladder()+"<p class=\"msg\">"+msg+"</p><p>"+R.q+"</p>";
   R.ch.forEach(function(v){h+="<button onclick=\"lvPick("+v+")\">"+v+"</button>"});W(h);
 }
@@ -334,14 +355,10 @@ function lvPick(v){var R=RUNGS[LV.i];LV.tries++;
   if(LV.tries>=2){LV.i++;LV.tries=0;lvDraw("It's "+R.a+": take two-thirds of what you think everyone else guesses.");return}
   lvDraw("Not quite. Take two-thirds of the guess one level below.");
 }
-function lvOpinion(){
-  var h="<h2>ONE LAST QUESTION</h2>"+ladder()+"<p>When real people play this game, how many levels deep do you think most of them go?</p>";
-  ["LEVEL 0","LEVEL 1","LEVEL 2","LEVEL 3 OR MORE"].forEach(function(t,i){h+="<button onclick=\"lvDone("+i+")\">"+t+"</button>"});W(h);
-}
 function lvDone(i){
   var pick=["Level 0","Level 1","Level 2","Level 3+"][i];
-  var line="GN1-LAB-LEVELS | rungs right first try: "+LV.right+"/5 | thinks most people play: "+pick;
-  finish("TOP OF THE LADDER","<p>Rungs right on the first try: <b>"+LV.right+"/5</b>. You think most people play <b>"+pick+"</b>.</p><div class=\"tape\">Studies of this game usually find most people think only <b>1 or 2 levels</b> ahead. So the winning guess is rarely 1: you want to be just <b>one level smarter</b> than the crowd, not infinitely smart.</div>",line);
+  var line="GN1-LAB-LEVELS | rungs right first try: "+LV.right+"/5 | thinks most people play: "+pick+" (guessed before the ladder)";
+  finish("TOP OF THE LADDER","<p>Rungs right on the first try: <b>"+LV.right+"/5</b>. Before the ladder you guessed the crowd plays <b>"+pick+"</b>.</p><div class=\"tape\">Studies of this game usually find most people think only <b>1 or 2 levels</b> ahead. So the winning guess is rarely 1: you want to be just <b>one level smarter</b> than the crowd, not infinitely smart.</div>",line);
 }
 
 /* ---------- MIX-O-METER ---------- */
@@ -349,14 +366,14 @@ var MX={p:50};
 function vsL(p){return p*55/100+(100-p)*85/100}
 function vsR(p){return p*90/100+(100-p)*45/100}
 function mixStart(){MX={p:50,moves:0};mixDraw()}
-function bar(label,v,low){return "<div class=\"barrow\"><span class=\"bl\">"+label+"</span><div class=\"track\"><div class=\"fill"+(low?" low":"")+"\" style=\"width:"+v+"%\"></div></div><b>"+v.toFixed(1)+"%</b></div>"}
+function bar(label,v,low){return "<div class=\"barrow\"><span class=\"bl\">"+label+"</span><div class=\"track\"><div class=\"fill"+(low?" low":"")+"\" style=\"width:"+v+"%\"></div></div><b>??</b></div>"}
 function mixDraw(){
   var p=MX.p,a=vsL(p),b=vsR(p),low=Math.min(a,b),dive=Math.abs(a-b)<0.01?"EITHER WAY":(a<b?"LEFT":"RIGHT");
   var h="<h2>MIX-O-METER</h2><p class=\"note\">Chance you score: kick LEFT vs dive LEFT 55%, kick LEFT vs dive RIGHT 90%, kick RIGHT vs dive LEFT 85%, kick RIGHT vs dive RIGHT 45%. A smart goalie learns your mix and dives the way that hurts you most.</p>";
   h+="<div class=\"dial\">KICK LEFT <b>"+p+"%</b> · KICK RIGHT <b>"+(100-p)+"%</b></div>";
   h+="<button class=\"mini2\" onclick=\"mixStep(-5)\">−5</button><button class=\"mini2\" onclick=\"mixStep(-1)\">−1</button><button class=\"mini2\" onclick=\"mixStep(1)\">+1</button><button class=\"mini2\" onclick=\"mixStep(5)\">+5</button>";
   h+=bar("If goalie dives LEFT",a,a<=b)+bar("If goalie dives RIGHT",b,b<=a);
-  h+="<p>A smart goalie dives <b>"+dive+"</b> and holds you to <b>"+low.toFixed(1)+"%</b>.</p><p class=\"note\">Goal: make the two bars match, so the goalie's guess stops mattering.</p><button class=\"big\" onclick=\"mixLock()\">LOCK IN MY MIX</button>";
+  h+="<p>A smart goalie dives <b>"+dive+"</b>. Exact numbers stay hidden until you lock in.</p><p class=\"note\">Goal: make the two bars match, so the goalie's guess stops mattering.</p><button class=\"big\" onclick=\"mixLock()\">LOCK IN MY MIX</button>";
   W(h);
 }
 function mixStep(d){MX.p=Math.max(0,Math.min(100,MX.p+d));MX.moves++;mixDraw()}
@@ -364,7 +381,7 @@ function mixLock(){
   var p=MX.p,low=Math.min(vsL(p),vsR(p)),best=69;
   var line="GN1-LAB-MIX | kick LEFT "+p+"% | smart goalie holds you to "+low.toFixed(1)+"% | best possible about 69% at about 53% LEFT";
   var verdict=low>=68.8?"PERFECT MIX!":(low>=66?"SO CLOSE!":"KEEP TUNING");
-  finish(verdict,"<p>Your mix: <b>"+p+"% LEFT</b>. A smart goalie holds you to <b>"+low.toFixed(1)+"%</b>.</p><div class=\"tape\">The best mix is about <b>53% LEFT</b>. There both bars meet at about <b>69%</b>, so diving either way gives the goalie nothing. That's a <b>mixed strategy</b>: be unpredictable on purpose.</div>",line);
+  finish(verdict,"<p>Your mix: <b>"+p+"% LEFT</b>. If goalie dives LEFT: <b>"+vsL(p).toFixed(1)+"%</b>. If goalie dives RIGHT: <b>"+vsR(p).toFixed(1)+"%</b>. A smart goalie holds you to <b>"+low.toFixed(1)+"%</b>.</p><div class=\"tape\">The best mix is about <b>53% LEFT</b>. There both bars meet at about <b>69%</b>, so diving either way gives the goalie nothing. That's a <b>mixed strategy</b>: be unpredictable on purpose.</div>",line);
 }
 
 (function(){var t=param("tool");if(t&&["grid","nash","levels","mix"].indexOf(t)>=0)go(t)})();
@@ -386,9 +403,9 @@ function mixLock(){
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
-    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
-      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
-    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
 </script>
