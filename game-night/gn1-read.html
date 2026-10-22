@@ -125,6 +125,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
   <h2>LESSON COMPLETE!</h2>
   <div class="rank" id="rank"></div>
   <p id="verdict"></p>
+  <div class="tape keyideas" id="keys"></div>
   <p>Copy your results, then paste them to Rocky in the chat. Rocky has two questions for you next.</p>
   <textarea id="out" readonly></textarea><br>
   <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
@@ -202,6 +203,7 @@ var L={
  {h:"CHECK 2",q:"Nobody can do better by switching alone. That's...",o:["A Nash equilibrium","Zero-sum","A dominated move"],a:0,w:"That's the test for a Nash equilibrium."},
  {h:"CHECK 3",q:"Your opponent always goes LEFT. In a zero-sum game you should...",o:["Mix 50/50","Punish the habit","Copy them"],a:1,w:"A habit is a pattern you can aim at. Mixing is for when the opponent is smart."}]}
 };
+var K={"1": ["Game theory: what you get depends on what others choose too.", "Four parts: PLAYERS, MOVES, PAYOFFS, INFORMATION.", "Coordination game: you win together or lose together.", "Focal point: the choice that stands out when you can't talk."], "2": ["Payoff table: rows are your moves, columns are theirs.", "Dominant move: best for you no matter what they do (cover a column to check).", "Share or Grab: Grab is dominant, but Grab/Grab (1 each) is worse than Share/Share (3 each).", "That trap is the Prisoner's Dilemma. Repeating the game makes trust worth something."], "3": ["Best reply: your best move if you knew what others will do.", "Nash equilibrium: nobody gains by switching alone.", "Bank: all keep (15 each) and all withdraw (10 each) are both equilibria.", "An equilibrium is where things settle, not always where they should."], "4": ["Target = two-thirds of the average, so it can never be above about 67.", "Guesses above 67 are dominated: cross them out.", "Ladder: level 1 guesses 33, level 2 guesses 22, level 3 about 15.", "Win by being one level deeper than the crowd."], "5": ["Everyone walks to the nearer truck; count the spots on your side.", "Best reply: park right next to your rival, on the bigger side.", "Both trucks slide to the middle (5 and 6): a Nash equilibrium.", "Beachgoers lose: they walk farther."], "6": ["Zero-sum: your gain is exactly the other side's loss.", "Beat a habit: Lefty dives LEFT 80%, so kick RIGHT (77% vs 62%).", "If you're predictable, a smart keeper punishes you.", "Best mix: LEFT about 53% of the time scores about 69% either way."], "7": ["Profit = (price − cost) × customers.", "Same soda: undercut by 1 and win everyone, so prices fall toward cost.", "Fans: a lower price steals only some customers.", "With fans, prices settle near 12 instead of 2."], "8": ["Four parts · Dominant move · Nash lock · Level up", "Median magnet · Keep 'em guessing · Price war"]};
 var m=1;try{m=parseInt(new URLSearchParams(location.search).get("m"),10)||1}catch(e){}if(!L[m])m=1;
 var LS=L[m],i=0,first=0,checks=0,tried=false;
 function el(x){return document.getElementById(x)}
@@ -231,7 +233,7 @@ function finish(){el("round").style.display="none";
   var rk=first===checks?"PERFECT RUN":(first>=checks-1?"SHARP READER":"LEVEL CLEARED");el("rank").textContent=rk;
   el("verdict").textContent="You got "+first+" of "+checks+" checks right on the first try.";
   el("out").value="GN1-READ-M0"+m+" | lesson finished | checks right on first try "+first+"/"+checks;
-  el("final").style.display="block";window.scrollTo(0,0);}
+  el("keys").innerHTML="<b>KEY IDEAS</b> (keep this open while you talk to Rocky)<br>"+(K[m]||[]).map(function(x){return "• "+x}).join("<br>");el("final").style.display="block";window.scrollTo(0,0);}
 function copyIt(){
   var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
   function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
