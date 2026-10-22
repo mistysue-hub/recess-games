@@ -54,22 +54,22 @@ dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;fo
 <script>
 const DEFS=[
  {k:"pleasure",name:"Pleasure",def:"Good just means: whatever brings the most pleasure.",
-  case:"A crowd gets a lot of real pleasure from laughing at someone who tripped and got hurt. That's plenty of pleasure.",
-  q:"It brought lots of pleasure. Is it still a real question whether laughing was good?",
-  moore:"The question stays open, so \"good\" can't just mean \"pleasant\". Pleasure and goodness are two different ideas, even if they often go together.",
-  nat:"A naturalist could refine it: maybe good means the most pleasure <i>for everyone</i>, counting the hurt person's pain too. The test then has to be run again on the new definition."},
+  case:"Your friend spends Saturday playing a game she loves and has a great time. Nobody is hurt.",
+  q:"It brought lots of pleasure. Does it still make sense to ask whether it was good?",
+  moore:"Even if the answer is probably yes, the question isn't silly the way \"Is this bachelor unmarried?\" is. That's Moore's real point: \"good\" and \"pleasant\" are two different ideas, even when they go together.",
+  nat:"A naturalist says: some questions sound open until science answers them. \"Is water H<sub>2</sub>O?\" sounded open once, too."},
  {k:"survival",name:"Survival",def:"Good just means: whatever helps us survive.",
   case:"Hoarding all the town's food would help your family survive the longest, while your neighbours go hungry.",
   q:"It helps survival. Is it still a real question whether hoarding is good?",
   moore:"You can sensibly ask whether surviving that way is good, so \"good\" can't just mean \"helps survival\".",
   nat:"A naturalist might say good means helping a whole <i>community</i> flourish, not one family. That's a natural fact too, and maybe a better candidate."},
  {k:"approval",name:"Social approval",def:"Good just means: what your society approves of.",
-  case:"A society approves of keeping some children from ever going to school.",
+  case:"A society approves of making the youngest child in every family do all the chores, forever, no matter what.",
   q:"Their society approves. Is it still a real question whether it's good?",
   moore:"People inside and outside that society can sensibly ask whether it's good. If \"good\" meant \"approved\", that question would make no sense.",
   nat:"A defender might bite the bullet: in that society it <i>is</i> good, and \"is it really good?\" just means \"would <i>we</i> approve?\". You'll meet this view, relativism, in Session 4."},
  {k:"want",name:"What people want",def:"Good just means: what most people want.",
-  case:"Nearly everyone in a group wants to leave one kid out of every game.",
+  case:"Nearly everyone in a group chat wants to quietly remove one member without telling her.",
   q:"Most people want it. Is it still a real question whether it's good?",
   moore:"\"Most people want it, but is it good?\" is a real question, so \"good\" can't just mean \"wanted\".",
   nat:"A naturalist could switch to what people <i>would</i> want if they were calm, informed and fair. Moore's challenge: is <i>that</i> good? Try the test again."}
@@ -82,25 +82,44 @@ const CHECK=[
   o:["commands from an authority","feelings with no truth to them","natural facts science could study"],a:2,
   why:"Naturalism says goodness is a natural feature, like pleasure or flourishing, that science could in principle study."}
 ];
-let d=0,verdicts={},ci=0,tries=0,checkScore=0,checkLog=[],stance=null;
+let d=0,verdicts={},ci=0,tries=0,checkScore=0,checkLog=[],stance=null,myDef='',myCase='',myVerdict='';
 const stage=document.getElementById('stage');
 function el(h){stage.innerHTML=h;window.scrollTo(0,0)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 function intro(){
- el(`<h2>Feed it a definition</h2><p>The machine will test 4 famous definitions of "good". For each one you'll see a case. You decide whether "but is it good?" is still a real question.</p><p>There are no right answers in this part. At the end there are 2 quick check questions.</p><div class="btns one"><button class="primary" onclick="showDef()">Start the machine</button></div>`);
+ el(`<h2>Feed it a definition</h2><p>The machine will test 4 famous definitions of "good". For each one you'll see a case. Your job: decide whether it even makes sense to ask "but is it good?" The answer can be yes and the question can still make sense. That's the whole trick.</p><p>Then it's your turn: feed in your own definition and try to break it. No right answers until the 2 quick check questions at the end.</p><div class="btns one"><button class="primary" onclick="showDef()">Start the machine</button></div>`);
 }
 function showDef(){
  const x=DEFS[d];
- el(`<div class="prog">Definition ${d+1} of ${DEFS.length}</div><h2>${x.name}</h2><div class="claim">${x.def}</div><p><b>Test case:</b> ${esc(x.case)}</p><p>${esc(x.q)}</p><div class="btns one"><button onclick="judge('open',this)">Yes, it's still a real question</button><button onclick="judge('closed',this)">No, it's obviously good, so the question is pointless</button></div><div class="fb" id="fb"></div>`);
+ el(`<div class="prog">Definition ${d+1} of ${DEFS.length}</div><h2>${x.name}</h2><div class="claim">${x.def}</div><p><b>Test case:</b> ${esc(x.case)}</p><p>${esc(x.q)}</p><div class="btns one"><button onclick="judge('open',this)">It makes sense to ask</button><button onclick="judge('closed',this)">Asking would be silly, like "Is this bachelor unmarried?"</button></div><div class="fb" id="fb"></div>`);
 }
 function judge(v,btn){
  const x=DEFS[d];verdicts[x.k]=v;
  document.querySelectorAll('.btns button').forEach(b=>b.disabled=true);btn.classList.add('picked');
- const head=v==='open'?`<b>The question stayed open. This definition cracked.</b>`:`<b>You closed the question. This definition survived your test.</b>`;
+ const head=v==='open'?`<b>It makes sense to ask, so the question stays open. This definition cracked.</b>`:`<b>You say asking is silly. This definition survived your test.</b>`;
  const fb=document.getElementById('fb');fb.className='fb show neutral';
  fb.innerHTML=`${head}<div class="two"><div class="view"><b>Moore's side</b><br>${x.moore}</div><div class="view"><b>Naturalist's side</b><br>${x.nat}</div></div><div class="btns one" style="margin-top:12px"><button class="primary" onclick="nextDef()">${d<DEFS.length-1?'Next definition':'On to the check questions'}</button></div>`;
 }
-function nextDef(){d++; if(d<DEFS.length)showDef(); else showCheck();}
+function nextDef(){d++; if(d<DEFS.length)showDef(); else mine();}
+const INP='width:100%;font:18px Georgia,serif;padding:10px;margin-top:8px;border:2px solid #8a6424;border-radius:6px';
+function mine(){
+ el(`<div class="prog">Bonus round: your own definition</div><h2>Feed the machine YOUR definition</h2><p>Remember the start of today's session? Type your definition of "good" (the same one, or a better one).</p><div class="claim">Good just means... <input id="md" maxlength="90" style="${INP}" placeholder="for example: helping people"></div><div class="btns one"><button class="primary" onclick="mine2()">Next</button></div><p class="sub" id="mw"></p>`);
+}
+function mine2(){
+ const v=document.getElementById('md').value.trim(); if(v.length<3){document.getElementById('mw').textContent='Type at least a few words first.';return;}
+ myDef=v;
+ el(`<div class="prog">Bonus round: your own definition</div><div class="claim">Good just means: <b>${esc(myDef)}</b></div><p>Now think of something that fits your definition perfectly. (Bonus points if it's a tricky case.) Type it here:</p><input id="mc" maxlength="120" style="${INP}" placeholder="Something that fits it perfectly..."><div class="btns one" style="margin-top:12px"><button class="primary" onclick="mine3()">Run the machine</button></div><p class="sub" id="mw"></p>`);
+}
+function mine3(){
+ const v=document.getElementById('mc').value.trim(); if(v.length<3){document.getElementById('mw').textContent='Type your example first.';return;}
+ myCase=v;
+ el(`<div class="prog">Bonus round: your own definition</div><div class="claim">It fits "${esc(myDef)}" perfectly: <b>${esc(myCase)}</b></div><p><b>The machine asks:</b> but is it <i>good</i>?</p><div class="btns one"><button onclick="mine4('open')">It makes sense to ask</button><button onclick="mine4('closed')">Asking would be silly</button></div>`);
+}
+function mine4(v){
+ myVerdict=v;
+ const msg=v==='open'?`<b>The question stayed open, so your definition cracked.</b> Don't feel bad: Moore thought every definition does. Bring your example to Rocky.`:`<b>Your definition survived your own test.</b> Moore would say any definition leaves the question open. Bring it to Rocky and see if he can crack it.`;
+ el(`<div class="prog">Bonus round: your own definition</div><div class="fb show neutral">${msg}</div><div class="btns one" style="margin-top:12px"><button class="primary" onclick="showCheck()">On to the check questions</button></div>`);
+}
 function showCheck(){
  tries=0;const c=CHECK[ci];
  el(`<div class="prog">Check question ${ci+1} of ${CHECK.length}</div><div class="claim">${esc(c.q)}</div><div class="btns one">${c.o.map((o,j)=>`<button id="o${j}" onclick="answer(${j})">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div>`);
@@ -134,6 +153,7 @@ function resultText(){
  return `Open Question Machine (Is Anything Really Wrong? M02)
 Definitions:
 ${lines}
+My definition: "${myDef}". My test case: "${myCase}". Result: ${myVerdict==='open'?'cracked':'survived'}
 Check questions: ${checkScore} of ${CHECK.length} right first try (${checkLog.join('; ')})
 My verdict: ${stance}`;
 }
@@ -147,7 +167,7 @@ function copyRes(){
  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
 }
 function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
-function restart(){d=0;verdicts={};ci=0;tries=0;checkScore=0;checkLog=[];stance=null;intro();}
+function restart(){d=0;verdicts={};ci=0;tries=0;checkScore=0;checkLog=[];stance=null;myDef='';myCase='';myVerdict='';intro();}
 intro();
 </script>
 </body>

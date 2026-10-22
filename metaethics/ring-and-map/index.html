@@ -106,12 +106,18 @@ const RING=[
  {s:"Your friends' private group chat is open on a laptop, and they're talking about you.",
   o:["Walk away without reading","Be tempted, honestly","Read every message"],
   g:"Anyone would read it if they knew they'd never be found out.",p:"Snooping eats away at the trust that makes friendship good for <i>you</i>."},
- {s:"Your neighbor's fence is broken. You could fix it secretly, and no one would ever know it was you.",
-  o:["Fix it, even with no credit","Maybe, if I had time","Skip it; nobody would know"],
-  g:"Nobody does good with no chance of reward or praise.",p:"A just person enjoys doing right. If you'd fix it anyway, Glaucon's claim about <i>everyone</i> is false."},
- {s:"You broke a lamp. Your little brother is about to get blamed, and you're invisible.",
+ {s:"You find a wallet with $200 and a student ID inside. Nobody saw you pick it up.",
+  o:["Return it all","Be tempted, honestly","Keep the cash"],
+  g:"No one would hand back $200 they could keep without anyone knowing.",p:"Keeping it would make you a little more ruled by greed. If you'd return it anyway, Glaucon's claim about <i>everyone</i> is false."},
+ {s:"You could post a mean comment about someone from an anonymous account that could never be traced back to you.",
+  o:["Don't post it","Be tempted, honestly","Post it"],
+  g:"Anonymous accounts prove my point: hide people's names and their true selves come out.",p:"Plenty of people stay kind with no name attached. Each one is evidence that being just can be chosen for its own sake."},
+ {s:"You broke a lamp while nobody was home. Your little brother is about to get blamed, and no one will ever know it was you.",
   o:["Own up anyway","Be tempted to stay quiet","Let him take the blame"],
-  g:"Staying quiet is what anyone would do if they could get away with it.",p:"You'd have to live knowing it, and being at war with yourself is its own punishment."}
+  g:"Staying quiet is what anyone would do if they could get away with it.",p:"You'd have to live knowing it, and being at war with yourself is its own punishment."},
+ {s:"Glaucon's final test. Life 1: you're always honest, but everyone believes you're a cheater, forever. Life 2: you cheat whenever you like, but everyone thinks you're honest.",
+  o:["Life 1: honest, but seen as a cheater","Life 2: a cheater, but seen as honest","I can't decide"],
+  g:"If people secretly prefer Life 2, they care about looking good, not being good.",p:"Life 1. Being just is good for you even when nobody knows, and even when it costs you your reputation."}
 ];
 const VIEWS={
  express:{n:"Expressivist",d:"Moral claims express attitudes or plans, not facts.",obj:"The if-then puzzle: in \"if cheating is wrong...\" nobody is booing, yet the argument works. (Session 5)"},
@@ -127,8 +133,15 @@ function intro(){
 function rq(i){
  const r=RING[i];
  choose({prog:`Part 1 · Situation ${i+1} of ${RING.length}`,head:`<div class="claim">${esc(r.s)}</div>`,q:"What would you do?",opts:r.o,
-  reveal:j=>views([["Glaucon",r.g],["Plato",r.p]]),next:i<RING.length-1?'Next situation':'On to your map',
-  cb:j=>{ring.push(`S${i+1}: ${r.o[j]}`);i<RING.length-1?rq(i+1):m1();}});
+  reveal:j=>views([["Glaucon (arguing the case)",r.g],["Plato",r.p]]),next:i<RING.length-1?'Next situation':'One more question',
+  cb:j=>{ring.push(`S${i+1}: ${r.o[j]}`);i<RING.length-1?rq(i+1):fs();}});
+}
+let fsAns='';
+function fs(){
+ choose({prog:'Part 1 · Does morality bind everyone?',head:`<div class="claim">Someone says: "I understand the rules. I just don't care about anyone but me."</div>`,q:"Is she making a mistake, or does morality just not bind her, the way etiquette doesn't bind someone who doesn't care about manners?",
+  opts:["She's making a mistake","Morality doesn't bind her","Not sure"],
+  reveal:j=>views([["Shafer-Landau (moral rationalist)","Moral reasons apply to you whatever you want, like the rules of logic. Not caring doesn't free her; it's a mistake."],["Philippa Foot","Maybe morality is like etiquette: real rules, but they only give you a reason if you care about what they protect."]]),
+  next:'On to your map',cb:j=>{fsAns=["she's making a mistake","morality doesn't bind her","not sure"][j];m1();}});
 }
 function m1(){
  choose({prog:'Part 2 · Your map, question 1',head:`<h2>Where do you stand?</h2>`,q:"When people say \"stealing is wrong,\" are they trying to state a fact?",
@@ -164,6 +177,7 @@ function finish(){
  showResults(`The Ring and Your Map (Is Anything Really Wrong? M06)
 With the ring I would:
 - ${ring.join('\n- ')}
+Someone who doesn't care: ${fsAns}
 My map: ${place.n} (answers: ${path.join(' > ')})
 Objection to face: ${place.obj}
 Check questions: ${cScore} of ${CHECK.length} right first try (${log.join('; ')})`);

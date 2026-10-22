@@ -51,22 +51,22 @@ dl.bins{margin:0}dl.bins dt{font-weight:bold;font-family:system-ui,sans-serif;fo
     <dl class="bins">
       <dt>Fact</dt><dd>Says how the world is; true or false. Includes claims about what people believe or do.</dd>
       <dt>Taste</dt><dd>States a preference.</dd>
-      <dt>Moral</dt><dd>Says right, wrong, good, bad, fair, or should.</dd>
+      <dt>Moral</dt><dd>Says what's morally right or wrong, fair or unfair, or how people should treat others.</dd>
       <dt>Mixed</dt><dd>More than one kind in one sentence.</dd>
     </dl>
   </div>
 </div>
 <script>
 const CLAIMS=[
- {t:"The Moon has no air to breathe.",a:"Fact",why:"It describes how the world is, and you could check it."},
+ {t:"Octopuses have three hearts.",a:"Fact",why:"It describes how the world is, and a biologist could check it."},
  {t:"Board games are more fun than video games.",a:"Taste",why:"It's a preference. Someone who disagrees hasn't made a mistake."},
  {t:"It's wrong to make fun of someone for how they look.",a:"Moral",why:"It says something is wrong."},
  {t:"Most people think lying is wrong.",a:"Fact",why:"It's about what people believe. You could check it with a survey, so it's a fact claim, even though it mentions wrongness."},
  {t:"You ought to keep a promise even when it's inconvenient.",a:"Moral",why:"\"Ought\" tells someone what they should do."},
  {t:"That movie's ending was boring.",a:"Taste",why:"It's a reaction to the movie, not something anyone could prove."},
  {t:"Cheating on the test was unfair, and the test had 40 questions.",a:"Mixed",why:"\"Unfair\" is moral; \"40 questions\" is a fact."},
- {t:"Sound travels faster in water than in air.",a:"Fact",why:"It's about how the world works, and it can be measured."},
- {t:"Being cruel just for fun is wrong.",a:"Moral",why:"It says something is wrong."},
+ {t:"Doctors agree smoking is bad for you.",a:"Fact",why:"Here \"bad\" means harmful to your health, which doctors can measure. Moral-sounding word, but it's a fact claim."},
+ {t:"Pineapple on pizza is a crime against food.",a:"Taste",why:"\"Crime\" sounds moral, but it's really a strong food preference. Nobody is treating anyone unfairly."},
  {t:"Blue is the nicest colour, and the sky looks blue because air scatters blue light.",a:"Mixed",why:"\"Nicest colour\" is taste; the reason the sky looks blue is a fact."}
 ];
 const BINS=["Fact","Taste","Moral","Mixed"];
@@ -93,9 +93,13 @@ function fork1(){
  el(`<h2>Part 2: Euthyphro's fork</h2><p>You scored <b>${score} of ${CLAIMS.length}</b>.</p><div class="fb show neutral"><b>What's a "fork"?</b> A question with two paths, where each path leads to a problem. This one comes from Plato's <i>Euthyphro</i>, written about 2,400 years ago. Socrates asked a man named Euthyphro: is something good <i>because</i> the gods approve of it, or do the gods approve of it <i>because</i> it's already good? It sounds like a small difference, but it decides where right and wrong come from.</div><p style="margin-top:14px">Plato asked about the gods, but you can ask it about any authority. Pick one to think about:</p><div class="btns one"><button onclick="setAuth('gods')">The gods (or God)</button><button onclick="setAuth('law')">The law</button><button onclick="setAuth('people')">What most people think</button></div>`);
 }
 function setAuth(a){auth=a;const A=AUTH[a];
- el(`<h2>Pick a side</h2><div class="claim">Is something right because ${A} approve${a==='law'?'s':''} of it, or ${a==='law'?'does':'do'} ${A} approve of it because it's already right?</div><div class="btns one"><button onclick="setHorn('A')">A. It's right <i>because</i> ${A} approve${a==='law'?'s':''}.</button><button onclick="setHorn('B')">B. ${A[0].toUpperCase()+A.slice(1)} approve${a==='law'?'s':''} <i>because</i> it's right.</button></div>`);
+ el(`<h2>Pick a side</h2><div class="claim">Is something right because ${A} approve${a==='law'?'s':''} of it, or ${a==='law'?'does':'do'} ${A} approve of it because it's already right?</div><div class="btns one"><button onclick="setHorn('A')">A. It's right <i>because</i> ${A} approve${a==='law'?'s':''}.</button><button onclick="setHorn('B')">B. ${A[0].toUpperCase()+A.slice(1)} approve${a==='law'?'s':''} <i>because</i> it's right.</button>${a==='gods'?`<button onclick="setHorn('C')">C. Neither: goodness is part of God's own nature.</button>`:''}</div>`);
 }
 function setHorn(h){horn=h;const A=AUTH[auth];
+ if(h==='C'){
+  el(`<h2>You picked C</h2><div class="fb show neutral"><b>The third path:</b> many religious thinkers answer that goodness is part of God's own nature, so God's commands come from that goodness and could never be cruel. <b>Critics ask:</b> does that escape the fork, or quietly pick Option B? Philosophers still argue about it.</div><p style="margin-top:14px">After hearing the critics' question, what do you do?</p><div class="btns"><button onclick="setAfter('kept')">Keep C</button><button onclick="setAfter('unsure')">Not sure now</button></div>`);
+  return;
+ }
  const prob=h==='A'
   ?`<b>The problem with A:</b> if approval is what <i>makes</i> something right, then if ${A} had approved of cruelty, cruelty would have been right. Rightness would depend entirely on whoever is in charge.`
   :`<b>The problem with B:</b> if ${A} ${auth==='law'?'approves':'approve'} <i>because</i> something is already right, then rightness comes from somewhere else. So where does it come from? ${A[0].toUpperCase()+A.slice(1)} ${auth==='law'?'is':'are'} more like a reliable expert than the source of right and wrong.`;
