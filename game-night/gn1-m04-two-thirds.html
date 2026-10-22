@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two-Thirds of the Average</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  tr.win td{color:#39ff14;border-color:#39ff14}
+  tr.me td{color:#ffe600}
+  .disp{font:bold 28px "Courier New",monospace;width:110px;margin:6px auto;text-align:center;background:#0e0e1c;color:#ffe600;border:3px solid #ffe600;padding:8px}
+  .pad button{min-width:64px;margin:4px;padding:10px 0}
+  button{font:bold 18px "Courier New",monospace;margin:8px;padding:12px 20px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active{background:#ffe600;color:#07070f}
+  #result,#final{display:none}
+  #out{width:95%;max-width:600px;height:110px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .err{color:#ff5555;min-height:20px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+</style>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="casino-skin">
+:root{--felt:#0f6b3a;--felt-dark:#0a4a28;--gold:#f7c948;--gold-deep:#b8860b;--ivory:#fff8e7;--ink:#1b1b1b;--red:#d7263d;--blue:#1e6fd9;--black:#222;--green:#13a05a;--violet:#7b3fe4}
+html{background:#140711}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#fff7e6 !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;
+ background:
+  radial-gradient(circle at 50% -10%,rgba(255,200,80,.18),transparent 55%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  repeating-linear-gradient(-45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  radial-gradient(circle at 50% 40%,#3a0f2a,#140711 75%) !important;min-height:100vh}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:18px;background:linear-gradient(180deg,#2a0a1d,#12040c);border:3px solid var(--gold);box-shadow:0 0 0 4px #3b1020,0 0 24px rgba(247,201,72,.35),inset 0 0 18px rgba(0,0,0,.7)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--gold);opacity:.85;margin-bottom:2px;text-transform:uppercase}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:9px;height:9px;border-radius:50%;background:#ffd36b;box-shadow:0 0 6px #ffd36b,0 0 12px #ffb300;animation:bulb 1.2s infinite}
+.marquee i:nth-child(odd){animation-delay:.6s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:clamp(22px,6vw,34px) !important;letter-spacing:2px !important;margin:8px 0 !important;
+ color:#ffe9a8 !important;text-shadow:0 0 2px #fff,0 0 10px #ff9d00,0 0 22px #ff5e00,0 3px 0 #7a2b00 !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 2px 0 rgba(0,0,0,.6) !important}
+#pick,#round,#result,#final{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+ background:radial-gradient(ellipse at 50% 35%,var(--felt),var(--felt-dark) 85%);
+ border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px var(--gold-deep),inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+#pick::before,#round::before,#result::before,#final::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--gold) !important;border-radius:12px !important;padding:6px 12px 8px !important;
+ background:linear-gradient(180deg,#2b2b2b,#0b0b0b 45%,#1c1c1c) !important;box-shadow:0 0 0 3px #4a1020,0 6px 0 #000,inset 0 2px 6px rgba(255,255,255,.15) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#f3d38a}
+.box b{font-family:"Bungee","Arial Black",sans-serif !important;font-weight:400 !important;font-size:24px !important;color:#ff4747 !important;text-shadow:0 0 8px #ff2a2a !important;background:#120000;border-radius:6px;margin-top:4px;padding:2px 6px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 35%,#ff5a6e,var(--red) 60%) !important;border:3px dashed rgba(255,255,255,.9) !important;border-radius:999px !important;
+ box-shadow:0 0 0 4px var(--red),0 6px 0 4px #5e0b17,0 10px 14px rgba(0,0,0,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.45);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 35%,#5aa2ff,var(--blue) 60%) !important;box-shadow:0 0 0 4px var(--blue),0 6px 0 4px #0b2f63,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 35%,#555,var(--black) 60%) !important;box-shadow:0 0 0 4px #111,0 6px 0 4px #000,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 35%,#38d17f,var(--green) 60%) !important;box-shadow:0 0 0 4px var(--green),0 6px 0 4px #06512b,0 10px 14px rgba(0,0,0,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 35%,#fff3c4,var(--gold) 60%) !important;color:#3a2200 !important;text-shadow:none;box-shadow:0 0 0 4px var(--gold),0 0 18px 6px rgba(247,201,72,.75),0 6px 0 4px #6b4a00 !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#ffe28a,#f7c948 45%,#c99212) !important;color:#3a2200 !important;text-shadow:0 1px 0 rgba(255,255,255,.6);
+ border:3px solid #fff3c4 !important;border-radius:14px !important;box-shadow:0 0 0 4px #8a5a00,0 6px 0 4px #4a2f00,0 0 22px rgba(247,201,72,.45) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.28);border-radius:10px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(247,201,72,.45) !important;color:#fff7e6}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(0,0,0,.25)}
+.note{color:#f1dfc0 !important;opacity:.92}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:#ffd84d !important;background:#0a0a0a;border:2px solid #ffd84d !important;border-radius:8px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,216,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#9fe7ff !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe9a8 !important}
+.rank{font-family:"Bungee","Arial Black",sans-serif !important;font-size:clamp(24px,6vw,34px) !important;display:inline-block;padding:10px 18px;margin:12px auto 6px !important;border-radius:14px;
+ color:#fff2b3 !important;background:#1a0610;border:3px solid var(--gold);text-shadow:0 0 10px #ffb300,0 0 22px #ff6a00 !important;animation:jackpot 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #4a1020,0 0 26px rgba(255,179,0,.55)}
+@keyframes jackpot{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:12px !important;box-shadow:0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"♦";position:absolute;left:10px;top:8px;color:var(--red);font-size:18px}
+.tape b{color:#a1001c !important}
+.fact{background:linear-gradient(180deg,#d8b25a,#a87b22);color:#2a1800 !important;border:2px solid #fff0b8 !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 4px 0 #5a3a00,0 8px 16px rgba(0,0,0,.4)}
+#out{font-family:"Courier New",monospace !important;background:#fffdf4 !important;color:#222 !important;border:2px dashed #b8860b !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#7dff9e !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff8a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#120000 !important;color:#ff4747 !important;border:3px solid var(--gold) !important;border-radius:10px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px #ff2a2a}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-40px;width:26px;height:26px;border-radius:50%;border:4px dashed rgba(255,255,255,.9);animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final{border-width:6px;padding:12px 8px 14px}button{margin:8px 5px !important;padding:9px 12px !important}}
+.cardwin{margin:14px auto 6px;max-width:520px;padding:12px 14px;border-radius:14px;background:linear-gradient(180deg,#ffe28a,#f7c948 45%,#c99212);color:#3a2200;font-family:"Bungee","Arial Black",sans-serif;font-size:16px;letter-spacing:1px;box-shadow:0 0 0 4px #8a5a00,0 0 22px rgba(247,201,72,.6)}
+.cardwin a{display:inline-block;margin-top:6px;font-family:"Rubik",sans-serif;font-weight:800;font-size:15px;color:#4a1020;text-decoration:underline}
+</style>
+</head>
+<body>
+<h1>TWO-THIRDS OF THE AVERAGE</h1>
+<p class="note">Pick a number from 1 to 100. Five classmates pick too. Whoever gets closest to two-thirds of the average of all six numbers wins.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/2</b></div>
+</div>
+
+<div id="pick">
+  <p>Lock in your number before you see anyone else's.</p>
+  <div id="g" class="disp">--</div>
+  <div class="pad">
+    <button onclick="key(1)">1</button><button onclick="key(2)">2</button><button onclick="key(3)">3</button><br>
+    <button onclick="key(4)">4</button><button onclick="key(5)">5</button><button onclick="key(6)">6</button><br>
+    <button onclick="key(7)">7</button><button onclick="key(8)">8</button><button onclick="key(9)">9</button><br>
+    <button onclick="clr()">CLEAR</button><button onclick="key(0)">0</button>
+  </div>
+  <button onclick="lock()">LOCK IT IN</button>
+  <div class="err" id="err"></div>
+</div>
+
+<div id="result">
+  <h2 id="headline"></h2>
+  <table id="tbl"></table>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Level Up<br><a href="gn1-deck.html?card=4">See your deck</a></div>
+
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var names=["Ada","Bo","Cy","Di","Eli"];
+var levelSets=[[0,1,2,3,4],[1,2,3,4,5]];
+var r=0,data=[];
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function botNum(level){
+  if(level===0)return 1+rnd(100);
+  var v=50*Math.pow(2/3,level);
+  var j=Math.max(1,Math.round(v*0.08));
+  var n=Math.round(v)+rnd(2*j+1)-j;
+  return Math.min(100,Math.max(1,n));
+}
+function r2(x){return Math.round(x*100)/100}
+function levelOf(g){
+  if(g>=42)return 0;if(g>=28)return 1;if(g>=19)return 2;if(g>=13)return 3;if(g>=9)return 4;if(g>=6)return 5;return 6;
+}
+var entry="";
+function key(d){if(entry.length>=3)return;if(entry===""&&d===0)return;entry+=String(d);el("g").textContent=entry}
+function clr(){entry="";el("g").textContent="--"}
+function lock(){
+  var g=Number(entry);
+  if(!(g>=1&&g<=100)||Math.floor(g)!==g){el("err").textContent="Pick a whole number from 1 to 100.";return}
+  el("err").textContent="";
+  var lv=levelSets[r],bots=[],i;
+  for(i=0;i<5;i++)bots.push(botNum(lv[i]));
+  var sum=g;for(i=0;i<5;i++)sum+=bots[i];
+  var avg=sum/6,target=avg*2/3;
+  var all=[{n:"YOU",v:g,lv:levelOf(g),me:true}];
+  for(i=0;i<5;i++)all.push({n:names[i],v:bots[i],lv:lv[i],me:false});
+  var best=1e9;all.forEach(function(p){p.d=Math.abs(p.v-target);if(p.d<best)best=p.d});
+  var winners=all.filter(function(p){return Math.abs(p.d-best)<1e-9}).map(function(p){return p.n});
+  data.push({g:g,bots:bots,avg:avg,target:target,winners:winners,all:all});
+  var rows="<tr><th>Player</th><th>Number</th><th>Distance from target</th></tr>";
+  all.forEach(function(p){
+    var w=winners.indexOf(p.n)>=0;
+    rows+="<tr class=\""+(w?"win":(p.me?"me":""))+"\"><td>"+p.n+"</td><td>"+p.v+"</td><td>"+r2(p.d)+"</td></tr>";
+  });
+  el("tbl").innerHTML=rows;
+  el("headline").textContent=winners.indexOf("YOU")>=0?"YOU WIN THIS ROUND!":"Winner: "+winners.join(" and ");
+  el("detail").innerHTML="Average of all six: <b>"+r2(avg)+"</b>. Two-thirds of that: <b>"+r2(target)+"</b>."+
+    "<br><span class=\"note\">"+(r===0?"Round 2 is next. Same classmates. Will they think harder this time?":"")+"</span>";
+  el("next").textContent=(r===1)?"SEE FINAL SCORE":"NEXT ROUND";
+  show("pick",false);show("result",true);
+}
+function nextRound(){
+  r++;
+  if(r>=2){finish();return}
+  el("rn").textContent=(r+1)+"/2";
+  clr();
+  show("result",false);show("pick",true);
+}
+function finish(){
+  show("result",false);show("pick",false);
+  var a=data[0],b=data[1];
+  var youWon=(a.winners.indexOf("YOU")>=0?1:0)+(b.winners.indexOf("YOU")>=0?1:0);
+  var rank=youWon>0?"MIND READER":(b.g<=a.g?"QUICK LEARNER":"STUBBORN THINKER");
+  var lv=levelOf(b.g);
+  el("verdict").innerHTML=
+    "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<p class=\"note\">Rounds won: "+youWon+" of 2.</p>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">Round 1: you picked <b>"+a.g+"</b>. The winning target was <b>"+r2(a.target)+"</b>.</div>"+
+    "<div class=\"tape\">Round 2: you picked <b>"+b.g+"</b>. The winning target was <b>"+r2(b.target)+"</b>.</div>"+
+    "<h2>THE SECRET: THINKING LEVELS</h2><p class=\"note\">Each classmate thinks a set number of steps ahead. Level 0 picks at random. Level 1 assumes everyone else is Level 0 (average 50, so guess about 33). Level 2 assumes everyone is Level 1 (guess about 22), and so on. In round 1 your classmates were Levels 0 to 4. In round 2 each one thought one level deeper (Levels 1 to 5).</p>"+"<p class=\"note\">The average moved from "+r2(a.avg)+" to "+r2(b.avg)+" because the classmates thought one level deeper. Your round 2 number sits at about Level "+(lv>=6?"6+":lv)+".</p>"+
+    "<div class=\"fact\">When the website Wait But Why ran this game, 4,940 readers sent guesses. The average was about 23, so the winning number was 15. Why might the lowest possible guess still not win?</div>";
+  el("out").value="GN1-M04 | r1 my guess: "+a.g+", classmates: "+a.bots.join(", ")+", average: "+r2(a.avg)+", target: "+r2(a.target)+", winner: "+a.winners.join("+")+
+    " | r2 my guess: "+b.g+", classmates: "+b.bots.join(", ")+", average: "+r2(b.avg)+", target: "+r2(b.target)+", winner: "+b.winners.join("+");
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");
+  t.select();t.setSelectionRange(0,999);
+  var ok=false;
+  function fallback(){
+    try{ok=document.execCommand("copy")}catch(e){}
+    s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky.";
+  }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+</script>
+
+
+<script id="casino-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 1 · OUTSMART ANYONE";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>

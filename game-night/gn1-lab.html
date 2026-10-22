@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strategy Lab</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;margin:8px 0}
+  h2{font-size:16px;letter-spacing:2px;margin:6px 0}
+  p{line-height:1.45}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:7px 9px;font-size:14px}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;cursor:pointer}
+  #out{width:95%;max-width:620px;height:110px;font:14px "Courier New",monospace}
+  .note{font-size:14px}
+  .panel{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+   background:radial-gradient(ellipse at 50% 35%,var(--felt,#0f6b3a),var(--felt-dark,#0a4a28) 85%);
+   border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px #b8860b,inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+  .panel::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+  @media (max-width:480px){.panel{border-width:6px;padding:12px 8px 14px}}
+  .story{background:rgba(0,0,0,.28);border-radius:12px;padding:10px 12px;text-align:left;font-size:15px}
+  .msg{min-height:22px;color:#ffe9a8;font-weight:600}
+  .tiny{font-size:11px;color:#7dff9e}
+  .gwrap{max-width:100%;overflow-x:auto}
+  .grid td{min-width:0;padding:5px 4px}
+  .grid th{padding:5px 4px;font-size:12px}
+  .step{display:flex;align-items:center;justify-content:center;gap:4px;margin:3px 0}
+  .step .who{font-size:10px;min-width:30px;text-align:right;color:#f3d38a}
+  .step b{display:inline-block;min-width:18px;font-size:18px;color:#fff}
+  button.mini{min-width:28px !important;padding:1px 4px !important;margin:2px 1px !important;font-size:13px !important;border-width:2px !important;box-shadow:0 0 0 2px #5e0b17,0 3px 0 2px #3a0610 !important}
+  button.mini2{min-width:54px !important}
+  td.locked{background:rgba(255,255,255,.06)}
+  .nash td{font-size:15px;min-width:0;padding:6px 4px}
+  .nash td.act{background:rgba(255,233,168,.16);cursor:pointer;outline:2px dashed #ffe9a8;outline-offset:-4px}
+  .nash td.lock{background:rgba(247,201,72,.28);box-shadow:inset 0 0 12px rgba(247,201,72,.8)}
+  .ring{display:inline-block;border:2px solid #ffd84d;border-radius:50%;padding:0 6px;color:#ffe9a8}
+  .locktxt{font:11px "Bungee","Arial Black",sans-serif;color:#ffd84d;letter-spacing:1px}
+  .ladder{display:inline-block;margin:6px auto;text-align:left}
+  .rung{padding:5px 14px;margin:3px 0;border-left:4px solid #555;background:rgba(0,0,0,.3);border-radius:6px;font-size:14px;color:#aaa}
+  .rung.on{border-left-color:#ffd84d;color:#fff7e6}
+  .dial{font:20px "Bungee","Arial Black",sans-serif;margin:8px 0;color:#ffe9a8}
+  .barrow{display:flex;align-items:center;gap:8px;margin:8px auto;max-width:520px;text-align:left}
+  .bl{min-width:150px;font-size:13px}
+  .track{flex:1;height:18px;background:rgba(0,0,0,.4);border-radius:9px;overflow:hidden}
+  .fill{height:100%;background:linear-gradient(90deg,#38d17f,#7dff9e)}
+  .fill.low{background:linear-gradient(90deg,#d7263d,#ff8a8a)}
+  button.on:disabled{filter:none;opacity:1}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="casino-skin">
+:root{--felt:#0f6b3a;--felt-dark:#0a4a28;--gold:#f7c948;--gold-deep:#b8860b;--ivory:#fff8e7;--ink:#1b1b1b;--red:#d7263d;--blue:#1e6fd9;--black:#222;--green:#13a05a;--violet:#7b3fe4}
+html{background:#140711}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#fff7e6 !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;
+ background:
+  radial-gradient(circle at 50% -10%,rgba(255,200,80,.18),transparent 55%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  repeating-linear-gradient(-45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  radial-gradient(circle at 50% 40%,#3a0f2a,#140711 75%) !important;min-height:100vh}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:18px;background:linear-gradient(180deg,#2a0a1d,#12040c);border:3px solid var(--gold);box-shadow:0 0 0 4px #3b1020,0 0 24px rgba(247,201,72,.35),inset 0 0 18px rgba(0,0,0,.7)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--gold);opacity:.85;margin-bottom:2px;text-transform:uppercase}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:9px;height:9px;border-radius:50%;background:#ffd36b;box-shadow:0 0 6px #ffd36b,0 0 12px #ffb300;animation:bulb 1.2s infinite}
+.marquee i:nth-child(odd){animation-delay:.6s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:clamp(22px,6vw,34px) !important;letter-spacing:2px !important;margin:8px 0 !important;
+ color:#ffe9a8 !important;text-shadow:0 0 2px #fff,0 0 10px #ff9d00,0 0 22px #ff5e00,0 3px 0 #7a2b00 !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 2px 0 rgba(0,0,0,.6) !important}
+#pick,#round,#result,#final{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+ background:radial-gradient(ellipse at 50% 35%,var(--felt),var(--felt-dark) 85%);
+ border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px var(--gold-deep),inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+#pick::before,#round::before,#result::before,#final::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--gold) !important;border-radius:12px !important;padding:6px 12px 8px !important;
+ background:linear-gradient(180deg,#2b2b2b,#0b0b0b 45%,#1c1c1c) !important;box-shadow:0 0 0 3px #4a1020,0 6px 0 #000,inset 0 2px 6px rgba(255,255,255,.15) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#f3d38a}
+.box b{font-family:"Bungee","Arial Black",sans-serif !important;font-weight:400 !important;font-size:24px !important;color:#ff4747 !important;text-shadow:0 0 8px #ff2a2a !important;background:#120000;border-radius:6px;margin-top:4px;padding:2px 6px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 35%,#ff5a6e,var(--red) 60%) !important;border:3px dashed rgba(255,255,255,.9) !important;border-radius:999px !important;
+ box-shadow:0 0 0 4px var(--red),0 6px 0 4px #5e0b17,0 10px 14px rgba(0,0,0,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.45);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 35%,#5aa2ff,var(--blue) 60%) !important;box-shadow:0 0 0 4px var(--blue),0 6px 0 4px #0b2f63,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 35%,#555,var(--black) 60%) !important;box-shadow:0 0 0 4px #111,0 6px 0 4px #000,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 35%,#38d17f,var(--green) 60%) !important;box-shadow:0 0 0 4px var(--green),0 6px 0 4px #06512b,0 10px 14px rgba(0,0,0,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 35%,#fff3c4,var(--gold) 60%) !important;color:#3a2200 !important;text-shadow:none;box-shadow:0 0 0 4px var(--gold),0 0 18px 6px rgba(247,201,72,.75),0 6px 0 4px #6b4a00 !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#ffe28a,#f7c948 45%,#c99212) !important;color:#3a2200 !important;text-shadow:0 1px 0 rgba(255,255,255,.6);
+ border:3px solid #fff3c4 !important;border-radius:14px !important;box-shadow:0 0 0 4px #8a5a00,0 6px 0 4px #4a2f00,0 0 22px rgba(247,201,72,.45) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.28);border-radius:10px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(247,201,72,.45) !important;color:#fff7e6}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(0,0,0,.25)}
+.note{color:#f1dfc0 !important;opacity:.92}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:#ffd84d !important;background:#0a0a0a;border:2px solid #ffd84d !important;border-radius:8px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,216,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#9fe7ff !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe9a8 !important}
+.rank{font-family:"Bungee","Arial Black",sans-serif !important;font-size:clamp(24px,6vw,34px) !important;display:inline-block;padding:10px 18px;margin:12px auto 6px !important;border-radius:14px;
+ color:#fff2b3 !important;background:#1a0610;border:3px solid var(--gold);text-shadow:0 0 10px #ffb300,0 0 22px #ff6a00 !important;animation:jackpot 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #4a1020,0 0 26px rgba(255,179,0,.55)}
+@keyframes jackpot{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:12px !important;box-shadow:0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"♦";position:absolute;left:10px;top:8px;color:var(--red);font-size:18px}
+.tape b{color:#a1001c !important}
+.fact{background:linear-gradient(180deg,#d8b25a,#a87b22);color:#2a1800 !important;border:2px solid #fff0b8 !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 4px 0 #5a3a00,0 8px 16px rgba(0,0,0,.4)}
+#out{font-family:"Courier New",monospace !important;background:#fffdf4 !important;color:#222 !important;border:2px dashed #b8860b !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#7dff9e !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff8a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#120000 !important;color:#ff4747 !important;border:3px solid var(--gold) !important;border-radius:10px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px #ff2a2a}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-40px;width:26px;height:26px;border-radius:50%;border:4px dashed rgba(255,255,255,.9);animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final{border-width:6px;padding:12px 8px 14px}button{margin:8px 5px !important;padding:9px 12px !important}}
+</style>
+</head>
+<body>
+<h1>STRATEGY LAB</h1>
+<p class="note" id="intro">Tools for figuring out games. Pick one, or open the one Rocky gave you.</p>
+
+<div class="panel" id="picker">
+  <h2>PICK A TOOL</h2>
+  <button onclick="go('grid')">PAYOFF GRID BUILDER</button>
+  <button onclick="go('nash')">NASH LOCK FINDER</button>
+  <button onclick="go('levels')">LEVEL-UP LADDER</button>
+  <button onclick="go('mix')">MIX-O-METER</button>
+</div>
+
+<div class="panel" id="work" style="display:none"></div>
+
+<div class="panel" id="final" style="display:none">
+  <h2 id="ftitle">TOOL COMPLETE</h2>
+  <div id="fsum"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" id="copybtn" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+var W=function(h){el("work").innerHTML=h};
+function param(n){try{var m=new RegExp("[?&]"+n+"=([^&]+)").exec(location.search);return m?decodeURIComponent(m[1]):null}catch(e){return null}}
+function go(t){show("picker",false);show("final",false);show("work",true);el("intro").style.display="none";
+  if(t==="grid")gridStart();else if(t==="nash")nashStart(0);else if(t==="levels")lvStart();else if(t==="mix")mixStart();}
+function finish(title,sum,line){show("work",false);el("ftitle").textContent=title;el("fsum").innerHTML=sum;el("out").value=line;show("final",true);try{window.scrollTo(0,0)}catch(e){}}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+
+/* ---------- GRID BUILDER ---------- */
+var STORIES=[
+ {key:"PIZZA-TACOS",name:"Pizza or Tacos",row:"Ava",col:"Ben",m:["PIZZA","TACOS"],
+  text:"Ava and Ben want to eat together after practice, but their phones died, so each just picks a place. If both pick PIZZA, Ava gets 3 fun points and Ben gets 2 (Ava loves pizza). If both pick TACOS, Ava gets 2 and Ben gets 3 (Ben loves tacos). If they pick different places, they eat alone and each gets 0.",
+  g:[[[3,2],[0,0]],[[0,0],[2,3]]]},
+ {key:"SHARE-GRAB",name:"Share or Grab",row:"You",col:"Partner",m:["SHARE","GRAB"],
+  text:"You and a partner each secretly pick SHARE or GRAB. Both SHARE: 3 points each. Both GRAB: 1 point each. If one GRABS and the other SHARES, the grabber gets 5 and the sharer gets 0.",
+  g:[[[3,3],[0,5]],[[5,0],[1,1]]]},
+ {key:"STUDY-SLACK",name:"Study or Slack",row:"Maya",col:"Leo",m:["STUDY","SLACK"],
+  text:"Maya and Leo share a group grade. Points are what each of them feels about how it went. Both STUDY: 4 each. Maya studies, Leo slacks: Maya 3, Leo 5. Maya slacks, Leo studies: Maya 1, Leo 2. Both slack: Maya 0, Leo 1.",
+  g:[[[4,4],[3,5]],[[1,2],[0,1]]]}
+];
+var G={};
+function gridStart(){
+  var h="<h2>PAYOFF GRID BUILDER</h2><p>Pick a story. You'll turn it into a payoff grid.</p>";
+  STORIES.forEach(function(s,i){h+="<button onclick=\"gridPick("+i+")\">"+s.name.toUpperCase()+"</button>"});
+  W(h);
+}
+function gridPick(i){
+  var s=STORIES[i];G={s:s,cur:[[[0,0],[0,0]],[[0,0],[0,0]]],tries:[[0,0],[0,0]],done:[[false,false],[false,false]],first:0,br:[],brRight:0,dom:{}};
+  gridDraw("");
+}
+function cellHTML(r,c){
+  var s=G.s,v=G.cur[r][c],d=G.done[r][c];
+  if(d)return "<td class=\"locked\"><b>"+v[0]+"</b>, <b>"+v[1]+"</b><br><span class=\"tiny\">✔</span></td>";
+  return "<td><div class=\"step\"><span class=\"who\">"+s.row+"</span><button class=\"mini\" onclick=\"bump("+r+","+c+",0,-1)\">−</button><b>"+v[0]+"</b><button class=\"mini\" onclick=\"bump("+r+","+c+",0,1)\">+</button></div>"+
+   "<div class=\"step\"><span class=\"who\">"+s.col+"</span><button class=\"mini\" onclick=\"bump("+r+","+c+",1,-1)\">−</button><b>"+v[1]+"</b><button class=\"mini\" onclick=\"bump("+r+","+c+",1,1)\">+</button></div></td>";
+}
+function gridDraw(msg){
+  var s=G.s,h="<h2>"+s.name.toUpperCase()+"</h2><p class=\"story\">"+s.text+"</p><p class=\"note\">Step 1: set each box to the points the story gives. First number: "+s.row+". Second number: "+s.col+".</p>";
+  h+="<div class=\"gwrap\"><table class=\"grid\"><tr><th>"+s.row+" \\ "+s.col+"</th><th>"+s.m[0]+"</th><th>"+s.m[1]+"</th></tr>";
+  for(var r=0;r<2;r++){h+="<tr><th>"+s.m[r]+"</th>"+cellHTML(r,0)+cellHTML(r,1)+"</tr>"}
+  h+="</table></div><p class=\"msg\">"+msg+"</p><button class=\"big\" onclick=\"gridCheck()\">CHECK MY GRID</button>";
+  W(h);
+}
+function bump(r,c,k,d){var v=G.cur[r][c][k]+d;if(v<0)v=0;if(v>6)v=6;G.cur[r][c][k]=v;gridDraw("")}
+function gridCheck(){
+  var wrong=0,shown=0;
+  for(var r=0;r<2;r++)for(var c=0;c<2;c++){
+    if(G.done[r][c])continue;
+    var ok=G.cur[r][c][0]===G.s.g[r][c][0]&&G.cur[r][c][1]===G.s.g[r][c][1];
+    G.tries[r][c]++;
+    if(ok){G.done[r][c]=true;if(G.tries[r][c]===1)G.first++}
+    else if(G.tries[r][c]>=2){G.cur[r][c]=G.s.g[r][c].slice();G.done[r][c]=true;shown++}
+    else wrong++;
+  }
+  var all=G.done[0][0]&&G.done[0][1]&&G.done[1][0]&&G.done[1][1];
+  if(all){gridBR(0,shown?"Grid complete! ("+shown+" box"+(shown>1?"es were":" was")+" filled in for you.)":"Grid complete!");return}
+  gridDraw(wrong+" box"+(wrong>1?"es are":" is")+" off. Reread the story and try again.");
+}
+function fullGrid(){
+  var s=G.s,h="<table class=\"grid\"><tr><th>"+s.row+" \\ "+s.col+"</th><th>"+s.m[0]+"</th><th>"+s.m[1]+"</th></tr>";
+  for(var r=0;r<2;r++){h+="<tr><th>"+s.m[r]+"</th>";for(var c=0;c<2;c++)h+="<td><b>"+s.g[r][c][0]+"</b>, <b>"+s.g[r][c][1]+"</b></td>";h+="</tr>"}
+  return h+"</table>";
+}
+/* best-reply questions: q0,q1 = Row's best vs col 0/1; q2,q3 = Col's best vs row 0/1 */
+function brAnswer(q){
+  var g=G.s.g;
+  if(q<2){var a=g[0][q][0],b=g[1][q][0];return a>b?0:(b>a?1:2)}
+  var r=q-2,x=g[r][0][1],y=g[r][1][1];return x>y?0:(y>x?1:2);
+}
+function gridBR(q,msg){
+  var s=G.s;
+  if(q>=4){gridDom(0,"");return}
+  var who=q<2?s.row:s.col,other=q<2?s.col:s.row,om=q<2?s.m[q]:s.m[q-2];
+  var h="<h2>STEP 2: BEST REPLIES</h2>"+fullGrid()+"<p class=\"msg\">"+msg+"</p><p>If <b>"+other+"</b> picks <b>"+om+"</b>, what is <b>"+who+"</b>'s best move?</p>";
+  h+="<button onclick=\"brPick("+q+",0)\">"+s.m[0]+"</button><button onclick=\"brPick("+q+",1)\">"+s.m[1]+"</button><button onclick=\"brPick("+q+",2)\">IT'S A TIE</button>";
+  W(h);
+}
+var brTry={};
+function brPick(q,a){
+  var ans=brAnswer(q),s=G.s;brTry[q]=(brTry[q]||0)+1;
+  if(a===ans){if(brTry[q]===1)G.brRight++;G.br[q]=a;gridBR(q+1,"✔ Right!");return}
+  if(brTry[q]>=2){G.br[q]=ans;gridBR(q+1,"The answer was "+(ans===2?"a tie":s.m[ans])+": compare the two numbers for that player in that "+(q<2?"column":"row")+".");return}
+  gridBR(q,"Not quite. Look only at "+(q<2?s.row+"'s first":s.col+"'s second")+" numbers in that "+(q<2?"column":"row")+".");
+}
+function domAnswer(p){var a=p===0?[brAnswer(0),brAnswer(1)]:[brAnswer(2),brAnswer(3)];return (a[0]===a[1]&&a[0]!==2)?a[0]:2}
+var domTry={};
+function gridDom(p,msg){
+  var s=G.s;
+  if(p>=2){
+    var line="GN1-LAB-GRID | story: "+s.key+" | grid boxes right first try: "+G.first+"/4 | best replies right first try: "+G.brRight+"/4 | "+s.row+" dominant: "+G.dom[0]+" | "+s.col+" dominant: "+G.dom[1];
+    finish("GRID BUILT!", fullGrid()+"<p>Boxes right on the first try: <b>"+G.first+"/4</b>. Best replies right on the first try: <b>"+G.brRight+"/4</b>.</p><div class=\"tape\">A <b>dominant move</b> is best no matter what the other player does. "+s.row+": "+G.dom[0]+". "+s.col+": "+G.dom[1]+".</div>",line);
+    return;
+  }
+  var who=p===0?s.row:s.col;
+  var h="<h2>STEP 3: DOMINANT MOVE?</h2>"+fullGrid()+"<p class=\"msg\">"+msg+"</p><p>Does <b>"+who+"</b> have a move that's best <i>no matter what</i> the other player does?</p>";
+  h+="<button onclick=\"domPick("+p+",0)\">YES: "+s.m[0]+"</button><button onclick=\"domPick("+p+",1)\">YES: "+s.m[1]+"</button><button onclick=\"domPick("+p+",2)\">NO DOMINANT MOVE</button>";
+  W(h);
+}
+function domPick(p,a){
+  var ans=domAnswer(p),s=G.s,txt=ans===2?"none":s.m[ans];domTry[p]=(domTry[p]||0)+1;
+  if(a===ans){G.dom[p]=txt+(domTry[p]===1?" (right first try)":" (right on try 2)");gridDom(p+1,"✔ Right!");return}
+  if(domTry[p]>=2){G.dom[p]=txt+" (shown)";gridDom(p+1,"The answer: "+(ans===2?"no dominant move, because the best move changes with what the other player does.":s.m[ans]+" is best in both cases."));return}
+  gridDom(p,"Not quite. Check your two best-reply answers for that player. Are they the same move?");
+}
+
+/* ---------- NASH LOCK FINDER ---------- */
+var NL=[
+ {name:"STAG HUNT",story:"Two hunters. Catching a stag needs both of them. A hare can be caught alone.",r:["STAG","HARE"],c:["STAG","HARE"],
+  g:[[[4,4],[0,3]],[[3,0],[3,3]]]},
+ {name:"CHICKEN",story:"Two skateboarders race straight at each other. Swerving looks weak; nobody swerving is a crash.",r:["SWERVE","STRAIGHT"],c:["SWERVE","STRAIGHT"],
+  g:[[[2,2],[1,3]],[[3,1],[0,0]]]},
+ {name:"THE ONE LOCK",story:"Row picks UP or DOWN. Column picks LEFT or RIGHT.",r:["UP","DOWN"],c:["LEFT","RIGHT"],
+  g:[[[2,3],[4,1]],[[1,0],[3,2]]]},
+ {name:"BIG BOARD",story:"A 3-by-3 game. Find every box where nobody wants to switch alone.",r:["TOP","MIDDLE","BOTTOM"],c:["LEFT","CENTER","RIGHT"],
+  g:[[[0,4],[4,0],[5,3]],[[4,0],[0,4],[5,3]],[[3,5],[3,5],[6,6]]]}
+];
+var N={};
+function nashStart(i){
+  if(i===0)N={lvl:0,mist:0,cleared:0,log:[]};
+  N.lvl=i;var L=NL[i];N.rb=L.c.map(function(){return null});N.cb=L.r.map(function(){return null});N.phase="row";N.k=0;N.try=0;
+  nashDraw("");
+}
+function bestRow(L,c){var m=-1e9,b=[];for(var r=0;r<L.r.length;r++){var v=L.g[r][c][0];if(v>m){m=v;b=[r]}else if(v===m)b.push(r)}return b}
+function bestCol(L,r){var m=-1e9,b=[];for(var c=0;c<L.c.length;c++){var v=L.g[r][c][1];if(v>m){m=v;b=[c]}else if(v===m)b.push(c)}return b}
+function nashCells(L){var out=[];for(var r=0;r<L.r.length;r++)for(var c=0;c<L.c.length;c++)if(bestRow(L,c).indexOf(r)>=0&&bestCol(L,r).indexOf(c)>=0)out.push([r,c]);return out}
+function nashDraw(msg){
+  var L=NL[N.lvl],h="<h2>LEVEL "+(N.lvl+1)+" OF 4: "+L.name+"</h2><p class=\"story\">"+L.story+"</p>";
+  var prompt="";
+  if(N.phase==="row")prompt="If Column picks <b>"+L.c[N.k]+"</b>, tap Row's best box in that column.";
+  else if(N.phase==="col")prompt="If Row picks <b>"+L.r[N.k]+"</b>, tap Column's best box in that row.";
+  else prompt="Boxes with BOTH numbers circled are locked in. How many Nash locks does this game have?";
+  h+="<p class=\"note\">First number = Row's points. Second = Column's points.</p><div class=\"gwrap\"><table class=\"grid nash\"><tr><th>Row \\ Col</th>";
+  L.c.forEach(function(x){h+="<th>"+x+"</th>"});h+="</tr>";
+  for(var r=0;r<L.r.length;r++){h+="<tr><th>"+L.r[r]+"</th>";
+    for(var c=0;c<L.c.length;c++){
+      var a=L.g[r][c][0],b=L.g[r][c][1],ra=N.rb[c]===r,cb=N.cb[r]===c;
+      var lock=(N.phase==="count"||N.phase==="done")&&ra&&cb;
+      var act=(N.phase==="row"&&c===N.k)||(N.phase==="col"&&r===N.k);
+      h+="<td class=\""+(lock?"lock":"")+(act?" act":"")+"\""+(act?" onclick=\"nashTap("+r+","+c+")\"":"")+">"+
+        (ra?"<span class=\"ring\">"+a+"</span>":a)+", "+(cb?"<span class=\"ring\">"+b+"</span>":b)+(lock?"<br><span class=\"locktxt\">NASH LOCK!</span>":"")+"</td>"}
+    h+="</tr>"}
+  h+="</table></div><p class=\"msg\">"+msg+"</p><p>"+prompt+"</p>";
+  if(N.phase==="count"){[0,1,2,3].forEach(function(n){h+="<button onclick=\"nashCount("+n+")\">"+n+"</button>"})}
+  if(N.phase==="done")h+="<button class=\"big\" onclick=\"nashNext()\">"+(N.lvl===3?"FINISH":"NEXT LEVEL")+"</button>";
+  W(h);
+}
+function nashTap(r,c){
+  var L=NL[N.lvl];
+  if(N.phase==="row"){var b=bestRow(L,c);
+    if(b.indexOf(r)>=0){N.rb[c]=r;N.try=0;N.k++;if(N.k>=L.c.length){N.phase="col";N.k=0}nashDraw("✔ Circled!");}
+    else{N.mist++;N.try++;if(N.try>=2){N.rb[c]=b[0];N.try=0;N.k++;if(N.k>=L.c.length){N.phase="col";N.k=0}nashDraw("Row's best there was "+L.r[b[0]]+": it has the biggest FIRST number in that column.")}
+      else nashDraw("Not that one. Compare only the FIRST numbers in that column.")}
+  }else if(N.phase==="col"){var b2=bestCol(L,r);
+    if(b2.indexOf(c)>=0){N.cb[r]=c;N.try=0;N.k++;if(N.k>=L.r.length){N.phase="count";N.k=0}nashDraw("✔ Circled!");}
+    else{N.mist++;N.try++;if(N.try>=2){N.cb[r]=b2[0];N.try=0;N.k++;if(N.k>=L.r.length){N.phase="count";N.k=0}nashDraw("Column's best there was "+L.c[b2[0]]+": it has the biggest SECOND number in that row.")}
+      else nashDraw("Not that one. Compare only the SECOND numbers in that row.")}
+  }
+}
+function nashCount(n){
+  var L=NL[N.lvl],right=nashCells(L).length;
+  if(n===right){N.cleared++;N.log.push(L.name+" "+right+" lock"+(right===1?"":"s"));N.phase="done";nashDraw("✔ Right! "+right+" Nash lock"+(right===1?"":"s")+". In each one, nobody can do better by switching alone.")}
+  else{N.mist++;N.phase="done";N.log.push(L.name+" missed count");nashDraw("Count the glowing boxes: there "+(right===1?"is 1":"are "+right)+". A Nash lock needs BOTH numbers circled.")}
+}
+function nashNext(){
+  if(N.lvl<3){nashStart(N.lvl+1);return}
+  var line="GN1-LAB-NASH | levels cleared: "+N.cleared+"/4 | mistakes: "+N.mist+" | "+N.log.join("; ");
+  finish("ALL LOCKS FOUND", "<p>Levels cleared: <b>"+N.cleared+"/4</b>. Mistakes along the way: <b>"+N.mist+"</b>.</p><div class=\"tape\">A <b>Nash lock</b> (Nash equilibrium) is a box where each player is already making their best reply to the other. Some games have two, some have one.</div>",line);
+}
+
+/* ---------- LEVEL-UP LADDER ---------- */
+var RUNGS=[
+ {q:"<b>Level 0</b> players guess at random from 1 to 100, so their average is about 50. A <b>Level 1</b> player thinks everyone else is Level 0. What does Level 1 guess (two-thirds of 50)?",ch:[50,33,25,67],a:33},
+ {q:"A <b>Level 2</b> player thinks everyone else is Level 1, so everyone else guesses about 33. What does Level 2 guess?",ch:[33,22,11,15],a:22},
+ {q:"A <b>Level 3</b> player thinks everyone else is Level 2 (guessing about 22). What does Level 3 guess?",ch:[15,18,10,22],a:15},
+ {q:"A <b>Level 4</b> player thinks everyone else is Level 3 (guessing about 15). What does Level 4 guess?",ch:[10,12,7,15],a:10},
+ {q:"Now imagine everyone is perfectly logical, and everyone knows it, forever. Each level keeps taking two-thirds. Where does it end up (guesses go from 1 to 100)?",ch:[1,10,33,50],a:1}
+];
+var LV={};
+function lvStart(){LV={i:0,right:0,tries:0};lvDraw("")}
+function ladder(){var h="<div class=\"ladder\">";for(var i=RUNGS.length-1;i>=0;i--){var d=i<LV.i;h+="<div class=\"rung"+(d?" on":"")+"\">"+(i===4?"ALL THE WAY":"LEVEL "+(i+1))+": "+(d?RUNGS[i].a:"?")+"</div>"}h+="<div class=\"rung on\">LEVEL 0: about 50</div></div>";return h}
+function lvDraw(msg){
+  if(LV.i>=RUNGS.length){lvOpinion();return}
+  var R=RUNGS[LV.i],h="<h2>LEVEL-UP LADDER</h2><p class=\"note\">The game: everyone picks 1 to 100. Closest to two-thirds of the average wins.</p>"+ladder()+"<p class=\"msg\">"+msg+"</p><p>"+R.q+"</p>";
+  R.ch.forEach(function(v){h+="<button onclick=\"lvPick("+v+")\">"+v+"</button>"});W(h);
+}
+function lvPick(v){var R=RUNGS[LV.i];LV.tries++;
+  if(v===R.a){if(LV.tries===1)LV.right++;LV.i++;LV.tries=0;lvDraw("✔ "+R.a+" it is!");return}
+  if(LV.tries>=2){LV.i++;LV.tries=0;lvDraw("It's "+R.a+": take two-thirds of what you think everyone else guesses.");return}
+  lvDraw("Not quite. Take two-thirds of the guess one level below.");
+}
+function lvOpinion(){
+  var h="<h2>ONE LAST QUESTION</h2>"+ladder()+"<p>When real people play this game, how many levels deep do you think most of them go?</p>";
+  ["LEVEL 0","LEVEL 1","LEVEL 2","LEVEL 3 OR MORE"].forEach(function(t,i){h+="<button onclick=\"lvDone("+i+")\">"+t+"</button>"});W(h);
+}
+function lvDone(i){
+  var pick=["Level 0","Level 1","Level 2","Level 3+"][i];
+  var line="GN1-LAB-LEVELS | rungs right first try: "+LV.right+"/5 | thinks most people play: "+pick;
+  finish("TOP OF THE LADDER","<p>Rungs right on the first try: <b>"+LV.right+"/5</b>. You think most people play <b>"+pick+"</b>.</p><div class=\"tape\">Studies of this game usually find most people think only <b>1 or 2 levels</b> ahead. So the winning guess is rarely 1: you want to be just <b>one level smarter</b> than the crowd, not infinitely smart.</div>",line);
+}
+
+/* ---------- MIX-O-METER ---------- */
+var MX={p:50};
+function vsL(p){return p*55/100+(100-p)*85/100}
+function vsR(p){return p*90/100+(100-p)*45/100}
+function mixStart(){MX={p:50,moves:0};mixDraw()}
+function bar(label,v,low){return "<div class=\"barrow\"><span class=\"bl\">"+label+"</span><div class=\"track\"><div class=\"fill"+(low?" low":"")+"\" style=\"width:"+v+"%\"></div></div><b>"+v.toFixed(1)+"%</b></div>"}
+function mixDraw(){
+  var p=MX.p,a=vsL(p),b=vsR(p),low=Math.min(a,b),dive=Math.abs(a-b)<0.01?"EITHER WAY":(a<b?"LEFT":"RIGHT");
+  var h="<h2>MIX-O-METER</h2><p class=\"note\">Chance you score: kick LEFT vs dive LEFT 55%, kick LEFT vs dive RIGHT 90%, kick RIGHT vs dive LEFT 85%, kick RIGHT vs dive RIGHT 45%. A smart goalie learns your mix and dives the way that hurts you most.</p>";
+  h+="<div class=\"dial\">KICK LEFT <b>"+p+"%</b> · KICK RIGHT <b>"+(100-p)+"%</b></div>";
+  h+="<button class=\"mini2\" onclick=\"mixStep(-5)\">−5</button><button class=\"mini2\" onclick=\"mixStep(-1)\">−1</button><button class=\"mini2\" onclick=\"mixStep(1)\">+1</button><button class=\"mini2\" onclick=\"mixStep(5)\">+5</button>";
+  h+=bar("If goalie dives LEFT",a,a<=b)+bar("If goalie dives RIGHT",b,b<=a);
+  h+="<p>A smart goalie dives <b>"+dive+"</b> and holds you to <b>"+low.toFixed(1)+"%</b>.</p><p class=\"note\">Goal: make the two bars match, so the goalie's guess stops mattering.</p><button class=\"big\" onclick=\"mixLock()\">LOCK IN MY MIX</button>";
+  W(h);
+}
+function mixStep(d){MX.p=Math.max(0,Math.min(100,MX.p+d));MX.moves++;mixDraw()}
+function mixLock(){
+  var p=MX.p,low=Math.min(vsL(p),vsR(p)),best=69;
+  var line="GN1-LAB-MIX | kick LEFT "+p+"% | smart goalie holds you to "+low.toFixed(1)+"% | best possible about 69% at about 53% LEFT";
+  var verdict=low>=68.8?"PERFECT MIX!":(low>=66?"SO CLOSE!":"KEEP TUNING");
+  finish(verdict,"<p>Your mix: <b>"+p+"% LEFT</b>. A smart goalie holds you to <b>"+low.toFixed(1)+"%</b>.</p><div class=\"tape\">The best mix is about <b>53% LEFT</b>. There both bars meet at about <b>69%</b>, so diving either way gives the goalie nothing. That's a <b>mixed strategy</b>: be unpredictable on purpose.</div>",line);
+}
+
+(function(){var t=param("tool");if(t&&["grid","nash","levels","mix"].indexOf(t)>=0)go(t)})();
+</script>
+
+<script id="casino-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 1 · OUTSMART ANYONE";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>

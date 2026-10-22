@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strategy Gauntlet</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;margin:8px 0}
+  h2{font-size:16px;letter-spacing:2px;margin:6px 0}
+  p{line-height:1.45}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:7px 9px;font-size:14px}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;cursor:pointer}
+  #out{width:95%;max-width:620px;height:110px;font:14px "Courier New",monospace}
+  .note{font-size:14px}
+  .panel{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+   background:radial-gradient(ellipse at 50% 35%,var(--felt,#0f6b3a),var(--felt-dark,#0a4a28) 85%);
+   border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px #b8860b,inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+  .panel::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+  @media (max-width:480px){.panel{border-width:6px;padding:12px 8px 14px}}
+  .story{background:rgba(0,0,0,.28);border-radius:12px;padding:10px 12px;text-align:left;font-size:15px}
+  .msg{min-height:22px;color:#ffe9a8;font-weight:600}
+  .tiny{font-size:11px;color:#7dff9e}
+  .gwrap{max-width:100%;overflow-x:auto}
+  .grid td{min-width:0;padding:5px 4px}
+  .grid th{padding:5px 4px;font-size:12px}
+  .step{display:flex;align-items:center;justify-content:center;gap:4px;margin:3px 0}
+  .step .who{font-size:10px;min-width:30px;text-align:right;color:#f3d38a}
+  .step b{display:inline-block;min-width:18px;font-size:18px;color:#fff}
+  button.mini{min-width:28px !important;padding:1px 4px !important;margin:2px 1px !important;font-size:13px !important;border-width:2px !important;box-shadow:0 0 0 2px #5e0b17,0 3px 0 2px #3a0610 !important}
+  button.mini2{min-width:54px !important}
+  td.locked{background:rgba(255,255,255,.06)}
+  .nash td{font-size:15px;min-width:0;padding:6px 4px}
+  .nash td.act{background:rgba(255,233,168,.16);cursor:pointer;outline:2px dashed #ffe9a8;outline-offset:-4px}
+  .nash td.lock{background:rgba(247,201,72,.28);box-shadow:inset 0 0 12px rgba(247,201,72,.8)}
+  .ring{display:inline-block;border:2px solid #ffd84d;border-radius:50%;padding:0 6px;color:#ffe9a8}
+  .locktxt{font:11px "Bungee","Arial Black",sans-serif;color:#ffd84d;letter-spacing:1px}
+  .ladder{display:inline-block;margin:6px auto;text-align:left}
+  .rung{padding:5px 14px;margin:3px 0;border-left:4px solid #555;background:rgba(0,0,0,.3);border-radius:6px;font-size:14px;color:#aaa}
+  .rung.on{border-left-color:#ffd84d;color:#fff7e6}
+  .dial{font:20px "Bungee","Arial Black",sans-serif;margin:8px 0;color:#ffe9a8}
+  .barrow{display:flex;align-items:center;gap:8px;margin:8px auto;max-width:520px;text-align:left}
+  .bl{min-width:150px;font-size:13px}
+  .track{flex:1;height:18px;background:rgba(0,0,0,.4);border-radius:9px;overflow:hidden}
+  .fill{height:100%;background:linear-gradient(90deg,#38d17f,#7dff9e)}
+  .fill.low{background:linear-gradient(90deg,#d7263d,#ff8a8a)}
+  button.on:disabled{filter:none;opacity:1}
+</style>
+<style>
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px}
+  #final{display:none}
+  .hpbar{max-width:420px;height:16px;margin:6px auto 0;border-radius:8px;background:#2a0a0a;border:2px solid #f7c948;overflow:hidden}
+  #hpfill{height:100%;width:100%;background:linear-gradient(90deg,#d7263d,#ff8a8a);transition:width .5s ease}
+  .taunt{font-style:italic;color:#ffd9a8;font-size:15px}
+  .tape a{color:#a1001c;font-weight:800}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="casino-skin">
+:root{--felt:#0f6b3a;--felt-dark:#0a4a28;--gold:#f7c948;--gold-deep:#b8860b;--ivory:#fff8e7;--ink:#1b1b1b;--red:#d7263d;--blue:#1e6fd9;--black:#222;--green:#13a05a;--violet:#7b3fe4}
+html{background:#140711}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#fff7e6 !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;
+ background:
+  radial-gradient(circle at 50% -10%,rgba(255,200,80,.18),transparent 55%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  repeating-linear-gradient(-45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  radial-gradient(circle at 50% 40%,#3a0f2a,#140711 75%) !important;min-height:100vh}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:18px;background:linear-gradient(180deg,#2a0a1d,#12040c);border:3px solid var(--gold);box-shadow:0 0 0 4px #3b1020,0 0 24px rgba(247,201,72,.35),inset 0 0 18px rgba(0,0,0,.7)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--gold);opacity:.85;margin-bottom:2px;text-transform:uppercase}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:9px;height:9px;border-radius:50%;background:#ffd36b;box-shadow:0 0 6px #ffd36b,0 0 12px #ffb300;animation:bulb 1.2s infinite}
+.marquee i:nth-child(odd){animation-delay:.6s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:clamp(22px,6vw,34px) !important;letter-spacing:2px !important;margin:8px 0 !important;
+ color:#ffe9a8 !important;text-shadow:0 0 2px #fff,0 0 10px #ff9d00,0 0 22px #ff5e00,0 3px 0 #7a2b00 !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 2px 0 rgba(0,0,0,.6) !important}
+#pick,#round,#result,#final{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+ background:radial-gradient(ellipse at 50% 35%,var(--felt),var(--felt-dark) 85%);
+ border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px var(--gold-deep),inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+#pick::before,#round::before,#result::before,#final::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--gold) !important;border-radius:12px !important;padding:6px 12px 8px !important;
+ background:linear-gradient(180deg,#2b2b2b,#0b0b0b 45%,#1c1c1c) !important;box-shadow:0 0 0 3px #4a1020,0 6px 0 #000,inset 0 2px 6px rgba(255,255,255,.15) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#f3d38a}
+.box b{font-family:"Bungee","Arial Black",sans-serif !important;font-weight:400 !important;font-size:24px !important;color:#ff4747 !important;text-shadow:0 0 8px #ff2a2a !important;background:#120000;border-radius:6px;margin-top:4px;padding:2px 6px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 35%,#ff5a6e,var(--red) 60%) !important;border:3px dashed rgba(255,255,255,.9) !important;border-radius:999px !important;
+ box-shadow:0 0 0 4px var(--red),0 6px 0 4px #5e0b17,0 10px 14px rgba(0,0,0,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.45);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 35%,#5aa2ff,var(--blue) 60%) !important;box-shadow:0 0 0 4px var(--blue),0 6px 0 4px #0b2f63,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 35%,#555,var(--black) 60%) !important;box-shadow:0 0 0 4px #111,0 6px 0 4px #000,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 35%,#38d17f,var(--green) 60%) !important;box-shadow:0 0 0 4px var(--green),0 6px 0 4px #06512b,0 10px 14px rgba(0,0,0,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 35%,#fff3c4,var(--gold) 60%) !important;color:#3a2200 !important;text-shadow:none;box-shadow:0 0 0 4px var(--gold),0 0 18px 6px rgba(247,201,72,.75),0 6px 0 4px #6b4a00 !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#ffe28a,#f7c948 45%,#c99212) !important;color:#3a2200 !important;text-shadow:0 1px 0 rgba(255,255,255,.6);
+ border:3px solid #fff3c4 !important;border-radius:14px !important;box-shadow:0 0 0 4px #8a5a00,0 6px 0 4px #4a2f00,0 0 22px rgba(247,201,72,.45) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.28);border-radius:10px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(247,201,72,.45) !important;color:#fff7e6}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(0,0,0,.25)}
+.note{color:#f1dfc0 !important;opacity:.92}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:#ffd84d !important;background:#0a0a0a;border:2px solid #ffd84d !important;border-radius:8px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,216,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#9fe7ff !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe9a8 !important}
+.rank{font-family:"Bungee","Arial Black",sans-serif !important;font-size:clamp(24px,6vw,34px) !important;display:inline-block;padding:10px 18px;margin:12px auto 6px !important;border-radius:14px;
+ color:#fff2b3 !important;background:#1a0610;border:3px solid var(--gold);text-shadow:0 0 10px #ffb300,0 0 22px #ff6a00 !important;animation:jackpot 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #4a1020,0 0 26px rgba(255,179,0,.55)}
+@keyframes jackpot{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:12px !important;box-shadow:0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"♦";position:absolute;left:10px;top:8px;color:var(--red);font-size:18px}
+.tape b{color:#a1001c !important}
+.fact{background:linear-gradient(180deg,#d8b25a,#a87b22);color:#2a1800 !important;border:2px solid #fff0b8 !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 4px 0 #5a3a00,0 8px 16px rgba(0,0,0,.4)}
+#out{font-family:"Courier New",monospace !important;background:#fffdf4 !important;color:#222 !important;border:2px dashed #b8860b !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#7dff9e !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff8a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#120000 !important;color:#ff4747 !important;border:3px solid var(--gold) !important;border-radius:10px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px #ff2a2a}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-40px;width:26px;height:26px;border-radius:50%;border:4px dashed rgba(255,255,255,.9);animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final{border-width:6px;padding:12px 8px 14px}button{margin:8px 5px !important;padding:9px 12px !important}}
+</style>
+</head>
+<body>
+<h1>STRATEGY GAUNTLET</h1>
+<p class="note">Boss round! The Dealer has 8 HP. Each puzzle you crack knocks off 1 HP. Two tries per puzzle.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/8</b></div>
+  <div class="box">DEALER HP<b id="hp">8</b></div>
+</div>
+<div class="hpbar"><div id="hpfill"></div></div>
+
+<div id="pick">
+  <p class="taunt" id="taunt"></p>
+  <h2 id="rtitle"></h2>
+  <div id="scene"></div>
+  <p id="q"></p>
+  <div id="choices"></div>
+  <p class="msg" id="fb"></p>
+  <button class="big" id="next" style="display:none" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1 id="endt">GAUNTLET OVER</h1>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function g2(rl,cl,rm,cm,cells){var h="<table class=\"grid\"><tr><th>"+rl+" \\ "+cl+"</th><th>"+cm[0]+"</th><th>"+cm[1]+"</th></tr>";
+  for(var r=0;r<2;r++){h+="<tr><th>"+rm[r]+"</th><td>"+cells[r][0]+"</td><td>"+cells[r][1]+"</td></tr>"}return h+"</table><p class=\"note\">First number: "+rl+". Second number: "+cl+".</p>"}
+var R=[
+ {t:"ROUND 1: WHAT'S IN A GAME?",taunt:"\"Every game has rules, kid. Let's see if you know them.\"",
+  scene:"<div class=\"story\">Rock-paper-scissors: two players, three hand shapes, both shown at the same moment.</div>",
+  q:"Which of these is a <b>payoff</b> in rock-paper-scissors?",ch:["Choosing rock","Winning, losing or tying","The two players","Not seeing the other hand early"],a:1,
+  why:"Payoffs are what each player gets at the end: a win, a loss or a tie. Rock is a move, the two people are the players, and not seeing the other hand is about information."},
+ {t:"ROUND 2: THE DOMINANT MOVE",taunt:"\"Bet you can't spot a sure thing when you see one.\"",
+  scene:g2("You","Rival",["PRACTICE","SKIP"],["PRACTICE","SKIP"],[["3, 3","5, 1"],["1, 5","2, 2"]])+"<div class=\"story\">Before a race, you and a rival each decide to practice or skip. Points show how happy each of you is with the result.</div>",
+  q:"Do <b>you</b> have a dominant move?",ch:["Yes: PRACTICE","Yes: SKIP","No dominant move"],a:0,
+  why:"If the rival practices, you get 3 for practicing vs 1 for skipping. If the rival skips, you get 5 vs 2. Practicing wins both times, so it's dominant."},
+ {t:"ROUND 3: FIND THE LOCK",taunt:"\"Two friends, one plan, no phones. Good luck.\"",
+  scene:g2("Jo","Sam",["MOVIE","ARCADE"],["MOVIE","ARCADE"],[["3, 2","0, 0"],["0, 0","2, 3"]])+"<div class=\"story\">Jo and Sam want to hang out but can't text. Jo likes the movie more, Sam likes the arcade more, and going alone is worth 0 to both.</div>",
+  q:"Which outcomes are <b>Nash equilibria</b> (nobody wants to switch alone)?",ch:["Only MOVIE-MOVIE","Only ARCADE-ARCADE","Both MOVIE-MOVIE and ARCADE-ARCADE","None of them"],a:2,
+  why:"At MOVIE-MOVIE, switching alone drops Jo from 3 to 0 and Sam from 2 to 0. At ARCADE-ARCADE, switching drops Jo from 2 to 0 and Sam from 3 to 0. Both are locks; the mixed-up outcomes are not, because either friend would rather switch to join the other."},
+ {t:"ROUND 4: LEVEL UP",taunt:"\"Everyone thinks they're the smart one at my table.\"",
+  scene:"<div class=\"story\">New game: everyone picks a number from 0 to 100. Closest to <b>HALF</b> of the average wins. You know everyone else is a Level 1 player: they assume the crowd picks at random (average about 50) and guess half of that. Ignore your own guess's effect on the average.</div>",
+  q:"What should <b>you</b> guess?",ch:["50","25","About 12","0"],a:2,
+  why:"Level 1 players guess half of 50 = 25. If everyone guesses about 25, the average is about 25, and half of that is about 12. You beat the crowd by being exactly one level smarter."},
+ {t:"ROUND 5: THE BEACH",taunt:"\"Pick your spot. I'll pick mine right next to yours.\"",
+  scene:"<div class=\"story\">Two ice-cream trucks park on a long beach marked 1 to 9. Swimmers are spread evenly along it, and each one walks to the nearer truck. Each day, each truck can move to grab more customers.</div>",
+  q:"If both trucks keep moving to win more customers, where do they end up?",ch:["One at 1, one at 9","Both near 5, the middle","One at 3, one at 7","Wherever they started"],a:1,
+  why:"A truck can always win more customers by sliding toward the other truck from the outside. The only spot where neither can gain by moving is side by side in the middle: the median magnet."},
+ {t:"ROUND 6: KEEP 'EM GUESSING",taunt:"\"I can read you like an open hand.\"",
+  scene:g2("Your shot","Keeper guesses",["LEFT","RIGHT"],["LEFT","RIGHT"],[["40%","80%"],["70%","30%"]])+"<div class=\"story\">You take a shot LEFT or RIGHT; the keeper guesses a side. Each box is your chance to score. The keeper studies you and always guesses the side that hurts you most.</div>",
+  q:"Which plan makes the keeper's guess not matter?",ch:["Always shoot LEFT","Shoot LEFT half the time","Shoot LEFT 3 times out of 4","Always shoot RIGHT"],a:1,
+  why:"Shooting LEFT half the time: if the keeper guesses LEFT you score 0.5×40 + 0.5×70 = 55%; if RIGHT, 0.5×80 + 0.5×30 = 55%. Same either way, so the keeper can't exploit you. Any fixed side gets read and drops to 40% or 30%."},
+ {t:"ROUND 7: PRICE WAR",taunt:"\"Undercut me? Cute. Let's see your math.\"",
+  scene:"<div class=\"story\">Two stands sell the exact same phone case. Each case costs $2 to make. Every buyer goes to the cheaper stand; if prices tie, buyers split evenly. Your rival is charging <b>$6</b>.</div>",
+  q:"Which of these prices earns <b>you</b> the most profit?",ch:["$7","$6","$5","$2"],a:2,
+  why:"At $5 you get every buyer and make $3 each. At $6 you split the buyers and make $4 each, which is only $2 per buyer on average. At $7 you sell nothing, and at $2 you make nothing. So $5 wins, and that's how price wars start."},
+ {t:"ROUND 8: FINAL HAND",taunt:"\"Last hand. Everything you've learned, all at once.\"",
+  scene:g2("Kai","Rio",["CLEAN","SKIP"],["CLEAN","SKIP"],[["3, 3","1, 4"],["4, 1","2, 2"]])+"<div class=\"story\">Kai and Rio share a room. Each decides to clean or skip. A clean room is nice, but each would rather the other do the work.</div>",
+  q:"If each just picks their own best move, where does it settle?",ch:["Both clean","Both skip","One cleans, one skips","You can't tell"],a:1,
+  why:"Skipping is dominant for both: 4 beats 3 if the other cleans, and 2 beats 1 if the other skips. So both skip and get 2, even though both cleaning would give each of them 3. It's a Prisoner's Dilemma in disguise."}
+];
+var r=0,hp=8,tries=0,log=[],locked=false;
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%"}
+function setup(){
+  var x=R[r];tries=0;locked=false;
+  el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE DEALER: "+x.taunt;el("rtitle").textContent=x.t;
+  el("scene").innerHTML=x.scene;el("q").innerHTML=x.q;el("fb").innerHTML="";show("next",false);
+  var h="";x.ch.forEach(function(c,i){h+="<button id=\"c"+i+"\" onclick=\"pick("+i+")\">"+c+"</button>"});el("choices").innerHTML=h;
+  show("pick",true);
+}
+function pick(i){
+  if(locked)return;locked=true;var x=R[r];tries++;
+  el("fb").innerHTML="The Dealer flips the card...";
+  setTimeout(function(){
+    if(i===x.a){hp--;setHP();log.push("R"+(r+1)+":"+(tries===1?"hit":"hit on try 2"));
+      el("c"+i).className="on";el("fb").innerHTML="<b>HIT!</b> The Dealer loses 1 HP. "+x.why;endRound();}
+    else if(tries>=2){log.push("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
+      el("fb").innerHTML="<b>The Dealer blocks it.</b> The answer: "+x.ch[x.a]+". "+x.why;endRound();}
+    else{el("c"+i).disabled=true;el("fb").innerHTML="<b>Miss!</b> One more try. Look at the numbers again.";locked=false;}
+  },650);
+}
+function endRound(){
+  for(var k=0;k<R[r].ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
+  el("next").textContent=(r===7)?"SEE THE FINAL TABLE":"NEXT ROUND";show("next",true);
+}
+function nextRound(){r++;if(r>=8){finish();return}setup()}
+function finish(){
+  show("pick",false);var hits=8-hp;
+  var rank=hits===8?"HIGH ROLLER":(hits>=6?"CARD SHARP":(hits>=4?"TABLE REGULAR":"NEWCOMER"));
+  el("endt").textContent=hp===0?"THE DEALER IS BROKE!":"GAUNTLET OVER";
+  var rows="";log.forEach(function(s,i){rows+="<tr><td>"+R[i].t.replace(/^ROUND \d+: /,"")+"</td><td>"+s.split(":")[1]+"</td></tr>"});
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Dealer HP left: <b>"+hp+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
+   "<div class=\"tape\">Card unlocked: <b>STRATEGIST</b>. <a href=\"gn1-deck.html?card=8\">Open your Strategy Deck</a> to see it.</div>";
+  el("out").value="GN1-M08 | round results: "+log.join(", ")+" | Dealer HP left "+hp;
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setHP();setup();
+</script>
+
+<script id="casino-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 1 · OUTSMART ANYONE";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>

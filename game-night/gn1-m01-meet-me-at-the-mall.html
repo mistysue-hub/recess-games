@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meet Me at the Mall</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  td.hit{background:rgba(247,201,72,.35);font-weight:800}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer}
+  #round,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rival{color:#00e5ff;font-size:17px}
+  .rank{font-size:26px;color:#ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;padding:8px 14px;margin:8px;text-align:left}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+  .parts{max-width:520px;margin:10px auto;text-align:left}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="casino-skin">
+:root{--felt:#0f6b3a;--felt-dark:#0a4a28;--gold:#f7c948;--gold-deep:#b8860b;--ivory:#fff8e7;--ink:#1b1b1b;--red:#d7263d;--blue:#1e6fd9;--black:#222;--green:#13a05a;--violet:#7b3fe4}
+html{background:#140711}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#fff7e6 !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;
+ background:
+  radial-gradient(circle at 50% -10%,rgba(255,200,80,.18),transparent 55%),
+  repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  repeating-linear-gradient(-45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px),
+  radial-gradient(circle at 50% 40%,#3a0f2a,#140711 75%) !important;min-height:100vh}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:18px;background:linear-gradient(180deg,#2a0a1d,#12040c);border:3px solid var(--gold);box-shadow:0 0 0 4px #3b1020,0 0 24px rgba(247,201,72,.35),inset 0 0 18px rgba(0,0,0,.7)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--gold);opacity:.85;margin-bottom:2px;text-transform:uppercase}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:9px;height:9px;border-radius:50%;background:#ffd36b;box-shadow:0 0 6px #ffd36b,0 0 12px #ffb300;animation:bulb 1.2s infinite}
+.marquee i:nth-child(odd){animation-delay:.6s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:clamp(22px,6vw,34px) !important;letter-spacing:2px !important;margin:8px 0 !important;
+ color:#ffe9a8 !important;text-shadow:0 0 2px #fff,0 0 10px #ff9d00,0 0 22px #ff5e00,0 3px 0 #7a2b00 !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 2px 0 rgba(0,0,0,.6) !important}
+#pick,#round,#result,#final{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+ background:radial-gradient(ellipse at 50% 35%,var(--felt),var(--felt-dark) 85%);
+ border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px var(--gold-deep),inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+#pick::before,#round::before,#result::before,#final::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--gold) !important;border-radius:12px !important;padding:6px 12px 8px !important;
+ background:linear-gradient(180deg,#2b2b2b,#0b0b0b 45%,#1c1c1c) !important;box-shadow:0 0 0 3px #4a1020,0 6px 0 #000,inset 0 2px 6px rgba(255,255,255,.15) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#f3d38a}
+.box b{font-family:"Bungee","Arial Black",sans-serif !important;font-weight:400 !important;font-size:24px !important;color:#ff4747 !important;text-shadow:0 0 8px #ff2a2a !important;background:#120000;border-radius:6px;margin-top:4px;padding:2px 6px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 35%,#ff5a6e,var(--red) 60%) !important;border:3px dashed rgba(255,255,255,.9) !important;border-radius:999px !important;
+ box-shadow:0 0 0 4px var(--red),0 6px 0 4px #5e0b17,0 10px 14px rgba(0,0,0,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.45);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 35%,#5aa2ff,var(--blue) 60%) !important;box-shadow:0 0 0 4px var(--blue),0 6px 0 4px #0b2f63,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 35%,#555,var(--black) 60%) !important;box-shadow:0 0 0 4px #111,0 6px 0 4px #000,0 10px 14px rgba(0,0,0,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 35%,#38d17f,var(--green) 60%) !important;box-shadow:0 0 0 4px var(--green),0 6px 0 4px #06512b,0 10px 14px rgba(0,0,0,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 35%,#fff3c4,var(--gold) 60%) !important;color:#3a2200 !important;text-shadow:none;box-shadow:0 0 0 4px var(--gold),0 0 18px 6px rgba(247,201,72,.75),0 6px 0 4px #6b4a00 !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#ffe28a,#f7c948 45%,#c99212) !important;color:#3a2200 !important;text-shadow:0 1px 0 rgba(255,255,255,.6);
+ border:3px solid #fff3c4 !important;border-radius:14px !important;box-shadow:0 0 0 4px #8a5a00,0 6px 0 4px #4a2f00,0 0 22px rgba(247,201,72,.45) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.28);border-radius:10px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(247,201,72,.45) !important;color:#fff7e6}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(0,0,0,.25)}
+.note{color:#f1dfc0 !important;opacity:.92}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:#ffd84d !important;background:#0a0a0a;border:2px solid #ffd84d !important;border-radius:8px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,216,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#9fe7ff !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe9a8 !important}
+.rank{font-family:"Bungee","Arial Black",sans-serif !important;font-size:clamp(24px,6vw,34px) !important;display:inline-block;padding:10px 18px;margin:12px auto 6px !important;border-radius:14px;
+ color:#fff2b3 !important;background:#1a0610;border:3px solid var(--gold);text-shadow:0 0 10px #ffb300,0 0 22px #ff6a00 !important;animation:jackpot 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #4a1020,0 0 26px rgba(255,179,0,.55)}
+@keyframes jackpot{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:12px !important;box-shadow:0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"♦";position:absolute;left:10px;top:8px;color:var(--red);font-size:18px}
+.tape b{color:#a1001c !important}
+.fact{background:linear-gradient(180deg,#d8b25a,#a87b22);color:#2a1800 !important;border:2px solid #fff0b8 !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 4px 0 #5a3a00,0 8px 16px rgba(0,0,0,.4)}
+#out{font-family:"Courier New",monospace !important;background:#fffdf4 !important;color:#222 !important;border:2px dashed #b8860b !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#7dff9e !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff8a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#120000 !important;color:#ff4747 !important;border:3px solid var(--gold) !important;border-radius:10px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px #ff2a2a}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-40px;width:26px;height:26px;border-radius:50%;border:4px dashed rgba(255,255,255,.9);animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final{border-width:6px;padding:12px 8px 14px}button{margin:8px 5px !important;padding:9px 12px !important}}
+.cardwin{margin:14px auto 6px;max-width:520px;padding:12px 14px;border-radius:14px;background:linear-gradient(180deg,#ffe28a,#f7c948 45%,#c99212);color:#3a2200;font-family:"Bungee","Arial Black",sans-serif;font-size:16px;letter-spacing:1px;box-shadow:0 0 0 4px #8a5a00,0 0 22px rgba(247,201,72,.6)}
+.cardwin a{display:inline-block;margin-top:6px;font-family:"Rubik",sans-serif;font-weight:800;font-size:15px;color:#4a1020;text-decoration:underline}
+</style>
+</head>
+<body>
+<h1>MEET ME AT THE MALL</h1>
+<p class="note">You and your friend Jordan got split up at the mall, and both your phones just died. Each round you both make the same choice at the same moment. You only score if you match.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/5</b></div>
+  <div class="box">MATCHES<b id="mt">0</b></div>
+</div>
+
+<div id="pick">
+  <p class="news" id="news"></p>
+  <h2 id="q"></h2>
+  <div id="choices"></div>
+</div>
+
+<div id="round">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <table id="grid"></table>
+  <p class="note" id="gridnote"></p>
+  <button id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1>FOUND EACH OTHER?</h1>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: The Four Parts<br><a href="gn1-deck.html?card=1">See your deck</a></div>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+var ROUNDS=[
+  {tag:"WHERE",news:"Phones dead. No way to text. Where will Jordan go?",q:"WHERE WILL YOU WAIT?",
+   opts:["Main Entrance","Fountain","Food Court","Arcade","Shoe Store"],crowd:[18,50,20,9,3]},
+  {tag:"WHEN",news:"New plan: you will meet at the Fountain. But at what time?",q:"WHAT TIME WILL YOU BE THERE?",
+   opts:["Noon","12:15","1:00","2:30","4:45"],crowd:[55,5,22,10,8]},
+  {tag:"NUMBER",news:"Bonus round: you both get a prize if you pick the same number.",q:"PICK A NUMBER FROM 1 TO 10",
+   opts:["1","2","3","4","5","6","7","8","9","10"],crowd:[10,3,12,4,8,4,45,2,2,10]},
+  {tag:"COIN",news:"Last mind-reading test: call the same side of a coin.",q:"HEADS OR TAILS?",
+   opts:["Heads","Tails"],crowd:[60,40]},
+  {tag:"TEXT",news:"PLOT TWIST: right before Jordan's phone died, one text got through: \"Food court!\"",q:"WHERE WILL YOU WAIT NOW?",
+   opts:["Main Entrance","Fountain","Food Court","Arcade","Shoe Store"],crowd:[0,0,100,0,0]}
+];
+var total=5,r=0,log=[],mt=0;
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function jordanPick(R){var x=rnd(100),c=0;for(var i=0;i<R.opts.length;i++){c+=R.crowd[i];if(x<c)return i}return R.opts.length-1}
+function fav(R){var b=0;for(var i=1;i<R.crowd.length;i++)if(R.crowd[i]>R.crowd[b])b=i;return b}
+function setup(){
+  var R=ROUNDS[r];el("rn").textContent=(r+1)+"/"+total;
+  el("news").textContent=R.news;el("q").textContent=R.q;
+  var h="";R.opts.forEach(function(o,i){h+="<button onclick=\"play("+i+")\">"+o+"</button>"});
+  el("choices").innerHTML=h;show("pick",true);show("round",false);
+}
+function grid(R,me,jo){
+  var a=me,b=(jo!==me)?jo:(fav(R)!==me?fav(R):(me===0?1:0));
+  var o=[a,b],h="<tr><th>You \\ Jordan</th><th>"+R.opts[a]+"</th><th>"+R.opts[b]+"</th></tr>";
+  for(var i=0;i<2;i++){h+="<tr><th>"+R.opts[o[i]]+"</th>";for(var j=0;j<2;j++){var m=(o[i]===o[j])?"1, 1":"0, 0";var hit=(o[i]===me&&o[j]===jo);h+="<td"+(hit?" class=\"hit\"":"")+">"+m+"</td>"}h+="</tr>"}
+  return h;
+}
+function play(me){
+  var R=ROUNDS[r],jo=(r===4)?2:jordanPick(R),hit=(me===jo);
+  log.push({tag:R.tag,me:R.opts[me],jo:R.opts[jo],hit:hit,fav:R.opts[fav(R)]});
+  if(hit)mt++;
+  show("pick",false);show("round",true);
+  el("headline").textContent="You: "+R.opts[me]+"   Jordan: ...";
+  el("detail").textContent="";el("grid").innerHTML="";el("gridnote").textContent="";el("next").style.visibility="hidden";
+  var rr=r;
+  setTimeout(function(){
+    el("headline").innerHTML="You: "+R.opts[me]+"   Jordan: "+R.opts[jo]+"  "+(hit?"<span class=\"good\">MATCH!</span>":"<span class=\"bad\">MISSED!</span>");
+    el("detail").textContent=hit?"You found each other. +1 for both of you.":"No luck this time. 0 for both of you.";
+    el("mt").textContent=mt;
+    el("grid").innerHTML=grid(R,me,jo);
+    el("gridnote").textContent="Payoff grid: you both get 1 if you match and 0 if you don't. The gold box is what happened.";
+    el("next").textContent=(rr===total-1)?"SEE FINAL SCORE":"NEXT ROUND";el("next").style.visibility="visible";
+  },800);
+}
+function nextRound(){r++;if(r>=total){finish();return}setup()}
+function finish(){
+  show("round",false);show("pick",false);
+  var rows="<tr><th>Round</th><th>You</th><th>Jordan</th><th>Crowd favorite</th></tr>";
+  log.forEach(function(x,i){rows+="<tr><td>"+(i+1)+" "+x.tag+"</td><td>"+x.me+"</td><td>"+x.jo+(x.hit?" ✔":"")+"</td><td>"+(i===4?"(Jordan texted)":x.fav)+"</td></tr>"});
+  var rank=mt===5?"MIND MELD":(mt===4?"BEST FRIENDS":(mt===3?"IN SYNC":"LOST IN THE MALL"));
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Matches: <b>"+mt+"</b> of 5.</p><table>"+rows+"</table>"+
+    "<h2>REPLAY THE TAPE</h2>"+
+    "<div class=\"tape\">In rounds 1 to 4 there was no single right answer. The trick was to pick what you guessed Jordan would guess you would pick: the spot that stands out to both of you.</div>"+
+    "<div class=\"tape\">In round 5 one text made matching easy. In games like this, talking first helps everyone.</div>"+
+    "<p class=\"note\">Jordan's picks come from this game's made-up crowd (for example, half of the crowd waits at the Fountain), not from a real survey.</p>"+
+    "<h2>THE FOUR PARTS OF THIS GAME</h2>"+
+    "<div class=\"parts tape\"><b>Players:</b> you and Jordan.<br><b>Moves:</b> the places, times, numbers and coin sides you could pick.<br><b>Payoffs:</b> 1 each if you match, 0 if you don't.<br><b>Information:</b> no talking, until the text in round 5.</div>"+
+    "<div class=\"fact\">In his 1960 book <i>The Strategy of Conflict</i>, economist Thomas Schelling asked students where and when they would meet someone in New York if they couldn't talk. The most common answer: noon, at Grand Central Terminal. A choice that stands out like that is now called a focal point.</div>";
+  el("out").value="GN1-M01 | "+log.map(function(x,i){return "r"+(i+1)+" "+x.tag.toLowerCase()+": you "+x.me+", Jordan "+x.jo+(x.hit?" (match)":" (miss)")}).join(" | ")+" | matches "+mt+"/5";
+  show("final",true);
+}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+setup();
+</script>
+
+<script id="casino-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 1 · OUTSMART ANYONE";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#d7263d","#1e6fd9","#222","#13a05a","#f7c948","#7b3fe4"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<36;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];
+      s.style.animationDuration=(2.2+Math.random()*1.8)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},5200);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>
