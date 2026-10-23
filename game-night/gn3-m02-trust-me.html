@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trust Me</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;text-shadow:0 0 8px #39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;box-shadow:0 0 8px #00e5ff55;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:8px 10px;font-size:14px}
+  th{color:#ff2bd6}
+  button{font:bold 18px "Courier New",monospace;margin:8px;padding:12px 20px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
+  button:active{background:#ffe600;color:#07070f}
+  #round,#final{display:none}
+  .cardwin{display:inline-block;margin:8px auto}
+  #out{width:95%;max-width:560px;height:90px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .partner{color:#00e5ff;font-size:18px}
+  .promise{color:#ffe600;font-size:17px}
+  #log td{font-size:13px}
+  .rank{font-size:26px;color:#ffe600;text-shadow:0 0 10px #ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
+  .tape b{color:#39ff14}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:560px;color:#9fb4c8;font-size:14px}
+</style>
+<style>
+ .amts button{min-width:52px}
+ .coins{font-size:22px;letter-spacing:2px}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="wild-skin">
+:root{--felt:#0e2a1a;--felt-dark:#061a10;--gold:#ffe14d;--gold-deep:#a6f04a;--ivory:#f2f7ff;--ink:#0b0f24;--red:#ff8a3d;--blue:#2d7bff;--black:#2b2f45;--green:#22e07a;--violet:#9b5cff;--cyan:#a6f04a;--pink:#ff8a3d}
+html{background:#04140c}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#eef4ff !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;min-height:100vh;
+ background:
+  repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 4px),
+  linear-gradient(transparent 0 60%,rgba(255,138,61,.10)),
+  radial-gradient(circle at 25% 30%,rgba(166,240,74,.09) 0 2px,transparent 3px) 0 0/34px 30px,radial-gradient(circle at 75% 80%,rgba(255,138,61,.07) 0 2px,transparent 3px) 0 0/34px 30px,repeating-linear-gradient(60deg,rgba(166,240,74,.035) 0 1px,transparent 1px 26px),repeating-linear-gradient(-60deg,rgba(166,240,74,.035) 0 1px,transparent 1px 26px),
+  radial-gradient(circle at 50% -10%,#1d4a2a,#04140c 70%) !important}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:14px;background:linear-gradient(180deg,#0f2a18,#04120a);border:3px solid var(--cyan);box-shadow:0 0 0 4px #1d3a14,0 0 22px rgba(166,240,74,.5),inset 0 0 18px rgba(255,138,61,.25)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--pink);margin-bottom:2px;text-transform:uppercase;text-shadow:0 0 8px rgba(255,138,61,.8)}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:bulb 1.2s steps(1) infinite}
+.marquee i:nth-child(3n+1){background:var(--pink);box-shadow:0 0 6px var(--pink)}
+.marquee i:nth-child(3n+2){background:var(--gold);box-shadow:0 0 6px var(--gold);animation-delay:.4s}
+.marquee i:nth-child(odd){animation-delay:.8s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:clamp(16px,4.6vw,26px) !important;line-height:1.35 !important;letter-spacing:1px !important;margin:10px 0 !important;
+ color:#fff !important;text-shadow:0 0 6px var(--cyan),0 0 16px var(--cyan),3px 3px 0 var(--pink) !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.6) !important}
+#pick,#round,#result,#final,.panel{position:relative;margin:14px auto;padding:16px 14px 18px !important;border-radius:18px !important;
+ background:linear-gradient(180deg,rgba(14,42,26,.96),rgba(6,26,16,.98)) !important;
+ border:4px solid var(--cyan) !important;box-shadow:0 0 0 4px #12321e,0 0 0 7px var(--pink),0 0 26px rgba(166,240,74,.35),inset 0 0 30px rgba(166,240,74,.12) !important}
+#pick::before,#round::before,#result::before,#final::before,.panel::before{content:"✦ ❖ ✧ ❂" !important;display:block;font-size:12px;letter-spacing:10px;color:rgba(166,240,74,.45) !important;margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--cyan) !important;border-radius:8px !important;padding:6px 12px 8px !important;
+ background:#031008 !important;box-shadow:0 0 0 3px #1d3a14,0 0 12px rgba(166,240,74,.35) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#d8ffb0}
+.box b{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:18px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.8) !important;background:#000;border-radius:4px;margin-top:6px;padding:6px 8px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 30%,#ffb27a,var(--pink) 65%) !important;border:3px solid rgba(255,255,255,.85) !important;border-radius:14px !important;
+ box-shadow:0 6px 0 #8a3d0f,0 0 14px rgba(255,138,61,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.4);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;min-height:44px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 30%,#7fb0ff,var(--blue) 65%) !important;box-shadow:0 6px 0 #0d3a8a,0 0 14px rgba(45,123,255,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 30%,#c49bff,var(--violet) 65%) !important;box-shadow:0 6px 0 #4a1f8f,0 0 14px rgba(155,92,255,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 30%,#6dffb0,var(--green) 65%) !important;color:#032b14 !important;text-shadow:none;box-shadow:0 6px 0 #0b7a3e,0 0 14px rgba(34,224,122,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 30%,#fffbd0,var(--gold) 65%) !important;color:#2a2000 !important;text-shadow:none;box-shadow:0 6px 0 #8a7400,0 0 20px 6px rgba(255,225,77,.7) !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#d6ffa0,var(--cyan) 50%,#6fb82a) !important;color:#0f2a05 !important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+ border:3px solid #f3ffe0 !important;border-radius:10px !important;box-shadow:0 6px 0 #3d6e10,0 0 22px rgba(166,240,74,.55) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.35);border-radius:8px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(166,240,74,.45) !important;color:#eef4ff}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(166,240,74,.08)}
+.note{color:#d6e8c9 !important;opacity:.95}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:var(--gold) !important;background:#000;border:2px solid var(--gold) !important;border-radius:6px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,225,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#d8ffb0 !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe0c8 !important}
+.rank{font-family:"Press Start 2P","Bungee",monospace !important;font-size:clamp(14px,4.4vw,22px) !important;line-height:1.4;display:inline-block;padding:12px 16px;margin:12px auto 6px !important;border-radius:10px;
+ color:#fff !important;background:#06180c;border:3px solid var(--pink);text-shadow:0 0 8px var(--pink),0 0 18px var(--pink) !important;animation:levelup 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #12321e,0 0 26px rgba(255,138,61,.55)}
+@keyframes levelup{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:10px !important;box-shadow:0 0 0 3px var(--cyan),0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"✦" !important;position:absolute;left:10px;top:8px;color:var(--pink) !important;font-size:18px}
+.tape b{color:#b34a00 !important}
+.fact{background:linear-gradient(180deg,#1d4a2a,#10301a);color:#eef4ff !important;border:2px solid var(--gold) !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 0 14px rgba(255,225,77,.3)}
+.fact b{color:var(--gold) !important}
+#out{font-family:"Courier New",monospace !important;background:#f2f7ff !important;color:#111 !important;border:2px dashed var(--cyan) !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#6dffb0 !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff9a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#000 !important;color:var(--gold) !important;border:3px solid var(--cyan) !important;border-radius:8px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px rgba(255,225,77,.8)}
+.msg{color:var(--gold) !important}
+.story{background:rgba(166,240,74,.06) !important;border:1px solid rgba(166,240,74,.25)}
+.slot{border-color:rgba(166,240,74,.6) !important;color:#d8ffb0 !important}
+.slot.sel{border-color:var(--gold) !important}
+.card.back{background:repeating-linear-gradient(0deg,#12321e 0 6px,#0c2414 6px 12px) !important;border-color:var(--cyan) !important;color:#d8ffb0 !important;box-shadow:0 0 14px rgba(166,240,74,.35)}
+.card.back .cn{color:#d8ffb0 !important}
+.backpat{color:rgba(166,240,74,.75) !important;font-family:"Press Start 2P",monospace !important;font-size:22px !important;line-height:1.5 !important}
+.newbanner{border-color:var(--pink) !important;color:#fff !important;text-shadow:0 0 8px var(--pink)}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-30px;width:14px;height:14px;border-radius:2px !important;border:none !important;box-shadow:0 0 8px currentColor;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+</style>
+</head>
+<body>
+<h1>TRUST ME</h1>
+<p class="note">Part A: you get 10 coins each round. Any coins you SEND to your partner are TRIPLED. Your partner decides how many to send back. Part B: you switch seats.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/8</b></div>
+  <div class="box">YOUR COINS<b id="tot">0</b></div>
+</div>
+<div id="pick">
+  <h2 id="ptitle"></h2>
+  <p class="partner" id="who"></p>
+  <p id="ask"></p>
+  <div class="amts" id="amts"></div>
+</div>
+<div id="round">
+  <h2 id="headline"></h2>
+  <p id="detail"></p>
+  <button id="next" onclick="nextRound()">NEXT ROUND</button>
+</div>
+<div id="final">
+  <h1>GAME OVER</h1>
+  <div class="cardwin tape">STRATEGY CARD UNLOCKED: <b>Trust Builder</b><br><a id="decklink" href="gn3-deck.html?card=2">See your deck</a></div>
+  <table id="log"></table>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+<script>
+function copyIt(){var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}fallback()}
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rint(n){try{var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}}
+
+var r=0,tot=0,sent=[],back=[],partA=0,partB=0,keepLog=[],maxSends=[],lastRet=null,lastSend=null;
+function setup(){el("rn").textContent=(r+1)+"/8";show("round",false);
+ if(r<4){el("ptitle").textContent="PART A: YOU ARE THE SENDER";
+  el("who").innerHTML="Partner: <b>Robin</b>"+(r===0?"<br><span class=\"note\">You've never played with Robin before.</span>":"");
+  el("ask").textContent="You have 10 coins. How many will you send? (They triple on the way.)";
+  el("amts").innerHTML=[0,2,4,6,8,10].map(function(a){return "<button onclick=\"send("+a+")\">"+a+"</button>"}).join("");
+ }else{var s=maxSend();el("ptitle").textContent="PART B: YOU ARE THE RECEIVER";
+  el("who").innerHTML="Partner: <b>Max</b> sent you <b>"+s+"</b> coins. Tripled, you now hold <b>"+(3*s)+"</b>."+(r===7?"<br><span class=\"note\"><b>FINAL ROUND.</b> There is no round after this one.</span>":"");
+  el("ask").textContent=s===0?"Max sent nothing, so there is nothing to split.":"How much will you send back to Max?";
+  el("amts").innerHTML=s===0?"<button onclick=\"ret(0)\">OK</button>":[["keep it all",0],["send back a third",1/3],["send back half",1/2],["send back two-thirds",2/3]].map(function(o){return "<button onclick=\"ret("+o[1]+")\">"+o[0].toUpperCase()+"</button>"}).join("");
+ }
+ show("pick",true)}
+function robinFrac(){return (r>0&&lastSend!==null&&lastSend>=6)?1/2:1/3}
+function send(a){var f=robinFrac(),got=3*a,b=Math.round(got*f),gain=10-a+b;
+ sent.push(a);back.push(b);partA+=gain;tot+=gain;lastSend=a;el("tot").textContent=tot;
+ el("headline").textContent="You sent "+a+". Robin received "+got+".";
+ el("detail").innerHTML="Robin sent back <b>"+b+"</b>"+(a?" ("+(f===1/2?"half":"a third")+")":"")+". You kept "+(10-a)+" + got back "+b+" = <b>"+gain+"</b> coins this round."+(r>=1&&a>0?"<br><span class=\"note\">Robin "+(f===1/2?"trusts you more after you sent a lot last round.":"is still careful with you.")+"</span>":"");
+ el("next").textContent="NEXT ROUND";show("pick",false);show("round",true)}
+function maxSend(){if(r===4)return 6;if(lastRet===null)return 6;return lastRet>=1/2?10:(lastRet>0?4:0)}
+function ret(fr){var s=maxSend(),got=3*s,give=Math.round(got*fr),keep=got-give;
+ maxSends.push(s);keepLog.push(s===0?"nothing to split":(fr===0?"kept all":fr<0.4?"returned a third":fr<0.6?"returned half":"returned two-thirds"));
+ if(s>0)lastRet=fr;partB+=keep;tot+=keep;el("tot").textContent=tot;
+ el("headline").textContent=s===0?"Max didn't trust you this time.":"You kept "+keep+" and sent "+give+" back.";
+ el("detail").innerHTML=r===7?"That was the last round.":(s===0?"Max remembers. ":"")+"<span class=\"note\">Max decides next round's send by how you treated him.</span>";
+ el("next").textContent=r===7?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
+function nextRound(){r++;if(r>=8){finish();return}setup()}
+function finish(){show("round",false);show("pick",false);
+ var rows="<tr><th>Round</th><th>What happened</th></tr>";
+ for(var i=0;i<4;i++)rows+="<tr><td>"+(i+1)+"</td><td>Sent "+sent[i]+", got back "+back[i]+"</td></tr>";
+ for(var j=0;j<4;j++)rows+="<tr><td>"+(j+5)+"</td><td>Max sent "+maxSends[j]+": you "+keepLog[j]+"</td></tr>";
+ el("log").innerHTML=rows;
+ var rank=tot>=110?"TRUST TYCOON":(tot>=85?"SOLID PARTNER":"LONE SAVER");
+ el("verdict").innerHTML="<p>Part A: <b>"+partA+"</b> coins. Part B: <b>"+partB+"</b> coins. Total: <b>"+tot+"</b> (best possible 124).</p><div class=\"rank\">RANK: "+rank+"</div>"+
+ "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Send 10 every round: Robin returns a third in round 1 (break even), then half: <b>55</b> coins in Part A.</div>"+
+ "<div class=\"tape\">Return half to Max every round: <b>54</b> coins in Part B. Keep it all in round 5: Max stops sending, and you get <b>18</b>.</div>"+
+ "<p class=\"note\">Notice the last round: with no future, keeping it all is tempting. Trust needs a tomorrow.</p>"+
+ "<div class=\"fact\">In 1995 the economists Joyce Berg, John Dickhaut and Kevin McCabe ran this \"trust game\" with real people and real money. Most senders trusted a stranger with some of their money, even though nothing forced the stranger to pay it back.</div>";
+ el("out").value="GN3-M02 | sent to Robin: "+sent.join(",")+" | Robin returned: "+back.join(",")+" | Part A "+partA+" | Max sent: "+maxSends.join(",")+" | I "+keepLog.join(", ")+" | Part B "+partB+" | total "+tot+" | rank "+rank;
+ if(rank==="TRUST TYCOON"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
+ show("final",true)}
+setup();
+</script>
+
+<script id="wild-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 3 · THE LONG GAME";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#a6f04a","#ff8a3d","#ffe14d","#22e07a","#ffb27a","#d6ffa0"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];s.style.color=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>

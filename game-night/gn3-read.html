@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Night 3 Lessons</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;color:#39ff14;margin:8px 0}
+  h2{font-size:16px;color:#ff2bd6;letter-spacing:2px;margin:6px 0}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{border:2px solid #00e5ff;padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px;color:#ffe600}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
+  th{color:#ff2bd6}
+  td.hit{background:rgba(247,201,72,.35);font-weight:800}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer}
+  #round,#final{display:none}
+  #out{width:95%;max-width:620px;height:120px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  .note{color:#9fb4c8;font-size:14px}
+  .news{color:#ff2bd6;border:2px dashed #ff2bd6;display:inline-block;padding:6px 12px;margin:6px;font-size:15px}
+  .rival{color:#00e5ff;font-size:17px}
+  .rank{font-size:26px;color:#ffe600;letter-spacing:3px;margin:10px 0 2px}
+  .tape{display:inline-block;border:2px solid #ff2bd6;padding:8px 14px;margin:8px;text-align:left}
+  .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .good{color:#39ff14}.bad{color:#ff5555}
+  .parts{max-width:520px;margin:10px auto;text-align:left}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>.lesson a{color:#00e5ff;font-weight:700}.lesson{text-align:left;max-width:560px;margin:6px auto;line-height:1.5;font-size:16px}.lesson table{margin:10px auto}.qq{max-width:560px;margin:10px auto}.opt{min-width:220px}.rv{display:block;margin:4px auto 10px;text-align:left}#round{display:block}</style>
+<style id="wild-skin">
+:root{--felt:#0e2a1a;--felt-dark:#061a10;--gold:#ffe14d;--gold-deep:#a6f04a;--ivory:#f2f7ff;--ink:#0b0f24;--red:#ff8a3d;--blue:#2d7bff;--black:#2b2f45;--green:#22e07a;--violet:#9b5cff;--cyan:#a6f04a;--pink:#ff8a3d}
+html{background:#04140c}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#eef4ff !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;min-height:100vh;
+ background:
+  repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 4px),
+  linear-gradient(transparent 0 60%,rgba(255,138,61,.10)),
+  radial-gradient(circle at 25% 30%,rgba(166,240,74,.09) 0 2px,transparent 3px) 0 0/34px 30px,radial-gradient(circle at 75% 80%,rgba(255,138,61,.07) 0 2px,transparent 3px) 0 0/34px 30px,repeating-linear-gradient(60deg,rgba(166,240,74,.035) 0 1px,transparent 1px 26px),repeating-linear-gradient(-60deg,rgba(166,240,74,.035) 0 1px,transparent 1px 26px),
+  radial-gradient(circle at 50% -10%,#1d4a2a,#04140c 70%) !important}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:14px;background:linear-gradient(180deg,#0f2a18,#04120a);border:3px solid var(--cyan);box-shadow:0 0 0 4px #1d3a14,0 0 22px rgba(166,240,74,.5),inset 0 0 18px rgba(255,138,61,.25)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--pink);margin-bottom:2px;text-transform:uppercase;text-shadow:0 0 8px rgba(255,138,61,.8)}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:bulb 1.2s steps(1) infinite}
+.marquee i:nth-child(3n+1){background:var(--pink);box-shadow:0 0 6px var(--pink)}
+.marquee i:nth-child(3n+2){background:var(--gold);box-shadow:0 0 6px var(--gold);animation-delay:.4s}
+.marquee i:nth-child(odd){animation-delay:.8s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:clamp(16px,4.6vw,26px) !important;line-height:1.35 !important;letter-spacing:1px !important;margin:10px 0 !important;
+ color:#fff !important;text-shadow:0 0 6px var(--cyan),0 0 16px var(--cyan),3px 3px 0 var(--pink) !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.6) !important}
+#pick,#round,#result,#final,.panel{position:relative;margin:14px auto;padding:16px 14px 18px !important;border-radius:18px !important;
+ background:linear-gradient(180deg,rgba(14,42,26,.96),rgba(6,26,16,.98)) !important;
+ border:4px solid var(--cyan) !important;box-shadow:0 0 0 4px #12321e,0 0 0 7px var(--pink),0 0 26px rgba(166,240,74,.35),inset 0 0 30px rgba(166,240,74,.12) !important}
+#pick::before,#round::before,#result::before,#final::before,.panel::before{content:"✦ ❖ ✧ ❂" !important;display:block;font-size:12px;letter-spacing:10px;color:rgba(166,240,74,.45) !important;margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--cyan) !important;border-radius:8px !important;padding:6px 12px 8px !important;
+ background:#031008 !important;box-shadow:0 0 0 3px #1d3a14,0 0 12px rgba(166,240,74,.35) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#d8ffb0}
+.box b{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:18px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.8) !important;background:#000;border-radius:4px;margin-top:6px;padding:6px 8px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 30%,#ffb27a,var(--pink) 65%) !important;border:3px solid rgba(255,255,255,.85) !important;border-radius:14px !important;
+ box-shadow:0 6px 0 #8a3d0f,0 0 14px rgba(255,138,61,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.4);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;min-height:44px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 30%,#7fb0ff,var(--blue) 65%) !important;box-shadow:0 6px 0 #0d3a8a,0 0 14px rgba(45,123,255,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 30%,#c49bff,var(--violet) 65%) !important;box-shadow:0 6px 0 #4a1f8f,0 0 14px rgba(155,92,255,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 30%,#6dffb0,var(--green) 65%) !important;color:#032b14 !important;text-shadow:none;box-shadow:0 6px 0 #0b7a3e,0 0 14px rgba(34,224,122,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 30%,#fffbd0,var(--gold) 65%) !important;color:#2a2000 !important;text-shadow:none;box-shadow:0 6px 0 #8a7400,0 0 20px 6px rgba(255,225,77,.7) !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#d6ffa0,var(--cyan) 50%,#6fb82a) !important;color:#0f2a05 !important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+ border:3px solid #f3ffe0 !important;border-radius:10px !important;box-shadow:0 6px 0 #3d6e10,0 0 22px rgba(166,240,74,.55) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.35);border-radius:8px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(166,240,74,.45) !important;color:#eef4ff}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(166,240,74,.08)}
+.note{color:#d6e8c9 !important;opacity:.95}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:var(--gold) !important;background:#000;border:2px solid var(--gold) !important;border-radius:6px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,225,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#d8ffb0 !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe0c8 !important}
+.rank{font-family:"Press Start 2P","Bungee",monospace !important;font-size:clamp(14px,4.4vw,22px) !important;line-height:1.4;display:inline-block;padding:12px 16px;margin:12px auto 6px !important;border-radius:10px;
+ color:#fff !important;background:#06180c;border:3px solid var(--pink);text-shadow:0 0 8px var(--pink),0 0 18px var(--pink) !important;animation:levelup 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #12321e,0 0 26px rgba(255,138,61,.55)}
+@keyframes levelup{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:10px !important;box-shadow:0 0 0 3px var(--cyan),0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"✦" !important;position:absolute;left:10px;top:8px;color:var(--pink) !important;font-size:18px}
+.tape b{color:#b34a00 !important}
+.fact{background:linear-gradient(180deg,#1d4a2a,#10301a);color:#eef4ff !important;border:2px solid var(--gold) !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 0 14px rgba(255,225,77,.3)}
+.fact b{color:var(--gold) !important}
+#out{font-family:"Courier New",monospace !important;background:#f2f7ff !important;color:#111 !important;border:2px dashed var(--cyan) !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#6dffb0 !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff9a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#000 !important;color:var(--gold) !important;border:3px solid var(--cyan) !important;border-radius:8px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px rgba(255,225,77,.8)}
+.msg{color:var(--gold) !important}
+.story{background:rgba(166,240,74,.06) !important;border:1px solid rgba(166,240,74,.25)}
+.slot{border-color:rgba(166,240,74,.6) !important;color:#d8ffb0 !important}
+.slot.sel{border-color:var(--gold) !important}
+.card.back{background:repeating-linear-gradient(0deg,#12321e 0 6px,#0c2414 6px 12px) !important;border-color:var(--cyan) !important;color:#d8ffb0 !important;box-shadow:0 0 14px rgba(166,240,74,.35)}
+.card.back .cn{color:#d8ffb0 !important}
+.backpat{color:rgba(166,240,74,.75) !important;font-family:"Press Start 2P",monospace !important;font-size:22px !important;line-height:1.5 !important}
+.newbanner{border-color:var(--pink) !important;color:#fff !important;text-shadow:0 0 8px var(--pink)}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-30px;width:14px;height:14px;border-radius:2px !important;border:none !important;box-shadow:0 0 8px currentColor;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+</style>
+</head>
+<body>
+<h1 id="ttl">LESSON</h1>
+<p class="note" id="sub"></p>
+<div class="bar">
+  <div class="box">SCREEN<b id="sn">1/1</b></div>
+  <div class="box">FIRST-TRY<b id="ft">0</b></div>
+</div>
+<div id="round" style="display:block">
+  <h2 id="sh"></h2>
+  <div id="sbody" class="lesson"></div>
+  <div id="sact"></div>
+  <p class="msg" id="fb"></p>
+  <button id="next" onclick="nextScreen()" style="display:none">NEXT</button>
+</div>
+<div id="final" style="display:none">
+  <h2>LESSON COMPLETE!</h2>
+  <div class="rank" id="rank"></div>
+  <p id="verdict"></p>
+  <div class="tape keyideas" id="keys"></div>
+  <p>Copy your results, then paste them to Rocky in the chat. Rocky has two questions for you next.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+<script>
+function T(rows){return "<table>"+rows.map(function(r,i){return "<tr>"+r.map(function(c){return i===0||c===r[0]?"<th>"+c+"</th>":"<td>"+c+"</td>"}).join("")+"</tr>"}).join("")+"</table>"}
+var PD=T([["You \\ Them","SHARE","GRAB"],["SHARE","You 3, Them 3","You 0, Them 5"],["GRAB","You 5, Them 0","You 1, Them 1"]]);
+var HD=T([["You \\ Rival","HAWK","DOVE"],["HAWK","-5","10"],["DOVE","0","5"]]);
+var L={
+1:{t:"TIT FOR TAT",s:"Lesson 1 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"Your bot played Share or Grab against every other bot, <b>10 rounds</b> each. Unlike Game Night 1, partners met again and again, so every move could be paid back next round."+PD},
+ {h:"QUICK CHECK",q:"In a single match, can Tit for Tat ever score MORE than the bot it's playing?",o:["Yes, often","No, never","Only against Saint Sam"],a:1,w:"Tit for Tat never grabs first, so it can tie or fall a little behind, but never get ahead. It wins tournaments by adding up lots of good matches."},
+ {h:"THE REAL TOURNAMENT",b:"Around 1980 the political scientist Robert Axelrod invited experts to send in computer programs to play the repeated Prisoner's Dilemma against each other.<br><br>The winner was one of the shortest programs sent in, just four lines long: <b>Tit for Tat</b>, by the mathematical psychologist Anatol Rapoport. Axelrod ran a second, bigger tournament. Tit for Tat won again."},
+ {h:"WHY TIT FOR TAT WORKS",r:[["NICE","It never grabs first, so it gets lots of 3-point rounds with other nice players."],["QUICK TO HIT BACK","It grabs right after you grab, so it isn't a pushover."],["QUICK TO FORGIVE","As soon as you share again, it shares again."],["CLEAR","It's easy to figure out, so other players learn that sharing pays."]]},
+ {h:"TRY IT",q:"Which bot in your arena was nice but NOT quick to hit back?",o:["Copycat Cora","Saint Sam","Grudge Greta"],a:1,w:"Saint Sam shared no matter what, so grabbers took advantage of him every round."},
+ {h:"WHY GRABBERS FADE",b:"Grabby Gus wins big for one round against each nice bot. After that, the bots that hit back grab too, and Gus is stuck with 1 point a round.<br><br>Against Copycat Cora: Gus gets 5, then 1 point for 9 rounds."},
+ {h:"QUICK CHECK",q:"Grabby Gus plays Copycat Cora for 10 rounds. How many points does Gus get?",o:["50","14","10"],a:1,w:"5 in round 1, then 9 rounds of Grab/Grab at 1 point each: 5 + 9 = 14. Two sharers would each get 30."},
+ {h:"THE SHADOW OF THE FUTURE",b:"In a one-time game, grabbing is the dominant move. But when you'll meet again, today's grab costs you tomorrow. Axelrod called this the <b>shadow of the future</b>: the longer the future, the more sharing pays."},
+ {h:"TRUCES IN THE TRENCHES",b:"In his 1984 book <i>The Evolution of Cooperation</i>, Axelrod described soldiers in World War I trenches who faced the same enemy unit for months. In some places, both sides quietly held back, a system called \"live and let live,\" and answered any attack with an attack. It was Tit for Tat with real stakes."},
+ {h:"A LITTLE FORGIVENESS",b:"In real life, moves get misread. A friend's \"grab\" might be an accident. Strict Tit for Tat can get stuck in a revenge loop after one mistake. Forgiving Fiona (Tit for Two Tats) only hits back after two grabs in a row, so one accident doesn't start a feud."},
+ {h:"LAST CHECK",q:"A friend breaks a promise once, then apologizes and keeps the next one. What does Tit for Tat do?",o:["Never trust them again","Hit back once, then go back to sharing","Ignore it forever"],a:1,w:"Quick to hit back, quick to forgive: that's the Tit for Tat way."}]},
+2:{t:"TRUST ME",s:"Lesson 2 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"First you were the <b>sender</b>: every coin you sent to Robin was tripled, and Robin chose what to send back. Then you were the <b>receiver</b>, and Max had to decide whether to trust you."},
+ {h:"QUICK CHECK",q:"You send 6 coins. They triple, and your partner sends back half. How many come back?",o:["3","9","18"],a:1,w:"6 × 3 = 18 for your partner. Half of 18 is 9, so you turned 6 into 9."},
+ {h:"THE TRUST GAME",b:"In 1995 the economists Joyce Berg, John Dickhaut and Kevin McCabe ran this game with real people and real money. Players never met and never learned who their partner was.<br><br>Cold logic says: the receiver will keep everything, so send nothing. But 30 of the 32 senders trusted a stranger with some money, about half of it on average."},
+ {h:"WHY TRUST CAN PAY",b:"When you send coins, the pile <b>grows</b>. Sending 10 makes 30 to share. Sending nothing keeps the pile at 10.<br><br>Trust is risky, but it's how both sides end up with more."},
+ {h:"REPUTATION",b:"Robin returned more after you trusted Robin with more. Max sent you more after you treated him fairly. Your past moves became a <b>reputation</b>, and your reputation decided what you were offered next."},
+ {h:"TRY IT",q:"In Part B, why did keeping it all in round 5 hurt you?",o:["Max stopped sending","The coins stopped tripling","You lost your own coins"],a:0,w:"Max remembered. Keep it all once, and you get 18 coins for the whole Part B instead of 54."},
+ {h:"THE LAST-ROUND PROBLEM",b:"In the final round, there's no future to protect, so keeping it all is tempting. And if you think ahead, your partner might expect that and send less at the end.<br><br>This is why trust grows best when relationships <b>don't have a known last day</b>."},
+ {h:"QUICK CHECK",q:"When is the temptation to break trust the strongest?",o:["The first round","The middle rounds","The last round"],a:2,w:"With no next round, there's no reputation left to lose."},
+ {h:"STARS AND REVIEWS",b:"How do strangers on the internet trust each other? Sites like eBay added buyer and seller ratings in the 1990s. A good rating is a reputation everyone can see, so it pays to stay honest even with someone you'll never meet again."},
+ {h:"LAST CHECK",q:"A new classmate wants to borrow your favorite charger. What's the trust-builder move?",o:["Lend something small first and see if it comes back","Refuse forever","Lend everything you own"],a:0,w:"Start small, watch how they repay you, and build from there."}]},
+3:{t:"HAWK OR DOVE",s:"Lesson 3 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"Birds met over food worth 10. Hawks fight; doves back down. Then you watched a whole flock change, generation after generation."+HD},
+ {h:"WHY NOT ALL HAWKS?",b:"In a flock full of hawks, every meeting is a fight worth <b>-5</b>. A dove in that flock just backs away and gets <b>0</b>, which beats -5. So doves start to spread."},
+ {h:"QUICK CHECK",q:"In a flock of ALL doves, what does one hawk get from each meeting?",o:["5","10","-5"],a:1,w:"Every dove backs down, so the hawk gets all 10. Doves only get 5. So hawks spread too."},
+ {h:"THE BALANCE POINT",b:"Hawks do best when they're rare. Doves do best when hawks are common. So the flock settles where both score the <b>same</b>.<br><br>In this game that point is: <b>share of hawks = food ÷ fight cost</b>."},
+ {h:"WORKED EXAMPLE",r:[["FIGHT COST 20","10 ÷ 20 = 1/2. Half hawks."],["FIGHT COST 30","10 ÷ 30 = 1/3. A third hawks."],["THE PATTERN","The more fights hurt, the fewer hawks."]]},
+ {h:"TRY IT",q:"If fights cost 50, where does the share of hawks settle?",o:["50%","20%","10%"],a:1,w:"10 ÷ 50 = 1/5, or 20% hawks."},
+ {h:"A STABLE STRATEGY",b:"In 1973 the biologists John Maynard Smith and George Price used games like this to ask why animal fights are so often more show than injury. Maynard Smith called the settled mix an <b>evolutionarily stable strategy</b>: once a population has it, a few newcomers playing differently can't take over."},
+ {h:"NOBODY IS CHOOSING",b:"Birds don't do math. Birds whose habits score better have more chicks, and the chicks inherit those habits. Over many generations, the population ends up where a game theorist would predict."},
+ {h:"SHOW BEFORE FIGHT",b:"Many animals size each other up before fighting. Red deer stags have roaring contests and walk side by side before they ever lock antlers. Often one backs off, and nobody gets hurt. It's a lot more dove than hawk."},
+ {h:"LAST CHECK",q:"If fights get MORE dangerous, the share of hawks...",o:["goes up","goes down","stays the same"],a:1,w:"Food ÷ a bigger fight cost is a smaller number, so there are fewer hawks."}]},
+4:{t:"SIGNALS",s:"Lesson 4 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"Every runner said \"I'm fast!\" With the Iron Camp badge, you could pick fast runners every time. Without it, you were mostly guessing."},
+ {h:"CHEAP TALK",b:"Saying something costs nothing. When everyone wants to be picked, everyone says the same thing, so the words tell you nothing. Game theorists call this <b>cheap talk</b>."},
+ {h:"QUICK CHECK",q:"Why did your Stage 2 picks feel like luck?",o:["Everyone said they were fast, because talk was free","The fast runners were hiding","Coaches can never tell"],a:0,w:"When saying it is free, slow runners say it too."},
+ {h:"COSTLY SIGNALS",b:"A signal is believable when it costs <b>too much to fake</b>. Camp cost a fast runner 2 points but a slow runner 8. With a reward of 10 for camp finishers and 4 for everyone else:"},
+ {h:"DO THE MATH",r:[["FAST RUNNER","Camp: 10 - 2 = 8. Skip: 4. Do the camp."],["SLOW RUNNER","Camp: 10 - 8 = 2. Skip: 4. Skip it."],["SO...","Only fast runners finish camp, which is exactly why the badge means something."]]},
+ {h:"TRY IT",q:"If camp cost slow runners only 3, what would happen?",o:["Slow runners would do camp too, and the badge would stop meaning anything","Nothing would change","Fast runners would quit"],a:0,w:"Slow: 10 - 3 = 7, which beats 4. Everyone does camp, so the badge stops telling you who's fast."},
+ {h:"DIPLOMAS AS SIGNALS",b:"In 1973 the economist Michael Spence explained that a diploma can work like the camp badge. It's harder to earn for people who'd struggle with the job, so employers treat it as a signal. Spence shared the 2001 Nobel Prize in economics for this kind of work."},
+ {h:"THE PEACOCK'S TAIL",b:"A peacock's huge tail is heavy and makes him easier to catch. In 1975 the biologist Amotz Zahavi suggested that's the point: only a healthy bird can afford such a handicap, so the tail is hard to fake. Biologists still debate the details, but the idea changed how they study animal signals."},
+ {h:"QUICK CHECK",q:"Which is the most believable signal that a shop sells good products?",o:["A sign that says \"Best quality!\"","A full money-back guarantee","A shiny new logo"],a:1,w:"A guarantee is costly for a shop with bad products, because they'd keep paying refunds."},
+ {h:"LAST CHECK",q:"What makes a signal believable?",o:["It's loud","It costs too much for the wrong people to fake","Lots of people say it"],a:1,w:"If a faker can't afford it, the signal tells the truth."}]},
+5:{t:"BLUFF",s:"Lesson 5 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"Your rival couldn't see your card. That's <b>hidden information</b>. Trusting Tess never challenged. Watchful Wes watched how you played your LOW cards."},
+ {h:"QUICK CHECK",q:"Against Trusting Tess, what was the best move with a LOW card?",o:["STAY","PUSH"],a:1,w:"Tess always backed down, so pushing won +1 every time. Staying with LOW lost 1."},
+ {h:"IF YOU NEVER BLUFF",b:"If you push only with HIGH cards, your push gives your card away. A smart rival just backs down every time. You win +1 with HIGH and lose 1 with LOW: about even."},
+ {h:"IF YOU ALWAYS BLUFF",b:"If you push with every card, a smart rival challenges every time. HIGH wins +2, LOW loses 2. Still about even, and you've been caught."},
+ {h:"THE BALANCE",b:"The best plan is in between. In this game, it works out to bluffing with about <b>1 LOW card in 3</b>. Then a smart rival can't tell, and the best they can do is challenge about <b>2 pushes in 3</b>."},
+ {h:"CHECK THE MATH",r:[["YOUR LOW CARD","Stay: lose 1. Push: win 1 a third of the time, lose 2 two-thirds of the time: also lose 1 on average. You're fine either way."],["THEIR CHOICE","When you push, it's HIGH 3 times out of 4. Challenge: lose 2 three times, win 2 once: lose 1 on average. Back down: lose 1. They're stuck."]]},
+ {h:"TRY IT",q:"Why bluff only SOMETIMES?",o:["Bluffing always gets you caught; never bluffing gives your card away","Bluffing is against the rules","It's more polite"],a:0,w:"Bluffing is a mixed strategy, like the penalty kicks in Game Night 1."},
+ {h:"FROM POKER TO MATH",b:"John von Neumann, who helped start game theory, studied a simplified card game. In his 1944 book with Oskar Morgenstern, he showed that bluffing isn't a mistake or a trick. It's part of playing <b>well</b> when information is hidden."},
+ {h:"BLUFFS IN THE WILD",b:"A basketball player's pump fake, a soccer player's step-over, a cat puffing up its fur to look bigger: all bluffs. Each one works only because the real move happens sometimes too."},
+ {h:"GAMES VS. REAL LIFE",b:"Bluffing is part of the rules in games everyone agreed to play. In real life, people you bluff may not have agreed to play, and honesty builds the reputation from Lesson 2. Know which game you're in."},
+ {h:"LAST CHECK",q:"Watchful Wes saw you bluff on 3 of your last 4 LOW cards. What does he do?",o:["Backs down","Challenges every push","Leaves the game"],a:1,w:"Bluff too often and your push stops meaning anything, so Wes calls it."}]},
+6:{t:"THE SHARED LAKE",s:"Lesson 6 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"Four fishers shared one lake. Every fish you caught was yours, but a smaller lake hurt <b>everyone</b>. Then the town tried a plan."},
+ {h:"THE TRAGEDY OF THE COMMONS",b:"In 1968 the biologist Garrett Hardin wrote about a shared pasture. Each herder gets the full benefit of adding one more cow, but the damage to the grass is shared by all. So everyone adds cows until the pasture is ruined. He called it the <b>tragedy of the commons</b>."},
+ {h:"QUICK CHECK",q:"Gil takes 9 fish instead of 6. Who pays for the 3 extra fish?",o:["Only Gil","Everyone who shares the lake","Nobody"],a:1,w:"Gil gets all 3 extra fish, but the smaller lake is smaller for everyone."},
+ {h:"SHARE OR GRAB, AGAIN",b:"It's the Prisoner's Dilemma with many players. Taking more is better for you no matter what the others do, but if everyone takes more, everyone ends up with less."},
+ {h:"WORKED EXAMPLE",b:"The lake doubles what's left, up to 60. To get back to 60, you must leave at least <b>30</b>. So the safe total catch from a full lake is 30, or 7 or 8 each for 4 fishers. Bo, Cam and Gil took 9 each."},
+ {h:"TRY IT",q:"A lake has 40 fish and doubles what's left. What's the most the group can catch and still have 40 next season?",o:["10","20","40"],a:1,w:"Leave 20, which doubles back to 40. So the group can catch 20."},
+ {h:"ELINOR OSTROM",b:"Hardin thought only governments or private owners could save a commons. The political scientist <b>Elinor Ostrom</b> went and looked. She studied mountain pastures in Switzerland, forests in Japan and irrigation canals in Spain that communities had shared for centuries. In 2009 she became the first woman to win the Nobel Prize in economics."},
+ {h:"WHAT WORKS",r:[["CLEAR LIMITS","Everyone knows the rule, like 1 fish for every 10 in the lake."],["WATCHERS","Someone checks, so cheating gets noticed."],["FAIR PENALTIES","Small at first, bigger for repeat cheaters, like a one-season ban."],["A SAY FOR EVERYONE","People follow rules they helped make."]]},
+ {h:"WHEN IT GOES WRONG",b:"Off the coast of Newfoundland, cod were so plentiful for centuries that people thought they could never run out. After decades of heavy fishing, the cod collapsed, and in 1992 Canada closed the fishery. Thousands of people lost their jobs."},
+ {h:"LAST CHECK",q:"In the game, which plan made Gil stop overfishing?",o:["No rule","A promise nobody checked","Watchers and a one-season ban"],a:2,w:"A promise is cheap talk. Watchers plus a real penalty made cheating cost more than it paid."}]},
+7:{t:"VOTE!",s:"Lesson 7 · about 11 minutes",S:[
+ {h:"WHAT JUST HAPPENED?",b:"Three groups, three field trips, the same opinions every time. But when you changed the <b>order</b> of the votes, the winner changed."},
+ {h:"HEAD TO HEAD",r:[["ZOO VS MUSEUM","Animal Fans and Splash Squad prefer the zoo. Zoo wins 14 to 7."],["MUSEUM VS WATER PARK","Animal Fans and History Buffs prefer the museum. Museum wins 14 to 7."],["WATER PARK VS ZOO","History Buffs and Splash Squad prefer the water park. Water Park wins 14 to 7."]]},
+ {h:"QUICK CHECK",q:"Which trip beats BOTH others head-to-head?",o:["Zoo","Museum","Water Park","None of them"],a:3,w:"Each one loses to one of the others. The class's preferences go in a circle."},
+ {h:"THE CONDORCET PARADOX",b:"In 1785 the French thinker the <b>Marquis de Condorcet</b> noticed this: each person can have sensible preferences, but the <b>group</b> can prefer A to B, B to C, and C to A. It's called the Condorcet paradox."},
+ {h:"THE AGENDA SETTER",b:"When preferences go in a circle, whatever enters the voting <b>last</b> wins. So whoever decides the order of the votes can choose the winner. That's real power, and it's why groups argue about the order of votes."},
+ {h:"TRY IT",q:"You want the ZOO to win. Which pair should vote first?",o:["Zoo vs Museum","Museum vs Water Park","Zoo vs Water Park"],a:1,w:"Museum beats Water Park, then Zoo beats Museum. The zoo entered last."},
+ {h:"STRATEGIC VOTING",b:"In Stage 2, Splash Squad's favorite couldn't win. Voting for it would let their <b>least</b> favorite, the zoo, win. Voting for their second choice stopped that. Voting this way is called <b>strategic voting</b>."},
+ {h:"ARROW'S SURPRISE",b:"In 1951 the economist Kenneth Arrow proved something shocking: with three or more options, no ranked voting system can follow every one of a short list of fair-sounding rules all the time. He later won a Nobel Prize. Every voting system has trade-offs."},
+ {h:"OTHER WAYS TO VOTE",b:"Some places use different systems. With <b>ranked-choice voting</b>, used in some US cities and in Maine, you rank the options, and votes for knocked-out options move to each voter's next choice. That can make strategic voting less necessary."},
+ {h:"LAST CHECK",q:"Why might a group fight over the ORDER of votes?",o:["When preferences go in a circle, the order can decide the winner","Order never matters","It makes votes faster"],a:0,w:"Same opinions, different order, different winner."}]},
+8:{t:"YOUR LONG GAME PLAYBOOK",s:"Boss warm-up · about 5 minutes",S:[
+ {h:"SEVEN BIG IDEAS",b:"Tap each card to review it. Then beat three quick checks before you face the Hive Mind."},
+ {h:"YOUR CARDS",r:[["TIT FOR TAT","Start nice, hit back right away, forgive fast, be clear."],["TRUST BUILDER","Trust grows with reputation and a future together."],["STABLE STRATEGY","A population settles on a mix no newcomer can beat. Hawks = food ÷ fight cost."],["COSTLY SIGNAL","Believable signals cost too much to fake."],["BLUFF MASTER","With hidden information, bluff sometimes so your moves don't give you away."],["COMMONS KEEPER","Shared resources need limits, watchers and fair penalties."],["AGENDA SETTER","When preferences go in a circle, the order of votes picks the winner."]]},
+ {h:"CHECK 1",q:"Tit for Tat's first move is always...",o:["SHARE","GRAB","Random"],a:0,w:"It's nice: it never grabs first."},
+ {h:"CHECK 2",q:"Which signal is believable?",o:["One that's free to send","One that's too costly to fake","One that's loud"],a:1,w:"Costly signals are hard to fake."},
+ {h:"CHECK 3",q:"A shared lake keeps shrinking. What helped most in the game?",o:["A promise","Watchers and a fair penalty","Fishing faster"],a:1,w:"Rules only work when someone checks."}]},
+9:{t:"GO DEEPER",s:"Bonus · explore whenever you like",S:[
+ {h:"YOU DID IT!",b:"You've finished all three Game Nights: payoffs and Nash equilibrium, thinking ahead, and now the long game of trust, signals, evolution and voting.<br><br>That's the core of a real college course. Want more? Here's where to go next."},
+ {h:"THE REAL COURSE",b:"Game Night was built to make the ideas in <b>Yale's Game Theory course (ECON 159)</b>, taught by Professor Ben Polak, fun and bite-sized.<br><br>The whole course is free on Open Yale Courses: 24 recorded lectures from a real Yale class, about an hour each, with problem sets and exams. It's college-level, so it's a big step up, and a great challenge.<br><br><a href=\"https://oyc.yale.edu/economics/econ-159\" target=\"_blank\" rel=\"noopener\">Open Yale Courses: Game Theory</a>"},
+ {h:"PLAY MORE",b:"<b>The Evolution of Trust</b> by Nicky Case is a free interactive game (about 30 minutes) about the repeated Prisoner's Dilemma. You'll watch Tit for Tat and other strategies battle it out, with mistakes thrown in.<br><br><a href=\"https://ncase.me/trust/\" target=\"_blank\" rel=\"noopener\">Play The Evolution of Trust</a>"},
+ {h:"READ MORE",b:"<b>The Art of Strategy</b> by Avinash Dixit and Barry Nalebuff (2008): game theory told through stories from sports, business and movies.<br><br><b>Game Theory: A Very Short Introduction</b> by Ken Binmore (2007): short, but more mathematical.<br><br><b>Introduction to Game Theory: A Discovery Approach</b> by Jennifer Firkins Nordstrom: a free online textbook where you work out the ideas yourself.<br><a href=\"https://nordstrommath.com/IntroGameTheoryText\" target=\"_blank\" rel=\"noopener\">Read it free</a>"},
+ {h:"FOR THE VERY CURIOUS",b:"<b>The Evolution of Cooperation</b> by Robert Axelrod (1984): the story of the Tit for Tat tournaments, written for everyone.<br><br><b>Governing the Commons</b> by Elinor Ostrom (1990): how real communities protect shared resources. It's written for researchers, so it's a challenge."},
+ {h:"KEEP PLAYING",b:"Every time you share a pizza, vote in a group, trust a new friend or decide whether to believe an ad, you're in a game. Now you know how to read it."}]}
+};
+var K={"1":["Repeated games: today's move can be paid back tomorrow.","Tit for Tat: nice, quick to hit back, quick to forgive, clear.","Grabbers win once, then get stuck with 1 point a round.","The longer the future, the more sharing pays."],
+"2":["Trust game: sent coins triple, the receiver chooses what to return.","Trusting grows the pile; reputation decides what you're offered next.","The last round tempts people to break trust.","Start small and build trust step by step."],
+"3":["Hawks fight; doves back down. Neither wins everywhere.","The mix settles where both score the same.","Share of hawks = food ÷ fight cost.","A stable strategy can't be taken over by a few newcomers."],
+"4":["Cheap talk: free to say, so it tells you little.","Costly signal: too expensive for the wrong people to fake.","Fast: camp 10 - 2 = 8 > 4. Slow: camp 10 - 8 = 2 < 4.","Diplomas, guarantees and peacock tails can work as signals."],
+"5":["Hidden information: your rival can't see your card.","Never bluff: your push gives your card away.","Always bluff: you get caught.","Best mix here: bluff on about 1 LOW card in 3."],
+"6":["Tragedy of the commons: each person's extra take hurts everyone a little.","Safe catch: leave enough for the lake to grow back.","Promises alone fail; watchers plus fair penalties work.","Elinor Ostrom showed communities can manage commons well."],
+"7":["Group preferences can go in a circle (Condorcet paradox).","Then whoever sets the order of votes can pick the winner.","Strategic voting: back your 2nd choice to stop your last.","Every voting system has trade-offs (Arrow)."],
+"8":["Tit for Tat · Trust Builder · Stable Strategy · Costly Signal","Bluff Master · Commons Keeper · Agenda Setter"]};
+
+var m=1;try{m=parseInt(new URLSearchParams(location.search).get("m"),10)||1}catch(e){}if(!L[m])m=1;
+var LS=L[m],i=0,first=0,checks=0,tried=false;
+function el(x){return document.getElementById(x)}
+document.title="Lesson "+m+": "+LS.t;el("ttl").textContent=LS.t;el("sub").textContent=LS.s+". Tap through, answer the checks.";
+LS.S.forEach(function(s){if(s.q)checks++});
+if(checks===0){el("sub").textContent=LS.s+". Tap through at your own pace.";try{el("ft").parentNode.style.display="none"}catch(e){}}
+function draw(){
+  var s=LS.S[i];el("sn").textContent=(i+1)+"/"+LS.S.length;el("ft").textContent=first+"/"+checks;
+  el("sh").textContent=s.h;el("sbody").innerHTML=s.b||"";el("fb").innerHTML="";el("sact").innerHTML="";tried=false;
+  el("next").textContent=(i===LS.S.length-1)?"FINISH":"NEXT";
+  if(s.q){el("next").style.display="none";var h="<p class=\"qq\"><b>"+s.q+"</b></p>";
+    s.o.forEach(function(o,k){h+="<button class=\"opt\" onclick=\"pick("+k+",this)\">"+o+"</button><br>"});el("sact").innerHTML=h;}
+  else if(s.r){el("next").style.display="none";var h="";s.r.forEach(function(r,k){h+="<button class=\"opt\" onclick=\"rev("+k+",this)\">"+r[0]+"</button><div class=\"tape rv\" id=\"rv"+k+"\" style=\"display:none\"></div>"});
+    el("sact").innerHTML=h+"<p class=\"note\">Tap every card to go on.</p>";}
+  else el("next").style.display="inline-block";
+  window.scrollTo(0,0);
+}
+function rev(k,b){var r=LS.S[i].r[k];var d=el("rv"+k);d.innerHTML="<b>"+r[0]+":</b> "+r[1];d.style.display="block";b.disabled=true;
+  var all=true;LS.S[i].r.forEach(function(x,j){if(el("rv"+j).style.display==="none")all=false});if(all)el("next").style.display="inline-block";}
+function pick(k,b){var s=LS.S[i];
+  if(k===s.a){if(!tried)first++;el("ft").textContent=first+"/"+checks;b.classList.add("on");
+    el("fb").innerHTML="<span class=\"good\"><b>"+(tried?"Got it.":"Yes!")+"</b></span> "+s.w;
+    Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.disabled=true});el("next").style.display="inline-block";}
+  else{tried=true;b.disabled=true;el("fb").innerHTML="<span class=\"bad\"><b>Not quite.</b></span> Look back at the screen and try another answer.";}
+}
+function nextScreen(){if(i<LS.S.length-1){i++;draw()}else finish()}
+function finish(){el("round").style.display="none";
+  var rk=first===checks?"PERFECT RUN":(first>=checks-1?"SHARP READER":"LEVEL CLEARED");el("rank").textContent=rk;
+  el("verdict").textContent="You got "+first+" of "+checks+" checks right on the first try.";
+  el("out").value="GN3-READ-M0"+m+" | lesson finished | checks right on first try "+first+"/"+checks;
+  el("keys").innerHTML="<b>KEY IDEAS</b> (keep this open while you talk to Rocky)<br>"+(K[m]||[]).map(function(x){return "• "+x}).join("<br>");if(checks===0){el("rank").textContent="EXPLORER";el("verdict").textContent="Come back to these links any time.";el("out").style.display="none";Array.prototype.forEach.call(document.querySelectorAll("#final button, #final p"),function(x){if(x.id!=="verdict")x.style.display="none"});el("keys").style.display="none";}
+  el("final").style.display="block";window.scrollTo(0,0);}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+draw();
+</script>
+
+<script id="wild-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 3 · THE LONG GAME";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#a6f04a","#ff8a3d","#ffe14d","#22e07a","#ffb27a","#d6ffa0"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];s.style.color=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>

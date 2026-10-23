@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Growing Pot</title>
+<style>
+  body{margin:0;background:#0b1030;color:#f1ead8;font-family:"Rubik",system-ui,sans-serif;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;margin:8px 0}
+  h2{font-size:16px;letter-spacing:2px;margin:6px 0}
+  p{line-height:1.45}
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{padding:7px 9px;font-size:14px}
+  button{font:bold 16px "Rubik",sans-serif;margin:6px;padding:10px 16px;cursor:pointer;min-height:44px;min-width:44px}
+  #round,#final{display:none}
+  #out{width:95%;max-width:560px;height:100px;font:14px "Courier New",monospace}
+  .note{font-size:14px}
+  .story{background:rgba(242,193,78,.07);border:1px solid rgba(242,193,78,.3);border-radius:12px;padding:10px 12px;text-align:left;font-size:15px;max-width:560px;margin:8px auto}
+  .msg{min-height:22px;font-weight:600}
+  .rank{margin:12px auto 6px}
+  .tape{display:inline-block;padding:8px 14px;margin:8px;text-align:left}
+  .fact{margin:14px auto;max-width:560px;font-size:14px;text-align:left}
+  .big{font:42px "Press Start 2P","Bungee",monospace;color:#f2c14e;margin:10px 0;text-shadow:0 0 10px rgba(242,193,78,.6)}
+  .rival{font-size:17px}
+  .trail{font-size:14px;min-height:20px;color:#d9d3c0;word-wrap:break-word}
+  .cards{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:8px 0}
+  .pc{background:rgba(245,236,215,.08);border:2px solid rgba(242,193,78,.5);border-radius:10px;padding:6px 10px;min-width:90px;font-size:14px}
+  .pc b{display:block;font-size:13px;color:#f2c14e}
+  .vote-yes{color:#6dd8a0;font-weight:700}.vote-no{color:#ff9b8a;font-weight:700}
+  .opt{min-width:240px}
+  .piles{display:flex;justify-content:center;gap:16px;margin:10px 0}
+  .pile{border:3px solid #f2c14e;border-radius:12px;padding:8px 14px;min-width:110px;background:rgba(0,0,0,.3)}
+  .pile b{display:block;font:24px "Press Start 2P",monospace;color:#f2c14e;margin-top:6px}
+  .numrow{display:flex;flex-wrap:wrap;justify-content:center;max-width:420px;margin:0 auto}
+  .numrow button{min-width:52px}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="chess-skin">
+:root{--felt:#141c45;--felt-dark:#0a0f2a;--gold:#f5ecd7;--gold-deep:#f2c14e;--ivory:#f5ecd7;--ink:#0b0f24;--red:#c0573e;--blue:#3a6fd8;--black:#2b2f45;--green:#3fa877;--violet:#8e7dff;--cyan:#f2c14e;--pink:#8e7dff}
+html{background:#070b22}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#f1ead8 !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;min-height:100vh;
+ background:
+  radial-gradient(circle at 50% -10%,rgba(242,193,78,.16),transparent 55%),
+  repeating-conic-gradient(rgba(255,255,255,.035) 0 25%,transparent 0 50%) 0 0/56px 56px,
+  linear-gradient(180deg,#0e1640,#070b22 80%) !important}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:14px;background:linear-gradient(180deg,#151d4a,#0a0f2a);border:3px solid var(--cyan);box-shadow:0 0 0 4px #2a2f63,0 0 22px rgba(242,193,78,.5),inset 0 0 18px rgba(142,125,255,.25)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--pink);margin-bottom:2px;text-transform:uppercase;text-shadow:0 0 8px rgba(142,125,255,.8)}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:bulb 1.2s steps(1) infinite}
+.marquee i:nth-child(3n+1){background:var(--pink);box-shadow:0 0 6px var(--pink)}
+.marquee i:nth-child(3n+2){background:var(--gold);box-shadow:0 0 6px var(--gold);animation-delay:.4s}
+.marquee i:nth-child(odd){animation-delay:.8s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:clamp(16px,4.6vw,26px) !important;line-height:1.35 !important;letter-spacing:1px !important;margin:10px 0 !important;
+ color:#fff !important;text-shadow:0 0 6px var(--cyan),0 0 16px var(--cyan),3px 3px 0 var(--pink) !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(245,236,215,.6) !important}
+#pick,#round,#result,#final,.panel{position:relative;margin:14px auto;padding:16px 14px 18px !important;border-radius:18px !important;
+ background:linear-gradient(180deg,rgba(16,26,61,.96),rgba(7,11,31,.98)) !important;
+ border:4px solid var(--cyan) !important;box-shadow:0 0 0 4px #1b2350,0 0 0 7px var(--pink),0 0 26px rgba(242,193,78,.35),inset 0 0 30px rgba(242,193,78,.12) !important}
+#pick::before,#round::before,#result::before,#final::before,.panel::before{content:"♞ ♜ ♝ ♛" !important;display:block;font-size:12px;letter-spacing:10px;color:rgba(242,193,78,.55) !important;margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--cyan) !important;border-radius:8px !important;padding:6px 12px 8px !important;
+ background:#080c26 !important;box-shadow:0 0 0 3px #2a2f63,0 0 12px rgba(242,193,78,.35) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#e9dcb8}
+.box b{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:18px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(245,236,215,.8) !important;background:#000;border-radius:4px;margin-top:6px;padding:6px 8px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 30%,#b3a8ff,var(--violet) 65%) !important;border:3px solid rgba(255,255,255,.85) !important;border-radius:14px !important;
+ box-shadow:0 6px 0 #4b3f9e,0 0 14px rgba(142,125,255,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.4);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;min-height:44px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 30%,#7fb0ff,var(--blue) 65%) !important;box-shadow:0 6px 0 #0d3a8a,0 0 14px rgba(45,123,255,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 30%,#c49bff,var(--violet) 65%) !important;box-shadow:0 6px 0 #4a1f8f,0 0 14px rgba(155,92,255,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 30%,#6dffb0,var(--green) 65%) !important;color:#032b14 !important;text-shadow:none;box-shadow:0 6px 0 #0b7a3e,0 0 14px rgba(34,224,122,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 30%,#fffbd0,var(--gold) 65%) !important;color:#2a2000 !important;text-shadow:none;box-shadow:0 6px 0 #8a7400,0 0 20px 6px rgba(245,236,215,.7) !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#fff1c2,var(--cyan) 50%,#c9952a) !important;color:#2a1d00 !important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+ border:3px solid #fff8e1 !important;border-radius:10px !important;box-shadow:0 6px 0 #7d5a12,0 0 22px rgba(242,193,78,.55) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.35);border-radius:8px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(242,193,78,.45) !important;color:#eef4ff}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(242,193,78,.08)}
+.note{color:#d9d3c0 !important;opacity:.95}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:var(--gold) !important;background:#000;border:2px solid var(--gold) !important;border-radius:6px;padding:8px 14px !important;box-shadow:0 0 12px rgba(245,236,215,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#e9dcb8 !important;text-shadow:0 1px 0 #000}
+.promise{color:#f2c14e !important}
+.rank{font-family:"Press Start 2P","Bungee",monospace !important;font-size:clamp(14px,4.4vw,22px) !important;line-height:1.4;display:inline-block;padding:12px 16px;margin:12px auto 6px !important;border-radius:10px;
+ color:#fff !important;background:#0e1438;border:3px solid var(--pink);text-shadow:0 0 8px var(--pink),0 0 18px var(--pink) !important;animation:levelup 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #1b2350,0 0 26px rgba(142,125,255,.55)}
+@keyframes levelup{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:10px !important;box-shadow:0 0 0 3px var(--cyan),0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"♛" !important;position:absolute;left:10px;top:8px;color:var(--pink) !important;font-size:18px}
+.tape b{color:#7a4a00 !important}
+.fact{background:linear-gradient(180deg,#1d2660,#121842);color:#eef4ff !important;border:2px solid var(--gold) !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 0 14px rgba(245,236,215,.3)}
+.fact b{color:var(--gold) !important}
+#out{font-family:"Courier New",monospace !important;background:#f2f7ff !important;color:#111 !important;border:2px dashed var(--cyan) !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#6dffb0 !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff8ab8 !important;text-shadow:0 1px 0 #000}
+.disp{background:#000 !important;color:var(--gold) !important;border:3px solid var(--cyan) !important;border-radius:8px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px rgba(245,236,215,.8)}
+.msg{color:var(--gold) !important}
+.story{background:rgba(242,193,78,.06) !important;border:1px solid rgba(242,193,78,.25)}
+.slot{border-color:rgba(242,193,78,.6) !important;color:#e9dcb8 !important}
+.slot.sel{border-color:var(--gold) !important}
+.card.back{background:repeating-linear-gradient(0deg,#1b2350 0 6px,#120a33 6px 12px) !important;border-color:var(--cyan) !important;color:#e9dcb8 !important;box-shadow:0 0 14px rgba(242,193,78,.35)}
+.card.back .cn{color:#e9dcb8 !important}
+.backpat{color:rgba(242,193,78,.75) !important;font-family:"Press Start 2P",monospace !important;font-size:22px !important;line-height:1.5 !important}
+.newbanner{border-color:var(--pink) !important;color:#fff !important;text-shadow:0 0 8px var(--pink)}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-30px;width:14px;height:14px;border-radius:2px !important;border:none !important;box-shadow:0 0 8px currentColor;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+</style>
+
+</head>
+<body>
+<h1>THE GROWING POT</h1>
+<p class="note">Two piles of coins. On your turn: <b>TAKE</b> the big pile (your partner gets the small one, game over) or <b>PASS</b> (both piles double and it's your partner's turn). 6 turns. You move first. If nobody takes by the end, you get the big pile.</p>
+<div class="bar"><div class="box">ROUND<b id="rn">1/3</b></div><div class="box">YOUR COINS<b id="yc">0</b></div></div>
+<div id="pick">
+  <p class="rival" id="who"></p>
+  <p id="turn"></p>
+  <div class="piles"><div class="pile">BIG PILE<b id="bigp">4</b></div><div class="pile">SMALL PILE<b id="smp">1</b></div></div>
+  <div id="choices"><button id="tk" onclick="act('TAKE')">TAKE</button><button id="ps" onclick="act('PASS')">PASS</button></div>
+  <p class="msg" id="fb"></p>
+</div>
+<div id="round"><h2 id="headline"></h2><p id="detail"></p><button id="next" onclick="nextRound()">NEXT ROUND</button></div>
+<div id="final">
+  <h1>POT'S EMPTY</h1>
+  <div class="tape">STRATEGY CARD UNLOCKED: <b>Trust Has a Price</b><br><a id="decklink" href="gn2-deck.html?card=3">See your deck</a></div>
+  <div id="verdict"></div>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+<script>
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+function finalBlock(card,n,rank,foilRanks){var dl=el("decklink");dl.href="gn2-deck.html?card="+n+(foilRanks.indexOf(rank)>=0?"&foil=1":"");if(foilRanks.indexOf(rank)>=0)dl.textContent="Top rank! See your GOLD FOIL card"}
+
+var P=[{n:"Trusting Tess",takeAt:6,intro:"Tess likes to let the pot grow."},{n:"Grabby Gus",takeAt:2,intro:"Gus has a reputation. Just saying."},{n:"Middle Max",takeAt:4,intro:"Max is somewhere in between."}];
+var BEST=[64,4,16];
+var r=0,t=1,total=0,busy=false,log=[];
+function big(){return 4*Math.pow(2,t-1)}function small(){return Math.pow(2,t-1)}
+function setup(){t=1;busy=false;var p=P[r];el("rn").textContent=(r+1)+"/3";el("who").innerHTML="Round "+(r+1)+" partner: <b>"+p.n+"</b><br><span class=\"note\">"+p.intro+"</span>";el("fb").textContent="";draw();show("pick",true);show("round",false)}
+function draw(){el("bigp").textContent=big();el("smp").textContent=small();var mine=(t%2===1);
+  el("turn").innerHTML="Turn <b>"+t+"</b> of 6: "+(mine?"<b>your move</b>":P[r].n+"'s move");el("tk").disabled=busy||!mine;el("ps").disabled=busy||!mine}
+function act(a){if(busy)return;
+  if(a==="TAKE"){done("you",t);return}
+  el("fb").textContent="You pass. Both piles double!";t++;busy=true;draw();setTimeout(partner,800)}
+function partner(){var p=P[r];
+  if(t>=p.takeAt){el("fb").textContent=p.n+" takes the big pile!";setTimeout(function(){done("partner",t)},500);return}
+  el("fb").textContent=p.n+" passes. Both piles double!";t++;
+  if(t>6){done("end",6);return}
+  busy=false;draw()}
+function done(who,turn){var b=4*Math.pow(2,turn-1),s=Math.pow(2,turn-1),you,them,txt;
+  if(who==="you"){you=b;them=s;txt="You took at turn "+turn}else if(who==="partner"){you=s;them=b;txt=P[r].n.split(" ")[1]+" took at turn "+turn}else{you=4*Math.pow(2,6);them=Math.pow(2,6);txt="Nobody took"}
+  total+=you;el("yc").textContent=total;log.push({n:P[r].n,txt:txt,you:you});
+  el("headline").textContent=txt.toUpperCase()+"!";el("detail").innerHTML="You get <b>"+you+"</b> coins. "+P[r].n+" gets "+them+".";
+  el("next").textContent=r===2?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
+function nextRound(){r++;if(r>=3){finish();return}setup()}
+function finish(){show("round",false);var rank=total>=84?"MIND READER":(total>=40?"SMART TRUSTER":"PLAYING IT SAFE");
+  var rows="<tr><th>Partner</th><th>What happened</th><th>You got</th><th>Best possible</th></tr>";log.forEach(function(l,i){rows+="<tr><td>"+l.n+"</td><td>"+l.txt+"</td><td>"+l.you+"</td><td>"+BEST[i]+"</td></tr>"});
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You earned <b>"+total+"</b> coins. Best possible against these partners: 84.</p><table>"+rows+"</table>"+
+   "<h2>WHAT LOGIC SAYS</h2><div class=\"tape\">Work backward: at turn 6 your partner takes (128 beats 64). So at turn 5 you should take (64 beats 32). Keep going back and logic says <b>take at turn 1</b>, every round: just 4 coins each, <b>12</b> total.</div>"+
+   "<div class=\"tape\">Real partners don't always follow that logic. Against each one, the best move was to take <b>one turn before they would</b>.</div>"+
+   "<div class=\"fact\">This is called the centipede game. When economists Richard McKelvey and Thomas Palfrey tested it with real players in 1992, very few took the pot at the first chance.</div>";
+  el("out").value="GN2-M03 | "+log.map(function(l){return "vs "+l.n.split(" ")[1]+": "+l.txt.toLowerCase()+", got "+l.you}).join(" | ")+" | total "+total+" | best possible 84 | 'take now' logic 12";
+  finalBlock("",3,rank,["MIND READER"]);show("final",true)}
+setup();
+
+</script>
+
+<script id="chess-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 2 · THINK AHEAD";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#f2c14e","#f5ecd7","#8e7dff","#3a6fd8","#c9952a","#ffffff"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];s.style.color=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>

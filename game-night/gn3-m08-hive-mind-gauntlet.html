@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hive Mind Gauntlet</title>
+<style>
+  body{margin:0;background:#07070f;color:#e8f7ff;font-family:"Courier New",monospace;padding:14px;text-align:center}
+  h1{font-size:22px;letter-spacing:3px;margin:8px 0}
+  h2{font-size:16px;letter-spacing:2px;margin:6px 0}
+  p{line-height:1.45}
+  table{margin:10px auto;border-collapse:collapse}
+  td,th{border:2px solid #00e5ff;padding:7px 9px;font-size:14px}
+  button{font:bold 16px "Courier New",monospace;margin:5px;padding:10px 14px;cursor:pointer}
+  #out{width:95%;max-width:620px;height:110px;font:14px "Courier New",monospace}
+  .note{font-size:14px}
+  .panel{position:relative;margin:14px auto;padding:16px 14px 18px;border-radius:26px;
+   background:radial-gradient(ellipse at 50% 35%,var(--felt,#0f6b3a),var(--felt-dark,#0a4a28) 85%);
+   border:10px solid #5a2e12;box-shadow:inset 0 0 0 3px #b8860b,inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.55)}
+  .panel::before{content:"♠ ♥ ♣ ♦";display:block;font-size:12px;letter-spacing:8px;color:rgba(255,255,255,.28);margin-bottom:4px}
+  @media (max-width:480px){.panel{border-width:6px;padding:12px 8px 14px}}
+  .story{background:rgba(0,0,0,.28);border-radius:12px;padding:10px 12px;text-align:left;font-size:15px}
+  .msg{min-height:22px;color:#ffe9a8;font-weight:600}
+  .tiny{font-size:11px;color:#7dff9e}
+  .gwrap{max-width:100%;overflow-x:auto}
+  .grid td{min-width:0;padding:5px 4px}
+  .grid th{padding:5px 4px;font-size:12px}
+  .step{display:flex;align-items:center;justify-content:center;gap:4px;margin:3px 0}
+  .step .who{font-size:10px;min-width:30px;text-align:right;color:#f3d38a}
+  .step b{display:inline-block;min-width:18px;font-size:18px;color:#fff}
+  button.mini{min-width:28px !important;padding:1px 4px !important;margin:2px 1px !important;font-size:13px !important;border-width:2px !important;box-shadow:0 0 0 2px #5e0b17,0 3px 0 2px #3a0610 !important}
+  button.mini2{min-width:54px !important}
+  td.locked{background:rgba(255,255,255,.06)}
+  .nash td{font-size:15px;min-width:0;padding:6px 4px}
+  .nash td.act{background:rgba(255,233,168,.16);cursor:pointer;outline:2px dashed #ffe9a8;outline-offset:-4px}
+  .nash td.lock{background:rgba(247,201,72,.28);box-shadow:inset 0 0 12px rgba(247,201,72,.8)}
+  .ring{display:inline-block;border:2px solid #ffd84d;border-radius:50%;padding:0 6px;color:#ffe9a8}
+  .locktxt{font:11px "Bungee","Arial Black",sans-serif;color:#ffd84d;letter-spacing:1px}
+  .ladder{display:inline-block;margin:6px auto;text-align:left}
+  .rung{padding:5px 14px;margin:3px 0;border-left:4px solid #555;background:rgba(0,0,0,.3);border-radius:6px;font-size:14px;color:#aaa}
+  .rung.on{border-left-color:#ffd84d;color:#fff7e6}
+  .dial{font:20px "Bungee","Arial Black",sans-serif;margin:8px 0;color:#ffe9a8}
+  .barrow{display:flex;align-items:center;gap:8px;margin:8px auto;max-width:520px;text-align:left}
+  .bl{min-width:150px;font-size:13px}
+  .track{flex:1;height:18px;background:rgba(0,0,0,.4);border-radius:9px;overflow:hidden}
+  .fill{height:100%;background:linear-gradient(90deg,#38d17f,#7dff9e)}
+  .fill.low{background:linear-gradient(90deg,#d7263d,#ff8a8a)}
+  button.on:disabled{filter:none;opacity:1}
+</style>
+<style>
+  .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .box{padding:6px 12px;min-width:92px}
+  .box b{display:block;font-size:22px}
+  #final{display:none}
+  .hpbar{max-width:420px;height:16px;margin:6px auto 0;border-radius:8px;background:#2a0a0a;border:2px solid #f7c948;overflow:hidden}
+  #hpfill{height:100%;width:100%;background:linear-gradient(90deg,#d7263d,#ff8a8a);transition:width .5s ease}
+  .taunt{font-style:italic;color:#ffd9a8;font-size:15px}
+  .tape a{color:#a1001c;font-weight:800}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style id="wild-skin">
+:root{--felt:#0e2a1a;--felt-dark:#061a10;--gold:#ffe14d;--gold-deep:#a6f04a;--ivory:#f2f7ff;--ink:#0b0f24;--red:#ff8a3d;--blue:#2d7bff;--black:#2b2f45;--green:#22e07a;--violet:#9b5cff;--cyan:#a6f04a;--pink:#ff8a3d}
+html{background:#04140c}
+body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !important;color:#eef4ff !important;max-width:760px;margin:0 auto !important;padding:12px 16px 40px !important;min-height:100vh;
+ background:
+  repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 4px),
+  linear-gradient(transparent 0 60%,rgba(255,138,61,.10)),
+  radial-gradient(circle at 25% 30%,rgba(166,240,74,.09) 0 2px,transparent 3px) 0 0/34px 30px,radial-gradient(circle at 75% 80%,rgba(255,138,61,.07) 0 2px,transparent 3px) 0 0/34px 30px,repeating-linear-gradient(60deg,rgba(166,240,74,.035) 0 1px,transparent 1px 26px),repeating-linear-gradient(-60deg,rgba(166,240,74,.035) 0 1px,transparent 1px 26px),
+  radial-gradient(circle at 50% -10%,#1d4a2a,#04140c 70%) !important}
+.sign{position:relative;margin:4px auto 14px;padding:14px 10px 12px;border-radius:14px;background:linear-gradient(180deg,#0f2a18,#04120a);border:3px solid var(--cyan);box-shadow:0 0 0 4px #1d3a14,0 0 22px rgba(166,240,74,.5),inset 0 0 18px rgba(255,138,61,.25)}
+.sign .tag{display:block;font:600 11px "Rubik",sans-serif;letter-spacing:4px;color:var(--pink);margin-bottom:2px;text-transform:uppercase;text-shadow:0 0 8px rgba(255,138,61,.8)}
+.marquee{display:flex;justify-content:space-between;gap:4px;padding:0 6px}
+.marquee i{width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:bulb 1.2s steps(1) infinite}
+.marquee i:nth-child(3n+1){background:var(--pink);box-shadow:0 0 6px var(--pink)}
+.marquee i:nth-child(3n+2){background:var(--gold);box-shadow:0 0 6px var(--gold);animation-delay:.4s}
+.marquee i:nth-child(odd){animation-delay:.8s}
+@keyframes bulb{0%,49%{opacity:1}50%,100%{opacity:.25}}
+h1{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:clamp(16px,4.6vw,26px) !important;line-height:1.35 !important;letter-spacing:1px !important;margin:10px 0 !important;
+ color:#fff !important;text-shadow:0 0 6px var(--cyan),0 0 16px var(--cyan),3px 3px 0 var(--pink) !important}
+h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.6) !important}
+#pick,#round,#result,#final,.panel{position:relative;margin:14px auto;padding:16px 14px 18px !important;border-radius:18px !important;
+ background:linear-gradient(180deg,rgba(14,42,26,.96),rgba(6,26,16,.98)) !important;
+ border:4px solid var(--cyan) !important;box-shadow:0 0 0 4px #12321e,0 0 0 7px var(--pink),0 0 26px rgba(166,240,74,.35),inset 0 0 30px rgba(166,240,74,.12) !important}
+#pick::before,#round::before,#result::before,#final::before,.panel::before{content:"✦ ❖ ✧ ❂" !important;display:block;font-size:12px;letter-spacing:10px;color:rgba(166,240,74,.45) !important;margin-bottom:4px}
+.bar{gap:10px !important}
+.box{min-width:96px;border:3px solid var(--cyan) !important;border-radius:8px !important;padding:6px 12px 8px !important;
+ background:#031008 !important;box-shadow:0 0 0 3px #1d3a14,0 0 12px rgba(166,240,74,.35) !important;
+ font:600 11px "Rubik",sans-serif;letter-spacing:2px;color:#d8ffb0}
+.box b{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:18px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.8) !important;background:#000;border-radius:4px;margin-top:6px;padding:6px 8px}
+button{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;letter-spacing:1px;color:#fff !important;
+ background:radial-gradient(circle at 50% 30%,#ffb27a,var(--pink) 65%) !important;border:3px solid rgba(255,255,255,.85) !important;border-radius:14px !important;
+ box-shadow:0 6px 0 #8a3d0f,0 0 14px rgba(255,138,61,.45) !important;text-shadow:0 2px 0 rgba(0,0,0,.4);
+ margin:10px 8px !important;padding:10px 16px !important;min-width:56px;min-height:44px;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+button:nth-of-type(4n+2){background:radial-gradient(circle at 50% 30%,#7fb0ff,var(--blue) 65%) !important;box-shadow:0 6px 0 #0d3a8a,0 0 14px rgba(45,123,255,.45) !important}
+button:nth-of-type(4n+3){background:radial-gradient(circle at 50% 30%,#c49bff,var(--violet) 65%) !important;box-shadow:0 6px 0 #4a1f8f,0 0 14px rgba(155,92,255,.45) !important}
+button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 30%,#6dffb0,var(--green) 65%) !important;color:#032b14 !important;text-shadow:none;box-shadow:0 6px 0 #0b7a3e,0 0 14px rgba(34,224,122,.45) !important}
+button:active{transform:translateY(4px)}
+button.on{background:radial-gradient(circle at 50% 30%,#fffbd0,var(--gold) 65%) !important;color:#2a2000 !important;text-shadow:none;box-shadow:0 6px 0 #8a7400,0 0 20px 6px rgba(255,225,77,.7) !important}
+button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#next,button.big,#final button,#go{background:linear-gradient(180deg,#d6ffa0,var(--cyan) 50%,#6fb82a) !important;color:#0f2a05 !important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+ border:3px solid #f3ffe0 !important;border-radius:10px !important;box-shadow:0 6px 0 #3d6e10,0 0 22px rgba(166,240,74,.55) !important;padding:12px 22px !important}
+table{background:rgba(0,0,0,.35);border-radius:8px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
+td,th{border:1px solid rgba(166,240,74,.45) !important;color:#eef4ff}
+th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;background:rgba(166,240,74,.08)}
+.note{color:#d6e8c9 !important;opacity:.95}
+.news{font-family:"Bungee","Arial Black",sans-serif;font-size:14px !important;color:var(--gold) !important;background:#000;border:2px solid var(--gold) !important;border-radius:6px;padding:8px 14px !important;box-shadow:0 0 12px rgba(255,225,77,.4);letter-spacing:1px}
+.rival,.partner,.goalie{color:#d8ffb0 !important;text-shadow:0 1px 0 #000}
+.promise{color:#ffe0c8 !important}
+.rank{font-family:"Press Start 2P","Bungee",monospace !important;font-size:clamp(14px,4.4vw,22px) !important;line-height:1.4;display:inline-block;padding:12px 16px;margin:12px auto 6px !important;border-radius:10px;
+ color:#fff !important;background:#06180c;border:3px solid var(--pink);text-shadow:0 0 8px var(--pink),0 0 18px var(--pink) !important;animation:levelup 1.4s ease-in-out infinite;box-shadow:0 0 0 4px #12321e,0 0 26px rgba(255,138,61,.55)}
+@keyframes levelup{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tape{background:var(--ivory) !important;color:var(--ink) !important;border:none !important;border-radius:10px !important;box-shadow:0 0 0 3px var(--cyan),0 6px 14px rgba(0,0,0,.5) !important;
+ padding:14px 16px 12px 34px !important;position:relative;max-width:520px}
+.tape::before{content:"✦" !important;position:absolute;left:10px;top:8px;color:var(--pink) !important;font-size:18px}
+.tape b{color:#b34a00 !important}
+.fact{background:linear-gradient(180deg,#1d4a2a,#10301a);color:#eef4ff !important;border:2px solid var(--gold) !important;border-radius:10px;padding:12px 14px !important;box-shadow:0 0 14px rgba(255,225,77,.3)}
+.fact b{color:var(--gold) !important}
+#out{font-family:"Courier New",monospace !important;background:#f2f7ff !important;color:#111 !important;border:2px dashed var(--cyan) !important;border-radius:6px;box-shadow:0 6px 12px rgba(0,0,0,.4)}
+.goal,.good,.w,.k,td.k{color:#6dffb0 !important;text-shadow:0 1px 0 #000}
+.save,.bad,.l,.w-,td.w{color:#ff9a8a !important;text-shadow:0 1px 0 #000}
+.disp{background:#000 !important;color:var(--gold) !important;border:3px solid var(--cyan) !important;border-radius:8px;font-family:"Bungee",sans-serif !important;text-shadow:0 0 8px rgba(255,225,77,.8)}
+.msg{color:var(--gold) !important}
+.story{background:rgba(166,240,74,.06) !important;border:1px solid rgba(166,240,74,.25)}
+.slot{border-color:rgba(166,240,74,.6) !important;color:#d8ffb0 !important}
+.slot.sel{border-color:var(--gold) !important}
+.card.back{background:repeating-linear-gradient(0deg,#12321e 0 6px,#0c2414 6px 12px) !important;border-color:var(--cyan) !important;color:#d8ffb0 !important;box-shadow:0 0 14px rgba(166,240,74,.35)}
+.card.back .cn{color:#d8ffb0 !important}
+.backpat{color:rgba(166,240,74,.75) !important;font-family:"Press Start 2P",monospace !important;font-size:22px !important;line-height:1.5 !important}
+.newbanner{border-color:var(--pink) !important;color:#fff !important;text-shadow:0 0 8px var(--pink)}
+.shower{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.shower span{position:absolute;top:-30px;width:14px;height:14px;border-radius:2px !important;border:none !important;box-shadow:0 0 8px currentColor;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
+@media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+</style>
+</head>
+<body>
+<h1>HIVE MIND GAUNTLET</h1>
+<p class="note">Boss round! The Hive Mind has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Hive Mind wins.</p>
+<div class="bar">
+  <div class="box">ROUND<b id="rn">1/8</b></div>
+  <div class="box">HIVE HP<b id="hp">8</b></div>
+  <div class="box">YOUR LIVES<b id="lives">3</b></div>
+</div>
+<div class="hpbar"><div id="hpfill"></div></div>
+
+<div id="pick">
+  <p class="taunt" id="taunt"></p>
+  <h2 id="rtitle"></h2>
+  <div id="scene"></div>
+  <p id="q"></p>
+  <div id="choices"></div>
+  <p class="msg" id="fb"></p>
+  <button id="whyb" style="display:none" onclick="showWhy()">WHY?</button>
+  <p class="msg" id="whytxt" style="display:none"></p>
+  <button class="big" id="next" style="display:none" onclick="nextRound()">NEXT ROUND</button>
+</div>
+
+<div id="final">
+  <h1 id="endt">GAUNTLET OVER</h1>
+  <div id="verdict"></div>
+  <button class="big" id="rematch" style="display:none" onclick="rematch()">REMATCH</button>
+  <p>Copy your results, then paste them to Rocky in the chat.</p>
+  <textarea id="out" readonly></textarea><br>
+  <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
+  <p class="note" id="status"></p>
+</div>
+
+<script>
+function g2(rl,cl,rm,cm,cells){var h="<table class=\"grid\"><tr><th>"+rl+" \\ "+cl+"</th><th>"+cm[0]+"</th><th>"+cm[1]+"</th></tr>";
+  for(var r=0;r<2;r++){h+="<tr><th>"+rm[r]+"</th><td>"+cells[r][0]+"</td><td>"+cells[r][1]+"</td></tr>"}return h+"</table><p class=\"note\">First number: "+rl+". Second number: "+cl+".</p>"}
+var R=[
+ {t:"ROUND 1: TIT FOR TAT",taunt:"\"We are many. We remember everything.\"",
+  scene:"<div class=\"story\">Tit for Tat (share first, then copy) plays 5 rounds of Share or Grab against Always Grab. Share/Share 3 each, Share vs Grab 0 and 5, Grab/Grab 1 each.</div>",
+  q:"How many points does <b>Tit for Tat</b> score?",ch:["0","4","5","15"],a:1,
+  short:"0 in round 1, then 1 point in each of the last 4 rounds: 4.",
+  why:"Tit for Tat shares first and gets 0. Then it copies the grab, so both grab for 1 point, four more times. It never wins the match, but it stops being a pushover."},
+ {t:"ROUND 2: TRUST ME",taunt:"\"Trust us. We are very trustworthy.\"",
+  scene:"<div class=\"story\">In the trust game, you send 4 coins. They are tripled on the way. Your partner sends back half of what they received.</div>",
+  q:"How many coins come back to you?",ch:["2","6","8","12"],a:1,
+  short:"4 tripled is 12. Half of 12 is 6.",
+  why:"Your partner receives 4 × 3 = 12 and returns half: 6. You sent 4 and got 6 back, so trusting paid off."},
+ {t:"ROUND 3: HAWK OR DOVE",taunt:"\"We fight. Always. Or do we?\"",
+  scene:"<div class=\"story\">Birds fight over food worth 10. A fight costs the loser 40 points of injuries. Hawks always fight; doves back down.</div>",
+  q:"Where does the share of hawks settle?",ch:["10%","25%","50%","75%"],a:1,
+  short:"Food ÷ fight cost = 10 ÷ 40 = 1/4 = 25%.",
+  why:"The mix settles where hawks and doves score the same. With these numbers that's food divided by fight cost: 10 ÷ 40, or 25% hawks."},
+ {t:"ROUND 4: SIGNALS",taunt:"\"Anyone can SAY they're fast.\"",
+  scene:"<div class=\"story\">You're picking a fast runner. Every runner says \"I'm fast!\"</div>",
+  q:"Which is the most <b>believable</b> sign of a fast runner?",ch:["Saying \"I'm the fastest\"","Wearing fast-looking shoes","Finishing a brutal training camp that slow runners can't finish","Having a cool nickname"],a:2,
+  short:"Only the camp is too costly for slow runners to fake.",
+  why:"Talk and shoes are cheap, so anyone can fake them. A signal is believable when it costs too much for the wrong people to copy."},
+ {t:"ROUND 5: BLUFF",taunt:"\"We can read every card in your hand.\"",
+  scene:"<div class=\"story\">In Bluff, a player PUSHES only when holding a HIGH card. Never with LOW.</div>",
+  q:"When that player pushes, what should a smart rival do?",ch:["Challenge every time","Back down every time","Flip a coin"],a:1,
+  short:"A push always means HIGH, so challenging just loses 2.",
+  why:"If you never bluff, your push gives your card away, and a smart rival simply backs down. That's why good players bluff sometimes."},
+ {t:"ROUND 6: THE SHARED LAKE",taunt:"\"Take it all. Before someone else does.\"",
+  scene:"<div class=\"story\">A lake has 50 fish. Four fishers follow the town rule: each takes 1 fish for every 10 in the lake.</div>",
+  q:"How many fish are caught in total?",ch:["5","10","20","50"],a:2,
+  short:"Each takes 5; four fishers take 20.",
+  why:"50 fish means 5 each. Four fishers take 20, leaving 30. If the lake doubles, it's back to 60 next season."},
+ {t:"ROUND 7: VOTE!",taunt:"\"We always agree with ourselves.\"",
+  scene:"<div class=\"story\">Head to head, a club prefers Pizza over Tacos, Tacos over Sushi, and Sushi over Pizza. You run the votes: two foods face off, then the winner faces the third.</div>",
+  q:"You want <b>SUSHI</b> to win. Which pair votes first?",ch:["Pizza vs Tacos","Tacos vs Sushi","Pizza vs Sushi"],a:0,
+  short:"Pizza beats Tacos, then Sushi beats Pizza.",
+  why:"In a circle of preferences, whatever enters the vote last wins. Keep Sushi out of the first vote."},
+ {t:"ROUND 8: THE LONG GAME",taunt:"\"Five rounds. Share or Grab. We never forget.\"",rps:true,
+  scene:"<div class=\"story\">Final round: play 5 rounds of Share or Grab against the Hive Mind (Share/Share 3 each, Share vs Grab 0 and 5, Grab/Grab 1 each). Score at least <b>15</b> to land the hit. Word is the Hive Mind <b>always answers your last move</b>...</div>",
+  q:"Make your move.",ch:["SHARE","GRAB"],a:-1,
+  short:"The Hive Mind plays Tit for Tat: it shares first, then copies your last move.",
+  why:"Share every round for 15. Grab early and it grabs right back, so your score sinks. (Grabbing only in the very last round gets 17, because there's no round left for revenge.)"}
+];
+var BEATS={ROCK:"PAPER",PAPER:"SCISSORS",SCISSORS:"ROCK"};
+var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1;
+function el(i){return document.getElementById(i)}
+function show(id,on){el(id).style.display=on?"block":"none"}
+function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
+function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%";el("lives").textContent=lives}
+function start(){r=0;hp=8;lives=3;log=[];setHP();setup()}
+function setup(){
+  var x=R[r];tries=0;locked=false;firstMiss=false;
+  el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE HIVE MIND: "+x.taunt;el("rtitle").textContent=x.t;
+  el("scene").innerHTML=x.scene;el("q").innerHTML=x.q;el("fb").innerHTML="";show("next",false);show("whyb",false);show("whytxt",false);
+  var h="";x.ch.forEach(function(c,i){h+="<button id=\"c"+i+"\" onclick=\""+(x.rps?"throwIt":"pick")+"("+i+")\">"+c+"</button>"});el("choices").innerHTML=h;
+  if(x.rps){rps={n:0,wins:0,last:null,hist:[]}}
+  show("pick",true);show("final",false);
+}
+function showWhy(){el("whytxt").innerHTML=R[r].why;show("whytxt",true);show("whyb",false)}
+function loseLife(){lives--;setHP();if(lives<=0){setTimeout(hiveWins,900);return true}return false}
+function pick(i){
+  if(locked)return;locked=true;var x=R[r];tries++;
+  el("fb").innerHTML="The Hive Mind buzzes...";
+  setTimeout(function(){
+    if(i===x.a){
+      el("c"+i).className="on";
+      if(tries===1){hp--;setHP();log.push("R"+(r+1)+":hit");el("fb").innerHTML="<b>HIT!</b> The Hive Mind loses 1 HP. "+x.short;}
+      else{log.push("R"+(r+1)+":fixed on try 2");el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
+      endRound();
+    } else if(tries>=2){
+      log.push("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
+      el("fb").innerHTML="<b>The Hive Mind blocks it.</b> The answer: "+x.ch[x.a]+". "+x.short;endRound();
+    } else {
+      el("c"+i).disabled=true;
+      var out=loseLife();
+      el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
+      if(!out)locked=false;
+    }
+  },650);
+}
+function throwIt(i){
+  if(locked)return;locked=true;var me=R[r].ch[i];
+  var hive=rps.last?rps.last:"SHARE";
+  el("fb").innerHTML="The Hive Mind decides...";
+  setTimeout(function(){
+    var P={"SHARE|SHARE":3,"SHARE|GRAB":0,"GRAB|SHARE":5,"GRAB|GRAB":1},p=P[me+"|"+hive];
+    rps.wins+=p;rps.n++;rps.last=me;rps.hist.push(me[0]+"v"+hive[0]);
+    el("fb").innerHTML="Round "+rps.n+": You <b>"+me+"</b> &nbsp; Hive Mind <b>"+hive+"</b> &nbsp; +"+p+" (total "+rps.wins+")";
+    if(rps.n<5){locked=false;return}
+    var hit=rps.wins>=15;
+    if(hit){hp--;setHP();log.push("R8:hit ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>HIT!</b> You played the long game. "+R[r].short;endRound();}
+    else{log.push("R8:miss ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>The Hive Mind holds.</b> No hit. "+R[r].short;endRound();}
+  },650);
+}
+function endRound(){
+  for(var k=0;k<R[r].ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
+  show("whyb",true);
+  el("next").textContent=(r===7)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
+}
+function nextRound(){r++;if(r>=8){finish(false);return}setup()}
+function hiveWins(){finish(true)}
+function rankOf(h){return h===8?"GRANDMASTER":(h>=6?"MASTERMIND":(h>=4?"STRATEGIST":"ROOKIE"))}
+function finish(lost){
+  show("pick",false);var hits=8-hp,rank=rankOf(hits);
+  el("endt").textContent=lost?"THE HIVE MIND WINS":(hp===0?"HIVE MIND DEFEATED!":"GAUNTLET OVER");
+  var rows="";log.forEach(function(s){var n=parseInt(s.slice(1),10);rows+="<tr><td>"+R[n-1].t.replace(/^ROUND \d+: /,"")+"</td><td>"+s.split(":")[1]+"</td></tr>"});
+  var foil=(!lost&&hits===8)?"&foil=1":"";
+  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Hive Mind still had "+hp+" HP. Hit REMATCH to try again with 3 fresh lives.</p>":"")+
+   "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
+   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>LONG GAMER</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn3-deck.html?card=8"+foil+"\">See your deck</a></div>")+"<div class=\"tape\"><b>YOU FINISHED GAME NIGHT!</b> See the real college course this whole series was built from, plus games and books to go deeper. <a href=\"gn3-read.html?m=9\">Go deeper</a></div>";
+  show("rematch",lost);
+  el("out").value="GN3-M08 | attempt "+attempt+" | "+(lost?"HIVE MIND WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Hive Mind HP left "+hp+" | rank "+rank;
+  show("final",true);
+}
+function rematch(){attempt++;start()}
+function copyIt(){
+  var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
+  function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}
+  fallback();
+}
+start();
+</script>
+
+<script id="wild-skin-js">
+(function(){try{
+  var h=document.querySelector("h1");
+  if(h&&!document.querySelector(".sign")){
+    var sign=document.createElement("div");sign.className="sign";
+    function row(){var m=document.createElement("div");m.className="marquee";var s="";for(var i=0;i<22;i++)s+="<i></i>";m.innerHTML=s;return m}
+    h.parentNode.insertBefore(sign,h);
+    var tag=document.createElement("span");tag.className="tag";tag.textContent="GAME NIGHT 3 · THE LONG GAME";
+    sign.appendChild(row());sign.appendChild(tag);sign.appendChild(h);sign.appendChild(row());
+  }
+  var f=document.getElementById("final");
+  if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
+    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+  function shower(){
+    try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+    var cols=["#a6f04a","#ff8a3d","#ffe14d","#22e07a","#ffb27a","#d6ffa0"],b=document.createElement("div");b.className="shower";
+    for(var i=0;i<20;i++){var s=document.createElement("span");s.style.left=Math.round(Math.random()*96)+"%";s.style.background=cols[i%cols.length];s.style.color=cols[i%cols.length];
+      s.style.animationDuration=(1.6+Math.random()*0.6)+"s";s.style.animationDelay=(Math.random()*0.3)+"s";b.appendChild(s)}
+    document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
+  }
+}catch(e){}})();
+</script>
+</body>
+</html>
