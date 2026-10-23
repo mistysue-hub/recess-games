@@ -243,7 +243,7 @@ function pick(i){
       el("fb").innerHTML="<b>The Hive Mind blocks it.</b> The answer: "+x.ch[x.a]+". "+x.short;endRound();
     } else {
       el("c"+i).disabled=true;
-      var out=loseLife();
+      var out=loseLife();if(out)log.push("R"+(r+1)+":miss (last life)");
       el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
       if(!out)locked=false;
     }
@@ -278,7 +278,7 @@ function finish(lost){
   var foil=(!lost&&hits===8)?"&foil=1":"";
   el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Hive Mind still had "+hp+" HP. Hit REMATCH to try again with 3 fresh lives.</p>":"")+
    "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
-   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>LONG GAMER</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn3-deck.html?card=8"+foil+"\">See your deck</a></div>")+"<div class=\"tape\"><b>YOU FINISHED GAME NIGHT!</b> See the real college course this whole series was built from, plus games and books to go deeper. <a href=\"gn3-read.html?m=9\">Go deeper</a></div>";
+   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>LONG GAMER</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn3-deck.html?card=8"+foil+"\">See your deck</a></div>")+(lost?"<div class=\"tape\">Hit <b>REMATCH</b> to take on the Hive Mind again with 3 fresh lives. Beat it to unlock your last Strategy Card.</div>":"<div class=\"tape\"><b>YOU FINISHED GAME NIGHT!</b> See the real college course this whole series was built from, plus games and books to go deeper. <a href=\"gn3-read.html?m=9\">Go deeper</a></div>");
   show("rematch",lost);
   el("out").value="GN3-M08 | attempt "+attempt+" | "+(lost?"HIVE MIND WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Hive Mind HP left "+hp+" | rank "+rank;
   show("final",true);

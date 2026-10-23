@@ -170,10 +170,11 @@ function setup(){
 }
 function play(me){
   var pk=keepProb(),others=[],keepers=(me==="KEEP")?1:0,i,oKeep=0;
-  for(i=0;i<5;i++){
-    var c=rnd(100)<pk?"KEEP":"WITHDRAW";
-    others.push(c);if(c==="KEEP"){oKeep++;keepers++}
-  }
+  /* fixed-ish count so the story is reliable: average stays 5*pk% (85%->4 or 5, 35%->1 or 2) */
+  var exp=5*pk,nK=Math.floor(exp/100)+(rnd(100)<(exp%100)?1:0);
+  for(i=0;i<5;i++)others.push(i<nK?"KEEP":"WITHDRAW");
+  for(i=4;i>0;i--){var j=rnd(i+1),t=others[i];others[i]=others[j];others[j]=t}
+  oKeep=nK;keepers+=nK;
   var open=keepers>=4;
   var got=(me==="WITHDRAW")?10:(open?15:0);
   var best=(oKeep+1>=4)?"KEEP":"WITHDRAW";
@@ -214,7 +215,7 @@ function finish(){
   var rank=hits===3?"STEADY HAND":(hits===2?"QUICK READER":"JUMPY");
   el("verdict").innerHTML=
     "<table>"+rows+"</table>"+
-    "<p>Total coins: <b>"+cs+"</b>. Best reply on <b>"+hits+"</b> of 3 days. The bank failed on <b>"+fails+"</b> day(s).</p>"+
+    "<p>Total coins: <b>"+cs+"</b>. Best reply on <b>"+hits+"</b> of 3 days. The bank failed on <b>"+fails+"</b> "+(fails===1?"day":"days")+".</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
     "<h2>REPLAY THE TAPE</h2>"+
     "<div class=\"tape\">If all six had KEPT, everyone would get <b>15</b>.</div>"+

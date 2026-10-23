@@ -169,7 +169,7 @@ function ret(fr){var s=maxSend(),got=3*s,give=Math.round(got*fr),keep=got-give;
  maxSends.push(s);keepLog.push(s===0?"nothing to split":(fr===0?"kept all":fr<0.4?"returned a third":fr<0.6?"returned half":"returned two-thirds"));
  if(s>0)lastRet=fr;partB+=keep;tot+=keep;el("tot").textContent=tot;
  el("headline").textContent=s===0?"Max didn't trust you this time.":"You kept "+keep+" and sent "+give+" back.";
- el("detail").innerHTML=r===7?"That was the last round.":(s===0?"Max remembers. ":"")+"<span class=\"note\">Max decides next round's send by how you treated him.</span>";
+ el("detail").innerHTML=r===7?"That was the last round.":(s===0?"Max remembers. Once burned, he's done sending.":"<span class=\"note\">Max decides next round's send by how you treated him.</span>");
  el("next").textContent=r===7?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=8){finish();return}setup()}
 function finish(){show("round",false);show("pick",false);
@@ -177,11 +177,11 @@ function finish(){show("round",false);show("pick",false);
  for(var i=0;i<4;i++)rows+="<tr><td>"+(i+1)+"</td><td>Sent "+sent[i]+", got back "+back[i]+"</td></tr>";
  for(var j=0;j<4;j++)rows+="<tr><td>"+(j+5)+"</td><td>Max sent "+maxSends[j]+": you "+keepLog[j]+"</td></tr>";
  el("log").innerHTML=rows;
- var rank=tot>=110?"TRUST TYCOON":(tot>=85?"SOLID PARTNER":"LONE SAVER");
+ var rank=tot>=109?"TRUST TYCOON":(tot>=85?"SOLID PARTNER":"LONE SAVER");
  el("verdict").innerHTML="<p>Part A: <b>"+partA+"</b> coins. Part B: <b>"+partB+"</b> coins. Total: <b>"+tot+"</b> (best possible 124).</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Send 10 every round: Robin returns a third in round 1 (break even), then half: <b>55</b> coins in Part A.</div>"+
- "<div class=\"tape\">Return half to Max every round: <b>54</b> coins in Part B. Keep it all in round 5: Max stops sending, and you get <b>18</b>.</div>"+
- "<p class=\"note\">Notice the last round: with no future, keeping it all is tempting. Trust needs a tomorrow.</p>"+
+ "<div class=\"tape\">Return half to Max every round: <b>54</b> coins in Part B. Keep it all in round 5: Max stops sending, and you get <b>18</b>. That 55 + 54 = <b>109</b> is the best an honest player can do, and it earns the top rank.</div>"+
+ "<p class=\"note\">The sneaky 124: return half until the very last round, then keep it all (69 in Part B). Max can't punish you because there's no round left. With no tomorrow, keeping it all is tempting. Trust needs a tomorrow.</p>"+
  "<div class=\"fact\">In 1995 the economists Joyce Berg, John Dickhaut and Kevin McCabe ran this \"trust game\" with real people and real money. Most senders trusted a stranger with some of their money, even though nothing forced the stranger to pay it back.</div>";
  el("out").value="GN3-M02 | sent to Robin: "+sent.join(",")+" | Robin returned: "+back.join(",")+" | Part A "+partA+" | Max sent: "+maxSends.join(",")+" | I "+keepLog.join(", ")+" | Part B "+partB+" | total "+tot+" | rank "+rank;
  if(rank==="TRUST TYCOON"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}

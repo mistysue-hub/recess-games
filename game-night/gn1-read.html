@@ -157,7 +157,7 @@ var L={
  {h:"WHERE THE NAME COMES FROM",b:"Two researchers at the RAND Corporation, Merrill Flood and Melvin Dresher, invented this game in 1950. The mathematician Albert Tucker told it as a story: two suspects are questioned in separate rooms. Each is offered a deal to blame the other. If both stay quiet, both get a short sentence. If both blame each other, both get a long one."},
  {h:"THE DILEMMA",b:"If both players follow their dominant move, both GRAB and get <b>1 each</b>. If both had shared, they'd get <b>3 each</b>.<br><br>Each player's smart choice leads to a worse result for both. This is the <b>Prisoner's Dilemma</b>."},
  {h:"DILEMMAS ARE EVERYWHERE",b:"• Two companies both spend a fortune on ads, mostly canceling each other out.<br>• Fishing boats each catch as much as they can, and the fish run out for everyone.<br>• Two countries both build more weapons, and neither ends up safer.<br><br>Each side's smart move makes everyone worse off."},
- {h:"WHY DID PARTNER 5 GRAB?",r:[["TAP TO FIND OUT","Partner 5 remembered how often you grabbed. When a game is played again and again, trust becomes worth something, and breaking promises costs you later."]]},
+ {h:"WHAT ABOUT PARTNER 5?",r:[["TAP TO FIND OUT","Partner 5 checked your record. If you grabbed in 3 or more of your first 4 games, Partner 5 grabbed. Otherwise, Partner 5 shared. When a game is played again and again, trust becomes worth something, and breaking promises costs you later."]]},
  {h:"HOW TO ESCAPE: TIT FOR TAT",b:"Around 1980 the political scientist Robert Axelrod held a contest. Experts sent in computer programs to play the Prisoner's Dilemma against each other, again and again.<br><br>The winner, sent in by Anatol Rapoport, was the simplest one: <b>Tit for Tat</b>. Share on the first round, then copy whatever your partner did last time. Nice, but not a pushover."},
  {h:"LAST CHECK",q:"Which one is a Prisoner's Dilemma?",o:["Two teammates who both slack on a group project, each hoping the other does the work","Flipping a coin","A race where the fastest runner wins"],a:0,w:"Each slacker gains by slacking, but if both slack, the project (and both grades) suffer."}]},
 3:{t:"NASH EQUILIBRIUM",s:"Lesson 3 · about 11 minutes",S:[
@@ -186,7 +186,7 @@ var L={
 5:{t:"WHY RIVALS CROWD THE MIDDLE",s:"Lesson 5 · about 11 minutes",S:[
  {h:"COUNTING YOUR SHARE",b:"The beach has 10 spots with the same number of people at each. Everyone walks to the <b>nearer</b> truck."},
  {h:"EXAMPLE",r:[["FRAN AT 3, YOU AT 4","You get spots 4 to 10: 7 spots, or 70%. Fran gets spots 1 to 3: 30%."]]},
- {h:"QUICK CHECK",q:"Fran parks at 8. Where should you park?",o:["5","7","9"],a:1,w:"At 7 you get spots 1 to 7: 70%. At 5 you'd split the middle and get less."},
+ {h:"QUICK CHECK",q:"Fran parks at 8. Where should you park?",o:["5","7","9"],a:1,w:"At 7 you get spots 1 to 7: 70%. At 5 you'd get only spots 1 to 6: 60%."},
  {h:"YOUR BEST REPLY",b:"Park <b>right next to your rival, on the side with more beach</b>."},
  {h:"TRY IT",q:"Fran parks at 6. Best spot?",o:["5 (spots 1-5, 50%)","7 (spots 7-10, 40%)","1"],a:0,w:"Left of 6 has more beach: 5 gets spots 1 to 5, 50%."},
  {h:"WHO FIGURED THIS OUT?",b:"The economist Harold Hotelling explained this in a 1929 paper called <i>Stability in Competition</i>. His example was two shops along one street, but the same idea works for trucks on a beach."},
@@ -251,15 +251,16 @@ function draw(){
   else el("next").style.display="inline-block";
   window.scrollTo(0,0);
 }
-function rev(k,b){var r=LS.S[i].r[k];var d=el("rv"+k);d.innerHTML="<b>"+r[0]+":</b> "+r[1];d.style.display="block";b.disabled=true;
+function rev(k,b){if(Date.now()-lastNav<300)return;var r=LS.S[i].r[k];var d=el("rv"+k);d.innerHTML="<b>"+r[0]+":</b> "+r[1];d.style.display="block";b.disabled=true;
   var all=true;LS.S[i].r.forEach(function(x,j){if(el("rv"+j).style.display==="none")all=false});if(all)el("next").style.display="inline-block";}
-function pick(k,b){var s=LS.S[i];
+function pick(k,b){if(Date.now()-lastNav<300)return;var s=LS.S[i];
   if(k===s.a){if(!tried)first++;el("ft").textContent=first+"/"+checks;b.classList.add("on");
     el("fb").innerHTML="<span class=\"good\"><b>"+(tried?"Got it.":"Yes!")+"</b></span> "+s.w;
     Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.disabled=true});el("next").style.display="inline-block";}
   else{tried=true;b.disabled=true;el("fb").innerHTML="<span class=\"bad\"><b>Not quite.</b></span> Look back at the screen and try another answer.";}
 }
-function nextScreen(){if(i<LS.S.length-1){i++;draw()}else finish()}
+var lastNav=0;
+function nextScreen(){var t=Date.now();if(t-lastNav<300)return;lastNav=t;if(i<LS.S.length-1){i++;draw()}else finish()}
 function finish(){el("round").style.display="none";
   var rk=first===checks?"PERFECT RUN":(first>=checks-1?"SHARP READER":"LEVEL CLEARED");el("rank").textContent=rk;
   el("verdict").textContent="You got "+first+" of "+checks+" checks right on the first try.";

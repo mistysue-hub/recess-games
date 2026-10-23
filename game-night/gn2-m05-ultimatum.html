@@ -162,13 +162,13 @@ function offer(k){var p=PR[r],ok=k>=p.min,g=ok?10-k:0;coins+=g;propKept+=g;el("y
   end()}
 function respond(a){var q=RS[r-3],g=a?q.offer:0;coins+=g;el("yc").textContent=coins;respLog.push({n:q.n,offer:q.offer,a:a});
   el("headline").textContent=a?"YOU ACCEPT":"YOU REJECT";
-  el("detail").innerHTML=a?"You get <b>"+q.offer+"</b>. "+q.n+" gets "+(10-q.offer)+".":"Nobody gets anything. "+q.n+" just lost "+(10-q.offer)+" coins because of that offer.";end()}
+  el("detail").innerHTML=a?"You get <b>"+q.offer+"</b>. "+q.n+" gets "+(10-q.offer)+".":"Nobody gets anything. You gave up "+q.offer+" coin"+(q.offer===1?"":"s")+", and "+q.n+" lost "+(10-q.offer)+".";end()}
 function end(){el("next").textContent=r===5?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=6){finish();return}setup()}
 function finish(){show("round",false);var rank=propKept===21?"MASTER NEGOTIATOR":(propKept>=15?"DEAL MAKER":"DEAL BREAKER");var rej=respLog.filter(function(x){return !x.a}).length;
   var rows="<tr><th>Round</th><th>What happened</th><th>You got</th></tr>";
-  propLog.forEach(function(l,i){rows+="<tr><td>"+(i+1)+". you offer "+l.n.split(" ")[1]+"</td><td>"+l.k+" coins, "+(l.ok?"accepted":"rejected")+" (needed "+l.min+")</td><td>"+l.g+"</td></tr>"});
-  respLog.forEach(function(l,i){rows+="<tr><td>"+(i+4)+". "+l.n.split(" ")[1]+" offers you</td><td>"+l.offer+" coins, you "+(l.a?"accepted":"rejected")+"</td><td>"+(l.a?l.offer:0)+"</td></tr>"});
+  propLog.forEach(function(l,i){rows+="<tr><td>"+(i+1)+". you offer "+l.n.split(" ")[1]+"</td><td>"+l.k+" coin"+(l.k===1?"":"s")+", "+(l.ok?"accepted":"rejected")+" (needed "+l.min+")</td><td>"+l.g+"</td></tr>"});
+  respLog.forEach(function(l,i){rows+="<tr><td>"+(i+4)+". "+l.n.split(" ")[1]+" offers you</td><td>"+l.offer+" coin"+(l.offer===1?"":"s")+", you "+(l.a?"accepted":"rejected")+"</td><td>"+(l.a?l.offer:0)+"</td></tr>"});
   el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>Total coins: <b>"+coins+"</b>. As proposer you kept "+propKept+" of a possible 21 (offer each responder exactly their minimum).</p><table>"+rows+"</table>"+
    "<h2>LOGIC VS PEOPLE</h2><div class=\"tape\">Pure coin logic says: accept anything above 0 (1 coin beats 0), so a proposer should offer just 1. "+(rej?"You rejected "+rej+" offer"+(rej===1?"":"s")+". Logic calls that a mistake, but most real people do the same with offers that feel unfair.":"You accepted every offer, just like pure coin logic says.")+"</div>"+
    "<div class=\"fact\">Economists first tested this game in 1982 (Werner Güth, Rolf Schmittberger and Bernd Schwarze). Since then, studies around the world find proposers often offer 4 or 5 out of 10, and very low offers often get rejected.</div>";

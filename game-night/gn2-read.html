@@ -492,7 +492,7 @@ var L={
 "h": "LAST CHECK",
 "q": "A parent says: \"Clean your room or no phone for a YEAR!\" Why might a kid doubt it?",
 "o": [
-"A year without the phone would be hard on the parent too",
+"Enforcing it for a whole year would be a pain for the parent too",
 "Parents never mean it",
 "Rooms are never clean"
 ],
@@ -634,8 +634,8 @@ var L={
 "h": "CHECK",
 "q": "Jar 1 was really worth 50. Your guess was 58. If you bid 55 and won, what happened?",
 "o": [
-"I gained 5",
-"I won but lost 5",
+"You gained 5",
+"You won but lost 5",
 "Nothing"
 ],
 "a": 1,
@@ -717,7 +717,7 @@ var L={
 ],
 [
 "STUBBORN STAN",
-"He never quits until 250. The only winning move was not to start."
+"He keeps raising all the way to 250, way past the prize. The only winning move was not to start."
 ],
 [
 "SENSIBLE SAM",
@@ -800,7 +800,7 @@ var L={
 "o": [
 "2, 6, 10 ... 30",
 "1, 5, 9 ... 29",
-"3, 7, 11 ... 30"
+"3, 7, 11 ... 27"
 ],
 "a": 0,
 "w": "Back up by 4 from 30: 26, 22, 18, 14, 10, 6, 2."
@@ -871,15 +871,15 @@ function draw(){
   else el("next").style.display="inline-block";
   window.scrollTo(0,0);
 }
-function rev(k,b){var r=LS.S[i].r[k];var d=el("rv"+k);d.innerHTML="<b>"+r[0]+":</b> "+r[1];d.style.display="block";b.disabled=true;
+function rev(k,b){if(Date.now()-lastNav<350)return;var r=LS.S[i].r[k];var d=el("rv"+k);d.innerHTML="<b>"+r[0]+":</b> "+r[1];d.style.display="block";b.disabled=true;
   var all=true;LS.S[i].r.forEach(function(x,j){if(el("rv"+j).style.display==="none")all=false});if(all)el("next").style.display="inline-block";}
-function pick(k,b){var s=LS.S[i];
+function pick(k,b){if(Date.now()-lastNav<350)return;var s=LS.S[i];
   if(k===s.a){if(!tried)first++;el("ft").textContent=first+"/"+checks;b.classList.add("on");
     el("fb").innerHTML="<span class=\"good\"><b>"+(tried?"Got it.":"Yes!")+"</b></span> "+s.w;
     Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.disabled=true});el("next").style.display="inline-block";}
   else{tried=true;b.disabled=true;el("fb").innerHTML="<span class=\"bad\"><b>Not quite.</b></span> Look back at the screen and try another answer.";}
 }
-function nextScreen(){if(i<LS.S.length-1){i++;draw()}else finish()}
+var lastNav=0;function nextScreen(){var now=Date.now();if(now-lastNav<350)return;lastNav=now;if(i<LS.S.length-1){i++;draw()}else finish()}
 function finish(){el("round").style.display="none";
   var rk=first===checks?"PERFECT RUN":(first>=checks-1?"SHARP READER":"LEVEL CLEARED");el("rank").textContent=rk;
   el("verdict").textContent="You got "+first+" of "+checks+" checks right on the first try.";
