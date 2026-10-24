@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Counts as Knowing?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0d1b3d; --night2:#1d3a7a; --star:#f7d774; --gold:#9a7114;
+    --parch:#f6ecd6; --parch2:#eadbb8; --ink:#2b2117; --rule:#b89b67;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--night);font-family:Poppins,system-ui,sans-serif}
+  .reading{max-width:1100px;margin:0 auto;min-height:100vh;background:var(--night)}
+
+  /* ---- moving sky ---- */
+  .sky{position:relative;height:210px;background:radial-gradient(ellipse at 70% 30%,#2d57a8 0%,var(--night2) 35%,var(--night) 75%);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .head{position:absolute;left:20px;bottom:32px;right:20px;color:#fff}
+  .course{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--star)}
+  h1{font:700 clamp(28px,5vw,44px)/1.05 "Cormorant Garamond",Georgia,serif;margin:6px 0 0;text-shadow:0 2px 12px rgba(0,0,0,.5);color:#fff}
+  .toggle{position:absolute;top:14px;right:14px;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;z-index:2}
+  .toggle button{border:0;background:transparent;color:#fff;font:600 12px Poppins;padding:7px 13px;border-radius:999px;cursor:pointer}
+  .toggle button.on{background:var(--star);color:var(--night)}
+  .flow{animation:flow 14s linear infinite}
+  .flow.slow{animation-duration:22s}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+  .tw{animation:tw 3.2s ease-in-out infinite}
+  .tw:nth-child(2n){animation-delay:1.1s} .tw:nth-child(3n){animation-delay:2s}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}
+  .shoot{animation:shoot 9s ease-in 3s infinite;opacity:0}
+  @keyframes flow{to{stroke-dashoffset:-280}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%{opacity:0;transform:translate(-220px,90px)}100%{opacity:0;transform:translate(-220px,90px)}}
+
+  /* ---- flipping book ---- */
+  .bookwrap{position:relative;margin:-18px 16px 0;perspective:2200px}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;height:600px;
+        background:linear-gradient(90deg,var(--parch2) 0%,var(--parch) 6%,var(--parch) 47%,#d9c69d 50%,var(--parch) 53%,var(--parch) 94%,var(--parch2) 100%);
+        border-radius:6px 6px 10px 10px;box-shadow:0 14px 24px rgba(0,0,0,.35), inset 0 -6px 0 #d6c193}
+  .slot{position:relative;overflow:hidden}
+  .curl{position:absolute;right:0;bottom:0;width:40px;height:40px;z-index:4;border:0;padding:0;cursor:pointer;
+        background:linear-gradient(225deg,transparent 50%,#e2cfa3 50%,#fbf4e3 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.14);border-radius:0 0 6px 0;
+        animation:nudge 2.4s ease-in-out 1.2s 3}
+  @keyframes nudge{0%,100%{width:40px;height:40px}50%{width:58px;height:58px}}
+  .leaf{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.3,1);z-index:5}
+  .leaf.fwd{left:50%;transform-origin:left center}
+  .leaf.back{left:0;transform-origin:right center}
+  .single .leaf{width:100%;left:0;transform-origin:left center}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--parch)}
+  .face.b{transform:rotateY(180deg)}
+  .leaf.fwd .face.f,.leaf.back .face.b{background:linear-gradient(90deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd .face.b,.leaf.back .face.f{background:linear-gradient(270deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd.go{transform:rotateY(-180deg)} .leaf.back.go{transform:rotateY(180deg)}
+  .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 60%);opacity:0;transition:opacity .45s}
+  .leaf.go .shade{opacity:1}
+  .page{height:100%;overflow-y:auto;padding:30px 34px 44px;font:500 19px/1.6 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+  .page h2{font:700 27px/1.15 "Cormorant Garamond",Georgia,serif;margin:0 0 10px;color:var(--night)}
+  .page p{margin:0 0 14px}
+  .page ol{margin:0 0 14px;padding-left:24px}
+  .drop::first-letter{float:left;font:700 58px/0.85 "Cormorant Garamond",serif;color:var(--night2);padding:6px 8px 0 0}
+  .key{border:1.5px solid #c99a2e;background:rgba(247,215,116,.22);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:18px}
+  .key .k{display:block;font:600 11px Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .key p{margin:0 0 6px} .key p:last-child{margin:0}
+  .quote{border-left:3px solid var(--rule);padding-left:14px;font-style:italic;color:#4a3b29;font-size:21px}
+  .src{font:400 12px/1.55 Poppins;color:#6f5f47}
+  .more::after{content:"scroll for more \2193";position:absolute;left:0;right:0;bottom:0;height:64px;padding-top:34px;text-align:center;font:600 11px Poppins;letter-spacing:.08em;color:#8a6a2a;pointer-events:none;
+         background:linear-gradient(rgba(246,236,214,0),var(--parch) 55%)}
+  .more .pnum{display:none}
+  .pnum{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:500 14px "Cormorant Garamond",serif;color:#8a7756;pointer-events:none}
+  .extended{display:none}
+  .show-ext .extended{display:block}
+  .tag-ext{font:600 10px Poppins;letter-spacing:.12em;text-transform:uppercase;color:var(--night2);background:#dfe8f7;border-radius:4px;padding:2px 6px;margin-right:6px;vertical-align:2px}
+  .fig{display:flex;justify-content:center;margin:4px 0 12px}
+  .fig svg{width:100%;max-width:250px}
+  .ring{transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring.r2{animation-delay:1.3s} .ring.r3{animation-delay:2.6s}
+  .pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 0 24px;color:#dce8fb;font:600 13px Poppins}
+  .pager button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--star);background:transparent;color:var(--star);font:600 22px/1 Poppins;cursor:pointer}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .hint{text-align:center;color:#9fb6dc;font:400 12px Poppins;margin-top:-14px;padding-bottom:20px}
+  .single .book{grid-template-columns:1fr;background:linear-gradient(90deg,#e8d8b4,var(--parch) 6%)}
+  .single .slot.l{display:none}
+  @media (max-width:720px){
+    .bookwrap{margin:-16px 10px 0}
+    .book{height:max(440px,calc(100vh - 290px))}
+    .page{padding:22px 20px 44px;font-size:18px}
+    .head{bottom:26px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flow,.spin,.tw,.pulse,.ring,.curl,.shoot{animation:none}
+    .leaf{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="reading" id="reading">
+  <header class="sky">
+    <svg viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f7d774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#7fa8e8" stroke-opacity=".12" fill="none">
+        <path d="M0 55 Q550 15 1100 55"/><path d="M0 110 Q550 70 1100 110"/><path d="M0 165 Q550 125 1100 165"/>
+        <path d="M180 0 Q160 105 180 210"/><path d="M420 0 Q400 105 420 210"/><path d="M660 0 Q640 105 660 210"/><path d="M900 0 Q880 105 900 210"/>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path class="flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".55" stroke-width="10" stroke-dasharray="18 10"/>
+        <path class="flow slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".35" stroke-width="6" stroke-dasharray="12 9"/>
+        <path class="spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".7" stroke-width="5" stroke-dasharray="10 7"/>
+        <path class="spin" d="M300 65 m-28 0 a28 28 0 1 1 56 0 a18 18 0 1 1 -36 0 a8 8 0 1 1 16 0" stroke="#dce8fb" stroke-opacity=".45" stroke-width="4" stroke-dasharray="8 6"/>
+      </g>
+      <g stroke="#f7d774" stroke-opacity=".5" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+      <g fill="#f7d774">
+        <circle class="tw" cx="760" cy="38" r="2.5"/><circle class="tw" cx="800" cy="66" r="2"/><circle class="tw" cx="850" cy="52" r="3"/><circle class="tw" cx="880" cy="90" r="2"/><circle class="tw" cx="930" cy="80" r="2.5"/>
+        <circle class="tw" cx="140" cy="38" r="2"/><circle class="tw" cx="430" cy="28" r="1.6"/><circle class="tw" cx="660" cy="160" r="1.8"/><circle class="tw" cx="1010" cy="160" r="2"/><circle class="tw" cx="240" cy="180" r="1.5"/>
+      </g>
+      <line class="shoot" x1="700" y1="20" x2="730" y2="8" stroke="#fff6c8" stroke-width="2" stroke-linecap="round"/>
+      <circle class="pulse" cx="560" cy="90" r="36" fill="url(#glow)"/>
+      <circle class="pulse" cx="300" cy="65" r="22" fill="url(#glow)"/>
+      <circle cx="990" cy="66" r="44" fill="url(#glow)"/>
+      <path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+    </svg>
+    <div class="toggle" role="group" aria-label="Reading length">
+      <button id="bCore" class="on">Core</button>
+      <button id="bExt">Extended</button>
+    </div>
+    <div class="head">
+      <div class="course">How Do You Know? · Lock 1</div>
+      <h1>What Counts as Knowing?</h1>
+    </div>
+  </header>
+
+  <div class="bookwrap" id="wrap">
+    <div class="book" id="book">
+      <div class="slot l" id="slotL"></div>
+      <div class="slot r" id="slotR"></div>
+    </div>
+  </div>
+  <nav class="pager">
+    <button id="prev" aria-label="Previous page">&#8249;</button>
+    <span id="where" aria-live="polite"></span>
+    <button id="next" aria-label="Next page">&#8250;</button>
+  </nav>
+  <div class="hint">Tap the arrows, the page corner, or swipe to turn the page.</div>
+</main>
+
+<!-- Built from resources/M01Know.md by tools/build_readings.py. Edit the .md file, then rebuild. -->
+<div id="pages" hidden>
+<section>
+  <h2>The stopped clock</h2>
+  <p class="drop">You glance at the clock in the hallway. It says three o'clock, and it is three o'clock. You believe it's three, your belief is true, and you have a decent reason: that clock has been right every day for years. But yesterday its battery died at exactly three, and it hasn't moved since. Do you <em>know</em> what time it is, or did you just get lucky?</p>
+  <p>Most people say you got lucky. Hold on to that feeling. This whole lock is about where it comes from, and why it has been so hard to pin down.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Bertrand Russell used a stopped clock in <em>Human Knowledge: Its Scope and Limits</em> (1948) to show that a true belief, held for a reasonable-looking reason, can still fall short of knowledge.</p>
+</section>
+<section>
+  <h2>Two kinds of knowing</h2>
+  <p>The word <em>know</em> covers more than one thing.</p>
+  <div class="key"><span class="k">Key terms</span><p><b>Knowing-how</b> is a skill you show by doing: riding a bike, parallel parking, tying a bowline.</p><p><b>Knowing-that</b> is a claim you can state, one that is either true or false: water boils at 100 °C at sea level.</p></div>
+  <p>You can know how to ride a bike without being able to explain the physics, and you can know every fact about bikes and still fall off. There is also knowing a person or a place ("I know Chicago"), sometimes called knowledge by acquaintance. This course is about knowing-that, because that is where the arguments are fiercest.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Gilbert Ryle drew the how/that line in <em>The Concept of Mind</em> (1949) and argued that knowing-how can't be reduced to a pile of facts. In 2001 Jason Stanley and Timothy Williamson argued the opposite: that knowing how to do something is knowing a fact about a way to do it. The debate is still open.</p>
+</section>
+<section>
+  <h2>Plato's first try</h2>
+  <p>About 2,400 years ago Plato wrote a dialogue called <em>Theaetetus</em>. In it, Socrates and a gifted young mathematician named Theaetetus test one definition of knowledge after another. Knowledge is perception? Knocked down. Knowledge is true belief? Knocked down too: a clever lawyer can talk a jury into a true belief about a crime only an eyewitness could know about, and the jury still doesn't know what happened. Near the end they try this:</p>
+  <p class="quote">Knowledge is true belief accompanied by an account.</p>
+  <p>An "account" (in Greek, <em>logos</em>) means something like a reason or an explanation. Even this one doesn't survive. The dialogue ends with nobody able to say what knowledge is. Socrates says the effort still helped: Theaetetus will no longer think he knows what he doesn't.</p>
+</section>
+<section>
+  <h2>The three-part recipe</h2>
+  <p>Twentieth-century philosophers boiled Plato's idea down to a recipe. You know a claim when:</p>
+  <ol><li>you <b>believe</b> it,</li><li>it is <b>true</b>, and</li><li>you are <b>justified</b> in believing it, meaning you have good reasons.</li></ol>
+  <div class="fig"><svg viewBox="0 0 300 205" role="img" aria-label="three overlapping circles labelled Believe, True and Justified, with &quot;Knowledge?&quot; where all three meet">
+  <circle class="ring" cx="112" cy="80" r="64" fill="#1d3a7a" fill-opacity=".14" stroke="#1d3a7a" stroke-width="2.5"/>
+  <circle class="ring r2" cx="188" cy="80" r="64" fill="#b98a22" fill-opacity=".16" stroke="#9a7114" stroke-width="2.5"/>
+  <circle class="ring r3" cx="150" cy="138" r="64" fill="#7b3f61" fill-opacity=".14" stroke="#7b3f61" stroke-width="2.5"/>
+  <text x="70" y="56" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="20" fill="#1d3a7a">Believe</text>
+  <text x="196" y="56" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="20" fill="#7a5a10">True</text>
+  <text x="150" y="190" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="20" fill="#7b3f61">Justified</text>
+  <text x="150" y="108" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="16" fill="#2b2117">Knowledge?</text>
+</svg></div>
+  <p>This is called <b>justified true belief</b>, or JTB. Each part does a job. Belief: you can't know something you don't even accept. Truth: you can't know something false; you can only think you know it. Justification: a lucky guess isn't knowledge, even when it's right. By the middle of the 1900s, many philosophers treated JTB as the standard definition.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Historians of philosophy argue about how standard it really was before then. Some say the "traditional" JTB view was partly a creation of the people who later attacked it.</p>
+</section>
+<section>
+  <h2>Three pages that broke it</h2>
+  <p>In 1963 a philosopher named Edmund Gettier published a paper three pages long. It told two short stories. Here is the first, retold.</p>
+  <p>Smith and Jones have both applied for the same job. The company president has told Smith that Jones will get it, and ten minutes ago Smith counted the coins in Jones's pocket: ten. So Smith reasons his way to a new belief: <em>The person who gets the job has ten coins in his pocket.</em></p>
+  <p>Then the surprise. Smith gets the job. And without realizing it, Smith also had ten coins in his own pocket.</p>
+</section>
+<section>
+  <h2>Why that's a problem</h2>
+  <p>Run the recipe. Smith <b>believes</b> the sentence. It is <b>true</b>: the man who got the job did have ten coins. And he was <b>justified</b>: the president's word and his own count are good reasons.</p>
+  <p>All three parts are there, and it still isn't knowledge. His reasons were all about Jones. The sentence came out true because of facts about Smith. The reasons and the truth never touched. It was true by luck.</p>
+  <p>Stories like this are now called <b>Gettier cases</b>. They share one shape: a belief with good reasons, a truth, and a lucky gap between the two. The stopped clock has the same shape.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Gettier's second story works the same way. Smith has good evidence that Jones owns a Ford, so he believes "Either Jones owns a Ford or Brown is in Barcelona," with no idea where Brown is. Jones doesn't own a Ford. By pure chance, Brown is in Barcelona.</p>
+</section>
+<section>
+  <h2>Can the recipe be fixed?</h2>
+  <p>Philosophers spent decades trying to add a fourth ingredient. One early idea: no false steps. Smith reasoned through a false belief (Jones will get the job), so that rule would rule him out.</p>
+  <p>The trouble is that some Gettier cases have no false step. Picture Henry driving through a county where the locals have put up dozens of fake barn fronts, flat facades that look real from the road. Henry happens to look at the one real barn and thinks, <em>That's a barn.</em> True, justified, no false step, and still lucky: almost any other barn he looked at would have fooled him.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Alvin Goldman published the fake barn case in 1976, crediting the idea to Carl Ginet. Other fixes ask whether you would stop believing the claim if it were false (<em>sensitivity</em>, from Robert Nozick in 1981), or whether your belief could easily have been wrong (<em>safety</em>). In 1994 Linda Zagzebski argued that any recipe allowing even a small gap between reasons and truth can be beaten by a new Gettier case. In 2000 Timothy Williamson suggested giving up the recipe altogether and treating knowledge as basic.</p>
+  <p>Nobody has a fix that everyone accepts. That is part of what makes this lock hard.</p>
+</section>
+<section>
+  <h2>Carry this with you</h2>
+  <p>Knowing seems to need more than being right, and more than having reasons. It needs the reasons and the truth to be <em>connected</em>, not lucky.</p>
+  <p>Every lock ahead comes back to that question in a new form. Where do reasons come from? How far down do they go? Can you trust someone else's? And what makes something true in the first place?</p>
+  <p>Next up is the game, the Gettier Factory. You'll run cases through the recipe and decide which ones are real knowledge.</p>
+  <p class="src">Sources: Plato, <em>Theaetetus</em> 201a–210d (public domain); B. Russell, <em>Human Knowledge: Its Scope and Limits</em> (1948); G. Ryle, <em>The Concept of Mind</em> (1949); E. Gettier, "Is Justified True Belief Knowledge?", <em>Analysis</em> 23 (1963); A. Goldman, "Discrimination and Perceptual Knowledge," <em>Journal of Philosophy</em> 73 (1976); R. Nozick, <em>Philosophical Explanations</em> (1981); L. Zagzebski, "The Inescapability of Gettier Problems," <em>Philosophical Quarterly</em> 44 (1994); T. Williamson, <em>Knowledge and Its Limits</em> (2000); J. Stanley and T. Williamson, "Knowing How," <em>Journal of Philosophy</em> 98 (2001). Original text written for this course by its author, with help from an AI assistant; nothing copied.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
+  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  const L=document.getElementById('slotL'), R=document.getElementById('slotR');
+  const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=matchMedia('(max-width: 720px)');
+  let single=narrow.matches, pos=0, busy=false;
+
+  function pageHTML(i){
+    if(i<0||i>=N) return '<div class="page"></div>';
+    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+  }
+  function watchMore(slot){
+    const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
+    const check=()=>slot.classList.toggle('more', pg.scrollHeight-pg.scrollTop-pg.clientHeight>8);
+    pg.addEventListener('scroll',check,{passive:true}); check();
+  }
+  function step(){ return single?1:2; }
+  function render(){
+    wrap.classList.toggle('single', single);
+    if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
+    else { L.innerHTML=pageHTML(pos); R.innerHTML=pageHTML(pos+1); }
+    if(pos+step()<N){
+      R.insertAdjacentHTML('beforeend','<button class="curl" aria-label="Turn the page"></button>');
+      R.querySelector('.curl').onclick=()=>turn(1);
+    }
+    [L,R].forEach(watchMore);
+    prev.disabled=pos===0; next.disabled=pos+step()>=N;
+    where.textContent=single?('Page '+(pos+1)+' of '+N):('Pages '+(pos+1)+(pos+2<=N?'–'+(pos+2):'')+' of '+N);
+  }
+  function turn(dir){
+    const to=pos+dir*step();
+    if(busy||to<0||to>=N) return;
+    if(reduce){ pos=to; render(); return; }
+    busy=true;
+    const leaf=document.createElement('div');
+    let front, back, startFlipped=false;
+    if(single){
+      leaf.className='leaf fwd';
+      if(dir>0){ front=pos; R.innerHTML=pageHTML(to); }
+      else { front=to; startFlipped=true; leaf.classList.add('go'); }
+      back=-1;
+    } else if(dir>0){ leaf.className='leaf fwd'; front=pos+1; back=pos+2; R.innerHTML=pageHTML(pos+3); }
+    else { leaf.className='leaf back'; front=pos; back=pos-1; L.innerHTML=pageHTML(pos-2); }
+    leaf.innerHTML='<div class="face f">'+pageHTML(front)+'<div class="shade"></div></div><div class="face b">'+pageHTML(back)+'<div class="shade"></div></div>';
+    book.appendChild(leaf);
+    leaf.getBoundingClientRect();
+    requestAnimationFrame(()=>{ if(startFlipped) leaf.classList.remove('go'); else leaf.classList.add('go'); });
+    setTimeout(()=>{ pos=to; leaf.remove(); render(); busy=false; }, 950);
+  }
+  prev.onclick=()=>turn(-1); next.onclick=()=>turn(1);
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') turn(1); if(e.key==='ArrowLeft') turn(-1); });
+  let x0=null, y0=null;
+  book.addEventListener('touchstart',e=>{x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  book.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
+    x0=null;
+  });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+
+  const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
+  function setLevel(ext){
+    document.getElementById('reading').classList.toggle('show-ext',ext);
+    [L,R].forEach(watchMore);
+    bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
+    try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
+  }
+  bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
+  setLevel(lvl==='extended');
+  render();
+})();
+</script>
+</body>
+</html>

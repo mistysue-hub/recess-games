@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Gettier Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fff8ec; --dot:#f0e2c8; --ink:#2d1e3e; --teal:#1b998b; --teal-d:#137469; --teal-l:#e2f4f1;
+    --tang:#ff8c42; --tang-d:#c85a14; --tang-l:#ffeadb; --plum:#5b3e96; --plum-l:#efeaf8; --sand:#f3d9a4; --mute:#6b5a7a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg) radial-gradient(var(--dot) 1.5px, transparent 1.6px) 0 0/18px 18px;
+            font-family:Fredoka,"Trebuchet MS",system-ui,sans-serif;color:var(--ink)}
+  button{font-family:inherit;color:inherit}
+  .app{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+
+  /* header */
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .badge{width:48px;height:48px;flex:none}
+  .t1{font:700 clamp(22px,4.5vw,30px)/1.05 Fredoka,sans-serif;margin:0}
+  .t2{font:500 14px Fredoka,sans-serif;color:var(--plum);margin-top:3px}
+  .lights{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:150px}
+  .lights i{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--ink);background:#fff}
+  .lights i.ok{background:var(--teal)} .lights i.no{background:var(--tang)} .lights i.now{background:var(--sand)}
+
+  .panel{background:#fff;border:3px solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink);padding:20px}
+  .panel + .panel{margin-top:18px}
+  h2{font:700 22px Fredoka,sans-serif;margin:0 0 8px}
+  p{font:400 17px/1.5 Fredoka,sans-serif;margin:0 0 12px}
+  .small{font-size:14px;color:var(--mute)}
+  .big{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 24px;border:3px solid var(--ink);border-radius:14px;
+       background:var(--tang);color:var(--ink);font:700 18px Fredoka,sans-serif;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .08s, box-shadow .08s}
+  .big:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+  .big:disabled{opacity:.4;cursor:default;transform:none;box-shadow:4px 4px 0 var(--ink)}
+  .big.alt{background:#fff}
+  .center{text-align:center}
+  .hidden{display:none !important}
+
+  /* conveyor */
+  .line{position:relative;padding:8px 0 64px;overflow:hidden}
+  .belt{position:absolute;left:0;right:0;bottom:24px;height:18px;border:3px solid var(--ink);border-radius:999px;
+        background:repeating-linear-gradient(90deg,var(--sand) 0 18px,#e8c98a 18px 36px);animation:belt 1.2s linear infinite paused}
+  .belt.run{animation-play-state:running}
+  @keyframes belt{to{background-position:36px 0}}
+  .case{position:relative;background:var(--bg);border:3px solid var(--ink);border-radius:16px;padding:16px 18px 14px;
+        box-shadow:4px 4px 0 var(--sand);transform:rotate(-1deg)}
+  .case.in{animation:slidein .7s cubic-bezier(.2,.8,.3,1)}
+  @keyframes slidein{from{transform:translateX(-110%) rotate(-6deg)}to{transform:translateX(0) rotate(-1deg)}}
+  .case .who{font:600 12px Fredoka,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--plum);margin-bottom:6px}
+  .case p{margin:0;font-size:18px}
+  .case .belief{display:block;margin-top:10px;padding:8px 12px;background:var(--plum-l);border-radius:10px;font-weight:500}
+  .stampmark{position:absolute;right:18px;bottom:8px;z-index:2;padding:4px 12px;border:4px solid currentColor;border-radius:8px;font:700 18px Fredoka,sans-serif;letter-spacing:.06em;
+        transform:rotate(-12deg) scale(2.2);opacity:0;pointer-events:none;background:rgba(255,255,255,.75)}
+  .stampmark.on{animation:thunk .35s ease-out forwards}
+  .stampmark.k{color:var(--teal-d)} .stampmark.n{color:var(--tang-d)}
+  @keyframes thunk{to{transform:rotate(-12deg) scale(1);opacity:1}}
+
+  /* gauges */
+  .gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .gauge{border:3px solid var(--ink);border-radius:16px;background:#fff;padding:10px 8px 12px;text-align:center}
+  .gauge svg{width:100%;max-width:120px;height:auto;display:block;margin:0 auto}
+  .needle{transform-origin:60px 58px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+  .gname{font:700 17px Fredoka,sans-serif;margin:2px 0 8px}
+  .yn{display:flex;gap:6px;justify-content:center}
+  .yn button{flex:1;min-height:44px;border:2.5px solid var(--ink);border-radius:10px;background:#fff;font:600 16px Fredoka,sans-serif;cursor:pointer}
+  .yn button.pick.y{background:var(--teal);color:#fff} .yn button.pick.n{background:var(--tang)}
+  .yn button:disabled{cursor:default}
+  .verdict{font:500 13px/1.3 Fredoka,sans-serif;margin-top:8px;min-height:17px}
+  .verdict.ok{color:var(--teal-d)} .verdict.no{color:var(--tang-d)}
+
+  /* stamps */
+  .stamps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .stamp{min-height:62px;border:3px solid var(--ink);border-radius:14px;font:700 18px Fredoka,sans-serif;cursor:pointer;background:#fff;
+         display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:4px 4px 0 var(--ink)}
+  .stamp svg{width:28px;height:28px;flex:none}
+  .stamp.k.pick{background:var(--teal);color:#fff} .stamp.n.pick{background:var(--tang)}
+  .stamp:disabled{cursor:default}
+  .label{font:600 13px Fredoka,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:18px 0 0}
+  .go{margin-top:16px;text-align:center}
+
+  .fb{margin-top:16px;padding:14px 16px;border:3px solid var(--ink);border-radius:14px;background:var(--teal-l)}
+  .fb.bad{background:var(--tang-l)}
+  .fb b.head{display:block;font:700 18px Fredoka,sans-serif;margin-bottom:4px}
+  .fb p{margin:0 0 6px;font-size:16px}
+  .luck{display:grid;gap:10px;margin-top:10px}
+  .luck button{text-align:left;min-height:48px;padding:10px 14px;border:2.5px solid var(--ink);border-radius:12px;background:#fff;font:500 16px/1.35 Fredoka,sans-serif;cursor:pointer}
+  .luck button.right{background:var(--teal);color:#fff} .luck button.wrong{background:var(--tang)}
+  .luck button:disabled{cursor:default}
+
+  /* warm-up jars */
+  .claim{background:var(--bg);border:3px solid var(--ink);border-radius:16px;padding:16px 18px;font:500 18px/1.4 Fredoka,sans-serif;text-align:center;
+         transform:rotate(-1.5deg);box-shadow:4px 4px 0 var(--sand);transition:transform .35s, opacity .35s;margin:6px auto 0;max-width:560px}
+  .claim.dropL{transform:translate(-30%,80px) rotate(-14deg) scale(.6);opacity:0}
+  .claim.dropR{transform:translate(30%,80px) rotate(14deg) scale(.6);opacity:0}
+  .jars{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:520px;margin:12px auto 0}
+  .jar{border:0;background:none;padding:0;cursor:pointer}
+  .jar svg{width:100%;height:auto;display:block}
+  .jar .tag{display:block;margin:-6px auto 0;width:max-content;font:700 16px Fredoka,sans-serif;padding:6px 16px;border:3px solid var(--ink);border-radius:10px;background:#fff}
+  .jar .hint{display:block;font:500 13px Fredoka,sans-serif;color:var(--mute);margin-top:6px}
+
+  /* results */
+  table{width:100%;border-collapse:collapse;font:400 15px Fredoka,sans-serif;margin:6px 0 12px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:2px dashed var(--sand);vertical-align:top}
+  th{font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+  .yes{color:var(--teal-d);font-weight:600} .nope{color:var(--tang-d);font-weight:600}
+  .code{display:inline-block;margin:6px 0 4px;padding:10px 18px;border:3px dashed var(--ink);border-radius:12px;background:var(--sand);font:700 24px Fredoka,sans-serif;letter-spacing:.1em}
+  .scores{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 14px}
+  .scores div{border:2.5px solid var(--ink);border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
+  .scores b{display:block;font:700 22px Fredoka,sans-serif}
+  .scores span{font:500 12px Fredoka,sans-serif;color:var(--mute)}
+
+  @media (max-width:560px){
+    .gauges{gap:6px} .gauge{padding:8px 4px 10px} .gname{font-size:15px}
+    .yn{flex-direction:column} .yn button{min-height:40px}
+    .stamps{grid-template-columns:1fr}
+    .scores{grid-template-columns:1fr 1fr}
+    .lights{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .case.in,.stampmark.on,.belt{animation:none} .stampmark.on{opacity:1;transform:rotate(-12deg)}
+    .needle{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="8" y="21" width="32" height="23" rx="6" fill="#ff8c42" stroke="#2d1e3e" stroke-width="3"/>
+      <path d="M15 21 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#2d1e3e" stroke-width="3"/>
+      <circle cx="24" cy="31" r="3.2" fill="#2d1e3e"/><rect x="22.4" y="32" width="3.2" height="7" rx="1.6" fill="#2d1e3e"/>
+    </svg>
+    <div>
+      <h1 class="t1">The Gettier Factory</h1>
+      <div class="t2">How Do You Know? · Lock 1</div>
+    </div>
+    <div class="lights" id="lights" aria-hidden="true"></div>
+  </div>
+
+  <!-- 1. how it works -->
+  <section id="sIntro">
+    <div class="panel">
+      <h2>How the factory works</h2>
+      <p>Beliefs roll down the line. Your job is quality control. Each one passes three gauges from the recipe, then gets a stamp.</p>
+      <div class="gauges" id="demoGauges"></div>
+      <p class="label">Then stamp it</p>
+      <div class="stamps">
+        <div class="stamp k pick" aria-hidden="true">KNOWLEDGE</div>
+        <div class="stamp n" aria-hidden="true">NOT KNOWLEDGE</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Two worked examples</h2>
+      <p><b>Dev</b> checks his library's app, which reads the shelf scanners, and believes the book he wants is on shelf 4. It is. Believe <span class="yes">yes</span>, True <span class="yes">yes</span>, Justified <span class="yes">yes</span>, and the app is right <em>because</em> the scanner saw the book there. Reasons and truth are connected: <span class="yes">KNOWLEDGE</span>.</p>
+      <p><b>Smith</b> from the reading believes "the person who gets the job has ten coins in his pocket." All three gauges read yes, but his reasons were about Jones and the truth came from his own pocket. They only meet by luck: <span class="nope">NOT KNOWLEDGE</span>. That's a Gettier case, and when you find one, you'll be asked where the luck snuck in.</p>
+      <p class="small">First a quick warm-up, then seven cases on the line. You commit to every answer before the factory shows you anything.</p>
+      <div class="center"><button class="big" id="startBtn">Start the warm-up</button></div>
+    </div>
+  </section>
+
+  <!-- 2. warm-up -->
+  <section id="sWarm" class="hidden">
+    <div class="panel">
+      <h2>Warm-up: skill or statement?</h2>
+      <p class="small">Tap the jar each one belongs in.</p>
+      <div class="claim" id="wClaim"></div>
+      <div class="jars" id="wJars">
+        <button class="jar" data-pick="how" aria-label="Skill jar: knowing-how">
+          <svg viewBox="0 0 200 170" aria-hidden="true">
+            <rect x="62" y="8" width="76" height="20" rx="6" fill="#1b998b" stroke="#2d1e3e" stroke-width="3"/>
+            <path d="M52 34 h96 q10 0 10 12 v96 q0 20 -20 20 h-76 q-20 0 -20 -20 v-96 q0 -12 10 -12z" fill="#e2f4f1" stroke="#2d1e3e" stroke-width="3"/>
+            <g class="fill"></g>
+            <g transform="translate(100 88)"><circle r="28" fill="#fff" stroke="#2d1e3e" stroke-width="3"/>
+              <path d="M-13 11 l17 -17 a9 9 0 1 1 6 6 l-17 17 z" fill="#1b998b" stroke="#2d1e3e" stroke-width="2.5" stroke-linejoin="round"/></g>
+          </svg>
+          <span class="tag">Skill</span><span class="hint">knowing-how: shown by doing</span>
+        </button>
+        <button class="jar" data-pick="that" aria-label="Statement jar: knowing-that">
+          <svg viewBox="0 0 200 170" aria-hidden="true">
+            <rect x="62" y="8" width="76" height="20" rx="6" fill="#5b3e96" stroke="#2d1e3e" stroke-width="3"/>
+            <path d="M52 34 h96 q10 0 10 12 v96 q0 20 -20 20 h-76 q-20 0 -20 -20 v-96 q0 -12 10 -12z" fill="#efeaf8" stroke="#2d1e3e" stroke-width="3"/>
+            <g class="fill"></g>
+            <g transform="translate(100 88)"><circle r="28" fill="#fff" stroke="#2d1e3e" stroke-width="3"/>
+              <path d="M-15 -10 h30 a5 5 0 0 1 5 5 v13 a5 5 0 0 1 -5 5 h-17 l-8 8 v-8 h-5 a5 5 0 0 1 -5 -5 v-13 a5 5 0 0 1 5 -5z" fill="#5b3e96" stroke="#2d1e3e" stroke-width="2.5" stroke-linejoin="round"/></g>
+          </svg>
+          <span class="tag">Statement</span><span class="hint">knowing-that: true or false</span>
+        </button>
+      </div>
+      <div class="fb hidden" id="wFb"></div>
+      <div class="go hidden" id="wNextWrap"><button class="big" id="wNext">Next</button></div>
+    </div>
+  </section>
+
+  <!-- 3. factory -->
+  <section id="sLine" class="hidden">
+    <div class="panel">
+      <div class="line">
+        <div class="case" id="case">
+          <div class="who" id="cWho"></div>
+          <p id="cText"></p>
+          <span class="belief" id="cBelief"></span>
+        </div>
+        <div class="belt" id="belt"></div>
+        <div class="stampmark" id="cMark"></div>
+      </div>
+      <div class="gauges" id="gauges"></div>
+      <p class="label">Stamp it</p>
+      <div class="stamps" id="stamps">
+        <button class="stamp k" data-s="k"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="2" width="14" height="12" rx="3" fill="#fff" stroke="#2d1e3e" stroke-width="2.5"/><rect x="3" y="14" width="22" height="8" rx="2" fill="#1b998b" stroke="#2d1e3e" stroke-width="2.5"/></svg>KNOWLEDGE</button>
+        <button class="stamp n" data-s="n"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="2" width="14" height="12" rx="3" fill="#fff" stroke="#2d1e3e" stroke-width="2.5"/><rect x="3" y="14" width="22" height="8" rx="2" fill="#ff8c42" stroke="#2d1e3e" stroke-width="2.5"/></svg>NOT KNOWLEDGE</button>
+      </div>
+      <div class="go"><button class="big" id="send" disabled>Send it through</button></div>
+      <div class="fb hidden" id="fb"></div>
+      <div class="go hidden" id="nextWrap"><button class="big" id="nextBtn">Next case</button></div>
+    </div>
+  </section>
+
+  <!-- 4. results -->
+  <section id="sEnd" class="hidden">
+    <div class="panel">
+      <h2>Shift over: what you reported</h2>
+      <div class="scores" id="scores"></div>
+      <table>
+        <thead><tr><th>Case</th><th>Your stamp</th><th>Right?</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p>Your code word:</p>
+      <div class="center"><span class="code" id="code"></span></div>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your stamp score and the code word. Then he'll ask you to build a Gettier case of your own.</p>
+      <div class="center"><button class="big alt" id="again">Run the line again</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const CODE='COPPER KEY';
+  const WARM=[
+    {q:"Maya can parallel park on the first try, but she couldn't explain how she does it.", a:"how", why:"Parking is a skill she shows by doing. She doesn't need to be able to state it."},
+    {q:"Leo is sure that water boils at 100 °C at sea level.", a:"that", why:"It's a claim that's either true or false, so it's knowing-that."},
+    {q:"A dog finds its way home across town every evening.", a:"how", why:"The dog can't state a claim; it shows a skill. Many philosophers say animals have plenty of knowing-how."},
+    {q:"Priya knows the Treaty of Versailles was signed in 1919.", a:"that", why:"A statable fact, true or false: knowing-that."}
+  ];
+  // b,t,j = correct gauge readings; k = is it knowledge; luck = options for Gettier cases (r = right index)
+  const CASES=[
+    {who:"Lena and the coin", text:"Just before a coin flip, Lena shouts “Heads!” She is completely sure. It lands heads.", belief:"Lena believes: it will land heads.",
+     b:1,t:1,j:0,k:0, why:"She believed it and it came true, but a hunch isn't a reason. It fails the recipe at Justified, so it's a lucky guess, not knowledge."},
+    {who:"Priya's chemistry question", text:"Priya asks her chemistry teacher whether gold's symbol is Au. The teacher checks the periodic table on the wall and says yes.", belief:"Priya believes: gold's symbol is Au.",
+     b:1,t:1,j:1,k:1, why:"All three gauges read yes, and her reason (the table, via her teacher) is exactly what makes the belief true. Reasons and truth are connected. That's knowledge."},
+    {who:"Mina's kitchen clock", text:"Mina glances at the kitchen clock, which has been reliable for years. It says 7:20, and it is 7:20. But the clock stopped at 7:20 last night.", belief:"Mina believes: it's 7:20.",
+     b:1,t:1,j:1,k:0, why:"All three gauges read yes, and it still isn't knowledge. It's a Gettier case.",
+     luck:{opts:["She had no good reason to trust that clock.","Her reason was a stopped clock; it matched the real time only because she happened to look at 7:20.","It wasn't really 7:20."], r:1}},
+    {who:"Omar's train", text:"Omar's train app, which is almost always right, says his 8:15 train is on time. The train turns up 20 minutes late.", belief:"Omar believes: my train is on time.",
+     b:1,t:0,j:1,k:0, why:"Good reasons, sincere belief, but the belief is false. You can't know something false; you can only think you know it."},
+    {who:"Ruth's field", text:"Driving past a field, Ruth sees a white woolly shape and thinks it's a sheep. The shape is actually a shaggy white dog. But a real sheep is lying behind a rock where she can't see it.", belief:"Ruth believes: there's a sheep in that field.",
+     b:1,t:1,j:1,k:0, why:"Believed, true, and justified, since the dog really did look like a sheep. Still not knowledge. Another Gettier case.",
+     luck:{opts:["What she saw was a dog; the belief came out true because of a sheep she never saw.","A woolly white shape is never a good reason to think something is a sheep.","There was no sheep in the field at all."], r:0}},
+    {who:"Theo's test", text:"Theo's friend, who is usually reliable, tells him the history test is on Friday. Theo is sure his friend is joking and doesn't believe it. The test is on Friday.", belief:"The claim: the test is on Friday.",
+     b:0,t:1,j:1,k:0, why:"The claim is true and Theo had a good reason to accept it, but he doesn't believe it. You can't know something you don't even accept."},
+    {who:"Henry's drive", text:"Henry drives through a county full of fake barn fronts, flat facades built to look real from the road. He happens to look at the one real barn and thinks, “That's a barn.”", belief:"Henry believes: that's a barn.",
+     b:1,t:1,j:1,k:0, why:"Believed, true, justified, and no false step in his thinking. Still not knowledge. This is the fake barn case.",
+     luck:{opts:["He doesn't really believe it's a barn.","The barn he looked at was one of the fakes.","He picked the one real barn by chance; almost any other barn he looked at would have fooled him."], r:2}}
+  ];
+  const $=id=>document.getElementById(id);
+  const lights=$('lights');
+  let wi=0, wRight=0, ci=0, gaugeRight=0, stampRight=0, luckRight=0, picks, stamp, log=[];
+
+  CASES.forEach(()=>lights.appendChild(document.createElement('i')));
+
+  function gaugeSVG(){
+    return '<svg viewBox="0 0 120 72" aria-hidden="true">'+
+      '<path d="M10 58 A50 50 0 0 1 60 8" fill="none" stroke="#ff8c42" stroke-width="12"/>'+
+      '<path d="M60 8 A50 50 0 0 1 110 58" fill="none" stroke="#1b998b" stroke-width="12"/>'+
+      '<path d="M10 58 A50 50 0 0 1 110 58" fill="none" stroke="#2d1e3e" stroke-width="3"/>'+
+      '<text x="14" y="70" font-size="11" font-family="Fredoka,sans-serif" fill="#c85a14">NO</text>'+
+      '<text x="88" y="70" font-size="11" font-family="Fredoka,sans-serif" fill="#137469">YES</text>'+
+      '<g class="needle"><line x1="60" y1="58" x2="60" y2="16" stroke="#2d1e3e" stroke-width="4" stroke-linecap="round"/></g>'+
+      '<circle cx="60" cy="58" r="7" fill="#5b3e96" stroke="#2d1e3e" stroke-width="3"/></svg>';
+  }
+  const NAMES=[['b','Believe?'],['t','True?'],['j','Justified?']];
+  function buildGauges(el, interactive){
+    el.innerHTML=NAMES.map(([k,n])=>'<div class="gauge" data-k="'+k+'">'+gaugeSVG()+'<div class="gname">'+n+'</div>'+
+      (interactive?'<div class="yn"><button class="y" data-v="1">Yes</button><button class="n" data-v="0">No</button></div><div class="verdict"></div>':'')+'</div>').join('');
+  }
+  function setNeedle(g,v){ g.querySelector('.needle').style.transform='rotate('+(v===null?0:(v?62:-62))+'deg)'; }
+
+  // intro demo: needles swing to yes one after another
+  buildGauges($('demoGauges'), false);
+  [...$('demoGauges').children].forEach((g,i)=>setTimeout(()=>setNeedle(g,1), 600+i*450));
+
+  function show(id){ ['sIntro','sWarm','sLine','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
+
+  // ---- warm-up ----
+  $('startBtn').onclick=()=>{ show('sWarm'); showWarm(); };
+  function showWarm(){
+    const c=$('wClaim'); c.className='claim'; c.textContent=WARM[wi].q;
+    $('wFb').classList.add('hidden'); $('wNextWrap').classList.add('hidden');
+    $('wJars').style.pointerEvents='';
+  }
+  const wLevel={how:0,that:0};
+  $('wJars').querySelectorAll('.jar').forEach(btn=>btn.onclick=()=>{
+    const pick=btn.dataset.pick, w=WARM[wi], ok=pick===w.a; if(ok) wRight++;
+    $('wJars').style.pointerEvents='none';
+    $('wClaim').classList.add(pick==='how'?'dropL':'dropR');
+    const n=wLevel[pick]++, ns='http://www.w3.org/2000/svg', dot=document.createElementNS(ns,'circle');
+    dot.setAttribute('cx',72+(n%3)*28); dot.setAttribute('cy',146-Math.floor(n/3)*22); dot.setAttribute('r',10);
+    dot.setAttribute('fill', ok?(pick==='how'?'#1b998b':'#5b3e96'):'#ff8c42'); dot.setAttribute('stroke','#2d1e3e'); dot.setAttribute('stroke-width','2.5');
+    setTimeout(()=>btn.querySelector('.fill').appendChild(dot),300);
+    const fb=$('wFb'); fb.className='fb'+(ok?'':' bad');
+    fb.innerHTML='<b class="head">'+(ok?'Right.':'Not this one.')+'</b><p>'+w.why+'</p>';
+    $('wNext').textContent = wi===WARM.length-1 ? 'On to the factory' : 'Next';
+    $('wNextWrap').classList.remove('hidden');
+  });
+  $('wNext').onclick=()=>{ wi++; if(wi<WARM.length) showWarm(); else { show('sLine'); showCase(); } };
+
+  // ---- factory line ----
+  function showCase(){
+    const c=CASES[ci]; picks={b:null,t:null,j:null}; stamp=null;
+    $('cWho').textContent='Case '+(ci+1)+' of '+CASES.length+' · '+c.who;
+    $('cText').textContent=c.text; $('cBelief').textContent=c.belief;
+    const mark=$('cMark'); mark.className='stampmark'; mark.textContent='';
+    const card=$('case'); card.classList.remove('in'); void card.offsetWidth; card.classList.add('in');
+    const belt=$('belt'); belt.classList.add('run'); setTimeout(()=>belt.classList.remove('run'),700);
+    buildGauges($('gauges'), true);
+    [...$('gauges').children].forEach(g=>{
+      g.querySelectorAll('.yn button').forEach(b=>b.onclick=()=>{
+        const v=+b.dataset.v; picks[g.dataset.k]=v;
+        g.querySelectorAll('.yn button').forEach(x=>x.classList.toggle('pick',x===b));
+        setNeedle(g,v); ready();
+      });
+    });
+    $('stamps').querySelectorAll('.stamp').forEach(s=>{ s.disabled=false; s.classList.remove('pick'); s.onclick=()=>{
+      stamp=s.dataset.s; $('stamps').querySelectorAll('.stamp').forEach(x=>x.classList.toggle('pick',x===s)); ready(); }; });
+    $('send').disabled=true; $('send').parentElement.classList.remove('hidden');
+    $('fb').classList.add('hidden'); $('nextWrap').classList.add('hidden');
+    [...lights.children].forEach((l,i)=>{ if(i===ci) l.className='now'; });
+  }
+  function ready(){ $('send').disabled = picks.b===null||picks.t===null||picks.j===null||stamp===null; }
+
+  $('send').onclick=()=>{
+    const c=CASES[ci]; let g=0;
+    $('send').parentElement.classList.add('hidden');
+    [...$('gauges').children].forEach(el=>{
+      const k=el.dataset.k, ok=picks[k]===c[k]; if(ok) g++;
+      el.querySelectorAll('.yn button').forEach(b=>b.disabled=true);
+      const v=el.querySelector('.verdict'); v.className='verdict '+(ok?'ok':'no');
+      v.textContent= ok ? '✓ right' : 'should be '+(c[k]?'Yes':'No');
+    });
+    gaugeRight+=g;
+    const sOk=(stamp==='k')===!!c.k; if(sOk) stampRight++;
+    $('stamps').querySelectorAll('.stamp').forEach(s=>s.disabled=true);
+    const mark=$('cMark'); mark.textContent=c.k?'KNOWLEDGE':'NOT KNOWLEDGE'; mark.className='stampmark on '+(c.k?'k':'n');
+    lights.children[ci].className = sOk&&g===3 ? 'ok' : 'no';
+    const fb=$('fb'); fb.className='fb'+(sOk?'':' bad');
+    let h='<b class="head">'+(sOk?'Good stamp.':'Wrong stamp.')+' The right stamp is '+(c.k?'KNOWLEDGE':'NOT KNOWLEDGE')+'.</b><p>'+c.why+'</p>';
+    if(g<3) h+='<p class="small">Gauges: you got '+g+' of 3. Check the gauges marked above.</p>';
+    log.push({who:c.who, stamp:stamp==='k'?'Knowledge':'Not knowledge', ok:sOk});
+    if(c.luck){
+      h+='<p><b>Where did the luck sneak in?</b> Pick one.</p><div class="luck" id="luck">'+
+        c.luck.opts.map((o,i)=>'<button data-i="'+i+'">'+o+'</button>').join('')+'</div><div id="luckFb"></div>';
+      fb.innerHTML=h; fb.classList.remove('hidden');
+      $('luck').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+        const i=+b.dataset.i, ok=i===c.luck.r; if(ok) luckRight++;
+        $('luck').querySelectorAll('button').forEach(x=>{ x.disabled=true; if(+x.dataset.i===c.luck.r) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+        log[log.length-1].luck=ok;
+        $('luckFb').innerHTML='<p style="margin-top:10px">'+(ok?'<b>Yes.</b> ':'<b>Not quite.</b> ')+'The reasons and the truth only meet by luck. That gap is the mark of a Gettier case.</p>';
+        $('nextWrap').classList.remove('hidden');
+      });
+    } else {
+      fb.innerHTML=h; fb.classList.remove('hidden'); $('nextWrap').classList.remove('hidden');
+    }
+    $('nextBtn').textContent = ci===CASES.length-1 ? 'End of shift' : 'Next case';
+  };
+  $('nextBtn').onclick=()=>{ ci++; if(ci<CASES.length) showCase(); else finish(); };
+
+  function finish(){
+    show('sEnd');
+    const luckMax=CASES.filter(c=>c.luck).length;
+    $('scores').innerHTML=
+      '<div><b>'+stampRight+' / '+CASES.length+'</b><span>stamps</span></div>'+
+      '<div><b>'+gaugeRight+' / '+CASES.length*3+'</b><span>gauges</span></div>'+
+      '<div><b>'+luckRight+' / '+luckMax+'</b><span>luck spotted</span></div>'+
+      '<div><b>'+wRight+' / '+WARM.length+'</b><span>warm-up</span></div>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.who+'</td><td>'+r.stamp+'</td><td class="'+(r.ok?'yes':'nope')+'">'+(r.ok?'Right':'Missed')+
+      (r.luck!==undefined?(' · luck '+(r.luck?'spotted':'missed')):'')+'</td></tr>').join('');
+    $('code').textContent=CODE;
+  }
+  $('again').onclick=()=>{
+    wi=0; wRight=0; ci=0; gaugeRight=0; stampRight=0; luckRight=0; log=[];
+    [...lights.children].forEach(l=>l.className='');
+    document.querySelectorAll('#wJars .fill').forEach(f=>f.innerHTML=''); wLevel.how=0; wLevel.that=0;
+    show('sIntro');
+  };
+})();
+</script>
+</body>
+</html>
