@@ -268,12 +268,14 @@ function finish(lost){
   el("endt").textContent=lost?"THE GRANDMASTER WINS":(hp===0?"CHECKMATE! YOU WIN!":"GAUNTLET OVER");
   var rows="";log.forEach(function(s){var n=parseInt(s.slice(1),10);rows+="<tr><td>"+R[n-1].t.replace(/^ROUND \d+: /,"")+"</td><td>"+s.split(":")[1]+"</td></tr>"});
   var foil=(!lost&&hits===8)?"&foil=1":"";
+  var won=(!lost&&hp===0),close=(!lost&&hp>0);
   el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Grandmaster still had "+hp+" HP. Hit REMATCH to try again with 3 fresh lives.</p>":"")+
+   (close?"<p><b>So close!</b> The Grandmaster is hanging on with "+hp+" HP. Checkmate him to unlock the Endgame card. Hit REMATCH to try again.</p>":"")+
    "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
-   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>ENDGAME</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn2-deck.html?card=8"+foil+"\">See your deck</a></div>")+
+   (!won?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>ENDGAME</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn2-deck.html?card=8"+foil+"\">See your deck</a></div>")+
    "<div class=\"tape\"><b>WANT MORE?</b> See where these ideas come from, and what's next in Game Night. <a href=\"gn2-read.html?m=9\">Go deeper</a></div>";
-  show("rematch",lost);
-  el("out").value="GN2-M08 | attempt "+attempt+" | "+(lost?"GRANDMASTER WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Grandmaster HP left "+hp+" | rank "+rank;
+  show("rematch",!won);
+  el("out").value="GN2-M08 | attempt "+attempt+" | "+(lost?"GRANDMASTER WINS":(won?"CHECKMATE":"GAUNTLET OVER, Grandmaster survived"))+" | round results: "+log.join(", ")+" | lives left "+lives+" | Grandmaster HP left "+hp+" | rank "+rank;
   show("final",true);
 }
 function rematch(){attempt++;start()}
