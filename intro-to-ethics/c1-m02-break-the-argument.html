@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case 2: Break the Argument</title>
+<meta name="description" content="Interactive case file for Intro to Ethics, Challenge 1 module C1-M02: validity, soundness, counterexamples, hidden premises, and your own button argument.">
+<style>
+:root{
+  --desk:#22337A; --desk-dot:#2E43966b;
+  --paper:#F4E3B4; --paper-2:#EBD497; --paper-edge:#D9BC72;
+  --ink:#2A2016; --ink-soft:#5B4A34;
+  --stamp:#C0152F; --ball:#2443C4;
+  --hl-y:#FFE15A; --hl-p:#FF93C9; --hl-g:#74E5AA; --hl-b:#86CFFF; --hl-o:#FFB25C;
+  --hl-ink:#1E1609;
+  --card:#FFFDF5; --card-line:#C5DCF3; --card-margin:#F2A0AC;
+  --ok:#0E663B; --bad:#AE1029;
+  --btn:#2A2016; --btn-ink:#FFF7E0;
+  --shadow:0 1px 0 #0000001a, 0 10px 24px -8px #0a123d99;
+  --type:"Courier Prime","American Typewriter","Courier New",Courier,monospace;
+  --serif:Charter,"Bitstream Charter","Sitka Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#0A1233; --desk-dot:#1A2A6655;
+    --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+    --ink:#F3E7C8; --ink-soft:#D2C29E;
+    --stamp:#FF6B80; --ball:#A9BDFF;
+    --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+    --ok:#67E3A6; --bad:#FF8597;
+    --btn:#F3E7C8; --btn-ink:#21190F;
+    --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#0A1233; --desk-dot:#1A2A6655;
+  --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+  --ink:#F3E7C8; --ink-soft:#D2C29E;
+  --stamp:#FF6B80; --ball:#A9BDFF;
+  --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+  --ok:#67E3A6; --bad:#FF8597;
+  --btn:#F3E7C8; --btn-ink:#21190F;
+  --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background-color:var(--desk);
+  background-image:radial-gradient(var(--desk-dot) 1.2px, transparent 1.4px);
+  background-size:18px 18px;
+  color:var(--ink); font-family:var(--serif); font-size:18px; line-height:1.62;
+}
+a{color:var(--ball); text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--hl-b); outline-offset:2px; border-radius:4px}
+button{font:inherit; color:inherit}
+.wrap{max-width:760px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- evidence dock ---------- */
+.dock{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:10px;
+  max-width:760px; margin:0 auto; padding:10px 16px; background:var(--desk);
+  color:#F4E3B4; font-family:var(--type); font-size:14px; border-bottom:1px solid #ffffff1f}
+.dock b{font-weight:700; white-space:nowrap}
+.dock ol{list-style:none; display:flex; gap:6px; margin:0 0 0 auto; padding:0}
+@media (max-width:420px){ .dock{font-size:12px} .dock ol{gap:4px} }
+
+/* ---------- sheets ---------- */
+.sheet{position:relative; background:var(--paper); border-radius:3px 3px 6px 6px;
+  box-shadow:var(--shadow); padding:30px 30px 26px; margin:26px 0 0}
+.sheet::before{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(180deg,#ffffff14,transparent 30%), repeating-linear-gradient(0deg,transparent 0 31px,#00000006 31px 32px)}
+@media (max-width:520px){ .sheet{padding:24px 18px 20px} body{font-size:17px} .button-hook{align-items:flex-start} .big-red{width:44px;height:44px} }
+.sheet p{margin:0 0 .9em; max-width:64ch}
+.sheet p:last-child{margin-bottom:0}
+
+h1,h2,h3{font-family:var(--type); line-height:1.15; margin:0}
+h2{font-size:1.55rem; letter-spacing:-.01em; margin:0 0 .7em}
+h2 span{background:linear-gradient(100deg, transparent 0 2%, var(--mark,var(--hl-y)) 3% 96%, transparent 98%) 0 72%/100% 46% no-repeat; color:inherit; padding:0 .15em}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h2 span{background-size:100% 18%; background-position:0 96%} }
+:root[data-theme="dark"] h2 span{background-size:100% 18%; background-position:0 96%}
+h3{font-size:1.08rem; margin:0 0 .5em}
+
+/* ---------- cover ---------- */
+.cover{margin-top:52px; background:var(--paper-2); padding:44px 30px 32px}
+.cover .tab{position:absolute; top:1px; left:28px; background:var(--paper-2); padding:4px 14px; font-family:var(--type); font-size:14px;
+  transform:translateY(-100%); border-radius:8px 8px 0 0; box-shadow:0 -2px 6px #0a123d33}
+.cover h1{font-size:clamp(2.3rem, 9vw, 4.4rem); letter-spacing:-.03em; line-height:.98; max-width:9ch}
+.cover .dek{font-size:1.15rem; margin:18px 0 0; max-width:40ch}
+.stamp{font-family:var(--type); font-weight:700; color:var(--stamp); border:4px double var(--stamp);
+  padding:4px 12px; border-radius:6px; display:inline-block; letter-spacing:.08em; line-height:1.1; text-align:center}
+.cover .stamp{position:absolute; right:26px; top:30px; transform:rotate(9deg); font-size:1.5rem; opacity:.9}
+.cover .stamp small{display:block; font-size:.62rem; letter-spacing:.04em}
+@media (max-width:520px){ .cover{padding:36px 18px 24px} .cover .stamp{right:12px; top:16px; font-size:1.05rem} }
+.cover .meta{font-family:var(--type); font-size:14px; color:var(--ink-soft); margin-top:22px; display:flex; flex-wrap:wrap; gap:6px 22px}
+.button-hook{display:flex; gap:16px; align-items:center; margin-top:24px; padding:14px 16px; border-radius:12px;
+  background:var(--card); border:2px solid var(--ink)}
+.big-red{flex:none; width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FF7B8C,#D0122F 60%,#8E0A1F);
+  box-shadow:0 6px 0 #6b0716, 0 8px 14px #0006; border:3px solid #2A2016}
+.button-hook p{margin:0; font-size:1rem}
+
+/* ---------- index-card exhibits ---------- */
+.exhibit{position:relative; background:var(--card); border-radius:4px; margin:18px 0; padding:18px 18px 16px 34px;
+  background-image:linear-gradient(90deg, transparent 22px, var(--card-margin) 22px 24px, transparent 24px),
+  repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  background-position:0 0, 0 14px; box-shadow:0 2px 0 #00000014, 0 6px 14px -6px #0006; font-size:1rem; line-height:28px}
+.exhibit p{margin:0}
+.exhibit p+p{margin-top:28px}
+.exhibit .lbl{font-family:var(--type); font-weight:700; font-size:.88rem; display:inline-block; background:var(--hl-c,var(--hl-y)); color:var(--hl-ink);
+  padding:1px 8px; margin:0 0 8px; transform:rotate(-1deg)}
+.exhibit ol, .exhibit ul{margin:0; padding-left:1.3em}
+.exhibit .concl{border-top:2px solid var(--ink); margin-top:6px; padding-top:4px}
+.argline{display:block}
+
+/* ---------- margin note & sealed file ---------- */
+.note{font-style:italic; color:var(--ball); border-left:3px solid var(--ball); padding:2px 0 2px 14px; margin:14px 0; font-size:1rem}
+details.sealed{margin:20px 0 4px; border:2px dashed var(--stamp); border-radius:8px; background:var(--paper-2)}
+details.sealed summary{cursor:pointer; padding:12px 16px; font-family:var(--type); font-weight:700; list-style:none; display:flex; gap:12px; align-items:center}
+details.sealed summary::-webkit-details-marker{display:none}
+details.sealed summary .seal{flex:none; width:30px; height:30px; border-radius:50%; background:var(--stamp); color:#fff; display:grid; place-items:center; font-size:14px}
+details.sealed[open] summary .seal{background:transparent; border:2px solid var(--stamp); color:var(--stamp)}
+details.sealed .inner{padding:0 16px 16px}
+details.sealed .inner p{font-size:1rem}
+
+/* ---------- games ---------- */
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
+  font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
+.lab h2{margin-bottom:.4em}
+.lab .how{font-size:1rem; color:var(--ink-soft); margin-bottom:16px}
+.cleared{position:absolute; right:18px; top:16px; font-size:1.05rem; transform:rotate(-8deg); transform-origin:100% 0; opacity:0; pointer-events:none}
+.lab.is-cleared .cleared{opacity:.92; animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes thunk{0%{transform:scale(2.6) rotate(-20deg); opacity:0}100%{transform:scale(1) rotate(-8deg); opacity:.92}}
+/* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
+html,body{overflow-x:clip}
+@media (prefers-reduced-motion: reduce){ .lab.is-cleared .cleared{animation:none} *{scroll-behavior:auto!important} }
+
+.btn{cursor:pointer; border:2px solid var(--ink); background:var(--btn); color:var(--btn-ink); border-radius:999px;
+  padding:8px 16px; font-family:var(--type); font-weight:700; font-size:.95rem; line-height:1.2}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.btn:not(:disabled):active{transform:translateY(1px)}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+
+.fb{margin-top:12px; padding:12px 14px; border-radius:10px; font-size:.98rem; background:var(--card); border:2px solid var(--ink-soft)}
+.fb:empty{display:none}
+.fb.good{border-color:var(--ok)} .fb.bad{border-color:var(--bad)}
+.fb strong.v{font-family:var(--type)}
+.fb.good strong.v{color:var(--ok)} .fb.bad strong.v{color:var(--bad)}
+.score{font-family:var(--type); font-size:.95rem; color:var(--ink-soft)}
+
+/* sort */
+.sort-scn{font-size:1rem; background:var(--hl-g); color:var(--hl-ink); padding:10px 14px; border-radius:8px; margin-bottom:14px}
+.sort-item{background:var(--card); border-radius:10px; padding:12px 14px; margin:10px 0; border:2px solid transparent}
+.sort-item.locked{border-color:var(--ok)}
+.sort-item q{display:block; font-size:1.02rem; margin-bottom:8px; quotes:"\201C" "\201D"}
+.pick{cursor:pointer; border:2px solid var(--ink); background:transparent; border-radius:8px; padding:6px 12px; font-family:var(--type); font-size:.88rem; font-weight:700}
+.pick[data-v="wb"]{--pc:var(--hl-y)} .pick[data-v="mo"]{--pc:var(--hl-p)} .pick[data-v="ne"]{--pc:var(--hl-b)}
+.pick:hover:not(:disabled){background:color-mix(in srgb, var(--pc) 45%, transparent)}
+.pick.chosen{background:var(--pc); color:var(--hl-ink)}
+.pick:disabled{cursor:default}
+.sort-item .fb{margin-top:10px}
+
+/* highlighter */
+.hl-pass{background:var(--card); padding:16px; border-radius:8px; font-size:1.08rem; line-height:2.05}
+.seg{cursor:pointer; border:0; background:transparent; padding:2px 3px; border-radius:3px; text-align:left; font-family:var(--serif); font-size:inherit; line-height:inherit;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone; display:inline; border-bottom:2px dotted var(--ink-soft)}
+.seg[data-m="p"]{background:var(--hl-y); color:var(--hl-ink); border-bottom-color:transparent}
+.seg[data-m="c"]{background:var(--hl-p); color:var(--hl-ink); border-bottom-color:transparent}
+.seg.wrong{outline:2px solid var(--bad); outline-offset:1px}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; font-family:var(--type); font-size:.85rem; margin:10px 0 12px}
+.legend i{display:inline-block; width:18px; height:12px; vertical-align:-1px; margin-right:6px; border-radius:2px}
+
+/* machine */
+.machine{background:var(--card); border-radius:12px; padding:14px; border:2px solid var(--ink)}
+.m-arg{font-size:1rem; margin-bottom:12px}
+.m-line{display:flex; gap:10px; align-items:baseline; padding:3px 0}
+.m-line .lamp{flex:none; font-family:var(--type); font-size:.75rem; font-weight:700; border-radius:999px; padding:1px 8px; min-width:62px; text-align:center}
+.lamp.t{background:var(--hl-g); color:var(--hl-ink)} .lamp.f{background:transparent; border:1.5px solid var(--ink-soft); color:var(--ink-soft)}
+.m-line.concl{border-top:2px solid var(--ink); margin-top:4px; padding-top:6px}
+.creatures{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:12px 0}
+@media (max-width:560px){ .creatures{grid-template-columns:repeat(2,1fr)} }
+.cr{border:2px solid var(--ink-soft); border-radius:10px; padding:8px 6px 8px; text-align:center; background:var(--paper)}
+.cr svg{width:92px; height:80px; display:block; margin:0 auto}
+.cr .nm{font-family:var(--type); font-weight:700; font-size:.9rem}
+.tog{display:block; width:100%; cursor:pointer; margin-top:5px; border:1.5px solid var(--ink-soft); background:transparent; border-radius:6px; padding:3px 4px; font-family:var(--type); font-size:.78rem}
+.tog[aria-pressed="true"]{background:var(--tc); color:var(--hl-ink); border-color:var(--ink); font-weight:700}
+.tog[data-p="0"]{--tc:var(--hl-o)} .tog[data-p="1"]{--tc:var(--hl-g)} .tog[data-p="2"]{--tc:var(--hl-b)}
+.alarm{font-family:var(--type); font-weight:700; padding:8px 12px; border-radius:8px; margin:6px 0 10px; font-size:.92rem; border:2px dashed var(--ink-soft)}
+.alarm.hot{background:var(--stamp); color:#fff; border:2px solid var(--stamp)}
+.m-nav{font-family:var(--type); font-size:.9rem; color:var(--ink-soft); margin-bottom:8px}
+.vac{font-size:.85rem; color:var(--ink-soft); margin-top:6px}
+
+/* rapid */
+.rf-card{background:var(--card); border-radius:10px; padding:16px; min-height:120px; font-size:1.02rem}
+.rf-card .argline+.argline{margin-top:2px}
+.rf-top{display:flex; justify-content:space-between; font-family:var(--type); font-size:.9rem; margin-bottom:8px; color:var(--ink-soft)}
+.streak{color:var(--stamp); font-weight:700}
+
+/* hunt */
+.choice{display:block; width:100%; text-align:left; cursor:pointer; margin:8px 0; padding:10px 14px; border-radius:10px; border:2px solid var(--ink-soft);
+  background:var(--card); font-family:var(--serif); font-size:1rem}
+.choice:hover{border-color:var(--ink)}
+.choice[aria-pressed="true"]{border-color:var(--ink); background:var(--hl-o); color:var(--hl-ink)}
+
+/* builder */
+.slot{display:block; min-height:46px; border:2.5px dashed var(--ball); border-radius:8px; padding:8px 12px; margin:4px 0; color:var(--ball); font-style:italic}
+.slot.filled{border-style:solid; font-style:normal; color:var(--ink); background:var(--hl-b); color:var(--hl-ink)}
+.tray{display:grid; gap:8px; margin-top:12px}
+.tile{cursor:pointer; text-align:left; padding:8px 12px; border-radius:8px; border:2px solid var(--ink); background:var(--paper); font-family:var(--serif); font-size:.98rem}
+.tile[aria-pressed="true"]{background:var(--hl-b); color:var(--hl-ink)}
+
+/* grid of possibilities */
+.combo{display:grid; grid-template-columns:auto 1fr 1fr; gap:6px; font-size:.92rem; margin:12px 0}
+.combo div{background:var(--card); padding:8px 10px; border-radius:6px}
+.combo .h{background:transparent; font-family:var(--type); font-weight:700; padding:4px 6px}
+.combo .x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+
+/* deeper */
+.deeper{background:var(--card); border:3px solid var(--ink)}
+.deeper ul{padding-left:1.1em; margin:0}
+.deeper li{margin:0 0 12px; font-size:1rem}
+.deeper li b{font-family:var(--type)}
+.foot{color:#F4E3B4cc; font-size:.85rem; font-family:var(--type); margin-top:22px; text-align:center}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* ---------- v2 additions ---------- */
+.dock .pip{display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  border:2px dashed #F4E3B488; color:#F4E3B4; font-weight:700; font-size:13px}
+.dock .pip.done{border:2px solid var(--c,#FFE15A); background:var(--c,#FFE15A); color:#1E1609}
+@media (max-width:420px){ .dock .pip{width:26px;height:26px;font-size:12px} }
+.gotit{margin-top:20px; padding-top:16px; border-top:2px dashed var(--paper-edge); display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.gotit .gmsg{font-family:var(--type); font-size:.88rem; color:var(--ink-soft)}
+.gotit .btn.ok, .gotit .btn.ok:disabled{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+.lockcard{display:flex; gap:14px; align-items:center; background:var(--card); border:2px dashed var(--ink-soft); border-radius:10px; padding:14px 16px; font-size:1rem}
+.lockcard .padlock{flex:none; width:34px; height:34px}
+.lab.is-unlocked .lockcard{display:none}
+.copyrow{margin-top:16px; padding:12px 14px; border-radius:10px; background:var(--paper-2); border:2px solid var(--ball)}
+.copyrow p{font-size:.95rem; margin:0 0 8px}
+.copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copyrow textarea[hidden]{display:none}
+.copyrow .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.reasonbox{display:block; width:100%; min-height:64px; margin-top:6px; font-family:var(--serif); font-size:1rem; background:var(--card); color:var(--ink);
+  border:2px solid var(--ink-soft); border-radius:8px; padding:8px 10px}
+.small{font-size:.92rem}
+
+/* ---------- v3 additions ---------- */
+.btn, .pick, .tile, .choice, .tog{min-height:44px}
+.tog{padding:6px 4px; font-size:.8rem}
+.hl-pass{line-height:2.7}
+.seg{padding:6px 3px}
+.dock{flex-wrap:wrap}
+.dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
+.dock .pip:not(:disabled){cursor:pointer}
+.dock .pip:disabled{opacity:1}
+@media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
+.evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
+.evpanel h3{font-size:1rem; margin-bottom:4px}
+.evpanel p{margin:0 0 6px}
+.evpanel .row{justify-content:flex-end}
+@media (max-width:520px){
+  .cleared{top:6px; right:8px; font-size:.78rem; padding:2px 8px}
+  .lab h2{padding-right:0}
+}
+.wow{font-family:var(--type); font-weight:700; font-size:.98rem; background:var(--ink); color:var(--paper); display:inline-block; padding:4px 10px; border-radius:4px; margin:0 0 14px}
+.lockin{margin-top:20px; background:var(--card); border:2px solid var(--ink); border-radius:12px; padding:14px 16px}
+.lockin .row{margin-top:8px}
+.lockin .vbtn{cursor:pointer; min-height:44px; padding:8px 18px; border-radius:999px; border:2px solid var(--ink); background:transparent; font-family:var(--type); font-weight:700; color:var(--ink)}
+.lockin .vbtn[aria-pressed="true"]{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.lockin label{font-family:var(--type); font-weight:700; font-size:.92rem; display:block; margin-top:12px}
+.lockin input[type=text], .lockin textarea{width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
+.lockmsg{font-family:var(--type); font-size:.9rem; color:var(--ok); margin-left:6px}
+.poll{background:var(--card); border-radius:12px; padding:14px 16px; margin:4px 0 18px; border:2px dashed var(--hl-o)}
+.poll p{font-size:1rem}
+.versus{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+.versus div{background:var(--card); border-radius:8px; padding:10px 12px}
+.versus .hd{font-family:var(--type); font-weight:700; text-align:center; background:var(--hl-y); color:var(--hl-ink)}
+.versus .hd.b{background:var(--hl-b)}
+.versus .full{grid-column:1 / -1; text-align:center}
+.combo button{all:unset; box-sizing:border-box; display:block; cursor:pointer; padding:8px 10px; border-radius:6px; background:var(--card); min-height:44px}
+.combo button.x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+.combo button:focus-visible{outline:3px solid var(--hl-b)}
+.combo button.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion: reduce){ .combo button.shake, .streak.pulse{animation:none} }
+#rfBtns .btn.right{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+#rfBtns .btn.wrongpick{background:transparent; color:var(--bad); border:3px solid var(--bad); opacity:1}
+#rfBtns .btn.right::after{content:" \2713"}
+#rfBtns .btn.wrongpick::after{content:" \2717"}
+.rf-top .streak{font-size:1rem; padding:2px 10px; border-radius:999px}
+.rf-top .streak.hot{background:var(--stamp); color:#fff}
+.streak.pulse{animation:pulse .5s}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.perfect{display:inline-block; margin-left:8px; color:#8a6400; border-color:#c99a00; transform:rotate(-6deg)}
+:root[data-theme="dark"] .perfect{color:#ffd24d; border-color:#ffd24d}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .perfect{color:#ffd24d; border-color:#ffd24d} }
+.mq{margin-top:10px}
+.mq .choice{font-size:.95rem}
+.copymini{margin-top:14px}
+.copymini .btn{font-size:.85rem}
+.copymini textarea, .copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copymini textarea[hidden]{display:none}
+.copymini .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.pause{font-family:var(--type); font-size:.9rem; background:var(--hl-g); color:var(--hl-ink); padding:8px 12px; border-radius:8px; margin-top:14px}
+.finale-arg .mine{background:var(--hl-y); color:var(--hl-ink); padding:0 4px}
+.finale-arg .gap{color:var(--ball); font-style:italic}
+.attack{color:var(--stamp); font-family:var(--type); font-weight:700}
+.rcard{position:relative; max-width:440px; margin:18px auto 8px; background:var(--card); border-radius:6px; padding:20px 22px 18px 40px;
+  background-image:linear-gradient(90deg, transparent 26px, var(--card-margin) 26px 28px, transparent 28px), repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  box-shadow:0 2px 0 #00000014, 0 10px 20px -8px #0008; font-size:.98rem; line-height:28px}
+.rcard h3{font-size:1.25rem; line-height:28px; margin:0 0 4px}
+.rcard .stamp{position:absolute; right:10px; top:-14px; transform:rotate(8deg); font-size:.9rem}
+.rcard b{font-family:var(--type)}
+</style>
+</head>
+<body>
+<div class="dock" id="dock" aria-label="Evidence collected">
+  <b id="dockCount" role="status"><span class="evw">Evidence </span>0/6</b>
+  <ol id="dockList"></ol>
+  <div class="evpanel" id="evPanel" hidden></div>
+</div>
+
+<main class="wrap">
+<!-- ================= COVER ================= -->
+<section class="sheet cover" aria-labelledby="t1">
+  <div class="tab">Challenge 1 &middot; Case #2</div>
+  <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
+  <h1 id="t1">Break the Argument</h1>
+  <p class="dek">How to tell a good argument from a bad one, a machine that checks 4,096 worlds, and the hidden premise inside your own button call.</p>
+  <div class="button-hook">
+    <div class="big-red" aria-hidden="true"></div>
+    <p>The button: $1,000 for you, $1,000 gone from a stranger you'll never meet, and nobody ever finds out. Would you press it, and why? At the end of this file, your own reason is the case you crack.</p>
+  </div>
+  <div class="poll" id="bringBack">
+    <p><b>Bring your button argument.</b> <span id="bbStatus">Pick any one way:</span></p>
+    <p class="small">1. If you did Case 1 in this browser, it loads by itself. 2. Paste your Case 1 file from Rocky (or any line starting "Button call:"). 3. Or just answer below.</p>
+    <label class="small" for="pasteBox"><b>Paste here</b></label>
+    <textarea class="reasonbox" id="pasteBox" placeholder="Button call: I wouldn't press it. My reason: ..."></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="pasteBtn">Use pasted text</button><span class="lockmsg" id="pasteMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="lockin" id="lockin">
+    <div class="row" role="group" aria-label="Your button call">
+      <button class="vbtn" type="button" data-v="press" aria-pressed="false">I'd press it</button>
+      <button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn't press it</button>
+    </div>
+    <label for="myReason">My reason, in one sentence</label>
+    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 30 to 35 minutes</span></div>
+</section>
+
+<!-- ================= RECAP ================= -->
+<section class="sheet" aria-labelledby="b0">
+  <h2 id="b0"><span style="--mark:var(--hl-y)">Sixty-second recap</span></h2>
+  <p>Ethics asks two big questions: what makes a life go well for the person living it (<b>well-being</b>), and what we owe each other (<b>morality</b>). Philosophers answer them with arguments.</p>
+  <p>An <b>argument</b> is a package: some claims, called <b>premises</b>, offered as support for one more claim, the <b>conclusion</b>. Signpost words help: "so" and "therefore" usually mark a conclusion; "because" and "since" usually mark a premise.</p>
+  <div class="exhibit" style="--hl-c:var(--hl-b)">
+    <span class="lbl">Exhibit B: an argument, laid out flat</span>
+    <span class="argline">1. Anyone on the team has to come to practice.</span>
+    <span class="argline">2. Jordan is on the team.</span>
+    <span class="argline concl">So, Jordan has to come to practice.</span>
+  </div>
+  <p>This file is about the next question: when does an argument actually <i>work</i>?</p>
+</section>
+
+<!-- ================= BEAT 4: VALIDITY ================= -->
+<section class="sheet" aria-labelledby="b4">
+  <h2 id="b4"><span style="--mark:var(--hl-o)">Valid is not the same as true</span></h2>
+  <p>Here is the single most useful idea on this page. An argument is <b>valid</b> when the conclusion <i>has to</i> be true <i>if</i> the premises are true. There's no way to have the premises true and the conclusion false at the same time.</p>
+  <p>Validity is about the <i>connection</i>, not about whether the premises are actually true. Which leads to some gloriously silly results:</p>
+  <div class="exhibit" style="--hl-c:var(--hl-o)">
+    <span class="lbl">Exhibit C: valid, and completely ridiculous</span>
+    <span class="argline">1. Every planet is made of cheese.</span>
+    <span class="argline">2. Mars is a planet.</span>
+    <span class="argline concl">So, Mars is made of cheese.</span>
+  </div>
+  <p>Premise 1 is false. But <i>if</i> it were true, and premise 2 is true, Mars would have to be cheese. The connection is airtight, so the argument is valid. It just doesn't prove anything, because it starts from garbage.</p>
+  <p>That's why we need a second word. An argument is <b>sound</b> when it's valid <i>and</i> all its premises are actually true. A sound argument is the real deal: its conclusion must be true.</p>
+  <p>Here's the whole map. Tap the squares. Down the side: are the premises all true? Across the top: is the conclusion true?</p>
+  <div class="combo" role="group" aria-label="Which combinations a valid argument can have">
+    <div class="h"></div><div class="h">Conclusion true</div><div class="h">Conclusion false</div>
+    <div class="h">Premises all true</div><button type="button" data-c="1">Possible</button><button type="button" class="x" data-c="2">Off-limits</button>
+    <div class="h">Some premise false</div><button type="button" data-c="3">Possible</button><button type="button" data-c="4">Possible</button>
+  </div>
+  <div class="fb" id="comboFb" aria-live="polite"></div>
+  <p>One square is off-limits. That's all validity is: a guarantee that you'll never land in the red square.</p>
+  <p>Flip side, which trips up almost everyone: an <i>invalid</i> argument can have every line true. "Paris is in France. Water is wet. So the Pacific is the largest ocean." True, true, true. But France and water could be exactly as they are while some other ocean was the biggest, so the premises don't guarantee the conclusion. Invalid.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 3: RAPID FIRE ================= -->
+<section class="sheet lab" id="g4" style="--g:var(--hl-p)" aria-labelledby="g4h">
+  <div class="gtab">Lead 1 of 3</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g4h">Sound, valid, or broken?</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Valid is not the same as true" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Rapid fire: eight arguments per round, dealt fresh from a pile of twenty, with a mix of all three answers every round. Two steps: first ask whether true premises would guarantee the conclusion. Only if yes, ask whether the premises are actually true. Every fact you need is everyday knowledge. Score 6 or more to clear it.</p>
+  <div class="rf-card">
+    <div class="rf-top"><span id="rfCount"></span><span class="streak" id="rfStreak"></span></div>
+    <div id="rfArg" aria-live="polite"></div>
+  </div>
+  <div class="row" style="margin-top:12px" id="rfBtns">
+    <button class="btn" type="button" data-a="sound">Sound</button>
+    <button class="btn" type="button" data-a="valid">Valid, not sound</button>
+    <button class="btn" type="button" data-a="invalid">Invalid</button>
+  </div>
+  <div class="fb" id="rfFb" aria-live="polite"></div>
+  <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="rfNext" hidden>Next</button></div>
+  <div class="copymini" data-copy="g4"></div>
+  </div>
+</section>
+
+<!-- ================= BEAT 5: COUNTEREXAMPLES ================= -->
+<section class="sheet" aria-labelledby="b5">
+  <h2 id="b5"><span style="--mark:var(--hl-g)">How to break an argument</span></h2>
+  <p>So how do you <i>prove</i> an argument is invalid? You don't need to show the conclusion is false in real life. You only need to describe <b>one possible situation</b> where every premise is true and the conclusion is false. That situation is called a <b>counterexample</b>. It can be as weird as you like, as long as it's possible.</p>
+  <p>Logicians also have a cheat code. For most arguments you'll meet, validity depends on the argument's <i>shape</i>, not its topic. So keep the shape, swap in new words, and see if you get true premises with a false conclusion:</p>
+  <div class="exhibit" style="--hl-c:var(--hl-g)">
+    <span class="lbl">Exhibit D: same skeleton, new skin</span>
+    <span class="argline">Original: All poets are dreamers. Kai is a dreamer. So Kai is a poet.</span>
+    <span class="argline">Same shape: All cats are mammals. My dog is a mammal. So my dog is a cat.</span>
+  </div>
+  <p>The second one has true premises and an obviously false conclusion. Same shape, so the first one is invalid too, even if Kai happens to be a poet.</p>
+  <p class="note">The fine print: a few arguments are valid because of what particular words mean rather than their shape. "Ana is taller than Ben, and Ben is taller than Cy, so Ana is taller than Cy" works only because of how "taller than" behaves. Swap in "is the mother of" and the same shape breaks. When in doubt, go back to the definition: can you describe a situation with true premises and a false conclusion?</p>
+  <p>One more tool for the machine below. "Every dragon is a reptile" and "No dragon flies" both count as <b>true</b> in a world with no dragons at all: there's no dragon around to break them. Logicians call this <i>vacuously</i> true. (But "Some dragon..." is false with no dragons, because "some" means at least one exists.)</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 4: MACHINE ================= -->
+<section class="sheet lab" id="g3" style="--g:var(--hl-o)" aria-labelledby="g3h">
+  <div class="gtab">Lead 2 of 3</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g3h">The counterexample machine</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "How to break an argument" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">A tiny world with four creatures. Toggle what each one is; the lights show which lines are true in the world you've built. Build a world where every premise is true and the conclusion is false. If you think no such world exists, call it valid, but you'll have to say <i>why</i> before the machine checks every world it can build.</p>
+  <p class="m-nav" id="mNav"></p>
+  <div class="machine">
+    <div class="m-arg" id="mArg" aria-live="polite"></div>
+    <div class="alarm" id="mAlarm" aria-live="polite"></div>
+    <div class="creatures" id="mWorld"></div>
+    <div class="row">
+      <button class="btn" type="button" id="mInvalid">Log counterexample: invalid</button>
+      <button class="btn ghost" type="button" id="mValid">Can't be broken: valid</button>
+      <button class="btn ghost" type="button" id="mNext" hidden>Next argument</button>
+    </div>
+    <p class="vac">Reminder: with no dragons in the world, "every dragon..." and "no dragon..." lines light up TRUE (vacuously true), and "some dragon..." lines stay false.</p>
+  </div>
+  <div class="fb" id="mFb" aria-live="polite"></div>
+  <p class="pause" id="pauseNote" hidden>Good place to pause. Your progress is saved in this browser.</p>
+  <div class="copymini" data-copy="g3"></div>
+  </div>
+</section>
+
+<!-- ================= BEAT 6: WHY IT MATTERS ================= -->
+<section class="sheet" aria-labelledby="b6">
+  <h2 id="b6"><span style="--mark:var(--hl-y)">The rule that makes arguing worth it</span></h2>
+  <p>Here's why any of this is worth your time.</p>
+  <p>Suppose someone hands you a <b>valid</b> argument, and you hate the conclusion. You are not allowed to just say "nah." Because the argument is valid, the only way its conclusion can be false is if <b>at least one premise is false</b>. So you owe them an answer to one question: <i>which premise?</i></p>
+  <p>That's the move that turns a fight into progress. Instead of "you're wrong" versus "no, you're wrong," you get "I accept premise 1, I accept premise 2, but I think premise 3 fails, and here's a case that shows it." Now you're actually disagreeing about something specific, and one of you might learn something.</p>
+  <p class="note">There's an old philosophers' saying: one person's proof is another person's refutation. If I accept the premises, I'm stuck with the conclusion. If you reject the conclusion, the same valid argument shows you that a premise is false. Logic tells you something has to give. It doesn't tell you what.</p>
+</section>
+
+<!-- ================= BEAT 7: MISSING PIECES ================= -->
+<section class="sheet" aria-labelledby="b7">
+  <h2 id="b7"><span style="--mark:var(--hl-g)">Missing pieces, and one cheat</span></h2>
+  <p class="wow">Logicians and newscasters mean different things by "begging the question."</p>
+  <p>Real arguments skip steps. "Lying hurts people, so lying is wrong" leaves something out. As written, it's invalid: the premise alone doesn't rule out a situation where lying hurts people and still isn't wrong.</p>
+  <p>To make it valid, add the <b>missing premise</b> that bridges the gap: "Anything that hurts people is wrong." Now the conclusion follows. And look what happened: the premise you had to add is exactly where a critic would aim. Dentists hurt people. Is a filling wrong? Digging out the hidden premise shows you where the real disagreement lives.</p>
+  <p>One cheat to watch for. You can make <i>any</i> argument valid by adding the conclusion itself as a premise. "Lying is wrong. So lying is wrong." Technically valid, since the premise can't be true while the conclusion is false. But it proves nothing, because it assumes exactly what it was supposed to show. Philosophers call this <b>begging the question</b>. (That's the original meaning of the phrase. It doesn't mean "raises the question.")</p>
+</section>
+
+<!-- ================= BEAT 8: IS / OUGHT ================= -->
+<section class="sheet" aria-labelledby="b8">
+  <h2 id="b8"><span style="--mark:var(--hl-p)">The gap that's hard to jump</span></h2>
+  <p>Spot the pattern. "Most people tip at restaurants. So you ought to tip." The premise is about how things <i>are</i>. The conclusion is about how things <i>ought</i> to be. Even if the premise is true, the argument is invalid as it stands: everyone could tip and you still might not be obliged to. To close it, you'd need a premise with an <i>ought</i> in it, like "you ought to do what most people do" (and good luck defending that one).</p>
+  <p>The Scottish philosopher David Hume pointed at this in <i>A Treatise of Human Nature</i> (1739 to 1740). He complained that writers would describe how things are and then, without warning, start talking about what ought to be. Philosophers now call this the <b>is/ought gap</b>. Many think no pile of facts about what <i>is</i> can validly get you to a real <i>ought</i> unless some premise already has an ought in it.</p>
+  <p class="note">Logicians, starting with Arthur Prior around 1960, have found tricky technical exceptions, but none that settles a real moral question. Whether the gap is real at all is still argued about.</p>
+  <p>Practical upshot: in any valid argument for a moral conclusion, hunt for the premise with the "ought" or "wrong" in it. That's usually the one doing the real work, and the one worth arguing about.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 6: MISSING PREMISE ================= -->
+<section class="sheet lab" id="g6" style="--g:var(--hl-g)" aria-labelledby="g6h">
+  <div class="gtab">Lead 3 of 3</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g6h">Find the missing piece</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Missing pieces, and one cheat" and "The gap that's hard to jump" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Each argument below is invalid as written. Pick the premise from the tray that makes the conclusion follow <b>without simply assuming the conclusion</b>. Exactly one tile does that. The others leave the gap open or beg the question.</p>
+  <p class="m-nav" id="bNav"></p>
+  <div class="exhibit" style="--hl-c:var(--hl-g)" id="bArg"></div>
+  <div class="tray" id="bTray" role="group" aria-label="Premise tiles"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" type="button" id="bCheck" disabled>Test this premise</button><button class="btn ghost" type="button" id="bNext" hidden>Next argument</button></div>
+  <div class="fb" id="bFb" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ================= FINALE: CASE CLOSED ================= -->
+<section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
+  <div class="gtab" style="color:#fff">The verdict</div>
+  <div class="stamp cleared" aria-hidden="true">CLOSED</div>
+  <h2 id="finh">Case closed: your button argument</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all three pieces of evidence (clear all three leads) to open the final file.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Here's your call from the top of this file, laid out as an argument. Your reason is premise 1. Almost every one-sentence reason leaves a gap between the reason and the conclusion. Which hidden premise is <b>your</b> argument relying on? Only you can say. Pick the one that fits what you meant.</p>
+  <div class="lockin" id="finLock"></div>
+  <div class="exhibit finale-arg" style="--hl-c:var(--stamp)" id="finArg"></div>
+  <div id="finOpts" role="group" aria-label="Hidden premise options"></div>
+  <div id="finOwnWrap" hidden><label class="small" for="finOwn"><b>Write your own bridge premise:</b></label><textarea class="reasonbox" id="finOwn"></textarea><div class="row" style="margin-top:8px"><button class="btn" type="button" id="finOwnBtn">Use my premise</button></div></div>
+  <div class="fb" id="finFb" aria-live="polite"></div>
+  <div id="rcardWrap" hidden>
+    <div class="rcard" id="rcard"></div>
+    <div class="row" style="justify-content:center"><button class="btn" type="button" id="saveCard">Save card as image</button><span class="lockmsg" id="saveMsg" aria-live="polite"></span></div>
+  </div>
+  </div>
+</section>
+
+<!-- ================= WATCH ================= -->
+<section class="sheet" aria-labelledby="b10">
+  <h2 id="b10"><span style="--mark:var(--hl-b)">Before you go back to Rocky: the clip</span></h2>
+  <p>This short clip comes from MIT's course 24.02x, Moral Problems and the Good Life.</p>
+  <ol>
+    <li><a href="https://youtu.be/d4Q1HJIX9Dg" target="_blank" rel="noopener">MIT clip: Valid Arguments</a></li>
+  </ol>
+  <p>Rocky will also send you to <a href="https://www.philosophyexperiments.com/validorinvalid" target="_blank" rel="noopener">Valid or Invalid?</a> on Philosophy Experiments. Use the counterexample trick on every one.</p>
+</section>
+
+<!-- ================= CASE FILE FOR ROCKY ================= -->
+<section class="sheet" aria-labelledby="b11">
+  <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
+  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your button call, all three leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (The small "Copy just this lead" buttons inside the leads are only for when Rocky asks about one lead.)</p>
+  <div class="copyrow" data-copy="all"></div>
+</section>
+
+<!-- ================= DEEPER ================= -->
+<section class="sheet deeper" aria-labelledby="b12">
+  <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <ul>
+    <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by, taught by MIT philosophers Caspar Hare, Kieran Setiya and Tamar Schapiro, with Cosmo Grant and David Balcarras. <a href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
+    <li><b>Wireless Philosophy (Wi-Phi)</b>. Short, free animated videos by philosophers, including ones on validity and soundness. <a href="https://www.wi-phi.com/videos/soundness/" target="_blank" rel="noopener">wi-phi.com</a></li>
+    <li><b>forall x: Calgary</b>. A free, open textbook on formal logic, if the counterexample machine made you want the full system. <a href="https://forallx.openlogicproject.org/" target="_blank" rel="noopener">forallx.openlogicproject.org</a></li>
+  </ul>
+</section>
+
+<p class="foot">Case file written for Intro to Ethics on Recess. The clips are MIT's; this page, its games and its wording are our own, not MIT's.</p>
+</main>
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+
+
+/* ---------- optional saving (page works without it) ---------- */
+var KEY="goodlife-m01b-v1", BKEY="goodlife-button-v1", canSave=false, SAVED=null, SHARED=null;
+try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); SHARED=JSON.parse(localStorage.getItem(BKEY)||"null"); }catch(e){ canSave=false; SAVED=null; SHARED=null; }
+if(!SAVED || typeof SAVED!=="object") SAVED=null;
+if(!SHARED || typeof SHARED!=="object") SHARED=null;
+var touched={}, restoring=false;
+function saveState(){
+  if(!canSave || restoring) return;
+  try{
+    var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, finale:FIN.pick, rf:REC.rf, lines:lines}));
+    if(COVER.v && COVER.reason) localStorage.setItem(BKEY, JSON.stringify({v:COVER.v, reason:COVER.reason}));
+  }catch(e){}
+}
+function touch(g){ touched[g]=true; saveState(); }
+
+/* ---------- state for Rocky's copy ---------- */
+var REC={ sort:{}, hl:{done:false, wrongChecks:0}, m:{solved:0, notes:[]}, rf:{rounds:0, best:null}, b:{done:0, firstTry:0} };
+var COVER={v:null, reason:""};
+var FIN={pick:null};
+
+/* ---------- evidence dock with cheat-sheet cards ---------- */
+var GAMES=[
+ {id:"g4",c:"var(--hl-p)",lead:1,title:"Valid vs sound",body:"<b>Valid:</b> if the premises were true, the conclusion would have to be. <b>Sound:</b> valid, and the premises really are true.",ex:"Cheese Mars: valid, not sound."},
+ {id:"g3",c:"var(--hl-o)",lead:2,title:"Counterexample",body:"One possible situation with every premise true and the conclusion false proves an argument invalid.",ex:"All cats are mammals; my dog is a mammal; so my dog is a cat. Nope."},
+ {id:"g6",c:"var(--hl-g)",lead:3,title:"Hidden premise",body:"Find the missing bridge. A moral conclusion usually needs a premise with \"ought\" or \"wrong\" in it. Adding the conclusion itself begs the question. And if you reject a valid argument's conclusion, name the premise you reject.",ex:"Lying hurts people (+ anything that hurts people is wrong), so lying is wrong."}
+];
+var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
+var cleared={}, openCard=null;
+GAMES.forEach(function(g){
+  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  b.addEventListener("click",function(){ showCard(g); });
+  li.appendChild(b); $("dockList").appendChild(li);
+});
+$("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
+function showCard(g){
+  var P=$("evPanel");
+  GAMES.forEach(function(x){ $("dock-"+x.id).setAttribute("aria-expanded","false"); });
+  if(openCard===g.id){ P.hidden=true; openCard=null; return; }
+  openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
+  P.style.setProperty("--c",g.c);
+  P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
+}
+function clear(id, quiet){
+  if(cleared[id]) return; cleared[id]=true;
+  var g=GAMES.filter(function(x){return x.id===id;})[0];
+  $(id).classList.add("is-cleared");
+  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var n=Object.keys(cleared).length;
+  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
+  if(!quiet){
+    var body=$(id).querySelector(".lab-body");
+    var note=el("p",{class:"pause"}); note.textContent="New evidence card: \""+g.title+"\". Tap pip "+g.lead+" in the top bar any time to review it.";
+    body.appendChild(note);
+  }
+  if(n===NG) openFinale();
+  saveState();
+}
+
+/* ---------- locks: each lead opens only after its reading ---------- */
+var UNLOCKS={1:"g4",2:"g3",3:"g6"};
+var unlockedStep=0;
+var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
+function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
+function refreshGot(){
+  gotBtns.forEach(function(b){
+    var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
+    if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; }
+    else if(k===unlockedStep+1){ b.disabled=false; msg.textContent=""; }
+    else { b.disabled=true; msg.textContent="Open the earlier leads first (scroll up)."; }
+  });
+}
+function doUnlock(k, focus){
+  unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
+  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body textarea"); if(first) first.focus(); }
+}
+gotBtns.forEach(function(b){
+  b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
+});
+refreshGot();
+window.__m01={cleared:cleared, unlockStep:function(){return unlockedStep;}};
+
+/* ---------- button call (lock in) ---------- */
+var VL={press:"I'd press it", nopress:"I wouldn't press it"};
+function buildLockin(root){
+  root.querySelectorAll(".vbtn").forEach(function(b){
+    b.addEventListener("click",function(){ COVER.v=b.getAttribute("data-v"); syncLockins(); renderFinale(); saveState(); });
+  });
+}
+function syncLockins(){
+  document.querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
+  var a=$("myReason"), f=$("finReason"); if(a && document.activeElement!==a) a.value=COVER.reason; if(f && document.activeElement!==f) f.value=COVER.reason;
+}
+buildLockin($("lockin"));
+$("lockBtn").addEventListener("click",function(){
+  COVER.reason=$("myReason").value.trim();
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
+  if(!COVER.reason){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in. You'll need it at the end.";
+  renderFinale(); saveState();
+});
+
+/* ---------- copy for Rocky (shared machinery) ---------- */
+function linesFor(g){ if(!touched[g] && SAVED && SAVED.lines && SAVED.lines[g]) return SAVED.lines[g].concat(); return LIVE[g](); }
+function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(COVER.reason?". My reason: "+COVER.reason:"")]; }
+function report(key){ return "C1-M02 case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
+function copyText(txt, box, stat){
+  box.value=txt; box.hidden=false;
+  function done(ok){ stat.textContent= ok ? "Copied!" : "Select the text below and copy it."; }
+  function fallback(){ box.focus(); box.select(); var ok=false; try{ ok=document.execCommand("copy"); }catch(e){} done(ok); }
+  try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(function(){done(true); box.focus(); box.select();}, fallback); return; } }catch(e){}
+  fallback();
+}
+function wireCopies(){
+  [].forEach.call(document.querySelectorAll("[data-copy]"),function(row){
+    var key=row.getAttribute("data-copy"), big=key==="all";
+    var b=el("button",{class:big?"btn":"btn ghost",type:"button"}); b.textContent= big ? "Copy my case file for Rocky" : "Copy just this lead";
+    var st=el("span",{class:"cstat","aria-live":"polite"});
+    var ta=el("textarea",{readonly:"","aria-label":"Text to paste to Rocky",rows:"6"}); ta.hidden=true;
+    ta.addEventListener("focus",function(){ ta.select(); });
+    b.addEventListener("click",function(){ st.textContent=""; copyText(report(key), ta, st); });
+    row.appendChild(b); row.appendChild(st); row.appendChild(ta);
+  });
+}
+
+function rfLines(){ return ["Lead 1 Sound/valid/broken: "+(REC.rf.rounds? "best round "+REC.rf.best+" of 8 over "+REC.rf.rounds+" round"+(REC.rf.rounds>1?"s":"")+(REC.rf.best>=6?" (cleared)":" (not cleared yet)") : "no full round played")]; }
+function mLines(){ return ["Lead 2 Counterexample machine: "+REC.m.solved+" of 4 arguments solved"].concat(REC.m.notes); }
+function bLines(){ return ["Lead 3 Missing piece: "+REC.b.done+" of 3 repaired, "+REC.b.firstTry+" on the first try"]; }
+var LIVE={g4:rfLines,g3:mLines,g6:bLines};
+function finLines(){ return ["Verdict, hidden premise my button argument relies on: "+(FIN.pick||"not done yet")]; }
+var BUILDERS={ g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");},
+  all:function(){ return [].concat(coverLines(), linesFor("g4"), linesFor("g3"), linesFor("g6"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of 3"]); } };
+wireCopies();
+window.__m01.report=report;
+
+/* ---------- bring back the button argument (paste) ---------- */
+function parseButton(txt){
+  var m=/Button call:\s*(I'd press it|I wouldn't press it|I would press it|I'd not press it)\.?\s*(?:My reason:\s*([^\n\r]*))?/i.exec(txt||"");
+  if(!m) return null;
+  var v=/wouldn't|not press/i.test(m[1])?"nopress":"press";
+  return {v:v, reason:(m[2]||"").trim()};
+}
+$("pasteBtn").addEventListener("click",function(){
+  var r=parseButton($("pasteBox").value);
+  if(!r){ $("pasteMsg").style.color="var(--bad)"; $("pasteMsg").textContent="Couldn't find a line starting \"Button call:\". Or just answer below."; return; }
+  COVER.v=r.v; COVER.reason=r.reason; syncLockins(); renderFinale(); saveState();
+  $("pasteMsg").style.color=""; $("pasteMsg").textContent= r.reason ? "Loaded. Check it below." : "Loaded your call. Add your reason below.";
+  $("bbStatus").textContent="Loaded from your pasted file.";
+  if(r.reason){ $("lockMsg").textContent="Locked in. You'll need it at the end."; }
+});
+window.__m01.parseButton=parseButton;
+/* ---------- impossible square ---------- */
+var COMBO={"1":"Possible: true premises, true conclusion. If the argument is also valid, it's sound.","2":"Valid arguments can never land here. True premises with a false conclusion is exactly what validity rules out.","3":"Possible: a valid argument can have a false premise and still reach a true conclusion by luck.","4":"Possible: hello, cheese Mars. False premise, false conclusion, perfectly valid."};
+document.querySelectorAll(".combo button").forEach(function(b){
+  b.addEventListener("click",function(){
+    var c=b.getAttribute("data-c"); setFb($("comboFb"), c==="2"?"bad":"", c==="2"?"Off-limits.":"", COMBO[c]);
+    if(c==="2" && !reduceMotion){ b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); }
+  });
+});
+
+/* ================= LEAD 3: RAPID FIRE ================= */
+var BANK=[
+ {p:["All whales are mammals.","All mammals breathe air."],c:"So, all whales breathe air.",a:"sound",
+  why:"Valid: if both premises hold, whales can't escape breathing air. And both premises are true. Sound."},
+ {p:["All fish can climb trees.","Goldfish are fish."],c:"So, goldfish can climb trees.",a:"valid",
+  why:"The connection is perfect, so it's valid. But most fish, goldfish included, can't climb trees, so premise 1 is false. Not sound."},
+ {p:["If Lisbon is in Spain, then Lisbon is in Europe.","Lisbon is not in Spain."],c:"So, Lisbon is not in Europe.",a:"invalid",
+  why:"Both premises can be true while Lisbon sits outside Spain but still in Europe. In fact that's the real world: Lisbon is in Portugal. True premises, false conclusion. Invalid."},
+ {p:["The Moon is made either of rock or of cheese.","The Moon is not made of rock."],c:"So, the Moon is made of cheese.",a:"valid",
+  why:"Either-or plus 'not the first' forces the second, so it's valid. But premise 2 is false. Not sound."},
+ {p:["Every square is a rectangle.","Every rectangle has four right angles."],c:"So, every square has four right angles.",a:"sound",
+  why:"Valid chain, and both premises are true geometry. Sound."},
+ {p:["Some birds can't fly.","Penguins are birds."],c:"So, penguins can't fly.",a:"invalid",
+  why:"Trap! Every line is true. But 'some birds can't fly' doesn't say which ones. Picture a world where penguins fly and ostriches don't: both premises still true, conclusion false. Invalid."},
+ {p:["All trout are fish.","No tuna is a trout."],c:"So, no tuna is a fish.",a:"invalid",
+  why:"Premises true, conclusion false. Not being a trout doesn't stop a tuna being a fish. Invalid."},
+ {p:["No reptiles are mammals.","All snakes are reptiles."],c:"So, no snakes are mammals.",a:"sound",
+  why:"Valid: snakes sit inside 'reptiles', which is completely outside 'mammals'. Premises true. Sound."},
+ {p:["No birds are animals.","All eagles are birds."],c:"So, no eagles are animals.",a:"valid",
+  why:"Valid: if no birds were animals and eagles were birds, eagles couldn't be animals. But premise 1 is wildly false. Not sound."},
+ {p:["All dogs are mammals.","All mammals are animals."],c:"So, all dogs are animals.",a:"sound",
+  why:"A clean chain: dogs inside mammals, mammals inside animals. Valid, and both premises are true. Sound."},
+ {p:["The Pacific is bigger than the Atlantic."],c:"So, the Atlantic is bigger than the Arctic Ocean.",a:"invalid",
+  why:"True premise, true conclusion, zero connection. The premise says nothing about the Arctic, so the Atlantic could be smaller and the premise still true. Invalid."},
+ {p:["All prime numbers are odd.","2 is a prime number."],c:"So, 2 is odd.",a:"valid",
+  why:"Valid: if every prime were odd, 2 would have to be. But 2 is prime and even, so premise 1 is false. Not sound."},
+ {p:["If Tokyo is the capital of Japan, then Tokyo is in Asia.","Tokyo is the capital of Japan."],c:"So, Tokyo is in Asia.",a:"sound",
+  why:"'If A then B; A; so B' is about as valid as it gets. Both premises true. Sound."},
+ {p:["Everything that orbits Earth is a star.","The Moon orbits Earth."],c:"So, the Moon is a star.",a:"valid",
+  why:"Valid: if premise 1 were true the Moon couldn't avoid stardom. Premise 1 is false. Not sound."},
+ {p:["All cats are animals.","All dogs are animals."],c:"So, all cats are dogs.",a:"invalid",
+  why:"True premises, false conclusion, right here in the real world. Sharing a feature doesn't make one group part of the other. Invalid."},
+ {p:["Shakespeare wrote Hamlet."],c:"So, somebody wrote Hamlet.",a:"sound",
+  why:"If Shakespeare wrote it, somebody did. Valid, and the premise is true. Sound, even if it's not very exciting."},
+ {p:["All triangles have three sides.","Anything with three sides has fewer than four sides."],c:"So, all triangles have fewer than four sides.",a:"sound",
+  why:"Valid chain, and both premises are true. Sound."},
+ {p:["All metals conduct electricity.","Copper is a metal."],c:"So, copper conducts electricity.",a:"sound",
+  why:"Valid, and both premises are true (it's why wires are made of copper). Sound."},
+ {p:["Every country in Europe uses the euro.","The United Kingdom is in Europe."],c:"So, the United Kingdom uses the euro.",a:"valid",
+  why:"Valid: if every European country used the euro, the UK would. But premise 1 is false: the UK uses the pound. Not sound."},
+ {p:["No cats are dogs.","No dogs have walked on the Moon."],c:"So, no cats have walked on the Moon.",a:"invalid",
+  why:"Every line is true, but the premises don't guarantee it. Picture a world where a cat rode a rocket to the Moon and no dog ever did: both premises still true, conclusion false. Invalid."}
+];
+var rfRound=[], rfI=0, rfScore=0, rfStreak=0, rfAnswered=false;
+var ALBL={sound:"Sound",valid:"Valid, not sound",invalid:"Invalid"};
+function rfNew(){
+  var cnt=shuffle([3,3,2]), cats=["sound","valid","invalid"], pick=[];
+  cats.forEach(function(c,i){ pick=pick.concat(shuffle(BANK.filter(function(x){return x.a===c;})).slice(0,cnt[i])); });
+  rfRound=shuffle(pick); rfI=0; rfScore=0; rfStreak=0; rfShow(); }
+function rfTop(pulse){
+  var s=$("rfStreak"); s.textContent="Score "+rfScore+(rfStreak>=2 ? ", "+rfStreak+" in a row" : "")+(REC.rf.best!=null?" (best "+REC.rf.best+"/8)":"");
+  s.classList.toggle("hot", rfStreak>=3);
+  if(pulse && !reduceMotion){ s.classList.remove("pulse"); void s.offsetWidth; s.classList.add("pulse"); }
+}
+function rfShow(){
+  rfAnswered=false; var it=rfRound[rfI];
+  $("rfCount").textContent="Argument "+(rfI+1)+" of 8"; rfTop(false);
+  $("rfArg").innerHTML = it.p.map(function(p,i){return '<span class="argline">'+(i+1)+". "+p+'</span>';}).join("")+'<span class="argline" style="border-top:2px solid var(--ink);margin-top:6px;padding-top:4px">'+it.c+'</span>';
+  $("rfFb").className="fb"; $("rfFb").innerHTML=""; $("rfNext").hidden=true;
+  $("rfBtns").querySelectorAll("button").forEach(function(b){b.disabled=false; b.classList.remove("right","wrongpick");});
+}
+$("rfBtns").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click",function(){
+    if(rfAnswered) return; rfAnswered=true; var it=rfRound[rfI], a=b.getAttribute("data-a");
+    $("rfBtns").querySelectorAll("button").forEach(function(x){ x.disabled=true; if(x.getAttribute("data-a")===it.a) x.classList.add("right"); });
+    if(a===it.a){ rfScore++; rfStreak++; setFb($("rfFb"),"good","Yes: "+ALBL[it.a]+".",it.why); }
+    else { b.classList.add("wrongpick"); rfStreak=0; var extra = (a==="sound"&&it.a==="valid")?"You got the connection right; now check each premise against the real world. ":(a==="valid"&&it.a==="sound")?"Right that it's valid. Are the premises actually false, though? ":(it.a==="invalid")?"Before checking truth, ask: could the premises be true and the conclusion false? ":"Try to imagine the premises true and the conclusion false. If you can't, it's valid. ";
+      setFb($("rfFb"),"bad","It's "+ALBL[it.a]+".",extra+it.why); }
+    rfTop(rfStreak===3||rfStreak===5||rfStreak===8);
+    $("rfNext").hidden=false; $("rfNext").textContent= rfI<7 ? "Next" : "See result"; $("rfNext").focus();
+    touch("g4");
+  });
+});
+$("rfNext").addEventListener("click",function(){
+  if(rfI===8){ rfNew(); $("rfBtns").querySelector("button").focus(); return; }
+  if(rfI<7){ rfI++; rfShow(); $("rfBtns").querySelector("button").focus(); return; }
+  var pass=rfScore>=6;
+  REC.rf.rounds++; REC.rf.best=Math.max(REC.rf.best||0, rfScore);
+  $("rfArg").innerHTML='<b style="font-family:var(--type)">Round over: '+rfScore+' of 8.</b>'+(rfScore===8?'<span class="stamp perfect">PERFECT</span>':'')+' '+(pass?"You're spotting the traps. Deal a new round for different arguments if you want more.":"You need 6 to clear this one. A new round deals you a different hand.")+'<br><span class="score">Best so far: '+REC.rf.best+'/8</span>';
+  $("rfFb").className="fb"; $("rfFb").innerHTML=""; $("rfCount").textContent="Round complete"; $("rfStreak").textContent="Final score "+rfScore; $("rfStreak").classList.remove("hot");
+  $("rfBtns").querySelectorAll("button").forEach(function(b){b.classList.remove("right","wrongpick");});
+  $("rfNext").textContent="Deal a new round";
+  rfI=8; touch("g4"); if(pass) clear("g4"); $("rfNext").focus();
+});
+window.__m01.rfAnswer=function(){ return rfRound[rfI] && rfRound[rfI].a; };
+rfNew();
+
+/* ================= LEAD 4: COUNTEREXAMPLE MACHINE ================= */
+var PN=["dragon","reptile","flies"], CN=["Pip","Moss","Ember","Quill"];
+var D=0,R=1,F=2;
+var S={
+  all:function(a,b){return function(w){return w.every(function(c){return !c[a]||c[b];});};},
+  no:function(a,b){return function(w){return w.every(function(c){return !(c[a]&&c[b]);});};},
+  some:function(a,b){return function(w){return w.some(function(c){return c[a]&&c[b];});};},
+  someNot:function(a,b){return function(w){return w.some(function(c){return c[a]&&!c[b];});};},
+  is:function(i,a){return function(w){return !!w[i][a];};}
+};
+function W(spec){ return CN.map(function(_,i){ var s=spec[i]||""; return [s.indexOf("d")>=0, s.indexOf("r")>=0, s.indexOf("f")>=0]; }); }
+var ARGS=[
+ {p:[["Every dragon is a reptile.",S.all(D,R)],["Pip is a reptile.",S.is(0,R)]], c:["So, Pip is a dragon.",S.is(0,D)], valid:false, start:W(["dr"]),
+  hint:"The conclusion is all about Pip. What would Pip have to be like for the conclusion to be false, while both premises stay true?",
+  win:"Pip is a reptile, every dragon is a reptile, and yet Pip is no dragon. Being a reptile doesn't make you a dragon. Invalid.",
+  vwrong:"The machine found a world that breaks it. Being a reptile doesn't make you a dragon. Can Pip be a reptile without being a dragon?"},
+ {p:[["Every dragon is a reptile.",S.all(D,R)],["No reptile flies.",S.no(R,F)]], c:["So, no dragon flies.",S.no(D,F)], valid:true, start:W([]),
+  q:"Before the machine checks: a counterexample would need a dragon that flies. Why can't any world have one while both premises are true?",
+  opts:[{t:"A flying dragon would be a flying reptile, and premise 2 says no reptile flies.",ok:true},
+        {t:"The world isn't allowed to contain dragons.",fb:"It is: toggle one on. Dragons are fine. The question is whether one can fly."},
+        {t:"Premise 1 says dragons can't fly.",fb:"Premise 1 only says dragons are reptiles. Neither premise alone blocks a flying dragon; it's the combination."}],
+  win:"Every dragon is a reptile, no reptile flies, so no dragon can fly. Valid.",
+  ifalse:"Look at the lights: in this world the premises aren't all true, or the conclusion isn't false. A counterexample needs both. Try to build one, and notice what keeps stopping you."},
+ {p:[["Some reptile flies.",S.some(R,F)],["Every dragon is a reptile.",S.all(D,R)]], c:["So, some dragon flies.",S.some(D,F)], valid:false, start:W(["drf","d"]),
+  hint:"You need a reptile that flies but isn't a dragon, every dragon still a reptile, and no dragon that flies. Check every creature, not just Pip.",
+  win:"A flying reptile that isn't a dragon makes premise 1 true, every dragon is still a reptile, and no dragon flies. Knowing some reptiles fly tells you nothing about dragons. Invalid.",
+  vwrong:"There's a world that breaks this one. Does a flying reptile have to be a dragon?"},
+ {p:[["Some dragon doesn't fly.",S.someNot(D,F)],["Every dragon is a reptile.",S.all(D,R)]], c:["So, some reptile doesn't fly.",S.someNot(R,F)], valid:true, start:W([]),
+  q:"Before the machine checks: a counterexample would need every reptile to fly while both premises are true. Why can't that happen?",
+  opts:[{t:"Premise 1 puts a non-flying dragon in the world, and premise 2 makes that dragon a reptile, so some reptile doesn't fly.",ok:true},
+        {t:"Dragons always fly.",fb:"Premise 1 says the opposite: at least one dragon doesn't fly. Use that."},
+        {t:"There might be no reptiles at all.",fb:"With premise 1 true there's at least one dragon, and premise 2 makes it a reptile. So reptiles exist. Keep going from there."}],
+  win:"The grounded dragon from premise 1 is a reptile by premise 2, so some reptile doesn't fly. Valid.",
+  ifalse:"Not a counterexample yet. Check the lights: a counterexample needs every premise lit and the conclusion dark. Notice what happens to the conclusion the moment premises 1 and 2 are both true."}
+];
+var mI=0, world, mHintCount=0, mWrong=0, mDone=false, mBusy=false;
+function describeWorld(w){ return w.map(function(c,i){ var t=[]; if(c[D]) t.push("dragon"); if(c[R]) t.push("reptile"); if(c[F]) t.push("flies"); return CN[i]+": "+(t.length?t.join("+"):"none of these"); }).join(", "); }
+function creatureSVG(c){
+  var body=c[R]?"#3FBF83":"#B488EE", dark=c[R]?"#1E7A50":"#6E46B0";
+  var s='<svg viewBox="2 2 68 56" aria-hidden="true">';
+  if(c[F]) s+='<path d="M22 30 C6 14 2 28 4 36 C10 32 16 34 22 38Z" fill="#86CFFF" stroke="#1E1609" stroke-width="1.5"/><path d="M50 30 C66 14 70 28 68 36 C62 32 56 34 50 38Z" fill="#86CFFF" stroke="#1E1609" stroke-width="1.5"/>';
+  if(c[D]) s+='<path d="M48 46 Q64 50 66 40 Q60 44 50 40Z" fill="'+body+'" stroke="#1E1609" stroke-width="1.5"/><path d="M27 16 L24 4 L32 13Z M45 16 L48 4 L40 13Z" fill="#FF8A3D" stroke="#1E1609" stroke-width="1.5"/>';
+  s+='<ellipse cx="36" cy="36" rx="16" ry="19" fill="'+body+'" stroke="#1E1609" stroke-width="2"/>';
+  if(c[R]) s+='<path d="M28 42 q4 -4 8 0 q4 -4 8 0 M30 49 q3 -3 6 0 q3 -3 6 0" fill="none" stroke="'+dark+'" stroke-width="1.6"/>';
+  else s+='<path d="M24 26 l-3 -4 M48 26 l3 -4 M30 50 l-2 4 M42 50 l2 4" stroke="'+dark+'" stroke-width="2"/>';
+  s+='<circle cx="30" cy="30" r="4" fill="#fff" stroke="#1E1609" stroke-width="1.2"/><circle cx="42" cy="30" r="4" fill="#fff" stroke="#1E1609" stroke-width="1.2"/><circle cx="31" cy="31" r="1.8" fill="#1E1609"/><circle cx="43" cy="31" r="1.8" fill="#1E1609"/>';
+  if(c[D]) s+='<path d="M33 40 l3 3 l3 -3" fill="none" stroke="#1E1609" stroke-width="1.6"/>'; else s+='<path d="M32 40 q4 3 8 0" fill="none" stroke="#1E1609" stroke-width="1.6"/>';
+  return s+'</svg>';
+}
+function evalArg(A,w){ return {p:A.p.map(function(x){return x[1](w);}), c:A.c[1](w)}; }
+function isCounter(A,w){ var e=evalArg(A,w); return e.p.every(Boolean) && !e.c; }
+function worldN(n){ return CN.map(function(_,i){ return [!!(n>>(i*3)&1),!!(n>>(i*3+1)&1),!!(n>>(i*3+2)&1)]; }); }
+function findCounter(A){ for(var n=0;n<4096;n++){ var w=worldN(n); if(isCounter(A,w)) return w; } return null; }
+function mRender(w){
+  w=w||world; var A=ARGS[mI], e=evalArg(A,w), h="";
+  A.p.forEach(function(p,i){ h+='<div class="m-line"><span class="lamp '+(e.p[i]?"t":"f")+'">'+(e.p[i]?"TRUE":"false")+'</span><span>'+(i+1)+". "+p[0]+'</span></div>'; });
+  h+='<div class="m-line concl"><span class="lamp '+(e.c?"t":"f")+'">'+(e.c?"TRUE":"false")+'</span><span>'+A.c[0]+'</span></div>';
+  $("mArg").innerHTML=h;
+  if(!mBusy){
+    var hot=e.p.every(Boolean)&&!e.c, al=$("mAlarm");
+    al.className="alarm"+(hot?" hot":"");
+    al.textContent= hot ? "Counterexample in view: every premise true, conclusion false." : (e.p.every(Boolean) ? "Premises all true, but the conclusion is true too. No counterexample yet." : "Not every premise is true in this world yet.");
+  }
+  var Wd=$("mWorld"); Wd.innerHTML="";
+  w.forEach(function(c,i){
+    var card=el("div",{class:"cr"}); card.innerHTML=creatureSVG(c)+'<div class="nm">'+CN[i]+'</div>';
+    PN.forEach(function(pn,j){
+      var t=el("button",{class:"tog",type:"button","data-p":String(j),"aria-pressed":String(c[j]),"aria-label":CN[i]+": "+(j===2?"flies":"is a "+pn)});
+      t.textContent= j===2 ? (c[j]?"flies":"doesn't fly") : (c[j]?pn:"not "+pn);
+      if(mBusy) t.disabled=true;
+      t.addEventListener("click",function(){ if(mDone||mBusy) return; world[i][j]=!world[i][j]; mRender(); $("mWorld").querySelectorAll(".cr")[i].querySelectorAll(".tog")[j].focus(); touch("g3"); });
+      card.appendChild(t);
+    });
+    Wd.appendChild(card);
+  });
+  $("mNav").textContent="Argument "+(mI+1)+" of "+ARGS.length+", "+REC.m.solved+" solved";
+}
+function mLoad(){ world=ARGS[mI].start.map(function(c){return c.slice();}); mHintCount=0; mWrong=0; mDone=false; $("mFb").className="fb"; $("mFb").innerHTML=""; $("mNext").hidden=true; $("mInvalid").disabled=false; $("mValid").disabled=false; mRender(); }
+function mSolve(msg, note){
+  mDone=true; REC.m.solved++; REC.m.notes.push("Arg "+(mI+1)+" ("+ARGS[mI].p.map(function(p){return p[0];}).join(" ")+" "+ARGS[mI].c[0]+"): "+note+(mWrong?" (wrong calls first: "+mWrong+")":""));
+  setFb($("mFb"),"good","Case closed.",msg); $("mInvalid").disabled=true; $("mValid").disabled=true;
+  if(mI<ARGS.length-1){ $("mNext").hidden=false; $("mNext").focus(); } else { $("mFb").innerHTML+="<br><br>That's every argument. You've just done by hand what logicians do with formal models."; if(canSave) $("pauseNote").hidden=false; clear("g3"); }
+  mRender(); touch("g3");
+}
+function runCheck(A, done){
+  var al=$("mAlarm");
+  if(reduceMotion){ al.className="alarm"; al.textContent="Checked all 4,096 worlds: 0 counterexamples found."; done(); return; }
+  mBusy=true; $("mInvalid").disabled=true; $("mValid").disabled=true;
+  var t0=null, dur=1400, last=-1;
+  function step(ts){
+    if(t0===null) t0=ts; var k=Math.min(1,(ts-t0)/dur), n=Math.floor(k*4095);
+    if(n!==last){ last=n; mRender(worldN(n)); al.className="alarm"; al.textContent="Checking world "+(n+1).toLocaleString("en-US")+" of 4,096... counterexamples found: 0"; }
+    if(k<1) requestAnimationFrame(step);
+    else { mBusy=false; mRender(); al.className="alarm"; al.textContent="Checked all 4,096 worlds: 0 counterexamples found."; done(); }
+  }
+  requestAnimationFrame(step);
+}
+function askWhy(A){
+  var box=el("div",{class:"mq"}); var p=el("p",{class:"small"}); p.innerHTML="<b>"+A.q+"</b>"; box.appendChild(p);
+  shuffle(A.opts).forEach(function(o){
+    var b=el("button",{class:"choice",type:"button"}); b.textContent=o.t;
+    b.addEventListener("click",function(){
+      if(o.ok){ box.querySelectorAll("button").forEach(function(x){x.disabled=true;}); $("mFb").className="fb good"; $("mFb").innerHTML='<strong class="v">Right.</strong> Now watch the machine check every world it can build.';
+        runCheck(A,function(){ mSolve(A.win+" The machine checked every world it can build, all 4,096 of them, and found none.", "called valid and explained why"); }); }
+      else { mWrong++; var f=box.querySelector(".fb"); setFb(f,"bad","Not quite.",o.fb); }
+      touch("g3");
+    });
+    box.appendChild(b);
+  });
+  box.appendChild(el("div",{class:"fb","aria-live":"polite"}));
+  $("mFb").className="fb"; $("mFb").innerHTML=""; $("mFb").appendChild(box);
+  box.querySelector("button").focus();
+}
+$("mInvalid").addEventListener("click",function(){
+  var A=ARGS[mI];
+  if(isCounter(A,world)){ mSolve(A.win, "called invalid; my counterexample: "+describeWorld(world)); }
+  else if(A.valid){ mWrong++; setFb($("mFb"),"bad","No alarm.",A.ifalse); }
+  else { mWrong++; mHintCount++; setFb($("mFb"),"bad","Not yet.","The world on screen isn't a counterexample: you need every premise lit TRUE and the conclusion dark. "+(mHintCount>1?"Hint: "+A.hint:"Keep toggling.")); }
+  touch("g3");
+});
+$("mValid").addEventListener("click",function(){
+  var A=ARGS[mI];
+  if(A.valid){ askWhy(A); }
+  else { mWrong++; mHintCount++; setFb($("mFb"),"bad","The machine says no.",A.vwrong + (mHintCount>2?" (Machine tip: "+A.hint+")":"")); }
+  touch("g3");
+});
+$("mNext").addEventListener("click",function(){ mI++; mLoad(); $("mInvalid").focus(); });
+mLoad();
+window.__m01.findCounter=function(i){ return findCounter(ARGS[i]); };
+window.__m01.machineWorld=function(){ return world.map(function(c){return c.slice();}); };
+
+/* ================= LEAD 6: MISSING PREMISE ================= */
+var BUILD=[
+ {p:"Pressing the button takes $1,000 from a stranger who did nothing to deserve losing it.", c:"So, pressing the button is wrong.",
+  tiles:[
+   {t:"Taking money from someone who did nothing to deserve losing it is wrong.",r:"ok",fb:"Locked in. Now the argument works: if both premises are true, pressing has to be wrong. Notice the premise you added is the one with 'wrong' in it, just like the is/ought section predicted."},
+   {t:"If someone loses money, they are usually upset.",r:"no",fb:"An if-then, but it's about what usually happens, not what's wrong. Add it and pressing could still be fine as far as the premises go. Gap still open."},
+   {t:"Most people wouldn't press the button.",r:"no",fb:"This tells you what people would do, not what's wrong. That's the is/ought gap: most people could be making a mistake. Gap still open."},
+   {t:"Pressing the button is wrong.",r:"circ",fb:"That's the conclusion itself. It makes the argument valid, but only by begging the question: it assumes what it was supposed to prove. Find a premise that does real work."}]},
+ {p:"Learning an instrument would make Sam's life go better.", c:"So, Sam has a reason to learn an instrument.",
+  tiles:[
+   {t:"If you learn an instrument, you usually practice a lot.",r:"no",fb:"An if-then, but it links instruments to practice, not to having a reason. Gap still open."},
+   {t:"If something would make your life go better, you have a reason to do it.",r:"ok",fb:"That's the bridge. Premise: it'd make Sam's life better. Bridge: anything like that gives you a reason. Conclusion follows. This is a well-being argument, and the bridge is a claim about well-being reasons in general."},
+   {t:"Lots of people Sam's age play instruments.",r:"no",fb:"What other people do doesn't tell us what Sam has reason to do. Gap still open."},
+   {t:"Sam has a reason to learn an instrument.",r:"circ",fb:"That's the conclusion again, so it begs the question. Find the premise that links 'better life' to 'a reason'."}]},
+ {p:"Dev promised to help Ana move on Saturday.", c:"So, Dev ought to help Ana move on Saturday.",
+  tiles:[
+   {t:"People usually keep their promises.",r:"no",fb:"That's the is/ought gap from above. This tells you what people usually <i>do</i>; the conclusion is about what Dev <i>ought</i> to do. No 'ought' follows from 'usually does.' Gap still open."},
+   {t:"If you promise something, people expect you to do it.",r:"no",fb:"Sneaky: it's an if-then, but it's still an <i>is</i>. It says what people expect, not what Dev ought to do. Expectations can be mistaken. Gap still open."},
+   {t:"Ana would be really grateful.",r:"no",fb:"Nice for Ana, but it doesn't say anything about what Dev ought to do. Could Ana be grateful and Dev still be off the hook? Nothing here rules it out."},
+   {t:"If you promise to do something, you ought to do it.",r:"ok",fb:"Now the conclusion follows. And here's the fun part: this premise is strong. Is it true with no exceptions? What if keeping the promise meant leaving someone in danger? Now you know exactly where a critic would aim."}]}
+];
+var bI=0, bSel=null, bMissed=false;
+function bRender(){
+  var B=BUILD[bI]; bSel=null; bMissed=false;
+  $("bNav").textContent="Argument "+(bI+1)+" of "+BUILD.length;
+  $("bArg").innerHTML='<span class="lbl">Exhibit F'+(bI+1)+'</span><span class="argline">1. '+B.p+'</span><span class="argline">2. <span class="slot" id="bSlot">Drop a premise here: pick a tile below</span></span><span class="argline concl">'+B.c+'</span>';
+  var T=$("bTray"); T.innerHTML="";
+  shuffle(B.tiles).forEach(function(t){
+    var b=el("button",{class:"tile",type:"button","aria-pressed":"false"}); b.textContent=t.t;
+    b.addEventListener("click",function(){ T.querySelectorAll(".tile").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); bSel=t; var s=$("bSlot"); s.textContent=t.t; s.classList.add("filled"); $("bCheck").disabled=false; });
+    T.appendChild(b);
+  });
+  $("bCheck").disabled=true; $("bCheck").hidden=false; $("bNext").hidden=true; $("bFb").className="fb"; $("bFb").innerHTML="";
+}
+$("bCheck").addEventListener("click",function(){
+  if(!bSel) return; var t=bSel;
+  if(t.r==="ok"){
+    REC.b.done++; if(!bMissed) REC.b.firstTry++;
+    setFb($("bFb"),"good","It follows.",t.fb); $("bCheck").hidden=true;
+    $("bTray").querySelectorAll(".tile").forEach(function(x){x.disabled=true;});
+    if(bI<BUILD.length-1){ $("bNext").hidden=false; $("bNext").focus(); } else { $("bFb").innerHTML+="<br><br>All three repaired. Every moral or reason-giving conclusion needed a premise that said so."; clear("g6"); }
+  } else { bMissed=true; if(t.r==="circ") setFb($("bFb"),"bad","Begging the question.",t.fb); else setFb($("bFb"),"bad","Still a gap.",t.fb); }
+  touch("g6");
+});
+$("bNext").addEventListener("click",function(){ bI++; bRender(); $("bTray").querySelector(".tile").focus(); });
+bRender();
+window.__m01.tiles=function(){ return [].map.call($("bTray").querySelectorAll(".tile"),function(x){return x.textContent;}); };
+
+/* ================= FINALE: CASE CLOSED ================= */
+var FINOPTS={
+ nopress:[
+  {t:"I shouldn't take money from an innocent stranger, even if nobody ever finds out.",k:"bridge",atk:"Is that true no matter what? What if the $1,000 would save your own life, or someone else's? A critic will hunt for the exception."},
+  {t:"If something would leave me feeling guilty, I shouldn't do it.",k:"bridge",atk:"Is guilt always a good guide? People feel guilty about things that aren't wrong, and some feel no guilt about things that are."},
+  {t:"I should only do things I'd be fine with everyone knowing about.",k:"bridge",atk:"What about private things that hurt nobody, like a surprise party? A critic will say the test is too strict."},
+  {t:"Most people wouldn't press it.",k:"is",fb:"That's about what people <i>do</i>. Your conclusion is about what you <i>should</i> do. On its own it can't bridge the gap (remember the is/ought section). Pick a premise that says what you should do."},
+  {t:"I shouldn't press the button.",k:"circ",fb:"That's your conclusion, used as a premise: begging the question. Pick the general principle behind your reason."}
+ ],
+ press:[
+  {t:"If something is good for me and nobody I know gets hurt, I should do it.",k:"bridge",atk:"The stranger does get hurt; you just don't know them. Why should knowing someone matter? That's where a critic will aim."},
+  {t:"What's best for me is what I should do.",k:"bridge",atk:"That's pure self-interest. A critic will ask: would you accept it if a stranger pressed a button that cost <i>you</i> $1,000?"},
+  {t:"If nobody ever finds out, I should do whatever is best for me.",k:"bridge",atk:"A critic will ask whether the stranger's loss is any smaller just because no one finds out. (Plato's Ring of Gyges story asks exactly this.)"},
+  {t:"Lots of people would press it.",k:"is",fb:"That's about what people <i>do</i>. Your conclusion is about what you <i>should</i> do. On its own it can't bridge the gap (remember the is/ought section). Pick a premise that says what you should do."},
+  {t:"I should press the button.",k:"circ",fb:"That's your conclusion, used as a premise: begging the question. Pick the general principle behind your reason."}
+ ]
+};
+var finOpen=false;
+function openFinale(){
+  finOpen=true; openLab("fin");
+  var L=$("finLock");
+  L.innerHTML='<div class="row" role="group" aria-label="Your button call"><button class="vbtn" type="button" data-v="press" aria-pressed="false">I\'d press it</button><button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn\'t press it</button></div><label for="finReason">My reason, in one sentence</label><input type="text" id="finReason" maxlength="220" autocomplete="off">';
+  buildLockin(L);
+  $("finReason").addEventListener("input",function(){ COVER.reason=$("finReason").value.trim(); renderFinArg(); saveState(); });
+  syncLockins(); renderFinale();
+  if(!$("fin").classList.contains("is-cleared")) $("fin").classList.add("is-unlocked");
+}
+function renderFinArg(){
+  var concl = COVER.v==="press" ? "So, I should press the button." : COVER.v==="nopress" ? "So, I shouldn't press the button." : "So, ... (pick press or don't press above)";
+  $("finArg").innerHTML='<span class="lbl">Exhibit Z: your case</span><span class="argline">1. <span class="mine">'+(COVER.reason?esc(COVER.reason):"(type your reason above)")+'</span></span><span class="argline">2. <span class="gap">'+(FIN.pick?esc(FIN.pick):"[hidden premise: which one is yours?]")+'</span></span><span class="argline concl">'+concl+'</span>';
+}
+function renderFinale(){
+  if(!finOpen) return;
+  syncLockins(); renderFinArg();
+  var O=$("finOpts"); O.innerHTML="";
+  if(!COVER.v){ O.innerHTML='<p class="small">Pick press or don\'t press above to see the options.</p>'; return; }
+  FINOPTS[COVER.v].concat([{t:"None of these. My bridge is different.",k:"own"}]).forEach(function(o){
+    var b=el("button",{class:"choice",type:"button","aria-pressed":"false"}); b.textContent=o.t;
+    b.addEventListener("click",function(){
+      O.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      $("finOwnWrap").hidden = o.k!=="own";
+      if(o.k==="own"){ $("finFb").className="fb"; $("finFb").innerHTML="Write it as a general rule that links your reason to your conclusion, then press <b>Use my premise</b>."; $("finOwn").focus(); return; }
+      if(o.k==="bridge") finishFinale(o.t, '<span class="attack">This is the premise a critic would attack.</span> '+o.atk);
+      else setFb($("finFb"),"bad", o.k==="is"?"That can't bridge it.":"Begging the question.", o.fb);
+    });
+    O.appendChild(b);
+  });
+}
+$("finOwnBtn").addEventListener("click",function(){
+  var t=$("finOwn").value.trim(); if(!t){ $("finOwn").focus(); return; }
+  finishFinale(t, '<span class="attack">This is the premise a critic would attack.</span> Check it two ways. Does it say what you should or shouldn\'t do? If not, it can\'t bridge to your conclusion. And can you think of a case where it fails? That case is where Rocky will push.');
+});
+function finishFinale(t, msg){
+  FIN.pick=t; renderFinArg();
+  setFb($("finFb"),"good","Case closed.", msg+"<br><br>You started with a gut call. Now your argument is laid out with its bridge, and you know which premise you'd have to defend. (Whether it's airtight depends on your exact wording; that's a good thing to tighten with Rocky.) That's the whole toolkit.");
+  $("fin").classList.add("is-cleared"); buildCard(); $("rcardWrap").hidden=false; saveState();
+}
+function rank(){ var b=REC.rf.best||0; return b>=8?"Counterexample Machine":b>=7?"Senior Logician":"Junior Logician"; }
+function cardData(){ return {verdict:COVER.v?VL[COVER.v]:"Not locked in", premise:FIN.pick||"", rf:(REC.rf.best!=null?REC.rf.best+"/8":"not played this visit"), rank:rank()}; }
+function buildCard(){
+  var d=cardData();
+  $("rcard").innerHTML='<div class="stamp">CLOSED</div><h3>Case #2: closed</h3><div><b>My call:</b> '+esc(d.verdict)+'</div><div><b>The premise I\'d have to defend:</b> '+esc(d.premise)+'</div><div><b>Rapid fire best:</b> '+esc(d.rf)+'</div><div><b>Rank:</b> '+esc(d.rank)+'</div><div><b>Evidence:</b> 3 of 3</div>';
+}
+function wrapText(ctx, text, x, y, maxW, lh){ var words=text.split(" "), line=""; for(var i=0;i<words.length;i++){ var test=line?line+" "+words[i]:words[i]; if(ctx.measureText(test).width>maxW && line){ ctx.fillText(line,x,y); y+=lh; line=words[i]; } else line=test; } if(line){ ctx.fillText(line,x,y); y+=lh; } return y; }
+$("saveCard").addEventListener("click",function(){
+  var d=cardData();
+  try{
+    var c=document.createElement("canvas"); c.width=900; c.height=560; var x=c.getContext("2d");
+    x.fillStyle="#22337A"; x.fillRect(0,0,900,560);
+    x.fillStyle="#FFFDF5"; x.fillRect(40,40,820,480);
+    x.strokeStyle="#C5DCF3"; x.lineWidth=2; for(var yy=110;yy<520;yy+=40){ x.beginPath(); x.moveTo(40,yy); x.lineTo(860,yy); x.stroke(); }
+    x.strokeStyle="#F2A0AC"; x.beginPath(); x.moveTo(90,40); x.lineTo(90,520); x.stroke();
+    x.fillStyle="#2A2016"; x.font="bold 40px 'Courier New', monospace"; x.fillText("Case #2: closed",110,96);
+    x.save(); x.translate(720,90); x.rotate(0.14); x.strokeStyle="#C0152F"; x.lineWidth=4; x.strokeRect(-80,-30,160,50); x.fillStyle="#C0152F"; x.font="bold 30px 'Courier New', monospace"; x.fillText("CLOSED",-62,6); x.restore();
+    x.fillStyle="#2A2016"; x.font="26px Georgia, serif"; var y=150;
+    y=wrapText(x,"My call: "+d.verdict,110,y,720,40);
+    y=wrapText(x,"The premise I'd have to defend: "+d.premise,110,y,720,40);
+    y=wrapText(x,"Rapid fire best: "+d.rf,110,y,720,40);
+    y=wrapText(x,"Rank: "+d.rank+"    Evidence: 3 of 3",110,y,720,40);
+    x.font="18px Georgia, serif"; x.fillStyle="#5B4A34"; x.fillText("Intro to Ethics, Challenge 1, Case 2: Break the Argument",110,505);
+    var a=document.createElement("a"); a.href=c.toDataURL("image/png"); a.download="case-2-closed.png"; document.body.appendChild(a); a.click(); a.remove();
+    $("saveMsg").textContent="Saved. If nothing downloaded, take a screenshot of the card instead.";
+  }catch(e){ $("saveMsg").textContent="This browser blocked the download. Take a screenshot of the card instead."; }
+});
+
+
+function restoreFinale(){ renderFinArg(); $("fin").classList.add("is-cleared"); buildCard(); $("rcardWrap").hidden=false; }
+
+/* ---------- restore saved progress, if any ---------- */
+try{
+  var src = (SAVED && SAVED.cover && SAVED.cover.v) ? SAVED.cover : SHARED;
+  if(src && src.v){ COVER.v=src.v; COVER.reason=src.reason||""; syncLockins(); if(COVER.reason) $("lockMsg").textContent="Locked in (loaded from this browser). You'll need it at the end."; $("bbStatus").textContent=(SAVED&&SAVED.cover&&SAVED.cover.v)?"Loaded from this browser.":"Loaded from Case 1 in this browser."; }
+}catch(e){}
+if(SAVED){
+  restoring=true;
+  try{
+    var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
+    if(SAVED.rf && SAVED.rf.rounds){ REC.rf.rounds=SAVED.rf.rounds; REC.rf.best=SAVED.rf.best; }
+    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence stays."; b.insertBefore(n,b.firstChild); } });
+    if(SAVED.finale){ FIN.pick=SAVED.finale; if(finOpen){ restoreFinale(); } }
+  }catch(e){}
+  restoring=false; saveState();
+}
+renderFinale();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case 1: Two Big Questions</title>
+<meta name="description" content="Interactive case file for Intro to Ethics, Challenge 1 module C1-M01: well-being vs morality, and what an argument is.">
+<style>
+:root{
+  --desk:#22337A; --desk-dot:#2E43966b;
+  --paper:#F4E3B4; --paper-2:#EBD497; --paper-edge:#D9BC72;
+  --ink:#2A2016; --ink-soft:#5B4A34;
+  --stamp:#C0152F; --ball:#2443C4;
+  --hl-y:#FFE15A; --hl-p:#FF93C9; --hl-g:#74E5AA; --hl-b:#86CFFF; --hl-o:#FFB25C;
+  --hl-ink:#1E1609;
+  --card:#FFFDF5; --card-line:#C5DCF3; --card-margin:#F2A0AC;
+  --ok:#0E663B; --bad:#AE1029;
+  --btn:#2A2016; --btn-ink:#FFF7E0;
+  --shadow:0 1px 0 #0000001a, 0 10px 24px -8px #0a123d99;
+  --type:"Courier Prime","American Typewriter","Courier New",Courier,monospace;
+  --serif:Charter,"Bitstream Charter","Sitka Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#0A1233; --desk-dot:#1A2A6655;
+    --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+    --ink:#F3E7C8; --ink-soft:#D2C29E;
+    --stamp:#FF6B80; --ball:#A9BDFF;
+    --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+    --ok:#67E3A6; --bad:#FF8597;
+    --btn:#F3E7C8; --btn-ink:#21190F;
+    --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#0A1233; --desk-dot:#1A2A6655;
+  --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+  --ink:#F3E7C8; --ink-soft:#D2C29E;
+  --stamp:#FF6B80; --ball:#A9BDFF;
+  --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+  --ok:#67E3A6; --bad:#FF8597;
+  --btn:#F3E7C8; --btn-ink:#21190F;
+  --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background-color:var(--desk);
+  background-image:radial-gradient(var(--desk-dot) 1.2px, transparent 1.4px);
+  background-size:18px 18px;
+  color:var(--ink); font-family:var(--serif); font-size:18px; line-height:1.62;
+}
+a{color:var(--ball); text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--hl-b); outline-offset:2px; border-radius:4px}
+button{font:inherit; color:inherit}
+.wrap{max-width:760px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- evidence dock ---------- */
+.dock{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:10px;
+  max-width:760px; margin:0 auto; padding:10px 16px; background:var(--desk);
+  color:#F4E3B4; font-family:var(--type); font-size:14px; border-bottom:1px solid #ffffff1f}
+.dock b{font-weight:700; white-space:nowrap}
+.dock ol{list-style:none; display:flex; gap:6px; margin:0 0 0 auto; padding:0}
+@media (max-width:420px){ .dock{font-size:12px} .dock ol{gap:4px} }
+
+/* ---------- sheets ---------- */
+.sheet{position:relative; background:var(--paper); border-radius:3px 3px 6px 6px;
+  box-shadow:var(--shadow); padding:30px 30px 26px; margin:26px 0 0}
+.sheet::before{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(180deg,#ffffff14,transparent 30%), repeating-linear-gradient(0deg,transparent 0 31px,#00000006 31px 32px)}
+@media (max-width:520px){ .sheet{padding:24px 18px 20px} body{font-size:17px} .button-hook{align-items:flex-start} .big-red{width:44px;height:44px} }
+.sheet p{margin:0 0 .9em; max-width:64ch}
+.sheet p:last-child{margin-bottom:0}
+
+h1,h2,h3{font-family:var(--type); line-height:1.15; margin:0}
+h2{font-size:1.55rem; letter-spacing:-.01em; margin:0 0 .7em}
+h2 span{background:linear-gradient(100deg, transparent 0 2%, var(--mark,var(--hl-y)) 3% 96%, transparent 98%) 0 72%/100% 46% no-repeat; color:inherit; padding:0 .15em}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h2 span{background-size:100% 18%; background-position:0 96%} }
+:root[data-theme="dark"] h2 span{background-size:100% 18%; background-position:0 96%}
+h3{font-size:1.08rem; margin:0 0 .5em}
+
+/* ---------- cover ---------- */
+.cover{margin-top:52px; background:var(--paper-2); padding:44px 30px 32px}
+.cover .tab{position:absolute; top:1px; left:28px; background:var(--paper-2); padding:4px 14px; font-family:var(--type); font-size:14px;
+  transform:translateY(-100%); border-radius:8px 8px 0 0; box-shadow:0 -2px 6px #0a123d33}
+.cover h1{font-size:clamp(2.3rem, 9vw, 4.4rem); letter-spacing:-.03em; line-height:.98; max-width:9ch}
+.cover .dek{font-size:1.15rem; margin:18px 0 0; max-width:40ch}
+.stamp{font-family:var(--type); font-weight:700; color:var(--stamp); border:4px double var(--stamp);
+  padding:4px 12px; border-radius:6px; display:inline-block; letter-spacing:.08em; line-height:1.1; text-align:center}
+.cover .stamp{position:absolute; right:26px; top:30px; transform:rotate(9deg); font-size:1.5rem; opacity:.9}
+.cover .stamp small{display:block; font-size:.62rem; letter-spacing:.04em}
+@media (max-width:520px){ .cover{padding:36px 18px 24px} .cover .stamp{right:12px; top:16px; font-size:1.05rem} }
+.cover .meta{font-family:var(--type); font-size:14px; color:var(--ink-soft); margin-top:22px; display:flex; flex-wrap:wrap; gap:6px 22px}
+.button-hook{display:flex; gap:16px; align-items:center; margin-top:24px; padding:14px 16px; border-radius:12px;
+  background:var(--card); border:2px solid var(--ink)}
+.big-red{flex:none; width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FF7B8C,#D0122F 60%,#8E0A1F);
+  box-shadow:0 6px 0 #6b0716, 0 8px 14px #0006; border:3px solid #2A2016}
+.button-hook p{margin:0; font-size:1rem}
+
+/* ---------- index-card exhibits ---------- */
+.exhibit{position:relative; background:var(--card); border-radius:4px; margin:18px 0; padding:18px 18px 16px 34px;
+  background-image:linear-gradient(90deg, transparent 22px, var(--card-margin) 22px 24px, transparent 24px),
+  repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  background-position:0 0, 0 14px; box-shadow:0 2px 0 #00000014, 0 6px 14px -6px #0006; font-size:1rem; line-height:28px}
+.exhibit p{margin:0}
+.exhibit p+p{margin-top:28px}
+.exhibit .lbl{font-family:var(--type); font-weight:700; font-size:.88rem; display:inline-block; background:var(--hl-c,var(--hl-y)); color:var(--hl-ink);
+  padding:1px 8px; margin:0 0 8px; transform:rotate(-1deg)}
+.exhibit ol, .exhibit ul{margin:0; padding-left:1.3em}
+.exhibit .concl{border-top:2px solid var(--ink); margin-top:6px; padding-top:4px}
+.argline{display:block}
+
+/* ---------- margin note & sealed file ---------- */
+.note{font-style:italic; color:var(--ball); border-left:3px solid var(--ball); padding:2px 0 2px 14px; margin:14px 0; font-size:1rem}
+details.sealed{margin:20px 0 4px; border:2px dashed var(--stamp); border-radius:8px; background:var(--paper-2)}
+details.sealed summary{cursor:pointer; padding:12px 16px; font-family:var(--type); font-weight:700; list-style:none; display:flex; gap:12px; align-items:center}
+details.sealed summary::-webkit-details-marker{display:none}
+details.sealed summary .seal{flex:none; width:30px; height:30px; border-radius:50%; background:var(--stamp); color:#fff; display:grid; place-items:center; font-size:14px}
+details.sealed[open] summary .seal{background:transparent; border:2px solid var(--stamp); color:var(--stamp)}
+details.sealed .inner{padding:0 16px 16px}
+details.sealed .inner p{font-size:1rem}
+
+/* ---------- games ---------- */
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
+  font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
+.lab h2{margin-bottom:.4em}
+.lab .how{font-size:1rem; color:var(--ink-soft); margin-bottom:16px}
+.cleared{position:absolute; right:18px; top:16px; font-size:1.05rem; transform:rotate(-8deg); opacity:0; pointer-events:none}
+.lab.is-cleared .cleared{opacity:.92; animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes thunk{0%{transform:scale(2.6) rotate(-20deg); opacity:0}100%{transform:scale(1) rotate(-8deg); opacity:.92}}
+/* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
+html,body{overflow-x:clip}
+@media (prefers-reduced-motion: reduce){ .lab.is-cleared .cleared{animation:none} *{scroll-behavior:auto!important} }
+
+.btn{cursor:pointer; border:2px solid var(--ink); background:var(--btn); color:var(--btn-ink); border-radius:999px;
+  padding:8px 16px; font-family:var(--type); font-weight:700; font-size:.95rem; line-height:1.2}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.btn:not(:disabled):active{transform:translateY(1px)}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+
+.fb{margin-top:12px; padding:12px 14px; border-radius:10px; font-size:.98rem; background:var(--card); border:2px solid var(--ink-soft)}
+.fb:empty{display:none}
+.fb.good{border-color:var(--ok)} .fb.bad{border-color:var(--bad)}
+.fb strong.v{font-family:var(--type)}
+.fb.good strong.v{color:var(--ok)} .fb.bad strong.v{color:var(--bad)}
+.score{font-family:var(--type); font-size:.95rem; color:var(--ink-soft)}
+
+/* sort */
+.sort-scn{font-size:1rem; background:var(--hl-g); color:var(--hl-ink); padding:10px 14px; border-radius:8px; margin-bottom:14px}
+.sort-item{background:var(--card); border-radius:10px; padding:12px 14px; margin:10px 0; border:2px solid transparent}
+.sort-item.locked{border-color:var(--ok)}
+.sort-item q{display:block; font-size:1.02rem; margin-bottom:8px; quotes:"\201C" "\201D"}
+.pick{cursor:pointer; border:2px solid var(--ink); background:transparent; border-radius:8px; padding:6px 12px; font-family:var(--type); font-size:.88rem; font-weight:700}
+.pick[data-v="wb"]{--pc:var(--hl-y)} .pick[data-v="mo"]{--pc:var(--hl-p)} .pick[data-v="ne"]{--pc:var(--hl-b)}
+.pick:hover:not(:disabled){background:color-mix(in srgb, var(--pc) 45%, transparent)}
+.pick.chosen{background:var(--pc); color:var(--hl-ink)}
+.pick:disabled{cursor:default}
+.sort-item .fb{margin-top:10px}
+
+/* highlighter */
+.hl-pass{background:var(--card); padding:16px; border-radius:8px; font-size:1.08rem; line-height:2.05}
+.seg{cursor:pointer; border:0; background:transparent; padding:2px 3px; border-radius:3px; text-align:left; font-family:var(--serif); font-size:inherit; line-height:inherit;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone; display:inline; border-bottom:2px dotted var(--ink-soft)}
+.seg[data-m="p"]{background:var(--hl-y); color:var(--hl-ink); border-bottom-color:transparent}
+.seg[data-m="c"]{background:var(--hl-p); color:var(--hl-ink); border-bottom-color:transparent}
+.seg.wrong{outline:2px solid var(--bad); outline-offset:1px}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; font-family:var(--type); font-size:.85rem; margin:10px 0 12px}
+.legend i{display:inline-block; width:18px; height:12px; vertical-align:-1px; margin-right:6px; border-radius:2px}
+
+/* machine */
+.machine{background:var(--card); border-radius:12px; padding:14px; border:2px solid var(--ink)}
+.m-arg{font-size:1rem; margin-bottom:12px}
+.m-line{display:flex; gap:10px; align-items:baseline; padding:3px 0}
+.m-line .lamp{flex:none; font-family:var(--type); font-size:.75rem; font-weight:700; border-radius:999px; padding:1px 8px; min-width:62px; text-align:center}
+.lamp.t{background:var(--hl-g); color:var(--hl-ink)} .lamp.f{background:transparent; border:1.5px solid var(--ink-soft); color:var(--ink-soft)}
+.m-line.concl{border-top:2px solid var(--ink); margin-top:4px; padding-top:6px}
+.creatures{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:12px 0}
+@media (max-width:560px){ .creatures{grid-template-columns:repeat(2,1fr)} }
+.cr{border:2px solid var(--ink-soft); border-radius:10px; padding:8px 6px 8px; text-align:center; background:var(--paper)}
+.cr svg{width:92px; height:80px; display:block; margin:0 auto}
+.cr .nm{font-family:var(--type); font-weight:700; font-size:.9rem}
+.tog{display:block; width:100%; cursor:pointer; margin-top:5px; border:1.5px solid var(--ink-soft); background:transparent; border-radius:6px; padding:3px 4px; font-family:var(--type); font-size:.78rem}
+.tog[aria-pressed="true"]{background:var(--tc); color:var(--hl-ink); border-color:var(--ink); font-weight:700}
+.tog[data-p="0"]{--tc:var(--hl-o)} .tog[data-p="1"]{--tc:var(--hl-g)} .tog[data-p="2"]{--tc:var(--hl-b)}
+.alarm{font-family:var(--type); font-weight:700; padding:8px 12px; border-radius:8px; margin:6px 0 10px; font-size:.92rem; border:2px dashed var(--ink-soft)}
+.alarm.hot{background:var(--stamp); color:#fff; border:2px solid var(--stamp)}
+.m-nav{font-family:var(--type); font-size:.9rem; color:var(--ink-soft); margin-bottom:8px}
+.vac{font-size:.85rem; color:var(--ink-soft); margin-top:6px}
+
+/* rapid */
+.rf-card{background:var(--card); border-radius:10px; padding:16px; min-height:120px; font-size:1.02rem}
+.rf-card .argline+.argline{margin-top:2px}
+.rf-top{display:flex; justify-content:space-between; font-family:var(--type); font-size:.9rem; margin-bottom:8px; color:var(--ink-soft)}
+.streak{color:var(--stamp); font-weight:700}
+
+/* hunt */
+.choice{display:block; width:100%; text-align:left; cursor:pointer; margin:8px 0; padding:10px 14px; border-radius:10px; border:2px solid var(--ink-soft);
+  background:var(--card); font-family:var(--serif); font-size:1rem}
+.choice:hover{border-color:var(--ink)}
+.choice[aria-pressed="true"]{border-color:var(--ink); background:var(--hl-o); color:var(--hl-ink)}
+
+/* builder */
+.slot{display:block; min-height:46px; border:2.5px dashed var(--ball); border-radius:8px; padding:8px 12px; margin:4px 0; color:var(--ball); font-style:italic}
+.slot.filled{border-style:solid; font-style:normal; color:var(--ink); background:var(--hl-b); color:var(--hl-ink)}
+.tray{display:grid; gap:8px; margin-top:12px}
+.tile{cursor:pointer; text-align:left; padding:8px 12px; border-radius:8px; border:2px solid var(--ink); background:var(--paper); font-family:var(--serif); font-size:.98rem}
+.tile[aria-pressed="true"]{background:var(--hl-b); color:var(--hl-ink)}
+
+/* grid of possibilities */
+.combo{display:grid; grid-template-columns:auto 1fr 1fr; gap:6px; font-size:.92rem; margin:12px 0}
+.combo div{background:var(--card); padding:8px 10px; border-radius:6px}
+.combo .h{background:transparent; font-family:var(--type); font-weight:700; padding:4px 6px}
+.combo .x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+
+/* deeper */
+.deeper{background:var(--card); border:3px solid var(--ink)}
+.deeper ul{padding-left:1.1em; margin:0}
+.deeper li{margin:0 0 12px; font-size:1rem}
+.deeper li b{font-family:var(--type)}
+.foot{color:#F4E3B4cc; font-size:.85rem; font-family:var(--type); margin-top:22px; text-align:center}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* ---------- v2 additions ---------- */
+.dock .pip{display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  border:2px dashed #F4E3B488; color:#F4E3B4; font-weight:700; font-size:13px}
+.dock .pip.done{border:2px solid var(--c,#FFE15A); background:var(--c,#FFE15A); color:#1E1609}
+@media (max-width:420px){ .dock .pip{width:26px;height:26px;font-size:12px} }
+.gotit{margin-top:20px; padding-top:16px; border-top:2px dashed var(--paper-edge); display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.gotit .gmsg{font-family:var(--type); font-size:.88rem; color:var(--ink-soft)}
+.gotit .btn.ok, .gotit .btn.ok:disabled{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+.lockcard{display:flex; gap:14px; align-items:center; background:var(--card); border:2px dashed var(--ink-soft); border-radius:10px; padding:14px 16px; font-size:1rem}
+.lockcard .padlock{flex:none; width:34px; height:34px}
+.lab.is-unlocked .lockcard{display:none}
+.copyrow{margin-top:16px; padding:12px 14px; border-radius:10px; background:var(--paper-2); border:2px solid var(--ball)}
+.copyrow p{font-size:.95rem; margin:0 0 8px}
+.copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copyrow textarea[hidden]{display:none}
+.copyrow .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.reasonbox{display:block; width:100%; min-height:64px; margin-top:6px; font-family:var(--serif); font-size:1rem; background:var(--card); color:var(--ink);
+  border:2px solid var(--ink-soft); border-radius:8px; padding:8px 10px}
+.small{font-size:.92rem}
+
+/* ---------- v3 additions ---------- */
+.btn, .pick, .tile, .choice, .tog{min-height:44px}
+.tog{padding:6px 4px; font-size:.8rem}
+.hl-pass{line-height:2.7}
+.seg{padding:6px 3px}
+.dock{flex-wrap:wrap}
+.dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
+.dock .pip:not(:disabled){cursor:pointer}
+.dock .pip:disabled{opacity:1}
+@media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
+.evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
+.evpanel h3{font-size:1rem; margin-bottom:4px}
+.evpanel p{margin:0 0 6px}
+.evpanel .row{justify-content:flex-end}
+@media (max-width:520px){
+  .cleared{top:6px; right:8px; font-size:.78rem; padding:2px 8px}
+  .lab h2{padding-right:0}
+}
+.wow{font-family:var(--type); font-weight:700; font-size:.98rem; background:var(--ink); color:var(--paper); display:inline-block; padding:4px 10px; border-radius:4px; margin:0 0 14px}
+.lockin{margin-top:20px; background:var(--card); border:2px solid var(--ink); border-radius:12px; padding:14px 16px}
+.lockin .row{margin-top:8px}
+.lockin .vbtn{cursor:pointer; min-height:44px; padding:8px 18px; border-radius:999px; border:2px solid var(--ink); background:transparent; font-family:var(--type); font-weight:700; color:var(--ink)}
+.lockin .vbtn[aria-pressed="true"]{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.lockin label{font-family:var(--type); font-weight:700; font-size:.92rem; display:block; margin-top:12px}
+.lockin input[type=text], .lockin textarea{width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
+.lockmsg{font-family:var(--type); font-size:.9rem; color:var(--ok); margin-left:6px}
+.poll{background:var(--card); border-radius:12px; padding:14px 16px; margin:4px 0 18px; border:2px dashed var(--hl-o)}
+.poll p{font-size:1rem}
+.versus{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+.versus div{background:var(--card); border-radius:8px; padding:10px 12px}
+.versus .hd{font-family:var(--type); font-weight:700; text-align:center; background:var(--hl-y); color:var(--hl-ink)}
+.versus .hd.b{background:var(--hl-b)}
+.versus .full{grid-column:1 / -1; text-align:center}
+.combo button{all:unset; box-sizing:border-box; display:block; cursor:pointer; padding:8px 10px; border-radius:6px; background:var(--card); min-height:44px}
+.combo button.x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+.combo button:focus-visible{outline:3px solid var(--hl-b)}
+.combo button.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion: reduce){ .combo button.shake, .streak.pulse{animation:none} }
+#rfBtns .btn.right{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+#rfBtns .btn.wrongpick{background:transparent; color:var(--bad); border:3px solid var(--bad); opacity:1}
+#rfBtns .btn.right::after{content:" \2713"}
+#rfBtns .btn.wrongpick::after{content:" \2717"}
+.rf-top .streak{font-size:1rem; padding:2px 10px; border-radius:999px}
+.rf-top .streak.hot{background:var(--stamp); color:#fff}
+.streak.pulse{animation:pulse .5s}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.perfect{display:inline-block; margin-left:8px; color:#8a6400; border-color:#c99a00; transform:rotate(-6deg)}
+:root[data-theme="dark"] .perfect{color:#ffd24d; border-color:#ffd24d}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .perfect{color:#ffd24d; border-color:#ffd24d} }
+.mq{margin-top:10px}
+.mq .choice{font-size:.95rem}
+.copymini{margin-top:14px}
+.copymini .btn{font-size:.85rem}
+.copymini textarea, .copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copymini textarea[hidden]{display:none}
+.copymini .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.pause{font-family:var(--type); font-size:.9rem; background:var(--hl-g); color:var(--hl-ink); padding:8px 12px; border-radius:8px; margin-top:14px}
+.finale-arg .mine{background:var(--hl-y); color:var(--hl-ink); padding:0 4px}
+.finale-arg .gap{color:var(--ball); font-style:italic}
+.attack{color:var(--stamp); font-family:var(--type); font-weight:700}
+.rcard{position:relative; max-width:440px; margin:18px auto 8px; background:var(--card); border-radius:6px; padding:20px 22px 18px 40px;
+  background-image:linear-gradient(90deg, transparent 26px, var(--card-margin) 26px 28px, transparent 28px), repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  box-shadow:0 2px 0 #00000014, 0 10px 20px -8px #0008; font-size:.98rem; line-height:28px}
+.rcard h3{font-size:1.25rem; line-height:28px; margin:0 0 4px}
+.rcard .stamp{position:absolute; right:10px; top:-14px; transform:rotate(8deg); font-size:.9rem}
+.rcard b{font-family:var(--type)}
+</style>
+</head>
+<body>
+<div class="dock" id="dock" aria-label="Evidence collected">
+  <b id="dockCount" role="status"><span class="evw">Evidence </span>0/6</b>
+  <ol id="dockList"></ol>
+  <div class="evpanel" id="evPanel" hidden></div>
+</div>
+
+<main class="wrap">
+<!-- ================= COVER ================= -->
+<section class="sheet cover" aria-labelledby="t1">
+  <div class="tab">Challenge 1 &middot; Case #1</div>
+  <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
+  <h1 id="t1">What Is Ethics?</h1>
+  <p class="dek">Two questions humans have argued about for at least 2,400 years, one toolkit philosophers use to argue well, and a very suspicious button.</p>
+  <div class="button-hook">
+    <div class="big-red" aria-hidden="true"></div>
+    <p>The button: $1,000 for you, $1,000 gone from a stranger you'll never meet, and nobody ever finds out. You already made the call with Rocky. Lock it in below. At the end of this file, your reason goes on the evidence board.</p>
+  </div>
+  <div class="lockin" id="lockin">
+    <div class="row" role="group" aria-label="Your button call">
+      <button class="vbtn" type="button" data-v="press" aria-pressed="false">I'd press it</button>
+      <button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn't press it</button>
+    </div>
+    <label for="myReason">My reason, in one sentence</label>
+    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 20 minutes</span></div>
+</section>
+
+<!-- ================= BEAT 1 ================= -->
+<section class="sheet" aria-labelledby="b1">
+  <h2 id="b1"><span style="--mark:var(--hl-y)">The two big questions</span></h2>
+  <p class="wow">Plato wrote a version of your button about 2,400 years ago.</p>
+  <p>Ethics is the part of philosophy about how to live. Most of its questions land under one of two headings.</p>
+  <div class="exhibit" style="--hl-c:var(--hl-y)">
+    <span class="lbl">Question one: well-being</span>
+    <p><b>What makes a life go well for the person living it?</b> Not "is this right?" but "is this actually <i>good for</i> me?" Pleasure, health, friendship, getting what you want, achieving things: these are all candidates for what makes a life go well, and philosophers fight about which ones really count. A reason of this kind is sometimes called a <i>prudential</i> reason.</p>
+  </div>
+  <div class="exhibit" style="--hl-c:var(--hl-p)">
+    <span class="lbl">Question two: morality</span>
+    <p><b>What do we owe each other?</b> Fairness, honesty, keeping promises, not harming people. When you ask "would this be <i>wrong</i>?" you've switched questions. A handy test: when a reason is about someone <i>else's</i> good, or what you owe them, it's on the moral side.</p>
+  </div>
+  <p>Look at the button. "$1,000 would be great for me" answers question one. "A stranger loses $1,000 they did nothing to lose" answers question two. Same choice, two completely different kinds of reasons.</p>
+  <p>Some facts aren't reasons of either kind. "The button is red" is true, but it doesn't count for or against pressing it.</p>
+  <p>And there's a third question lurking behind both: is any of this <i>objectively</i> true, or is it all just opinion? Philosophers call that one <i>metaethics</i>. Park it. We're coming back for it later in the course.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 1: SORT ================= -->
+<section class="sheet lab" id="g1" style="--g:var(--hl-g)" aria-labelledby="g1h">
+  <div class="gtab">Lead 1 of 2</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g1h">Sort the motives</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The two big questions" above, then press <b>Got it</b> at the end of it.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Each line is a reason someone might give. Tag it: is it about what's <b>good for me</b>, what I <b>owe others</b>, or <b>neither</b> (a fact that isn't a reason either way)? One of them is a judgment call and accepts two tags.</p>
+  <div class="sort-scn">The situation: you find a wallet on the bus seat. Inside, $200 and an ID card.</div>
+  <div id="sortList"></div>
+  <p class="score" id="sortScore" aria-live="polite"></p>
+  <div class="copymini" data-copy="g1"></div>
+  </div>
+</section>
+
+<!-- ================= BEAT 2: COLLISION ================= -->
+<section class="sheet" aria-labelledby="b2">
+  <h2 id="b2"><span style="--mark:var(--hl-p)">When the questions collide</span></h2>
+  <p>Most of the time the two questions agree. Being honest tends to keep your friendships alive; being cruel tends to make you miserable. But not always.</p>
+  <div class="poll" id="ringPoll">
+    <p><b>Quick, honest gut check:</b> you find a ring that makes you invisible whenever you like. Would you behave exactly the same as you do now?</p>
+    <div class="row" role="group" aria-label="Your answer">
+      <button class="btn ghost" type="button" data-r="yes">Yes, exactly</button>
+      <button class="btn ghost" type="button" data-r="mostly">Mostly</button>
+      <button class="btn ghost" type="button" data-r="no">Honestly, no</button>
+    </div>
+    <div class="fb" id="ringFb" aria-live="polite"></div>
+  </div>
+  <div class="exhibit" style="--hl-c:var(--hl-o)">
+    <span class="lbl">Exhibit A: the oldest version of your button</span>
+    <p>In Plato's <i>Republic</i>, written around 2,400 years ago, a character named Glaucon tells a story about a shepherd (called Gyges in many translations) who finds exactly that ring. With nobody able to see him, he uses it to seize power for himself. Glaucon's challenge: if you could never get caught, would you still have any reason to be just? Or are people only good because they're afraid of being seen?</p>
+    <p>"Nobody will ever know" is the Ring of Gyges in button form. Socrates spends most of the rest of the book trying to prove that being just is actually good <i>for</i> the just person.</p>
+  </div>
+  <p>Fast forward to 1874. In <i>The Methods of Ethics</i>, the Cambridge philosopher Henry Sidgwick found two principles that both seemed self-evident to him on careful reflection:</p>
+  <div class="versus" aria-label="Sidgwick's two principles">
+    <div class="hd">Do what's best for you</div><div class="hd b">Do what's best for everyone, you counting as one</div>
+    <div class="full">Usually: they point the same way.</div>
+    <div class="full">Sometimes: they split. (Hello, button.)</div>
+    <div class="full">Sidgwick's verdict: he couldn't prove either one always wins. He called the standoff the <i>dualism of practical reason</i>.</div>
+  </div>
+  <p class="note">So when the button feels hard, that's not you being confused. You've walked into a problem Sidgwick never managed to declare a winner on.</p>
+</section>
+
+<!-- ================= BEAT 3: ARGUMENTS ================= -->
+<section class="sheet" aria-labelledby="b3">
+  <h2 id="b3"><span style="--mark:var(--hl-b)">How philosophers fight (politely)</span></h2>
+  <p class="wow">An argument can be perfectly logical and still completely wrong. Next case file, you'll see how.</p>
+  <p>In philosophy an <b>argument</b> isn't a shouting match. It's a package: some claims, called <b>premises</b>, offered as support for one more claim, the <b>conclusion</b>.</p>
+  <div class="exhibit" style="--hl-c:var(--hl-b)">
+    <span class="lbl">Exhibit B: an argument, laid out flat</span>
+    <span class="argline">1. Anyone on the team has to come to practice.</span>
+    <span class="argline">2. Jordan is on the team.</span>
+    <span class="argline concl">So, Jordan has to come to practice.</span>
+  </div>
+  <p>In real life arguments come scrambled. The conclusion might be first, last, or stuck in the middle. Watch for signpost words:</p>
+  <ul>
+    <li><b>so, therefore, which means, that's why</b> usually come right before a conclusion.</li>
+    <li><b>because, since, given that, after all</b> usually come right before a premise.</li>
+  </ul>
+  <p>Premises can also be chained on with plain <b>and</b>. And not every sentence in a paragraph is part of the argument. Some are just vibes.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 2: HIGHLIGHTER ================= -->
+<section class="sheet lab" id="g2" style="--g:var(--hl-y)" aria-labelledby="g2h">
+  <div class="gtab">Lead 2 of 2</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g2h">The highlighter</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "How philosophers fight (politely)" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Tap a chunk of text to cycle its color: yellow for premise, pink for conclusion, tap again to clear it. Leave anything that isn't part of the argument unmarked. Then check.</p>
+  <div class="legend" aria-hidden="true"><span><i style="background:var(--hl-y)"></i>premise</span><span><i style="background:var(--hl-p)"></i>conclusion</span><span><i style="border:1.5px dotted var(--ink-soft)"></i>unmarked</span></div>
+  <p class="m-nav" id="hlNav"></p>
+  <div class="hl-pass" id="hlPass"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="hlCheck" type="button">Check my marks</button><button class="btn ghost" id="hlNext" type="button" hidden>Next passage</button></div>
+  <div class="fb" id="hlFb" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ================= STEP 1 CLOSE ================= -->
+<section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
+  <div class="gtab" style="color:#fff">The board</div>
+  <div class="stamp cleared" aria-hidden="true">STEP 1</div>
+  <h2 id="finh">Case closed (Step 1): your argument on the board</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect both pieces of evidence (clear Leads 1 and 2) to open this file.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Here's your button call from the cover, laid out the way philosophers lay out arguments: your reason as premise 1, your call as the conclusion.</p>
+  <div class="lockin" id="finLock"></div>
+  <div class="exhibit finale-arg" style="--hl-c:var(--stamp)" id="finArg"></div>
+  <p style="font-size:1rem"><b>Which kind of reason is your premise 1?</b> Only you can say; pick what fits what you meant.</p>
+  <div id="finOpts" role="group" aria-label="Kind of reason"></div>
+  <div class="fb" id="finFb" aria-live="polite"></div>
+  <div id="cliff" hidden>
+    <p class="wow" style="background:var(--stamp);color:#fff">To be continued.</p>
+    <p>Look at line 2. Your argument has a <b>hidden premise</b>: a step nobody wrote down, sitting between your reason and your call. Almost every one-sentence reason has one. Next case file, we find yours and try to break it.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ================= WATCH ================= -->
+<section class="sheet" aria-labelledby="b10">
+  <h2 id="b10"><span style="--mark:var(--hl-b)">Before you go back to Rocky: the clip</span></h2>
+  <p>This short clip comes from MIT's course 24.02x, Moral Problems and the Good Life.</p>
+  <ol>
+    <li><a href="https://youtu.be/ZY5Z5gYduTE" target="_blank" rel="noopener">MIT clip: What Is Ethics?</a></li>
+  </ol>
+</section>
+
+<!-- ================= CASE FILE FOR ROCKY ================= -->
+<section class="sheet" aria-labelledby="b11">
+  <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
+  <p>Rocky can't see this page. Done? Copy your case file below and paste it to Rocky as one message. It includes your button call, both leads and your Step 1 verdict. Keep it handy: the next case file can read it back in. Nothing is sent anywhere; it only goes where you paste it.</p>
+  <div class="copyrow" data-copy="all"></div>
+</section>
+
+<!-- ================= DEEPER ================= -->
+<section class="sheet deeper" aria-labelledby="b12">
+  <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <ul>
+    <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by, taught by MIT philosophers Caspar Hare, Kieran Setiya and Tamar Schapiro, with Cosmo Grant and David Balcarras. <a href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
+    <li><b>MIT OpenCourseWare 24.02, Moral Problems and the Good Life (Fall 2008)</b>. An earlier version of the MIT class, taught by Sally Haslanger, with its syllabus and readings list. <a href="https://ocw.mit.edu/courses/24-02-moral-problems-and-the-good-life-fall-2008/" target="_blank" rel="noopener">ocw.mit.edu</a></li>
+    <li><b>Plato's <i>Republic</i>, Book II</b> (the Ring of Gyges) and <b>Henry Sidgwick's <i>The Methods of Ethics</i></b> are both old enough to be free on Project Gutenberg. <a href="https://www.gutenberg.org/ebooks/1497" target="_blank" rel="noopener">Republic on gutenberg.org</a>, <a href="https://www.gutenberg.org/ebooks/46743" target="_blank" rel="noopener">Sidgwick on gutenberg.org</a></li>
+  </ul>
+</section>
+
+<p class="foot">Case file written for Intro to Ethics on Recess. The clips are MIT's; this page, its games and its wording are our own, not MIT's.</p>
+</main>
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+
+
+/* ---------- optional saving (page works without it) ---------- */
+var KEY="goodlife-m01a-v1", BKEY="goodlife-button-v1", canSave=false, SAVED=null, SHARED=null;
+var restoring=false;
+try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); SHARED=JSON.parse(localStorage.getItem(BKEY)||"null"); }catch(e){ canSave=false; SAVED=null; SHARED=null; }
+if(!SAVED || typeof SAVED!=="object") SAVED=null;
+if(!SHARED || typeof SHARED!=="object") SHARED=null;
+var touched={};
+function saveState(){
+  if(!canSave || restoring) return;
+  try{
+    var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, finale:FIN.pick, rf:REC.rf, lines:lines}));
+    if(COVER.v && COVER.reason) localStorage.setItem(BKEY, JSON.stringify({v:COVER.v, reason:COVER.reason}));
+  }catch(e){}
+}
+function touch(g){ touched[g]=true; saveState(); }
+
+/* ---------- state for Rocky's copy ---------- */
+var REC={ sort:{}, hl:{done:false, wrongChecks:0}, m:{solved:0, notes:[]}, rf:{rounds:0, best:null}, b:{done:0, firstTry:0} };
+var COVER={v:null, reason:""};
+var FIN={pick:null};
+
+/* ---------- evidence dock with cheat-sheet cards ---------- */
+var GAMES=[
+ {id:"g1",c:"var(--hl-g)",lead:1,title:"Two kinds of reasons",body:"<b>Well-being:</b> is it good for me? <b>Morality:</b> what do I owe others? Some facts are neither.",ex:"\"$1,000 for me\" vs \"a stranger loses $1,000\"."},
+ {id:"g2",c:"var(--hl-y)",lead:2,title:"Signpost words",body:"<b>so, therefore</b> usually point to a conclusion; <b>because, since</b> usually point to a premise. Not every sentence is part of the argument.",ex:"\"Keeping it would be wrong, <b>because</b> it's not mine.\""}
+];
+var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
+var cleared={}, openCard=null;
+GAMES.forEach(function(g){
+  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  b.addEventListener("click",function(){ showCard(g); });
+  li.appendChild(b); $("dockList").appendChild(li);
+});
+$("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
+function showCard(g){
+  var P=$("evPanel");
+  GAMES.forEach(function(x){ $("dock-"+x.id).setAttribute("aria-expanded","false"); });
+  if(openCard===g.id){ P.hidden=true; openCard=null; return; }
+  openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
+  P.style.setProperty("--c",g.c);
+  P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
+}
+function clear(id, quiet){
+  if(cleared[id]) return; cleared[id]=true;
+  var g=GAMES.filter(function(x){return x.id===id;})[0];
+  $(id).classList.add("is-cleared");
+  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var n=Object.keys(cleared).length;
+  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
+  if(!quiet){
+    var body=$(id).querySelector(".lab-body");
+    var note=el("p",{class:"pause"}); note.textContent="New evidence card: \""+g.title+"\". Tap pip "+g.lead+" in the top bar any time to review it.";
+    body.appendChild(note);
+  }
+  if(n===NG) openFinale();
+  saveState();
+}
+
+/* ---------- locks: each lead opens only after its reading ---------- */
+var UNLOCKS={1:"g1",2:"g2"};
+var unlockedStep=0;
+var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
+function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
+function refreshGot(){
+  gotBtns.forEach(function(b){
+    var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
+    if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; }
+    else if(k===unlockedStep+1){ b.disabled=false; msg.textContent=""; }
+    else { b.disabled=true; msg.textContent="Open the earlier leads first (scroll up)."; }
+  });
+}
+function doUnlock(k, focus){
+  unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
+  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body textarea"); if(first) first.focus(); }
+}
+gotBtns.forEach(function(b){
+  b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
+});
+refreshGot();
+window.__m01={cleared:cleared, unlockStep:function(){return unlockedStep;}};
+
+/* ---------- button call (lock in) ---------- */
+var VL={press:"I'd press it", nopress:"I wouldn't press it"};
+function buildLockin(root){
+  root.querySelectorAll(".vbtn").forEach(function(b){
+    b.addEventListener("click",function(){ COVER.v=b.getAttribute("data-v"); syncLockins(); renderFinale(); saveState(); });
+  });
+}
+function syncLockins(){
+  document.querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
+  var a=$("myReason"), f=$("finReason"); if(a && document.activeElement!==a) a.value=COVER.reason; if(f && document.activeElement!==f) f.value=COVER.reason;
+}
+buildLockin($("lockin"));
+$("lockBtn").addEventListener("click",function(){
+  COVER.reason=$("myReason").value.trim();
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
+  if(!COVER.reason){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in. You'll need it at the end.";
+  renderFinale(); saveState();
+});
+
+/* ---------- copy for Rocky (shared machinery) ---------- */
+function linesFor(g){ if(!touched[g] && SAVED && SAVED.lines && SAVED.lines[g]) return SAVED.lines[g].concat(); return LIVE[g](); }
+function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(COVER.reason?". My reason: "+COVER.reason:"")]; }
+function report(key){ return "C1-M01 case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
+function copyText(txt, box, stat){
+  box.value=txt; box.hidden=false;
+  function done(ok){ stat.textContent= ok ? "Copied!" : "Select the text below and copy it."; }
+  function fallback(){ box.focus(); box.select(); var ok=false; try{ ok=document.execCommand("copy"); }catch(e){} done(ok); }
+  try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(function(){done(true); box.focus(); box.select();}, fallback); return; } }catch(e){}
+  fallback();
+}
+function wireCopies(){
+  [].forEach.call(document.querySelectorAll("[data-copy]"),function(row){
+    var key=row.getAttribute("data-copy"), big=key==="all";
+    var b=el("button",{class:big?"btn":"btn ghost",type:"button"}); b.textContent= big ? "Copy my case file for Rocky" : "Copy just this lead";
+    var st=el("span",{class:"cstat","aria-live":"polite"});
+    var ta=el("textarea",{readonly:"","aria-label":"Text to paste to Rocky",rows:"6"}); ta.hidden=true;
+    ta.addEventListener("focus",function(){ ta.select(); });
+    b.addEventListener("click",function(){ st.textContent=""; copyText(report(key), ta, st); });
+    row.appendChild(b); row.appendChild(st); row.appendChild(ta);
+  });
+}
+
+var LBL={wb:"Good for me",mo:"Owed to others",ne:"Neither"};
+function sortLines(){
+  var done=Object.keys(REC.sort).filter(function(k){return REC.sort[k].final;}).length;
+  if(!done) return ["Lead 1 Sort the motives: not started"];
+  var first=Object.keys(REC.sort).filter(function(k){return REC.sort[k].final && !REC.sort[k].misses.length;}).length;
+  var L=["Lead 1 Sort the motives: "+done+" of "+SORT.length+" sorted, "+first+" right on the first try"];
+  L.push("Final tags: "+SORT.map(function(it,i){ var r=REC.sort[i]; return it.short+" = "+(r&&r.final?LBL[r.final]:"(not done)"); }).join("; "));
+  var miss=SORT.map(function(it,i){ var r=REC.sort[i]; return r&&r.misses.length ? it.short+" (first tried "+r.misses.map(function(m){return LBL[m];}).join(", then ")+")" : null; }).filter(Boolean);
+  L.push("Misses: "+(miss.length?miss.join("; "):"none"));
+  return L;
+}
+function hlLines(){ return ["Lead 2 Highlighter: "+(REC.hl.done?"all 3 passages correct":"not finished")+", checks with mistakes: "+REC.hl.wrongChecks]; }
+var LIVE={g1:sortLines,g2:hlLines};
+function finLines(){ return ["Step 1 verdict, my premise 1 is: "+(FIN.pick||"not done yet")]; }
+var BUILDERS={ g1:function(){return linesFor("g1");},
+  all:function(){ return [].concat(coverLines(), linesFor("g1"), linesFor("g2"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of 2"]); } };
+wireCopies();
+window.__m01.report=report;
+/* ---------- ring poll (no right answer) ---------- */
+var RING={yes:"Then you're rarer than Glaucon's challenge assumes: the view he lays out, playing devil's advocate, is that with the ring, nobody would stay just. Socrates spends most of the rest of the book on your side.",
+ mostly:"Honest answer. The view Glaucon lays out, playing devil's advocate, is harsher: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that people would still have reason to.",
+ no:"That's exactly the view Glaucon lays out, playing devil's advocate: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that view is wrong."};
+$("ringPoll").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click",function(){ $("ringPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("ringFb"),"","Noted.",RING[b.getAttribute("data-r")]+" Read on for the story."); });
+});
+
+/* ================= LEAD 1: SORT ================= */
+var SORT=[
+ {t:"That $200 would finally cover my concert ticket.", short:"concert ticket", a:["wb"], ok:"Good for me: it's your own good.", hint:"Who would this reason be good for?",
+  fb:{wb:"It's about making your own life go better. A real reason, not a bad one; it just answers question one.",
+      mo:"Ask who benefits here. You do. That makes it a well-being reason, even though it's the reason you're tempted.",
+      ne:"It's definitely a reason: it pulls you toward keeping the cash. It's about your own good, so it's a well-being reason."}},
+ {t:"The money isn't mine. It belongs to whoever lost it.", short:"not mine", a:["mo"], ok:"Owed to others: it's about what's theirs.", hint:"Is this about what makes your life better, or about what you owe someone?",
+  fb:{mo:"It's about what you owe the owner: their stuff is theirs. Classic moral reason.",
+      wb:"This reason doesn't say anything about your life going better. It says the money is someone else's, which is about what you owe them: a moral reason.",
+      ne:"It sounds like a plain fact, but ownership gives the owner a claim on you: it's theirs, so you shouldn't keep it. That's a moral reason."}},
+ {t:"The wallet is brown leather with a zipper.", short:"brown leather", a:["ne"], ok:"Neither: true, but not a reason either way.", hint:"Does this count for or against keeping the money at all?",
+  fb:{ne:"Useful for describing it, but it doesn't count for or against keeping it.",
+      wb:"The zipper doesn't make your life better or worse either way. It's a fact that isn't a reason: neither.",
+      mo:"Nobody is owed anything because of a zipper. It's a fact that doesn't bear on the choice: neither."}},
+ {t:"If I kept it, I'd feel guilty every time I put on my headphones.", short:"guilt", a:["wb","mo"], ok:null, hint:"Does this push you one way or the other? If so, whose good or what duty does it appeal to?",
+  fb:{wb:"Good call. Read one way, the reason is about you: avoiding weeks of feeling bad. That's well-being. Read another way, it's your conscience saying keeping it is wrong, so 'Owed to others' also counts. One feeling, both questions.",
+      mo:"Fair. Guilt can be your conscience telling you that keeping it would be wrong, which is moral. Read another way, it's about avoiding feeling bad yourself, which is well-being. Both tags count here.",
+      ne:"It's a reason: it pushes you to return the wallet. It appeals either to your own good (not feeling bad) or to your conscience (it's wrong). Both of those tags count."}},
+ {t:"The owner might need that ID to get into work tomorrow.", short:"owner needs ID", a:["mo"], ok:"Owed to others: someone else's good.", hint:"Whose good is this reason about: yours, or someone else's?",
+  fb:{mo:"It's about someone else's good and what you owe them. Morality often cares about other people's well-being; the line is whose.",
+      wb:"It is about well-being, but not yours. A reason about someone else's good is on the moral side.",
+      ne:"It's more than a fact. It counts in favor of returning the wallet because of what it means for another person: a moral reason."}},
+ {t:"The owner is probably panicking right now.", short:"owner panicking", a:["mo"], ok:"Owed to others: another person's distress.", hint:"Whose feelings is this reason about?",
+  fb:{mo:"It's about another person's distress, which you could end. Someone else's good: moral side.",
+      wb:"It's about feelings, but someone else's. A reason about another person's good is a moral reason.",
+      ne:"It's a reason: it counts toward returning the wallet fast, because of what it means for someone else. Moral."}}
+];
+var sortDone=0;
+SORT.forEach(function(it,i){
+  REC.sort[i]={final:null, misses:[]};
+  var box=el("div",{class:"sort-item"}); var q=el("q"); q.textContent=it.t; box.appendChild(q);
+  var row=el("div",{class:"row",role:"group","aria-label":"Tag this reason"});
+  var fb=el("div",{class:"fb","aria-live":"polite"});
+  ["wb","mo","ne"].forEach(function(v){
+    var b=el("button",{class:"pick",type:"button","data-v":v}); b.textContent=LBL[v];
+    b.addEventListener("click",function(){
+      row.querySelectorAll(".pick").forEach(function(x){x.classList.remove("chosen");});
+      b.classList.add("chosen");
+      var r=REC.sort[i];
+      if(it.a.indexOf(v)>=0){
+        r.final=v; box.classList.add("locked");
+        if(it.ok && !r.misses.length) setFb(fb,"good","Yes.",esc(it.ok)+' <details style="display:inline"><summary style="display:inline;cursor:pointer;text-decoration:underline">Why?</summary> '+it.fb[v]+'</details>');
+        else setFb(fb,"good","Got it.",it.fb[v]);
+        row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
+        sortDone++; $("sortScore").textContent=sortDone+" of "+SORT.length+" sorted";
+        if(sortDone===SORT.length){ $("sortScore").textContent="All "+SORT.length+" sorted. Notice how often the two kinds of reasons point the same way, and how different they still are."; clear("g1"); }
+      } else {
+        r.misses.push(v);
+        if(r.misses.length===1) setFb(fb,"bad","Not quite.",it.hint+" Try another tag.");
+        else setFb(fb,"bad","Not that one either.",it.fb[v]);
+      }
+      touch("g1");
+    });
+    row.appendChild(b);
+  });
+  box.appendChild(row); box.appendChild(fb); $("sortList").appendChild(box);
+});
+
+/* ================= LEAD 2: HIGHLIGHTER ================= */
+var HL=[
+ [ {t:"Keeping the wallet would be wrong,",r:"c",why:"This is the claim the rest is backing up. The conclusion comes first here, and 'because' right after it is the giveaway."},
+   {t:"because the money belongs to someone else,",r:"p",why:"'Because' flags support. This is a premise."},
+   {t:"and taking what belongs to someone else without asking is wrong.",r:"p",why:"A second premise, chained on with 'and'. It's the general rule that links the other two together."} ],
+ [ {t:"Sleep helps your brain hold on to what you studied that day.",r:"p",why:"This is support for the plan at the end. Premise."},
+   {t:"Your chem final is Friday.",r:"p",why:"Another supporting fact. Premise."},
+   {t:"Honestly, the cafeteria coffee is terrible.",r:"x",why:"True or not, it doesn't support anything here. It's commentary, so leave it unmarked."},
+   {t:"So pulling an all-nighter on Thursday is a bad plan for you.",r:"c",why:"'So' announces the conclusion. Bonus: this is a well-being argument."} ],
+ [ {t:"Since a stranger's loss counts just as much as your gain,",r:"p",why:"'Since' flags a premise, even at the start of a sentence."},
+   {t:"and the button's gain and loss are exactly the same size,",r:"p",why:"Second premise, joined with 'and'."},
+   {t:"pressing it doesn't make the world any better.",r:"c",why:"No signpost word right before it, but it's what the 'since' clauses are supporting. Conclusion."},
+   {t:"Also, it's a very satisfying-looking button.",r:"x",why:"A fun aside, not support for anything. Unmarked."} ]
+];
+var hlI=0;
+var CYC={"":"p","p":"c","c":""}, NAMES={"":"unmarked","p":"premise","c":"conclusion"};
+function hlRender(){
+  var P=$("hlPass"); P.innerHTML=""; $("hlFb").className="fb"; $("hlFb").innerHTML="";
+  $("hlNav").textContent="Passage "+(hlI+1)+" of "+HL.length; $("hlNext").hidden=true; $("hlCheck").hidden=false;
+  HL[hlI].forEach(function(s){
+    var b=el("button",{class:"seg",type:"button","data-m":"","aria-label":s.t+" (unmarked)"}); b.textContent=s.t;
+    b.addEventListener("click",function(){ var m=CYC[b.getAttribute("data-m")]; b.setAttribute("data-m",m); b.setAttribute("aria-label",s.t+" ("+NAMES[m]+")"); b.classList.remove("wrong"); });
+    P.appendChild(b); P.appendChild(document.createTextNode(" "));
+  });
+}
+$("hlCheck").addEventListener("click",function(){
+  var segs=$("hlPass").querySelectorAll(".seg"), bad=[];
+  segs.forEach(function(b,i){ var want=HL[hlI][i].r==="x"?"":HL[hlI][i].r, got=b.getAttribute("data-m"); b.classList.toggle("wrong",want!==got); if(want!==got) bad.push({i:i,got:got}); });
+  if(!bad.length){
+    setFb($("hlFb"),"good","Clean read.", HL[hlI].map(function(s){return "<br>&bull; "+s.why;}).join(""));
+    $("hlCheck").hidden=true;
+    if(hlI<HL.length-1){ $("hlNext").hidden=false; $("hlNext").focus(); } else { REC.hl.done=true; clear("g2"); $("hlFb").innerHTML+="<br><br>Three for three. Signpost words won't fool you now."; }
+  } else {
+    REC.hl.wrongChecks++;
+    var tips=bad.map(function(x){ var s=HL[hlI][x.i]; var hint = s.r==="x" ? "Does this chunk actually support anything?" : (s.r==="c" ? "Is this chunk supporting something, or being supported?" : "Look for a signpost word nearby, or ask what this chunk is helping to prove."); return "<br>&bull; “"+s.t+"”: you have it as "+NAMES[x.got]+". "+hint; }).join("");
+    setFb($("hlFb"),"bad","Almost.", bad.length+" chunk"+(bad.length>1?"s are":" is")+" outlined in red."+tips);
+  }
+  touch("g2");
+});
+$("hlNext").addEventListener("click",function(){ hlI++; hlRender(); $("hlPass").querySelector(".seg").focus(); });
+hlRender();
+
+
+/* ================= STEP 1 CLOSE ================= */
+var KINDS=[
+ {k:"wb",t:"A well-being reason (it's about what's good for me)",fb:"Then your argument rests on what's good for you. Next file's question: does \"good for me\" on its own make it what you should do?"},
+ {k:"mo",t:"A moral reason (it's about what I owe others)",fb:"Then your argument rests on what you owe others. Next file's question: what general rule turns that into a \"should\"?"},
+ {k:"both",t:"Honestly, a bit of both",fb:"Like the guilt item in Lead 1: one reason, both questions. Next file you'll find out which one is really doing the work."},
+ {k:"ne",t:"Just a fact",fb:"Then something else has to be doing the work, because a plain fact doesn't count for or against anything on its own (remember the zipper). Next file, you'll find out what it is."}
+];
+var finOpen=false;
+function openFinale(){
+  finOpen=true; openLab("fin");
+  var L=$("finLock");
+  L.innerHTML='<div class="row" role="group" aria-label="Your button call"><button class="vbtn" type="button" data-v="press" aria-pressed="false">I\'d press it</button><button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn\'t press it</button></div><label for="finReason">My reason, in one sentence</label><input type="text" id="finReason" maxlength="220" autocomplete="off">';
+  buildLockin(L);
+  $("finReason").addEventListener("input",function(){ COVER.reason=$("finReason").value.trim(); renderFinArg(); saveState(); });
+  syncLockins(); renderFinale();
+}
+function renderFinArg(){
+  var concl = COVER.v==="press" ? "So, I should press the button." : COVER.v==="nopress" ? "So, I shouldn't press the button." : "So, ... (pick press or don't press above)";
+  $("finArg").innerHTML='<span class="lbl">Exhibit Z: your case</span><span class="argline">1. <span class="mine">'+(COVER.reason?esc(COVER.reason):"(type your reason above)")+'</span></span><span class="argline">2. <span class="gap">[classified: opens in the next case file]</span></span><span class="argline concl">'+concl+'</span>';
+}
+var kindsBuilt=false;
+function renderFinale(){
+  if(!finOpen) return;
+  syncLockins(); renderFinArg();
+  if(kindsBuilt) return; kindsBuilt=true;
+  var O=$("finOpts");
+  KINDS.forEach(function(o){
+    var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o.k}); b.textContent=o.t;
+    b.addEventListener("click",function(){
+      if(!COVER.v || !COVER.reason){ setFb($("finFb"),"bad","First things first.","Fill in your call and your reason above, so there's an argument on the board."); return; }
+      O.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      FIN.pick=o.t; setFb($("finFb"),"good","Logged.",o.fb);
+      $("cliff").hidden=false; $("fin").classList.add("is-cleared"); saveState();
+    });
+    O.appendChild(b);
+  });
+}
+function restoreFinale(){ renderFinale(); var b=[].filter.call($("finOpts").querySelectorAll(".choice"),function(x){return x.textContent===FIN.pick;})[0]; if(b){ b.setAttribute("aria-pressed","true"); } $("cliff").hidden=false; $("fin").classList.add("is-cleared"); }
+
+/* ---------- restore saved progress, if any ---------- */
+try{
+  var src = (SAVED && SAVED.cover && SAVED.cover.v) ? SAVED.cover : SHARED;
+  if(src && src.v){ COVER.v=src.v; COVER.reason=src.reason||""; syncLockins(); if(COVER.reason) $("lockMsg").textContent="Locked in (saved). You'll need it at the end.";  }
+}catch(e){}
+if(SAVED){
+  restoring=true;
+  try{
+    var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
+    if(SAVED.rf && SAVED.rf.rounds){ REC.rf.rounds=SAVED.rf.rounds; REC.rf.best=SAVED.rf.best; }
+    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence stays."; b.insertBefore(n,b.firstChild); } });
+    if(SAVED.finale){ FIN.pick=SAVED.finale; if(finOpen){ restoreFinale(); } }
+  }catch(e){}
+  restoring=false; saveState();
+}
+renderFinale();
+})();
+</script>
+</body>
+</html>
