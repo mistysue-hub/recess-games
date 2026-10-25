@@ -7,45 +7,191 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-  :root{--paper:#fdfdf8;--grid:#d6e4f0;--margin:#e08a8a;--ink:#1f2a36;--soft:#5a6875;--red:#b3261e;--sticky:#fff2a8;--line:#c9d6e2}
+  :root{--paper:#fbfbf4;--grid:#d3e2ef;--margin:#e7a3a3;--ink:#1f2a36;--soft:#56636f;--pencil:#2d5f8b;--red:#b3261e;
+        --sticky:#fff2a8;--hi:#ffe866;--card:#ffffff;--line:#c9d6e2;--tape:rgba(214,226,236,.85)}
   *{box-sizing:border-box}
-  html,body{margin:0}
+  html,body{margin:0;overflow-x:clip}
   body{background:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-    background-size:22px 22px;color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:19px;line-height:1.6;min-height:100vh}
-  .page{max-width:780px;margin:0 auto;padding:22px 18px 48px 52px;position:relative;min-height:100vh}
-  .page::before{content:"";position:absolute;left:34px;top:0;bottom:0;width:2px;background:var(--margin)}
-  .tag{font-family:"Special Elite",ui-monospace,monospace;color:var(--soft);font-size:15px;margin:0 0 6px}
+    background-size:22px 22px;color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:19px;line-height:1.62}
+  .page{max-width:760px;margin:0 auto;padding:22px 20px 56px 56px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:36px;top:0;bottom:0;width:2px;background:var(--margin)}
+  .ink-line{position:absolute;left:35px;top:0;width:4px;height:0;background:var(--red);border-radius:2px}
+  .ink-line::after{content:"";position:absolute;left:-4px;bottom:-6px;width:12px;height:12px;border-radius:50%;background:var(--red)}
+  .tag{font-family:"Special Elite",ui-monospace,monospace;color:var(--soft);font-size:15px;margin:0 0 10px}
   h1,h2,h3{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;line-height:1.2;text-wrap:balance}
-  h1{font-size:30px;margin:0 0 14px} h2{font-size:23px;margin:28px 0 6px} h3{font-size:20px;margin:22px 0 6px}
-  p{margin:9px 0;max-width:66ch} li{max-width:64ch;margin:5px 0}
-  ul,ol{padding-left:26px}
+  h1{font-size:clamp(28px,6vw,38px);margin:0 0 6px}
+  h2{font-size:24px;margin:34px 0 8px}
+  h2 span{padding:0 6px;margin-left:-6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;
+     background:linear-gradient(transparent 52%,var(--hi) 52%,var(--hi) 90%,transparent 90%)}
+  h3{font-size:20px;margin:24px 0 6px}
+  p{margin:10px 0;max-width:64ch} li{max-width:62ch;margin:6px 0} ul,ol{padding-left:26px}
   strong{font-weight:700}
-  hr{border:0;border-top:1px solid var(--line);margin:28px 0 8px}
-  hr + p{font-size:15px;color:var(--soft)}
-  .sticky{display:block;background:var(--sticky);padding:14px 16px;margin:22px 0;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.3deg);max-width:64ch}
+  .lede{font-size:1.18em;line-height:1.55;max-width:56ch}
+  /* the taped-in sketch */
+  .sketch{position:relative;margin:18px 0 20px;max-width:420px;background:var(--card);padding:14px 14px 8px;
+          box-shadow:0 1px 0 var(--line),3px 5px 0 rgba(31,42,54,.08);transform:rotate(-1.2deg)}
+  .sketch::before,.sketch::after{content:"";position:absolute;top:-10px;width:70px;height:22px;background:var(--tape)}
+  .sketch::before{left:22px;transform:rotate(-6deg)} .sketch::after{right:22px;transform:rotate(5deg)}
+  .sketch svg{display:block;width:100%;height:auto}
+  .sketch svg path,.sketch svg circle,.sketch svg ellipse,.sketch svg rect{fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .sketch .ink{stroke:var(--ink);stroke-width:3} .sketch .red{stroke:var(--red);stroke-width:3}
+  .sketch .pencil{stroke:var(--pencil);stroke-width:2;opacity:.8} .sketch .thin{stroke-width:2}
+  .sketch .dash{stroke-dasharray:6 7} .sketch .fill.red{fill:var(--red)} .sketch .fill.ink,.sketch .fill.small{fill:var(--ink)}
+  .sketch .pencil.fill{fill:var(--pencil)}
+  .sketch figcaption{font-family:"Special Elite",ui-monospace,monospace;color:var(--pencil);font-size:15px;margin:4px 2px 2px}
+  /* pencil timeline for dated history */
+  .timeline{padding:0 0 0 28px;margin:16px 0;position:relative}
+  .timeline::before{content:"";position:absolute;left:7px;top:12px;bottom:12px;width:2px;background:var(--pencil);opacity:.55}
+  .timeline p{position:relative;margin:0 0 16px}
+  .timeline .entry::before{content:"";position:absolute;left:-27px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--paper);border:3px solid var(--pencil)}
+  .timeline .entry > strong:first-child{display:block;font-family:"Special Elite",ui-monospace,monospace;font-weight:400;color:var(--pencil);font-size:18px}
+  .timeline .note{color:var(--ink);padding:10px 14px;background:rgba(255,255,255,.7);border-radius:4px}
+  /* index card */
+  .card{position:relative;background:var(--card);margin:26px 0;padding:16px 18px;max-width:60ch;transform:rotate(.8deg);
+        box-shadow:3px 5px 0 rgba(31,42,54,.1);background-image:linear-gradient(transparent 33px,#f2b8b8 33px,#f2b8b8 35px,transparent 35px)}
+  .card .tape{position:absolute;top:-11px;left:50%;width:84px;height:22px;margin-left:-42px;background:var(--tape);transform:rotate(-3deg)}
+  .card-title,.sticky-title,.anomaly-title{font-family:"Special Elite",ui-monospace,monospace;font-size:17px;margin:0 0 6px}
+  .card-title{color:var(--red)}
+  .now{position:relative;background:var(--card);margin:26px 0;padding:14px 18px 12px 18px;max-width:60ch;border:2px solid var(--pencil);border-radius:3px;
+       transform:rotate(-.5deg);box-shadow:3px 5px 0 rgba(45,95,139,.18)}
+  .now::before{content:"";position:absolute;top:-9px;left:22px;width:16px;height:16px;border-radius:50%;background:var(--red);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .now-title{font-family:"Special Elite",ui-monospace,monospace;color:var(--pencil);font-size:17px;margin:0 0 6px}
+  .logbox{background:var(--card);margin:26px 0;padding:14px 16px;max-width:62ch;border:2px dashed var(--red);border-radius:4px}
+  .logbox h3{margin:0 0 4px;font-size:19px;color:var(--red)}
+  .logbox p{margin:4px 0;font-size:16px;color:var(--soft)}
+  .logbox textarea{width:100%;min-height:96px;margin:8px 0;padding:10px;font:inherit;font-size:17px;color:var(--ink);background:var(--paper);
+       border:1px solid var(--line);border-radius:4px;resize:vertical}
+  .logbox textarea:focus-visible,.logbox button:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
+  .logbox button{font:inherit;font-size:16px;padding:9px 14px;border-radius:6px;border:0;background:var(--red);color:#fff;cursor:pointer}
+  .logbox .status{display:inline-block;margin-left:10px;font-size:15px;color:var(--pencil)}
+  .logbox details{margin-top:12px} .logbox summary{cursor:pointer;font-size:16px;color:var(--pencil)}
+  .logbox ol{margin:8px 0 0;padding-left:22px;font-size:16px} .logbox li{margin:6px 0}
+  .logbox li b{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;color:var(--red)}
+  .glossary{background:var(--card);border-left:6px solid var(--pencil);padding:4px 18px 8px;margin:28px 0;box-shadow:3px 5px 0 rgba(31,42,54,.08)}
+  .glossary h2{margin-top:14px}
+  .sticky{display:block;background:var(--sticky);padding:16px 18px;margin:28px 0;box-shadow:3px 4px 0 rgba(0,0,0,.12);transform:rotate(-.6deg);max-width:62ch}
   .sticky p{margin:4px 0}
-  .label{display:block;font-family:"Special Elite",ui-monospace,monospace;font-size:15px;letter-spacing:.04em;margin-bottom:2px}
-  .anomaly{color:var(--red);margin:18px 0}
-  .anomaly p{margin:2px 0}
-  .tablewrap{overflow-x:auto;margin:12px 0}
-  table{border-collapse:collapse;font-size:16px;background:rgba(255,255,255,.6)}
-  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-  th{font-family:"Special Elite",ui-monospace,monospace;font-weight:400}
-  .done{margin-top:26px;font-family:"Special Elite",ui-monospace,monospace;font-size:17px}
-  @media (max-width:480px){ .page{padding:18px 14px 40px 40px} .page::before{left:24px} body{font-size:18px} }
-  @media (prefers-reduced-motion:reduce){ .sticky{transform:none} }
+  .anomaly{color:var(--red);margin:24px 0;padding-left:14px;border-left:3px dashed var(--red)}
+  .anomaly p{margin:3px 0}
+  .tablewrap{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;font-size:16px;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;color:var(--pencil)}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0 8px}
+  hr + p{font-size:15px;color:var(--soft)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .stamp{display:inline-block;margin:28px 0 8px;padding:10px 16px;border:3px solid var(--red);color:var(--red);border-radius:6px;
+         font-family:"Special Elite",ui-monospace,monospace;font-size:18px;transform:rotate(-2deg)}
+  .stamp b{font-weight:400;text-decoration:underline}
+  @media (max-width:480px){ .page{padding:18px 14px 44px 42px} .page::before{left:24px} .ink-line{left:23px} body{font-size:18px} }
+  @media (prefers-reduced-motion:no-preference){
+    .sketch path,.sketch circle,.sketch ellipse,.sketch rect{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 1.6s ease-out forwards}
+    .sketch .dash{animation:none;stroke-dashoffset:0}
+    @keyframes draw{to{stroke-dashoffset:0}}
+  }
+  @media (prefers-reduced-motion:reduce){ .sketch,.card,.sticky,.stamp{transform:none} }
+  /* scroll motion (only when JS adds .anim, so text is never hidden without it) */
+  body.anim .rv{opacity:0;translate:var(--dx,0) 18px;transition:opacity .55s ease-out,translate .75s cubic-bezier(.2,.9,.25,1.05)}
+  body.anim .rv.in{opacity:1;translate:0 0}
+  body.anim h2{opacity:0}
+  body.anim h2.pop{opacity:1;animation:pop .55s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes pop{0%{scale:.4;rotate:-4deg}60%{scale:1.08;rotate:1deg}100%{scale:1;rotate:0deg}}
+  .burst{position:absolute;pointer-events:none;z-index:5;width:0;height:0}
+  .burst i{position:absolute;left:0;top:0;display:block;border-radius:50%}
+  .burst b{position:absolute;left:-8px;top:-8px;width:16px;height:16px;border-radius:50%;border:4px solid var(--red)}
+  h2{position:relative}
 </style>
 </head>
 <body>
-<main class="page" id="page"></main>
+<main class="page" id="page"><div class="ink-line" id="ink"></div><div id="body"></div></main>
 <script>
-  var LEVELS = {"core": "<h1>Module 5: The Puzzle That Won't Solve<\/h1>\n<p>In December 1612, Galileo pointed his telescope near Jupiter and drew a faint dot in his notebook. He thought it was a star. It was actually the planet Neptune. Nobody would find Neptune on purpose for another 234 years, and it took a planet that wouldn't behave to do it.<\/p>\n<h2>A planet off course<\/h2>\n<p>In 1781, the astronomer William Herschel discovered a new planet, Uranus. Astronomers used Newton's laws to work out exactly where it should be, year after year. But Uranus wouldn't cooperate. By the 1840s it was clearly drifting away from where the math said it should be.<\/p>\n<p>That's an <strong>anomaly<\/strong>: a result that doesn't fit what your paradigm expects. Astronomers had two choices:<\/p>\n<ol>\n<li>Newton's laws are wrong.<\/li>\n<li>Newton's laws are fine, and something we can't see is pulling on Uranus.<\/li>\n<\/ol>\n<h2>The rescue<\/h2>\n<p>Two mathematicians, Urbain Le Verrier in France and John Couch Adams in England, chose option 2. Each worked out where an unseen planet would have to be to pull Uranus off course. Le Verrier sent his prediction to the Berlin Observatory.<\/p>\n<p>On the night of September 23, 1846, the astronomer Johann Galle pointed his telescope where Le Verrier said to look. In less than an hour he found a planet that wasn't on any star map, less than one degree from the predicted spot. It was Neptune.<\/p>\n<p>The anomaly became one of Newton's greatest victories.<\/p>\n<h2>The same trick, again<\/h2>\n<p>Then Le Verrier noticed another problem. Mercury, the planet closest to the Sun, doesn't trace exactly the same oval every time. Its whole orbit slowly turns. Newton's laws explained most of that turning, but not all. A tiny bit was left over (today we know it's 43 arcseconds every hundred years). (An arcsecond is a very small piece of a degree.)<\/p>\n<p>Le Verrier tried the trick that had worked so well. In 1859 he suggested an unseen planet even closer to the Sun. It was named Vulcan. That same year, an amateur astronomer said he'd seen it crossing the Sun. For decades, astronomers searched. Vulcan was never found.<\/p>\n<p>In 1915, Albert Einstein published a new theory of gravity called general relativity. It explained Mercury's leftover 43 arcseconds exactly, with no extra planet at all. Mercury's anomaly hadn't been a missing planet. It was a crack in Newton's laws.<\/p>\n<h2>Why scientists don't give up right away<\/h2>\n<p>Kuhn's point: an anomaly almost never makes scientists drop their paradigm right away. First they try to fix it, and often they should. The Neptune rescue worked brilliantly. The Vulcan rescue failed. At the start, nobody could tell which kind of anomaly they were looking at.<\/p>\n<p>Only some anomalies refuse every fix. Those are the ones that can push a science into crisis, which is what Module 6 is about.<\/p>\n<p><strong>Weird but true:<\/strong> When Galileo saw Neptune in 1612, it had just started its own backward loop and was barely moving. That may be why he thought it was a star. The planet's own odd motion helped it hide.<\/p>\n<h2>Words for your notebook<\/h2>\n<ul>\n<li><strong>Anomaly:<\/strong> a result that doesn't fit what the paradigm expects.<\/li>\n<li><strong>Rescue:<\/strong> explaining an anomaly by adding something new (like an unseen planet) while keeping the paradigm.<\/li>\n<li><strong>General relativity:<\/strong> Einstein's 1915 theory of gravity, which replaced Newton's for some problems.<\/li>\n<\/ul>\n<aside class=\"sticky\"><span class=\"label\">Side View<\/span><p>Two philosophers, Pierre Duhem and W. V. O. Quine, pointed out that you can never test just one idea by itself. Every prediction also depends on other things you assumed, like how many planets there are or whether your telescope works. So when a prediction fails, you can always blame one of those other things and save your main theory. If that's true, how should scientists decide when to stop saving a theory?<\/p><\/aside>\n<h2>Your Anomaly Log<\/h2>\n<p>Look back over this module. Did anything seem too tidy, left out, or not quite fitting? Add it to your log.<\/p>\n<div class=\"anomaly\"><span class=\"label\">Anomaly<\/span><p>This module made the Neptune story sound simple. People still argue about how much credit Adams deserves compared with Le Verrier.<\/p><\/div>\n<hr />\n<p><em>This reading was written for this course. No text was copied from Kuhn's book or any other source.<\/em><\/p>", "extended": "<h1>Module 5: The Puzzle That Won't Solve<\/h1>\n<p>On December 28, 1612, and again on January 27, 1613, Galileo plotted a faint object near Jupiter in his notebook. It was Neptune. He took it for a fixed star; it was barely moving at the time. Neptune would wait 234 years to be found on purpose, and the search began with a planet that refused to follow the rules.<\/p>\n<h2>Uranus misbehaves<\/h2>\n<p>William Herschel discovered Uranus on March 13, 1781, the first planet found since antiquity. Astronomers soon computed its orbit from Newton's laws, and in 1821 Alexis Bouvard published detailed tables of its expected positions. Within a couple of decades, Uranus had drifted measurably off those tables.<\/p>\n<p>Faced with an anomaly like this, a scientist can question the paradigm, or question something else. Questioning Newton, whose mechanics had already predicted Halley's comet, seemed far less reasonable than supposing something unseen was at work.<\/p>\n<h2>Rescue, version one: Neptune<\/h2>\n<p>In 1845–46 Urbain Le Verrier in Paris and John Couch Adams in Cambridge independently calculated the position of an undiscovered planet whose gravity could account for Uranus's wandering. Le Verrier published his result and sent it to the Berlin Observatory. On the night of September 23–24, 1846, Johann Galle, assisted by Heinrich d'Arrest, found the planet within an hour of starting the search, less than a degree from Le Verrier's predicted position.<\/p>\n<p>Neptune turned an anomaly into a triumph. It became the textbook example of a scientific prediction. (How much credit Adams deserves is still debated; his work was mostly unpublished at the time.)<\/p>\n<h2>Rescue, version two: Vulcan<\/h2>\n<p>Mercury's orbit is an ellipse whose closest point to the Sun, its perihelion, slowly rotates. Newtonian gravity, counting the pulls of the other planets, accounts for nearly all of that rotation. Le Verrier found a stubborn remainder, later fixed at about 43 arcseconds per century. (One arcsecond is 1/3,600 of a degree.)<\/p>\n<p>In 1859 Le Verrier proposed the same cure that had worked for Uranus: unseen matter inside Mercury's orbit. That year, an amateur astronomer, Edmond Lescarbault, reported seeing a small body cross the Sun, and in January 1860 Le Verrier announced the planet, named Vulcan. Sightings came and went for decades. None held up.<\/p>\n<p>In 1915 Einstein's general theory of relativity predicted Mercury's extra 43 arcseconds with no new planet at all. The anomaly had been pointing at a limit of Newton's theory itself.<\/p>\n<h2>What the two stories teach together<\/h2>\n<p>The two rescues used exactly the same reasoning. One succeeded spectacularly and one failed completely. That is Kuhn's central point about anomalies. Scientists do not, and should not, abandon a successful paradigm at the first mismatch; the mismatch is usually a puzzle for normal science, and often it gets solved. But there is no rule that tells you in advance which anomalies will yield to a fix and which ones mark the edge of the paradigm. Mercury's anomaly was known for more than half a century before a new theory replaced Newton's.<\/p>\n<p>Rescues of this kind keep happening. In 1930 Wolfgang Pauli proposed an undetectable particle to explain why energy seemed to go missing in a type of radioactive decay, rather than give up conservation of energy. The neutrino was finally detected in 1956. In 2011 the OPERA experiment reported neutrinos apparently arriving faster than light; in 2012 the cause turned out to be a fiber-optic cable that wasn't fully plugged in. Sometimes the fix is a new particle. Sometimes it's the equipment. Sometimes, as with Mercury, it's the theory.<\/p>\n<p><strong>Weird but true:<\/strong> When Galileo first recorded Neptune, the planet had just begun its retrograde loop and was nearly stationary, too slow to stand out in his small telescope. One physicist argued in 2009 that he may have noticed it shift, though others doubt it. If so, he saw an anomaly and filed it as noise.<\/p>\n<h2>Terms<\/h2>\n<ul>\n<li><strong>Anomaly:<\/strong> an observation that violates the expectations of the current paradigm.<\/li>\n<li><strong>Auxiliary hypothesis:<\/strong> an extra assumption used alongside a theory to make a prediction (for example, \"there is no planet beyond Uranus\").<\/li>\n<li><strong>Perihelion precession:<\/strong> the slow rotation of a planet's orbit, measured at its point closest to the Sun.<\/li>\n<\/ul>\n<aside class=\"sticky\"><span class=\"label\">Side View<\/span><p>Pierre Duhem (<em>The Aim and Structure of Physical Theory<\/em>, 1906) and W. V. O. Quine (\"Two Dogmas of Empiricism,\" 1951) argued that hypotheses are never tested in isolation. A prediction always depends on a bundle of assumptions: the theory, the number of planets, how the instruments work, and more. When the prediction fails, logic alone doesn't say which assumption to blame. This <strong>Duhem–Quine thesis<\/strong> is why the Neptune rescue was legitimate, and also why a determined defender can save almost any theory. It is a problem for Popper's falsification from Module 3: if one failed prediction never forces you to drop a particular theory, what does? Imagine you're an astronomer in 1880. Mercury's orbit is still off, and after twenty years of searching nobody has found Vulcan. How much longer do you keep searching before you suspect Newton?<\/p><\/aside>\n<h2>Your Anomaly Log<\/h2>\n<p>Look back over this module. Add anything that seemed too tidy, one-sided, left out, or out of place.<\/p>\n<div class=\"anomaly\"><span class=\"label\">Anomaly<\/span><p>Two of the last three modules have been about astronomy, and most of the rest about physics and chemistry. Astronomy's predictions are unusually clean. Would these lessons look the same in biology or medicine?<\/p><\/div>\n<hr />\n<p><em>This reading was written for this course. No text was copied from Kuhn's book or any other source.<\/em><\/p>"};
+  var LEVELS = {"core": "<h1>Module 5: The Puzzle That Won't Solve<\/h1>\n<p class=\"lede\">In December 1612, Galileo pointed his telescope near Jupiter and drew a faint dot in his notebook. He thought it was a star. It was actually the planet Neptune. Nobody would find Neptune on purpose for another 234 years, and it took a planet that wouldn't behave to do it.<\/p>\n<h2><span>A planet off course<\/span><\/h2>\n<p>In 1781, the astronomer William Herschel discovered a new planet, Uranus. Astronomers used Newton's laws to work out exactly where it should be, year after year. But Uranus wouldn't cooperate. By the 1840s it was clearly drifting away from where the math said it should be.<\/p>\n<p>That's an <strong>anomaly<\/strong>: a result that doesn't fit what your paradigm expects. Astronomers had two choices:<\/p>\n<ol>\n<li>Newton's laws are wrong.<\/li>\n<li>Newton's laws are fine, and something we can't see is pulling on Uranus.<\/li>\n<\/ol>\n<h2><span>The rescue<\/span><\/h2>\n<p>Two mathematicians, Urbain Le Verrier in France and John Couch Adams in England, chose option 2. Each worked out where an unseen planet would have to be to pull Uranus off course. Le Verrier sent his prediction to the Berlin Observatory.<\/p>\n<p>On the night of September 23, 1846, the astronomer Johann Galle pointed his telescope where Le Verrier said to look. In less than an hour he found a planet that wasn't on any star map, less than one degree from the predicted spot. It was Neptune.<\/p>\n<p>The anomaly became one of Newton's greatest victories.<\/p>\n<h2><span>The same trick, again<\/span><\/h2>\n<p>Then Le Verrier noticed another problem. Mercury, the planet closest to the Sun, doesn't trace exactly the same oval every time. Its whole orbit slowly turns. Newton's laws explained most of that turning, but not all. A tiny bit was left over (today we know it's 43 arcseconds every hundred years). (An arcsecond is a very small piece of a degree.)<\/p>\n<p>Le Verrier tried the trick that had worked so well. In 1859 he suggested an unseen planet even closer to the Sun. It was named Vulcan. That same year, an amateur astronomer said he'd seen it crossing the Sun. For decades, astronomers searched. Vulcan was never found.<\/p>\n<p>In 1915, Albert Einstein published a new theory of gravity called general relativity. It explained Mercury's leftover 43 arcseconds exactly, with no extra planet at all. Mercury's anomaly hadn't been a missing planet. It was a crack in Newton's laws.<\/p>\n<h2><span>Why scientists don't give up right away<\/span><\/h2>\n<p>Kuhn's point: an anomaly almost never makes scientists drop their paradigm right away. First they try to fix it, and often they should. The Neptune rescue worked brilliantly. The Vulcan rescue failed. At the start, nobody could tell which kind of anomaly they were looking at.<\/p>\n<p>Only some anomalies refuse every fix. Those are the ones that can push a science into crisis, which is what Module 6 is about.<\/p>\n<aside class=\"card\"><span class=\"tape\"><\/span><p class=\"card-title\">Weird but true<\/p><p>When Galileo saw Neptune in 1612, it had just started its own backward loop and was barely moving. That may be why he thought it was a star. The planet's own odd motion helped it hide.<\/p><\/aside>\n<h2><span>Words for your notebook<\/span><\/h2>\n<ul>\n<li><strong>Anomaly:<\/strong> a result that doesn't fit what the paradigm expects.<\/li>\n<li><strong>Rescue:<\/strong> explaining an anomaly by adding something new (like an unseen planet) while keeping the paradigm.<\/li>\n<li><strong>General relativity:<\/strong> Einstein's 1915 theory of gravity, which replaced Newton's for some problems.<\/li>\n<\/ul>\n<aside class=\"sticky\"><p class=\"sticky-title\">Side View<\/p><p>Two philosophers, Pierre Duhem and W. V. O. Quine, pointed out that you can never test just one idea by itself. Every prediction also depends on other things you assumed, like how many planets there are or whether your telescope works. So when a prediction fails, you can always blame one of those other things and save your main theory. If that's true, how should scientists decide when to stop saving a theory?<\/p><\/aside>\n<h2><span>Your Anomaly Log<\/span><\/h2>\n<p>Look back over this module. Did anything seem too tidy, left out, or not quite fitting? Add it to your log.<\/p>\n<div class=\"anomaly\"><p class=\"anomaly-title\">Anomaly<\/p><p>This module made the Neptune story sound simple. People still argue about how much credit Adams deserves compared with Le Verrier.<\/p><\/div>\n<hr />\n<p><em>This reading was written for this course. No text was copied from Kuhn's book or any other source.<\/em><\/p>", "extended": "<h1>Module 5: The Puzzle That Won't Solve<\/h1>\n<p class=\"lede\">On December 28, 1612, and again on January 27, 1613, Galileo plotted a faint object near Jupiter in his notebook. It was Neptune. He took it for a fixed star; it was barely moving at the time. Neptune would wait 234 years to be found on purpose, and the search began with a planet that refused to follow the rules.<\/p>\n<h2><span>Uranus misbehaves<\/span><\/h2>\n<p>William Herschel discovered Uranus on March 13, 1781, the first planet found since antiquity. Astronomers soon computed its orbit from Newton's laws, and in 1821 Alexis Bouvard published detailed tables of its expected positions. Within a couple of decades, Uranus had drifted measurably off those tables.<\/p>\n<p>Faced with an anomaly like this, a scientist can question the paradigm, or question something else. Questioning Newton, whose mechanics had already predicted Halley's comet, seemed far less reasonable than supposing something unseen was at work.<\/p>\n<h2><span>Rescue, version one: Neptune<\/span><\/h2>\n<p>In 1845–46 Urbain Le Verrier in Paris and John Couch Adams in Cambridge independently calculated the position of an undiscovered planet whose gravity could account for Uranus's wandering. Le Verrier published his result and sent it to the Berlin Observatory. On the night of September 23–24, 1846, Johann Galle, assisted by Heinrich d'Arrest, found the planet within an hour of starting the search, less than a degree from Le Verrier's predicted position.<\/p>\n<p>Neptune turned an anomaly into a triumph. It became the textbook example of a scientific prediction. (How much credit Adams deserves is still debated; his work was mostly unpublished at the time.)<\/p>\n<h2><span>Rescue, version two: Vulcan<\/span><\/h2>\n<p>Mercury's orbit is an ellipse whose closest point to the Sun, its perihelion, slowly rotates. Newtonian gravity, counting the pulls of the other planets, accounts for nearly all of that rotation. Le Verrier found a stubborn remainder, later fixed at about 43 arcseconds per century. (One arcsecond is 1/3,600 of a degree.)<\/p>\n<p>In 1859 Le Verrier proposed the same cure that had worked for Uranus: unseen matter inside Mercury's orbit. That year, an amateur astronomer, Edmond Lescarbault, reported seeing a small body cross the Sun, and in January 1860 Le Verrier announced the planet, named Vulcan. Sightings came and went for decades. None held up.<\/p>\n<p>In 1915 Einstein's general theory of relativity predicted Mercury's extra 43 arcseconds with no new planet at all. The anomaly had been pointing at a limit of Newton's theory itself.<\/p>\n<h2><span>What the two stories teach together<\/span><\/h2>\n<p>The two rescues used exactly the same reasoning. One succeeded spectacularly and one failed completely. That is Kuhn's central point about anomalies. Scientists do not, and should not, abandon a successful paradigm at the first mismatch; the mismatch is usually a puzzle for normal science, and often it gets solved. But there is no rule that tells you in advance which anomalies will yield to a fix and which ones mark the edge of the paradigm. Mercury's anomaly was known for more than half a century before a new theory replaced Newton's.<\/p>\n<p>Rescues of this kind keep happening. In 1930 Wolfgang Pauli proposed an undetectable particle to explain why energy seemed to go missing in a type of radioactive decay, rather than give up conservation of energy. The neutrino was finally detected in 1956. In 2011 the OPERA experiment reported neutrinos apparently arriving faster than light; in 2012 the cause turned out to be a fiber-optic cable that wasn't fully plugged in. Sometimes the fix is a new particle. Sometimes it's the equipment. Sometimes, as with Mercury, it's the theory.<\/p>\n<aside class=\"now\"><p class=\"now-title\">Why it matters now<\/p><p>Astronomers face their own \"Neptune or Vulcan?\" choice today. Galaxies spin as if they hold far more mass than we can see. Most physicists blame unseen \"dark matter,\" a Neptune-style rescue; a minority think gravity itself needs changing, as it did for Mercury. The question is still open.<\/p><\/aside>\n<aside class=\"card\"><span class=\"tape\"><\/span><p class=\"card-title\">Weird but true<\/p><p>When Galileo first recorded Neptune, the planet had just begun its retrograde loop and was nearly stationary, too slow to stand out in his small telescope. One physicist argued in 2009 that he may have noticed it shift, though others doubt it. If so, he saw an anomaly and filed it as noise.<\/p><\/aside>\n<section class=\"glossary\"><h2><span>Terms<\/span><\/h2><ul>\n<li><strong>Anomaly:<\/strong> an observation that violates the expectations of the current paradigm.<\/li>\n<li><strong>Auxiliary hypothesis:<\/strong> an extra assumption used alongside a theory to make a prediction (for example, \"there is no planet beyond Uranus\").<\/li>\n<li><strong>Perihelion precession:<\/strong> the slow rotation of a planet's orbit, measured at its point closest to the Sun.<\/li>\n<\/ul><\/section>\n<aside class=\"sticky\"><p class=\"sticky-title\">Side View<\/p><p>Pierre Duhem (<em>The Aim and Structure of Physical Theory<\/em>, 1906) and W. V. O. Quine (\"Two Dogmas of Empiricism,\" 1951) argued that hypotheses are never tested in isolation. A prediction always depends on a bundle of assumptions: the theory, the number of planets, how the instruments work, and more. When the prediction fails, logic alone doesn't say which assumption to blame. This <strong>Duhem–Quine thesis<\/strong> is why the Neptune rescue was legitimate, and also why a determined defender can save almost any theory. It is a problem for Popper's falsification from Module 3: if one failed prediction never forces you to drop a particular theory, what does? Imagine you're an astronomer in 1880. Mercury's orbit is still off, and after twenty years of searching nobody has found Vulcan. How much longer do you keep searching before you suspect Newton?<\/p><\/aside>\n<h2><span>Your Anomaly Log<\/span><\/h2>\n<p>Look back over this module. Add anything that seemed too tidy, one-sided, left out, or out of place.<\/p>\n<div class=\"anomaly\"><p class=\"anomaly-title\">Anomaly<\/p><p>Two of the last three modules have been about astronomy, and most of the rest about physics and chemistry. Astronomy's predictions are unusually clean. Would these lessons look the same in biology or medicine?<\/p><\/div>\n<hr />\n<p><em>This reading was written for this course. No text was copied from Kuhn's book or any other source.<\/em><\/p>"};
   var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
-  document.getElementById('page').innerHTML =
-    '<p class="tag">Lab notebook · Module 5 · ' + (level === 'core' ? 'Core' : 'Extended') + '</p>' +
-    LEVELS[level] +
-    '<p class="done">Finished reading? Go back to Rocky and say <b>done</b>.</p>';
-  document.title = 'Module 5: The Puzzle That Won&#x27;t Solve · ' + (level === 'core' ? 'Core' : 'Extended');
+  var sketch = '<figure class="sketch"><svg viewBox="0 0 320 170" role="img" aria-label="Sketch: an orbit that doesn&#x27;t fit"><circle class="red fill" cx="48" cy="90" r="10"/><path class="pencil dash" d="M48 90 m-70 0 a70 60 0 1 0 140 0 a70 60 0 1 0 -140 0"/><path class="ink" d="M58 90 a150 110 0 0 1 220 -10"/><circle class="ink" cx="190" cy="30" r="9"/><path class="pencil dash" d="M190 30 l12 -12"/><circle class="red" cx="272" cy="86" r="12"/><path class="red" d="M266 80 q6 -8 12 0 q0 6 -6 8 v6"/><circle class="red fill" cx="272" cy="102" r="1.5"/></svg><figcaption>Fig. 5: an orbit that doesn&#x27;t fit</figcaption></figure>';
+  var body = LEVELS[level].replace(/(<\/h1>)/, '$1' + sketch);
+  document.getElementById('body').innerHTML =
+    '<p class="tag">Lab notebook, module 5, ' + (level === 'core' ? 'Core' : 'Extended') + '</p>' + body +
+    '<p class="stamp">Finished reading? Go back to Rocky and say <b>done</b>.</p>';
+  document.title = 'Module 5: The Puzzle That Won&#x27;t Solve (' + (level === 'core' ? 'Core' : 'Extended') + ')';
+  // Anomaly Log box: saved only in this browser, with a Copy button for Rocky
+  (function(){
+    var N = '05', KEY = 'paradigm-shift:anomaly-log:M';
+    var store = null; try { localStorage.setItem('ps-test', '1'); localStorage.removeItem('ps-test'); store = localStorage; } catch(e) {}
+    var box = document.createElement('section'); box.className = 'logbox';
+    box.innerHTML = '<h3>Add to your log</h3>' +
+      '<p>Jot what seemed too tidy, one-sided or left out in this module. ' + (store ? 'It stays on this device.' : 'This page can\'t save here, so copy it before you leave.') + '</p>' +
+      '<label for="lg" class="sr">Anomaly Log entry for module 5</label><textarea id="lg" placeholder="Anomaly: ..."></textarea>' +
+      '<button type="button" id="cp">Copy for Rocky</button><span class="status" id="st" role="status"></span>' +
+      '<details id="past"><summary>Your log so far</summary><ol id="pl"></ol></details>';
+    var anchor = document.querySelector('#body .anomaly') || document.querySelector('#body .stamp');
+    anchor.parentNode.insertBefore(box, anchor.nextSibling);
+    var ta = box.querySelector('#lg'), st = box.querySelector('#st');
+    if (store) { ta.value = store.getItem(KEY + N) || ''; }
+    ta.addEventListener('input', function(){ if (store) { try { store.setItem(KEY + N, ta.value); st.textContent = 'Saved'; } catch(e) {} } });
+    function list(){
+      var pl = box.querySelector('#pl'), n = 0; pl.innerHTML = '';
+      for (var i = 1; i <= 12; i++) { var k = (i < 10 ? '0' : '') + i, v = store ? store.getItem(KEY + k) : '';
+        if (v && v.trim()) { var li = document.createElement('li'); li.innerHTML = '<b>Module ' + i + ':</b> '; li.appendChild(document.createTextNode(v)); pl.appendChild(li); n++; } }
+      box.querySelector('#past').style.display = n ? '' : 'none';
+    }
+    list(); ta.addEventListener('change', list);
+    box.querySelector('#cp').addEventListener('click', function(){
+      var text = 'Anomaly Log, module 5: ' + ta.value.trim();
+      function ok(){ st.textContent = 'Copied. Paste it to Rocky.'; }
+      function fallback(){ var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); ok(); } catch(e) { st.textContent = 'Select your note and copy it.'; } t.remove(); }
+      if (!ta.value.trim()) { st.textContent = 'Write a note first, or tell Rocky "nothing this time."'; return; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback); else fallback();
+    });
+  })();
+  // stagger the sketch strokes so the drawing inks in once
+  var parts = document.querySelectorAll('.sketch svg *');
+  parts.forEach(function(el, i){ try{ var L = Math.ceil(el.getTotalLength()); el.style.setProperty('--len', L); el.style.animationDelay = (i * 0.12) + 's'; }catch(e){} });
+  // the margin line fills with ink as you read
+  var page = document.getElementById('page'), ink = document.getElementById('ink');
+  function fill(){ var max = document.documentElement.scrollHeight - innerHeight;
+    var f = max > 0 ? Math.min(1, scrollY / max) : 1; ink.style.height = (f * page.offsetHeight) + 'px'; }
+  addEventListener('scroll', fill, {passive:true}); addEventListener('resize', fill); fill();
+  // motion: paragraphs slide in from alternating sides; each section heading explodes into view
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window && document.body.animate) {
+    document.body.classList.add('anim');
+    var root = document.getElementById('body');
+    var blocks = root.querySelectorAll(':scope > p:not(.tag), :scope > ul > li, :scope > ol > li, :scope > aside, :scope > .anomaly, :scope > .tablewrap, :scope > .stamp, :scope > .logbox, .timeline > p, .glossary li');
+    blocks.forEach(function(el, i){
+      el.classList.add('rv');
+      var fromLeft = el.parentNode.classList && el.parentNode.classList.contains('timeline') ? true : (i % 2 === 0);
+      el.style.setProperty('--dx', (fromLeft ? -46 : 46) + 'px');
+    });
+    var colors = ['#b3261e', '#2d5f8b', '#ffd400', '#1f2a36', '#e7a3a3'];
+    var nBursts = 0;
+    function burst(h){
+      var sc = nBursts++ === 0 ? 1 : 0.7;
+      var box = document.createElement('span'); box.className = 'burst';
+      box.style.left = Math.min(h.offsetWidth * 0.45, 200) + 'px'; box.style.top = (h.offsetHeight / 2) + 'px'; h.appendChild(box);
+      var ring = document.createElement('b'); box.appendChild(ring);
+      ring.animate([{transform:'scale(.2)', opacity:1}, {transform:'scale(' + (12 * sc) + ')', opacity:0}], {duration:800, easing:'ease-out'});
+      for (var k = 0; k < Math.round(34 * sc); k++) {
+        var d = document.createElement('i'), size = (7 + Math.random() * 10) * sc, ang = Math.random() * Math.PI * 2, dist = (70 + Math.random() * 150) * sc;
+        d.style.width = d.style.height = size + 'px'; d.style.background = colors[k % colors.length];
+        d.style.marginLeft = d.style.marginTop = (-size / 2) + 'px'; box.appendChild(d);
+        d.animate([{transform:'translate(0,0) scale(1.3)', opacity:1}, {opacity:1, offset:.6},
+                   {transform:'translate(' + Math.cos(ang) * dist * 1.6 + 'px,' + Math.sin(ang) * dist * .7 + 'px) scale(0)', opacity:0}],
+                  {duration:950 + Math.random() * 600, easing:'cubic-bezier(.1,.75,.3,1)', fill:'forwards'});
+      }
+      setTimeout(function(){ box.remove(); }, 1700);
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        var el = e.target; io.unobserve(el);
+        if (el.tagName === 'H2') { el.classList.add('pop'); burst(el); }
+        else { el.classList.add('in'); }
+      });
+    }, {threshold: 0.12, rootMargin: '0px 0px -6% 0px'});
+    root.querySelectorAll('h2').forEach(function(h){ io.observe(h); });
+    blocks.forEach(function(el){ io.observe(el); });
+  }
 </script>
 </body>
 </html>
