@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Could It All Be a Dream?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0d1b3d; --night2:#1d3a7a; --star:#f7d774; --gold:#9a7114;
+    --parch:#f6ecd6; --parch2:#eadbb8; --ink:#2b2117; --rule:#b89b67;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--night);font-family:Poppins,system-ui,sans-serif}
+  .reading{max-width:1100px;margin:0 auto;min-height:100vh;background:var(--night)}
+
+  /* ---- moving sky ---- */
+  .sky{position:relative;height:210px;background:radial-gradient(ellipse at 70% 30%,#2d57a8 0%,var(--night2) 35%,var(--night) 75%);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .head{position:absolute;left:20px;bottom:32px;right:20px;color:#fff}
+  .course{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--star)}
+  h1{font:700 clamp(28px,5vw,44px)/1.05 "Cormorant Garamond",Georgia,serif;margin:6px 0 0;text-shadow:0 2px 12px rgba(0,0,0,.5);color:#fff}
+  .toggle{position:absolute;top:14px;right:14px;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;z-index:2}
+  .toggle button{border:0;background:transparent;color:#fff;font:600 12px Poppins;padding:7px 13px;border-radius:999px;cursor:pointer}
+  .toggle button.on{background:var(--star);color:var(--night)}
+  .flow{animation:flow 14s linear infinite}
+  .flow.slow{animation-duration:22s}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+  .tw{animation:tw 3.2s ease-in-out infinite}
+  .tw:nth-child(2n){animation-delay:1.1s} .tw:nth-child(3n){animation-delay:2s}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}
+  .shoot{animation:shoot 9s ease-in 3s infinite;opacity:0}
+  @keyframes flow{to{stroke-dashoffset:-280}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%{opacity:0;transform:translate(-220px,90px)}100%{opacity:0;transform:translate(-220px,90px)}}
+
+  /* ---- flipping book ---- */
+  .bookwrap{position:relative;margin:-18px 16px 0;perspective:2200px}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;height:600px;
+        background:linear-gradient(90deg,var(--parch2) 0%,var(--parch) 6%,var(--parch) 47%,#d9c69d 50%,var(--parch) 53%,var(--parch) 94%,var(--parch2) 100%);
+        border-radius:6px 6px 10px 10px;box-shadow:0 14px 24px rgba(0,0,0,.35), inset 0 -6px 0 #d6c193}
+  .slot{position:relative;overflow:hidden}
+  .curl{position:absolute;right:0;bottom:0;width:40px;height:40px;z-index:4;border:0;padding:0;cursor:pointer;
+        background:linear-gradient(225deg,transparent 50%,#e2cfa3 50%,#fbf4e3 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.14);border-radius:0 0 6px 0;
+        animation:nudge 2.4s ease-in-out 1.2s 3}
+  @keyframes nudge{0%,100%{width:40px;height:40px}50%{width:58px;height:58px}}
+  .leaf{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.3,1);z-index:5}
+  .leaf.fwd{left:50%;transform-origin:left center}
+  .leaf.back{left:0;transform-origin:right center}
+  .single .leaf{width:100%;left:0;transform-origin:left center}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--parch)}
+  .face.b{transform:rotateY(180deg)}
+  .leaf.fwd .face.f,.leaf.back .face.b{background:linear-gradient(90deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd .face.b,.leaf.back .face.f{background:linear-gradient(270deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd.go{transform:rotateY(-180deg)} .leaf.back.go{transform:rotateY(180deg)}
+  .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 60%);opacity:0;transition:opacity .45s}
+  .leaf.go .shade{opacity:1}
+  .page{height:100%;overflow-y:auto;padding:30px 34px 44px;font:500 19px/1.6 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+  .page h2{font:700 27px/1.15 "Cormorant Garamond",Georgia,serif;margin:0 0 10px;color:var(--night)}
+  .page p{margin:0 0 14px}
+  .page ol{margin:0 0 14px;padding-left:24px}
+  .drop::first-letter{float:left;font:700 58px/0.85 "Cormorant Garamond",serif;color:var(--night2);padding:6px 8px 0 0}
+  .key{border:1.5px solid #c99a2e;background:rgba(247,215,116,.22);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:18px}
+  .key .k{display:block;font:600 11px Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .key p{margin:0 0 6px} .key p:last-child{margin:0}
+  .quote{border-left:3px solid var(--rule);padding-left:14px;font-style:italic;color:#4a3b29;font-size:21px}
+  .src{font:400 12px/1.55 Poppins;color:#6f5f47}
+  .more::after{content:"scroll for more \2193";position:absolute;left:0;right:0;bottom:0;height:64px;padding-top:34px;text-align:center;font:600 11px Poppins;letter-spacing:.08em;color:#8a6a2a;pointer-events:none;
+         background:linear-gradient(rgba(246,236,214,0),var(--parch) 55%)}
+  .more .pnum{display:none}
+  .pnum{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:500 14px "Cormorant Garamond",serif;color:#8a7756;pointer-events:none}
+  .extended{display:none}
+  .show-ext .extended{display:block}
+  .tag-ext{font:600 10px Poppins;letter-spacing:.12em;text-transform:uppercase;color:var(--night2);background:#dfe8f7;border-radius:4px;padding:2px 6px;margin-right:6px;vertical-align:2px}
+  .fig{display:flex;justify-content:center;margin:4px 0 12px}
+  .fig svg{width:100%;max-width:250px}
+  .ring{transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring.r2{animation-delay:1.3s} .ring.r3{animation-delay:2.6s}
+  .pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 0 24px;color:#dce8fb;font:600 13px Poppins}
+  .pager button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--star);background:transparent;color:var(--star);font:600 22px/1 Poppins;cursor:pointer}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .hint{text-align:center;color:#9fb6dc;font:400 12px Poppins;margin-top:-14px;padding-bottom:20px}
+  .single .book{grid-template-columns:1fr;background:linear-gradient(90deg,#e8d8b4,var(--parch) 6%)}
+  .single .slot.l{display:none}
+  @media (max-width:720px){
+    .bookwrap{margin:-16px 10px 0}
+    .book{height:max(440px,calc(100vh - 290px))}
+    .page{padding:22px 20px 44px;font-size:18px}
+    .head{bottom:26px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flow,.spin,.tw,.pulse,.ring,.curl,.shoot{animation:none}
+    .leaf{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="reading" id="reading">
+  <header class="sky">
+    <svg viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f7d774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#7fa8e8" stroke-opacity=".12" fill="none">
+        <path d="M0 55 Q550 15 1100 55"/><path d="M0 110 Q550 70 1100 110"/><path d="M0 165 Q550 125 1100 165"/>
+        <path d="M180 0 Q160 105 180 210"/><path d="M420 0 Q400 105 420 210"/><path d="M660 0 Q640 105 660 210"/><path d="M900 0 Q880 105 900 210"/>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path class="flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".55" stroke-width="10" stroke-dasharray="18 10"/>
+        <path class="flow slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".35" stroke-width="6" stroke-dasharray="12 9"/>
+        <path class="spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".7" stroke-width="5" stroke-dasharray="10 7"/>
+        <path class="spin" d="M300 65 m-28 0 a28 28 0 1 1 56 0 a18 18 0 1 1 -36 0 a8 8 0 1 1 16 0" stroke="#dce8fb" stroke-opacity=".45" stroke-width="4" stroke-dasharray="8 6"/>
+      </g>
+      <g stroke="#f7d774" stroke-opacity=".5" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+      <g fill="#f7d774">
+        <circle class="tw" cx="760" cy="38" r="2.5"/><circle class="tw" cx="800" cy="66" r="2"/><circle class="tw" cx="850" cy="52" r="3"/><circle class="tw" cx="880" cy="90" r="2"/><circle class="tw" cx="930" cy="80" r="2.5"/>
+        <circle class="tw" cx="140" cy="38" r="2"/><circle class="tw" cx="430" cy="28" r="1.6"/><circle class="tw" cx="660" cy="160" r="1.8"/><circle class="tw" cx="1010" cy="160" r="2"/><circle class="tw" cx="240" cy="180" r="1.5"/>
+      </g>
+      <line class="shoot" x1="700" y1="20" x2="730" y2="8" stroke="#fff6c8" stroke-width="2" stroke-linecap="round"/>
+      <circle class="pulse" cx="560" cy="90" r="36" fill="url(#glow)"/>
+      <circle class="pulse" cx="300" cy="65" r="22" fill="url(#glow)"/>
+      <circle cx="990" cy="66" r="44" fill="url(#glow)"/>
+      <path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+    </svg>
+    <div class="toggle" role="group" aria-label="Reading length">
+      <button id="bCore" class="on">Core</button>
+      <button id="bExt">Extended</button>
+    </div>
+    <div class="head">
+      <div class="course">How Do You Know? · Lock 2</div>
+      <h1>Could It All Be a Dream?</h1>
+    </div>
+  </header>
+
+  <div class="bookwrap" id="wrap">
+    <div class="book" id="book">
+      <div class="slot l" id="slotL"></div>
+      <div class="slot r" id="slotR"></div>
+    </div>
+  </div>
+  <nav class="pager">
+    <button id="prev" aria-label="Previous page">&#8249;</button>
+    <span id="where" aria-live="polite"></span>
+    <button id="next" aria-label="Next page">&#8250;</button>
+  </nav>
+  <div class="hint">Tap the arrows, the page corner, or swipe to turn the page.</div>
+</main>
+
+<!-- Built from resources/M02Know.md by tools/build_readings.py. Edit the .md file, then rebuild. -->
+<div id="pages" hidden>
+<section>
+  <h2>Are you sure you're awake?</h2>
+  <p class="drop">Think of the most real dream you've ever had. While it was happening, did you know it was a dream? Probably not. You believed the falling, the test you hadn't studied for, the friend who was somehow also your cousin.</p>
+  <p>So here's an uncomfortable question: what tells you that <em>this</em> isn't one of those times?</p>
+  <p>In 1641 the French philosopher René Descartes published <em>Meditations on First Philosophy</em>. His plan was bold. He would tear down every belief he held, then rebuild knowledge using only what could not be doubted at all.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Answering critics later, Descartes compared the method to tipping out a whole basket of apples to find the rotten ones, then putting back only the sound ones.</p>
+</section>
+<section>
+  <h2>Doubt, level one: the senses</h2>
+  <p>Descartes starts with the senses. They sometimes fool us. An oar dipped in water looks bent. Later in the book he describes towers that looked round from far away and turned out to be square up close.</p>
+  <div class="key"><span class="k">Key term</span><p><b>Skepticism</b> is the view that we know much less than we think, or nothing at all. Descartes uses it as a tool, not a conclusion: he doubts in order to find what survives.</p></div>
+  <p>But this first doubt is weak. The senses fool us about things that are tiny, far away or seen in bad light. They don't seem to fool Descartes about the fact that he's sitting by the fire in his winter dressing gown, holding a sheet of paper. That belief survives level one.</p>
+</section>
+<section>
+  <h2>Doubt, level two: the dream</h2>
+  <p>Then Descartes remembers how often he has dreamed that very scene: sitting by the fire, dressed, when really he was undressed in bed. In the 1680 translation he writes:</p>
+  <p class="quote">I am so far convinced of the difficulty of distinguishing sleep from waking</p>
+  <p>If no sure sign separates waking from dreaming, then "I'm sitting by the fire" falls. So does "I have hands." Dreams can fake all of that.</p>
+  <p>What survives? Descartes points out that even painters who invent sirens and satyrs still have to use real colors. Dreams are built from simple pieces: shape, size, number, time. And some truths hold asleep or awake. Two plus three is five in a dream too. A square still has four sides.</p>
+</section>
+<section>
+  <h2>Doubt, level three: the deceiver</h2>
+  <p>So Descartes reaches for the strongest doubt he can imagine. Suppose, he says,</p>
+  <p class="quote">that some Evil Spirit which is very Powerful and crafty has used all his endeavours to deceive me</p>
+  <p>This deceiver could make the sky, the earth, his own body and every sound and color into illusions. Worse, it could make him go wrong every single time he adds two and three, or counts the sides of a square. Now even arithmetic falls.</p>
+  <div class="fig"><svg viewBox="0 0 300 230" role="img" aria-label="a ladder of doubt: the senses at the bottom, then dreaming, then the deceiver, with &quot;I exist&quot; above the top rung">
+  <line x1="70" y1="40" x2="70" y2="222" stroke="#6b4f2a" stroke-width="6" stroke-linecap="round"/>
+  <line x1="230" y1="40" x2="230" y2="222" stroke="#6b4f2a" stroke-width="6" stroke-linecap="round"/>
+  <g font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="18" text-anchor="middle">
+    <rect class="ring" x="70" y="186" width="160" height="26" rx="5" fill="#1d3a7a" fill-opacity=".16" stroke="#1d3a7a" stroke-width="2"/>
+    <text x="150" y="205" fill="#1d3a7a">1 · The senses</text>
+    <rect class="ring r2" x="70" y="140" width="160" height="26" rx="5" fill="#7b3f61" fill-opacity=".16" stroke="#7b3f61" stroke-width="2"/>
+    <text x="150" y="159" fill="#7b3f61">2 · The dream</text>
+    <rect class="ring r3" x="70" y="94" width="160" height="26" rx="5" fill="#2b2117" fill-opacity=".12" stroke="#2b2117" stroke-width="2"/>
+    <text x="150" y="113" fill="#2b2117">3 · The deceiver</text>
+    <text x="150" y="30" fill="#7a5a10" font-size="22">I exist</text>
+  </g>
+  <path class="pulse" d="M150 40 l4 9 10 1 -8 6 3 10 -9 -5 -9 5 3 -10 -8 -6 10 -1z" fill="#f7d774" stroke="#9a7114" stroke-width="1.5"/>
+</svg></div>
+  <p>At this point it looks as if nothing is left. Descartes says he feels like someone who has fallen into deep water and can neither touch the bottom nor swim to the surface.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>At first Descartes wonders whether God might be the one deceiving him. Since God is supposed to be supremely good, he swaps in the evil spirit instead, a deceiver he can imagine without that objection.</p>
+</section>
+<section>
+  <h2>The one thing left standing</h2>
+  <p>In the Second Meditation, Descartes finds a floor. If the deceiver is fooling him, then he must exist to be fooled. Even doubting is a kind of thinking, and something has to be doing it.</p>
+  <p class="quote">whenever this sentence I am, I exist, is spoken or thought of by Me, 'tis necessarily True</p>
+  <p>So what is this "I" that can't be doubted away? Not a body, since the deceiver could fake that. Descartes concludes he is a <em>thinking thing</em>: something that doubts, understands, wants, refuses, imagines and senses.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>The famous slogan "I think, therefore I am" doesn't appear in the <em>Meditations</em> in those words. It appears in French in Descartes's <em>Discourse on the Method</em> (1637) and in Latin, <em>cogito, ergo sum</em>, in his <em>Principles of Philosophy</em> (1644).</p>
+</section>
+<section>
+  <h2>The modern deceiver</h2>
+  <p>Philosophers have since swapped the evil spirit for something more modern. Picture your brain kept alive in a vat of nutrients, wired to a computer that feeds it perfect experiences of a life. Every test you could run would come back looking normal. Movies have made versions of this idea famous.</p>
+  <p>Hilary Putnam made the "brain in a vat" a classic in 1981, and then gave it a twist. He argued that a brain that had only ever lived in the vat couldn't even <em>think</em> "I'm a brain in a vat" and be right. Its word "vat" would be about the images the computer feeds it, not about real vats.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>In 2003 Nick Bostrom published "Are You Living in a Computer Simulation?", arguing that if advanced civilizations run many detailed simulations of minds like ours, it could be likely that we are in one. Many philosophers dispute the premises, and the debate is lively.</p>
+</section>
+<section>
+  <h2>Here is one hand</h2>
+  <p>In 1939 the English philosopher G. E. Moore gave a lecture in London with a famous gesture near the end. He held up his hands and said, in effect, "Here is one hand, and here is another." So there are at least two things outside his mind, and the skeptic is wrong.</p>
+  <p>Moore's point was that he was more certain he had hands than he was of any clever premise in a skeptic's argument. If an argument ends with "you don't know you have hands," something in the argument must be broken.</p>
+  <p>Critics answer that Moore just assumed what was in question. The skeptic asked how he knows he isn't dreaming his hands, and showing them doesn't answer that. Defenders reply that it is perfectly reasonable to trust your firmest beliefs over a clever puzzle. Philosophers still argue about who wins.</p>
+</section>
+<section>
+  <h2>Carry this with you</h2>
+  <p>Descartes didn't stay in the deep water. In the later Meditations he argues that a perfect God exists and would not deceive him, so whatever he perceives very clearly and distinctly must be true. Few philosophers today accept that way back out.</p>
+  <p>Most don't think you need to defeat the skeptic before you can know anything. They disagree about why. But doubt remains one of the sharpest tools philosophy has: push hard on a belief and see what survives.</p>
+  <p>Next up is the game, the Deceiver's Ladder. Each belief faces three levels of doubt. Your job is to find the weakest doubt that knocks it out, or to spot the beliefs nothing can touch.</p>
+  <p class="src">Sources: R. Descartes, <em>Meditations on First Philosophy</em> (1641), translated by William Molyneux as <em>Six Metaphysical Meditations</em> (1680; public domain, Project Gutenberg #70091); Descartes, <em>Discourse on the Method</em> (1637) and <em>Principles of Philosophy</em> (1644); G. E. Moore, "Proof of an External World" (1939); H. Putnam, <em>Reason, Truth and History</em> (1981); N. Bostrom, "Are You Living in a Computer Simulation?", <em>Philosophical Quarterly</em> 53 (2003). Original text written for this course by its author, with help from an AI assistant; quotations are from the public-domain 1680 translation.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
+  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  const L=document.getElementById('slotL'), R=document.getElementById('slotR');
+  const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=matchMedia('(max-width: 720px)');
+  let single=narrow.matches, pos=0, busy=false;
+
+  function pageHTML(i){
+    if(i<0||i>=N) return '<div class="page"></div>';
+    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+  }
+  function watchMore(slot){
+    const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
+    const check=()=>slot.classList.toggle('more', pg.scrollHeight-pg.scrollTop-pg.clientHeight>8);
+    pg.addEventListener('scroll',check,{passive:true}); check();
+  }
+  function step(){ return single?1:2; }
+  function render(){
+    wrap.classList.toggle('single', single);
+    if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
+    else { L.innerHTML=pageHTML(pos); R.innerHTML=pageHTML(pos+1); }
+    if(pos+step()<N){
+      R.insertAdjacentHTML('beforeend','<button class="curl" aria-label="Turn the page"></button>');
+      R.querySelector('.curl').onclick=()=>turn(1);
+    }
+    [L,R].forEach(watchMore);
+    prev.disabled=pos===0; next.disabled=pos+step()>=N;
+    where.textContent=single?('Page '+(pos+1)+' of '+N):('Pages '+(pos+1)+(pos+2<=N?'–'+(pos+2):'')+' of '+N);
+  }
+  function turn(dir){
+    const to=pos+dir*step();
+    if(busy||to<0||to>=N) return;
+    if(reduce){ pos=to; render(); return; }
+    busy=true;
+    const leaf=document.createElement('div');
+    let front, back, startFlipped=false;
+    if(single){
+      leaf.className='leaf fwd';
+      if(dir>0){ front=pos; R.innerHTML=pageHTML(to); }
+      else { front=to; startFlipped=true; leaf.classList.add('go'); }
+      back=-1;
+    } else if(dir>0){ leaf.className='leaf fwd'; front=pos+1; back=pos+2; R.innerHTML=pageHTML(pos+3); }
+    else { leaf.className='leaf back'; front=pos; back=pos-1; L.innerHTML=pageHTML(pos-2); }
+    leaf.innerHTML='<div class="face f">'+pageHTML(front)+'<div class="shade"></div></div><div class="face b">'+pageHTML(back)+'<div class="shade"></div></div>';
+    book.appendChild(leaf);
+    leaf.getBoundingClientRect();
+    requestAnimationFrame(()=>{ if(startFlipped) leaf.classList.remove('go'); else leaf.classList.add('go'); });
+    setTimeout(()=>{ pos=to; leaf.remove(); render(); busy=false; }, 950);
+  }
+  prev.onclick=()=>turn(-1); next.onclick=()=>turn(1);
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') turn(1); if(e.key==='ArrowLeft') turn(-1); });
+  let x0=null, y0=null;
+  book.addEventListener('touchstart',e=>{x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  book.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
+    x0=null;
+  });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+
+  const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
+  function setLevel(ext){
+    document.getElementById('reading').classList.toggle('show-ext',ext);
+    [L,R].forEach(watchMore);
+    bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
+    try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
+  }
+  bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
+  setLevel(lvl==='extended');
+  render();
+})();
+</script>
+</body>
+</html>
