@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where Does Knowledge Come From?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0d1b3d; --night2:#1d3a7a; --star:#f7d774; --gold:#9a7114;
+    --parch:#f6ecd6; --parch2:#eadbb8; --ink:#2b2117; --rule:#b89b67;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--night);font-family:Poppins,system-ui,sans-serif}
+  .reading{max-width:1100px;margin:0 auto;min-height:100vh;background:var(--night)}
+
+  /* ---- moving sky ---- */
+  .sky{position:relative;height:210px;background:radial-gradient(ellipse at 70% 30%,#2d57a8 0%,var(--night2) 35%,var(--night) 75%);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .head{position:absolute;left:20px;bottom:32px;right:20px;color:#fff}
+  .course{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--star)}
+  h1{font:700 clamp(28px,5vw,44px)/1.05 "Cormorant Garamond",Georgia,serif;margin:6px 0 0;text-shadow:0 2px 12px rgba(0,0,0,.5);color:#fff}
+  .toggle{position:absolute;top:14px;right:14px;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;z-index:2}
+  .toggle button{border:0;background:transparent;color:#fff;font:600 12px Poppins;padding:7px 13px;border-radius:999px;cursor:pointer}
+  .toggle button.on{background:var(--star);color:var(--night)}
+  .flow{animation:flow 14s linear infinite}
+  .flow.slow{animation-duration:22s}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+  .tw{animation:tw 3.2s ease-in-out infinite}
+  .tw:nth-child(2n){animation-delay:1.1s} .tw:nth-child(3n){animation-delay:2s}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}
+  .shoot{animation:shoot 9s ease-in 3s infinite;opacity:0}
+  @keyframes flow{to{stroke-dashoffset:-280}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%{opacity:0;transform:translate(-220px,90px)}100%{opacity:0;transform:translate(-220px,90px)}}
+
+  /* ---- flipping book ---- */
+  .bookwrap{position:relative;margin:-18px 16px 0;perspective:2200px}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;height:600px;
+        background:linear-gradient(90deg,var(--parch2) 0%,var(--parch) 6%,var(--parch) 47%,#d9c69d 50%,var(--parch) 53%,var(--parch) 94%,var(--parch2) 100%);
+        border-radius:6px 6px 10px 10px;box-shadow:0 14px 24px rgba(0,0,0,.35), inset 0 -6px 0 #d6c193}
+  .slot{position:relative;overflow:hidden}
+  .curl{position:absolute;right:0;bottom:0;width:40px;height:40px;z-index:4;border:0;padding:0;cursor:pointer;
+        background:linear-gradient(225deg,transparent 50%,#e2cfa3 50%,#fbf4e3 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.14);border-radius:0 0 6px 0;
+        animation:nudge 2.4s ease-in-out 1.2s 3}
+  @keyframes nudge{0%,100%{width:40px;height:40px}50%{width:58px;height:58px}}
+  .leaf{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.3,1);z-index:5}
+  .leaf.fwd{left:50%;transform-origin:left center}
+  .leaf.back{left:0;transform-origin:right center}
+  .single .leaf{width:100%;left:0;transform-origin:left center}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--parch)}
+  .face.b{transform:rotateY(180deg)}
+  .leaf.fwd .face.f,.leaf.back .face.b{background:linear-gradient(90deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd .face.b,.leaf.back .face.f{background:linear-gradient(270deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd.go{transform:rotateY(-180deg)} .leaf.back.go{transform:rotateY(180deg)}
+  .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 60%);opacity:0;transition:opacity .45s}
+  .leaf.go .shade{opacity:1}
+  .page{height:100%;overflow-y:auto;padding:28px 34px 40px;font:500 18.5px/1.55 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+  .page h2{font:700 27px/1.15 "Cormorant Garamond",Georgia,serif;margin:0 0 10px;color:var(--night)}
+  .page p{margin:0 0 14px}
+  .page ol{margin:0 0 14px;padding-left:24px}
+  .drop::first-letter{float:left;font:700 58px/0.85 "Cormorant Garamond",serif;color:var(--night2);padding:6px 8px 0 0}
+  .key{border:1.5px solid #c99a2e;background:rgba(247,215,116,.22);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:18px}
+  .key .k{display:block;font:600 11px Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .key p{margin:0 0 6px} .key p:last-child{margin:0}
+  .quote{border-left:3px solid var(--rule);padding-left:14px;font-style:italic;color:#4a3b29;font-size:21px}
+  .src{font:400 12px/1.55 Poppins;color:#6f5f47}
+  .more::after{content:"scroll for more \2193";position:absolute;left:0;right:0;bottom:0;height:64px;padding-top:34px;text-align:center;font:600 11px Poppins;letter-spacing:.08em;color:#8a6a2a;pointer-events:none;
+         background:linear-gradient(rgba(246,236,214,0),var(--parch) 55%)}
+  .more .pnum{display:none}
+  .pnum{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:500 14px "Cormorant Garamond",serif;color:#8a7756;pointer-events:none}
+  .extended{display:none}
+  .show-ext .extended{display:block}
+  .tag-ext{font:600 10px Poppins;letter-spacing:.12em;text-transform:uppercase;color:var(--night2);background:#dfe8f7;border-radius:4px;padding:2px 6px;margin-right:6px;vertical-align:2px}
+  .fig{display:flex;justify-content:center;margin:4px 0 12px}
+  .fig svg{width:100%;max-width:215px}
+  .ring{transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring.r2{animation-delay:1.3s} .ring.r3{animation-delay:2.6s}
+  .pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 0 24px;color:#dce8fb;font:600 13px Poppins}
+  .pager button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--star);background:transparent;color:var(--star);font:600 22px/1 Poppins;cursor:pointer}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .hint{text-align:center;color:#9fb6dc;font:400 12px Poppins;margin-top:-14px;padding-bottom:20px}
+  .single .book{grid-template-columns:1fr;background:linear-gradient(90deg,#e8d8b4,var(--parch) 6%)}
+  .single .slot.l{display:none}
+  @media (max-width:720px){
+    .bookwrap{margin:-16px 10px 0}
+    .book{height:max(440px,calc(100vh - 290px))}
+    .page{padding:22px 20px 44px;font-size:18px}
+    .head{bottom:26px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flow,.spin,.tw,.pulse,.ring,.curl,.shoot{animation:none}
+    .leaf{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="reading" id="reading">
+  <header class="sky">
+    <svg viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f7d774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#7fa8e8" stroke-opacity=".12" fill="none">
+        <path d="M0 55 Q550 15 1100 55"/><path d="M0 110 Q550 70 1100 110"/><path d="M0 165 Q550 125 1100 165"/>
+        <path d="M180 0 Q160 105 180 210"/><path d="M420 0 Q400 105 420 210"/><path d="M660 0 Q640 105 660 210"/><path d="M900 0 Q880 105 900 210"/>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path class="flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".55" stroke-width="10" stroke-dasharray="18 10"/>
+        <path class="flow slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".35" stroke-width="6" stroke-dasharray="12 9"/>
+        <path class="spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".7" stroke-width="5" stroke-dasharray="10 7"/>
+        <path class="spin" d="M300 65 m-28 0 a28 28 0 1 1 56 0 a18 18 0 1 1 -36 0 a8 8 0 1 1 16 0" stroke="#dce8fb" stroke-opacity=".45" stroke-width="4" stroke-dasharray="8 6"/>
+      </g>
+      <g stroke="#f7d774" stroke-opacity=".5" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+      <g fill="#f7d774">
+        <circle class="tw" cx="760" cy="38" r="2.5"/><circle class="tw" cx="800" cy="66" r="2"/><circle class="tw" cx="850" cy="52" r="3"/><circle class="tw" cx="880" cy="90" r="2"/><circle class="tw" cx="930" cy="80" r="2.5"/>
+        <circle class="tw" cx="140" cy="38" r="2"/><circle class="tw" cx="430" cy="28" r="1.6"/><circle class="tw" cx="660" cy="160" r="1.8"/><circle class="tw" cx="1010" cy="160" r="2"/><circle class="tw" cx="240" cy="180" r="1.5"/>
+      </g>
+      <line class="shoot" x1="700" y1="20" x2="730" y2="8" stroke="#fff6c8" stroke-width="2" stroke-linecap="round"/>
+      <circle class="pulse" cx="560" cy="90" r="36" fill="url(#glow)"/>
+      <circle class="pulse" cx="300" cy="65" r="22" fill="url(#glow)"/>
+      <circle cx="990" cy="66" r="44" fill="url(#glow)"/>
+      <path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+    </svg>
+    <div class="toggle" role="group" aria-label="Reading length">
+      <button id="bCore" class="on">Core</button>
+      <button id="bExt">Extended</button>
+    </div>
+    <div class="head">
+      <div class="course">How Do You Know? · Lock 3</div>
+      <h1>Where Does Knowledge Come From?</h1>
+    </div>
+  </header>
+
+  <div class="bookwrap" id="wrap">
+    <div class="book" id="book">
+      <div class="slot l" id="slotL"></div>
+      <div class="slot r" id="slotR"></div>
+    </div>
+  </div>
+  <nav class="pager">
+    <button id="prev" aria-label="Previous page">&#8249;</button>
+    <span id="where" aria-live="polite"></span>
+    <button id="next" aria-label="Next page">&#8250;</button>
+  </nav>
+  <div class="hint">Tap the arrows, the page corner, or swipe to turn the page.</div>
+</main>
+
+<!-- Built from resources/M03Know.md by tools/build_readings.py. Edit the .md file, then rebuild. -->
+<div id="pages" hidden>
+<section>
+  <h2>A puzzle in the sand</h2>
+  <p class="drop">In Plato's dialogue <em>Meno</em>, written around 2,400 years ago, Socrates draws a square in the sand. Each side is two feet long, so the square covers four square feet. He calls over a boy who has never studied geometry and asks him: how long must the sides be to make a square twice as big, eight square feet?</p>
+  <p>The boy answers at once: double the sides. Four feet.</p>
+  <p>Socrates draws it. The new square holds four of the old squares, not two. Sixteen square feet. The boy tries three feet instead. Nine square feet: still too big. Now he's stuck, and he admits he doesn't know.</p>
+  <p>Socrates says the boy is better off: before, he thought he knew; now he knows he doesn't. He has had "the torpedo's shock" (Jowett's 1871 translation), like the sting of a numbing torpedo fish.</p>
+</section>
+<section>
+  <h2>The boy finds the answer</h2>
+  <p>Then Socrates draws a line from corner to corner across each small square. Those diagonals make a tilted square in the middle. Each diagonal cuts a four-foot square in half, and the tilted square is made of four of those halves. Eight square feet. The answer is the square built on the diagonal.</p>
+  <div class="fig"><svg viewBox="0 0 240 225" style="max-width:185px" role="img" aria-label="a big square made of four small squares, with a tilted square drawn on the diagonals of the small squares">
+  <g stroke="#2b2117" stroke-width="2" fill="none">
+    <rect x="30" y="30" width="180" height="180" fill="#f7d774" fill-opacity=".12"/>
+    <line x1="120" y1="30" x2="120" y2="210"/><line x1="30" y1="120" x2="210" y2="120"/>
+  </g>
+  <rect x="30" y="30" width="90" height="90" fill="#1d3a7a" fill-opacity=".18" stroke="#1d3a7a" stroke-width="3"/>
+  <polygon class="ring" points="120,30 210,120 120,210 30,120" fill="#7b3f61" fill-opacity=".22" stroke="#7b3f61" stroke-width="3.5"/>
+  <g font-family="Cormorant Garamond, Georgia, serif" font-weight="700" text-anchor="middle">
+    <text x="75" y="82" font-size="17" fill="#1d3a7a">4</text>
+    <text x="120" y="165" font-size="22" fill="#7b3f61">8</text>
+  </g>
+</svg></div>
+  <p>Socrates insists he only asked questions. So where did the answer come from?</p>
+</section>
+<section>
+  <h2>Learning as remembering</h2>
+  <p>Socrates' answer is startling. He says the boy already had the knowledge inside him, from before he was born, and the questions just woke it up:</p>
+  <p class="quote">these notions have just been stirred up in him, as in a dream</p>
+  <p>Plato's view is that learning is really <em>recollection</em>. Few people today believe in remembering a life before birth. But the puzzle he raised is still alive. Some things seem knowable just by thinking hard, without looking at the world. How?</p>
+  <div class="key"><span class="k">Key terms</span><p><b>A priori</b> knowledge doesn't depend on experience of the world: 2 + 2 = 4, or "all bachelors are unmarried."</p><p><b>A posteriori</b> knowledge does depend on experience: water boils at 100 °C at sea level; some swans are black.</p></div>
+</section>
+<section>
+  <h2>The blank sheet</h2>
+  <p>In 1689 the English philosopher John Locke disagreed sharply. He asked his readers to</p>
+  <p class="quote">suppose the mind to be, as we say, white paper, void of all characters, without any ideas</p>
+  <p>So where do all our ideas come from? "To this I answer, in one word, from experience." For Locke, everything in the mind arrives either through the senses or through noticing the mind's own workings, which he called reflection. People who follow this line are called <b>empiricists</b>. Those who think reason alone can give us real knowledge, like Plato and Descartes, are called <b>rationalists</b>.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Locke's picture is often summed up with the Latin <em>tabula rasa</em>, "scraped tablet." The image of the mind as a blank writing tablet goes back to Aristotle.</p>
+</section>
+<section>
+  <h2>Molyneux's question</h2>
+  <p>Here is a puzzle that tested the empiricist view. William Molyneux, the Irish scientist whose Descartes translation you read in Lock 2, sent Locke a question. Imagine a man born blind who has learned to tell a cube from a sphere by touch. If he suddenly gained his sight, could he tell which was which just by looking, before touching them?</p>
+  <p>Molyneux and Locke both said no: he would have to learn the link between how things feel and how they look. A rationalist might say yes: the idea of a cube is the same idea, whichever sense delivers it.</p>
+  <p>For three hundred years this was a thought experiment. Then, in 2011, a team studied children in India who had been blind from birth and had their sight restored by surgery. Right after surgery, they could not match shapes they had felt to shapes they saw. Within days, they could.</p>
+</section>
+<section>
+  <h2>Veins in the marble</h2>
+  <p>The German philosopher Gottfried Wilhelm Leibniz wrote a long reply to Locke. He agreed that experience matters, but he said the mind is not blank paper. It is more like a block of marble with veins running through it. The veins already mark where a statue of Hercules could be carved. Experience is the sculptor, but the marble has a grain.</p>
+  <p>Leibniz added a famous twist to an old slogan. "Nothing is in the mind that was not first in the senses," the empiricists said. Leibniz agreed, <em>except the mind itself</em>.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Leibniz wrote his <em>New Essays on Human Understanding</em> around 1704, but held them back after Locke died that year. They were published in 1765.</p>
+</section>
+<section>
+  <h2>Hume's fork</h2>
+  <p>The Scottish philosopher David Hume pushed empiricism further. In 1748 he split everything we can know into two kinds:</p>
+  <p class="quote">All the objects of human reason or enquiry may naturally be divided into two kinds, to wit, Relations of Ideas, and Matters of Fact.</p>
+  <p>Relations of ideas, like math and logic, are certain and need no experience, but they tell us nothing about what actually exists. Matters of fact tell us about the world, but only experience can teach them, and they could have been otherwise. Philosophers call this split <b>Hume's fork</b>.</p>
+  <p>He ended his book with a challenge. If a book contains neither reasoning about quantity or number nor reasoning from experience about matters of fact, then: "Commit it then to the flames: for it can contain nothing but sophistry and illusion."</p>
+</section>
+<section>
+  <h2>Kant's third way</h2>
+  <p>The German philosopher Immanuel Kant said Hume woke him from a "dogmatic slumber." In 1781 he opened his <em>Critique of Pure Reason</em> with a careful line, here in J. M. D. Meiklejohn's translation:</p>
+  <p class="quote">though all our knowledge begins with experience, it by no means follows that all arises out of experience</p>
+  <div class="key"><span class="k">Key terms</span><p>An <b>analytic</b> claim is true just because of what its words mean: "all bachelors are unmarried."</p><p>A <b>synthetic</b> claim adds something new that the words alone don't contain: "this bachelor is tall."</p></div>
+  <p>Kant argued that some knowledge is both synthetic <em>and</em> a priori. His example was 7 + 5 = 12: he said the idea of "twelve" isn't contained in the idea of "seven plus five," yet we know the sum without any experiment. His explanation was that the mind shapes all experience with its own built-in forms, such as space, time and cause and effect.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Later thinkers pushed back. Gottlob Frege argued in 1884 that arithmetic is analytic after all, rooted in logic. Einstein's general relativity (1915) described real space as curved, unsettling Kant's view that Euclid's geometry was known a priori. In 1951 W. V. O. Quine argued that the line between analytic and synthetic can't be drawn cleanly at all.</p>
+</section>
+<section>
+  <h2>Carry this with you</h2>
+  <p>One last test. In the picture below the two lines are exactly the same length. Measure them if you like. Knowing that doesn't make them look equal. This is the Müller-Lyer illusion, published in 1889.</p>
+  <div class="fig"><svg viewBox="0 0 300 150" role="img" aria-label="two equal lines, one ending in arrowheads and one ending in open fins, so the second looks longer">
+  <g stroke="#2b2117" stroke-width="3.5" stroke-linecap="round" fill="none">
+    <line x1="80" y1="45" x2="220" y2="45"/>
+    <polyline points="98,30 80,45 98,60"/><polyline points="202,30 220,45 202,60"/>
+    <line x1="80" y1="110" x2="220" y2="110"/>
+    <polyline points="62,95 80,110 62,125"/><polyline points="238,95 220,110 238,125"/>
+  </g>
+  <g class="tw" stroke="#b98a22" stroke-width="1.5" stroke-dasharray="4 4">
+    <line x1="80" y1="18" x2="80" y2="138"/><line x1="220" y1="18" x2="220" y2="138"/>
+  </g>
+</svg></div>
+  <p>Perception, reason and what you already know don't always agree, and the arguments in this lock are about which one gets the final word. Later locks add more sources: memory, and other people's word.</p>
+</section>
+<section>
+  <h2>Your turn</h2>
+  <p>Next up is the game: first you'll solve the boy's puzzle yourself, then sort claims by where knowledge of them comes from.</p>
+  <p class="src">Sources: Plato, <em>Meno</em> 82b–86b, translated by Benjamin Jowett (1871; public domain); J. Locke, <em>An Essay Concerning Human Understanding</em> (1689), II.i.2 and II.ix.8 (public domain); G. W. Leibniz, <em>New Essays on Human Understanding</em> (written c. 1704, published 1765); D. Hume, <em>An Enquiry Concerning Human Understanding</em> (1748), sections IV and XII (public domain); I. Kant, <em>Critique of Pure Reason</em> (1781), translated by J. M. D. Meiklejohn (public domain); G. Frege, <em>The Foundations of Arithmetic</em> (1884); W. V. O. Quine, "Two Dogmas of Empiricism" (1951); R. Held et al., "The newly sighted fail to match seen with felt," <em>Nature Neuroscience</em> 14 (2011); F. C. Müller-Lyer (1889). Original text written for this course by its author, with help from an AI assistant; quotations are from public-domain texts.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
+  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  const L=document.getElementById('slotL'), R=document.getElementById('slotR');
+  const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=matchMedia('(max-width: 720px)');
+  let single=narrow.matches, pos=0, busy=false;
+
+  function pageHTML(i){
+    if(i<0||i>=N) return '<div class="page"></div>';
+    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+  }
+  function watchMore(slot){
+    const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
+    const check=()=>slot.classList.toggle('more', pg.scrollHeight-pg.scrollTop-pg.clientHeight>8);
+    pg.addEventListener('scroll',check,{passive:true}); check();
+  }
+  function step(){ return single?1:2; }
+  function render(){
+    wrap.classList.toggle('single', single);
+    if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
+    else { L.innerHTML=pageHTML(pos); R.innerHTML=pageHTML(pos+1); }
+    if(pos+step()<N){
+      R.insertAdjacentHTML('beforeend','<button class="curl" aria-label="Turn the page"></button>');
+      R.querySelector('.curl').onclick=()=>turn(1);
+    }
+    [L,R].forEach(watchMore);
+    prev.disabled=pos===0; next.disabled=pos+step()>=N;
+    where.textContent=(single||pos+2>N)?('Page '+(pos+1)+' of '+N):('Pages '+(pos+1)+'–'+(pos+2)+' of '+N);
+  }
+  function turn(dir){
+    const to=pos+dir*step();
+    if(busy||to<0||to>=N) return;
+    if(reduce){ pos=to; render(); return; }
+    busy=true;
+    const leaf=document.createElement('div');
+    let front, back, startFlipped=false;
+    if(single){
+      leaf.className='leaf fwd';
+      if(dir>0){ front=pos; R.innerHTML=pageHTML(to); }
+      else { front=to; startFlipped=true; leaf.classList.add('go'); }
+      back=-1;
+    } else if(dir>0){ leaf.className='leaf fwd'; front=pos+1; back=pos+2; R.innerHTML=pageHTML(pos+3); }
+    else { leaf.className='leaf back'; front=pos; back=pos-1; L.innerHTML=pageHTML(pos-2); }
+    leaf.innerHTML='<div class="face f">'+pageHTML(front)+'<div class="shade"></div></div><div class="face b">'+pageHTML(back)+'<div class="shade"></div></div>';
+    book.appendChild(leaf);
+    leaf.getBoundingClientRect();
+    requestAnimationFrame(()=>{ if(startFlipped) leaf.classList.remove('go'); else leaf.classList.add('go'); });
+    setTimeout(()=>{ pos=to; leaf.remove(); render(); busy=false; }, 950);
+  }
+  prev.onclick=()=>turn(-1); next.onclick=()=>turn(1);
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') turn(1); if(e.key==='ArrowLeft') turn(-1); });
+  let x0=null, y0=null;
+  book.addEventListener('touchstart',e=>{x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  book.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
+    x0=null;
+  });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+
+  const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
+  function setLevel(ext){
+    document.getElementById('reading').classList.toggle('show-ext',ext);
+    [L,R].forEach(watchMore);
+    bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
+    try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
+  }
+  bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
+  setLevel(lvl==='extended');
+  render();
+})();
+</script>
+</body>
+</html>
