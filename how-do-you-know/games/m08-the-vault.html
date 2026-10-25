@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6ecd6; --dot:#eadbb8; --ink:#2b2117; --teal:#2e6b57; --teal-d:#24543f; --teal-l:#e4eee3;
+    --tang:#b5522e; --tang-d:#8f3c1f; --tang-l:#f6e2d6; --plum:#1d3a7a; --plum-l:#e3e9f5; --sand:#e6d3a8; --mute:#6f5f47;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg) ;font-family:Poppins,system-ui,sans-serif;color:var(--ink)}
+  button{font-family:inherit;color:inherit}
+  .app{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .badge{width:48px;height:48px;flex:none}
+  .t1{font:700 clamp(22px,4.5vw,30px)/1.05 Poppins,sans-serif;margin:0}
+  .t2{font:500 14px Poppins,sans-serif;color:var(--plum);margin-top:3px}
+  .panel{background:#fff;border:1.5px solid #b89b67;border-radius:20px;box-shadow:0 3px 8px rgba(43,33,23,.18);padding:20px}
+  h2{font:700 22px Poppins,sans-serif;margin:0 0 8px}
+  p{font:400 17px/1.5 Poppins,sans-serif;margin:0 0 12px}
+  .small{font-size:14px;color:var(--mute)}
+  .big{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:12px 24px;border:1.5px solid #b89b67;border-radius:14px;background:var(--tang);font:700 18px Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18)}
+  .big:disabled{opacity:.4;cursor:default}
+  .big.alt{background:#fff}
+  .center{text-align:center}
+  .hidden{display:none !important}
+  .go{margin-top:16px;text-align:center}
+  .step{font:600 12px Poppins,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--plum);margin-bottom:6px}
+  .fb{margin-top:16px;padding:14px 16px;border:1.5px solid #b89b67;border-radius:14px;background:var(--teal-l)}
+  .fb.bad{background:var(--tang-l)}
+  .fb b.head{display:block;font:700 18px Poppins,sans-serif;margin-bottom:4px}
+  .fb p{margin:0 0 6px;font-size:16px}
+  .label{font:600 13px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:16px 0 0}
+
+  /* vault door */
+  .vault{display:block;width:210px;max-width:60%;height:auto;margin:0 auto 12px}
+  .bolt{transition:transform .5s cubic-bezier(.3,1.5,.5,1), fill .3s}
+  .bolt.open{fill:#f7d774}
+  .bolt.miss{fill:#f0d3c4}
+  .dial{transform-origin:105px 105px;transition:transform 1.2s cubic-bezier(.4,1.4,.5,1)}
+  .door{transform-origin:20px 105px;transition:transform 1.6s ease-in-out}
+  .vault.swing .door{transform:perspective(400px) rotateY(-70deg)}
+  .glow{opacity:0;transition:opacity 1.2s}
+  .vault.swing .glow{opacity:1}
+
+  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif}
+  .cardtext.in{animation:pop .4s cubic-bezier(.2,.8,.3,1.3)}
+  @keyframes pop{from{transform:scale(.8) rotate(3deg);opacity:0}to{transform:rotate(-.8deg);opacity:1}}
+  .opts{display:grid;gap:10px;margin-top:14px}
+  .opts.row{grid-template-columns:1fr 1fr} .opts.four{grid-template-columns:repeat(4,1fr)}
+  .opts button{min-height:52px;padding:10px 12px;border:1.5px solid #b89b67;border-radius:12px;background:#fff;font:600 17px/1.3 Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18);text-align:left}
+  .opts.row button,.opts.four button{text-align:center}
+  .opts button.pick{background:var(--plum);color:#fff}
+  .opts button.right{background:var(--teal);color:#fff}
+  .opts button.wrong{background:var(--tang)}
+  .opts button:disabled{cursor:default}
+
+  .calib{margin:10px 0 14px}
+  .crow{display:grid;grid-template-columns:70px 1fr 90px;gap:10px;align-items:center;margin:8px 0;font:500 15px Poppins,sans-serif}
+  .track{position:relative;height:22px;border:1.5px solid #b89b67;border-radius:8px;background:var(--bg);overflow:hidden}
+  .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);width:0;transition:width 1s ease-out}
+  .ideal{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--plum)}
+  .verdict{border:1.5px solid #b89b67;border-radius:14px;padding:12px 14px;background:var(--plum-l);font:500 16px/1.45 Poppins,sans-serif}
+  table{width:100%;border-collapse:collapse;font:400 15px Poppins,sans-serif;margin:6px 0 12px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:2px dashed var(--sand);vertical-align:top}
+  th{font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+  .yes{color:var(--teal-d);font-weight:600} .nope{color:var(--tang-d);font-weight:600}
+  .code{display:inline-block;margin:6px 0 4px;padding:10px 18px;border:3px dashed var(--ink);border-radius:12px;background:var(--sand);font:700 24px Poppins,sans-serif;letter-spacing:.1em}
+  .scores{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 14px}
+  .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
+  .scores b{display:block;font:700 22px Poppins,sans-serif}
+  .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
+  @media (max-width:560px){ .opts.four{grid-template-columns:1fr 1fr} .crow{grid-template-columns:52px 1fr 76px;font-size:13px} }
+  @media (prefers-reduced-motion:reduce){ .bolt,.dial,.door,.glow,.fill{transition:none} .cardtext.in{animation:none} }
+
+  /* ===== reading look (added by tools/reskin_games.py) ===== */
+  html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
+            background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:radial-gradient(1.2px 1.2px at 12% 30%,#f7d774 50%,transparent 51%),radial-gradient(1px 1px at 38% 70%,#fff 50%,transparent 51%),
+      radial-gradient(1.4px 1.4px at 66% 44%,#f7d774 50%,transparent 51%),radial-gradient(1px 1px at 84% 82%,#fff 50%,transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 88%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 92% 18%,#f7d774 50%,transparent 51%)}
+  html,body{overflow-x:hidden}
+  .sky-deco{position:absolute;left:0;right:0;top:0;width:100%;height:210px;pointer-events:none;z-index:0;overflow:hidden}
+  .app{position:relative;z-index:1}
+  .top{min-height:110px;align-items:flex-end;padding-bottom:6px}
+  .t1{font-family:"Cormorant Garamond",Georgia,serif !important;font-weight:700 !important;font-size:clamp(30px,5.5vw,44px) !important;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+  .t2{font:600 12px Poppins,sans-serif !important;letter-spacing:.18em;text-transform:uppercase;color:#f7d774 !important}
+  .panel{background:#f6ecd6;border:1.5px solid #c99a2e !important;border-radius:12px;box-shadow:0 16px 30px rgba(0,0,0,.45), inset 0 -6px 0 #d6c193 !important}
+  h2{font-family:"Cormorant Garamond",Georgia,serif !important;font-weight:700 !important;font-size:28px !important;color:#0d1b3d}
+  p{font-family:"Cormorant Garamond",Georgia,serif !important;font-size:19.5px !important;line-height:1.5 !important;color:#2b2117}
+  p.small,.small{font-family:Poppins,sans-serif !important;font-size:13px !important;color:#6f5f47 !important}
+  .fb p{font-size:18.5px !important}
+  p.label{font-family:Poppins,sans-serif !important;font-size:12px !important;letter-spacing:.12em}
+  .big{background:#f7d774 !important;color:#0d1b3d !important;border:1.5px solid #9a7114 !important;border-radius:999px !important;box-shadow:0 4px 0 #9a7114 !important;font-family:Poppins,sans-serif !important;font-weight:600 !important}
+  .big:active{transform:translateY(3px) !important;box-shadow:0 1px 0 #9a7114 !important}
+  .big.alt{background:#fbf5e6 !important;border-color:#1d3a7a !important;box-shadow:0 4px 0 #1d3a7a !important}
+  .big.plum{background:#1d3a7a !important;color:#f7d774 !important;border-color:#0d1b3d !important;box-shadow:0 4px 0 #0d1b3d !important}
+  .code{background:#0d1b3d !important;color:#f7d774 !important;border:2px dashed #f7d774 !important;font-family:Poppins,sans-serif !important}
+  .badge rect:first-child{fill:#f7d774}
+  .case p,.case .belief,.card .claim,.claim,.claimcard,.quote,.reply,.blk,.q,.cardtext{font-family:"Cormorant Garamond",Georgia,serif !important}
+  .case p,.card .claim,.claim,.claimcard,.quote,.reply,.cardtext{font-size:22px !important;font-weight:600 !important}
+  .blk{font-size:19px !important} .q{font-size:21px !important;font-weight:700 !important}
+  .fb{border-radius:10px !important}
+  .fb b.head{font-family:"Cormorant Garamond",Georgia,serif !important;font-size:21px !important}
+  table{font-family:Poppins,sans-serif}
+  .sk-flow{animation:skflow 14s linear infinite} .sk-slow{animation-duration:22s}
+  .sk-spin{transform-box:fill-box;transform-origin:center;animation:skspin 40s linear infinite}
+  .sk-tw{animation:sktw 3.2s ease-in-out infinite} .sk-tw:nth-child(2n){animation-delay:1.1s} .sk-tw:nth-child(3n){animation-delay:2s}
+  .sk-pulse{transform-box:fill-box;transform-origin:center;animation:skpulse 5s ease-in-out infinite}
+  @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
+  @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+</style>
+</head>
+<body>
+<svg class="sky-deco" viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><radialGradient id="skyglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/><stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/><stop offset="1" stop-color="#f7d774" stop-opacity="0"/></radialGradient></defs>
+  <g fill="none" stroke-linecap="round">
+    <path class="sk-flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".5" stroke-width="10" stroke-dasharray="18 10"/>
+    <path class="sk-flow sk-slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".3" stroke-width="6" stroke-dasharray="12 9"/>
+    <path class="sk-spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".6" stroke-width="5" stroke-dasharray="10 7"/>
+  </g>
+  <g stroke="#f7d774" stroke-opacity=".45" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+  <g fill="#f7d774"><circle class="sk-tw" cx="760" cy="38" r="2.5"/><circle class="sk-tw" cx="850" cy="52" r="3"/><circle class="sk-tw" cx="930" cy="80" r="2.5"/><circle class="sk-tw" cx="140" cy="38" r="2"/><circle class="sk-tw" cx="430" cy="28" r="1.6"/><circle class="sk-tw" cx="660" cy="160" r="1.8"/><circle class="sk-tw" cx="1010" cy="160" r="2"/><circle class="sk-tw" cx="240" cy="180" r="1.5"/></g>
+  <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
+  <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+</svg>
+<div class="app">
+  <div class="top">
+    <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="8" y="21" width="32" height="23" rx="6" fill="#b5522e" stroke="#2b2117" stroke-width="3"/>
+      <path d="M15 21 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#2b2117" stroke-width="3"/>
+      <circle cx="24" cy="31" r="3.2" fill="#2b2117"/><rect x="22.4" y="32" width="3.2" height="7" rx="1.6" fill="#2b2117"/>
+    </svg>
+    <div>
+      <h1 class="t1">The Vault</h1>
+      <div class="t2">How Do You Know? · Lock 8</div>
+    </div>
+  </div>
+
+  <svg class="vault" id="vault" viewBox="0 0 210 210" aria-hidden="true">
+    <defs><radialGradient id="vglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6c8"/><stop offset=".55" stop-color="#f7d774"/><stop offset="1" stop-color="#f7d774" stop-opacity=".15"/></radialGradient></defs>
+    <g class="glow"><circle cx="105" cy="105" r="88" fill="url(#vglow)"/>
+      <path d="M105 62 l10 28 30 1 -24 18 9 29 -25 -17 -25 17 9 -29 -24 -18 30 -1z" fill="#fff" fill-opacity=".9" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/></g>
+    <g class="door">
+      <circle cx="105" cy="105" r="92" fill="#d6c193" stroke="#2b2117" stroke-width="4"/>
+      <circle cx="105" cy="105" r="76" fill="#e6d3a8" stroke="#2b2117" stroke-width="3"/>
+      <g id="bolts"></g>
+      <g class="dial" id="dial">
+        <circle cx="105" cy="105" r="30" fill="#1d3a7a" stroke="#2b2117" stroke-width="3"/>
+        <path d="M105 79 v52 M79 105 h52 M87 87 l36 36 M123 87 l-36 36" stroke="#f7d774" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="105" cy="105" r="8" fill="#f7d774" stroke="#2b2117" stroke-width="2"/>
+      </g>
+    </g>
+  </svg>
+
+  <section id="sIntro">
+    <div class="panel">
+      <h2>Seven bolts and a dial</h2>
+      <p>The Vault has seven bolts, one for each lock you've cracked. Answer one question from each lock to slide its bolt back.</p>
+      <p>Then comes the dial: a <b>calibration round</b>. For ten claims, say whether each is true or false <em>and</em> how sure you are. At the end you'll see whether your confidence matched your accuracy. That match, not the score, is what the dial measures.</p>
+      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <div class="center"><button class="big" id="startBtn">Try the first bolt</button></div>
+    </div>
+  </section>
+
+  <section id="sBolts" class="hidden">
+    <div class="panel">
+      <div class="step" id="bStep"></div>
+      <div class="cardtext" id="bText"></div>
+      <div class="opts" id="bOpts"></div>
+      <div class="fb hidden" id="bFb"></div>
+      <div class="go hidden" id="bNextWrap"><button class="big" id="bNext">Next bolt</button></div>
+    </div>
+  </section>
+
+  <section id="sCal" class="hidden">
+    <div class="panel">
+      <div class="step" id="cStep"></div>
+      <div class="cardtext" id="cText"></div>
+      <p class="label">True or false?</p>
+      <div class="opts row" id="cTF"><button data-v="1">True</button><button data-v="0">False</button></div>
+      <p class="label">How sure are you?</p>
+      <div class="opts four" id="cConf"><button data-v="50">50%<br><small>coin flip</small></button><button data-v="70">70%</button><button data-v="90">90%</button><button data-v="99">99%<br><small>nearly certain</small></button></div>
+      <div class="go"><button class="big" id="cLock" disabled>Lock it in</button></div>
+      <div class="fb hidden" id="cFb"></div>
+      <div class="go hidden" id="cNextWrap"><button class="big" id="cNext">Next claim</button></div>
+    </div>
+  </section>
+
+  <section id="sEnd" class="hidden">
+    <div class="panel">
+      <h2>The Vault is open</h2>
+      <div class="scores" id="scores"></div>
+      <p><b>Your calibration.</b> Each bar shows how often you were right when you chose that confidence. The line marks where a perfectly calibrated thinker would land.</p>
+      <div class="calib" id="calib"></div>
+      <div class="verdict" id="verdict"></div>
+      <table style="margin-top:14px">
+        <thead><tr><th>Claim</th><th>You said</th><th>Answer</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p>Your code word:</p>
+      <div class="center"><span class="code" id="code"></span></div>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your calibration verdict and the code word. Then write your own theory of knowledge in five sentences.</p>
+      <div class="center"><button class="big alt" id="again">Play again</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const CODE='STAR KEY';
+  const BOLTS=[
+    {lock:1, t:"Smith's belief about the ten coins was true and he had good reasons. Why wasn't it knowledge?", o:["It was only a guess","Its truth came from luck, not from his reasons","It was actually false"], a:1, why:"A Gettier case: belief, truth and justification, with a lucky gap between the reasons and the truth."},
+    {lock:2, t:"Which belief survives even Descartes's all-powerful deceiver?", o:["2 + 3 = 5","I have hands","I exist"], a:2, why:"To be fooled at all, you have to exist. The deceiver can't touch that."},
+    {lock:3, t:"“All bachelors are unmarried” is…", o:["a priori and analytic","a posteriori and synthetic","a priori and synthetic"], a:0, why:"Known without checking the world, and true just by what the words mean."},
+    {lock:4, t:"A chain of reasons that eventually leans on the very belief it started with ends in a…", o:["Stop","Circle","Forever"], a:1, why:"One of Agrippa's three endings. Coherentists argue a big enough circle isn't vicious."},
+    {lock:5, t:"What could disprove “all swans are white”?", o:["One black swan","A thousand more white swans","A white goose"], a:0, why:"Popper's point: confirmations never prove a rule, but one counterexample can refute it."},
+    {lock:6, t:"A real expert in her field shows no evidence and says only, “Trust me, I'm the expert.” You should…", o:["Believe her: she's the expert","Ask to see the evidence","Assume she's lying"], a:1, why:"Experts are more likely to be right in their field, and can still be wrong. Evidence decides."},
+    {lock:7, t:"“There is no truth” is…", o:["Self-defeating","A paradox","True for some people"], a:0, why:"If it were true, there would be a truth. So it defeats itself, and it's simply false."}
+  ];
+  const CAL=[
+    {t:"The Pacific is the largest ocean on Earth.", v:1},
+    {t:"Lightning never strikes the same place twice.", v:0},
+    {t:"Octopuses have three hearts.", v:1},
+    {t:"The Great Wall of China is visible from the Moon with the naked eye.", v:0},
+    {t:"Sound travels faster through water than through air.", v:1},
+    {t:"Non-bird dinosaurs and humans lived at the same time.", v:0},
+    {t:"One rotation of Venus takes longer than one Venus year.", v:1},
+    {t:"The chemical symbol for gold is Ag.", v:0},
+    {t:"Botanically speaking, bananas are berries.", v:1},
+    {t:"Mount Everest is the highest mountain above sea level.", v:1}
+  ];
+  const NOTE=[
+    "It covers about a third of the planet's surface.",
+    "It often does: tall buildings like the Empire State Building are struck many times a year.",
+    "Two pump blood through the gills and one through the rest of the body.",
+    "It's long but narrow, and astronauts say it can't be seen from the Moon without help.",
+    "Roughly four times faster in water.",
+    "The last non-bird dinosaurs died out about 66 million years ago, long before any humans.",
+    "Venus spins slowly: about 243 Earth days per rotation, but about 225 Earth days per orbit.",
+    "Gold is Au. Ag is silver.",
+    "Botanists count bananas as berries; strawberries, oddly, are not.",
+    "At about 8,849 meters above sea level."
+  ];
+  const $=id=>document.getElementById(id);
+  let bi=0, boltRight=0, ci=0, tf=null, conf=null, calRight=0, cal=[], log=[];
+  function show(id){ ['sIntro','sBolts','sCal','sEnd'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); }
+
+  // draw seven bolts around the door
+  const NS='http://www.w3.org/2000/svg', bolts=[];
+  for(let i=0;i<7;i++){
+    const ang=(-90+i*360/7)*Math.PI/180, cx=105+60*Math.cos(ang), cy=105+60*Math.sin(ang);
+    const r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',cx-7); r.setAttribute('y',cy-7); r.setAttribute('width',14); r.setAttribute('height',14); r.setAttribute('rx',3);
+    r.setAttribute('fill','#1d3a7a'); r.setAttribute('stroke','#2b2117'); r.setAttribute('stroke-width','2.5'); r.setAttribute('class','bolt');
+    r.dataset.dx=(10*Math.cos(ang)).toFixed(1); r.dataset.dy=(10*Math.sin(ang)).toFixed(1);
+    $('bolts').appendChild(r); bolts.push(r);
+  }
+  function slide(i, ok){ const b=bolts[i]; b.style.transform='translate('+b.dataset.dx+'px,'+b.dataset.dy+'px)'; b.classList.add(ok?'open':'miss'); }
+
+  $('startBtn').onclick=()=>{ show('sBolts'); showBolt(); };
+  function showBolt(){
+    const q=BOLTS[bi];
+    $('bStep').textContent='Bolt '+(bi+1)+' of 7 · from Lock '+q.lock;
+    const c=$('bText'); c.textContent=q.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    $('bOpts').innerHTML=q.o.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
+    $('bOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>answerBolt(+b.dataset.i));
+    $('bFb').classList.add('hidden'); $('bNextWrap').classList.add('hidden');
+  }
+  function answerBolt(i){
+    const q=BOLTS[bi], ok=i===q.a; if(ok) boltRight++;
+    $('bOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===q.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
+    slide(bi, ok); $('dial').style.transform='rotate('+((bi+1)*51)+'deg)';
+    const fb=$('bFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'The bolt slides back.':'The bolt sticks, then gives.')+'</b><p>'+q.why+'</p>';
+    log.push({c:'Lock '+q.lock+': '+(q.t.length>54?q.t.slice(0,52)+'…':q.t), you:q.o[i], ans:q.o[q.a], ok});
+    $('bNext').textContent= bi===BOLTS.length-1 ? 'Turn to the dial' : 'Next bolt';
+    $('bNextWrap').classList.remove('hidden');
+  }
+  $('bNext').onclick=()=>{ bi++; if(bi<BOLTS.length) showBolt(); else { show('sCal'); showCal(); } };
+
+  function showCal(){
+    const q=CAL[ci]; tf=null; conf=null;
+    $('cStep').textContent='The dial · claim '+(ci+1)+' of '+CAL.length;
+    const c=$('cText'); c.textContent=q.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    ['cTF','cConf'].forEach(g=>$(g).querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; }));
+    $('cLock').disabled=true; $('cLock').parentElement.classList.remove('hidden');
+    $('cFb').classList.add('hidden'); $('cNextWrap').classList.add('hidden');
+  }
+  function wire(g, set){ $(g).querySelectorAll('button').forEach(b=>b.onclick=()=>{ set(+b.dataset.v); $(g).querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b)); $('cLock').disabled = tf===null||conf===null; }); }
+  wire('cTF',v=>tf=v); wire('cConf',v=>conf=v);
+  $('cLock').onclick=()=>{
+    const q=CAL[ci], ok=tf===q.v; if(ok) calRight++;
+    cal.push({conf, ok});
+    $('cLock').parentElement.classList.add('hidden');
+    $('cTF').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(+b.dataset.v===q.v) b.classList.add('right'); else if(+b.dataset.v===tf) b.classList.add('wrong'); });
+    $('cConf').querySelectorAll('button').forEach(b=>b.disabled=true);
+    $('dial').style.transform='rotate('+(360+ (ci+1)*36)+'deg)';
+    const fb=$('cFb'); fb.className='fb'+(ok?'':' bad');
+    fb.innerHTML='<b class="head">'+(q.v?'True.':'False.')+' You were '+(ok?'right':'wrong')+' at '+conf+'% sure.</b><p>'+NOTE[ci]+'</p>';
+    log.push({c:q.t, you:(tf?'True':'False')+' ('+conf+'%)', ans:q.v?'True':'False', ok});
+    $('cNext').textContent= ci===CAL.length-1 ? 'Open the Vault' : 'Next claim';
+    $('cNextWrap').classList.remove('hidden');
+  };
+  $('cNext').onclick=()=>{ ci++; if(ci<CAL.length) showCal(); else finish(); };
+
+  function finish(){
+    show('sEnd'); window.scrollTo(0,0);
+    setTimeout(()=>$('vault').classList.add('swing'), 300);
+    $('scores').innerHTML='<div><b>'+boltRight+' / 7</b><span>bolts</span></div><div><b>'+calRight+' / '+CAL.length+'</b><span>dial claims right</span></div>';
+    const levels=[50,70,90,99]; let html='';
+    levels.forEach(l=>{
+      const g=cal.filter(x=>x.conf===l); if(!g.length) return;
+      const pct=Math.round(100*g.filter(x=>x.ok).length/g.length);
+      html+='<div class="crow"><span>'+l+'% sure</span><div class="track"><div class="fill" data-w="'+pct+'"></div><div class="ideal" style="left:calc('+l+'% - 1px)"></div></div><span>right '+pct+'% ('+g.filter(x=>x.ok).length+'/'+g.length+')</span></div>';
+    });
+    $('calib').innerHTML=html;
+    requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+    const avgConf=cal.reduce((s,x)=>s+x.conf,0)/cal.length, acc=100*calRight/CAL.length, gap=Math.round(avgConf-acc);
+    let v;
+    if(Math.abs(gap)<=10) v='<b>Well calibrated.</b> Your average confidence ('+Math.round(avgConf)+'%) was close to how often you were right ('+Math.round(acc)+'%).';
+    else if(gap>10) v='<b>A bit overconfident.</b> You were '+Math.round(avgConf)+'% sure on average but right '+Math.round(acc)+'% of the time. That is the most common pattern there is, and practice shrinks it.';
+    else v='<b>A bit underconfident.</b> You were right '+Math.round(acc)+'% of the time but only '+Math.round(avgConf)+'% sure on average. You know more than you give yourself credit for.';
+    $('verdict').innerHTML=v+' <span class="small">(Ten claims is a small sample, so treat this as a first reading, not a verdict.)</span>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
+    $('code').textContent=CODE;
+  }
+  $('again').onclick=()=>{ bi=0; ci=0; boltRight=0; calRight=0; cal=[]; log=[]; bolts.forEach(b=>{ b.style.transform=''; b.setAttribute('class','bolt'); }); $('dial').style.transform=''; $('vault').classList.remove('swing'); show('sIntro'); };
+})();
+</script>
+</body>
+</html>

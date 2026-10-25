@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Will the Sun Rise Tomorrow?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0d1b3d; --night2:#1d3a7a; --star:#f7d774; --gold:#9a7114;
+    --parch:#f6ecd6; --parch2:#eadbb8; --ink:#2b2117; --rule:#b89b67;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--night);font-family:Poppins,system-ui,sans-serif}
+  .reading{max-width:1100px;margin:0 auto;min-height:100vh;background:var(--night)}
+
+  /* ---- moving sky ---- */
+  .sky{position:relative;height:210px;background:radial-gradient(ellipse at 70% 30%,#2d57a8 0%,var(--night2) 35%,var(--night) 75%);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .head{position:absolute;left:20px;bottom:32px;right:20px;color:#fff}
+  .course{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--star)}
+  h1{font:700 clamp(28px,5vw,44px)/1.05 "Cormorant Garamond",Georgia,serif;margin:6px 0 0;text-shadow:0 2px 12px rgba(0,0,0,.5);color:#fff}
+  .toggle{position:absolute;top:14px;right:14px;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;z-index:2}
+  .toggle button{border:0;background:transparent;color:#fff;font:600 12px Poppins;padding:7px 13px;border-radius:999px;cursor:pointer}
+  .toggle button.on{background:var(--star);color:var(--night)}
+  .flow{animation:flow 14s linear infinite}
+  .flow.slow{animation-duration:22s}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+  .tw{animation:tw 3.2s ease-in-out infinite}
+  .tw:nth-child(2n){animation-delay:1.1s} .tw:nth-child(3n){animation-delay:2s}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}
+  .shoot{animation:shoot 9s ease-in 3s infinite;opacity:0}
+  @keyframes flow{to{stroke-dashoffset:-280}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%{opacity:0;transform:translate(-220px,90px)}100%{opacity:0;transform:translate(-220px,90px)}}
+
+  /* ---- flipping book ---- */
+  .bookwrap{position:relative;margin:-18px 16px 0;perspective:2200px}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;height:600px;
+        background:linear-gradient(90deg,var(--parch2) 0%,var(--parch) 6%,var(--parch) 47%,#d9c69d 50%,var(--parch) 53%,var(--parch) 94%,var(--parch2) 100%);
+        border-radius:6px 6px 10px 10px;box-shadow:0 14px 24px rgba(0,0,0,.35), inset 0 -6px 0 #d6c193}
+  .slot{position:relative;overflow:hidden}
+  .curl{position:absolute;right:0;bottom:0;width:40px;height:40px;z-index:4;border:0;padding:0;cursor:pointer;
+        background:linear-gradient(225deg,transparent 50%,#e2cfa3 50%,#fbf4e3 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.14);border-radius:0 0 6px 0;
+        animation:nudge 2.4s ease-in-out 1.2s 3}
+  @keyframes nudge{0%,100%{width:40px;height:40px}50%{width:58px;height:58px}}
+  .leaf{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.3,1);z-index:5}
+  .leaf.fwd{left:50%;transform-origin:left center}
+  .leaf.back{left:0;transform-origin:right center}
+  .single .leaf{width:100%;left:0;transform-origin:left center}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--parch)}
+  .face.b{transform:rotateY(180deg)}
+  .leaf.fwd .face.f,.leaf.back .face.b{background:linear-gradient(90deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd .face.b,.leaf.back .face.f{background:linear-gradient(270deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd.go{transform:rotateY(-180deg)} .leaf.back.go{transform:rotateY(180deg)}
+  .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 60%);opacity:0;transition:opacity .45s}
+  .leaf.go .shade{opacity:1}
+  .page{height:100%;overflow-y:auto;padding:28px 34px 40px;font:500 18.5px/1.55 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+  .page h2{font:700 27px/1.15 "Cormorant Garamond",Georgia,serif;margin:0 0 10px;color:var(--night)}
+  .page p{margin:0 0 14px}
+  .page ol{margin:0 0 14px;padding-left:24px}
+  .drop::first-letter{float:left;font:700 58px/0.85 "Cormorant Garamond",serif;color:var(--night2);padding:6px 8px 0 0}
+  .key{border:1.5px solid #c99a2e;background:rgba(247,215,116,.22);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:18px}
+  .key .k{display:block;font:600 11px Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .key p{margin:0 0 6px} .key p:last-child{margin:0}
+  .quote{border-left:3px solid var(--rule);padding-left:14px;font-style:italic;color:#4a3b29;font-size:21px}
+  .src{font:400 12px/1.55 Poppins;color:#6f5f47}
+  .more::after{content:"scroll for more \2193";position:absolute;left:0;right:0;bottom:0;height:64px;padding-top:34px;text-align:center;font:600 11px Poppins;letter-spacing:.08em;color:#8a6a2a;pointer-events:none;
+         background:linear-gradient(rgba(246,236,214,0),var(--parch) 55%)}
+  .more .pnum{display:none}
+  .pnum{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:500 14px "Cormorant Garamond",serif;color:#8a7756;pointer-events:none}
+  .extended{display:none}
+  .show-ext .extended{display:block}
+  .tag-ext{font:600 10px Poppins;letter-spacing:.12em;text-transform:uppercase;color:var(--night2);background:#dfe8f7;border-radius:4px;padding:2px 6px;margin-right:6px;vertical-align:2px}
+  .fig{display:flex;justify-content:center;margin:4px 0 12px}
+  .fig svg{width:100%;max-width:215px}
+  .ring{transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring.r2{animation-delay:1.3s} .ring.r3{animation-delay:2.6s}
+  .pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 0 24px;color:#dce8fb;font:600 13px Poppins}
+  .pager button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--star);background:transparent;color:var(--star);font:600 22px/1 Poppins;cursor:pointer}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .hint{text-align:center;color:#9fb6dc;font:400 12px Poppins;margin-top:-14px;padding-bottom:20px}
+  .single .book{grid-template-columns:1fr;background:linear-gradient(90deg,#e8d8b4,var(--parch) 6%)}
+  .single .slot.l{display:none}
+  @media (max-width:720px){
+    .bookwrap{margin:-16px 10px 0}
+    .book{height:max(440px,calc(100vh - 290px))}
+    .page{padding:22px 20px 44px;font-size:18px}
+    .head{bottom:26px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flow,.spin,.tw,.pulse,.ring,.curl,.shoot{animation:none}
+    .leaf{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="reading" id="reading">
+  <header class="sky">
+    <svg viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f7d774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#7fa8e8" stroke-opacity=".12" fill="none">
+        <path d="M0 55 Q550 15 1100 55"/><path d="M0 110 Q550 70 1100 110"/><path d="M0 165 Q550 125 1100 165"/>
+        <path d="M180 0 Q160 105 180 210"/><path d="M420 0 Q400 105 420 210"/><path d="M660 0 Q640 105 660 210"/><path d="M900 0 Q880 105 900 210"/>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path class="flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".55" stroke-width="10" stroke-dasharray="18 10"/>
+        <path class="flow slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".35" stroke-width="6" stroke-dasharray="12 9"/>
+        <path class="spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".7" stroke-width="5" stroke-dasharray="10 7"/>
+        <path class="spin" d="M300 65 m-28 0 a28 28 0 1 1 56 0 a18 18 0 1 1 -36 0 a8 8 0 1 1 16 0" stroke="#dce8fb" stroke-opacity=".45" stroke-width="4" stroke-dasharray="8 6"/>
+      </g>
+      <g stroke="#f7d774" stroke-opacity=".5" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+      <g fill="#f7d774">
+        <circle class="tw" cx="760" cy="38" r="2.5"/><circle class="tw" cx="800" cy="66" r="2"/><circle class="tw" cx="850" cy="52" r="3"/><circle class="tw" cx="880" cy="90" r="2"/><circle class="tw" cx="930" cy="80" r="2.5"/>
+        <circle class="tw" cx="140" cy="38" r="2"/><circle class="tw" cx="430" cy="28" r="1.6"/><circle class="tw" cx="660" cy="160" r="1.8"/><circle class="tw" cx="1010" cy="160" r="2"/><circle class="tw" cx="240" cy="180" r="1.5"/>
+      </g>
+      <line class="shoot" x1="700" y1="20" x2="730" y2="8" stroke="#fff6c8" stroke-width="2" stroke-linecap="round"/>
+      <circle class="pulse" cx="560" cy="90" r="36" fill="url(#glow)"/>
+      <circle class="pulse" cx="300" cy="65" r="22" fill="url(#glow)"/>
+      <circle cx="990" cy="66" r="44" fill="url(#glow)"/>
+      <path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+    </svg>
+    <div class="toggle" role="group" aria-label="Reading length">
+      <button id="bCore" class="on">Core</button>
+      <button id="bExt">Extended</button>
+    </div>
+    <div class="head">
+      <div class="course">How Do You Know? · Lock 5</div>
+      <h1>Will the Sun Rise Tomorrow?</h1>
+    </div>
+  </header>
+
+  <div class="bookwrap" id="wrap">
+    <div class="book" id="book">
+      <div class="slot l" id="slotL"></div>
+      <div class="slot r" id="slotR"></div>
+    </div>
+  </div>
+  <nav class="pager">
+    <button id="prev" aria-label="Previous page">&#8249;</button>
+    <span id="where" aria-live="polite"></span>
+    <button id="next" aria-label="Next page">&#8250;</button>
+  </nav>
+  <div class="hint">Tap the arrows, the page corner, or swipe to turn the page.</div>
+</main>
+
+<!-- Built from resources/M05Know.md by tools/build_readings.py. Edit the .md file, then rebuild. -->
+<div id="pages" hidden>
+<section>
+  <h2>The thousandth morning</h2>
+  <p class="drop">Picture a chicken on a farm. Every morning, for its whole life, the farmer has come out and fed it. By now the chicken has a lot of evidence. Day after day, the same thing. If chickens could reason, this one would be very confident about tomorrow.</p>
+  <p>In 1912 Bertrand Russell finished the story in <em>The Problems of Philosophy</em>:</p>
+  <p class="quote">The man who has fed the chicken every day throughout its life at last wrings its neck instead, showing that more refined views as to the uniformity of nature would have been useful to the chicken.</p>
+  <p>It's a dark joke with a serious point. We are all, in a way, that chicken. Almost everything we expect about tomorrow rests on what happened yesterday.</p>
+</section>
+<section>
+  <h2>Two kinds of argument</h2>
+  <div class="key"><span class="k">Key terms</span><p>A <b>deductive</b> argument guarantees its conclusion: if the premises are true, the conclusion has to be true. "All squares have four sides; this is a square; so it has four sides."</p><p>An <b>inductive</b> argument makes its conclusion likely, not certain. It reasons from cases you've seen to cases you haven't. "Every swan I've seen is white; so the next swan will be white."</p></div>
+  <p>Science, cooking, crossing the street and trusting your chair all run on induction. You've never tested the chair you're sitting on today. You've tested chairs.</p>
+  <p>Induction is so ordinary that it seems strange to ask what justifies it. The Scottish philosopher David Hume, whom you met in Lock 3, asked anyway.</p>
+</section>
+<section>
+  <h2>Hume's problem</h2>
+  <p>Hume pointed out that the future going differently from the past is not a contradiction. In 1748 he wrote:</p>
+  <p class="quote">That the sun will not rise to-morrow is no less intelligible a proposition, and implies no more contradiction than the affirmation, that it will rise.</p>
+  <p>So no deductive proof can show the sun will rise. What about evidence? Every argument from evidence assumes that the future will resemble the past. But how do we know <em>that</em>? Only from the past, where it has always worked. Using induction to prove that induction works goes in a circle, the kind you met in Lock 4.</p>
+  <p>Hume's conclusion was not that we should stop expecting sunrises. It was that the expectation comes from habit, not from reason. "Custom, then, is the great guide of human life."</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Philosophers call this the problem of induction. Hume didn't use that name, and it's still argued about. Some say the circle is harmless, some say induction is justified because it's reliable (Lock 4's reliabilism), and some say it can't be justified at all but we can't help using it.</p>
+</section>
+<section>
+  <h2>Betting on the sunrise</h2>
+  <p>One reply is to give up on certainty and talk about probability. In 1814 the French mathematician Pierre-Simon Laplace worked through the sunrise example. Taking about 5,000 years of recorded sunrises as the evidence, his formula gave odds of roughly 1.8 million to one that the sun would rise the next day. He added that anyone who understands what actually keeps the planets moving should be far more confident than that.</p>
+</section>
+<section>
+  <h2>Updating your confidence</h2>
+  <p>The idea behind this goes back to the English minister Thomas Bayes, whose essay on probability was published in 1763, after his death. On a Bayesian view, you never get certainty. You start with a degree of confidence and update it, up or down, each time new evidence arrives.</p>
+  <div class="key"><span class="k">Key term</span><p><b>Credence</b>: how confident you are in a belief, from 0 (certainly false) to 1 (certainly true). A Bayesian updates credences as evidence comes in.</p></div>
+  <p>Critics answer that this doesn't escape Hume. Your probabilities still assume the future will behave like the past.</p>
+</section>
+<section>
+  <h2>One black swan</h2>
+  <p>For centuries, Europeans used "a black swan" as a figure of speech for something that doesn't exist. Every swan anyone had seen was white. Then, in 1697, Dutch sailors exploring the west coast of Australia saw black swans.</p>
+  <p>The Austrian-British philosopher Karl Popper built a whole view of science on this lesson, starting with his 1934 book later translated as <em>The Logic of Scientific Discovery</em>. No number of white swans can prove "all swans are white." One black swan can disprove it.</p>
+  <p>So, Popper said, science doesn't work by piling up confirmations. It works by making bold guesses and trying hard to knock them down. A good theory is one that says clearly what would prove it wrong, and survives every honest attempt. On his view a theory is never proved, only "not yet refuted."</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Popper's falsificationism has critics too. Real scientists don't usually throw out a theory after one bad result; they check the equipment first. And Popper's view still seems to lean on induction when we choose which surviving theory to rely on tomorrow.</p>
+</section>
+<section>
+  <h2>The new riddle</h2>
+  <p>In 1955 the American philosopher Nelson Goodman made the problem stranger. He invented a word: <b>grue</b>. Something is grue if it's green and first examined before some future date, say the year 2100, or blue and first examined after that.</p>
+  <p>Every emerald anyone has ever examined was green. So every one of them was also grue. The evidence fits "all emeralds are green" and "all emeralds are grue" equally well. But the two predict different colors for emeralds first examined after 2100.</p>
+  <p>We all feel sure "green" is the right word to project into the future and "grue" is a cheat. Goodman's question is <em>why</em>. "Grue mentions a date" isn't enough: to someone who grew up with "grue" and "bleen," our word "green" would be the one that mentions a date.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Goodman's own answer, in <em>Fact, Fiction, and Forecast</em>, was that "green" is entrenched: it has a long history of being used successfully in predictions. Critics say that just describes our habits, which takes us back to Hume.</p>
+</section>
+<section>
+  <h2>Carry this with you</h2>
+  <p>Nobody has solved the problem of induction to everyone's satisfaction. Yet nobody stops using induction either. The honest position may be the one in between: hold expectations about the future with confidence that matches your evidence, look for the observations that could prove you wrong, and stay ready to be the chicken who notices something has changed.</p>
+  <p>Lock 8 will come back to that idea: how well your confidence matches how often you're right.</p>
+</section>
+<section>
+  <h2>Your turn</h2>
+  <p>Next up is the game, Russell's Chicken. First you'll sort arguments into sure things and good bets. Then you'll look for the one observation that could break each rule.</p>
+  <p class="src">Sources: B. Russell, <em>The Problems of Philosophy</em> (1912), ch. VI (public domain); D. Hume, <em>An Enquiry Concerning Human Understanding</em> (1748), sections IV and V (public domain); P.-S. Laplace, <em>Essai philosophique sur les probabilités</em> (1814); T. Bayes, "An Essay towards solving a Problem in the Doctrine of Chances" (1763); K. Popper, <em>Logik der Forschung</em> (1934), translated as <em>The Logic of Scientific Discovery</em> (1959); N. Goodman, <em>Fact, Fiction, and Forecast</em> (1955). Original text written for this course by its author, with help from an AI assistant; quotations are from public-domain texts.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
+  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  const L=document.getElementById('slotL'), R=document.getElementById('slotR');
+  const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=matchMedia('(max-width: 720px)');
+  let single=narrow.matches, pos=0, busy=false;
+
+  function pageHTML(i){
+    if(i<0||i>=N) return '<div class="page"></div>';
+    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+  }
+  function watchMore(slot){
+    const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
+    const check=()=>slot.classList.toggle('more', pg.scrollHeight-pg.scrollTop-pg.clientHeight>8);
+    pg.addEventListener('scroll',check,{passive:true}); check();
+  }
+  function step(){ return single?1:2; }
+  function render(){
+    wrap.classList.toggle('single', single);
+    if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
+    else { L.innerHTML=pageHTML(pos); R.innerHTML=pageHTML(pos+1); }
+    if(pos+step()<N){
+      R.insertAdjacentHTML('beforeend','<button class="curl" aria-label="Turn the page"></button>');
+      R.querySelector('.curl').onclick=()=>turn(1);
+    }
+    [L,R].forEach(watchMore);
+    prev.disabled=pos===0; next.disabled=pos+step()>=N;
+    where.textContent=(single||pos+2>N)?('Page '+(pos+1)+' of '+N):('Pages '+(pos+1)+'–'+(pos+2)+' of '+N);
+  }
+  function turn(dir){
+    const to=pos+dir*step();
+    if(busy||to<0||to>=N) return;
+    if(reduce){ pos=to; render(); return; }
+    busy=true;
+    const leaf=document.createElement('div');
+    let front, back, startFlipped=false;
+    if(single){
+      leaf.className='leaf fwd';
+      if(dir>0){ front=pos; R.innerHTML=pageHTML(to); }
+      else { front=to; startFlipped=true; leaf.classList.add('go'); }
+      back=-1;
+    } else if(dir>0){ leaf.className='leaf fwd'; front=pos+1; back=pos+2; R.innerHTML=pageHTML(pos+3); }
+    else { leaf.className='leaf back'; front=pos; back=pos-1; L.innerHTML=pageHTML(pos-2); }
+    leaf.innerHTML='<div class="face f">'+pageHTML(front)+'<div class="shade"></div></div><div class="face b">'+pageHTML(back)+'<div class="shade"></div></div>';
+    book.appendChild(leaf);
+    leaf.getBoundingClientRect();
+    requestAnimationFrame(()=>{ if(startFlipped) leaf.classList.remove('go'); else leaf.classList.add('go'); });
+    setTimeout(()=>{ pos=to; leaf.remove(); render(); busy=false; }, 950);
+  }
+  prev.onclick=()=>turn(-1); next.onclick=()=>turn(1);
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') turn(1); if(e.key==='ArrowLeft') turn(-1); });
+  let x0=null, y0=null;
+  book.addEventListener('touchstart',e=>{x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  book.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
+    x0=null;
+  });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+
+  const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
+  function setLevel(ext){
+    document.getElementById('reading').classList.toggle('show-ext',ext);
+    [L,R].forEach(watchMore);
+    bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
+    try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
+  }
+  bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
+  setLevel(lvl==='extended');
+  render();
+})();
+</script>
+</body>
+</html>

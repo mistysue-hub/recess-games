@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Liar's Lockbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6ecd6; --dot:#eadbb8; --ink:#2b2117; --teal:#2e6b57; --teal-d:#24543f; --teal-l:#e4eee3;
+    --tang:#b5522e; --tang-d:#8f3c1f; --tang-l:#f6e2d6; --plum:#1d3a7a; --plum-l:#e3e9f5; --sand:#e6d3a8; --mute:#6f5f47;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg) ;font-family:Poppins,system-ui,sans-serif;color:var(--ink)}
+  button{font-family:inherit;color:inherit}
+  .app{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .badge{width:48px;height:48px;flex:none}
+  .t1{font:700 clamp(22px,4.5vw,30px)/1.05 Poppins,sans-serif;margin:0}
+  .t2{font:500 14px Poppins,sans-serif;color:var(--plum);margin-top:3px}
+  .panel{background:#fff;border:1.5px solid #b89b67;border-radius:20px;box-shadow:0 3px 8px rgba(43,33,23,.18);padding:20px}
+  h2{font:700 22px Poppins,sans-serif;margin:0 0 8px}
+  p{font:400 17px/1.5 Poppins,sans-serif;margin:0 0 12px}
+  .small{font-size:14px;color:var(--mute)}
+  .big{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:12px 24px;border:1.5px solid #b89b67;border-radius:14px;background:var(--tang);font:700 18px Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18)}
+  .big.alt{background:#fff}
+  .center{text-align:center}
+  .hidden{display:none !important}
+  .go{margin-top:16px;text-align:center}
+  .step{font:600 12px Poppins,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--plum);margin-bottom:6px}
+  .fb{margin-top:16px;padding:14px 16px;border:1.5px solid #b89b67;border-radius:14px;background:var(--teal-l)}
+  .fb.bad{background:var(--tang-l)}
+  .fb b.head{display:block;font:700 18px Poppins,sans-serif;margin-bottom:4px}
+  .fb p{margin:0 0 6px;font-size:16px}
+
+  .stage{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+  .box{width:120px;height:auto}
+  .lid{transform-origin:20px 44px;transition:transform .6s cubic-bezier(.3,1.5,.5,1)}
+  .box.open .lid{transform:rotate(-38deg)}
+  .crack{opacity:0;transition:opacity .3s}
+  .box.cracked .crack{opacity:1}
+  .box.cracked{animation:jolt .3s linear 3}
+  @keyframes jolt{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+  .box.paradox{animation:flip 1.4s ease-in-out 2}
+  @keyframes flip{25%{transform:rotate(-8deg) scale(.95)}50%{transform:rotate(8deg) scale(1.05)}75%{transform:rotate(-4deg)}}
+  .sparkle{opacity:0}
+  .box.open .sparkle{opacity:1;animation:twinkle 1s ease-in-out infinite}
+  @keyframes twinkle{50%{opacity:.2}}
+  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif}
+  .cardtext.in{animation:pop .4s cubic-bezier(.2,.8,.3,1.3)}
+  @keyframes pop{from{transform:scale(.8) rotate(3deg);opacity:0}to{transform:rotate(-.8deg);opacity:1}}
+  .opts{display:grid;gap:10px;margin-top:14px;grid-template-columns:repeat(3,1fr)}
+  .opts button{min-height:58px;padding:10px 12px;border:1.5px solid #b89b67;border-radius:12px;background:#fff;font:600 17px/1.3 Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18)}
+  .opts button small{display:block;font-weight:400;font-size:13px;color:var(--mute)}
+  .opts button.right{background:var(--teal);color:#fff} .opts button.right small{color:#fff}
+  .opts button.wrong{background:var(--tang)}
+  .opts button:disabled{cursor:default}
+
+  table{width:100%;border-collapse:collapse;font:400 15px Poppins,sans-serif;margin:6px 0 12px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:2px dashed var(--sand);vertical-align:top}
+  th{font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+  .yes{color:var(--teal-d);font-weight:600} .nope{color:var(--tang-d);font-weight:600}
+  .code{display:inline-block;margin:6px 0 4px;padding:10px 18px;border:3px dashed var(--ink);border-radius:12px;background:var(--sand);font:700 24px Poppins,sans-serif;letter-spacing:.1em}
+  .scores{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 14px}
+  .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
+  .scores b{display:block;font:700 22px Poppins,sans-serif}
+  .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
+  @media (max-width:560px){ .opts{grid-template-columns:1fr} .stage{grid-template-columns:80px 1fr} .box{width:80px} }
+  @media (prefers-reduced-motion:reduce){ .box,.lid,.sparkle,.cardtext.in{animation:none;transition:none} }
+
+  /* ===== reading look (added by tools/reskin_games.py) ===== */
+  html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
+            background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:radial-gradient(1.2px 1.2px at 12% 30%,#f7d774 50%,transparent 51%),radial-gradient(1px 1px at 38% 70%,#fff 50%,transparent 51%),
+      radial-gradient(1.4px 1.4px at 66% 44%,#f7d774 50%,transparent 51%),radial-gradient(1px 1px at 84% 82%,#fff 50%,transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 88%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 92% 18%,#f7d774 50%,transparent 51%)}
+  html,body{overflow-x:hidden}
+  .sky-deco{position:absolute;left:0;right:0;top:0;width:100%;height:210px;pointer-events:none;z-index:0;overflow:hidden}
+  .app{position:relative;z-index:1}
+  .top{min-height:110px;align-items:flex-end;padding-bottom:6px}
+  .t1{font-family:"Cormorant Garamond",Georgia,serif !important;font-weight:700 !important;font-size:clamp(30px,5.5vw,44px) !important;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+  .t2{font:600 12px Poppins,sans-serif !important;letter-spacing:.18em;text-transform:uppercase;color:#f7d774 !important}
+  .panel{background:#f6ecd6;border:1.5px solid #c99a2e !important;border-radius:12px;box-shadow:0 16px 30px rgba(0,0,0,.45), inset 0 -6px 0 #d6c193 !important}
+  h2{font-family:"Cormorant Garamond",Georgia,serif !important;font-weight:700 !important;font-size:28px !important;color:#0d1b3d}
+  p{font-family:"Cormorant Garamond",Georgia,serif !important;font-size:19.5px !important;line-height:1.5 !important;color:#2b2117}
+  p.small,.small{font-family:Poppins,sans-serif !important;font-size:13px !important;color:#6f5f47 !important}
+  .fb p{font-size:18.5px !important}
+  p.label{font-family:Poppins,sans-serif !important;font-size:12px !important;letter-spacing:.12em}
+  .big{background:#f7d774 !important;color:#0d1b3d !important;border:1.5px solid #9a7114 !important;border-radius:999px !important;box-shadow:0 4px 0 #9a7114 !important;font-family:Poppins,sans-serif !important;font-weight:600 !important}
+  .big:active{transform:translateY(3px) !important;box-shadow:0 1px 0 #9a7114 !important}
+  .big.alt{background:#fbf5e6 !important;border-color:#1d3a7a !important;box-shadow:0 4px 0 #1d3a7a !important}
+  .big.plum{background:#1d3a7a !important;color:#f7d774 !important;border-color:#0d1b3d !important;box-shadow:0 4px 0 #0d1b3d !important}
+  .code{background:#0d1b3d !important;color:#f7d774 !important;border:2px dashed #f7d774 !important;font-family:Poppins,sans-serif !important}
+  .badge rect:first-child{fill:#f7d774}
+  .case p,.case .belief,.card .claim,.claim,.claimcard,.quote,.reply,.blk,.q,.cardtext{font-family:"Cormorant Garamond",Georgia,serif !important}
+  .case p,.card .claim,.claim,.claimcard,.quote,.reply,.cardtext{font-size:22px !important;font-weight:600 !important}
+  .blk{font-size:19px !important} .q{font-size:21px !important;font-weight:700 !important}
+  .fb{border-radius:10px !important}
+  .fb b.head{font-family:"Cormorant Garamond",Georgia,serif !important;font-size:21px !important}
+  table{font-family:Poppins,sans-serif}
+  .sk-flow{animation:skflow 14s linear infinite} .sk-slow{animation-duration:22s}
+  .sk-spin{transform-box:fill-box;transform-origin:center;animation:skspin 40s linear infinite}
+  .sk-tw{animation:sktw 3.2s ease-in-out infinite} .sk-tw:nth-child(2n){animation-delay:1.1s} .sk-tw:nth-child(3n){animation-delay:2s}
+  .sk-pulse{transform-box:fill-box;transform-origin:center;animation:skpulse 5s ease-in-out infinite}
+  @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
+  @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+</style>
+</head>
+<body>
+<svg class="sky-deco" viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><radialGradient id="skyglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/><stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/><stop offset="1" stop-color="#f7d774" stop-opacity="0"/></radialGradient></defs>
+  <g fill="none" stroke-linecap="round">
+    <path class="sk-flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".5" stroke-width="10" stroke-dasharray="18 10"/>
+    <path class="sk-flow sk-slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".3" stroke-width="6" stroke-dasharray="12 9"/>
+    <path class="sk-spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".6" stroke-width="5" stroke-dasharray="10 7"/>
+  </g>
+  <g stroke="#f7d774" stroke-opacity=".45" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+  <g fill="#f7d774"><circle class="sk-tw" cx="760" cy="38" r="2.5"/><circle class="sk-tw" cx="850" cy="52" r="3"/><circle class="sk-tw" cx="930" cy="80" r="2.5"/><circle class="sk-tw" cx="140" cy="38" r="2"/><circle class="sk-tw" cx="430" cy="28" r="1.6"/><circle class="sk-tw" cx="660" cy="160" r="1.8"/><circle class="sk-tw" cx="1010" cy="160" r="2"/><circle class="sk-tw" cx="240" cy="180" r="1.5"/></g>
+  <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
+  <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+</svg>
+<div class="app">
+  <div class="top">
+    <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="8" y="21" width="32" height="23" rx="6" fill="#b5522e" stroke="#2b2117" stroke-width="3"/>
+      <path d="M15 21 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#2b2117" stroke-width="3"/>
+      <circle cx="24" cy="31" r="3.2" fill="#2b2117"/><rect x="22.4" y="32" width="3.2" height="7" rx="1.6" fill="#2b2117"/>
+    </svg>
+    <div>
+      <h1 class="t1">The Liar's Lockbox</h1>
+      <div class="t2">How Do You Know? · Lock 7</div>
+    </div>
+  </div>
+
+  <section id="sIntro">
+    <div class="panel">
+      <h2>Every sentence is a key</h2>
+      <p>Each sentence goes into the lockbox. Some <b>unlock cleanly</b>: they can simply be true. Some <b>defeat themselves</b>: if they were true, they'd have to be false, so they're just false. And some are <b>paradoxes</b>: true if false and false if true, so they jam the lock.</p>
+      <p>Round 2 is the <b>Theory Desk</b>: match each statement to the theory of truth behind it, correspondence, coherence or pragmatist.</p>
+      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <div class="center"><button class="big" id="startBtn">Try the first key</button></div>
+    </div>
+  </section>
+
+  <section id="sQuiz" class="hidden">
+    <div class="panel">
+      <div class="step" id="qStep"></div>
+      <h2 id="qTitle"></h2>
+      <div class="stage">
+        <svg class="box" id="box" viewBox="0 0 120 110" aria-hidden="true">
+          <g class="sparkle" fill="#f7d774"><path d="M60 6 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/><circle cx="32" cy="18" r="3"/><circle cx="92" cy="16" r="3"/></g>
+          <rect x="16" y="48" width="88" height="54" rx="8" fill="#e6d3a8" stroke="#2b2117" stroke-width="3"/>
+          <path class="crack" d="M58 50 l-6 14 l8 8 l-7 14 l5 14" fill="none" stroke="#2b2117" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="50" y="62" width="20" height="20" rx="4" fill="#1d3a7a" stroke="#2b2117" stroke-width="2.5"/>
+          <circle cx="60" cy="70" r="3" fill="#f7d774"/><rect x="58.5" y="71" width="3" height="7" rx="1.5" fill="#f7d774"/>
+          <g class="lid"><rect x="12" y="34" width="96" height="16" rx="6" fill="#d6c193" stroke="#2b2117" stroke-width="3"/></g>
+        </svg>
+        <div class="cardtext" id="qText"></div>
+      </div>
+      <div class="opts" id="qOpts"></div>
+      <div class="fb hidden" id="qFb"></div>
+      <div class="go hidden" id="qNextWrap"><button class="big" id="qNext">Next</button></div>
+    </div>
+  </section>
+
+  <section id="sEnd" class="hidden">
+    <div class="panel">
+      <h2>The box is open: what you reported</h2>
+      <div class="scores" id="scores"></div>
+      <table>
+        <thead><tr><th>Item</th><th>You said</th><th>Answer</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p>Your code word:</p>
+      <div class="center"><span class="code" id="code"></span></div>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores and the code word. Then Rocky will play Protagoras, and it's your job to catch him in his own trap.</p>
+      <div class="center"><button class="big alt" id="again">Play again</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const CODE='QUARTZ MIRROR';
+  const K=['<b>Unlocks cleanly</b><small>can simply be true</small>','<b>Defeats itself</b><small>if true, then false</small>','<b>Paradox</b><small>true if false, false if true</small>'];
+  const KN=['Unlocks cleanly','Defeats itself','Paradox'];
+  const R1=[
+    {t:"There is no truth.", a:1, why:"If it were true, there would be at least one truth (itself), so it would be false. It defeats itself, so it's simply false."},
+    {t:"This sentence has five words.", a:0, why:"Count them: This, sentence, has, five, words. It talks about itself, and it's just true. Self-reference alone isn't a problem."},
+    {t:"This sentence is false.", a:2, why:"The liar. If it's true, it's false; if it's false, it's true. No stable answer: a paradox."},
+    {t:"All generalizations are false.", a:1, why:"It's a generalization itself, so if it were true it would be false. Self-defeating."},
+    {t:"This sentence is written in English.", a:0, why:"It is. Talking about yourself is fine as long as it doesn't loop back on your own truth."},
+    {t:"Whatever anyone believes is true.", a:1, why:"Plato's trap for Protagoras, in its simplest form. Plenty of people believe this sentence is false. If whatever anyone believes is true, then it's true that the sentence is false."},
+    {t:"Front of a card: “The sentence on the back is true.” Back of the card: “The sentence on the front is false.”", a:2, why:"Follow it around: if the front is true, the back is true, so the front is false, and so on forever. A two-step liar, a paradox."},
+    {t:"I know for certain that nobody can ever know anything.", a:1, why:"If nobody can know anything, then you can't know that either. The claim knocks out its own support."}
+  ];
+  const T=['<b>Correspondence</b><small>matches the facts</small>','<b>Coherence</b><small>fits the whole system</small>','<b>Pragmatist</b><small>works out under testing</small>'];
+  const TN=['Correspondence','Coherence','Pragmatist'];
+  const R2=[
+    {t:"“The cat is on the mat” is true because the cat really is on the mat.", a:0, why:"Truth as matching the world: Aristotle's idea, the correspondence theory."},
+    {t:"A belief is true when it fits, without contradiction, into our whole system of beliefs.", a:1, why:"Truth as fit with the whole: the coherence theory."},
+    {t:"True ideas are the ones that keep holding up and guiding us well as we test them.", a:2, why:"William James's pragmatism."},
+    {t:"A map is true when its roads and rivers match the land.", a:0, why:"The map picture is the classic image of correspondence."},
+    {t:"Truth is the opinion that everyone who investigates would end up agreeing on.", a:2, why:"Charles Sanders Peirce's pragmatist definition (1878)."},
+    {t:"No belief is true on its own. It's true by belonging to the one consistent story everything else fits into.", a:1, why:"Truth as membership in a consistent whole: coherence."}
+  ];
+  const $=id=>document.getElementById(id);
+  let items=[], k=0, s=[0,0], log=[];
+  function show(id){ ['sIntro','sQuiz','sEnd'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); window.scrollTo(0,0); }
+  function build(){
+    items=[];
+    R1.forEach((r,i)=>items.push({round:0, step:'Round 1 · The Lockbox · '+(i+1)+' of '+R1.length, title:'What happens when this key goes in?', text:r.t, opts:K, a:r.a, why:r.why, names:KN, box:true}));
+    R2.forEach((r,i)=>items.push({round:1, step:'Round 2 · The Theory Desk · '+(i+1)+' of '+R2.length, title:'Which theory of truth is this?', text:r.t, opts:T, a:r.a, why:r.why, names:TN, box:false}));
+  }
+  function showItem(){
+    const it=items[k];
+    $('qStep').textContent=it.step; $('qTitle').textContent=it.title;
+    const box=$('box'); box.setAttribute('class','box'); box.style.visibility = it.box ? 'visible' : 'hidden';
+    const c=$('qText'); c.textContent=it.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    const o=$('qOpts'); o.innerHTML=it.opts.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
+    $('qFb').classList.add('hidden'); $('qNextWrap').classList.add('hidden');
+  }
+  function answer(i){
+    const it=items[k], ok=i===it.a; if(ok) s[it.round]++;
+    if(it.box) $('box').setAttribute('class','box '+['open','cracked','paradox'][it.a]);
+    $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===it.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
+    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'Right.':'Not this time.')+' '+it.names[it.a]+'.</b><p>'+it.why+'</p>';
+    log.push({c:it.text.length>64?it.text.slice(0,62)+'…':it.text, you:it.names[i], ans:it.names[it.a], ok});
+    const last=k===items.length-1, nextRound=!last && items[k+1].round!==it.round;
+    $('qNext').textContent= last ? 'See my results' : (nextRound ? 'On to the Theory Desk' : 'Next key');
+    $('qNextWrap').classList.remove('hidden');
+  }
+  $('qNext').onclick=()=>{ k++; if(k<items.length) showItem(); else finish(); };
+  $('startBtn').onclick=()=>{ build(); k=0; show('sQuiz'); showItem(); };
+  function finish(){
+    show('sEnd');
+    $('scores').innerHTML='<div><b>'+s[0]+' / '+R1.length+'</b><span>lockbox</span></div><div><b>'+s[1]+' / '+R2.length+'</b><span>theory desk</span></div>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
+    $('code').textContent=CODE;
+  }
+  $('again').onclick=()=>{ s=[0,0]; log=[]; show('sIntro'); };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Is Truth, Anyway?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0d1b3d; --night2:#1d3a7a; --star:#f7d774; --gold:#9a7114;
+    --parch:#f6ecd6; --parch2:#eadbb8; --ink:#2b2117; --rule:#b89b67;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--night);font-family:Poppins,system-ui,sans-serif}
+  .reading{max-width:1100px;margin:0 auto;min-height:100vh;background:var(--night)}
+
+  /* ---- moving sky ---- */
+  .sky{position:relative;height:210px;background:radial-gradient(ellipse at 70% 30%,#2d57a8 0%,var(--night2) 35%,var(--night) 75%);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .head{position:absolute;left:20px;bottom:32px;right:20px;color:#fff}
+  .course{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--star)}
+  h1{font:700 clamp(28px,5vw,44px)/1.05 "Cormorant Garamond",Georgia,serif;margin:6px 0 0;text-shadow:0 2px 12px rgba(0,0,0,.5);color:#fff}
+  .toggle{position:absolute;top:14px;right:14px;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;z-index:2}
+  .toggle button{border:0;background:transparent;color:#fff;font:600 12px Poppins;padding:7px 13px;border-radius:999px;cursor:pointer}
+  .toggle button.on{background:var(--star);color:var(--night)}
+  .flow{animation:flow 14s linear infinite}
+  .flow.slow{animation-duration:22s}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+  .tw{animation:tw 3.2s ease-in-out infinite}
+  .tw:nth-child(2n){animation-delay:1.1s} .tw:nth-child(3n){animation-delay:2s}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}
+  .shoot{animation:shoot 9s ease-in 3s infinite;opacity:0}
+  @keyframes flow{to{stroke-dashoffset:-280}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%{opacity:0;transform:translate(-220px,90px)}100%{opacity:0;transform:translate(-220px,90px)}}
+
+  /* ---- flipping book ---- */
+  .bookwrap{position:relative;margin:-18px 16px 0;perspective:2200px}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;height:600px;
+        background:linear-gradient(90deg,var(--parch2) 0%,var(--parch) 6%,var(--parch) 47%,#d9c69d 50%,var(--parch) 53%,var(--parch) 94%,var(--parch2) 100%);
+        border-radius:6px 6px 10px 10px;box-shadow:0 14px 24px rgba(0,0,0,.35), inset 0 -6px 0 #d6c193}
+  .slot{position:relative;overflow:hidden}
+  .curl{position:absolute;right:0;bottom:0;width:40px;height:40px;z-index:4;border:0;padding:0;cursor:pointer;
+        background:linear-gradient(225deg,transparent 50%,#e2cfa3 50%,#fbf4e3 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.14);border-radius:0 0 6px 0;
+        animation:nudge 2.4s ease-in-out 1.2s 3}
+  @keyframes nudge{0%,100%{width:40px;height:40px}50%{width:58px;height:58px}}
+  .leaf{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.3,1);z-index:5}
+  .leaf.fwd{left:50%;transform-origin:left center}
+  .leaf.back{left:0;transform-origin:right center}
+  .single .leaf{width:100%;left:0;transform-origin:left center}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--parch)}
+  .face.b{transform:rotateY(180deg)}
+  .leaf.fwd .face.f,.leaf.back .face.b{background:linear-gradient(90deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd .face.b,.leaf.back .face.f{background:linear-gradient(270deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd.go{transform:rotateY(-180deg)} .leaf.back.go{transform:rotateY(180deg)}
+  .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 60%);opacity:0;transition:opacity .45s}
+  .leaf.go .shade{opacity:1}
+  .page{height:100%;overflow-y:auto;padding:28px 34px 40px;font:500 18.5px/1.55 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+  .page h2{font:700 27px/1.15 "Cormorant Garamond",Georgia,serif;margin:0 0 10px;color:var(--night)}
+  .page p{margin:0 0 14px}
+  .page ol{margin:0 0 14px;padding-left:24px}
+  .drop::first-letter{float:left;font:700 58px/0.85 "Cormorant Garamond",serif;color:var(--night2);padding:6px 8px 0 0}
+  .key{border:1.5px solid #c99a2e;background:rgba(247,215,116,.22);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:18px}
+  .key .k{display:block;font:600 11px Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .key p{margin:0 0 6px} .key p:last-child{margin:0}
+  .quote{border-left:3px solid var(--rule);padding-left:14px;font-style:italic;color:#4a3b29;font-size:21px}
+  .src{font:400 12px/1.55 Poppins;color:#6f5f47}
+  .more::after{content:"scroll for more \2193";position:absolute;left:0;right:0;bottom:0;height:64px;padding-top:34px;text-align:center;font:600 11px Poppins;letter-spacing:.08em;color:#8a6a2a;pointer-events:none;
+         background:linear-gradient(rgba(246,236,214,0),var(--parch) 55%)}
+  .more .pnum{display:none}
+  .pnum{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:500 14px "Cormorant Garamond",serif;color:#8a7756;pointer-events:none}
+  .extended{display:none}
+  .show-ext .extended{display:block}
+  .tag-ext{font:600 10px Poppins;letter-spacing:.12em;text-transform:uppercase;color:var(--night2);background:#dfe8f7;border-radius:4px;padding:2px 6px;margin-right:6px;vertical-align:2px}
+  .fig{display:flex;justify-content:center;margin:4px 0 12px}
+  .fig svg{width:100%;max-width:215px}
+  .ring{transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring.r2{animation-delay:1.3s} .ring.r3{animation-delay:2.6s}
+  .pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 0 24px;color:#dce8fb;font:600 13px Poppins}
+  .pager button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--star);background:transparent;color:var(--star);font:600 22px/1 Poppins;cursor:pointer}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .hint{text-align:center;color:#9fb6dc;font:400 12px Poppins;margin-top:-14px;padding-bottom:20px}
+  .single .book{grid-template-columns:1fr;background:linear-gradient(90deg,#e8d8b4,var(--parch) 6%)}
+  .single .slot.l{display:none}
+  @media (max-width:720px){
+    .bookwrap{margin:-16px 10px 0}
+    .book{height:max(440px,calc(100vh - 290px))}
+    .page{padding:22px 20px 44px;font-size:18px}
+    .head{bottom:26px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flow,.spin,.tw,.pulse,.ring,.curl,.shoot{animation:none}
+    .leaf{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="reading" id="reading">
+  <header class="sky">
+    <svg viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f7d774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#7fa8e8" stroke-opacity=".12" fill="none">
+        <path d="M0 55 Q550 15 1100 55"/><path d="M0 110 Q550 70 1100 110"/><path d="M0 165 Q550 125 1100 165"/>
+        <path d="M180 0 Q160 105 180 210"/><path d="M420 0 Q400 105 420 210"/><path d="M660 0 Q640 105 660 210"/><path d="M900 0 Q880 105 900 210"/>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path class="flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".55" stroke-width="10" stroke-dasharray="18 10"/>
+        <path class="flow slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".35" stroke-width="6" stroke-dasharray="12 9"/>
+        <path class="spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".7" stroke-width="5" stroke-dasharray="10 7"/>
+        <path class="spin" d="M300 65 m-28 0 a28 28 0 1 1 56 0 a18 18 0 1 1 -36 0 a8 8 0 1 1 16 0" stroke="#dce8fb" stroke-opacity=".45" stroke-width="4" stroke-dasharray="8 6"/>
+      </g>
+      <g stroke="#f7d774" stroke-opacity=".5" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+      <g fill="#f7d774">
+        <circle class="tw" cx="760" cy="38" r="2.5"/><circle class="tw" cx="800" cy="66" r="2"/><circle class="tw" cx="850" cy="52" r="3"/><circle class="tw" cx="880" cy="90" r="2"/><circle class="tw" cx="930" cy="80" r="2.5"/>
+        <circle class="tw" cx="140" cy="38" r="2"/><circle class="tw" cx="430" cy="28" r="1.6"/><circle class="tw" cx="660" cy="160" r="1.8"/><circle class="tw" cx="1010" cy="160" r="2"/><circle class="tw" cx="240" cy="180" r="1.5"/>
+      </g>
+      <line class="shoot" x1="700" y1="20" x2="730" y2="8" stroke="#fff6c8" stroke-width="2" stroke-linecap="round"/>
+      <circle class="pulse" cx="560" cy="90" r="36" fill="url(#glow)"/>
+      <circle class="pulse" cx="300" cy="65" r="22" fill="url(#glow)"/>
+      <circle cx="990" cy="66" r="44" fill="url(#glow)"/>
+      <path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+    </svg>
+    <div class="toggle" role="group" aria-label="Reading length">
+      <button id="bCore" class="on">Core</button>
+      <button id="bExt">Extended</button>
+    </div>
+    <div class="head">
+      <div class="course">How Do You Know? · Lock 7</div>
+      <h1>What Is Truth, Anyway?</h1>
+    </div>
+  </header>
+
+  <div class="bookwrap" id="wrap">
+    <div class="book" id="book">
+      <div class="slot l" id="slotL"></div>
+      <div class="slot r" id="slotR"></div>
+    </div>
+  </div>
+  <nav class="pager">
+    <button id="prev" aria-label="Previous page">&#8249;</button>
+    <span id="where" aria-live="polite"></span>
+    <button id="next" aria-label="Next page">&#8250;</button>
+  </nav>
+  <div class="hint">Tap the arrows, the page corner, or swipe to turn the page.</div>
+</main>
+
+<!-- Built from resources/M07Know.md by tools/build_readings.py. Edit the .md file, then rebuild. -->
+<div id="pages" hidden>
+<section>
+  <h2>"That's true for me"</h2>
+  <p class="drop">You've probably heard someone end an argument with "Well, that's true for me." Sometimes it's a fair point: "pineapple on pizza is delicious" really might be a matter of taste. Other times it sounds strange: is "the Earth is round" only true for some people?</p>
+  <p>Every lock so far has leaned on truth. In Lock 1, knowledge needed a belief that was <em>true</em>. Justification, testimony and induction are all ways of trying to <em>get</em> to the truth. So what is it we're trying to get to?</p>
+  <p>This lock looks at the main answers, and at a few sentences that seem to break the whole idea.</p>
+</section>
+<section>
+  <h2>Saying it like it is</h2>
+  <p>Aristotle gave the oldest and simplest answer, here in W. D. Ross's 1908 translation of his <em>Metaphysics</em>:</p>
+  <p class="quote">To say of what is that it is not, or of what is not that it is, is false, while to say of what is that it is, and of what is not that it is not, is true.</p>
+  <p>This became the <b>correspondence theory</b>: a belief or sentence is true when it matches the way things are. "The cat is on the mat" is true if, and only if, the cat is actually on the mat. A true belief is like an accurate map.</p>
+  <div class="fig"><svg viewBox="0 0 300 130" role="img" aria-label="a sentence on a card connected by a line to the scene it describes, a cat sitting on a mat">
+  <rect x="8" y="34" width="118" height="46" rx="6" fill="#fbf5e6" stroke="#9a7114" stroke-width="2"/>
+  <text x="67" y="62" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="15" fill="#2b2117">"The cat is on the mat."</text>
+  <path class="flow" d="M128 57 C 160 40, 180 70, 200 60" fill="none" stroke="#1d3a7a" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <rect x="200" y="96" width="86" height="12" rx="3" fill="#7b3f61" fill-opacity=".35" stroke="#7b3f61" stroke-width="1.5"/>
+  <g class="pulse" fill="#2b2117">
+    <ellipse cx="243" cy="84" rx="20" ry="14"/><circle cx="258" cy="66" r="10"/>
+    <path d="M251 59 l2 -9 l5 7 z M261 57 l4 -8 l2 9 z"/><path d="M224 88 q-14 -2 -12 -16" fill="none" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg></div>
+  <p>The worries come from the hard cases. What fact does "7 + 5 = 12" match? Or "cruelty for fun is wrong"? Or a claim about the future, which hasn't happened yet? Correspondence theorists have answers, but each one takes work.</p>
+</section>
+<section>
+  <h2>Truth as fit</h2>
+  <p>The <b>coherence theory</b> says a belief is true when it fits into a whole consistent system of beliefs, with no contradictions and lots of mutual support. Some idealist philosophers of the late 1800s and early 1900s held views like this.</p>
+  <p>This is a different question from Lock 4. There, coherence was a theory of <em>justification</em>: what makes you reasonable to believe something. Here, it's a theory of <em>truth</em>: what makes the belief right.</p>
+  <p>The big problem is the one from Lock 4, with higher stakes. Two different fantasy worlds could each be perfectly coherent and contradict each other. If truth is just coherence, are they both true?</p>
+</section>
+<section>
+  <h2>Truth that works</h2>
+  <p>In the United States around 1900, the <b>pragmatists</b> asked a practical question: what difference does it make whether a belief is true?</p>
+  <p>Charles Sanders Peirce, in 1878, said truth is where honest inquiry would end up: "the opinion which is fated to be ultimately agreed to by all who investigate." William James went further in 1907. He wrote that the true is "only the expedient in the way of our thinking": the ideas that hold up, guide us well and keep working as we test them.</p>
+  <p>Critics pounced on James. Lots of false beliefs are useful, and some true ones are useless or painful. Isn't a belief true because of how things are, not because believing it pays off? James's defenders say he meant something richer than "useful": ideas that survive verification in the long run.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>In 1933 the Polish logician Alfred Tarski gave a precise rule any theory of truth must meet, often stated as: "Snow is white" is true if and only if snow is white. Some later philosophers, called <b>deflationists</b>, argue that's nearly all there is to say about truth.</p>
+</section>
+<section>
+  <h2>Man is the measure</h2>
+  <p>Long before any of these, the Greek thinker Protagoras made the most radical claim. In Benjamin Jowett's translation of Plato's <em>Theaetetus</em>:</p>
+  <p class="quote">Man, he says, is the measure of all things, of the existence of things that are, and of the non-existence of things that are not</p>
+  <p>Plato took this to mean that whatever seems true to each person <em>is</em> true for that person. There's no truth beyond how things seem to each of us. That's <b>relativism</b> about truth.</p>
+  <div class="key"><span class="k">Key term</span><p><b>Relativism about truth</b>: the view that truth isn't the same for everyone; a claim can be true for one person and false for another.</p></div>
+</section>
+<section>
+  <h2>The trap Protagoras sets for himself</h2>
+  <p>Plato's Socrates found a trap built into the view. If every person's opinion is true for them, then the many people who think Protagoras is <em>wrong</em> are also right. In the dialogue Socrates says:</p>
+  <p class="quote">he acknowledges the truth of their opinion who believe his own opinion to be false</p>
+  <p>This is called <b>self-refutation</b>: a claim that undermines itself. "There is no truth" has the same problem. If it's true, there's at least one truth, so it's false.</p>
+  <p>Not every "true for me" is a trap. Matters of taste, or facts that depend on us, like what money is worth or what the rules of a game are, can vary between people or places. The trap springs only when <em>every</em> truth is said to be relative, including that one.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>Some modern relativists limit their view to particular areas, such as taste or etiquette, precisely to avoid Plato's argument. Whether moral truths belong in that list is one of philosophy's biggest open questions.</p>
+</section>
+<section>
+  <h2>The liar</h2>
+  <p>Some sentences make trouble for every theory at once. Around 2,400 years ago the Greek philosopher Eubulides asked about a man who says, "What I am saying now is a lie."</p>
+  <p>Try the modern version: <b>"This sentence is false."</b> If it's true, then what it says is right, so it's false. If it's false, then what it says is wrong, so it's true. It seems to be true exactly when it's false.</p>
+  <p>This is the <b>liar paradox</b>. It isn't just a party trick. It shaped modern logic: Tarski's work on truth was partly an attempt to keep paradoxes like it from wrecking formal languages. Philosophers still disagree about the best way out.</p>
+</section>
+<section>
+  <h2>Carry this with you</h2>
+  <p>Whatever truth turns out to be, the ideas in this course need it. Knowledge needs it, doubt aims at it, evidence points toward it, and testimony passes it along. You can believe that some things depend on taste or culture and still hold that "the Earth is round" isn't one of them. And the next time someone says "there's no such thing as truth," you'll know to ask: is <em>that</em> true?</p>
+</section>
+<section>
+  <h2>Your turn</h2>
+  <p>Next up is the game, the Liar's Lockbox. Some sentences unlock cleanly, some defeat themselves, and some are paradoxes. Then you'll match quotes to theories of truth.</p>
+  <p class="src">Sources: Aristotle, <em>Metaphysics</em> IV.7 (1011b), translated by W. D. Ross (1908; public domain); Plato, <em>Theaetetus</em> 152a and 171a, translated by Benjamin Jowett (public domain); C. S. Peirce, "How to Make Our Ideas Clear" (1878); W. James, <em>Pragmatism</em> (1907); A. Tarski, "The Concept of Truth in Formalized Languages" (1933). Original text written for this course by its author, with help from an AI assistant; quotations are from public-domain texts.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
+  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  const L=document.getElementById('slotL'), R=document.getElementById('slotR');
+  const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=matchMedia('(max-width: 720px)');
+  let single=narrow.matches, pos=0, busy=false;
+
+  function pageHTML(i){
+    if(i<0||i>=N) return '<div class="page"></div>';
+    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+  }
+  function watchMore(slot){
+    const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
+    const check=()=>slot.classList.toggle('more', pg.scrollHeight-pg.scrollTop-pg.clientHeight>8);
+    pg.addEventListener('scroll',check,{passive:true}); check();
+  }
+  function step(){ return single?1:2; }
+  function render(){
+    wrap.classList.toggle('single', single);
+    if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
+    else { L.innerHTML=pageHTML(pos); R.innerHTML=pageHTML(pos+1); }
+    if(pos+step()<N){
+      R.insertAdjacentHTML('beforeend','<button class="curl" aria-label="Turn the page"></button>');
+      R.querySelector('.curl').onclick=()=>turn(1);
+    }
+    [L,R].forEach(watchMore);
+    prev.disabled=pos===0; next.disabled=pos+step()>=N;
+    where.textContent=(single||pos+2>N)?('Page '+(pos+1)+' of '+N):('Pages '+(pos+1)+'–'+(pos+2)+' of '+N);
+  }
+  function turn(dir){
+    const to=pos+dir*step();
+    if(busy||to<0||to>=N) return;
+    if(reduce){ pos=to; render(); return; }
+    busy=true;
+    const leaf=document.createElement('div');
+    let front, back, startFlipped=false;
+    if(single){
+      leaf.className='leaf fwd';
+      if(dir>0){ front=pos; R.innerHTML=pageHTML(to); }
+      else { front=to; startFlipped=true; leaf.classList.add('go'); }
+      back=-1;
+    } else if(dir>0){ leaf.className='leaf fwd'; front=pos+1; back=pos+2; R.innerHTML=pageHTML(pos+3); }
+    else { leaf.className='leaf back'; front=pos; back=pos-1; L.innerHTML=pageHTML(pos-2); }
+    leaf.innerHTML='<div class="face f">'+pageHTML(front)+'<div class="shade"></div></div><div class="face b">'+pageHTML(back)+'<div class="shade"></div></div>';
+    book.appendChild(leaf);
+    leaf.getBoundingClientRect();
+    requestAnimationFrame(()=>{ if(startFlipped) leaf.classList.remove('go'); else leaf.classList.add('go'); });
+    setTimeout(()=>{ pos=to; leaf.remove(); render(); busy=false; }, 950);
+  }
+  prev.onclick=()=>turn(-1); next.onclick=()=>turn(1);
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') turn(1); if(e.key==='ArrowLeft') turn(-1); });
+  let x0=null, y0=null;
+  book.addEventListener('touchstart',e=>{x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  book.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
+    x0=null;
+  });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+
+  const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
+  function setLevel(ext){
+    document.getElementById('reading').classList.toggle('show-ext',ext);
+    [L,R].forEach(watchMore);
+    bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
+    try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
+  }
+  bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
+  setLevel(lvl==='extended');
+  render();
+})();
+</script>
+</body>
+</html>

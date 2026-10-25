@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who Do You Trust?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6ecd6; --dot:#eadbb8; --ink:#2b2117; --teal:#2e6b57; --teal-d:#24543f; --teal-l:#e4eee3;
+    --tang:#b5522e; --tang-d:#8f3c1f; --tang-l:#f6e2d6; --plum:#1d3a7a; --plum-l:#e3e9f5; --sand:#e6d3a8; --mute:#6f5f47;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg) ;font-family:Poppins,system-ui,sans-serif;color:var(--ink)}
+  button{font-family:inherit;color:inherit}
+  .app{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .badge{width:48px;height:48px;flex:none}
+  .t1{font:700 clamp(22px,4.5vw,30px)/1.05 Poppins,sans-serif;margin:0}
+  .t2{font:500 14px Poppins,sans-serif;color:var(--plum);margin-top:3px}
+  .panel{background:#fff;border:1.5px solid #b89b67;border-radius:20px;box-shadow:0 3px 8px rgba(43,33,23,.18);padding:20px}
+  h2{font:700 22px Poppins,sans-serif;margin:0 0 8px}
+  p{font:400 17px/1.5 Poppins,sans-serif;margin:0 0 12px}
+  .small{font-size:14px;color:var(--mute)}
+  .big{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:12px 24px;border:1.5px solid #b89b67;border-radius:14px;background:var(--tang);font:700 18px Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18)}
+  .big.alt{background:#fff}
+  .center{text-align:center}
+  .hidden{display:none !important}
+  .go{margin-top:16px;text-align:center}
+  .step{font:600 12px Poppins,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--plum);margin-bottom:6px}
+  .fb{margin-top:16px;padding:14px 16px;border:1.5px solid #b89b67;border-radius:14px;background:var(--teal-l)}
+  .fb.bad{background:var(--tang-l)}
+  .fb b.head{display:block;font:700 18px Poppins,sans-serif;margin-bottom:4px}
+  .fb p{margin:0 0 6px;font-size:16px}
+
+  .scale{display:block;width:220px;max-width:70%;height:auto;margin:0 auto 10px}
+  .beam{transform-origin:110px 40px;animation:tip 4s ease-in-out infinite}
+  @keyframes tip{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif}
+  .cardtext.in{animation:pop .4s cubic-bezier(.2,.8,.3,1.3)}
+  @keyframes pop{from{transform:scale(.8) rotate(3deg);opacity:0}to{transform:rotate(-.8deg);opacity:1}}
+  .opts{display:grid;gap:10px;margin-top:14px}
+  .opts.three{grid-template-columns:repeat(3,1fr)} .opts.two{grid-template-columns:1fr 1fr}
+  .opts button{min-height:54px;padding:10px 12px;border:1.5px solid #b89b67;border-radius:12px;background:#fff;font:600 17px/1.3 Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18)}
+  .opts.list button{text-align:left}
+  .opts button small{display:block;font-weight:400;font-size:13px;color:var(--mute)}
+  .opts button.right{background:var(--teal);color:#fff} .opts button.right small{color:#fff}
+  .opts button.wrong{background:var(--tang)}
+  .opts button:disabled{cursor:default}
+
+  table{width:100%;border-collapse:collapse;font:400 15px Poppins,sans-serif;margin:6px 0 12px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:2px dashed var(--sand);vertical-align:top}
+  th{font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+  .yes{color:var(--teal-d);font-weight:600} .nope{color:var(--tang-d);font-weight:600}
+  .code{display:inline-block;margin:6px 0 4px;padding:10px 18px;border:3px dashed var(--ink);border-radius:12px;background:var(--sand);font:700 24px Poppins,sans-serif;letter-spacing:.1em}
+  .scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
+  .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
+  .scores b{display:block;font:700 22px Poppins,sans-serif}
+  .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
+  @media (max-width:560px){ .opts.three,.opts.two{grid-template-columns:1fr} }
+  @media (prefers-reduced-motion:reduce){ .beam,.cardtext.in{animation:none} }
+
+  /* ===== reading look (added by tools/reskin_games.py) ===== */
+  html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
+            background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:radial-gradient(1.2px 1.2px at 12% 30%,#f7d774 50%,transparent 51%),radial-gradient(1px 1px at 38% 70%,#fff 50%,transparent 51%),
+      radial-gradient(1.4px 1.4px at 66% 44%,#f7d774 50%,transparent 51%),radial-gradient(1px 1px at 84% 82%,#fff 50%,transparent 51%),
+      radial-gradient(1.2px 1.2px at 22% 88%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 92% 18%,#f7d774 50%,transparent 51%)}
+  html,body{overflow-x:hidden}
+  .sky-deco{position:absolute;left:0;right:0;top:0;width:100%;height:210px;pointer-events:none;z-index:0;overflow:hidden}
+  .app{position:relative;z-index:1}
+  .top{min-height:110px;align-items:flex-end;padding-bottom:6px}
+  .t1{font-family:"Cormorant Garamond",Georgia,serif !important;font-weight:700 !important;font-size:clamp(30px,5.5vw,44px) !important;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+  .t2{font:600 12px Poppins,sans-serif !important;letter-spacing:.18em;text-transform:uppercase;color:#f7d774 !important}
+  .panel{background:#f6ecd6;border:1.5px solid #c99a2e !important;border-radius:12px;box-shadow:0 16px 30px rgba(0,0,0,.45), inset 0 -6px 0 #d6c193 !important}
+  h2{font-family:"Cormorant Garamond",Georgia,serif !important;font-weight:700 !important;font-size:28px !important;color:#0d1b3d}
+  p{font-family:"Cormorant Garamond",Georgia,serif !important;font-size:19.5px !important;line-height:1.5 !important;color:#2b2117}
+  p.small,.small{font-family:Poppins,sans-serif !important;font-size:13px !important;color:#6f5f47 !important}
+  .fb p{font-size:18.5px !important}
+  p.label{font-family:Poppins,sans-serif !important;font-size:12px !important;letter-spacing:.12em}
+  .big{background:#f7d774 !important;color:#0d1b3d !important;border:1.5px solid #9a7114 !important;border-radius:999px !important;box-shadow:0 4px 0 #9a7114 !important;font-family:Poppins,sans-serif !important;font-weight:600 !important}
+  .big:active{transform:translateY(3px) !important;box-shadow:0 1px 0 #9a7114 !important}
+  .big.alt{background:#fbf5e6 !important;border-color:#1d3a7a !important;box-shadow:0 4px 0 #1d3a7a !important}
+  .big.plum{background:#1d3a7a !important;color:#f7d774 !important;border-color:#0d1b3d !important;box-shadow:0 4px 0 #0d1b3d !important}
+  .code{background:#0d1b3d !important;color:#f7d774 !important;border:2px dashed #f7d774 !important;font-family:Poppins,sans-serif !important}
+  .badge rect:first-child{fill:#f7d774}
+  .case p,.case .belief,.card .claim,.claim,.claimcard,.quote,.reply,.blk,.q,.cardtext{font-family:"Cormorant Garamond",Georgia,serif !important}
+  .case p,.card .claim,.claim,.claimcard,.quote,.reply,.cardtext{font-size:22px !important;font-weight:600 !important}
+  .blk{font-size:19px !important} .q{font-size:21px !important;font-weight:700 !important}
+  .fb{border-radius:10px !important}
+  .fb b.head{font-family:"Cormorant Garamond",Georgia,serif !important;font-size:21px !important}
+  table{font-family:Poppins,sans-serif}
+  .sk-flow{animation:skflow 14s linear infinite} .sk-slow{animation-duration:22s}
+  .sk-spin{transform-box:fill-box;transform-origin:center;animation:skspin 40s linear infinite}
+  .sk-tw{animation:sktw 3.2s ease-in-out infinite} .sk-tw:nth-child(2n){animation-delay:1.1s} .sk-tw:nth-child(3n){animation-delay:2s}
+  .sk-pulse{transform-box:fill-box;transform-origin:center;animation:skpulse 5s ease-in-out infinite}
+  @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
+  @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+</style>
+</head>
+<body>
+<svg class="sky-deco" viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><radialGradient id="skyglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/><stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/><stop offset="1" stop-color="#f7d774" stop-opacity="0"/></radialGradient></defs>
+  <g fill="none" stroke-linecap="round">
+    <path class="sk-flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".5" stroke-width="10" stroke-dasharray="18 10"/>
+    <path class="sk-flow sk-slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".3" stroke-width="6" stroke-dasharray="12 9"/>
+    <path class="sk-spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".6" stroke-width="5" stroke-dasharray="10 7"/>
+  </g>
+  <g stroke="#f7d774" stroke-opacity=".45" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+  <g fill="#f7d774"><circle class="sk-tw" cx="760" cy="38" r="2.5"/><circle class="sk-tw" cx="850" cy="52" r="3"/><circle class="sk-tw" cx="930" cy="80" r="2.5"/><circle class="sk-tw" cx="140" cy="38" r="2"/><circle class="sk-tw" cx="430" cy="28" r="1.6"/><circle class="sk-tw" cx="660" cy="160" r="1.8"/><circle class="sk-tw" cx="1010" cy="160" r="2"/><circle class="sk-tw" cx="240" cy="180" r="1.5"/></g>
+  <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
+  <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+</svg>
+<div class="app">
+  <div class="top">
+    <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="8" y="21" width="32" height="23" rx="6" fill="#b5522e" stroke="#2b2117" stroke-width="3"/>
+      <path d="M15 21 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#2b2117" stroke-width="3"/>
+      <circle cx="24" cy="31" r="3.2" fill="#2b2117"/><rect x="22.4" y="32" width="3.2" height="7" rx="1.6" fill="#2b2117"/>
+    </svg>
+    <div>
+      <h1 class="t1">Who Do You Trust?</h1>
+      <div class="t2">How Do You Know? · Lock 6</div>
+    </div>
+  </div>
+
+  <section id="sIntro">
+    <div class="panel">
+      <svg class="scale" viewBox="0 0 220 130" aria-hidden="true">
+        <path d="M110 40 V118 M80 122 H140" stroke="#2b2117" stroke-width="5" stroke-linecap="round"/>
+        <g class="beam">
+          <path d="M30 40 H190" stroke="#2b2117" stroke-width="5" stroke-linecap="round"/>
+          <path d="M30 40 L14 82 M30 40 L46 82 M190 40 L174 82 M190 40 L206 82" stroke="#2b2117" stroke-width="2"/>
+          <path d="M10 82 Q30 98 50 82 Z" fill="#f7d774" stroke="#2b2117" stroke-width="3"/>
+          <path d="M170 82 Q190 98 210 82 Z" fill="#f7d774" stroke="#2b2117" stroke-width="3"/>
+          <rect x="20" y="66" width="20" height="14" rx="2" fill="#e3e9f5" stroke="#2b2117" stroke-width="2"/>
+          <circle cx="190" cy="74" r="7" fill="#e4eee3" stroke="#2b2117" stroke-width="2"/>
+        </g>
+        <circle cx="110" cy="40" r="7" fill="#1d3a7a" stroke="#2b2117" stroke-width="3"/>
+      </svg>
+      <h2>Weigh the source</h2>
+      <p>Three rounds. <b>Weigh It:</b> for each source, decide whether to trust it for now, ask for more evidence, or set it aside. Use Goldman's clues: arguments, agreement, credentials, interests and track record. <b>Bubble or Chamber?</b> Tell an epistemic bubble from an echo chamber. Then one last case about a disagreement between friends.</p>
+      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <div class="center"><button class="big" id="startBtn">Start weighing</button></div>
+    </div>
+  </section>
+
+  <section id="sQuiz" class="hidden">
+    <div class="panel">
+      <div class="step" id="qStep"></div>
+      <h2 id="qTitle"></h2>
+      <div class="cardtext" id="qText"></div>
+      <div class="opts" id="qOpts"></div>
+      <div class="fb hidden" id="qFb"></div>
+      <div class="go hidden" id="qNextWrap"><button class="big" id="qNext">Next</button></div>
+    </div>
+  </section>
+
+  <section id="sEnd" class="hidden">
+    <div class="panel">
+      <h2>Weighed and measured: what you reported</h2>
+      <div class="scores" id="scores"></div>
+      <table>
+        <thead><tr><th>Item</th><th>You said</th><th>Answer</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p>Your code word:</p>
+      <div class="center"><span class="code" id="code"></span></div>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores and the code word. Then he'll ask you to weigh a source you actually use.</p>
+      <div class="center"><button class="big alt" id="again">Play again</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const CODE='BRONZE BELL';
+  const W=['<b>Trust it, for now</b><small>good grounds</small>','<b>Needs more evidence</b><small>take it seriously, check</small>','<b>Set it aside</b><small>not a good source</small>'];
+  const WN=['Trust it, for now','Needs more evidence','Set it aside'];
+  const R1=[
+    {t:"Five independent research teams, in different countries, ran the same experiment and got the same result.", a:0, why:"Agreement among independent experts, each with their own data: about as strong as testimony gets. Still “for now”: new evidence could change it."},
+    {t:"A single study of 12 people, announced in a press release as a “breakthrough.”", a:1, why:"Not nothing, but one tiny study is easy to get wrong by chance. Worth watching for a bigger study before believing it."},
+    {t:"An anonymous post with no sources says a common fruit cures every kind of cancer.", a:2, why:"No name, no track record, no evidence, and a claim far bigger than any evidence offered. Hume's rule: it's far more likely the post is wrong."},
+    {t:"A Nobel-winning physicist gives confident advice about what you should eat.", a:1, any:[1,2], why:"Either answer is fair here. Brilliant in physics doesn't mean expert in nutrition. Credentials count most inside the expert's own field."},
+    {t:"A respected expert in her own field, asked for her evidence, says only: “Trust me, I'm the expert.”", a:1, why:"She's more likely than most to be right about her field, and she can still be wrong. “Trust me” isn't evidence. Ask to see it."},
+    {t:"Nearly every geologist accepts that the continents move. A handful dispute some of the details.", a:0, why:"Broad agreement among the people who study this, backed by a long track record of evidence. Disagreement about details is normal science."},
+    {t:"A company's own study finds that its product works better than every rival.", a:1, why:"The company gains if you believe it. That doesn't make it false, but you'd want an independent test."},
+    {t:"It's 1984. A young doctor says bacteria cause most stomach ulcers, against what nearly all the experts believe. He drinks the bacteria, gets sick, and antibiotics cure him.", a:1, why:"This is Barry Marshall's real story. One self-experiment isn't proof, but it's real evidence, and the right move was to test it further. When it was tested, he turned out to be right."}
+  ];
+  const R2=[
+    {t:"Maya only follows accounts about her favorite hobby, so she never sees any news about her town's elections.", a:0, why:"Other voices are missing by accident, not distrusted. A bubble: showing her the news would fix it."},
+    {t:"A group tells new members that every outside news source is secretly paid to lie about them.", a:1, why:"Outsiders are discredited in advance. That's the mark of an echo chamber."},
+    {t:"When a member shares outside evidence, the group says, “See? They're trying to fool you,” and trusts its leader even more.", a:1, why:"Outside evidence makes them trust the group more: an echo chamber, which Nguyen says needs rebuilt trust, not just more facts."},
+    {t:"A town's only newspaper closes, and people stop hearing anything about the school board.", a:0, why:"Information has gone missing, not been rejected. A bubble."}
+  ];
+  const R3={t:"You and an equally good friend split a restaurant bill in your heads and get slightly different answers. Neither of you has more information. What do conciliationists say you should do?",
+    opts:['Keep your answer; your friend made the mistake','Lower your confidence and check again','Go with whoever said it first'], a:1,
+    why:"Conciliationists, like David Christensen, say a peer's disagreement is evidence that one of you slipped, so you should both become less sure. Steadfast thinkers disagree, and this case is the one most people find easiest to concede."};
+  const $=id=>document.getElementById(id);
+  let items=[], k=0, s=[0,0,0], log=[];
+  function show(id){ ['sIntro','sQuiz','sEnd'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); window.scrollTo(0,0); }
+  function build(){
+    items=[];
+    R1.forEach((r,i)=>items.push({round:0, step:'Round 1 · Weigh It · '+(i+1)+' of '+R1.length, title:'How much weight does this deserve?', text:r.t, opts:W, cls:'three', a:r.a, any:r.any, why:r.why, names:WN}));
+    R2.forEach((r,i)=>items.push({round:1, step:'Round 2 · Bubble or Chamber? · '+(i+1)+' of '+R2.length, title:'Epistemic bubble or echo chamber?', text:r.t,
+      opts:['<b>Epistemic bubble</b><small>other voices missing</small>','<b>Echo chamber</b><small>other voices distrusted</small>'], cls:'two', a:r.a, why:r.why, names:['Bubble','Echo chamber']}));
+    items.push({round:2, step:'Last case', title:'When a friend disagrees', text:R3.t, opts:R3.opts, cls:'list', a:R3.a, why:R3.why, names:R3.opts});
+  }
+  function showItem(){
+    const it=items[k];
+    $('qStep').textContent=it.step; $('qTitle').textContent=it.title;
+    const c=$('qText'); c.textContent=it.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    const o=$('qOpts'); o.className='opts '+it.cls; o.innerHTML=it.opts.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
+    $('qFb').classList.add('hidden'); $('qNextWrap').classList.add('hidden');
+  }
+  function answer(i){
+    const it=items[k], ok=i===it.a||(it.any||[]).includes(i); if(ok) s[it.round]++;
+    $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a||(ok&&j===i)) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); });
+    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'Right.':'Not this time.')+'</b><p>'+it.why+'</p>';
+    log.push({c:it.text.length>70?it.text.slice(0,68)+'…':it.text, you:it.names[i], ans:it.names[it.a], ok});
+    const last=k===items.length-1, nextRound=!last && items[k+1].round!==it.round;
+    $('qNext').textContent= last ? 'See my results' : (nextRound ? (items[k+1].round===1?'On to Bubble or Chamber?':'One last case') : 'Next');
+    $('qNextWrap').classList.remove('hidden');
+  }
+  $('qNext').onclick=()=>{ k++; if(k<items.length) showItem(); else finish(); };
+  $('startBtn').onclick=()=>{ build(); k=0; show('sQuiz'); showItem(); };
+  function finish(){
+    show('sEnd');
+    $('scores').innerHTML='<div><b>'+s[0]+' / '+R1.length+'</b><span>weigh it</span></div><div><b>'+s[1]+' / '+R2.length+'</b><span>bubble or chamber</span></div><div><b>'+s[2]+' / 1</b><span>disagreement</span></div>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
+    $('code').textContent=CODE;
+  }
+  $('again').onclick=()=>{ s=[0,0,0]; log=[]; show('sIntro'); };
+})();
+</script>
+</body>
+</html>

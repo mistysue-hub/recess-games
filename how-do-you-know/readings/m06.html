@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Should You Take Their Word for It?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0d1b3d; --night2:#1d3a7a; --star:#f7d774; --gold:#9a7114;
+    --parch:#f6ecd6; --parch2:#eadbb8; --ink:#2b2117; --rule:#b89b67;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--night);font-family:Poppins,system-ui,sans-serif}
+  .reading{max-width:1100px;margin:0 auto;min-height:100vh;background:var(--night)}
+
+  /* ---- moving sky ---- */
+  .sky{position:relative;height:210px;background:radial-gradient(ellipse at 70% 30%,#2d57a8 0%,var(--night2) 35%,var(--night) 75%);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .head{position:absolute;left:20px;bottom:32px;right:20px;color:#fff}
+  .course{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--star)}
+  h1{font:700 clamp(28px,5vw,44px)/1.05 "Cormorant Garamond",Georgia,serif;margin:6px 0 0;text-shadow:0 2px 12px rgba(0,0,0,.5);color:#fff}
+  .toggle{position:absolute;top:14px;right:14px;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;z-index:2}
+  .toggle button{border:0;background:transparent;color:#fff;font:600 12px Poppins;padding:7px 13px;border-radius:999px;cursor:pointer}
+  .toggle button.on{background:var(--star);color:var(--night)}
+  .flow{animation:flow 14s linear infinite}
+  .flow.slow{animation-duration:22s}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+  .tw{animation:tw 3.2s ease-in-out infinite}
+  .tw:nth-child(2n){animation-delay:1.1s} .tw:nth-child(3n){animation-delay:2s}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}
+  .shoot{animation:shoot 9s ease-in 3s infinite;opacity:0}
+  @keyframes flow{to{stroke-dashoffset:-280}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%{opacity:0;transform:translate(-220px,90px)}100%{opacity:0;transform:translate(-220px,90px)}}
+
+  /* ---- flipping book ---- */
+  .bookwrap{position:relative;margin:-18px 16px 0;perspective:2200px}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;height:600px;
+        background:linear-gradient(90deg,var(--parch2) 0%,var(--parch) 6%,var(--parch) 47%,#d9c69d 50%,var(--parch) 53%,var(--parch) 94%,var(--parch2) 100%);
+        border-radius:6px 6px 10px 10px;box-shadow:0 14px 24px rgba(0,0,0,.35), inset 0 -6px 0 #d6c193}
+  .slot{position:relative;overflow:hidden}
+  .curl{position:absolute;right:0;bottom:0;width:40px;height:40px;z-index:4;border:0;padding:0;cursor:pointer;
+        background:linear-gradient(225deg,transparent 50%,#e2cfa3 50%,#fbf4e3 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.14);border-radius:0 0 6px 0;
+        animation:nudge 2.4s ease-in-out 1.2s 3}
+  @keyframes nudge{0%,100%{width:40px;height:40px}50%{width:58px;height:58px}}
+  .leaf{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.3,1);z-index:5}
+  .leaf.fwd{left:50%;transform-origin:left center}
+  .leaf.back{left:0;transform-origin:right center}
+  .single .leaf{width:100%;left:0;transform-origin:left center}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--parch)}
+  .face.b{transform:rotateY(180deg)}
+  .leaf.fwd .face.f,.leaf.back .face.b{background:linear-gradient(90deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd .face.b,.leaf.back .face.f{background:linear-gradient(270deg,#e8d8b4,var(--parch) 8%)}
+  .leaf.fwd.go{transform:rotateY(-180deg)} .leaf.back.go{transform:rotateY(180deg)}
+  .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.22),transparent 60%);opacity:0;transition:opacity .45s}
+  .leaf.go .shade{opacity:1}
+  .page{height:100%;overflow-y:auto;padding:28px 34px 40px;font:500 18.5px/1.55 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+  .page h2{font:700 27px/1.15 "Cormorant Garamond",Georgia,serif;margin:0 0 10px;color:var(--night)}
+  .page p{margin:0 0 14px}
+  .page ol{margin:0 0 14px;padding-left:24px}
+  .drop::first-letter{float:left;font:700 58px/0.85 "Cormorant Garamond",serif;color:var(--night2);padding:6px 8px 0 0}
+  .key{border:1.5px solid #c99a2e;background:rgba(247,215,116,.22);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:18px}
+  .key .k{display:block;font:600 11px Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .key p{margin:0 0 6px} .key p:last-child{margin:0}
+  .quote{border-left:3px solid var(--rule);padding-left:14px;font-style:italic;color:#4a3b29;font-size:21px}
+  .src{font:400 12px/1.55 Poppins;color:#6f5f47}
+  .more::after{content:"scroll for more \2193";position:absolute;left:0;right:0;bottom:0;height:64px;padding-top:34px;text-align:center;font:600 11px Poppins;letter-spacing:.08em;color:#8a6a2a;pointer-events:none;
+         background:linear-gradient(rgba(246,236,214,0),var(--parch) 55%)}
+  .more .pnum{display:none}
+  .pnum{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:500 14px "Cormorant Garamond",serif;color:#8a7756;pointer-events:none}
+  .extended{display:none}
+  .show-ext .extended{display:block}
+  .tag-ext{font:600 10px Poppins;letter-spacing:.12em;text-transform:uppercase;color:var(--night2);background:#dfe8f7;border-radius:4px;padding:2px 6px;margin-right:6px;vertical-align:2px}
+  .fig{display:flex;justify-content:center;margin:4px 0 12px}
+  .fig svg{width:100%;max-width:215px}
+  .ring{transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring.r2{animation-delay:1.3s} .ring.r3{animation-delay:2.6s}
+  .pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 0 24px;color:#dce8fb;font:600 13px Poppins}
+  .pager button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--star);background:transparent;color:var(--star);font:600 22px/1 Poppins;cursor:pointer}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .hint{text-align:center;color:#9fb6dc;font:400 12px Poppins;margin-top:-14px;padding-bottom:20px}
+  .single .book{grid-template-columns:1fr;background:linear-gradient(90deg,#e8d8b4,var(--parch) 6%)}
+  .single .slot.l{display:none}
+  @media (max-width:720px){
+    .bookwrap{margin:-16px 10px 0}
+    .book{height:max(440px,calc(100vh - 290px))}
+    .page{padding:22px 20px 44px;font-size:18px}
+    .head{bottom:26px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flow,.spin,.tw,.pulse,.ring,.curl,.shoot{animation:none}
+    .leaf{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="reading" id="reading">
+  <header class="sky">
+    <svg viewBox="0 0 1100 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f7d774" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f7d774" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#7fa8e8" stroke-opacity=".12" fill="none">
+        <path d="M0 55 Q550 15 1100 55"/><path d="M0 110 Q550 70 1100 110"/><path d="M0 165 Q550 125 1100 165"/>
+        <path d="M180 0 Q160 105 180 210"/><path d="M420 0 Q400 105 420 210"/><path d="M660 0 Q640 105 660 210"/><path d="M900 0 Q880 105 900 210"/>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path class="flow" d="M80 105 C 220 35, 380 165, 520 85 S 780 25, 900 105" stroke="#7fa8e8" stroke-opacity=".55" stroke-width="10" stroke-dasharray="18 10"/>
+        <path class="flow slow" d="M60 135 C 240 75, 360 195, 540 115 S 800 65, 1040 135" stroke="#b9d0f5" stroke-opacity=".35" stroke-width="6" stroke-dasharray="12 9"/>
+        <path class="spin" d="M560 90 m-46 0 a46 46 0 1 1 92 0 a34 34 0 1 1 -68 0 a22 22 0 1 1 44 0 a11 11 0 1 1 -22 0" stroke="#dce8fb" stroke-opacity=".7" stroke-width="5" stroke-dasharray="10 7"/>
+        <path class="spin" d="M300 65 m-28 0 a28 28 0 1 1 56 0 a18 18 0 1 1 -36 0 a8 8 0 1 1 16 0" stroke="#dce8fb" stroke-opacity=".45" stroke-width="4" stroke-dasharray="8 6"/>
+      </g>
+      <g stroke="#f7d774" stroke-opacity=".5" stroke-width="1" fill="none"><path d="M760 38 L800 66 L850 52 L880 90 L930 80"/></g>
+      <g fill="#f7d774">
+        <circle class="tw" cx="760" cy="38" r="2.5"/><circle class="tw" cx="800" cy="66" r="2"/><circle class="tw" cx="850" cy="52" r="3"/><circle class="tw" cx="880" cy="90" r="2"/><circle class="tw" cx="930" cy="80" r="2.5"/>
+        <circle class="tw" cx="140" cy="38" r="2"/><circle class="tw" cx="430" cy="28" r="1.6"/><circle class="tw" cx="660" cy="160" r="1.8"/><circle class="tw" cx="1010" cy="160" r="2"/><circle class="tw" cx="240" cy="180" r="1.5"/>
+      </g>
+      <line class="shoot" x1="700" y1="20" x2="730" y2="8" stroke="#fff6c8" stroke-width="2" stroke-linecap="round"/>
+      <circle class="pulse" cx="560" cy="90" r="36" fill="url(#glow)"/>
+      <circle class="pulse" cx="300" cy="65" r="22" fill="url(#glow)"/>
+      <circle cx="990" cy="66" r="44" fill="url(#glow)"/>
+      <path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
+    </svg>
+    <div class="toggle" role="group" aria-label="Reading length">
+      <button id="bCore" class="on">Core</button>
+      <button id="bExt">Extended</button>
+    </div>
+    <div class="head">
+      <div class="course">How Do You Know? · Lock 6</div>
+      <h1>Should You Take Their Word for It?</h1>
+    </div>
+  </header>
+
+  <div class="bookwrap" id="wrap">
+    <div class="book" id="book">
+      <div class="slot l" id="slotL"></div>
+      <div class="slot r" id="slotR"></div>
+    </div>
+  </div>
+  <nav class="pager">
+    <button id="prev" aria-label="Previous page">&#8249;</button>
+    <span id="where" aria-live="polite"></span>
+    <button id="next" aria-label="Next page">&#8250;</button>
+  </nav>
+  <div class="hint">Tap the arrows, the page corner, or swipe to turn the page.</div>
+</main>
+
+<!-- Built from resources/M06Know.md by tools/build_readings.py. Edit the .md file, then rebuild. -->
+<div id="pages" hidden>
+<section>
+  <h2>Most of what you know</h2>
+  <p class="drop">Do you know that the Earth goes around the Sun? That you were born on your birthday? That Antarctica exists? Almost certainly. Have you checked any of these yourself? Almost certainly not.</p>
+  <p>You learned them from parents, teachers, books, maps and videos. Philosophers call this source of knowledge <b>testimony</b>: believing something because someone told you. Without it you would know almost nothing beyond your own street, and nothing about anything before you were born.</p>
+  <p>So testimony is everywhere. The hard question is when it gives you knowledge, and when it just passes along someone else's mistake.</p>
+</section>
+<section>
+  <h2>Two Scottish answers</h2>
+  <p>In the 1700s two Scottish philosophers gave opposite answers.</p>
+  <p>David Hume, back again from Locks 3 and 5, said testimony is just another kind of evidence. You trust a witness only as far as experience has shown that witnesses like this are reliable. "A wise man, therefore, proportions his belief to the evidence."</p>
+</section>
+<section>
+  <h2>Trust as the starting point</h2>
+  <p>Thomas Reid answered in 1764 that this can't be how it works. A small child believes what she's told long before she has any experience of how reliable people are. Reid thought we are built with two matching instincts: a <em>principle of veracity</em>, a natural tendency to tell the truth, and a <em>principle of credulity</em>, a natural tendency to believe what we're told. Trust is the starting point. We pull it back only when we have a reason.</p>
+  <div class="key"><span class="k">Key terms</span><p><b>Reductionism</b> (Hume's side): testimony is justified only by other evidence, such as your experience of the speaker's reliability.</p><p><b>Anti-reductionism</b> (Reid's side): you're entitled to believe what you're told unless you have reason to doubt it.</p></div>
+</section>
+<section>
+  <h2>Miracles and the weight of evidence</h2>
+  <p>Hume applied his view to the hardest case: reports of miracles. In 1748 he proposed a rule:</p>
+  <p class="quote">That no testimony is sufficient to establish a miracle, unless the testimony be of such a kind, that its falsehood would be more miraculous, than the fact, which it endeavours to establish</p>
+  <p>In plain words: weigh which is more likely, that this report is mistaken or dishonest, or that the laws of nature were broken. Believe the more likely one. Hume thought reports of miracles almost always lose that contest.</p>
+  <p>This chapter of Hume's book is one of the most argued-over pieces of philosophy ever written. Critics say it stacks the deck: if you've decided in advance that miracles are near-impossible, no evidence could ever change your mind. Defenders say the rule simply asks you to weigh evidence honestly, and it works just as well for everyday wild claims.</p>
+</section>
+<section>
+  <h2>Which expert?</h2>
+  <p>Most of us can't check a climate model, a medical trial or a court ruling ourselves. So we rely on experts. But experts sometimes disagree. How can a non-expert choose?</p>
+  <p>In 2001 the American philosopher Alvin Goldman, whom you've met twice before, listed five kinds of clues a non-expert can still use:</p>
+  <ol><li><b>Arguments</b>: can you follow at least part of each side's reasoning?</li><li><b>Agreement</b>: how many other experts agree?</li><li><b>Credentials</b>: what do other experts say about this person's training and work?</li><li><b>Interests and biases</b>: does this person gain from your believing them?</li><li><b>Track record</b>: how often have they been right before?</li></ol>
+  <p>None of these is perfect. Together they're far better than going with whoever sounds most confident.</p>
+</section>
+<section>
+  <h2>When the experts were wrong</h2>
+  <p>For most of the 1900s, doctors were taught that stomach ulcers were caused by stress and acid. In the early 1980s two Australian doctors, Robin Warren and Barry Marshall, argued that most ulcers are caused by a bacterium, <em>Helicobacter pylori</em>. Many experts dismissed the idea.</p>
+  <p>In 1984, frustrated, Marshall drank a culture of the bacteria. Within days he was ill with the stomach inflammation that can lead to ulcers, and antibiotics cleared it up. Over the next decade the evidence piled up, and treatment for ulcers changed around the world. In 2005 Warren and Marshall won the Nobel Prize.</p>
+  <p>This story is real. Its lesson isn't "ignore experts." Most of the time, the experts in a field are far more likely to be right about it than anyone else. The lesson is that experts can still be wrong, and when they are, it's evidence that changes the answer, not confidence or credentials.</p>
+</section>
+<section>
+  <h2>Bubbles and echo chambers</h2>
+  <p>In 2020 the philosopher C. Thi Nguyen pointed out two different ways a group can go wrong together.</p>
+  <div class="key"><span class="k">Key terms</span><p>In an <b>epistemic bubble</b>, other voices are simply missing. You never happen to hear them. Show people the missing evidence and the bubble can pop.</p><p>In an <b>echo chamber</b>, other voices are actively distrusted. Members are taught in advance that outsiders lie. Show them outside evidence and they may trust their group <em>more</em>.</p></div>
+  <p>Nguyen's point is that the cures are different. A bubble needs more information. An echo chamber needs something harder: rebuilding trust in sources outside the group.</p>
+</section>
+<section>
+  <h2>When a friend disagrees</h2>
+  <p>Here's a puzzle that's harder than it looks. You and a friend are equally good at mental math. You split a restaurant bill in your heads and come up with slightly different amounts. Neither of you has more information than the other. What should you do?</p>
+  <p><b>Conciliationists</b> say the disagreement itself is evidence: you should both become less confident, maybe meet in the middle. <b>Steadfast</b> thinkers say that if you actually did the math right, you can keep your answer; your friend's mistake doesn't make you wrong. Most people's instincts change depending on the case: with the bill, check again; on a deep moral question, many feel entitled to stand firm.</p>
+  <p class="extended"><span class="tag-ext">Extended</span>The restaurant-bill case comes from the philosopher David Christensen (2007), a leading conciliationist. Thomas Kelly (2005) defended a more steadfast view. The debate about "peer disagreement" is one of the liveliest in recent epistemology.</p>
+</section>
+<section>
+  <h2>Carry this with you</h2>
+  <p>Testimony is how almost all knowledge travels. You can't avoid it, and you shouldn't want to. But you can use it well: notice who is telling you, check their track record and their interests, ask what the evidence is, and be most careful of anyone who asks you to trust them <em>instead</em> of showing you.</p>
+</section>
+<section>
+  <h2>Your turn</h2>
+  <p>Next up is the game, Who Do You Trust? You'll weigh real kinds of sources, then tell bubbles from echo chambers.</p>
+  <p class="src">Sources: D. Hume, <em>An Enquiry Concerning Human Understanding</em> (1748), section X (public domain); T. Reid, <em>An Inquiry into the Human Mind on the Principles of Common Sense</em> (1764), VI.24; A. Goldman, "Experts: Which Ones Should You Trust?", <em>Philosophy and Phenomenological Research</em> 63 (2001); B. Marshall and J. R. Warren, Nobel Prize in Physiology or Medicine (2005); C. T. Nguyen, "Echo Chambers and Epistemic Bubbles," <em>Episteme</em> 17 (2020); D. Christensen, "Epistemology of Disagreement: The Good News," <em>Philosophical Review</em> 116 (2007); T. Kelly, "The Epistemic Significance of Disagreement" (2005). Original text written for this course by its author, with help from an AI assistant; quotations are from public-domain texts.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
+  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  const L=document.getElementById('slotL'), R=document.getElementById('slotR');
+  const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=matchMedia('(max-width: 720px)');
+  let single=narrow.matches, pos=0, busy=false;
+
+  function pageHTML(i){
+    if(i<0||i>=N) return '<div class="page"></div>';
+    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+  }
+  function watchMore(slot){
+    const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
+    const check=()=>slot.classList.toggle('more', pg.scrollHeight-pg.scrollTop-pg.clientHeight>8);
+    pg.addEventListener('scroll',check,{passive:true}); check();
+  }
+  function step(){ return single?1:2; }
+  function render(){
+    wrap.classList.toggle('single', single);
+    if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
+    else { L.innerHTML=pageHTML(pos); R.innerHTML=pageHTML(pos+1); }
+    if(pos+step()<N){
+      R.insertAdjacentHTML('beforeend','<button class="curl" aria-label="Turn the page"></button>');
+      R.querySelector('.curl').onclick=()=>turn(1);
+    }
+    [L,R].forEach(watchMore);
+    prev.disabled=pos===0; next.disabled=pos+step()>=N;
+    where.textContent=(single||pos+2>N)?('Page '+(pos+1)+' of '+N):('Pages '+(pos+1)+'–'+(pos+2)+' of '+N);
+  }
+  function turn(dir){
+    const to=pos+dir*step();
+    if(busy||to<0||to>=N) return;
+    if(reduce){ pos=to; render(); return; }
+    busy=true;
+    const leaf=document.createElement('div');
+    let front, back, startFlipped=false;
+    if(single){
+      leaf.className='leaf fwd';
+      if(dir>0){ front=pos; R.innerHTML=pageHTML(to); }
+      else { front=to; startFlipped=true; leaf.classList.add('go'); }
+      back=-1;
+    } else if(dir>0){ leaf.className='leaf fwd'; front=pos+1; back=pos+2; R.innerHTML=pageHTML(pos+3); }
+    else { leaf.className='leaf back'; front=pos; back=pos-1; L.innerHTML=pageHTML(pos-2); }
+    leaf.innerHTML='<div class="face f">'+pageHTML(front)+'<div class="shade"></div></div><div class="face b">'+pageHTML(back)+'<div class="shade"></div></div>';
+    book.appendChild(leaf);
+    leaf.getBoundingClientRect();
+    requestAnimationFrame(()=>{ if(startFlipped) leaf.classList.remove('go'); else leaf.classList.add('go'); });
+    setTimeout(()=>{ pos=to; leaf.remove(); render(); busy=false; }, 950);
+  }
+  prev.onclick=()=>turn(-1); next.onclick=()=>turn(1);
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') turn(1); if(e.key==='ArrowLeft') turn(-1); });
+  let x0=null, y0=null;
+  book.addEventListener('touchstart',e=>{x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  book.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
+    x0=null;
+  });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+
+  const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
+  function setLevel(ext){
+    document.getElementById('reading').classList.toggle('show-ext',ext);
+    [L,R].forEach(watchMore);
+    bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
+    try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
+  }
+  bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
+  setLevel(lvl==='extended');
+  render();
+})();
+</script>
+</body>
+</html>
