@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case 4: The Greatest Happiness</title>
+<meta name="description" content="Interactive case file for Intro to Ethics, Challenge 2 module C2-M04: Bentham's utilitarianism, who counts, act vs rule, and the big objections.">
+<style>
+:root{
+  --desk:#22337A; --desk-dot:#2E43966b;
+  --paper:#F4E3B4; --paper-2:#EBD497; --paper-edge:#D9BC72;
+  --ink:#2A2016; --ink-soft:#5B4A34;
+  --stamp:#C0152F; --ball:#2443C4;
+  --hl-y:#FFE15A; --hl-p:#FF93C9; --hl-g:#74E5AA; --hl-b:#86CFFF; --hl-o:#FFB25C;
+  --hl-ink:#1E1609;
+  --card:#FFFDF5; --card-line:#C5DCF3; --card-margin:#F2A0AC;
+  --ok:#0E663B; --bad:#AE1029;
+  --btn:#2A2016; --btn-ink:#FFF7E0;
+  --shadow:0 1px 0 #0000001a, 0 10px 24px -8px #0a123d99;
+  --type:"Courier Prime","American Typewriter","Courier New",Courier,monospace;
+  --serif:Charter,"Bitstream Charter","Sitka Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#0A1233; --desk-dot:#1A2A6655;
+    --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+    --ink:#F3E7C8; --ink-soft:#D2C29E;
+    --stamp:#FF6B80; --ball:#A9BDFF;
+    --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+    --ok:#67E3A6; --bad:#FF8597;
+    --btn:#F3E7C8; --btn-ink:#21190F;
+    --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#0A1233; --desk-dot:#1A2A6655;
+  --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+  --ink:#F3E7C8; --ink-soft:#D2C29E;
+  --stamp:#FF6B80; --ball:#A9BDFF;
+  --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+  --ok:#67E3A6; --bad:#FF8597;
+  --btn:#F3E7C8; --btn-ink:#21190F;
+  --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background-color:var(--desk);
+  background-image:radial-gradient(var(--desk-dot) 1.2px, transparent 1.4px);
+  background-size:18px 18px;
+  color:var(--ink); font-family:var(--serif); font-size:18px; line-height:1.62;
+}
+a{color:var(--ball); text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--hl-b); outline-offset:2px; border-radius:4px}
+button{font:inherit; color:inherit}
+.wrap{max-width:760px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- evidence dock ---------- */
+.dock{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:10px;
+  max-width:760px; margin:0 auto; padding:10px 16px; background:var(--desk);
+  color:#F4E3B4; font-family:var(--type); font-size:14px; border-bottom:1px solid #ffffff1f}
+.dock b{font-weight:700; white-space:nowrap}
+.dock ol{list-style:none; display:flex; gap:6px; margin:0 0 0 auto; padding:0}
+@media (max-width:420px){ .dock{font-size:12px} .dock ol{gap:4px} }
+
+/* ---------- sheets ---------- */
+.sheet{position:relative; background:var(--paper); border-radius:3px 3px 6px 6px;
+  box-shadow:var(--shadow); padding:30px 30px 26px; margin:26px 0 0}
+.sheet::before{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(180deg,#ffffff14,transparent 30%), repeating-linear-gradient(0deg,transparent 0 31px,#00000006 31px 32px)}
+@media (max-width:520px){ .sheet{padding:24px 18px 20px} body{font-size:17px} .button-hook{align-items:flex-start} .big-red{width:44px;height:44px} }
+.sheet p{margin:0 0 .9em; max-width:64ch}
+.sheet p:last-child{margin-bottom:0}
+
+h1,h2,h3{font-family:var(--type); line-height:1.15; margin:0}
+h2{font-size:1.55rem; letter-spacing:-.01em; margin:0 0 .7em}
+h2 span{background:linear-gradient(100deg, transparent 0 2%, var(--mark,var(--hl-y)) 3% 96%, transparent 98%) 0 72%/100% 46% no-repeat; color:inherit; padding:0 .15em}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h2 span{background-size:100% 18%; background-position:0 96%} }
+:root[data-theme="dark"] h2 span{background-size:100% 18%; background-position:0 96%}
+h3{font-size:1.08rem; margin:0 0 .5em}
+
+/* ---------- cover ---------- */
+.cover{margin-top:52px; background:var(--paper-2); padding:44px 30px 32px}
+.cover .tab{position:absolute; top:1px; left:28px; background:var(--paper-2); padding:4px 14px; font-family:var(--type); font-size:14px;
+  transform:translateY(-100%); border-radius:8px 8px 0 0; box-shadow:0 -2px 6px #0a123d33}
+.cover h1{font-size:clamp(2.3rem, 9vw, 4.4rem); letter-spacing:-.03em; line-height:.98; max-width:9ch}
+.cover .dek{font-size:1.15rem; margin:18px 0 0; max-width:40ch}
+.stamp{font-family:var(--type); font-weight:700; color:var(--stamp); border:4px double var(--stamp);
+  padding:4px 12px; border-radius:6px; display:inline-block; letter-spacing:.08em; line-height:1.1; text-align:center}
+.cover .stamp{position:absolute; right:26px; top:30px; transform:rotate(9deg); font-size:1.5rem; opacity:.9}
+.cover .stamp small{display:block; font-size:.62rem; letter-spacing:.04em}
+@media (max-width:520px){ .cover{padding:36px 18px 24px} .cover .stamp{right:12px; top:16px; font-size:1.05rem} }
+.cover .meta{font-family:var(--type); font-size:14px; color:var(--ink-soft); margin-top:22px; display:flex; flex-wrap:wrap; gap:6px 22px}
+.button-hook{display:flex; gap:16px; align-items:center; margin-top:24px; padding:14px 16px; border-radius:12px;
+  background:var(--card); border:2px solid var(--ink)}
+.big-red{flex:none; width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FF7B8C,#D0122F 60%,#8E0A1F);
+  box-shadow:0 6px 0 #6b0716, 0 8px 14px #0006; border:3px solid #2A2016}
+.button-hook p{margin:0; font-size:1rem}
+
+/* ---------- index-card exhibits ---------- */
+.exhibit{position:relative; background:var(--card); border-radius:4px; margin:18px 0; padding:18px 18px 16px 34px;
+  background-image:linear-gradient(90deg, transparent 22px, var(--card-margin) 22px 24px, transparent 24px),
+  repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  background-position:0 0, 0 14px; box-shadow:0 2px 0 #00000014, 0 6px 14px -6px #0006; font-size:1rem; line-height:28px}
+.exhibit p{margin:0}
+.exhibit p+p{margin-top:28px}
+.exhibit .lbl{font-family:var(--type); font-weight:700; font-size:.88rem; display:inline-block; background:var(--hl-c,var(--hl-y)); color:var(--hl-ink);
+  padding:1px 8px; margin:0 0 8px; transform:rotate(-1deg)}
+.exhibit ol, .exhibit ul{margin:0; padding-left:1.3em}
+.exhibit .concl{border-top:2px solid var(--ink); margin-top:6px; padding-top:4px}
+.argline{display:block}
+
+/* ---------- margin note & sealed file ---------- */
+.note{font-style:italic; color:var(--ball); border-left:3px solid var(--ball); padding:2px 0 2px 14px; margin:14px 0; font-size:1rem}
+details.sealed{margin:20px 0 4px; border:2px dashed var(--stamp); border-radius:8px; background:var(--paper-2)}
+details.sealed summary{cursor:pointer; padding:12px 16px; font-family:var(--type); font-weight:700; list-style:none; display:flex; gap:12px; align-items:center}
+details.sealed summary::-webkit-details-marker{display:none}
+details.sealed summary .seal{flex:none; width:30px; height:30px; border-radius:50%; background:var(--stamp); color:#fff; display:grid; place-items:center; font-size:14px}
+details.sealed[open] summary .seal{background:transparent; border:2px solid var(--stamp); color:var(--stamp)}
+details.sealed .inner{padding:0 16px 16px}
+details.sealed .inner p{font-size:1rem}
+
+/* ---------- games ---------- */
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
+  font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
+.lab h2{margin-bottom:.4em}
+.lab .how{font-size:1rem; color:var(--ink-soft); margin-bottom:16px}
+.cleared{position:absolute; right:18px; top:16px; font-size:1.05rem; transform:rotate(-8deg); opacity:0; pointer-events:none}
+.lab.is-cleared .cleared{opacity:.92; animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes thunk{0%{transform:scale(2.6) rotate(-20deg); opacity:0}100%{transform:scale(1) rotate(-8deg); opacity:.92}}
+@media (prefers-reduced-motion: reduce){ .lab.is-cleared .cleared{animation:none} *{scroll-behavior:auto!important} }
+
+.btn{cursor:pointer; border:2px solid var(--ink); background:var(--btn); color:var(--btn-ink); border-radius:999px;
+  padding:8px 16px; font-family:var(--type); font-weight:700; font-size:.95rem; line-height:1.2}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.btn:not(:disabled):active{transform:translateY(1px)}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+
+.fb{margin-top:12px; padding:12px 14px; border-radius:10px; font-size:.98rem; background:var(--card); border:2px solid var(--ink-soft)}
+.fb:empty{display:none}
+.fb.good{border-color:var(--ok)} .fb.bad{border-color:var(--bad)}
+.fb strong.v{font-family:var(--type)}
+.fb.good strong.v{color:var(--ok)} .fb.bad strong.v{color:var(--bad)}
+.score{font-family:var(--type); font-size:.95rem; color:var(--ink-soft)}
+
+/* sort */
+.sort-scn{font-size:1rem; background:var(--hl-g); color:var(--hl-ink); padding:10px 14px; border-radius:8px; margin-bottom:14px}
+.sort-item{background:var(--card); border-radius:10px; padding:12px 14px; margin:10px 0; border:2px solid transparent}
+.sort-item.locked{border-color:var(--ok)}
+.sort-item q{display:block; font-size:1.02rem; margin-bottom:8px; quotes:"\201C" "\201D"}
+.pick{cursor:pointer; border:2px solid var(--ink); background:transparent; border-radius:8px; padding:6px 12px; font-family:var(--type); font-size:.88rem; font-weight:700}
+.pick[data-v="wb"]{--pc:var(--hl-y)} .pick[data-v="mo"]{--pc:var(--hl-p)} .pick[data-v="ne"]{--pc:var(--hl-b)}
+.pick:hover:not(:disabled){background:color-mix(in srgb, var(--pc) 45%, transparent)}
+.pick.chosen{background:var(--pc); color:var(--hl-ink)}
+.pick:disabled{cursor:default}
+.sort-item .fb{margin-top:10px}
+
+/* highlighter */
+.hl-pass{background:var(--card); padding:16px; border-radius:8px; font-size:1.08rem; line-height:2.05}
+.seg{cursor:pointer; border:0; background:transparent; padding:2px 3px; border-radius:3px; text-align:left; font-family:var(--serif); font-size:inherit; line-height:inherit;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone; display:inline; border-bottom:2px dotted var(--ink-soft)}
+.seg[data-m="p"]{background:var(--hl-y); color:var(--hl-ink); border-bottom-color:transparent}
+.seg[data-m="c"]{background:var(--hl-p); color:var(--hl-ink); border-bottom-color:transparent}
+.seg.wrong{outline:2px solid var(--bad); outline-offset:1px}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; font-family:var(--type); font-size:.85rem; margin:10px 0 12px}
+.legend i{display:inline-block; width:18px; height:12px; vertical-align:-1px; margin-right:6px; border-radius:2px}
+
+/* machine */
+.machine{background:var(--card); border-radius:12px; padding:14px; border:2px solid var(--ink)}
+.m-arg{font-size:1rem; margin-bottom:12px}
+.m-line{display:flex; gap:10px; align-items:baseline; padding:3px 0}
+.m-line .lamp{flex:none; font-family:var(--type); font-size:.75rem; font-weight:700; border-radius:999px; padding:1px 8px; min-width:62px; text-align:center}
+.lamp.t{background:var(--hl-g); color:var(--hl-ink)} .lamp.f{background:transparent; border:1.5px solid var(--ink-soft); color:var(--ink-soft)}
+.m-line.concl{border-top:2px solid var(--ink); margin-top:4px; padding-top:6px}
+.creatures{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:12px 0}
+@media (max-width:560px){ .creatures{grid-template-columns:repeat(2,1fr)} }
+.cr{border:2px solid var(--ink-soft); border-radius:10px; padding:8px 6px 8px; text-align:center; background:var(--paper)}
+.cr svg{width:92px; height:80px; display:block; margin:0 auto}
+.cr .nm{font-family:var(--type); font-weight:700; font-size:.9rem}
+.tog{display:block; width:100%; cursor:pointer; margin-top:5px; border:1.5px solid var(--ink-soft); background:transparent; border-radius:6px; padding:3px 4px; font-family:var(--type); font-size:.78rem}
+.tog[aria-pressed="true"]{background:var(--tc); color:var(--hl-ink); border-color:var(--ink); font-weight:700}
+.tog[data-p="0"]{--tc:var(--hl-o)} .tog[data-p="1"]{--tc:var(--hl-g)} .tog[data-p="2"]{--tc:var(--hl-b)}
+.alarm{font-family:var(--type); font-weight:700; padding:8px 12px; border-radius:8px; margin:6px 0 10px; font-size:.92rem; border:2px dashed var(--ink-soft)}
+.alarm.hot{background:var(--stamp); color:#fff; border:2px solid var(--stamp)}
+.m-nav{font-family:var(--type); font-size:.9rem; color:var(--ink-soft); margin-bottom:8px}
+.vac{font-size:.85rem; color:var(--ink-soft); margin-top:6px}
+
+/* rapid */
+.rf-card{background:var(--card); border-radius:10px; padding:16px; min-height:120px; font-size:1.02rem}
+.rf-card .argline+.argline{margin-top:2px}
+.rf-top{display:flex; justify-content:space-between; font-family:var(--type); font-size:.9rem; margin-bottom:8px; color:var(--ink-soft)}
+.streak{color:var(--stamp); font-weight:700}
+
+/* hunt */
+.choice{display:block; width:100%; text-align:left; cursor:pointer; margin:8px 0; padding:10px 14px; border-radius:10px; border:2px solid var(--ink-soft);
+  background:var(--card); font-family:var(--serif); font-size:1rem}
+.choice:hover{border-color:var(--ink)}
+.choice[aria-pressed="true"]{border-color:var(--ink); background:var(--hl-o); color:var(--hl-ink)}
+
+/* builder */
+.slot{display:block; min-height:46px; border:2.5px dashed var(--ball); border-radius:8px; padding:8px 12px; margin:4px 0; color:var(--ball); font-style:italic}
+.slot.filled{border-style:solid; font-style:normal; color:var(--ink); background:var(--hl-b); color:var(--hl-ink)}
+.tray{display:grid; gap:8px; margin-top:12px}
+.tile{cursor:pointer; text-align:left; padding:8px 12px; border-radius:8px; border:2px solid var(--ink); background:var(--paper); font-family:var(--serif); font-size:.98rem}
+.tile[aria-pressed="true"]{background:var(--hl-b); color:var(--hl-ink)}
+
+/* grid of possibilities */
+.combo{display:grid; grid-template-columns:auto 1fr 1fr; gap:6px; font-size:.92rem; margin:12px 0}
+.combo div{background:var(--card); padding:8px 10px; border-radius:6px}
+.combo .h{background:transparent; font-family:var(--type); font-weight:700; padding:4px 6px}
+.combo .x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+
+/* deeper */
+.deeper{background:var(--card); border:3px solid var(--ink)}
+.deeper ul{padding-left:1.1em; margin:0}
+.deeper li{margin:0 0 12px; font-size:1rem}
+.deeper li b{font-family:var(--type)}
+.foot{color:#F4E3B4cc; font-size:.85rem; font-family:var(--type); margin-top:22px; text-align:center}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* ---------- v2 additions ---------- */
+.dock .pip{display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  border:2px dashed #F4E3B488; color:#F4E3B4; font-weight:700; font-size:13px}
+.dock .pip.done{border:2px solid var(--c,#FFE15A); background:var(--c,#FFE15A); color:#1E1609}
+@media (max-width:420px){ .dock .pip{width:26px;height:26px;font-size:12px} }
+.gotit{margin-top:20px; padding-top:16px; border-top:2px dashed var(--paper-edge); display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.gotit .gmsg{font-family:var(--type); font-size:.88rem; color:var(--ink-soft)}
+.gotit .btn.ok, .gotit .btn.ok:disabled{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+.lockcard{display:flex; gap:14px; align-items:center; background:var(--card); border:2px dashed var(--ink-soft); border-radius:10px; padding:14px 16px; font-size:1rem}
+.lockcard .padlock{flex:none; width:34px; height:34px}
+.lab.is-unlocked .lockcard{display:none}
+.copyrow{margin-top:16px; padding:12px 14px; border-radius:10px; background:var(--paper-2); border:2px solid var(--ball)}
+.copyrow p{font-size:.95rem; margin:0 0 8px}
+.copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copyrow textarea[hidden]{display:none}
+.copyrow .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.reasonbox{display:block; width:100%; min-height:64px; margin-top:6px; font-family:var(--serif); font-size:1rem; background:var(--card); color:var(--ink);
+  border:2px solid var(--ink-soft); border-radius:8px; padding:8px 10px}
+.small{font-size:.92rem}
+
+/* ---------- v3 additions ---------- */
+.btn, .pick, .tile, .choice, .tog{min-height:44px}
+.tog{padding:6px 4px; font-size:.8rem}
+.hl-pass{line-height:2.7}
+.seg{padding:6px 3px}
+.dock{flex-wrap:wrap}
+.dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
+.dock .pip:not(:disabled){cursor:pointer}
+.dock .pip:disabled{opacity:1}
+@media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
+.evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
+.evpanel h3{font-size:1rem; margin-bottom:4px}
+.evpanel p{margin:0 0 6px}
+.evpanel .row{justify-content:flex-end}
+@media (max-width:520px){
+  .cleared{top:6px; right:8px; font-size:.78rem; padding:2px 8px}
+  .lab h2{padding-right:0}
+}
+.wow{font-family:var(--type); font-weight:700; font-size:.98rem; background:var(--ink); color:var(--paper); display:inline-block; padding:4px 10px; border-radius:4px; margin:0 0 14px}
+.lockin{margin-top:20px; background:var(--card); border:2px solid var(--ink); border-radius:12px; padding:14px 16px}
+.lockin .row{margin-top:8px}
+.lockin .vbtn{cursor:pointer; min-height:44px; padding:8px 18px; border-radius:999px; border:2px solid var(--ink); background:transparent; font-family:var(--type); font-weight:700; color:var(--ink)}
+.lockin .vbtn[aria-pressed="true"]{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.lockin label{font-family:var(--type); font-weight:700; font-size:.92rem; display:block; margin-top:12px}
+.lockin input[type=text], .lockin textarea{width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
+.lockmsg{font-family:var(--type); font-size:.9rem; color:var(--ok); margin-left:6px}
+.poll{background:var(--card); border-radius:12px; padding:14px 16px; margin:4px 0 18px; border:2px dashed var(--hl-o)}
+.poll p{font-size:1rem}
+.versus{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+.versus div{background:var(--card); border-radius:8px; padding:10px 12px}
+.versus .hd{font-family:var(--type); font-weight:700; text-align:center; background:var(--hl-y); color:var(--hl-ink)}
+.versus .hd.b{background:var(--hl-b)}
+.versus .full{grid-column:1 / -1; text-align:center}
+.combo button{all:unset; box-sizing:border-box; display:block; cursor:pointer; padding:8px 10px; border-radius:6px; background:var(--card); min-height:44px}
+.combo button.x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+.combo button:focus-visible{outline:3px solid var(--hl-b)}
+.combo button.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion: reduce){ .combo button.shake, .streak.pulse{animation:none} }
+#rfBtns .btn.right{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+#rfBtns .btn.wrongpick{background:transparent; color:var(--bad); border:3px solid var(--bad); opacity:1}
+#rfBtns .btn.right::after{content:" \2713"}
+#rfBtns .btn.wrongpick::after{content:" \2717"}
+.rf-top .streak{font-size:1rem; padding:2px 10px; border-radius:999px}
+.rf-top .streak.hot{background:var(--stamp); color:#fff}
+.streak.pulse{animation:pulse .5s}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.perfect{display:inline-block; margin-left:8px; color:#8a6400; border-color:#c99a00; transform:rotate(-6deg)}
+:root[data-theme="dark"] .perfect{color:#ffd24d; border-color:#ffd24d}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .perfect{color:#ffd24d; border-color:#ffd24d} }
+.mq{margin-top:10px}
+.mq .choice{font-size:.95rem}
+.copymini{margin-top:14px}
+.copymini .btn{font-size:.85rem}
+.copymini textarea, .copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copymini textarea[hidden]{display:none}
+.copymini .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.pause{font-family:var(--type); font-size:.9rem; background:var(--hl-g); color:var(--hl-ink); padding:8px 12px; border-radius:8px; margin-top:14px}
+.finale-arg .mine{background:var(--hl-y); color:var(--hl-ink); padding:0 4px}
+.finale-arg .gap{color:var(--ball); font-style:italic}
+.attack{color:var(--stamp); font-family:var(--type); font-weight:700}
+.rcard{position:relative; max-width:440px; margin:18px auto 8px; background:var(--card); border-radius:6px; padding:20px 22px 18px 40px;
+  background-image:linear-gradient(90deg, transparent 26px, var(--card-margin) 26px 28px, transparent 28px), repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  box-shadow:0 2px 0 #00000014, 0 10px 20px -8px #0008; font-size:.98rem; line-height:28px}
+.rcard h3{font-size:1.25rem; line-height:28px; margin:0 0 4px}
+.rcard .stamp{position:absolute; right:10px; top:-14px; transform:rotate(8deg); font-size:.9rem}
+.rcard b{font-family:var(--type)}
+/* ---------- shared with M03 ---------- */
+.prog{flex-basis:100%; height:8px; margin-top:4px; background:#ffffff26; border-radius:999px; overflow:hidden}
+.prog i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--hl-y),var(--hl-o),var(--hl-p),var(--hl-b),var(--hl-g)); transition:width .45s ease}
+@media (prefers-reduced-motion: reduce){ .prog i{transition:none} }
+.cover-art{display:block; width:100%; max-width:340px; height:auto; margin:18px auto 0}
+.hook{display:flex; gap:16px; align-items:center; margin-top:24px; padding:14px 16px; border-radius:12px; background:var(--card); border:2px solid var(--ink)}
+.hook p{margin:0; font-size:1rem}
+.hook-dot{flex:none; width:58px; height:58px; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle at 35% 30%,#FFF3A6,#F2B705 60%,#9A6A00); border:3px solid #2A2016; box-shadow:0 5px 0 #6b4a00}
+.hook-dot svg{width:30px; height:30px}
+@media (max-width:520px){ .hook-dot{width:44px;height:44px} .hook-dot svg{width:22px;height:22px} }
+.eq{font-family:var(--type); font-weight:700; font-size:1.05rem; text-align:center; background:var(--card); border:2px solid var(--ink); border-radius:10px; padding:12px; margin:14px 0}
+.dims{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+@media (max-width:520px){ .dims{grid-template-columns:1fr} }
+.dims div{background:var(--card); border-radius:8px; padding:8px 12px; border-left:6px solid var(--dc,var(--hl-y))}
+.dims b{font-family:var(--type)}
+.var{background:var(--card); border-radius:12px; padding:14px 16px; margin:12px 0; border:2px dashed var(--hl-o)}
+.var.done{border-style:solid; border-color:var(--ink-soft)}
+.var h3 em{font-style:normal; font-size:.78rem; background:var(--hl-o); color:var(--hl-ink); padding:1px 8px; border-radius:999px; margin-left:6px; vertical-align:2px}
+.var p{font-size:1rem}
+.pattern{background:var(--ink); color:var(--paper); border-radius:12px; padding:14px 16px; margin:14px 0}
+.pattern b{font-family:var(--type)}
+.verdict-opts .choice{font-size:.98rem}
+.compare{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0}
+.compare div{background:var(--card); border-radius:8px; padding:10px 12px; font-size:.95rem}
+.compare .hd{font-family:var(--type); font-weight:700; font-size:.8rem; color:var(--ink-soft)}
+select.reasonbox{min-height:44px}
+.step-lbl{font-family:var(--type); font-weight:700; font-size:.9rem; margin:12px 0 4px}
+.tally{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+.tally span{font-family:var(--type); font-size:.85rem; font-weight:700; padding:4px 10px; border-radius:999px; background:var(--paper-2); border:1.5px solid var(--ink-soft)}
+.tally span.on{background:var(--hl-y); color:var(--hl-ink); border-color:var(--ink)}
+.twins{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+.twins div{background:var(--card); border-radius:8px; padding:10px 12px}
+.twins .hd{font-family:var(--type); font-weight:700; text-align:center; background:var(--hl-g); color:var(--hl-ink)}
+.twins .hd.b{background:var(--hl-p)}
+.twins .full{grid-column:1 / -1; text-align:center}
+
+/* ---------- C2-M04: happiness ledger ---------- */
+.policy{background:var(--card); border-radius:12px; padding:12px 14px; margin:12px 0; border:2px solid var(--ink); border-top:8px solid var(--pc,var(--hl-y))}
+.policy h3{display:flex; justify-content:space-between; gap:8px; align-items:baseline; flex-wrap:wrap}
+.policy h3 .tot{font-size:.9rem; background:var(--paper-2); border-radius:999px; padding:2px 10px; border:1.5px solid var(--ink-soft)}
+.policy h3 .tot.done{background:var(--pc); color:var(--hl-ink); border-color:var(--ink)}
+.lrow{border-top:1px dashed var(--ink-soft); padding:8px 0 6px}
+.lrow:first-of-type{border-top:0}
+.lrow .who{font-size:.98rem}
+.lrow .sum{font-family:var(--type); font-weight:700; font-size:.92rem; margin:2px 0 6px}
+.lrow .row .pick{font-size:.85rem; --pc:var(--hl-y)}
+.lrow .pick.right{background:var(--hl-g); color:var(--hl-ink)}
+.lrow.done .sum::after{content:" \2713"; color:var(--ok)}
+.bars{margin:14px 0 4px; display:grid; gap:8px}
+.bar{display:grid; grid-template-columns:5.6em 1fr 4.2em; gap:8px; align-items:center; font-family:var(--type); font-size:.85rem; font-weight:700}
+.bar .track{height:22px; background:var(--paper-2); border:1.5px solid var(--ink-soft); border-radius:999px; overflow:hidden}
+.bar .track i{display:block; height:100%; width:0; border-radius:999px; background:var(--bc); transition:width .5s cubic-bezier(.2,1.2,.4,1)}
+.bar .num{text-align:right}
+@media (prefers-reduced-motion: reduce){ .bar .track i{transition:none} }
+
+/* ---------- C2-M04: circle of concern ---------- */
+.rings{display:block; width:100%; max-width:360px; height:auto; margin:6px auto 4px}
+.rings text{font-family:var(--type); font-size:10px; fill:var(--ink)}
+.rings .rlbl{font-size:9px; fill:var(--ink-soft)}
+.tok{background:var(--card); border-radius:10px; padding:10px 12px; margin:10px 0; border:2px solid transparent}
+.tok.locked{border-color:var(--ok)}
+.tok .nm{font-family:var(--type); font-weight:700; font-size:.95rem; margin-bottom:6px; display:flex; gap:8px; align-items:center}
+.tok .nm i{flex:none; width:22px; height:22px; border-radius:50%; display:inline-grid; place-items:center; font-style:normal; font-size:.75rem; background:var(--tc); color:var(--hl-ink); border:1.5px solid var(--ink)}
+.ringbtns{display:flex; flex-wrap:wrap; gap:6px}
+.ringbtns .pick{font-size:.8rem; padding:6px 10px; --pc:var(--hl-b)}
+.ringbtns .pick.right{background:var(--hl-g); color:var(--hl-ink)}
+.legend2{display:flex; flex-wrap:wrap; gap:4px 12px; font-family:var(--type); font-size:.78rem; margin:6px 0 4px; justify-content:center}
+.legend2 span{display:inline-flex; gap:5px; align-items:center}
+.legend2 i{width:16px; height:16px; border-radius:50%; display:inline-grid; place-items:center; font-style:normal; font-size:.62rem; background:var(--tc); color:var(--hl-ink); border:1px solid var(--ink)}
+
+/* ---------- C2-M04: verdict poll ---------- */
+.case{background:var(--card); border-radius:12px; padding:14px 16px; margin:12px 0; border:2px dashed var(--hl-b)}
+.case.done{border-style:solid; border-color:var(--ink-soft)}
+.case h3 em{font-style:normal; font-size:.75rem; background:var(--hl-b); color:var(--hl-ink); padding:1px 8px; border-radius:999px; margin-left:6px; vertical-align:2px}
+.case p{font-size:1rem}
+.case .stip{font-size:.92rem; color:var(--ink-soft); font-style:italic}
+.case .mine .btn[aria-pressed="true"]{background:var(--btn); color:var(--btn-ink)}
+
+/* ---------- C2-M04: objection matcher ---------- */
+.mboard{display:grid; grid-template-columns:1.25fr 1fr; gap:10px; align-items:start}
+@media (max-width:560px){ .mboard{grid-template-columns:1fr} .mboard .labels{position:sticky; bottom:8px; z-index:5; background:var(--paper); padding:8px; border-radius:10px; box-shadow:0 -4px 14px -6px #0006; display:grid; grid-template-columns:1fr 1fr; gap:6px} }
+.mcard{display:block; width:100%; text-align:left; cursor:pointer; margin:0 0 8px; padding:10px 12px; border-radius:10px; border:2px solid var(--ink-soft); background:var(--card); font-family:var(--serif); font-size:.95rem; line-height:1.45; min-height:44px; color:var(--ink)}
+.mcard[aria-pressed="true"]{border-color:var(--ink); border-width:3px; background:var(--hl-y); color:var(--hl-ink)}
+.mcard.matched{cursor:default; border-color:var(--ok); border-left:10px solid var(--mc); background:var(--card); color:var(--ink)}
+.mcard.matched::after{content:attr(data-tag); display:block; font-family:var(--type); font-size:.75rem; font-weight:700; margin-top:4px; color:var(--ok)}
+.mcard.shake{animation:shake .4s}
+.labels{display:grid; gap:8px}
+@media (min-width:561px){ .labels{position:sticky; top:96px} }
+.mlabel{cursor:pointer; min-height:44px; padding:8px 10px; border-radius:10px; border:2px solid var(--ink); background:var(--mc); color:var(--hl-ink); font-family:var(--type); font-weight:700; font-size:.85rem; text-align:left; line-height:1.25}
+.mlabel:disabled{opacity:.8; cursor:not-allowed}
+.mlabel small{display:block; font-family:var(--serif); font-weight:400; font-size:.78rem}
+.mlabel small{font-size:.74rem}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion: reduce){ .mcard.shake{animation:none} }
+
+.objcard{background:var(--card); border-radius:10px; padding:12px 14px; margin:12px 0; border-left:8px solid var(--oc,var(--hl-p)); font-size:1rem}
+.objcard h3{font-size:1rem}
+.objcard p{margin:0 0 .6em}
+.objcard .crit{font-size:.92rem; color:var(--ink-soft)}
+
+
+/* ---------- ported from M03 reusable fixes ---------- */
+.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
+  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.dock .pip.pulse{animation:pipPulse .9s ease}
+@keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
+.clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
+.clearline .stamp{font-size:.9rem; transform:rotate(-6deg); animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both; flex:none}
+.clearline p{margin:0; font-size:.95rem}
+@media (prefers-reduced-motion: reduce){ .toast, .dock .pip.pulse, .clearline .stamp{animation:none} }
+details.copymini{margin-top:14px}
+details.copymini > summary{cursor:pointer; font-family:var(--type); font-size:.85rem; color:var(--ink-soft); min-height:44px; display:flex; align-items:center}
+/* tap-to-open replies */
+details.reply{margin:12px 0; border-radius:10px; background:var(--card); border-left:8px solid var(--rc,var(--hl-y))}
+details.reply > summary{cursor:pointer; padding:12px 14px; min-height:44px; font-size:1rem}
+details.reply[open] > summary{border-bottom:1.5px dashed var(--ink-soft)}
+details.reply .inner{padding:10px 14px 12px}
+details.reply .inner p{font-size:1rem; margin:0 0 .6em}
+details.reply .other{font-style:italic; color:var(--ink-soft)}
+/* links as tap targets */
+.linkrow{display:flex; flex-wrap:wrap; gap:10px; margin:12px 0}
+a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 14px; border:2px solid var(--ball); border-radius:999px; font-family:var(--type); font-size:.9rem; font-weight:700; text-decoration:none; margin-top:4px}
+/* dark-mode contrast for the red verdict tab */
+.lab .gtab.fintab{color:#fff}
+:root[data-theme="dark"] .lab .gtab.fintab{color:var(--hl-ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lab .gtab.fintab{color:var(--hl-ink)} }
+:root[data-theme="dark"] .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)} }
+@media (max-width:520px){ .hook{flex-direction:column; align-items:flex-start} }
+.cover .stamp{opacity:1}
+.lockin .vbtn:disabled, .case .mine .btn:disabled{cursor:not-allowed}
+.lockin .vbtn:disabled:not([aria-pressed="true"]), .case .mine .btn:disabled:not([aria-pressed="true"]){opacity:.55}
+.case .mine .btn:disabled[aria-pressed="true"]{opacity:1}
+.deeper a.linkbtn{margin-left:4px}
+.fb:focus{outline:3px solid var(--hl-b); outline-offset:2px}
+.mwhy{display:block; font-family:var(--serif); font-size:.82rem; font-weight:400; color:var(--ink); margin-top:4px}
+.case .mine .btn{white-space:normal; text-align:left}
+
+/* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
+html,body{overflow-x:clip}
+</style>
+</head>
+<body>
+<div class="dock" id="dock" aria-label="Evidence collected">
+  <b id="dockCount" role="status"><span class="evw">Evidence </span>0/4</b>
+  <ol id="dockList"></ol>
+  <div class="prog" id="prog" role="progressbar" aria-label="Case progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><i id="progFill"></i></div>
+  <div class="evpanel" id="evPanel" hidden></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<main class="wrap">
+<!-- ================= 1 COVER ================= -->
+<section class="sheet cover" aria-labelledby="t1">
+  <div class="tab">Challenge 2 · Case #4</div>
+  <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
+  <h1 id="t1">The Greatest Happiness</h1>
+  <p class="dek">One rule meant to settle every moral question. It led an 18th-century lawyer to argue for animals and against cruel laws, well ahead of the laws of his day. It also seems to give a surgeon some truly terrible advice.</p>
+  <svg class="cover-art" viewBox="0 0 340 160" role="img" aria-label="Drawing of a balance scale: many small smiling faces on one pan, one large worried face on the other, with the pans level">
+    <path d="M170 30 V140" stroke="#2A2016" stroke-width="6" stroke-linecap="round"/>
+    <path d="M120 146 H220" stroke="#2A2016" stroke-width="8" stroke-linecap="round"/>
+    <path d="M60 52 H280" stroke="#2A2016" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="170" cy="30" r="9" fill="#FFE15A" stroke="#2A2016" stroke-width="3"/>
+    <path d="M60 52 L32 100 M60 52 L88 100 M280 52 L252 100 M280 52 L308 100" stroke="#2A2016" stroke-width="2.5"/>
+    <path d="M24 100 H96 Q60 126 24 100Z" fill="#86CFFF" stroke="#2A2016" stroke-width="3"/>
+    <path d="M244 100 H316 Q280 126 244 100Z" fill="#FF93C9" stroke="#2A2016" stroke-width="3"/>
+    <g stroke="#2A2016" stroke-width="1.6">
+      <circle cx="38" cy="92" r="7" fill="#FFE15A"/><circle cx="54" cy="92" r="7" fill="#74E5AA"/><circle cx="70" cy="92" r="7" fill="#FFB25C"/><circle cx="86" cy="92" r="7" fill="#FFE15A"/>
+      <circle cx="46" cy="79" r="7" fill="#FF93C9"/><circle cx="62" cy="79" r="7" fill="#86CFFF"/><circle cx="78" cy="79" r="7" fill="#74E5AA"/>
+      <circle cx="54" cy="66" r="7" fill="#FFE15A"/><circle cx="70" cy="66" r="7" fill="#FFB25C"/>
+    </g>
+    <g fill="none" stroke="#2A2016" stroke-width="1.3" stroke-linecap="round">
+      <path d="M35 94 q3 3 6 0"/><path d="M51 94 q3 3 6 0"/><path d="M67 94 q3 3 6 0"/><path d="M83 94 q3 3 6 0"/><path d="M43 81 q3 3 6 0"/><path d="M59 81 q3 3 6 0"/><path d="M75 81 q3 3 6 0"/><path d="M51 68 q3 3 6 0"/><path d="M67 68 q3 3 6 0"/>
+    </g>
+    <circle cx="280" cy="78" r="20" fill="#FFFDF5" stroke="#2A2016" stroke-width="3"/>
+    <circle cx="273" cy="74" r="2.4" fill="#2A2016"/><circle cx="287" cy="74" r="2.4" fill="#2A2016"/>
+    <path d="M272 88 q8 -6 16 0" fill="none" stroke="#2A2016" stroke-width="2.2" stroke-linecap="round"/>
+    <text x="280" y="38" text-anchor="middle" font-family="Courier New, monospace" font-weight="700" font-size="22" fill="#C0152F">?</text>
+  </svg>
+  <div class="hook">
+    <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 5v20M7 10h16" stroke="#2A2016" stroke-width="2.6" stroke-linecap="round"/><path d="M4 18h8l-4-8zM18 18h8l-4-8z" fill="#FFFDF5" stroke="#2A2016" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+    <p>The one-rule offer: some philosophers think all of morality comes down to this. <b>Do whatever makes things go best overall, counting everyone's happiness equally.</b> Before you read anything, lock in your gut call. Once locked, it stays locked. At the end of the file you'll answer again, knowing what philosophers know.</p>
+  </div>
+  <div class="lockin" id="lockin">
+    <div class="row" role="group" aria-label="Your gut call">
+      <button class="vbtn" type="button" data-v="yes" aria-pressed="false">Yes, that's basically it</button>
+      <button class="vbtn" type="button" data-v="mostly" aria-pressed="false">Mostly, not always</button>
+      <button class="vbtn" type="button" data-v="no" aria-pressed="false">No, there's more to it</button>
+    </div>
+    <label for="myReason">My reason, in one sentence</label>
+    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 35 minutes</span></div>
+</section>
+
+<!-- ================= 2 SAME MAN, NEW QUESTION ================= -->
+<section class="sheet" aria-labelledby="b0">
+  <h2 id="b0"><span style="--mark:var(--hl-y)">Same man, new question</span></h2>
+  <p>You've met Jeremy Bentham (1748 to 1832) before. In Challenge 1 he was the pleasure-counter, with a checklist for measuring how much pleasure an experience holds. That was about <b>well-being</b>: what makes a life go well <i>for the person living it</i>.</p>
+  <p>This file asks the other big question: <b>what makes an action right or wrong?</b> A <b>theory of right action</b> is an answer to that. It isn't a list of rules like "don't steal". It's the reason <i>behind</i> the list: the one feature that all right actions share.</p>
+  <p>So far this challenge has asked whether morality can be objective and how we could ever know right from wrong. Now come the great theories: Bentham first, then Kant, then Aristotle.</p>
+  <div class="exhibit" style="--hl-c:var(--hl-y)">
+    <span class="lbl">Exhibit A: words you'll need</span>
+    <p><b>Consequences</b> are the results of an action: everything that turns out differently because you did it. A <b>consequentialist</b> theory says the rightness of an action depends <i>only</i> on its consequences. <b>Utilitarianism</b>, Bentham's theory, is the most famous kind.</p>
+  </div>
+  <p class="note">Bentham's move, in one breath: if well-being is the only thing that's good in itself, then (he reasoned) the right thing to do is whatever produces the most of it. For everyone.</p>
+</section>
+
+<!-- ================= 3 GREATEST HAPPINESS PRINCIPLE ================= -->
+<section class="sheet" aria-labelledby="b1">
+  <h2 id="b1"><span style="--mark:var(--hl-o)">The Greatest Happiness Principle</span></h2>
+  <p class="wow">Bentham's most famous slogan wasn't originally his.</p>
+  <p>In 1776, in a book he published without his name on it, <i>A Fragment on Government</i>, Bentham announced what he called a fundamental axiom: "it is the greatest happiness of the greatest number that is the measure of right and wrong." The phrase was older; Bentham built an entire system on it.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: who said it first, and what's "the community"?</summary>
+    <div class="inner">
+      <p>Earlier writers, including the philosopher Francis Hutcheson in 1725, had used versions of the phrase. And "the community"? Bentham said it's a kind of fiction. It's only the people in it, and its interest is just their interests added together.</p>
+    </div>
+  </details>
+  <p>In <i>An Introduction to the Principles of Morals and Legislation</i> (1789) he called it the <b>principle of utility</b>: judge every action, whether it's done by one person or by a whole government, by whether it tends to increase or decrease the happiness of everyone it affects. ("Utility" here just means usefulness for producing happiness.)</p>
+  <div class="eq">An act is right if no other act you could do instead would produce more total well-being, counting everyone affected.</div>
+  <p>Five ideas are packed into that one line:</p>
+  <div class="dims" aria-label="Five parts of utilitarianism">
+    <div style="--dc:var(--hl-p)"><b>Consequences only.</b> Results decide. Not intentions, not traditions, not rules for their own sake.</div>
+    <div style="--dc:var(--hl-o)"><b>Well-being only.</b> The only result that matters in itself is how well lives go. (For Bentham: pleasure and the absence of pain.)</div>
+    <div style="--dc:var(--hl-y)"><b>Add it up.</b> Gains and losses for different people go into one total. Philosophers call this <i>aggregation</i>.</div>
+    <div style="--dc:var(--hl-g)"><b>Everyone counts as one.</b> John Stuart Mill passed on a slogan he credited to Bentham: "everybody to count for one, nobody for more than one." Your happiness, your best friend's and a total stranger's all weigh the same. This is called <i>impartiality</i>.</div>
+    <div style="--dc:var(--hl-b)"><b>Maximize.</b> On the classic version, doing <i>some</i> good isn't enough. The right act is the <i>best</i> one available, and anything less is wrong.</div>
+  </div>
+  <div class="poll" id="clashPoll">
+    <p><b>Quick gut check (not graded):</b> "The greatest happiness of the greatest number" names two things. When they clash, which should win?</p>
+    <div class="row" role="group" aria-label="Which should win?">
+      <button class="btn ghost" type="button" data-r="total">Most happiness in total</button>
+      <button class="btn ghost" type="button" data-r="number">Most people helped</button>
+    </div>
+    <div class="fb" id="clashFb" aria-live="polite"></div>
+  </div>
+  <p class="note" id="clashNote" hidden>Here's the official answer. The two usually agree, but when they clash (most happiness in total versus most people helped), utilitarians go with the <b>total</b>. Lead 1 puts that to the test.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 1: LEDGER ================= -->
+<section class="sheet lab" id="g1" style="--g:var(--hl-o)" aria-labelledby="g1h">
+  <div class="gtab">Lead 1 of 4</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g1h">The Happiness Ledger</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The Greatest Happiness Principle" above, answer its gut check, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">The town of Millbrook can afford <b>one</b> project this year. You're the town's utilitarian accountant. For each line, work out the total change in happiness, and the ledger fills in. Then advise the council.</p>
+  <p class="small"><i>The "happiness points" are pretend units, made up so we can do the math. Bentham never had real ones.</i></p>
+  <div id="ledger"></div>
+  <div class="bars" id="bars" aria-live="polite"></div>
+  <div id="ledQs" hidden></div>
+  <p class="score" id="ledScore" aria-live="polite"></p>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g1"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 5 WHO COUNTS ================= -->
+<section class="sheet" aria-labelledby="b2">
+  <h2 id="b2"><span style="--mark:var(--hl-g)">Who counts?</span></h2>
+  <p class="wow">In 1789, in a footnote in a book about law, Bentham asked a question animal-welfare thinkers still quote today.</p>
+  <p>Impartiality is a radical idea. No extra weight for yourself, your family, your country, your religion or your skin color. To get into the sum, it doesn't matter <i>who</i> you are. It only matters whether things can go better or worse <i>for</i> you.</p>
+  <p>So where's the edge of the circle? Bentham's answer comes in a footnote in the <i>Introduction</i>. The French, he noted, had already realized that dark skin is no reason to abandon a human being to cruelty. One day, he hoped, people would see that the number of legs an animal has is no better a reason. Then comes the famous line:</p>
+  <div class="exhibit" style="--hl-c:var(--hl-g)">
+    <span class="lbl">Exhibit B: the test</span>
+    <p>"The question is not, Can they reason? nor, Can they talk? but, Can they suffer?"</p>
+  </div>
+  <p>A being that can feel pleasure and pain is called <b>sentient</b>. For a utilitarian, sentience is the ticket into the moral sum. That has consequences:</p>
+  <ul>
+    <li><b>Distance doesn't matter.</b> Pain on the other side of the world hurts exactly as much as pain next door.</li>
+    <li><b>Time doesn't matter.</b> Someone who will be born in 2150 will feel just as much as you do. When they're born doesn't change that.</li>
+    <li><b>Things that can't feel don't count in themselves.</b> A river or a statue isn't in the sum. But what happens to it can still matter, because of its effects on beings who <i>can</i> feel: a poisoned river hurts the people and fish who depend on it.</li>
+  </ul>
+  <div class="poll" id="fishPoll">
+    <p><b>Your guess (not graded): can a fish feel pain?</b></p>
+    <div class="row" role="group" aria-label="Can a fish feel pain?">
+        <button class="btn ghost" type="button" data-r="yes">Yes</button>
+        <button class="btn ghost" type="button" data-r="no">No</button>
+        <button class="btn ghost" type="button" data-r="unsure">Not sure</button>
+    </div>
+    <div class="fb" id="fishFb" aria-live="polite"></div>
+  </div>
+  <p class="note">Can a fish feel pain? An insect? A future AI? Those are questions for science. Bentham's test doesn't answer them. It tells you which question to ask.</p>
+</section>
+
+<!-- ================= 6 REFORMER ================= -->
+<section class="sheet" aria-labelledby="b3">
+  <h2 id="b3"><span style="--mark:var(--hl-p)">Bentham the reformer</span></h2>
+  <p class="wow">Around 1785 Bentham wrote an essay arguing that sex between consenting men should not be a crime. Guess how long it waited to be published.</p>
+  <p>Bentham pointed his principle at the laws of his day and kept finding needless suffering. Three of his positions were well ahead of those laws:</p>
+  <div class="exhibit" style="--hl-c:var(--hl-g)">
+    <span class="lbl">Exhibit C: animals</span>
+    <p>That "Can they suffer?" footnote belongs to a passage complaining that the law ignored animals' interests. If an animal can suffer, its suffering goes in the sum, and cruelty to it is a real harm.</p>
+  </div>
+  <div class="exhibit" style="--hl-c:var(--hl-b)">
+    <span class="lbl">Exhibit D: slavery</span>
+    <p>Bentham condemned the slave trade, at a time when a large British abolition movement was already campaigning against it. In a 1789 newspaper letter he mocked the idea of paying compensation to slave traders, asking, in effect, whether stealing handkerchiefs was worse than stealing people. For ending slave-holding itself, he favored a step-by-step plan meant to make sure freed people had a living and were safe. Historians still argue about how far he went.</p>
+  </div>
+  <div class="exhibit" style="--hl-c:var(--hl-p)">
+    <span class="lbl">Exhibit E: sex laws</span>
+    <p>In Bentham's England, sex between men could be punished by death. In an essay written around 1785 he argued that it should not be a crime at all.</p>
+    <div class="poll" id="essayPoll">
+      <p><b>Guess (not graded):</b> when was that essay first published?</p>
+      <div class="row" role="group" aria-label="When was it published?">
+        <button class="btn ghost" type="button" data-r="1790s">1790s</button>
+        <button class="btn ghost" type="button" data-r="1890s">1890s</button>
+        <button class="btn ghost" type="button" data-r="1978">1978</button>
+      </div>
+    </div>
+    <div id="essayMore" hidden>
+      <p><b>1978,</b> almost two centuries later. Bentham never published it. His argument was the utilitarian test: whose happiness do these private, consenting acts reduce? Nobody's, he argued, while the punishments caused terrible suffering. So the law was making the world worse. Its 1978 editor, the scholar Louis Crompton, called it the first known argument for reforming these laws in England.</p>
+    </div>
+  </div>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: the prison Bentham designed</summary>
+    <div class="inner">
+      <p><b>Not every idea aged well.</b> In 1791 Bentham published plans for the <b>Panopticon</b>, a round prison in which a hidden guard could watch every cell at once. Bentham saw it as a reform: prisoners would be reformed by being watched, and the contractor running it would be fined for every prisoner who died. It was never built the way he planned it, and today it's a symbol of constant surveillance.</p>
+    </div>
+  </details>
+  <p><b>"Nonsense upon stilts."</b> Many reformers argue from <b>natural rights</b>: rights you have just by being human, before any law gives them to you. Bentham thought that idea was confused. Attacking the French Declaration of the Rights of Man, he called natural rights "nonsense upon stilts". His reforms rested on one thing only: their effects on happiness. That's a strength (no mysterious extras) and, as you'll see later, a possible weakness (no rights to protect you if the sum goes against you).</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 2: CIRCLE ================= -->
+<section class="sheet lab" id="g2" style="--g:var(--hl-g)" aria-labelledby="g2h">
+  <div class="gtab">Lead 2 of 4</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g2h">Who counts? Build the circle</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 1, read "Who counts?" and "Bentham the reformer" (including the essay guess), then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how"><b>Round 1, your circle (not graded).</b> Place each one where <i>you</i> honestly think it belongs when you decide what to do. The middle means it counts a lot.</p>
+  <svg class="rings" id="ringsMine" viewBox="0 0 300 300" role="img" aria-label="Your circle of concern"></svg>
+  <div id="mineList"></div>
+  <div class="row" style="margin-top:8px"><button class="btn" type="button" id="mineLock" disabled>Lock my circle</button><span class="score" id="mineMsg" aria-live="polite"></span></div>
+  <div id="benRound" hidden>
+    <p class="how" style="margin-top:18px"><b>Round 2, Bentham's circle (graded).</b> Now use Bentham's test. For each one: does its own happiness go into the utilitarian sum?</p>
+    <svg class="rings" id="ringsBen" viewBox="0 0 300 300" role="img" aria-label="Bentham's circle of concern"></svg>
+    <div id="benList"></div>
+    <div id="benCompare"></div>
+    <div id="refQs" hidden></div>
+  </div>
+  <p class="score" id="circScore" aria-live="polite"></p>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g2"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 8 CONSEQUENCES ================= -->
+<section class="sheet" aria-labelledby="b4">
+  <h2 id="b4"><span style="--mark:var(--hl-b)">What counts as a consequence?</span></h2>
+  <p class="wow">To a utilitarian, "but I meant well" is mostly beside the point.</p>
+  <p>"Look at the consequences" sounds simple. It hides three big choices (and a bonus one about motives).</p>
+  <div class="objcard" style="--oc:var(--hl-y)">
+    <h3>1. Compared with what?</h3>
+    <p>A consequence is the <b>difference</b> your act makes compared with what would have happened if you'd done something else, including doing nothing. You never judge an act alone; you judge it against the alternatives.</p>
+  </div>
+  <div class="objcard" style="--oc:var(--hl-o)">
+    <h3>2. All of them, for everyone</h3>
+    <p>Not just the obvious, immediate result. <b>Side effects</b> and <b>long-run effects</b> count too: whether people can still trust you, the habits you're building, the example you set. A "harmless" lie can become harmful once you count what happens to trust if it comes out, or what it does to your habit of honesty.</p>
+  </div>
+  <div class="objcard" style="--oc:var(--hl-p)">
+    <h3>3. Actual or expected?</h3>
+    <p>You can't see the future. Bentham talked about an action's <i>tendency</i>: what it's likely to bring about. Many utilitarians judge a choice by its <b>expected value</b>: each possible outcome multiplied by its chance of happening, then added up.</p>
+    <div class="poll" id="evPoll">
+      <p><b>Your call (not graded):</b> a sure +60, or a 50% shot at +100 (and a 50% chance of nothing)?</p>
+      <div class="row" role="group" aria-label="Sure thing or the shot?">
+        <button class="btn ghost" type="button" data-r="sure">Sure +60</button>
+        <button class="btn ghost" type="button" data-r="shot">Take the shot</button>
+      </div>
+      <div class="fb" id="evFb" aria-live="polite"></div>
+    </div>
+    <p>Luck can still make the actual result better or worse than expected.</p>
+  </div>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: what about motives?</summary>
+    <div class="inner">
+  <div class="objcard" style="--oc:var(--hl-g)">
+    <h3>What about motives?</h3>
+    <p>Bentham argued that no motive is good or bad in itself. The same desire, say wanting money, can drive honest hard work or a burglary. It's the effects that differ. Motives still matter for judging <i>people</i>, because they predict what someone will do next. But for a utilitarian they don't decide whether <i>this act</i> was right.</p>
+  </div>
+  <p class="note">Neat twist: praising and blaming are acts too. So a utilitarian should praise and blame in whatever ways do the most good. That might mean not blaming someone who did her honest best and got unlucky, even if her act turned out wrong.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ================= 9 ACT VS RULE ================= -->
+<section class="sheet" aria-labelledby="b5">
+  <h2 id="b5"><span style="--mark:var(--hl-y)">Act or rule?</span></h2>
+  <p class="wow">If everyone cut across the lawn, there'd be no lawn. So should you?</p>
+  <p>Philosophers now split utilitarianism into two main versions:</p>
+  <div class="twins" aria-label="Act versus rule utilitarianism">
+    <div class="hd">Act utilitarianism</div><div class="hd b">Rule utilitarianism</div>
+    <div>Judge <b>each act</b> by its own consequences. "Don't lie" is a handy rule of thumb, but you break it whenever breaking it does more good.</div>
+    <div>Find the <b>rules</b> that work out best when nearly everyone follows them. Then an act is right if it follows those rules.</div>
+    <div><b>The lawn:</b> one shortcut across the grass does no harm and saves you time. Cut across.</div>
+    <div><b>The lawn:</b> "Keep off the grass" works out best when nearly everyone follows it. Keep off.</div>
+    <div class="full">Both are utilitarian: in the end, everything is justified by consequences for well-being. They differ on <i>what</i> gets judged by those consequences.</div>
+  </div>
+  <div class="poll" id="campPoll">
+    <p><b>Which sounds more like you (not graded)?</b></p>
+    <div class="row" role="group" aria-label="Act or rule?">
+        <button class="btn ghost" type="button" data-r="act">Judge each act on its own</button>
+        <button class="btn ghost" type="button" data-r="rule">Stick to rules that work</button>
+    </div>
+    <div class="fb" id="campFb" aria-live="polite"></div>
+  </div>
+  <p>Rule utilitarianism fits common sense better: keep promises, don't punish the innocent, even when breaking the rule looks useful this once. But it faces a famous dilemma. If breaking the rule <i>really would</i> do more good this time, isn't sticking to it just rule-worship? And if you patch the rule ("keep off the grass, unless nobody will notice"), keep patching, and you end up back at act utilitarianism.</p>
+  <p class="note">Which camp was Bentham in? He is usually read as an act utilitarian, since he stated his principle for every single action. But he wrote mostly about laws, which are rules for everyone, so some scholars think the picture is more complicated.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 3: VERDICT POLL ================= -->
+<section class="sheet lab" id="g3" style="--g:var(--hl-b)" aria-labelledby="g3h">
+  <div class="gtab">Lead 3 of 4</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g3h">Predict the verdict</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 2, read "What counts as a consequence?" (including its quick call) and "Act or rule?", then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Four cases. For each: first <b>your</b> verdict (never graded), then predict what an <b>act utilitarian</b> says (graded). Your verdict locks as soon as you make your prediction. Read the small print; it fixes the facts so there's one right prediction. Sometimes the right prediction is that it makes no difference. At the end you'll see how often you and the theory agreed.</p>
+  <div id="caseList"></div>
+  <div id="pollReveal" hidden></div>
+  <p class="score" id="pollScore" aria-live="polite"></p>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g3"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 11 OBJECTIONS 1 ================= -->
+<section class="sheet" aria-labelledby="b6">
+  <h2 id="b6"><span style="--mark:var(--hl-p)">Objection file 1: the surgeon</span></h2>
+  <p class="wow">The most famous objection to utilitarianism happens in a hospital.</p>
+  <p>Here's a case made famous by the philosopher Judith Jarvis Thomson, in our own words. A surgeon has five patients, each of whom will die soon without a different organ transplant. A healthy young man comes in for a check-up, and he happens to be a perfect match for all five. If the surgeon secretly ended his life and used his organs, five people would live instead of one. Five beats one.</p>
+  <div class="poll" id="surgPoll">
+    <p><b>Your call (not graded):</b> would the surgeon be doing the right thing?</p>
+    <div class="row" role="group" aria-label="Would the surgeon be doing the right thing?">
+      <button class="btn ghost" type="button" data-r="yes">Yes, five beats one</button>
+      <button class="btn ghost" type="button" data-r="no">No, never</button>
+      <button class="btn ghost" type="button" data-r="secret">Only if nobody ever found out</button>
+    </div>
+    <div class="fb" id="surgFb" aria-live="polite"></div>
+  </div>
+  <div id="surgMore" hidden>
+  <p>Nearly everyone says it would be monstrous. Two objections grow out of cases like this.</p>
+  <div class="objcard" style="--oc:var(--hl-p)">
+    <h3>Objection A: rights (using a person)</h3>
+    <p>Some things you may not do to a person, even to produce more good overall. The healthy man has a <b>right</b> not to be killed, and that right isn't up for trade just because the numbers favor it. Utilitarianism seems to allow using people as mere tools. (Kant builds a whole theory around that complaint. You'll meet that part of it in Case 6.)</p>
+  </div>
+  <div class="objcard" style="--oc:var(--hl-o)">
+    <h3>Objection B: fair shares vs the total</h3>
+    <p>Only the total counts, so how it's <b>shared</b> doesn't matter in itself. Compare two plans for 100 people. Plan X: everyone gets 10 happiness points, a total of 1,000. Plan Y: 50 people get 25 and 50 get nothing, a total of 1,250. The theory picks Y. In the same way, a policy that makes a small minority miserable can win if the majority gains enough.</p>
+    <p class="crit">Think back to slavery. Utilitarians condemned it because its suffering hugely outweighed any gains. Critics reply: right answer, wrong reason. Slavery would be unjust even in a world where the sums somehow came out the other way.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ================= 12 OBJECTIONS 2 ================= -->
+<section class="sheet" aria-labelledby="b7">
+  <h2 id="b7"><span style="--mark:var(--hl-b)">Objection file 2: too much, too merged</span></h2>
+  <div class="objcard" style="--oc:var(--hl-y)">
+    <h3>Objection C: demandingness (it asks too much)</h3>
+    <p>Maximizing means anything less than the best is wrong. The money you'd spend on concert tickets could do more good given to an effective charity. The free afternoon you'd spend on your hobby could go to tutoring a kid who's struggling. It's hard to find a moment when the theory doesn't require you to do more. It seems to leave almost no room for your own life, projects and people. (Challenge 3 comes back to this with the philosopher Peter Singer.)</p>
+  </div>
+  <div class="poll" id="demPoll">
+    <p><b>Does that one land for you (not graded)?</b></p>
+    <div class="row" role="group" aria-label="Does demandingness land?">
+        <button class="btn ghost" type="button" data-r="yes">Yes, it asks too much</button>
+        <button class="btn ghost" type="button" data-r="no">No, maybe we should do more</button>
+    </div>
+    <div class="fb" id="demFb" aria-live="polite"></div>
+  </div>
+  <div class="objcard" style="--oc:var(--hl-g)">
+    <h3>Objection D: the separateness of persons</h3>
+    <p>Inside one life, trade-offs make sense. The dentist hurts you today so your teeth are healthy for years. The person who pays is the person who gains. Utilitarianism makes the same trade <i>between</i> people: your pain is "paid for" by my pleasure, as if society were one giant person. But nobody experiences the total. In <i>A Theory of Justice</i> (1971), John Rawls argued that utilitarianism fails to take seriously the distinction between persons.</p>
+  </div>
+  <p class="note">How these fit together: D is a diagnosis. It explains <i>why</i> B happens. Because the theory merges everyone into one sum, it can't see that the losers in Plan Y are real, separate people who get nothing back.</p>
+</section>
+
+<!-- ================= 13 FIGHTS BACK ================= -->
+<section class="sheet" aria-labelledby="b8">
+  <h2 id="b8"><span style="--mark:var(--hl-o)">The utilitarian fights back</span></h2>
+  <p class="wow">Utilitarians have answers. Some of them are surprisingly good.</p>
+  <p class="how">Tap each reply to open it. Each one comes with what the other side says back.</p>
+  <details class="reply" style="--rc:var(--hl-p)">
+    <summary><b>Reply 1 (to the surgeon):</b> what would hospitals become?</summary>
+    <div class="inner">
+      <p><b>Count <i>all</i> the consequences.</b> If surgeons did this, everyone would be terrified of hospitals and nobody would go for check-ups. Add in the fear, the lost trust and the chance of being found out, and the sum says: don't.</p>
+      <p class="other">The other side says: then make it perfectly secret. The theory still seems to say yes.</p>
+    </div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-p)">
+    <summary><b>Reply 2 (to the surgeon):</b> some rules are worth keeping</summary>
+    <div class="inner">
+      <p><b>Go rule.</b> "Doctors never harm one patient to help others" is a rule that works out best when nearly everyone follows it. A rule utilitarian keeps it, even in the secret case.</p>
+      <p class="other">The other side says: rule-worship, or a slide back into act utilitarianism (see "Act or rule?").</p>
+    </div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-o)">
+    <summary><b>Reply 3 (to fair shares):</b> a dollar means more to the poor</summary>
+    <div class="inner">
+      <p><b>Diminishing returns.</b> An extra $100 means far more to someone with almost nothing than to a millionaire. Extra resources produce less and less well-being the more you already have. So maximizing the total usually means spreading things <i>more</i> equally, not less.</p>
+      <p class="other">The other side says: "usually" isn't "always". In Plan Y the points were already happiness, so the trick doesn't help.</p>
+    </div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-y)">
+    <summary><b>Reply 4 (to demandingness):</b> right isn't the same as blameworthy</summary>
+    <div class="inner">
+      <p>The theory tells you what's best. But blaming is an act too, and condemning everyone who isn't a saint would do little good. A sensible utilitarian praises people for doing more good than before, not for being perfect.</p>
+      <p class="other">The other side says: the act is still called wrong. Some utilitarians bite the bullet: maybe morality really is that demanding.</p>
+    </div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-g)">
+    <summary><b>Reply 5 (to separateness):</b> equal counting is respect</summary>
+    <div class="inner">
+      <p>Every person's well-being goes into the sum separately, with exactly the same weight as anyone else's. Nobody's interests are ignored. What could taking persons seriously mean, if not that?</p>
+      <p class="other">The other side says: counting everyone isn't the same as protecting anyone.</p>
+    </div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-b)">
+    <summary><b>Reply 6 (to all of them):</b> maybe your gut is wrong</summary>
+    <div class="inner">
+      <p><b>Bite the bullet.</b> Maybe our gut reactions are the mistake. They were shaped by life in small groups, not for cases involving huge numbers. And utilitarians were sometimes right while gut feelings were wrong: about animals and about sex laws.</p>
+      <p class="other">The other side says: the track record cuts both ways. Bentham also designed the Panopticon, a prison that became a symbol of constant surveillance.</p>
+    </div>
+  </details>
+  <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 4: OBJECTION MATCHER ================= -->
+<section class="sheet lab" id="g4" style="--g:var(--hl-p)" aria-labelledby="g4h">
+  <div class="gtab">Lead 4 of 4</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g4h">Objection matcher</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 3, read the two objection files (including the surgeon call), open all six replies, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Tap a card, then tap the objection it belongs to. <b>Round 1:</b> new cases, each one a version of one objection. <b>Round 2:</b> utilitarian replies in new words. Match each to the objection it answers; one objection gets two replies, and one reply answers all four.</p>
+  <p class="step-lbl" id="matchRound">Round 1 of 2</p>
+  <div class="mboard">
+    <div id="mCards" role="group" aria-label="Cards to match"></div>
+    <div class="labels" id="mLabels" role="group" aria-label="Objections"></div>
+  </div>
+  <div class="fb" id="matchFb" tabindex="-1" aria-live="polite"></div>
+  <div id="hardest" hidden></div>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g4"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 15 FINALE ================= -->
+<section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
+  <div class="gtab fintab">The verdict</div>
+  <div class="stamp cleared" aria-hidden="true">CLOSED</div>
+  <h2 id="finh">Case closed: is the greatest happiness the whole story?</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all four pieces of evidence (clear all four leads) to open the final file.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Time to commit. You've seen the principle, the circle, Bentham's reforms, act versus rule, the surgeon and the replies. Pick the view closest to yours and give the reason that does the most work for you. Any view is fine; the reason is what counts. Once you lock it, it stays locked.</p>
+  <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
+  <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
+  <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
+  <label class="small" for="finMoved" style="display:block;margin-top:12px"><b>What moved me most in this file</b></label>
+  <select class="reasonbox" id="finMoved">
+    <option value="">Pick one</option>
+    <option>Everyone counts as one (impartiality)</option>
+    <option>"Can they suffer?" and the circle of concern</option>
+    <option>Bentham's reforms on slavery and sex laws</option>
+    <option>The Happiness Ledger: total vs number of people</option>
+    <option>Act vs rule utilitarianism</option>
+    <option>The surgeon case</option>
+    <option>Fair shares vs the total (Plan X vs Plan Y)</option>
+    <option>Demandingness</option>
+    <option>The separateness of persons</option>
+    <option>One of the utilitarian's replies</option>
+  </select>
+  <div class="row" style="margin-top:12px"><button class="btn" type="button" id="finBtn">Lock my verdict</button></div>
+  <div class="fb" id="finFb" tabindex="-1" aria-live="polite"></div>
+  <div id="finCard" hidden>
+    <div class="compare" id="finCompare"></div>
+    <div class="rcard" id="rcard"></div>
+    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ================= 16 COPY FOR ROCKY ================= -->
+<section class="sheet" aria-labelledby="b11">
+  <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
+  <p>Rocky can't see this page. When you're done, copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (Each lead also has a small "Rocky asked about this lead?" drawer, for when Rocky asks about just one.)</p>
+  <div class="copyrow" data-copy="all"></div>
+</section>
+
+<!-- ================= 17 DEEPER ================= -->
+<section class="sheet deeper" aria-labelledby="b12">
+  <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <ul>
+    <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by. Lecture 9, "Bentham and Mill", covers the same ground from MIT's side. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
+    <li><b>1000-Word Philosophy: "Consequentialism and Utilitarianism"</b>. A short, free introduction, including act vs rule and the transplant case. <a class="linkbtn" href="https://1000wordphilosophy.com/2014/05/15/consequentialism/" target="_blank" rel="noopener">1000wordphilosophy.com</a></li>
+    <li><b>1000-Word Philosophy: "Can They Suffer?" Bentham on animals</b>. The footnote, explained. <a class="linkbtn" href="https://1000wordphilosophy.com/2022/03/18/bentham-on-animals/" target="_blank" rel="noopener">1000wordphilosophy.com</a></li>
+    <li><b>Internet Encyclopedia of Philosophy: "Consequentialism and Utilitarianism"</b>. Deeper, with the main objections. <a class="linkbtn" href="https://iep.utm.edu/consequentialism-utilitarianism/" target="_blank" rel="noopener">iep.utm.edu</a></li>
+    <li><b>Bentham, <i>A Fragment on Government</i> (1776)</b>, in a lightly modernized free version from Early Modern Texts. The greatest-happiness line is in the preface. <a class="linkbtn" href="https://www.earlymoderntexts.com/assets/pdfs/bentham1776.pdf" target="_blank" rel="noopener">earlymoderntexts.com</a></li>
+    <li><b>Utilitarianism.net</b>. A free, peer-reviewed online textbook by philosophers sympathetic to utilitarianism, with chapters on the objections. Read it knowing whose side it's on. <a class="linkbtn" href="https://utilitarianism.net/" target="_blank" rel="noopener">utilitarianism.net</a></li>
+    <li><b>Transcribe Bentham</b> (University College London). Volunteers have typed up more than 40,000 of Bentham's handwritten pages, and the project invites the public to take part. <a class="linkbtn" href="https://transcribe-bentham.ucl.ac.uk/" target="_blank" rel="noopener">transcribe-bentham.ucl.ac.uk</a></li>
+  </ul>
+</section>
+
+<p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x; this page, its games and its wording are our own, not MIT's.</p>
+</main>
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+function fmt(n){ var s=Math.abs(n).toLocaleString("en-US"); return (n>0?"+":n<0?"−":"")+s; }
+var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+var MOD="C2-M04";
+
+/* ---------- varied feedback words, per lead ---------- */
+var VERD={
+ g1:{ok:["Ledger balanced.","The accountant approves.","Sums check out.","Clean math."], no:["The books don't balance.","Recount.","Not quite."]},
+ g2:{ok:["Bentham nods.","Can it suffer? Settled.","Spot on.","Exactly."], no:["Ask the one question.","Not by Bentham's test.","Not quite."]},
+ g3:{ok:["Called it.","That's the theory talking.","Prediction holds.","Spot on."], no:["The theory disagrees.","Read the small print again.","Not quite."]},
+ g4:{ok:["Filed.","Right drawer.","Matched.","Spot on."], no:["Wrong drawer.","Not that one.","Close, but no."]}
+};
+var lastV={};
+function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
+function focusFb(node){ if(!node.hasAttribute("tabindex")) node.setAttribute("tabindex","-1"); try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
+/* honest counts: "x of N answered so far" until everything is answered */
+function tally(done, first, total, noun){ return (done===total ? (total===2?"both ":"all "+total+" ")+noun : done+" of "+total+" "+noun+" so far")+", "+first+" right first try"; }
+
+/* ---------- optional saving (page works without it) ---------- */
+var KEY="ethics-c2m04-v2", canSave=false, SAVED=null;
+try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ canSave=false; SAVED=null; }
+if(!SAVED || typeof SAVED!=="object") SAVED=null;
+var touched={}, replayCleared={};
+var restoring=false;
+function saveState(){
+  if(!canSave || restoring) return;
+  try{
+    var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, replies:repliesOpen, lines:lines}));
+  }catch(e){}
+}
+function touch(g){ touched[g]=true; saveState(); }
+
+/* ---------- state for Rocky's copy ---------- */
+var REC={ led:{rows:{}, q:{}}, circ:{mine:{}, ben:{}, q:{}}, poll:{mine:{}, util:{}, q:{}}, match:{r1:{}, r2:{}, hardest:null} };
+var COVER={v:null, reason:"", locked:false};
+var FIN={view:null, reason:"", moved:"", done:false};
+var POLLS={clash:null, essay:null, fish:null, ev:null, camp:null, surg:null, dem:null};
+
+/* ---------- evidence dock + display-only progress bar ---------- */
+var GAMES=[
+ {id:"g1",c:"var(--hl-o)",lead:1,title:"The greatest happiness principle",body:"The right act is the one that produces the most <b>total</b> well-being, with everyone counted equally. Most happiness beats most people helped.",ex:"The clinic (60 patients, +1,900) beats the Wi-Fi (2,000 people, +900)."},
+ {id:"g2",c:"var(--hl-g)",lead:2,title:"Who counts",body:"Sentience is the ticket in: <b>Can they suffer?</b> Distance, date of birth, species and whether you like them don't change the weight.",ex:"A dog counts. A river counts only through its effects on those who can feel."},
+ {id:"g3",c:"var(--hl-b)",lead:3,title:"Consequences, act and rule",body:"A consequence is the difference an act makes, side effects included, often judged by <b>expected value</b>. Act utilitarians judge each act; rule utilitarians judge rules and follow the ones that work out best when nearly everyone follows them.",ex:"The lawn: the act utilitarian cuts across; the rule utilitarian keeps off."},
+ {id:"g4",c:"var(--hl-p)",lead:4,title:"Objections and replies",body:"Rights (using a person), fair shares vs the total, demandingness, the separateness of persons. Replies: count all the consequences, go rule, diminishing returns, right vs blameworthy, equal counting, bite the bullet.",ex:"Five beats one, says the sum. Nearly everyone says no."}
+];
+var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
+var cleared={}, openCard=null;
+GAMES.forEach(function(g){
+  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  b.addEventListener("click",function(){ showCard(g); });
+  li.appendChild(b); $("dockList").appendChild(li);
+});
+$("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
+function updateProg(){
+  var n=Object.keys(cleared).length+(FIN.done?1:0), max=NG+1;
+  $("progFill").style.width=Math.round(100*n/max)+"%";
+  $("prog").setAttribute("aria-valuenow",String(n));
+  $("prog").setAttribute("aria-valuetext",n+" of "+max+" steps done");
+}
+function showCard(g){
+  var P=$("evPanel");
+  GAMES.forEach(function(x){ $("dock-"+x.id).setAttribute("aria-expanded","false"); });
+  if(openCard===g.id){ P.hidden=true; openCard=null; return; }
+  openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
+  P.style.setProperty("--c",g.c);
+  P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
+}
+/* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
+var toastTimer=null;
+function toast(msg, color){
+  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  T.style.animation="none"; void T.offsetWidth; T.style.animation="";
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+}
+function celebrate(g, n){
+  var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
+  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  var slot=$(g.id).querySelector(".clearslot");
+  if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':' The next reading is below.')+'</p></div>';
+    try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
+}
+function clear(id, quiet){
+  var g=GAMES.filter(function(x){return x.id===id;})[0];
+  if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
+  cleared[id]=true; if(!quiet) replayCleared[id]=true;
+  $(id).classList.add("is-cleared");
+  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var n=Object.keys(cleared).length;
+  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
+  if(!quiet) celebrate(g, n);
+  if(n===NG) openLab("fin");
+  refreshGot(); updateProg(); saveState();
+}
+
+/* ---------- locks: each lead opens only after its reading, its quick tap AND the previous lead ---------- */
+var UNLOCKS={1:"g1",2:"g2",3:"g3",4:"g4"};
+var unlockedStep=0;
+var repliesOpen={};
+var replyEls=[].slice.call(document.querySelectorAll("details.reply"));
+var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
+function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
+function extraNeed(k){
+  if(k===1 && !POLLS.clash) return "Answer the quick gut check above first.";
+  if(k===2 && !POLLS.essay) return "Make your guess about the essay above first.";
+  if(k===3 && !POLLS.ev) return "Make the quick call in card 3 above first.";
+  if(k===4 && !POLLS.surg) return "Make your call on the surgeon (Objection file 1) first.";
+  if(k===4 && Object.keys(repliesOpen).length<replyEls.length) return "Open all six replies above first.";
+  return "";
+}
+function refreshGot(){
+  gotBtns.forEach(function(b){
+    var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
+    if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; return; }
+    var prevOk = k===1 || cleared[UNLOCKS[k-1]];
+    if(k===unlockedStep+1 && prevOk && !extraNeed(k)){ b.disabled=false; msg.textContent=""; }
+    else { b.disabled=true; msg.textContent = (k>unlockedStep+1) ? "Open the earlier leads first (scroll up)." : (!prevOk ? "Clear Lead "+(k-1)+" first (scroll up)." : extraNeed(k)); }
+  });
+}
+function doUnlock(k, focus){
+  unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
+  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button:not([disabled]), .lab-body textarea"); if(first) first.focus(); }
+}
+gotBtns.forEach(function(b){
+  b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
+});
+replyEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.open){ repliesOpen[i]=true; refreshGot(); saveState(); } }); });
+
+/* ---------- gut call: truly locked after "Lock it in" ---------- */
+var VL={yes:"Yes, that's basically it", mostly:"Mostly, not always", no:"No, there's more to it"};
+function freezeCover(){
+  $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
+  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
+}
+$("lockin").querySelectorAll(".vbtn").forEach(function(b){
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+});
+function syncLockin(){
+  $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
+  if(COVER.locked) $("myReason").value=COVER.reason;
+}
+$("lockBtn").addEventListener("click",function(){
+  if(COVER.locked) return;
+  var r=$("myReason").value.trim();
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return; }
+  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  COVER.reason=r; COVER.locked=true; freezeCover();
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
+  saveState();
+});
+
+/* ---------- copy for Rocky (shared machinery) ---------- */
+function linesFor(g){
+  var saved = SAVED && SAVED.lines && SAVED.lines[g];
+  var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
+  if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
+  if(saved && !touched[g]) return saved.concat();
+  return LIVE[g]();
+}
+function coverLines(){ return ["Gut call (is morality just 'do whatever makes things go best, counting everyone equally'?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
+function tapLines(){
+  var P={total:"most happiness in total",number:"most people helped","1790s":"1790s","1890s":"1890s","1978":"1978",sure:"sure +60",act:"judge each act on its own",rule:"stick to rules that work",unsure:"not sure",shot:"take the 50% shot",yes:"yes, five beats one",no:"no, never",secret:"only if nobody ever found out"};
+  function v(k){ return POLLS[k] ? P[POLLS[k]] : "not answered"; }
+  return ["Ungraded taps: when total and number clash = "+v("clash")+"; guessed the sex-law essay was published in = "+v("essay")+"; sure thing or gamble = "+v("ev")+"; surgeon doing the right thing = "+v("surg")+"; can a fish feel pain = "+(POLLS.fish?{yes:"yes",no:"no",unsure:"not sure"}[POLLS.fish]:"not answered")+"; act or rule sounds more like me = "+v("camp")+"; demandingness lands for me = "+(POLLS.dem?(POLLS.dem==="yes"?"yes":"no, maybe we should do more"):"not answered")];
+}
+function report(key){ return MOD+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
+function copyText(txt, box, stat){
+  box.value=txt; box.hidden=false;
+  function done(ok){ stat.textContent= ok ? "Copied!" : "Select the text below and copy it."; }
+  function fallback(){ box.focus(); box.select(); var ok=false; try{ ok=document.execCommand("copy"); }catch(e){} done(ok); }
+  try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(function(){done(true); box.focus(); box.select();}, fallback); return; } }catch(e){}
+  fallback();
+}
+function wireCopies(){
+  [].forEach.call(document.querySelectorAll("[data-copy]"),function(row){
+    var key=row.getAttribute("data-copy"), big=key==="all";
+    var b=el("button",{class:big?"btn":"btn ghost",type:"button"}); b.textContent= big ? "Copy my case file for Rocky" : "Copy just this lead";
+    var st=el("span",{class:"cstat","aria-live":"polite"});
+    var ta=el("textarea",{readonly:"","aria-label":"Text to paste to Rocky",rows:"6"}); ta.hidden=true;
+    ta.addEventListener("focus",function(){ ta.select(); });
+    b.addEventListener("click",function(){ st.textContent=""; copyText(report(key), ta, st); });
+    row.appendChild(b); row.appendChild(st); row.appendChild(ta);
+  });
+}
+
+/* ---------- ungraded taps in the reading ---------- */
+function wirePoll(id, key, onPick){
+  $(id).querySelectorAll("button[data-r]").forEach(function(b){
+    b.addEventListener("click",function(){
+      POLLS[key]=b.getAttribute("data-r");
+      $(id).querySelectorAll("button[data-r]").forEach(function(x){ x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost"; });
+      onPick(POLLS[key]); refreshGot(); saveState();
+    });
+  });
+}
+function syncPoll(id,key){ $(id).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===POLLS[key]; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; }); }
+var POLLFX={
+ clash:function(v){ setFb($("clashFb"),"","Noted.", v==="total" ? "That's the utilitarian answer. See the note below for why." : "Lots of people feel that way, and it's a real rival view. Utilitarians disagree; see the note below."); $("clashNote").hidden=false; },
+ essay:function(v){ $("essayMore").hidden=false; },
+ ev:function(v){ setFb($("evFb"),"","Noted.", "The shot's expected value is 50% × 100 = +50, so the sure +60 is worth more. "+(v==="sure"?"You picked the sure thing, and by expected value you're right.":"You took the gamble; by expected value the sure thing wins, though luck could still go your way.")); },
+ fish:function(v){ setFb($("fishFb"),"","Noted.", "Scientists still argue about this one, though the evidence that fish feel something like pain has been growing. For Bentham, the answer is what decides whether fish count."); },
+ camp:function(v){ setFb($("campFb"),"","Noted.", v==="act" ? "That's the act utilitarian's instinct. Lead 3 will test whether you stick to it." : "That's the rule utilitarian's instinct. Lead 3 will test whether you stick to it."); },
+ dem:function(v){ setFb($("demFb"),"","Noted.", v==="yes" ? "You're with most critics. Reply 4, below, is the utilitarian's answer." : "Some utilitarians agree: maybe morality really is that demanding. Peter Singer argues this in Challenge 3."); },
+ surg:function(v){ setFb($("surgFb"),"","Noted.", v==="yes" ? "That's what the simple sum says. Most people recoil; see why below." : v==="no" ? "That's what nearly everyone says. The question is whether utilitarianism can agree." : "Hold that thought: it's exactly where Reply 1, a few screens down, runs into trouble."); $("surgMore").hidden=false; }
+};
+wirePoll("clashPoll","clash",POLLFX.clash);
+wirePoll("essayPoll","essay",POLLFX.essay);
+wirePoll("evPoll","ev",POLLFX.ev);
+wirePoll("fishPoll","fish",POLLFX.fish);
+wirePoll("campPoll","camp",POLLFX.camp);
+wirePoll("demPoll","dem",POLLFX.dem);
+wirePoll("surgPoll","surg",POLLFX.surg);
+
+/* generic multiple-choice block: options shuffled; graded by key; onRight called once */
+var MCQ_LOG=[];
+function mcq(container, item, rec, onRight, label, g){
+  MCQ_LOG.push(item);
+  var wrap=el("div",{class:"mq"}); if(item.q||label){ var p=el("p",{class:"small"}); p.innerHTML=(label?"<b>"+label+"</b> ":"")+item.q; wrap.appendChild(p); }
+  var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
+  shuffle(item.o).forEach(function(o){
+    var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
+    b.addEventListener("click",function(){
+      if(rec.done) return;
+      wrap.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      if(o[0]===item.a){ rec.done=true; setFb(fb,"good",vword(g,"ok"),item.ok); wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); focusFb(fb); onRight(); }
+      else { rec.misses++; setFb(fb,"bad",vword(g,"no"),item.no[o[0]]); }
+    });
+    wrap.appendChild(b);
+  });
+  wrap.appendChild(fb); container.appendChild(wrap);
+  return wrap;
+}
+
+/* ================= LEAD 1: HAPPINESS LEDGER ================= */
+var POL=[
+ {k:"A", n:"Skate park", c:"var(--hl-o)", rows:[
+   {who:"300 teenagers finally get somewhere to skate", n:300, e:6, opts:[1800,306,180]},
+   {who:"50 neighbors put up with the noise", n:50, e:-4, opts:[-200,200,-2000]} ]},
+ {k:"B", n:"Free downtown Wi-Fi", c:"var(--hl-b)", rows:[
+   {who:"2,000 residents get slightly easier internet", n:2000, e:0.5, opts:[1000,4000,2000]},
+   {who:"10 café owners lose some customers", n:10, e:-10, opts:[-100,100,-20]} ]},
+ {k:"C", n:"Shorter clinic waits", c:"var(--hl-g)", rows:[
+   {who:"60 patients get treated months sooner", n:60, e:30, opts:[1800,90,180]},
+   {who:"20 clinic staff are less stressed", n:20, e:5, opts:[100,25,1000]} ]}
+];
+var ledDone=0, ledTotalRows=0, polDone={};
+POL.forEach(function(P){ ledTotalRows+=P.rows.length; P.total=P.rows.reduce(function(s,r){return s+r.n*r.e;},0); });
+var MAXT=Math.max(1,Math.max.apply(null,POL.map(function(P){return P.total;})));
+POL.forEach(function(P){
+  var card=el("div",{class:"policy"}); card.style.setProperty("--pc",P.c);
+  var h=el("h3"); h.innerHTML='<span>Plan '+P.k+': '+P.n+'</span>'; var tot=el("span",{class:"tot"}); tot.textContent="total: ?"; h.appendChild(tot); card.appendChild(h);
+  var left=P.rows.length;
+  P.rows.forEach(function(r,ri){
+    var id=P.k+ri; REC.led.rows[id]={misses:0, done:false};
+    var right=Math.round(r.n*r.e*100)/100;
+    var row=el("div",{class:"lrow"});
+    var who=el("div",{class:"who"}); who.textContent=r.who; row.appendChild(who);
+    var sum=el("div",{class:"sum"}); sum.textContent=r.n.toLocaleString("en-US")+" people × "+fmt(r.e)+" each = ?"; row.appendChild(sum);
+    var btns=el("div",{class:"row",role:"group","aria-label":"Total for: "+r.who});
+    var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
+    shuffle(r.opts).forEach(function(v){
+      var b=el("button",{class:"pick",type:"button","data-v":String(v)}); b.textContent=fmt(v);
+      b.addEventListener("click",function(){
+        var R=REC.led.rows[id]; if(R.done) return;
+        if(v===right){
+          R.done=true; b.classList.add("right"); btns.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
+          sum.textContent=r.n.toLocaleString("en-US")+" × "+fmt(r.e)+" = "+fmt(v); row.classList.add("done");
+          setFb(fb,"good",vword("g1","ok"),fmt(v)+" filed.");
+          focusFb(fb);
+          ledDone++; left--;
+          if(!left){ tot.textContent="total: "+fmt(P.total); tot.classList.add("done"); polDone[P.k]=true; drawBars(); }
+          if(ledDone===ledTotalRows) showLedQs();
+        } else {
+          R.misses++; b.disabled=true;
+          var hint = (v===-right) ? "Check the sign: is this group gaining happiness or losing it?" : "Multiply the number of people by the change for each person.";
+          setFb(fb,"bad",vword("g1","no"),hint);
+        }
+        touch("g1");
+      });
+      btns.appendChild(b);
+    });
+    row.appendChild(btns); row.appendChild(fb); card.appendChild(row);
+  });
+  $("ledger").appendChild(card);
+});
+function drawBars(){
+  var B=$("bars"); B.innerHTML="";
+  POL.forEach(function(P){
+    var d=el("div",{class:"bar"}); d.style.setProperty("--bc",P.c);
+    var done=!!polDone[P.k];
+    d.innerHTML='<span>Plan '+P.k+'</span><div class="track" role="img" aria-label="Plan '+P.k+' total '+(done?fmt(P.total):"not yet worked out")+'"><i></i></div><span class="num">'+(done?fmt(P.total):"?")+'</span>';
+    B.appendChild(d);
+    var i=d.querySelector("i"); var w=done?Math.max(0,Math.round(100*P.total/MAXT)):0;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ i.style.width=w+"%"; }); });
+  });
+}
+drawBars();
+var LEDQ=[
+ {q:"The council asks for your advice. Which project does a utilitarian tell them to fund?",
+  o:[["A","Plan A: the skate park"],["B","Plan B: the downtown Wi-Fi"],["C","Plan C: shorter clinic waits"]], a:"C",
+  ok:"Plan C has the biggest total (+1,900), so it's the one that maximizes well-being.",
+  no:{A:"The skate park is a strong second (+1,600), but second isn't good enough. The theory says maximize.",B:"Look at the bars: the Wi-Fi has the smallest total of the three."}},
+ {q:"The Wi-Fi plan helps by far the most people (2,000 of them). Why doesn't it win?",
+  o:[["a","The theory maximizes total well-being, not people helped"],["b","Gains under one point are dropped from a utilitarian sum"],["c","Internet access isn't a pleasure Bentham would count at all"]], a:"a",
+  ok:"\"The greatest number\" loses to \"the greatest happiness\". Lots of tiny gains can add up to less than a few big ones.",
+  no:{b:"They do count: all 2,000 half-points went into the sum. They just add up to less than the clinic's total.",c:"Bentham counts any pleasure at all. The problem is only how much this one adds up to."}},
+ {q:"A neighbor of the skate park says: \"My sleep should count double. I've paid taxes here for 30 years.\" What does impartiality say?",
+  o:[["a","Her loss counts the same as anyone's: no double weight"],["b","Count it double, since long-time residents matter more"],["c","Ignore the neighbors, since they are outnumbered anyway"]], a:"a",
+  ok:"Everybody to count for one, nobody for more than one. Her loss of sleep counts exactly as much as anyone else's, no more and no less.",
+  no:{b:"That's partiality, the opposite of what the \"everybody to count for one\" slogan asks for.",c:"Careful: the neighbors do go in the sum (that's the −200). Being outnumbered means being outweighed, not ignored."}}
+];
+var ledQDone=0, ledQBuilt=false;
+function showLedQs(){
+  if(ledQBuilt) return; ledQBuilt=true;
+  var Q=$("ledQs"); Q.hidden=false;
+  var intro=el("p",{class:"pause"}); intro.textContent="Ledger complete. Now advise the council: three questions."; Q.appendChild(intro);
+  LEDQ.forEach(function(item,qi){
+    REC.led.q[qi]={misses:0, done:false};
+    mcq(Q,item,REC.led.q[qi],function(){ ledQDone++; touch("g1"); if(ledQDone===LEDQ.length){ $("ledScore").textContent="Ledger balanced and council advised."; clear("g1"); } },"Q"+(qi+1)+".","g1");
+  });
+  Q.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g1"); }); });
+}
+function ledLines(){
+  var ids=Object.keys(REC.led.rows), done=ids.filter(function(k){return REC.led.rows[k].done;}).length;
+  if(!done) return ["Lead 1 Happiness Ledger: not started"];
+  var first=ids.filter(function(k){return REC.led.rows[k].done && !REC.led.rows[k].misses;}).length;
+  var out=["Lead 1 Happiness Ledger sums: "+tally(done,first,ledTotalRows,"worked out")];
+  if(ledQBuilt){
+    var qk=Object.keys(REC.led.q), qd=qk.filter(function(k){return REC.led.q[k].done;}).length, qf=qk.filter(function(k){return REC.led.q[k].done && !REC.led.q[k].misses;}).length;
+    out.push("Lead 1 council questions (which plan wins, total vs number of people, impartiality): "+(qd?tally(qd,qf,LEDQ.length,"answered"):"none answered yet"));
+  }
+  return out;
+}
+
+/* ================= LEAD 2: CIRCLE OF CONCERN ================= */
+var TOK=[
+ {k:"friend", n:"Your best friend", c:"#FFE15A", ben:"in", why:"Of course. But no more than anyone else."},
+ {k:"stranger", n:"A stranger on the other side of the world", c:"#86CFFF", ben:"in", why:"Distance doesn't change how much pain hurts."},
+ {k:"future", n:"Someone who'll be born in 2150", c:"#74E5AA", ben:"in", why:"They'll feel just as much as you do. When they're born doesn't change that."},
+ {k:"dog", n:"A dog", c:"#FFB25C", ben:"in", why:"Can a dog suffer? Clearly. So it's in."},
+ {k:"chicken", n:"A chicken", c:"#FF93C9", ben:"in", why:"Chickens can feel pain too. Bentham's test doesn't care how many legs you have."},
+ {k:"rival", n:"Someone you really can't stand", c:"#C9B6FF", ben:"in", why:"Impartiality cuts both ways: people you dislike count exactly as much as people you love."},
+ {k:"river", n:"A river", c:"#B8E3E0", ben:"out", why:"A river can't feel anything, so its own happiness isn't in the sum. What happens to it still matters through its effects on the people and animals who depend on it."},
+ {k:"robot", n:"A super-advanced robot from the future", c:"#D9D9D9", ben:"dep", why:"Bentham's test asks whether it can feel. That's a science question nobody can answer yet, so: it depends."}
+];
+var MR=[["0","Counts a lot"],["1","Counts some"],["2","Counts a little"],["3","Doesn't count"]];
+var BR=[["in","In the sum"],["out","Not in the sum"],["dep","Depends: can it feel?"]];
+var mine={}, minePlaced=0, mineLocked=false;
+function ringsSvg(svg, mode, placed){
+  var C=150, s="";
+  if(mode==="mine"){
+    s+='<rect x="2" y="2" width="296" height="296" rx="14" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-dasharray="4 4"/>';
+    s+='<circle cx="150" cy="150" r="128" fill="#86CFFF" fill-opacity=".18" stroke="currentColor" stroke-opacity=".5"/>';
+    s+='<circle cx="150" cy="150" r="88" fill="#74E5AA" fill-opacity=".22" stroke="currentColor" stroke-opacity=".5"/>';
+    s+='<circle cx="150" cy="150" r="46" fill="#FFE15A" fill-opacity=".45" stroke="currentColor" stroke-opacity=".6"/>';
+    s+='<text class="rlbl" x="150" y="114" text-anchor="middle">a lot</text><text class="rlbl" x="150" y="72" text-anchor="middle">some</text><text class="rlbl" x="150" y="32" text-anchor="middle">a little</text><text class="rlbl" x="150" y="294" text-anchor="middle">outside: doesn’t count</text>';
+  } else {
+    s+='<rect x="2" y="2" width="296" height="296" rx="14" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-dasharray="4 4"/>';
+    s+='<circle cx="150" cy="150" r="128" fill="none" stroke="currentColor" stroke-opacity=".6" stroke-dasharray="6 5"/>';
+    s+='<circle cx="150" cy="150" r="96" fill="#74E5AA" fill-opacity=".3" stroke="currentColor" stroke-opacity=".6"/>';
+    s+='<text class="rlbl" x="150" y="140" text-anchor="middle">can suffer:</text><text class="rlbl" x="150" y="152" text-anchor="middle">in the sum</text><text class="rlbl" x="150" y="40" text-anchor="middle">depends</text><text class="rlbl" x="150" y="294" text-anchor="middle">outside: not in the sum</text>';
+  }
+  var groups={};
+  TOK.forEach(function(t,i){ var z=placed[t.k]; if(z==null) return; (groups[z]=groups[z]||[]).push(i); });
+  Object.keys(groups).forEach(function(z){
+    var list=groups[z], n=list.length;
+    list.forEach(function(ti,j){
+      var r, ang, x, y;
+      if(mode==="mine"){
+        if(z==="3"){ ang=(45+90*(j%4))*Math.PI/180; r=j<4?176:150; }
+        else { r= z==="0" ? (n===1?0:(n>4?32:24)) : z==="1" ? 67 : 108; ang=(-45+j*360/n + (z==="2"?20:0))*Math.PI/180; }
+      } else {
+        if(z==="out"){ ang=(45+90*(j%4))*Math.PI/180; r=176; }
+        else if(z==="dep"){ ang=(-60+j*30)*Math.PI/180; r=112; }
+        else { r=62; ang=(-90+j*360/n)*Math.PI/180; }
+      }
+      x=C+r*Math.cos(ang); y=C+r*Math.sin(ang);
+      var t=TOK[ti];
+      s+='<g><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="11" fill="'+t.c+'" stroke="#2A2016" stroke-width="1.6"/><text x="'+x.toFixed(1)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="middle" font-weight="700" style="fill:#1E1609">'+(ti+1)+'</text></g>';
+    });
+  });
+  svg.innerHTML=s;
+}
+ringsSvg($("ringsMine"),"mine",mine);
+TOK.forEach(function(t,i){
+  var box=el("div",{class:"tok"});
+  var nm=el("div",{class:"nm"}); nm.innerHTML='<i style="--tc:'+t.c+'">'+(i+1)+'</i><span>'+esc(t.n)+'</span>'; box.appendChild(nm);
+  var row=el("div",{class:"ringbtns",role:"group","aria-label":"Where does "+t.n+" go in your circle?"});
+  MR.forEach(function(m){
+    var b=el("button",{class:"pick",type:"button","data-v":m[0]}); b.textContent=m[1];
+    b.addEventListener("click",function(){
+      if(mineLocked) return;
+      if(mine[t.k]==null) minePlaced++;
+      mine[t.k]=m[0]; REC.circ.mine[t.k]=m[0];
+      row.querySelectorAll(".pick").forEach(function(x){x.classList.toggle("chosen",x===b);});
+      ringsSvg($("ringsMine"),"mine",mine);
+      $("mineLock").disabled = minePlaced<TOK.length;
+      $("mineMsg").textContent = minePlaced<TOK.length ? (TOK.length-minePlaced)+" left to place" : "All placed. Lock it when you're happy.";
+      touch("g2");
+    });
+    row.appendChild(b);
+  });
+  box.appendChild(row); $("mineList").appendChild(box);
+});
+$("mineMsg").textContent=TOK.length+" left to place";
+var ben={}, benDone=0;
+$("mineLock").addEventListener("click",function(){
+  if(mineLocked || minePlaced<TOK.length) return;
+  mineLocked=true; $("mineLock").disabled=true; $("mineLock").textContent="Circle locked"; $("mineMsg").textContent="";
+  $("mineList").querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
+  $("benRound").hidden=false; ringsSvg($("ringsBen"),"ben",ben);
+  shuffle(TOK.map(function(_,i){return i;})).forEach(function(i){
+    var t=TOK[i];
+    REC.circ.ben[t.k]={misses:0, done:false};
+    var box=el("div",{class:"tok"});
+    var nm=el("div",{class:"nm"}); nm.innerHTML='<i style="--tc:'+t.c+'">'+(i+1)+'</i><span>'+esc(t.n)+'</span>'; box.appendChild(nm);
+    var row=el("div",{class:"ringbtns",role:"group","aria-label":"Bentham's verdict on "+t.n});
+    var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
+    shuffle(BR).forEach(function(m){
+      var b=el("button",{class:"pick",type:"button","data-v":m[0]}); b.textContent=m[1];
+      b.addEventListener("click",function(){
+        var R=REC.circ.ben[t.k]; if(R.done) return;
+        if(m[0]===t.ben){
+          R.done=true; b.classList.add("right"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;}); box.classList.add("locked");
+          setFb(fb,"good",vword("g2","ok"),t.why); focusFb(fb);
+          ben[t.k]=m[0]; ringsSvg($("ringsBen"),"ben",ben); benDone++;
+          if(benDone===TOK.length) benCompare();
+        } else {
+          R.misses++; b.disabled=true;
+          setFb(fb,"bad",vword("g2","no"), t.ben==="dep" ? "Bentham's test is about feeling. Do we actually know whether this one can feel?" : t.ben==="out" ? "Ask Bentham's one question: can it suffer?" : "Ask Bentham's one question: can it suffer? Who it is, where or when doesn't matter.");
+        }
+        touch("g2");
+      });
+      row.appendChild(b);
+    });
+    box.appendChild(row); box.appendChild(fb); $("benList").appendChild(box);
+  });
+  $("benList").querySelector(".pick").focus();
+  touch("g2");
+});
+var agreeN=0, agreeOf=0, partialNote=false;
+var REFQ=[
+ {q:"Bentham argued that private acts between consenting men should not be crimes. Which reasoning was his?",
+  o:[["a","The acts harmed no one, and the punishments caused great suffering"],["b","Everyone has a natural right to privacy, which the law broke"],["c","The law was centuries old, and old laws should be replaced"]], a:"a",
+  ok:"Pure utilitarian reasoning: weigh the effects. No victim on one side; great suffering from punishment on the other.",
+  no:{b:"Many modern reformers argue that way, but Bentham called natural rights \"nonsense upon stilts\". His case rested on effects, not rights.",c:"Age isn't Bentham's test. A law is bad if its effects on happiness are bad, however old or new it is."}},
+ {q:"By Bentham's test, why do animals count?",
+  o:[["a","Because they can feel pain and pleasure"],["b","Because many of them can reason, in their own way"],["c","Because they are useful and valuable to humans"]], a:"a",
+  ok:"Feeling is the whole test: can they suffer?",
+  no:{b:"Bentham said the question is not whether they can reason or talk.",c:"That would make animals matter only for what they do for us. Bentham's point was that their own suffering counts."}}
+];
+var refDone=0, refBuilt=false;
+function benCompare(){
+  agreeN=0; agreeOf=0;
+  TOK.forEach(function(t){ if(t.ben!=="in") return; agreeOf++; if(mine[t.k]!=="3") agreeN++; });
+  var msg='<div class="pattern"><b>You and Bentham agreed on '+agreeN+' of '+agreeOf+'</b> beings that can clearly suffer: you gave '+(agreeN===agreeOf?'all of them':'that many')+' some weight. (The river and the robot are left out of the count: see below.)';
+  var fr=+mine.friend, st=+mine.stranger;
+  partialNote = fr<st;
+  if(partialNote) msg+='<br><br>You put your best friend closer in than the stranger. Most people do. In the utilitarian sum, though, they weigh exactly the same. Hold that thought: it comes back in the objection files, when the theory asks you to treat your friend and a stranger the same.';
+  if(mine.river!=="3") msg+='<br><br>You gave the river some weight. Bentham would agree if that\'s because of the people and fish who depend on it, but not if it\'s for the river\'s own sake.';
+  else msg+='<br><br>You gave the river no weight. In itself, Bentham agrees. But careful: what happens to a river still counts through its effects on the people and animals who depend on it.';
+  if(mine.rival==="3") msg+='<br><br>You left out the person you can\'t stand. Impartiality says they count fully.';
+  msg+='</div>';
+  $("benCompare").innerHTML=msg;
+  if(refBuilt) return; refBuilt=true;
+  var Q=$("refQs"); Q.hidden=false; Q.innerHTML="";
+  var intro=el("p",{class:"pause"}); intro.textContent="Two questions from \"Bentham the reformer\" to clear this lead."; Q.appendChild(intro);
+  REFQ.forEach(function(item,qi){
+    REC.circ.q[qi]={misses:0, done:false};
+    mcq(Q,item,REC.circ.q[qi],function(){ refDone++; touch("g2"); if(refDone===REFQ.length){ $("circScore").textContent="Circle drawn, reforms explained."; clear("g2"); } },"Q"+(qi+1)+".","g2");
+  });
+  Q.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g2"); }); });
+}
+function circLines(){
+  var placed=Object.keys(REC.circ.mine);
+  if(!placed.length) return ["Lead 2 Circle of concern: not started"];
+  var ML={"0":"counts a lot","1":"counts some","2":"counts a little","3":"doesn't count"};
+  if(!mineLocked) return ["Lead 2 my own circle: not locked yet"];
+  var out=["Lead 2 my own circle (locked): "+TOK.map(function(t){return t.n.replace(/^Your /,"my ").replace(/^(A|Someone)\b/,function(w){return w.toLowerCase();})+" = "+ML[REC.circ.mine[t.k]];}).join("; ")];
+  var bk=Object.keys(REC.circ.ben);
+  if(bk.length){
+    var bd=bk.filter(function(k){return REC.circ.ben[k].done;}).length, bf=bk.filter(function(k){return REC.circ.ben[k].done && !REC.circ.ben[k].misses;}).length;
+    var missed=TOK.filter(function(t){return REC.circ.ben[t.k] && REC.circ.ben[t.k].misses;}).map(function(t){return t.n;});
+    out.push("Lead 2 Bentham's circle: "+tally(bd,bf,TOK.length,"placed")+(missed.length?"; needed a second go on: "+missed.join(", "):""));
+    if(bd===TOK.length) out.push("Lead 2 my circle gave weight to "+agreeN+" of the "+agreeOf+" beings that can clearly suffer"+(partialNote?" (I put my best friend closer than the stranger)":""));
+  }
+  var qk=Object.keys(REC.circ.q);
+  if(qk.length){ var qd=qk.filter(function(k){return REC.circ.q[k].done;}).length, qf=qk.filter(function(k){return REC.circ.q[k].done && !REC.circ.q[k].misses;}).length; out.push("Lead 2 reformer questions: "+(qd?tally(qd,qf,REFQ.length,"answered"):"none answered yet")); }
+  return out;
+}
+
+/* ================= LEAD 3: PREDICT THE VERDICT ================= */
+var NODIFF="It makes no difference";
+var CASES=[
+ {k:"wallet", n:"The found wallet", tag:"honesty",
+  d:"You find a wallet with $200 and the owner's ID inside. The owner is extremely rich and will barely notice the money is gone. A charity could use that $200 to make several struggling families much better off.",
+  stip:"Small print: nobody will ever find out, and it won't change your habits or anyone's trust in anyone.",
+  mine:[["ret","Return it"],["give","Give it to the charity"],["unsure","Not sure"]],
+  o:[["ret","Return it to the owner"],["give","Give it to the charity"],["same",NODIFF]], a:"give",
+  ok:"With the side effects ruled out, the charity produces far more well-being than a rich person's tiny relief. The act utilitarian says give it away. If that feels wrong to you, you've found a spot where the theory and common sense split.",
+  no:{ret:"That's the honest, common-sense answer. But the act utilitarian only compares totals, and with the side effects ruled out, the charity wins easily.",same:"The totals aren't close: several families much better off versus one person who barely notices."}},
+ {k:"promise", n:"The promise", tag:"keeping your word",
+  d:"You promised to meet a friend at the movies. On the way, an elderly man trips in front of you and is hurt. Nobody else is around. Staying with him until the ambulance arrives means missing the movie, and your friend will be annoyed.",
+  stip:"Small print: your friend will forgive you once you explain.",
+  mine:[["stay","Stay with him"],["go","Go to the movies"],["unsure","Not sure"]],
+  o:[["stay","Stay with the hurt man"],["go","Keep the promise and go"],["same",NODIFF]], a:"stay",
+  ok:"Helping the hurt man prevents far more suffering than a missed movie causes. Here the theory and almost everyone's gut agree. Worth remembering: most of the time, utilitarianism tells you to do ordinary, decent things.",
+  no:{go:"For a utilitarian, a promise has no weight of its own; only its effects count. Breaking this one costs a little annoyance; leaving the man costs a lot more.",same:"A hurt man waiting alone versus a missed movie: the totals are far apart."}},
+ {k:"ashes", n:"The deathbed promise", tag:"promises to the dead",
+  d:"An old family friend, before he died, made you promise to scatter his ashes at one particular beach. You could do that, or scatter them in his garden instead.",
+  stip:"Small print: use Bentham's view of well-being (pleasure and pain). Nobody else will ever know or care which you choose, both trips take the same time and effort, you'd feel the same either way, and it won't change your habits.",
+  mine:[["beach","Keep the promise: the beach"],["garden","The garden is fine"],["unsure","Not sure"]],
+  o:[["beach","The beach: a promise is a promise"],["garden","The garden: it's the easier choice"],["same",NODIFF]], a:"same",
+  ok:"Every effect on anyone's well-being is the same either way, and on Bentham's pleasure-and-pain view, the man himself can no longer be made better or worse off. So for Bentham's act utilitarian it makes no difference. (A desire theorist from Challenge 1 might disagree: his wish about the beach could still count.) Many people find that a striking result: the promise itself seems to count for nothing.",
+  no:{beach:"That's what most people feel. But for an act utilitarian a promise matters only through its effects, and the small print says the effects, including on your habits, are identical.",garden:"The small print says both take the same effort, so the garden isn't easier. Nothing in the totals separates them."}},
+ {k:"lawn", n:"The lawn", tag:"act vs rule",
+  d:"The park has a \"Keep off the grass\" sign. Cutting across saves you two minutes. If everyone cut across, the lawn would turn to mud.",
+  stip:"Small print: one crossing really does no harm to the grass, and nobody sees you, so you won't encourage anyone else. And suppose \"keep off the grass\" is a rule that works out best when nearly everyone follows it.",
+  mine:[["cut","Cut across"],["round","Go around"],["unsure","Not sure"]],
+  o:[["cut","Cut across the grass"],["round","Go around on the path"],["same",NODIFF]], a:"cut",
+  ok:"Two minutes saved, no harm, nobody copying you: the act utilitarian cuts across.",
+  no:{round:"That's reasoning about everyone, which is the rule utilitarian's move (you'll get to it in a moment). The act utilitarian judges this one act on its own effects.",same:"Two minutes saved against no harm at all: a small gain, but a gain, and a maximizer takes it."},
+  rule:{q:"And what does a <b>rule</b> utilitarian say?", o:[["cut","Cut across the grass"],["round","Go around on the path"],["same",NODIFF]], a:"round",
+   ok:"The rule utilitarian follows the rule that works out best when nearly everyone follows it: keep off the grass.",
+   no:{cut:"That's the act utilitarian's reasoning. The rule utilitarian asks which rule works out best when nearly everyone follows it, then follows that rule.",same:"For the rule utilitarian it does make a difference: one choice follows the best rule and one breaks it."}}}
+];
+var POLLQ=[
+ {q:"Why did the wallet case need the small print \"nobody will ever find out\"?",
+  o:[["a","Trust and habits are consequences too, and could change the total"],["b","Utilitarians only care about whether you get caught doing it"],["c","The law says anyone who finds a wallet must return it"]], a:"a",
+  ok:"Side effects count. Without the small print, the damage to trust and to your own honesty could tip the balance back toward returning it.",
+  no:{b:"Getting caught matters only because of its effects: lost trust, worse habits, a bad example. Those are what the small print rules out.",c:"The law isn't what a utilitarian is weighing here. Effects on well-being are."}},
+ {q:"Back in Millbrook: suppose the clinic plan has only a 50% chance of working (+1,900 if it works, nothing if it doesn't), while the other two plans are sure things. What's the clinic's expected value, and what follows?",
+  o:[["a","+950, so the skate park now wins"],["b","+1,900, so the clinic still wins"],["c","+3,800, so the clinic wins by more"]], a:"a",
+  ok:"50% × 1,900 = 950. A sure +1,600 beats an expected +950. Uncertainty can flip the verdict.",
+  no:{b:"That's the value if it works. Expected value multiplies by the chance of working.",c:"Expected value multiplies by the chance (0.5); it doesn't double."}}
+];
+var caseDone=0, pollBuilt=false, pollQDone=0, ruleRec={misses:0, done:false};
+CASES.forEach(function(C){
+  REC.poll.util[C.k]={misses:0, done:false};
+  var box=el("div",{class:"case"});
+  box.innerHTML='<h3>'+C.n+'<em>'+C.tag+'</em></h3><p>'+esc(C.d)+'</p><p class="stip">'+esc(C.stip)+'</p><p class="step-lbl">1. Your verdict (not graded; locks when you make your prediction)</p>';
+  var g1=el("div",{class:"row mine",role:"group","aria-label":"Your verdict: "+C.n});
+  var step2=el("div"); step2.hidden=true;
+  C.mine.forEach(function(o){
+    var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
+    b.addEventListener("click",function(){
+      if(C.frozen) return;
+      REC.poll.mine[C.k]=o[0];
+      g1.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      if(step2.hidden){ step2.hidden=false; var f=step2.querySelector(".choice"); if(f) f.focus(); }
+      touch("g3");
+    });
+    g1.appendChild(b);
+  });
+  box.appendChild(g1);
+  var lbl=el("p",{class:"step-lbl"}); lbl.textContent="2. What does an act utilitarian say?"; step2.appendChild(lbl);
+  mcq(step2,{q:"",o:C.o,a:C.a,ok:C.ok,no:C.no},REC.poll.util[C.k],function(){
+    if(C.rule){ var w=mcq(step2,C.rule,ruleRec,function(){ caseFinished(box); },"3.","g3"); w.querySelector(".choice").focus(); w.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g3"); }); }); }
+    else caseFinished(box);
+    touch("g3");
+  },"","g3");
+  step2.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){
+    if(!C.frozen){ C.frozen=true; g1.querySelectorAll("button").forEach(function(x){ x.disabled=true; }); }
+    touch("g3");
+  }); });
+  box.appendChild(step2);
+  $("caseList").appendChild(box);
+});
+function caseFinished(box){ box.classList.add("done"); caseDone++; if(caseDone===CASES.length) pollReveal(); }
+var agreePoll=0;
+function pollReveal(){
+  if(pollBuilt) return; pollBuilt=true;
+  var NC=CASES.length;
+  var MAP={wallet:{give:"give"},promise:{stay:"stay"},ashes:{garden:"same"},lawn:{cut:"cut"}};
+  agreePoll=0; CASES.forEach(function(C){ if(MAP[C.k][REC.poll.mine[C.k]]===C.a) agreePoll++; });
+  var t = agreePoll>=4 ? "Card-carrying act utilitarian" : agreePoll===3 ? "Mostly utilitarian" : agreePoll===2 ? "Split down the middle" : "Not buying it";
+  var b = agreePoll>=3 ? "Your gut and the act utilitarian mostly line up. Where they split, ask yourself: is that a mistake in my gut, or a hole in the theory?"
+        : agreePoll===2 ? "You sided with the theory some of the time. Notice which cases: many people agree on the promise but split on the wallet and the ashes."
+        : "Your gut keeps splitting from the act utilitarian. That's exactly the raw material for the objections coming next.";
+  var R=$("pollReveal"); R.hidden=false;
+  R.innerHTML='<div class="pattern"><b>'+t+': you agreed with the act utilitarian on '+agreePoll+' of '+NC+'.</b> (For the ashes, "the garden is fine" counts as agreeing.)<br>'+b+'</div><p class="small"><b>Two more questions to clear this lead.</b></p>';
+  POLLQ.forEach(function(item,qi){
+    REC.poll.q[qi]={misses:0, done:false};
+    mcq(R,item,REC.poll.q[qi],function(){ pollQDone++; touch("g3"); if(pollQDone===POLLQ.length){ $("pollScore").textContent="All verdicts predicted."; clear("g3"); } },"Q"+(qi+1)+".","g3");
+  });
+  R.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g3"); }); });
+}
+function pollLines(){
+  var locked=CASES.filter(function(C){ return C.frozen && REC.poll.mine[C.k]; });
+  if(!locked.length) return ["Lead 3 Predict the verdict: no verdicts locked yet"];
+  var out=["Lead 3 my own verdicts (each locked before I saw the theory's answer): "+locked.map(function(C){ var m=REC.poll.mine[C.k]; var o=C.mine.filter(function(x){return x[0]===m;})[0]; return C.n.replace("The ","")+" = "+o[1].toLowerCase(); }).join("; ")];
+  var ud=CASES.filter(function(C){return REC.poll.util[C.k].done;}), uf=ud.filter(function(C){return !REC.poll.util[C.k].misses;});
+  if(ud.length) out.push("Lead 3 act-utilitarian predictions: "+tally(ud.length,uf.length,CASES.length,"answered")+(ruleRec.done?"; rule-utilitarian lawn prediction right"+(ruleRec.misses?" after a miss":" first try"):""));
+  if(pollBuilt){
+    out.push("Lead 3 I agreed with the act utilitarian on "+agreePoll+" of "+CASES.length+" cases");
+    var qk=Object.keys(REC.poll.q), qd=qk.filter(function(k){return REC.poll.q[k].done;}).length, qf=qk.filter(function(k){return REC.poll.q[k].done && !REC.poll.q[k].misses;}).length;
+    out.push("Lead 3 consequences questions (side effects, expected value): "+(qd?tally(qd,qf,POLLQ.length,"answered"):"none answered yet"));
+  }
+  return out;
+}
+
+/* ================= LEAD 4: OBJECTION MATCHER ================= */
+var OBJ=[
+ {k:"R", n:"Rights: using a person", s:"treating someone as a tool for others' good", c:"var(--hl-p)"},
+ {k:"J", n:"Fair shares vs the total", s:"only the sum counts, not how it's split", c:"var(--hl-o)"},
+ {k:"D", n:"Demandingness", s:"it asks too much: always more to do", c:"var(--hl-y)"},
+ {k:"S", n:"Separateness of persons", s:"treats us as one big person", c:"var(--hl-g)"}
+];
+var ALL={k:"ALL", n:"All four (bite the bullet)", s:"answers every objection at once", c:"var(--hl-b)"};
+var ROUNDS=[
+ [ {id:"m1", t:"A mayor could calm a town-wide panic by framing a newcomer she knows is innocent, using him as a tool so everyone else feels safe. He'd be fined and sent away.", a:"R", hint:"Look at what's done to the newcomer himself: is he being shortchanged in a share-out, or used?", why:"An innocent person is deliberately used as a means. That's the surgeon's structure."},
+   {id:"m2", t:"Plan Y gives half the country a huge boost and leaves the other half with nothing, and it wins because its total beats a plan that shares things fairly.", a:"J", hint:"Nobody is being used here. Look at how the happiness is shared out.", why:"Nobody is used as a tool; the complaint is purely about the split."},
+   {id:"m3", t:"A policy keeps a small group permanently unhappy because it makes a much larger group a little happier.", a:"J", hint:"A minority loses out in the share-out so the sum gets bigger. Which objection is about the split?", why:"The minority isn't used as a means; they just get a bad share of a bigger total."},
+   {id:"m4", t:"You can't buy your sister a birthday present, because the same money would do more good as a donation.", a:"D", hint:"The theory is asking a lot of you personally here.", why:"Maximizing leaves no room for your own people and projects."},
+   {id:"m6", t:"\"When I get a filling, my pain buys my healthy teeth. But your pain can't buy my fun. We're not the same person.\"", a:"S", hint:"Trade-offs inside one life versus trade-offs between lives...", why:"The dentist trade works inside one life; the theory makes it between lives."} ],
+ [ {id:"p1", t:"If people knew doctors might do that, everyone would avoid check-ups and far more would die. So even by the numbers, the surgeon should stop.", a:"R", hint:"This reply says that even counting only results, the surgeon shouldn't do it. Which objection was about a healthy person being used?", why:"Reply 1: counting all the consequences, to rescue the surgeon case."},
+   {id:"p6", t:"Adopt the policy 'doctors never sacrifice a patient'. A world that keeps that policy does best overall, even if breaking it once would help.", a:"R", hint:"This reply protects individuals with a firm policy. Which objection was about an individual being sacrificed?", why:"Reply 2: going rule, so the healthy patient is protected."},
+   {id:"p2", t:"A dollar does more for someone with almost nothing, so the biggest total usually comes from sharing.", a:"J", hint:"This reply says maximizing tends to produce equality. Which objection was worried about inequality?", why:"Reply 3: diminishing returns push the total toward fair shares."},
+   {id:"p3", t:"Nobody improves by being scolded for every free afternoon; cheering on people who give a bit more does more good.", a:"D", hint:"Which objection complained that the theory leaves you no free time?", why:"Reply 4: what's best isn't the same as what deserves blame."},
+   {id:"p4", t:"No one gets left out: each person's well-being is entered on its own line, weighted the same as everyone else's.", a:"S", hint:"This reply insists each individual is still seen. Which objection said individuals vanish into the total?", why:"Reply 5: equal counting as a form of respect for each separate person."},
+   {id:"p5", t:"Maybe the gut feelings behind every one of these complaints are the mistake. They evolved for small groups, not billions.", a:"ALL", hint:"This reply doesn't fix one objection; it questions the feelings behind them all.", why:"Reply 6: bite the bullet, against every objection at once."} ]
+];
+var round=0, sel=null, roundLeft=0, matchDone=false;
+function renderRound(){
+  var cards=$("mCards"), labs=$("mLabels"); cards.innerHTML=""; labs.innerHTML=""; sel=null;
+  $("matchRound").textContent="Round "+(round+1)+" of 2"+(round===1?": replies":": cases");
+  var set=ROUNDS[round]; roundLeft=set.length;
+  var rec= round===0 ? REC.match.r1 : REC.match.r2;
+  shuffle(set).forEach(function(c){
+    rec[c.id]={misses:0, done:false};
+    var b=el("button",{class:"mcard",type:"button","aria-pressed":"false","data-id":c.id}); b.textContent=c.t;
+    b.addEventListener("click",function(){
+      if(rec[c.id].done) return;
+      sel=c; cards.querySelectorAll(".mcard").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      labs.querySelectorAll(".mlabel").forEach(function(x){x.disabled=false;});
+      $("matchFb").className="fb"; $("matchFb").innerHTML="";
+    });
+    cards.appendChild(b);
+  });
+  (round===1 ? OBJ.concat([ALL]) : OBJ).forEach(function(o){
+    var b=el("button",{class:"mlabel",type:"button","data-k":o.k}); b.style.setProperty("--mc",o.c); b.disabled=true;
+    b.innerHTML=o.n+'<small>'+o.s+'</small>';
+    b.addEventListener("click",function(){
+      if(!sel) return;
+      var c=sel, R=rec[c.id], cardBtn=cards.querySelector('[data-id="'+c.id+'"]');
+      if(o.k===c.a){
+        R.done=true; cardBtn.classList.add("matched"); cardBtn.setAttribute("aria-pressed","false"); cardBtn.style.setProperty("--mc",o.c); cardBtn.setAttribute("data-tag","✓ "+o.n); cardBtn.setAttribute("aria-label",c.t+" Matched: "+o.n+". "+c.why);
+        var w=el("span",{class:"mwhy"}); w.textContent=c.why; cardBtn.appendChild(w);
+        setFb($("matchFb"),"good",vword("g4","ok"), "That's "+o.n+". "+c.why);
+        sel=null; labs.querySelectorAll(".mlabel").forEach(function(x){x.disabled=true;});
+        roundLeft--;
+        if(!roundLeft){
+          if(round===0){ $("matchFb").innerHTML+=" <b>Round 1 done.</b> Now the replies."; var nx=el("button",{class:"btn",type:"button",id:"matchNext"}); nx.textContent="Start round 2"; nx.addEventListener("click",function(){ round=1; nx.remove(); renderRound(); $("mCards").querySelector(".mcard").focus(); touch("g4"); }); $("matchFb").appendChild(document.createElement("br")); $("matchFb").appendChild(nx); nx.focus(); }
+          else { matchDone=true; $("matchFb").innerHTML+=" <b>Both rounds done.</b>"; showHardest(); }
+        } else { var nextCard=cards.querySelector(".mcard:not(.matched)"); if(nextCard) nextCard.focus(); }
+      } else {
+        R.misses++; cardBtn.classList.remove("shake"); void cardBtn.offsetWidth; if(!reduceMotion) cardBtn.classList.add("shake");
+        setFb($("matchFb"),"bad",vword("g4","no"),c.hint);
+      }
+      touch("g4");
+    });
+    labs.appendChild(b);
+  });
+}
+renderRound();
+var HARD=[["R","Rights: using a person"],["J","Fair shares vs the total"],["D","Demandingness"],["S","Separateness of persons"],["none","None of them really land"]];
+function showHardest(){
+  var H=$("hardest"); H.hidden=false;
+  H.innerHTML='<p class="step-lbl">Last step (not graded): which objection hits utilitarianism hardest, for you?</p>';
+  var row=el("div",{class:"row",role:"group","aria-label":"Hardest objection"});
+  HARD.forEach(function(o){
+    var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false"}); b.textContent=o[1];
+    b.addEventListener("click",function(){
+      var first=REC.match.hardest===null; REC.match.hardest=o[1];
+      row.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost";});
+      if(first) clear("g4");
+      touch("g4");
+    });
+    row.appendChild(b);
+  });
+  H.appendChild(row); row.querySelector("button").focus();
+}
+function matchLines(){
+  var k1=Object.keys(REC.match.r1), d1=k1.filter(function(k){return REC.match.r1[k].done;});
+  if(!d1.length) return ["Lead 4 Objection matcher: not started"];
+  var f1=d1.filter(function(k){return !REC.match.r1[k].misses;}).length;
+  var out=["Lead 4 round 1 (cases to objections): "+tally(d1.length,f1,ROUNDS[0].length,"matched")];
+  var k2=Object.keys(REC.match.r2), d2=k2.filter(function(k){return REC.match.r2[k].done;});
+  if(d2.length) out.push("Lead 4 round 2 (replies to objections): "+tally(d2.length,d2.filter(function(k){return !REC.match.r2[k].misses;}).length,ROUNDS[1].length,"matched"));
+  if(REC.match.hardest) out.push("Lead 4 the objection that hits hardest for me: "+REC.match.hardest);
+  return out;
+}
+
+/* ================= FINALE ================= */
+var VIEWS=[
+ ["act","Act utilitarian: the right act is always the one with the best total, even when it feels wrong"],
+ ["rule","Rule utilitarian: follow the rules that work out best when nearly everyone follows them"],
+ ["mixed","Consequences matter a lot, but some things (rights, fairness) can't be traded for a bigger total"],
+ ["other","Consequences aren't what make acts right; something else does (duty, respect, character)"]
+];
+VIEWS.forEach(function(v){
+  var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
+  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  $("finOpts").appendChild(b);
+});
+function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
+function freezeFinale(){
+  $("finOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
+  $("finReason").readOnly=true; $("finMoved").disabled=true; $("finBtn").disabled=true; $("finBtn").textContent="Verdict filed";
+}
+function finRender(){
+  var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
+  var util = FIN.view==="act"||FIN.view==="rule";
+  var endTxt = util ? "a utilitarian of some kind" : "not a utilitarian";
+  $("finCompare").innerHTML='<div><span class="hd">START OF FILE</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">END OF FILE</span><br>'+esc(endTxt)+'</div>';
+  var shift="";
+  if(COVER.locked && COVER.v==="yes") shift = util ? "You started a utilitarian and you're still one. Rocky will test which objection you find hardest." : "You started out agreeing with the one-rule offer and ended up rejecting it. What changed your mind? Worth a sentence to Rocky.";
+  else if(COVER.locked && COVER.v==="no") shift = util ? "You started out skeptical and ended up a utilitarian. What won you over? Worth a sentence to Rocky." : "You were skeptical at the start and still are, now with reasons.";
+  else if(COVER.locked && COVER.v==="mostly") shift = FIN.view==="rule"||FIN.view==="mixed" ? "\"Mostly, not always\" was your gut call, and your verdict is a version of that. Can you say exactly where the line is?" : "Your gut said \"mostly, not always\", and your verdict picked a side. Which case pushed you?";
+  $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+esc(shift)+'</p>';
+  $("finCard").hidden=false;
+}
+$("finBtn").addEventListener("click",function(){
+  if(FIN.done) return;
+  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
+  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
+  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
+  setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
+  focusFb($("finFb"));
+  $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
+  toast("Case closed: verdict filed", "var(--stamp)");
+});
+function finLines(){
+  if(!FIN.done) return ["Final verdict: not locked yet"];
+  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+}
+
+var LIVE={g1:ledLines,g2:circLines,g3:pollLines,g4:matchLines};
+var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");},
+  all:function(){ return [].concat(coverLines(), tapLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+wireCopies();
+refreshGot();
+window.__c2m04={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report, mcqs:function(){ return MCQ_LOG.concat(LEDQ,REFQ,POLLQ); }, cases:CASES, verd:VERD};
+
+/* ---------- restore saved progress, if any ---------- */
+if(SAVED){
+  restoring=true;
+  try{
+    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.polls){ ["clash","essay","fish","ev","camp","surg","dem"].forEach(function(k){ if(SAVED.polls[k]){ POLLS[k]=SAVED.polls[k]; POLLFX[k](POLLS[k]); syncPoll({clash:"clashPoll",essay:"essayPoll",fish:"fishPoll",ev:"evPoll",camp:"campPoll",surg:"surgPoll",dem:"demPoll"}[k],k); } }); }
+    if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
+    var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
+    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
+    if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
+      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true;
+      $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
+      $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
+      freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
+    }
+    refreshGot();
+  }catch(e){}
+  restoring=false; saveState();
+}
+updateProg();
+})();
+</script>
+</body>
+</html>

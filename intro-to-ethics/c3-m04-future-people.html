@@ -1,0 +1,1436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case 4: People Who Don't Exist Yet</title>
+<meta name="description" content="Interactive case file for Intro to Ethics, Challenge 3 module C3-M04: what we owe future generations, discounting, the non-identity problem, person-affecting views and the repugnant conclusion.">
+<style>
+:root{
+  --desk:#22337A; --desk-dot:#2E43966b;
+  --paper:#F4E3B4; --paper-2:#EBD497; --paper-edge:#D9BC72;
+  --ink:#2A2016; --ink-soft:#5B4A34;
+  --stamp:#C0152F; --ball:#2443C4;
+  --hl-y:#FFE15A; --hl-p:#FF93C9; --hl-g:#74E5AA; --hl-b:#86CFFF; --hl-o:#FFB25C;
+  --hl-ink:#1E1609;
+  --card:#FFFDF5; --card-line:#C5DCF3; --card-margin:#F2A0AC;
+  --ok:#0E663B; --bad:#AE1029;
+  --btn:#2A2016; --btn-ink:#FFF7E0;
+  --shadow:0 1px 0 #0000001a, 0 10px 24px -8px #0a123d99;
+  --type:"Courier Prime","American Typewriter","Courier New",Courier,monospace;
+  --serif:Charter,"Bitstream Charter","Sitka Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#0A1233; --desk-dot:#1A2A6655;
+    --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+    --ink:#F3E7C8; --ink-soft:#D2C29E;
+    --stamp:#FF6B80; --ball:#A9BDFF;
+    --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+    --ok:#67E3A6; --bad:#FF8597;
+    --btn:#F3E7C8; --btn-ink:#21190F;
+    --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#0A1233; --desk-dot:#1A2A6655;
+  --paper:#2B2419; --paper-2:#352C1E; --paper-edge:#4A3D27;
+  --ink:#F3E7C8; --ink-soft:#D2C29E;
+  --stamp:#FF6B80; --ball:#A9BDFF;
+  --card:#211B12; --card-line:#33405C; --card-margin:#6E3440;
+  --ok:#67E3A6; --bad:#FF8597;
+  --btn:#F3E7C8; --btn-ink:#21190F;
+  --shadow:0 1px 0 #00000055, 0 12px 26px -8px #000000cc;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background-color:var(--desk);
+  background-image:radial-gradient(var(--desk-dot) 1.2px, transparent 1.4px);
+  background-size:18px 18px;
+  color:var(--ink); font-family:var(--serif); font-size:18px; line-height:1.62;
+}
+a{color:var(--ball); text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--hl-b); outline-offset:2px; border-radius:4px}
+button{font:inherit; color:inherit}
+.wrap{max-width:760px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- evidence dock ---------- */
+.dock{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:10px;
+  max-width:760px; margin:0 auto; padding:10px 16px; background:var(--desk);
+  color:#F4E3B4; font-family:var(--type); font-size:14px; border-bottom:1px solid #ffffff1f}
+.dock b{font-weight:700; white-space:nowrap}
+.dock ol{list-style:none; display:flex; gap:6px; margin:0 0 0 auto; padding:0}
+@media (max-width:420px){ .dock{font-size:12px} .dock ol{gap:4px} }
+
+/* ---------- sheets ---------- */
+.sheet{position:relative; background:var(--paper); border-radius:3px 3px 6px 6px;
+  box-shadow:var(--shadow); padding:30px 30px 26px; margin:26px 0 0}
+.sheet::before{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(180deg,#ffffff14,transparent 30%), repeating-linear-gradient(0deg,transparent 0 31px,#00000006 31px 32px)}
+@media (max-width:520px){ .sheet{padding:24px 18px 20px} body{font-size:17px} .button-hook{align-items:flex-start} .big-red{width:44px;height:44px} }
+.sheet p{margin:0 0 .9em; max-width:64ch}
+.sheet p:last-child{margin-bottom:0}
+
+h1,h2,h3{font-family:var(--type); line-height:1.15; margin:0}
+h2{font-size:1.55rem; letter-spacing:-.01em; margin:0 0 .7em}
+h2 span{background:linear-gradient(100deg, transparent 0 2%, var(--mark,var(--hl-y)) 3% 96%, transparent 98%) 0 72%/100% 46% no-repeat; color:inherit; padding:0 .15em}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h2 span{background-size:100% 18%; background-position:0 96%} }
+:root[data-theme="dark"] h2 span{background-size:100% 18%; background-position:0 96%}
+h3{font-size:1.08rem; margin:0 0 .5em}
+
+/* ---------- cover ---------- */
+.cover{margin-top:52px; background:var(--paper-2); padding:44px 30px 32px}
+.cover .tab{position:absolute; top:1px; left:28px; background:var(--paper-2); padding:4px 14px; font-family:var(--type); font-size:14px;
+  transform:translateY(-100%); border-radius:8px 8px 0 0; box-shadow:0 -2px 6px #0a123d33}
+.cover h1{font-size:clamp(2.3rem, 9vw, 4.4rem); letter-spacing:-.03em; line-height:.98; max-width:9ch}
+.cover .dek{font-size:1.15rem; margin:18px 0 0; max-width:40ch}
+.stamp{font-family:var(--type); font-weight:700; color:var(--stamp); border:4px double var(--stamp);
+  padding:4px 12px; border-radius:6px; display:inline-block; letter-spacing:.08em; line-height:1.1; text-align:center}
+.cover .stamp{position:absolute; right:26px; top:30px; transform:rotate(9deg); font-size:1.5rem; opacity:.9}
+.cover .stamp small{display:block; font-size:.62rem; letter-spacing:.04em}
+@media (max-width:520px){ .cover{padding:36px 18px 24px} .cover .stamp{right:12px; top:16px; font-size:1.05rem} }
+.cover .meta{font-family:var(--type); font-size:14px; color:var(--ink-soft); margin-top:22px; display:flex; flex-wrap:wrap; gap:6px 22px}
+.button-hook{display:flex; gap:16px; align-items:center; margin-top:24px; padding:14px 16px; border-radius:12px;
+  background:var(--card); border:2px solid var(--ink)}
+.big-red{flex:none; width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FF7B8C,#D0122F 60%,#8E0A1F);
+  box-shadow:0 6px 0 #6b0716, 0 8px 14px #0006; border:3px solid #2A2016}
+.button-hook p{margin:0; font-size:1rem}
+
+/* ---------- index-card exhibits ---------- */
+.exhibit{position:relative; background:var(--card); border-radius:4px; margin:18px 0; padding:18px 18px 16px 34px;
+  background-image:linear-gradient(90deg, transparent 22px, var(--card-margin) 22px 24px, transparent 24px),
+  repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  background-position:0 0, 0 14px; box-shadow:0 2px 0 #00000014, 0 6px 14px -6px #0006; font-size:1rem; line-height:28px}
+.exhibit p{margin:0}
+.exhibit p+p{margin-top:28px}
+.exhibit .lbl{font-family:var(--type); font-weight:700; font-size:.88rem; display:inline-block; background:var(--hl-c,var(--hl-y)); color:var(--hl-ink);
+  padding:1px 8px; margin:0 0 8px; transform:rotate(-1deg)}
+.exhibit ol, .exhibit ul{margin:0; padding-left:1.3em}
+.exhibit .concl{border-top:2px solid var(--ink); margin-top:6px; padding-top:4px}
+.argline{display:block}
+
+/* ---------- margin note & sealed file ---------- */
+.note{font-style:italic; color:var(--ball); border-left:3px solid var(--ball); padding:2px 0 2px 14px; margin:14px 0; font-size:1rem}
+details.sealed{margin:20px 0 4px; border:2px dashed var(--stamp); border-radius:8px; background:var(--paper-2)}
+details.sealed summary{cursor:pointer; padding:12px 16px; font-family:var(--type); font-weight:700; list-style:none; display:flex; gap:12px; align-items:center}
+details.sealed summary::-webkit-details-marker{display:none}
+details.sealed summary .seal{flex:none; width:30px; height:30px; border-radius:50%; background:var(--stamp); color:#fff; display:grid; place-items:center; font-size:14px}
+details.sealed[open] summary .seal{background:transparent; border:2px solid var(--stamp); color:var(--stamp)}
+details.sealed .inner{padding:0 16px 16px}
+details.sealed .inner p{font-size:1rem}
+
+/* ---------- games ---------- */
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
+  font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
+.lab h2{margin-bottom:.4em}
+.lab .how{font-size:1rem; color:var(--ink-soft); margin-bottom:16px}
+.cleared{position:absolute; right:18px; top:16px; font-size:1.05rem; transform:rotate(-8deg); opacity:0; pointer-events:none}
+.lab.is-cleared .cleared{opacity:.92; animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes thunk{0%{transform:scale(2.6) rotate(-20deg); opacity:0}100%{transform:scale(1) rotate(-8deg); opacity:.92}}
+@media (prefers-reduced-motion: reduce){ .lab.is-cleared .cleared{animation:none} *{scroll-behavior:auto!important} }
+
+.btn{cursor:pointer; border:2px solid var(--ink); background:var(--btn); color:var(--btn-ink); border-radius:999px;
+  padding:8px 16px; font-family:var(--type); font-weight:700; font-size:.95rem; line-height:1.2}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.btn:not(:disabled):active{transform:translateY(1px)}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+
+.fb{margin-top:12px; padding:12px 14px; border-radius:10px; font-size:.98rem; background:var(--card); border:2px solid var(--ink-soft)}
+.fb:empty{display:none}
+.fb.good{border-color:var(--ok)} .fb.bad{border-color:var(--bad)}
+.fb strong.v{font-family:var(--type)}
+.fb.good strong.v{color:var(--ok)} .fb.bad strong.v{color:var(--bad)}
+.score{font-family:var(--type); font-size:.95rem; color:var(--ink-soft)}
+
+/* sort */
+.sort-scn{font-size:1rem; background:var(--hl-g); color:var(--hl-ink); padding:10px 14px; border-radius:8px; margin-bottom:14px}
+.sort-item{background:var(--card); border-radius:10px; padding:12px 14px; margin:10px 0; border:2px solid transparent}
+.sort-item.locked{border-color:var(--ok)}
+.sort-item q{display:block; font-size:1.02rem; margin-bottom:8px; quotes:"\201C" "\201D"}
+.pick{cursor:pointer; border:2px solid var(--ink); background:transparent; border-radius:8px; padding:6px 12px; font-family:var(--type); font-size:.88rem; font-weight:700}
+.pick[data-v="wb"]{--pc:var(--hl-y)} .pick[data-v="mo"]{--pc:var(--hl-p)} .pick[data-v="ne"]{--pc:var(--hl-b)}
+.pick:hover:not(:disabled){background:color-mix(in srgb, var(--pc) 45%, transparent)}
+.pick.chosen{background:var(--pc); color:var(--hl-ink)}
+.pick:disabled{cursor:default}
+.sort-item .fb{margin-top:10px}
+
+/* highlighter */
+.hl-pass{background:var(--card); padding:16px; border-radius:8px; font-size:1.08rem; line-height:2.05}
+.seg{cursor:pointer; border:0; background:transparent; padding:2px 3px; border-radius:3px; text-align:left; font-family:var(--serif); font-size:inherit; line-height:inherit;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone; display:inline; border-bottom:2px dotted var(--ink-soft)}
+.seg[data-m="p"]{background:var(--hl-y); color:var(--hl-ink); border-bottom-color:transparent}
+.seg[data-m="c"]{background:var(--hl-p); color:var(--hl-ink); border-bottom-color:transparent}
+.seg.wrong{outline:2px solid var(--bad); outline-offset:1px}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; font-family:var(--type); font-size:.85rem; margin:10px 0 12px}
+.legend i{display:inline-block; width:18px; height:12px; vertical-align:-1px; margin-right:6px; border-radius:2px}
+
+/* machine */
+.machine{background:var(--card); border-radius:12px; padding:14px; border:2px solid var(--ink)}
+.m-arg{font-size:1rem; margin-bottom:12px}
+.m-line{display:flex; gap:10px; align-items:baseline; padding:3px 0}
+.m-line .lamp{flex:none; font-family:var(--type); font-size:.75rem; font-weight:700; border-radius:999px; padding:1px 8px; min-width:62px; text-align:center}
+.lamp.t{background:var(--hl-g); color:var(--hl-ink)} .lamp.f{background:transparent; border:1.5px solid var(--ink-soft); color:var(--ink-soft)}
+.m-line.concl{border-top:2px solid var(--ink); margin-top:4px; padding-top:6px}
+.creatures{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:12px 0}
+@media (max-width:560px){ .creatures{grid-template-columns:repeat(2,1fr)} }
+.cr{border:2px solid var(--ink-soft); border-radius:10px; padding:8px 6px 8px; text-align:center; background:var(--paper)}
+.cr svg{width:92px; height:80px; display:block; margin:0 auto}
+.cr .nm{font-family:var(--type); font-weight:700; font-size:.9rem}
+.tog{display:block; width:100%; cursor:pointer; margin-top:5px; border:1.5px solid var(--ink-soft); background:transparent; border-radius:6px; padding:3px 4px; font-family:var(--type); font-size:.78rem}
+.tog[aria-pressed="true"]{background:var(--tc); color:var(--hl-ink); border-color:var(--ink); font-weight:700}
+.tog[data-p="0"]{--tc:var(--hl-o)} .tog[data-p="1"]{--tc:var(--hl-g)} .tog[data-p="2"]{--tc:var(--hl-b)}
+.alarm{font-family:var(--type); font-weight:700; padding:8px 12px; border-radius:8px; margin:6px 0 10px; font-size:.92rem; border:2px dashed var(--ink-soft)}
+.alarm.hot{background:var(--stamp); color:#fff; border:2px solid var(--stamp)}
+.m-nav{font-family:var(--type); font-size:.9rem; color:var(--ink-soft); margin-bottom:8px}
+.vac{font-size:.85rem; color:var(--ink-soft); margin-top:6px}
+
+/* rapid */
+.rf-card{background:var(--card); border-radius:10px; padding:16px; min-height:120px; font-size:1.02rem}
+.rf-card .argline+.argline{margin-top:2px}
+.rf-top{display:flex; justify-content:space-between; font-family:var(--type); font-size:.9rem; margin-bottom:8px; color:var(--ink-soft)}
+.streak{color:var(--stamp); font-weight:700}
+
+/* hunt */
+.choice{display:block; width:100%; text-align:left; cursor:pointer; margin:8px 0; padding:10px 14px; border-radius:10px; border:2px solid var(--ink-soft);
+  background:var(--card); font-family:var(--serif); font-size:1rem}
+.choice:hover{border-color:var(--ink)}
+.choice[aria-pressed="true"]{border-color:var(--ink); background:var(--hl-o); color:var(--hl-ink)}
+
+/* builder */
+.slot{display:block; min-height:46px; border:2.5px dashed var(--ball); border-radius:8px; padding:8px 12px; margin:4px 0; color:var(--ball); font-style:italic}
+.slot.filled{border-style:solid; font-style:normal; color:var(--ink); background:var(--hl-b); color:var(--hl-ink)}
+.tray{display:grid; gap:8px; margin-top:12px}
+.tile{cursor:pointer; text-align:left; padding:8px 12px; border-radius:8px; border:2px solid var(--ink); background:var(--paper); font-family:var(--serif); font-size:.98rem}
+.tile[aria-pressed="true"]{background:var(--hl-b); color:var(--hl-ink)}
+
+/* grid of possibilities */
+.combo{display:grid; grid-template-columns:auto 1fr 1fr; gap:6px; font-size:.92rem; margin:12px 0}
+.combo div{background:var(--card); padding:8px 10px; border-radius:6px}
+.combo .h{background:transparent; font-family:var(--type); font-weight:700; padding:4px 6px}
+.combo .x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+
+/* deeper */
+.deeper{background:var(--card); border:3px solid var(--ink)}
+.deeper ul{padding-left:1.1em; margin:0}
+.deeper li{margin:0 0 12px; font-size:1rem}
+.deeper li b{font-family:var(--type)}
+.foot{color:#F4E3B4cc; font-size:.85rem; font-family:var(--type); margin-top:22px; text-align:center}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* ---------- v2 additions ---------- */
+.dock .pip{display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  border:2px dashed #F4E3B488; color:#F4E3B4; font-weight:700; font-size:13px}
+.dock .pip.done{border:2px solid var(--c,#FFE15A); background:var(--c,#FFE15A); color:#1E1609}
+@media (max-width:420px){ .dock .pip{width:26px;height:26px;font-size:12px} }
+.gotit{margin-top:20px; padding-top:16px; border-top:2px dashed var(--paper-edge); display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.gotit .gmsg{font-family:var(--type); font-size:.88rem; color:var(--ink-soft)}
+.gotit .btn.ok, .gotit .btn.ok:disabled{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+.lockcard{display:flex; gap:14px; align-items:center; background:var(--card); border:2px dashed var(--ink-soft); border-radius:10px; padding:14px 16px; font-size:1rem}
+.lockcard .padlock{flex:none; width:34px; height:34px}
+.lab.is-unlocked .lockcard{display:none}
+.copyrow{margin-top:16px; padding:12px 14px; border-radius:10px; background:var(--paper-2); border:2px solid var(--ball)}
+.copyrow p{font-size:.95rem; margin:0 0 8px}
+.copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copyrow textarea[hidden]{display:none}
+.copyrow .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.reasonbox{display:block; width:100%; min-height:64px; margin-top:6px; font-family:var(--serif); font-size:1rem; background:var(--card); color:var(--ink);
+  border:2px solid var(--ink-soft); border-radius:8px; padding:8px 10px}
+.small{font-size:.92rem}
+
+/* ---------- v3 additions ---------- */
+.btn, .pick, .tile, .choice, .tog{min-height:44px}
+.tog{padding:6px 4px; font-size:.8rem}
+.hl-pass{line-height:2.7}
+.seg{padding:6px 3px}
+.dock{flex-wrap:wrap}
+.dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
+.dock .pip:not(:disabled){cursor:pointer}
+.dock .pip:disabled{opacity:1}
+@media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
+.evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
+.evpanel h3{font-size:1rem; margin-bottom:4px}
+.evpanel p{margin:0 0 6px}
+.evpanel .row{justify-content:flex-end}
+@media (max-width:520px){
+  .cleared{top:6px; right:8px; font-size:.78rem; padding:2px 8px}
+  .lab h2{padding-right:0}
+}
+.wow{font-family:var(--type); font-weight:700; font-size:.98rem; background:var(--ink); color:var(--paper); display:inline-block; padding:4px 10px; border-radius:4px; margin:0 0 14px}
+.lockin{margin-top:20px; background:var(--card); border:2px solid var(--ink); border-radius:12px; padding:14px 16px}
+.lockin .row{margin-top:8px}
+.lockin .vbtn{cursor:pointer; min-height:44px; padding:8px 18px; border-radius:999px; border:2px solid var(--ink); background:transparent; font-family:var(--type); font-weight:700; color:var(--ink)}
+.lockin .vbtn[aria-pressed="true"]{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.lockin label{font-family:var(--type); font-weight:700; font-size:.92rem; display:block; margin-top:12px}
+.lockin input[type=text], .lockin textarea{width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
+.lockmsg{font-family:var(--type); font-size:.9rem; color:var(--ok); margin-left:6px}
+.poll{background:var(--card); border-radius:12px; padding:14px 16px; margin:4px 0 18px; border:2px dashed var(--hl-o)}
+.poll p{font-size:1rem}
+.versus{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+.versus div{background:var(--card); border-radius:8px; padding:10px 12px}
+.versus .hd{font-family:var(--type); font-weight:700; text-align:center; background:var(--hl-y); color:var(--hl-ink)}
+.versus .hd.b{background:var(--hl-b)}
+.versus .full{grid-column:1 / -1; text-align:center}
+.combo button{all:unset; box-sizing:border-box; display:block; cursor:pointer; padding:8px 10px; border-radius:6px; background:var(--card); min-height:44px}
+.combo button.x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
+.combo button:focus-visible{outline:3px solid var(--hl-b)}
+.combo button.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion: reduce){ .combo button.shake, .streak.pulse{animation:none} }
+#rfBtns .btn.right{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
+#rfBtns .btn.wrongpick{background:transparent; color:var(--bad); border:3px solid var(--bad); opacity:1}
+#rfBtns .btn.right::after{content:" \2713"}
+#rfBtns .btn.wrongpick::after{content:" \2717"}
+.rf-top .streak{font-size:1rem; padding:2px 10px; border-radius:999px}
+.rf-top .streak.hot{background:var(--stamp); color:#fff}
+.streak.pulse{animation:pulse .5s}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.perfect{display:inline-block; margin-left:8px; color:#8a6400; border-color:#c99a00; transform:rotate(-6deg)}
+:root[data-theme="dark"] .perfect{color:#ffd24d; border-color:#ffd24d}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .perfect{color:#ffd24d; border-color:#ffd24d} }
+.mq{margin-top:10px}
+.mq .choice{font-size:.95rem}
+.copymini{margin-top:14px}
+.copymini .btn{font-size:.85rem}
+.copymini textarea, .copyrow textarea{display:block; width:100%; margin-top:10px; min-height:110px; font-family:var(--type); font-size:.82rem; line-height:1.45;
+  background:var(--card); color:var(--ink); border:1.5px solid var(--ink-soft); border-radius:8px; padding:8px; resize:vertical}
+.copymini textarea[hidden]{display:none}
+.copymini .cstat{font-family:var(--type); font-weight:700; color:var(--ok); margin-left:6px}
+.pause{font-family:var(--type); font-size:.9rem; background:var(--hl-g); color:var(--hl-ink); padding:8px 12px; border-radius:8px; margin-top:14px}
+.finale-arg .mine{background:var(--hl-y); color:var(--hl-ink); padding:0 4px}
+.finale-arg .gap{color:var(--ball); font-style:italic}
+.attack{color:var(--stamp); font-family:var(--type); font-weight:700}
+.rcard{position:relative; max-width:440px; margin:18px auto 8px; background:var(--card); border-radius:6px; padding:20px 22px 18px 40px;
+  background-image:linear-gradient(90deg, transparent 26px, var(--card-margin) 26px 28px, transparent 28px), repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
+  box-shadow:0 2px 0 #00000014, 0 10px 20px -8px #0008; font-size:.98rem; line-height:28px}
+.rcard h3{font-size:1.25rem; line-height:28px; margin:0 0 4px}
+.rcard .stamp{position:absolute; right:10px; top:-14px; transform:rotate(8deg); font-size:.9rem}
+.rcard b{font-family:var(--type)}
+/* ---------- C3-M04 additions (shared pieces adapted from M03) ---------- */
+.prog{flex-basis:100%; height:8px; margin-top:4px; background:#ffffff26; border-radius:999px; overflow:hidden}
+.prog i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--hl-y),var(--hl-o),var(--hl-p),var(--hl-b),var(--hl-g)); transition:width .45s ease}
+@media (prefers-reduced-motion: reduce){ .prog i{transition:none} }
+.cover-art{display:block; width:100%; max-width:360px; height:auto; margin:18px auto 0}
+.plug-hook{display:flex; gap:16px; align-items:center; margin-top:24px; padding:14px 16px; border-radius:12px; background:var(--card); border:2px solid var(--ink)}
+.plug-hook p{margin:0; font-size:1rem}
+.plug-dot{flex:none; width:58px; height:58px; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle at 35% 30%,#FFB3B3,#E0344B 60%,#8C1626); border:3px solid #2A2016; box-shadow:0 5px 0 #5c0f1a}
+.plug-dot svg{width:30px; height:30px}
+@media (max-width:520px){ .plug-dot{width:44px;height:44px} .plug-dot svg{width:22px;height:22px} }
+.eq{font-family:var(--type); font-weight:700; font-size:1.05rem; text-align:center; background:var(--card); border:2px solid var(--ink); border-radius:10px; padding:12px; margin:14px 0; overflow-wrap:anywhere}
+.pattern{background:var(--ink); color:var(--paper); border-radius:12px; padding:14px 16px; margin:14px 0}
+.pattern b{font-family:var(--type)}
+.verdict-opts .choice{font-size:.98rem}
+.compare{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0}
+.compare div{background:var(--card); border-radius:8px; padding:10px 12px; font-size:.95rem}
+.compare .hd{font-family:var(--type); font-weight:700; font-size:.8rem; color:var(--ink-soft)}
+select.reasonbox{min-height:44px}
+.step-lbl{font-family:var(--type); font-weight:700; font-size:.9rem; margin:12px 0 4px}
+.tally{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+.tally span{font-family:var(--type); font-size:.85rem; font-weight:700; padding:4px 10px; border-radius:999px; background:var(--paper-2); border:1.5px solid var(--ink-soft)}
+.tally span.on{background:var(--hl-y); color:var(--hl-ink); border-color:var(--ink)}
+.mach{background:var(--card); border-radius:12px; padding:14px; border:2px solid var(--ink)}
+.clue{background:var(--card); border-radius:10px; padding:14px 16px; font-size:1.02rem; margin:12px 0; border:2px dashed var(--ink-soft)}
+
+/* generation strip (teaching screen) */
+.genstrip{display:flex; gap:4px; flex-wrap:wrap; margin:14px 0; align-items:flex-end}
+.genstrip span{flex:1 1 34px; min-width:34px; text-align:center; font-family:var(--type); font-size:.72rem; font-weight:700; padding:6px 2px; border-radius:8px; background:var(--card); border:2px solid var(--ink-soft)}
+.genstrip span.you{background:var(--hl-y); color:var(--hl-ink); border-color:var(--ink)}
+.genstrip span.fade{opacity:.55} .genstrip span.fade2{opacity:.3}
+
+/* Lead 1: timeline */
+.tl{position:relative; margin:14px 0; padding-left:26px}
+.tl::before{content:""; position:absolute; left:9px; top:6px; bottom:6px; width:6px; border-radius:3px; background:linear-gradient(var(--hl-y),var(--hl-o),var(--hl-p),var(--hl-b))}
+.tl .band{position:relative; background:var(--card); border-radius:10px; padding:10px 12px; margin:8px 0; border:2px solid var(--ink-soft); min-height:56px}
+.tl .band::before{content:""; position:absolute; left:-24px; top:16px; width:14px; height:14px; border-radius:50%; background:var(--bc); border:2px solid var(--ink)}
+.tl .band h3{margin:0; font-size:.95rem}
+.tl .band .rng{font-family:var(--type); font-size:.78rem; color:var(--ink-soft)}
+.tl .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.tl .chip{font-family:var(--type); font-size:.78rem; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--bc); color:var(--hl-ink); border:1.5px solid var(--ink); animation:pop .35s ease}
+@keyframes pop{from{transform:scale(.4); opacity:0} to{transform:scale(1); opacity:1}}
+@media (prefers-reduced-motion: reduce){ .tl .chip{animation:none} }
+.bandbtns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px}
+@media (max-width:420px){ .bandbtns{grid-template-columns:1fr} }
+.bandbtns .pick{--pc:var(--bc); text-align:left; font-size:.86rem}
+
+/* Lead 2: discount slider */
+.slidebox{background:var(--card); border:2px solid var(--ink); border-radius:12px; padding:14px}
+.slidebox label{font-family:var(--type); font-weight:700; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap}
+.slidebox .rate{font-size:1.6rem; color:var(--stamp)}
+input[type=range]{width:100%; min-height:44px; accent-color:var(--stamp); margin:6px 0}
+.dbars{display:grid; grid-template-columns:auto 1fr auto; gap:6px 8px; align-items:center; font-family:var(--type); font-size:.8rem; margin-top:8px}
+.dbars .bar{height:18px; border-radius:999px; background:var(--paper-2); overflow:hidden; border:1.5px solid var(--ink-soft)}
+.dbars .bar i{display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--hl-o),var(--hl-p)); transition:width .3s ease}
+@media (prefers-reduced-motion: reduce){ .dbars .bar i{transition:none} }
+.dbars .num{text-align:right; min-width:5.5em; font-weight:700}
+.bigline{margin:12px 0 0; padding:10px 12px; border-radius:10px; background:#1E1609; color:#FFF7E0; font-size:.98rem; border:2px solid var(--ink)}
+.bigline b{font-family:var(--type); color:#FFE15A}
+.presets{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.presets .btn{font-size:.85rem; padding:6px 12px; min-height:44px; min-width:52px}
+
+/* Lead 3: who is harmed */
+.who{background:var(--card); border-radius:12px; padding:14px 16px; margin:12px 0; border:2px solid var(--ink-soft)}
+.who.done{border-color:var(--ok)}
+.who h3{margin:0 0 4px; font-size:1rem}
+.who .row{margin-top:8px}
+
+/* side-by-side people (non-identity teaching) */
+.versus2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; font-size:.95rem}
+.versus2 div{background:var(--card); border-radius:8px; padding:10px 12px}
+.versus2 .hd{font-family:var(--type); font-weight:700; text-align:center; background:var(--hl-b); color:var(--hl-ink)}
+.versus2 .hd.b{background:var(--hl-p)}
+.versus2 .full{grid-column:1 / -1; text-align:center}
+
+/* population bars (repugnant conclusion) */
+.pops{display:flex; gap:14px; align-items:flex-end; margin:14px 0; flex-wrap:wrap}
+.pops figure{margin:0; flex:1 1 120px}
+.pops .pbox{background:var(--hl-g); border:2px solid var(--ink); border-radius:6px}
+.pops figcaption{font-family:var(--type); font-size:.78rem; margin-top:6px}
+
+/* Lead 4: poll */
+.pollcard h3{margin:0 0 4px}
+.pollcard .opts{display:flex; flex-direction:column; gap:6px}
+
+/* Lead 5: name the tool */
+.toolbtns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px}
+@media (max-width:420px){ .toolbtns{grid-template-columns:1fr} }
+.toolbtns .pick{font-size:.88rem; --pc:var(--hl-b)}
+.toolbtns .pick.right{background:var(--hl-g); color:var(--hl-ink)}
+
+/* ---------- review pass 1 (M03 reusable fixes) ---------- */
+@media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
+.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
+  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.dock .pip.pulse{animation:pipPulse .9s ease}
+@keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
+.clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
+.clearline .stamp{font-size:.9rem; transform:rotate(-6deg); animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both; flex:none}
+.clearline p{margin:0; font-size:.95rem}
+@media (prefers-reduced-motion: reduce){ .toast, .dock .pip.pulse, .clearline .stamp{animation:none} }
+details.copymini{margin-top:14px}
+details.copymini > summary{cursor:pointer; font-family:var(--type); font-size:.85rem; color:var(--ink-soft); min-height:44px; display:flex; align-items:center}
+details.reply{margin:12px 0; border-radius:10px; background:var(--card); border-left:8px solid var(--rc,var(--hl-y))}
+details.reply > summary{cursor:pointer; padding:12px 14px; min-height:44px; font-size:1rem}
+details.reply[open] > summary{border-bottom:1.5px dashed var(--ink-soft)}
+details.reply .inner{padding:10px 14px 12px}
+details.reply .inner p{font-size:1rem; margin:0 0 .6em}
+details.reply .other{font-style:italic; color:var(--ink-soft)}
+.linkrow{display:flex; flex-wrap:wrap; gap:10px; margin:12px 0}
+a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 14px; border:2px solid var(--ball); border-radius:999px; font-family:var(--type); font-size:.9rem; font-weight:700; text-decoration:none; margin-top:4px; overflow-wrap:anywhere}
+.lab .gtab.fintab{color:#fff}
+:root[data-theme="dark"] .lab .gtab.fintab{color:var(--hl-ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lab .gtab.fintab{color:var(--hl-ink)} }
+:root[data-theme="dark"] .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)} }
+.rf-top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.poll .row .btn{font-size:.9rem}
+
+/* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
+html,body{overflow-x:clip}
+</style>
+</head>
+<body>
+<div class="dock" id="dock" aria-label="Evidence collected">
+  <b id="dockCount" role="status"><span class="evw">Evidence </span>0/5</b>
+  <ol id="dockList"></ol>
+  <div class="prog" id="prog" role="progressbar" aria-label="Case progress" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0"><i id="progFill"></i></div>
+  <div class="evpanel" id="evPanel" hidden></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<main class="wrap">
+<!-- ================= 1 COVER ================= -->
+<section class="sheet cover" aria-labelledby="t1">
+  <div class="tab">Challenge 3 &middot; Case #4</div>
+  <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
+  <h1 id="t1">People Who Don't Exist Yet</h1>
+  <p class="dek">The people you'll affect most may not be born for centuries. They can't vote, complain or thank you. Some of them will only exist <i>because</i> of what you choose. What could you possibly owe them?</p>
+  <svg class="cover-art" style="color:var(--ink)" viewBox="0 0 360 150" role="img" aria-label="Drawing of a dotted road running from a small figure toward fainter and fainter figures in the distance">
+    <path d="M10 128 C 120 120, 220 70, 350 34" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/>
+    <circle cx="40" cy="84" r="13" fill="#FFE15A" stroke="currentColor" stroke-width="3"/>
+    <rect x="28" y="98" width="24" height="30" rx="10" fill="#FFE15A" stroke="currentColor" stroke-width="3"/>
+    <circle cx="140" cy="76" r="10" fill="#FFB25C" stroke="currentColor" stroke-width="3" opacity=".85"/>
+    <rect x="131" y="87" width="18" height="23" rx="8" fill="#FFB25C" stroke="currentColor" stroke-width="3" opacity=".85"/>
+    <circle cx="225" cy="56" r="8" fill="#FF93C9" stroke="currentColor" stroke-width="2.5" opacity=".6"/>
+    <rect x="218" y="65" width="14" height="18" rx="6" fill="#FF93C9" stroke="currentColor" stroke-width="2.5" opacity=".6"/>
+    <circle cx="292" cy="40" r="6" fill="#86CFFF" stroke="currentColor" stroke-width="2" opacity=".4" stroke-dasharray="3 3"/>
+    <rect x="287" y="47" width="10" height="13" rx="5" fill="#86CFFF" stroke="currentColor" stroke-width="2" opacity=".4" stroke-dasharray="3 3"/>
+    <circle cx="336" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="2" opacity=".3" stroke-dasharray="2 3"/>
+    <text x="22" y="146" font-family="Courier New, monospace" font-size="12" font-weight="700" fill="currentColor">you, 2026</text>
+    <text x="250" y="96" font-family="Courier New, monospace" font-size="12" font-weight="700" fill="currentColor">2326?</text>
+  </svg>
+  <div class="plug-hook">
+    <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="8" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M15 10v5l3 2" stroke="#2A2016" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></div>
+    <p><b>The 300-Year Button.</b> Press it, and every person alive today gets a noticeably better life: more comfort, less stress, a few extra good years. The catch: people living 300 years from now get noticeably harder lives (still worth living, just harder). Nobody alive now will ever meet them. Lock in your gut call; you'll face it again at the end.</p>
+  </div>
+  <div class="lockin" id="lockin">
+    <div class="row" role="group" aria-label="Your gut call">
+      <button class="vbtn" type="button" data-v="press" aria-pressed="false">I'd press it</button>
+      <button class="vbtn" type="button" data-v="no" aria-pressed="false">I wouldn't</button>
+    </div>
+    <label for="myReason">My reason, in one sentence</label>
+    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 32 minutes</span></div>
+</section>
+
+<!-- ================= 2 RECAP ================= -->
+<section class="sheet" aria-labelledby="b0">
+  <h2 id="b0"><span style="--mark:var(--hl-y)">From far away to far ahead</span></h2>
+  <p>So far this challenge has asked what we owe strangers who are far away <i>in space</i>. Remember the drowning child in the pond: most people decide that a child being 5,000 miles away instead of 5 meters away doesn't make the child matter less.</p>
+  <p>This file runs the same test through <b>time</b>. If miles don't shrink what you owe, do <i>years</i>?</p>
+  <div class="exhibit" style="--hl-c:var(--hl-y)">
+    <span class="lbl">Three words you'll need</span>
+    <p><b>Generation:</b> everyone born around the same time. Here we'll count one generation as about <b>25 years</b> (real gaps between parents and children are often closer to 25 to 30, but 25 keeps the math easy).</p>
+    <p><b>Future people:</b> people who will exist but don't yet. Not babies alive now (they already exist), but the ones who haven't been conceived.</p>
+    <p><b>Posterity:</b> an old word for all the future generations together.</p>
+  </div>
+  <p class="note">Today's question is about morality (what we owe each other), not well-being. You'll still use Challenge 1, Case 1's tool: keep "good for someone" and "the right thing to do" apart. It turns out to matter enormously here.</p>
+</section>
+
+<!-- ================= 3 DO WE OWE THEM ================= -->
+<section class="sheet" aria-labelledby="b1">
+  <h2 id="b1"><span style="--mark:var(--hl-p)">Do we owe them anything?</span></h2>
+  <p class="wow">The builders who laid the first stones of Cologne Cathedral in 1248 never saw it finished. It was completed in 1880.</p>
+  <p>Our choices reach a long way forward. Some do it on purpose, like a cathedral, a tree you plant or a law. Some do it by accident, like waste that stays dangerous for thousands of years. Either way, the people on the receiving end mostly aren't born yet.</p>
+  <div class="genstrip" aria-label="A strip of generations: you, then your children, grandchildren and so on, fading into the distance">
+    <span class="you">you</span><span>+1</span><span>+2</span><span>+3</span><span>+4</span><span class="fade">+5</span><span class="fade">+8</span><span class="fade2">+12</span><span class="fade2">+40</span>
+  </div>
+  <p><b>The case for "yes, we owe them":</b> the nineteenth-century philosopher Henry Sidgwick argued that, looked at impartially, <i>when</i> someone lives can't change how much their happiness matters. A pain in the year 2326 matters exactly as much as a pain today. That's the pond again, with years instead of miles.</p>
+  <p><b>Why future people are a strange case:</b></p>
+  <ul>
+    <li><b>They don't exist yet.</b> Can someone who doesn't exist have rights or claims? Who exactly is holding them?</li>
+    <li><b>No reciprocity.</b> <i>Reciprocity</i> means give and take: I help you, you help me. Future people can't pay us back, punish us or even thank us. An old joke, with many claimed authors, asks: "Why should I do anything for posterity? What has posterity ever done for me?" If morality is just a deal for mutual benefit, future people are left out of the deal.</li>
+    <li><b>Uncertainty.</b> We don't know who they'll be, how many, or what they'll want.</li>
+    <li><b>Power runs one way.</b> We can shape their whole world; they can't touch ours. Some philosophers think that's exactly why our responsibility is so big.</li>
+  </ul>
+  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 1: TIMELINE ================= -->
+<section class="sheet lab" id="g1" style="--g:var(--hl-y)" aria-labelledby="g1h">
+  <div class="gtab">Lead 1 of 5</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g1h">The generation timeline</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Do we owe them anything?" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">How far does a choice reach? Each card gives you a span of time in years. Do the division (years &divide; 25 = generations), then drop the card on the right band of the timeline. Seven cards.</p>
+  <p class="m-nav" id="tlNav"></p>
+  <div class="clue" id="tlClue" aria-live="polite"></div>
+  <div class="bandbtns" id="tlBtns" role="group" aria-label="Which band?"></div>
+  <div class="fb" id="tlFb" aria-live="polite" tabindex="-1"></div>
+  <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="tlNext" hidden>Next card</button></div>
+  <div class="tl" id="tl" aria-label="Timeline of generations"></div>
+  <p class="score" id="tlScore" aria-live="polite"></p>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g1"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 5 DISCOUNTING ================= -->
+<section class="sheet" aria-labelledby="b2">
+  <h2 id="b2"><span style="--mark:var(--hl-o)">Discounting: how the future shrinks</span></h2>
+  <p class="wow">Count the future just 5% less each year, and one death next year outweighs more than a billion deaths 500 years from now.</p>
+  <p>Governments and companies often have to compare costs and benefits that land at different times. A standard tool is the <b>discount rate</b>: a percentage by which you count something less for every year it lies in the future. At 3%, something next year counts about 3% less than the same thing today (its weight is 1 &divide; 1.03, about 97%); the year after, about 3% less again; and so on.</p>
+  <p>Because the shrinking <b>compounds</b> (each year's cut is taken from what's left after the last one), it snowballs:</p>
+  <div class="eq">weight today = 1 &divide; (1 + rate)<sup>years</sup></div>
+  <div class="poll" id="painPoll">
+    <p><b>Quick gut check:</b> does a pain 500 years from now matter less than the same pain next year? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Does a far-future pain matter less?">
+      <button class="btn ghost" type="button" data-r="less">Yes, it matters less</button>
+      <button class="btn ghost" type="button" data-r="same">No, pain is pain</button>
+    </div>
+    <div class="fb" id="painFb" aria-live="polite"></div>
+  </div>
+  <p>People give several different <i>reasons</i> for discounting, and philosophers think it's vital to keep them apart:</p>
+  <ul>
+    <li><b>Uncertainty.</b> A future harm might never happen, or we might find a fix. Fair enough, but that's a reason to weigh by <i>probability</i>, not by date.</li>
+    <li><b>Richer descendants.</b> If future people are wealthier, an extra dollar matters less to them (economists call this <b>diminishing marginal utility</b>: the more you have, the less each extra bit adds). This discounts <i>money</i>, not people's well-being.</li>
+    <li><b>Investment.</b> Money set aside now can grow, so a dollar today can become more than a dollar later.</li>
+    <li><b>Pure time preference.</b> Counting a harm less <i>simply because it's later</i>, with no other reason.</li>
+  </ul>
+  <p>Philosophers attack the last one hardest. The Cambridge mathematician and philosopher Frank Ramsey, in 1928, called discounting later enjoyments "ethically indefensible", a product of weak imagination. Derek Parfit made the point vivid in <i>Reasons and Persons</i> (1984): "At a discount rate of five per cent, one death next year counts for more than a billion deaths in 500 years."</p>
+  <p class="note">The careful position many philosophers hold: discount <i>money and goods</i> for good reasons (uncertainty, growth), but don't discount <i>a person's well-being</i> just for being far away in time. (Some economists defend a small pure rate; the debate is live.)</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 2: DISCOUNT SLIDER ================= -->
+<section class="sheet lab" id="g2" style="--g:var(--hl-o)" aria-labelledby="g2h">
+  <div class="gtab">Lead 2 of 5</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g2h">The Vanishing Future</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Discounting: how the future shrinks" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">A harm worth <b>100 units</b> (say, 100 people's worth of suffering) is coming. Drag the slider to choose a yearly discount rate and watch how much of that harm still "counts" today, depending on when it lands. Then answer three questions; the slider holds the answers to the first two.</p>
+  <div class="slidebox">
+    <label for="rate"><span>Discount rate per year</span><span class="rate" id="rateOut">0%</span></label>
+    <input type="range" id="rate" min="0" max="10" step="0.5" value="0" aria-describedby="rateOut">
+    <div class="presets" role="group" aria-label="Quick rates"><button class="btn ghost" type="button" data-r="0">0%</button><button class="btn ghost" type="button" data-r="1">1%</button><button class="btn ghost" type="button" data-r="3">3%</button><button class="btn ghost" type="button" data-r="5">5%</button><button class="btn ghost" type="button" data-r="10">10%</button></div>
+    <div class="dbars" id="dbars" aria-live="polite"></div>
+    <p class="bigline" id="bigline"></p>
+  </div>
+  <div id="dqs"></div>
+  <p class="score" id="dScore" aria-live="polite"></p>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g2"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 7 NON-IDENTITY ================= -->
+<section class="sheet" aria-labelledby="b3">
+  <h2 id="b3"><span style="--mark:var(--hl-b)">The non-identity problem</span></h2>
+  <p class="wow">If your parents had conceived a child one month later, that child would not have been you.</p>
+  <p>Start with biology. Which person gets born depends on which egg and which sperm meet. A month later means a different egg, and almost certainly a different sperm: a different child, with different genes. Not you with a different birthday. Someone else.</p>
+  <p>Next, a definition. On the most widely used understanding (philosophers debate others), to <b>harm</b> someone is to make them <i>worse off than they would otherwise have been</i>. Call this the "worse off than otherwise" test. A life <b>worth living</b> is one that's good for the person living it, overall, despite its hard parts.</p>
+  <p>Now put them together. Here's our version of a puzzle the Oxford philosopher Derek Parfit made famous in <i>Reasons and Persons</i> (1984). (A few other philosophers spotted versions of it around the same time.)</p>
+  <div class="versus2" aria-label="Two possible children">
+    <div class="hd">Now</div><div class="hd b">Two years later</div>
+    <div>Sam and Alex have a child now, in a chaotic year: little money, a cramped apartment, lots of stress. Their child, <b>Jo</b>, has a tougher start but a good life overall.</div>
+    <div>If they'd waited two years, they'd have been settled, and their child would have had an easier start. But that child would have been a different person, <b>Kit</b>, not Jo.</div>
+  </div>
+  <div class="poll" id="joPoll">
+    <p><b>Your call before the reveal:</b> was Jo harmed by the choice to have a child now? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Was Jo harmed?">
+      <button class="btn ghost" type="button" data-r="yes">Yes</button>
+      <button class="btn ghost" type="button" data-r="no">No</button>
+      <button class="btn ghost" type="button" data-r="unsure">Not sure</button>
+    </div>
+    <div class="fb" id="joFb" aria-live="polite"></div>
+  </div>
+  <p>Run the test: is Jo worse off than Jo would otherwise have been? Otherwise, Jo wouldn't exist at all. So by the "worse off than otherwise" test, Jo wasn't harmed. Many people still feel the parents could have done better. But better <i>for whom</i>?</p>
+  <div class="exhibit" style="--hl-c:var(--hl-b)">
+    <span class="lbl">Exhibit A: scale it up (Parfit's "depletion" case, our telling)</span>
+    <p>A society can either <b>use up</b> a precious resource now or <b>save</b> it. Using it up makes life slightly better for the next two centuries, then much worse for a long time after. But a choice this big changes who meets whom and when children are conceived. After a few generations, everyone born under "use it up" is a different person from anyone who would have been born under "save it".</p>
+    <p>The people living 300 years later still have lives worth living, and none of them would exist otherwise. Who did "use it up" harm? Yet it seems clearly wrong.</p>
+  </div>
+  <p>That's the <b>non-identity problem</b>: some choices seem wrong, yet make no particular person worse off, because the choice itself decides <i>who</i> exists. Almost every big long-term choice changes who gets born.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: another way to think about harm</summary>
+    <div class="inner"><p>Some philosophers reject the "worse off than otherwise" test. They think you can harm someone by causing them a bad condition, like pain or a serious hardship, even if they wouldn't otherwise have existed. On that kind of view, Jo might count as harmed after all, and the puzzle looks different. Many discussions of the problem start from the comparative test, so that's the one this file grades.</p></div>
+  </details>
+  <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 3: WHO IS HARMED ================= -->
+<section class="sheet lab" id="g3" style="--g:var(--hl-b)" aria-labelledby="g3h">
+  <div class="gtab">Lead 3 of 5</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g3h">Who is harmed?</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The non-identity problem" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Six cases. For each, two taps. First, run the "worse off than otherwise" test: is there a <b>particular person</b> who ends up worse off than they would otherwise have been? (Graded. Ask: would the same person exist either way?) Second, your own call: was the choice wrong anyway? (Never graded.)</p>
+  <div id="whoList"></div>
+  <div class="tally" id="whoTally" aria-live="polite"></div>
+  <div class="fb" id="whoFb" aria-live="polite" tabindex="-1"></div>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g3"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 9 PERSON-AFFECTING VS IMPERSONAL ================= -->
+<section class="sheet" aria-labelledby="b4">
+  <h2 id="b4"><span style="--mark:var(--hl-g)">Two ways out: "bad for someone" vs "bad, full stop"</span></h2>
+  <p>The puzzle forces a choice between two families of views.</p>
+  <div class="exhibit" style="--hl-c:var(--hl-g)">
+    <span class="lbl">The person-affecting view</span>
+    <p>An outcome can only be worse if it's worse <b>for someone</b>. No victim, no wrong (at least as far as outcomes go).</p>
+    <p>The philosopher Jan Narveson put its spirit into a famous slogan in 1973: "We are in favour of making people happy, but neutral about making happy people." (Quotes on this page keep their original British spelling.)</p>
+    <p>In its <b>strict</b> (often called "narrow") form, the view compares what happens to each particular person under each option. Someone who wouldn't exist under one option can't be better or worse off because of it. So creating extra happy people adds nothing, and "use it up" wrongs no one.</p>
+    <p><b>Softer</b> ("wide") person-affecting views try to fix this. Instead of tracking named individuals, they compare whoever would exist under each option: if the people of 2326 are worse off under "use it up" than the (different) people of 2326 would be under "save it", that counts against it.</p>
+  </div>
+  <div class="poll" id="narvPoll">
+    <p><b>Do you agree with Narveson's slogan?</b> (Not graded.)</p>
+    <div class="row" role="group" aria-label="Agree with Narveson?">
+      <button class="btn ghost" type="button" data-r="yes">Agree</button>
+      <button class="btn ghost" type="button" data-r="no">Disagree</button>
+    </div>
+    <div class="fb" id="narvFb" aria-live="polite"></div>
+  </div>
+  <div class="exhibit" style="--hl-c:var(--hl-p)">
+    <span class="lbl">Impersonal views</span>
+    <p>What matters is how much well-being (and suffering) there is in the world, <b>whoever</b> has it. An outcome can be worse even if it's worse for no one in particular.</p>
+    <p>In <i>Reasons and Persons</i> (1984), Parfit rejected the idea that what is bad must be bad for someone. He argued that in cases like Sam and Alex, it makes no moral difference whether the better-off child would be the same child or a different one (his <b>No-Difference View</b>). He spent years looking for the right replacement principle; late in life he defended a wide person-affecting principle.</p>
+  </div>
+  <p><b>The trade-off.</b> The strict person-affecting view fits a deep idea (wrongs need victims), but it can't condemn "use it up". Impersonal views condemn it easily, but, as the next screen shows, they lead somewhere very strange.</p>
+</section>
+
+<!-- ================= 10 REPUGNANT CONCLUSION ================= -->
+<section class="sheet" aria-labelledby="b5">
+  <h2 id="b5"><span style="--mark:var(--hl-o)">The repugnant conclusion</span></h2>
+  <p class="wow">Parfit named this result himself, and spent decades hunting for a way out of it.</p>
+  <p>If what matters is the amount of well-being in the world, how do you add it up? Two simple impersonal rules:</p>
+  <ul>
+    <li><b>The total view:</b> the better world is the one with the greatest <i>total</i> well-being (everyone's well-being added together).</li>
+    <li><b>The average view:</b> the better world is the one with the highest <i>average</i> well-being per person.</li>
+  </ul>
+  <p>Picture each world as a box: its width is how many people live there, its height is how good each life is. The total is the area.</p>
+  <div class="pops" aria-label="Two boxes: a narrow tall box for world A and a very wide, very flat box for world Z">
+    <figure><div class="pbox" style="height:110px; width:70px; background:var(--hl-g)"></div><figcaption><b>World A:</b> 10 billion people, wonderful lives</figcaption></figure>
+    <figure style="flex:3 1 200px"><div class="pbox" style="height:12px; width:100%; background:var(--hl-o)"></div><figcaption><b>World Z:</b> vastly more people, each life barely worth living</figcaption></figure>
+  </div>
+  <p>Make Z wide enough and its area beats A's. So the total view says Z is better. Parfit's own statement: "For any possible population of at least ten billion people, all with a very high quality of life, there must be some much larger imaginable population whose existence, if other things are equal, would be better even though its members have lives that are barely worth living." He called that the <b>Repugnant Conclusion</b>.</p>
+  <div class="poll" id="avgPoll">
+    <p><b>So try the average view instead. First, a gut check:</b> which world is better, a world of just <i>one</i> person whose life is very slightly better than anyone's in A, or World A with its ten billion wonderful lives? (Not graded.)</p>
+    <div class="row" role="group" aria-label="One person or World A?">
+      <button class="btn ghost" type="button" data-r="one">The one person</button>
+      <button class="btn ghost" type="button" data-r="A">World A</button>
+    </div>
+    <div class="fb" id="avgFb" aria-live="polite"></div>
+  </div>
+  <p>The average view also says adding a happy person makes the world worse if they're a bit below average. Neither simple rule escapes trouble.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: where the debate stands</summary>
+    <div class="inner"><p>Some philosophers try a <i>critical level</i> (a life only adds value if it's above some bar). Some deny that "better than" always works in a chain. A few accept the conclusion, arguing it only looks repugnant because we can't picture huge numbers or what "barely worth living" really means. Some have even argued that no theory can avoid every result people find unacceptable. There's no agreed solution.</p></div>
+  </details>
+  <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 4: PREDICTED-VERDICT POLL ================= -->
+<section class="sheet lab" id="g4" style="--g:var(--hl-g)" aria-labelledby="g4h">
+  <div class="gtab">Lead 4 of 5</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g4h">Predict the verdict</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read the two screens above ("Two ways out" and "The repugnant conclusion"), then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Four dilemmas. For each: first, <b>your</b> verdict (never graded). Then predict what two theories say: the <b>strict person-affecting view</b> and the <b>total view</b> (graded). At the end, see which theory you sided with more often.</p>
+  <p class="m-nav" id="pollNav"></p>
+  <div class="mach pollcard" id="pollCard"></div>
+  <div class="fb" id="pollFb" aria-live="polite" tabindex="-1"></div>
+  <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="pollNext" hidden>Next dilemma</button></div>
+  <div class="tally" id="pollTally" aria-live="polite"></div>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g4"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 12 LONG-TERM IDEAS ================= -->
+<section class="sheet" aria-labelledby="b6">
+  <h2 id="b6"><span style="--mark:var(--hl-p)">Thinking in centuries</span></h2>
+  <p class="wow">Some of the carbon dioxide released today will still be in the air thousands of years from now.</p>
+  <p>Philosophers use long-lasting effects as test cases because they bring every tool in this file into play at once. Two examples, at the level of ideas (this file takes no side on any policy):</p>
+  <ul>
+    <li><b>The climate case.</b> A sizeable share of the carbon dioxide we add to the air stays for centuries, and some of it for many thousands of years. So the costs and benefits of today's choices land across many generations. The <b>discount rate</b> chosen can decide how much those far-off effects count at all. And because big choices change who is born, the <b>non-identity problem</b> applies: most of the people affected far ahead wouldn't exist under a different choice.</li>
+    <li><b>Long-lived waste.</b> Plutonium-239 builds up in the fuel of ordinary uranium-fueled nuclear reactors, and it takes about 24,000 years for half of it to decay. Any storage plan has to think in hundreds of generations.</li>
+  </ul>
+  <p><b>Longtermism</b> is a recent view, made popular by the Oxford philosopher William MacAskill's 2022 book <i>What We Owe the Future</i>. It says that because the future could contain so many people, positively influencing the long-term future is a key moral priority of our time. Critics push back on three fronts. Tap each one open:</p>
+  <details class="reply" style="--rc:var(--hl-o)">
+    <summary><b>"We can't see that far."</b></summary>
+    <div class="inner"><p>We can barely predict the next fifty years, let alone the next thousand, so we can't know which actions help.</p><p class="other">The other side says: some risks (like extinction-level disasters) are bad in almost any future, so reducing them helps whatever happens.</p></div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-y)">
+    <summary><b>"What about people suffering now?"</b></summary>
+    <div class="inner"><p>Focusing on vast future numbers risks neglecting people who need help today.</p><p class="other">The other side says: many long-term actions (like preventing pandemics) also protect people alive now.</p></div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-p)">
+    <summary><b>"Tiny chances times huge numbers."</b></summary>
+    <div class="inner"><p>Multiply a one-in-a-trillion chance by trillions of future lives and you can justify almost anything. Critics call this "fanaticism".</p><p class="other">The other side says: the risks longtermists focus on, like pandemics or nuclear war, aren't one-in-a-trillion. They're in the range of risks people normally take precautions against.</p></div>
+  </details>
+  <p class="note">Notice the trap the non-identity problem sets. If a long-term harm is wrong, it's usually <i>not</i> because it makes particular future people worse off than they'd otherwise be. So whoever says it's wrong needs another explanation: an impersonal view, or a wide person-affecting view.</p>
+  <div class="gotit"><button class="btn" type="button" data-unlock="5">Got it: open Lead 5</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 5: NAME THE TOOL ================= -->
+<section class="sheet lab" id="g5" style="--g:var(--hl-p)" aria-labelledby="g5h">
+  <div class="gtab">Lead 5 of 5</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g5h">Name that tool</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Thinking in centuries" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Rapid fire. Six things people say about the future. Which idea from this file is each one using (or arguing about)? Build a streak; a miss resets it.</p>
+  <div class="rf-top"><span class="m-nav" id="toolNav"></span><span class="streak" id="toolStreak" aria-live="polite">Streak 0</span></div>
+  <div class="clue" id="toolClue" aria-live="polite"></div>
+  <div class="toolbtns" id="toolBtns" role="group" aria-label="Which idea?"></div>
+  <div class="fb" id="toolFb" aria-live="polite" tabindex="-1"></div>
+  <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="toolNext" hidden>Next</button></div>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g5"><summary>Rocky asked about this lead?</summary></details>
+  </div>
+</section>
+
+<!-- ================= 14 FINALE ================= -->
+<section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
+  <div class="gtab fintab">The verdict</div>
+  <div class="stamp cleared" aria-hidden="true">CLOSED</div>
+  <h2 id="finh">Case closed: what do we owe people who don't exist yet?</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all five pieces of evidence (clear all five leads) to open the final file.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Time to commit. Pick the view closest to yours and give the reason that does the most work for you. Any view is fine; the reason is what counts. Once you lock it, it stays locked.</p>
+  <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
+  <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
+  <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
+  <label class="small" for="finMoved" style="display:block;margin-top:12px"><b>What moved me most in this file</b></label>
+  <select class="reasonbox" id="finMoved">
+    <option value="">Pick one</option>
+    <option>Sidgwick: when you live can't change how much you matter</option>
+    <option>The "no reciprocity" worry</option>
+    <option>Watching discounting make the far future vanish</option>
+    <option>The non-identity problem (Jo, or "use it up")</option>
+    <option>Narveson's "making people happy, not making happy people"</option>
+    <option>The repugnant conclusion</option>
+    <option>The longtermism debate</option>
+  </select>
+  <div class="row" style="margin-top:12px"><button class="btn" type="button" id="finBtn">Lock my verdict</button></div>
+  <div class="fb" id="finFb" aria-live="polite" tabindex="-1"></div>
+  <div id="finCard" hidden>
+    <div class="compare" id="finCompare"></div>
+    <div class="rcard" id="rcard"></div>
+    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ================= 15 MIT ================= -->
+<section class="sheet" aria-labelledby="b10">
+  <h2 id="b10"><span style="--mark:var(--hl-b)">Before you go back to Rocky: MIT's version</span></h2>
+  <p>This file follows the topic of Lecture 15, "What You Owe to Future People", in MIT's online course 24.02x, Moral Problems and the Good Life. Our wording, examples and games are our own. The course is on the MIT Open Learning Library: you can browse it, or enroll to track your progress.</p>
+  <div class="linkrow"><a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">MIT 24.02x on the Open Learning Library</a></div>
+</section>
+
+<!-- ================= 16 COPY FOR ROCKY ================= -->
+<section class="sheet" aria-labelledby="b11">
+  <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
+  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all five leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (Each lead also has a small "Rocky asked about this lead?" link, for when Rocky asks about just one lead.)</p>
+  <div class="copyrow" data-copy="all"></div>
+</section>
+
+<!-- ================= 17 DEEPER ================= -->
+<section class="sheet deeper" aria-labelledby="b12">
+  <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <ul>
+    <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The online course this file is built around; see Lecture 15. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
+    <li><b>Stanford Encyclopedia of Philosophy: "The Nonidentity Problem"</b>. Free, detailed and written by experts; challenging but rewarding. <a class="linkbtn" href="https://plato.stanford.edu/entries/nonidentity-problem/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
+    <li><b>Stanford Encyclopedia of Philosophy: "The Repugnant Conclusion"</b>. Every major response, laid out. <a class="linkbtn" href="https://plato.stanford.edu/entries/repugnant-conclusion/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
+    <li><b>1000-Word Philosophy: "The Repugnant Conclusion"</b>. A short, friendly walk through Parfit's argument, step by step. <a class="linkbtn" href="https://1000wordphilosophy.com/2014/08/04/the-repugnant-conclusion/" target="_blank" rel="noopener">1000wordphilosophy.com</a></li>
+    <li><b>Derek Parfit, <i>Reasons and Persons</i> (1984), Part Four</b>. Where the non-identity problem and the repugnant conclusion come from. Dense; ask a library.</li>
+  </ul>
+</section>
+
+<p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x; this page, its games and its wording are our own, not MIT's.</p>
+</main>
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+function plural(n,w){ return n+" "+w+(n===1?"":"s"); }
+var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+var MID="C3-M04";
+
+/* ---------- varied feedback words, per lead ---------- */
+var VERD={
+ g1:{ok:["Right on the timeline.","Yep.","Nailed it.","Clean math."], no:["Not that band.","Check the division.","Close, but no."]},
+ g2:{ok:["Spot on.","Yep.","Nailed it.","Exactly."], no:["Not quite.","Tempting, but...","Check the slider."]},
+ g3:{ok:["Test passed.","Yep.","Exactly.","Clean."], no:["Run the test again.","Tempting, but...","Close, but no."]},
+ g4:{ok:["Theory-reader.","Yep.","Exactly.","Nailed it."], no:["Tempting, but...","Not what that theory says.","Close, but no."]},
+ g5:{ok:["Tool spotted.","Yep.","Clean.","Nailed it."], no:["Not that one.","Tempting, but...","Close, but no."]}
+};
+var lastV={};
+function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
+function focusFb(node){ try{ node.focus({preventScroll:true}); }catch(e){ try{ node.focus(); }catch(e2){} } }
+
+/* ---------- optional saving (page works without it) ---------- */
+var KEY="ethics-c3m04-v2", canSave=false, SAVED=null;
+try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ canSave=false; SAVED=null; }
+if(!SAVED || typeof SAVED!=="object") SAVED=null;
+var touched={}, replayCleared={};
+var restoring=false;
+function saveState(){
+  if(!canSave || restoring) return;
+  try{
+    var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, lines:lines}));
+  }catch(e){}
+}
+function touch(g){ touched[g]=true; saveState(); }
+
+/* ---------- state for Rocky's copy ---------- */
+var REC={ tl:{done:0, first:0, misses:[]}, disc:{rates:{}, q:{}}, who:{}, poll:{}, tool:{done:0, first:0, misses:[], streak:0, best:0} };
+var COVER={v:null, reason:"", locked:false};
+var FIN={view:null, reason:"", moved:"", done:false};
+var POLLS={pain:null, jo:null, narv:null, avg:null};
+
+/* ---------- evidence dock + display-only progress bar ---------- */
+var GAMES=[
+ {id:"g1",c:"var(--hl-y)",lead:1,title:"Choices reach far",body:"Many choices affect people <b>generations</b> away (one generation is about 25 years). Future people can't pay us back (no reciprocity), but Sidgwick argued <b>when</b> you live can't change how much you matter.",ex:"Cologne Cathedral took 632 years from first stone to finish (with a long pause): about 25 generations."},
+ {id:"g2",c:"var(--hl-o)",lead:2,title:"Discounting",body:"A <b>discount rate</b> counts the future a fixed percentage less each year, and compounding makes the far future vanish. Separate the reasons: uncertainty, richer descendants and investment are about money and odds; <b>pure time preference</b> counts harms less just for being later.",ex:"At 5%, one death next year outweighs more than a billion in 500 years (Parfit)."},
+ {id:"g3",c:"var(--hl-b)",lead:3,title:"Non-identity",body:"If a choice decides <b>who</b> gets born, the people born can't be \"worse off than otherwise\": otherwise they wouldn't exist. So some choices seem wrong with no particular victim.",ex:"Jo, born in a chaotic year, wasn't harmed by the \"worse off than otherwise\" test; waiting would have meant Kit, not Jo."},
+ {id:"g4",c:"var(--hl-g)",lead:4,title:"Person-affecting vs impersonal",body:"<b>Person-affecting:</b> worse only if worse for someone (\"making people happy, not making happy people\"); wide versions compare whoever would exist. <b>Impersonal:</b> what matters is how much well-being exists, whoever has it. The <b>total view</b> leads to the Repugnant Conclusion; the <b>average view</b> has its own disasters.",ex:"Use it up or save it (nobody alive affected): strict person-affecting says neither is better; the total view says save it."},
+ {id:"g5",c:"var(--hl-p)",lead:5,title:"Thinking in centuries",body:"Long-lasting effects (climate, nuclear waste) bring every tool in at once. <b>Longtermism</b> says shaping the long-term future is a key priority; critics cite uncertainty, present needs and tiny-chance-times-huge-number reasoning.",ex:"Half of any plutonium-239 takes about 24,000 years to decay."}
+];
+var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
+var cleared={}, openCard=null;
+GAMES.forEach(function(g){
+  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  b.addEventListener("click",function(){ showCard(g); });
+  li.appendChild(b); $("dockList").appendChild(li);
+});
+$("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
+function updateProg(){
+  var n=Object.keys(cleared).length+(FIN.done?1:0), max=NG+1;
+  $("progFill").style.width=Math.round(100*n/max)+"%";
+  $("prog").setAttribute("aria-valuenow",String(n));
+  $("prog").setAttribute("aria-valuetext",n+" of "+max+" steps done");
+}
+function showCard(g){
+  var P=$("evPanel");
+  GAMES.forEach(function(x){ $("dock-"+x.id).setAttribute("aria-expanded","false"); });
+  if(openCard===g.id){ P.hidden=true; openCard=null; return; }
+  openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
+  P.style.setProperty("--c",g.c);
+  P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
+}
+/* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
+var toastTimer=null;
+function toast(msg, color){
+  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  T.style.animation="none"; void T.offsetWidth; T.style.animation="";
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+}
+function celebrate(g, n){
+  var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
+  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  var slot=$(g.id).querySelector(".clearslot");
+  if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':'')+'</p></div>';
+    try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
+}
+function clear(id, quiet){
+  var g=GAMES.filter(function(x){return x.id===id;})[0];
+  if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
+  cleared[id]=true; if(!quiet) replayCleared[id]=true;
+  $(id).classList.add("is-cleared");
+  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var n=Object.keys(cleared).length;
+  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
+  if(!quiet) celebrate(g, n);
+  if(n===NG) openLab("fin");
+  refreshGot(); updateProg(); saveState();
+}
+
+/* ---------- locks: each lead opens only after its reading AND the previous lead ---------- */
+var UNLOCKS={1:"g1",2:"g2",3:"g3",4:"g4",5:"g5"};
+var unlockedStep=0;
+var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
+function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
+function refreshGot(){
+  gotBtns.forEach(function(b){
+    var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
+    if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; return; }
+    var prevOk = k===1 || cleared[UNLOCKS[k-1]];
+    if(k===unlockedStep+1 && prevOk){ b.disabled=false; msg.textContent=""; }
+    else { b.disabled=true; msg.textContent = (k>unlockedStep+1) ? "Open the earlier leads first (scroll up)." : "Clear Lead "+(k-1)+" first (scroll up)."; }
+  });
+}
+function doUnlock(k, focus){
+  unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
+  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body input, .lab-body textarea"); if(first) first.focus(); }
+}
+gotBtns.forEach(function(b){
+  b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
+});
+
+/* ---------- gut call: truly locked after "Lock it in" ---------- */
+var VL={press:"I'd press the 300-Year Button", no:"I wouldn't press it"};
+function freezeCover(){
+  $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
+  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
+}
+$("lockin").querySelectorAll(".vbtn").forEach(function(b){
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+});
+function syncLockin(){
+  $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
+  if(COVER.locked) $("myReason").value=COVER.reason;
+}
+$("lockBtn").addEventListener("click",function(){
+  if(COVER.locked) return;
+  var r=$("myReason").value.trim();
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
+  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  COVER.reason=r; COVER.locked=true; freezeCover();
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
+  saveState();
+});
+
+/* ---------- copy for Rocky (shared machinery) ---------- */
+function linesFor(g){
+  var saved = SAVED && SAVED.lines && SAVED.lines[g];
+  var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
+  if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
+  if(saved && !touched[g]) return saved.concat();
+  return LIVE[g]();
+}
+function coverLines(){ return ["Gut call on the 300-Year Button (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
+var PT={pain:{less:"matters less",same:"pain is pain"}, jo:{yes:"yes",no:"no",unsure:"not sure"}, narv:{yes:"agree",no:"disagree"}, avg:{one:"the one person",A:"World A"}};
+function tapLines(){
+  function v(k){ return POLLS[k] ? PT[k][POLLS[k]] : "not answered"; }
+  return ["Ungraded taps: far-future pain = "+v("pain")+"; was Jo harmed = "+v("jo")+"; Narveson's slogan = "+v("narv")+"; one slightly happier person vs World A = "+v("avg")];
+}
+function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
+function copyText(txt, box, stat){
+  box.value=txt; box.hidden=false;
+  function done(ok){ stat.textContent= ok ? "Copied!" : "Select the text below and copy it."; }
+  function fallback(){ box.focus(); box.select(); var ok=false; try{ ok=document.execCommand("copy"); }catch(e){} done(ok); }
+  try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(function(){done(true); box.focus(); box.select();}, fallback); return; } }catch(e){}
+  fallback();
+}
+function wireCopies(){
+  [].forEach.call(document.querySelectorAll("[data-copy]"),function(row){
+    var key=row.getAttribute("data-copy"), big=key==="all";
+    var b=el("button",{class:big?"btn":"btn ghost",type:"button"}); b.textContent= big ? "Copy my case file for Rocky" : "Copy just this lead";
+    var st=el("span",{class:"cstat","aria-live":"polite"});
+    var ta=el("textarea",{readonly:"","aria-label":"Text to paste to Rocky",rows:"6"}); ta.hidden=true;
+    ta.addEventListener("focus",function(){ ta.select(); });
+    b.addEventListener("click",function(){ st.textContent=""; copyText(report(key), ta, st); });
+    row.appendChild(b); row.appendChild(st); row.appendChild(ta);
+  });
+}
+
+/* ---------- ungraded taps in the reading ---------- */
+var POLLREPLY={
+ pain:{less:"Then you're leaning toward a pure time discount. Hold that thought: the reasons below will test it.", same:"That's Sidgwick's side. The next paragraphs show why economists discount anyway, and which of their reasons survive your answer."},
+ jo:{yes:"Interesting. Now run the formal test in the next paragraph and see if it agrees with you.", no:"Now see why the formal test agrees with you, and why that's a problem.", unsure:"Fair. The next paragraph runs the test step by step."},
+ narv:{yes:"Then you're with the person-affecting side: no duty to create extra happy people. The other side says: a world with one more very happy life in it, and nothing worse, seems better.", no:"Then you think creating happy lives can make the world better. The other side says: that seems to imply a duty to have children, which most people reject."},
+ avg:{one:"That's exactly what the average view says: one life a bit above A's average beats A. You're consistent with it; most people find this result absurd.", A:"Most people agree, but the average view says the one person: their life is slightly better than A's average, and only the average counts."}
+};
+function wirePoll(id, key, fbId){
+  $(id).querySelectorAll("button[data-r]").forEach(function(b){
+    b.addEventListener("click",function(){
+      POLLS[key]=b.getAttribute("data-r");
+      $(id).querySelectorAll("button[data-r]").forEach(function(x){ x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost"; });
+      setFb($(fbId),"","Noted.",POLLREPLY[key][POLLS[key]]); saveState();
+    });
+  });
+}
+wirePoll("painPoll","pain","painFb"); wirePoll("joPoll","jo","joFb"); wirePoll("narvPoll","narv","narvFb"); wirePoll("avgPoll","avg","avgFb");
+function syncPolls(){
+  var ids={pain:"painPoll",jo:"joPoll",narv:"narvPoll",avg:"avgPoll"}, fbs={pain:"painFb",jo:"joFb",narv:"narvFb",avg:"avgFb"};
+  Object.keys(ids).forEach(function(k){ if(!POLLS[k]) return;
+    $(ids[k]).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===POLLS[k]; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; });
+    setFb($(fbs[k]),"","Noted.",POLLREPLY[k][POLLS[k]]); });
+}
+
+/* ================= LEAD 1: GENERATION TIMELINE ================= */
+var BANDS=[
+ {k:"a",n:"1 to 4 generations",r:"up to about 100 years",c:"var(--hl-y)"},
+ {k:"b",n:"5 to 40 generations",r:"about 100 to 1,000 years",c:"var(--hl-o)"},
+ {k:"c",n:"41 to 400 generations",r:"about 1,000 to 10,000 years",c:"var(--hl-p)"},
+ {k:"d",n:"More than 400 generations",r:"beyond 10,000 years",c:"var(--hl-b)"}
+];
+var TL=shuffle([
+ {t:"Your city borrows money to build a bridge and pays the loan off over <b>30 years</b>.", s:"30-year loan", y:"30", a:"a", why:"30 &divide; 25 = about 1 generation. The people paying it off include kids who are small today."},
+ {t:"You plant an oak sapling. English oaks often live for <b>300 years</b> or more.", s:"oak tree", y:"300", a:"b", why:"300 &divide; 25 = 12 generations of people sitting in its shade, none of whom you'll meet."},
+ {t:"Cologne Cathedral: begun in <b>1248</b>, finished in <b>1880</b>: <b>632 years</b> from first stone to last.", s:"Cologne Cathedral", y:"632", a:"b", why:"632 &divide; 25 is about 25 generations, even though building stopped for nearly three centuries in the middle. The first builders almost certainly knew they'd never see it done."},
+ {t:"The Great Pyramid of Giza was built about <b>4,500 years</b> ago, and people still visit it.", s:"Great Pyramid", y:"4,500", a:"c", why:"4,500 &divide; 25 = 180 generations. Its builders' choices still reach us."},
+ {t:"The Appian Way, a Roman road, was begun in <b>312 BCE</b>, about <b>2,340 years</b> ago. People still walk on stretches of it.", s:"Appian Way", y:"2,340", a:"c", why:"2,340 &divide; 25 is about 94 generations of travelers on one road."},
+ {t:"Plutonium-239 builds up in ordinary nuclear reactor fuel. After about <b>24,000 years</b>, half of it is still there.", s:"plutonium-239", y:"24,000", a:"d", why:"24,000 &divide; 25 = 960 generations, and that's only the halfway point. Waste plans have to think further ahead than recorded history goes back."},
+ {t:"The Lascaux cave paintings in France were made at least <b>17,000 years</b> ago. People still study them.", s:"Lascaux paintings", y:"17,000", a:"d", why:"17,000 &divide; 25 = 680 generations (more, if the older estimates of about 22,000 years are right). Someone's afternoon of painting reached hundreds of generations ahead."}
+]);
+var tI=0, tMiss=0, placed={};
+function tlDraw(){
+  var T=$("tl"); T.innerHTML="";
+  BANDS.forEach(function(B){
+    var d=el("div",{class:"band"}); d.style.setProperty("--bc",B.c);
+    d.innerHTML='<h3>'+B.n+'</h3>'+((placed[B.k]||[]).length?'<span class="rng">'+B.r+'</span>':'');
+    var ch=el("div",{class:"chips"});
+    (placed[B.k]||[]).forEach(function(s){ var c=el("span",{class:"chip"}); c.textContent=s; ch.appendChild(c); });
+    d.appendChild(ch); T.appendChild(d);
+  });
+}
+function tlRender(){
+  var c=TL[tI]; $("tlNav").textContent="Card "+(tI+1)+" of "+TL.length;
+  $("tlClue").innerHTML=c.t; $("tlFb").className="fb"; $("tlFb").innerHTML=""; $("tlNext").hidden=true; tMiss=0;
+  var Bx=$("tlBtns"); Bx.innerHTML="";
+  BANDS.forEach(function(B){
+    var b=el("button",{class:"pick",type:"button","data-b":B.k}); b.style.setProperty("--bc",B.c);
+    b.textContent=B.n;
+    b.addEventListener("click",function(){
+      if(B.k===c.a){
+        b.classList.add("chosen"); Bx.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
+        REC.tl.done++; if(!tMiss) REC.tl.first++;
+        (placed[B.k]=placed[B.k]||[]).push(c.s); tlDraw();
+        setFb($("tlFb"),"good", vword("g1","ok"), c.why);
+        if(tI<TL.length-1){ $("tlNext").hidden=false; $("tlNext").focus(); }
+        else { focusFb($("tlFb")); $("tlScore").textContent="Timeline complete. Apart from the loan, nearly everyone affected was born long after the people who made the choice."; clear("g1"); }
+      } else {
+        tMiss++; b.disabled=true; if(REC.tl.misses.indexOf(c.s)<0) REC.tl.misses.push(c.s);
+        setFb($("tlFb"),"bad",vword("g1","no"), c.y+" years &divide; 25 = ? Work that out, then find the band it falls in.");
+      }
+      touch("g1");
+    });
+    Bx.appendChild(b);
+  });
+}
+$("tlNext").addEventListener("click",function(){ tI++; tlRender(); $("tlBtns").querySelector(".pick").focus(); });
+tlDraw(); tlRender();
+function tlLines(){
+  if(!REC.tl.done) return ["Lead 1 Generation timeline: not started"];
+  return ["Lead 1 Generation timeline: "+REC.tl.done+" of "+TL.length+" placed, "+REC.tl.first+" first try"+(REC.tl.misses.length?"; needed a second go on: "+REC.tl.misses.join(", "):"")];
+}
+
+/* ================= LEAD 2: DISCOUNT SLIDER ================= */
+var YRS=[1,10,50,100,250,500];
+function w(r,t){ return 1/Math.pow(1+r/100,t); }
+function fmt(v){
+  if(v>=10) return v.toFixed(0);
+  if(v>=1) return v.toFixed(1);
+  if(v>=0.01) return v.toFixed(2);
+  if(v>=0.0001) return v.toFixed(4);
+  return "&lt; 0.0001";
+}
+function bigNum(n){
+  if(n>=1e15) return "more than a thousand trillion";
+  if(n<1000) return n.toFixed(n<10?1:0);
+  var u=[[1e12,"trillion"],[1e9,"billion"],[1e6,"million"],[1e3,"thousand"]];
+  for(var i=0;i<u.length;i++){ if(n>=u[i][0]){ var x=n/u[i][0]; return (x>=10?x.toFixed(0):x.toFixed(1))+" "+u[i][1]; } }
+  return n.toFixed(0);
+}
+function discDraw(){
+  var r=+$("rate").value; $("rateOut").textContent=r+"%";
+  var D=$("dbars"); D.innerHTML="";
+  YRS.forEach(function(t){
+    var v=100*w(r,t);
+    var lab=el("span"); lab.textContent=t+(t===1?" year":" years");
+    var bar=el("div",{class:"bar"}); var i=el("i"); i.style.width=Math.max(0,v)+"%"; bar.appendChild(i);
+    var num=el("span",{class:"num"}); num.innerHTML=fmt(v);
+    D.appendChild(lab); D.appendChild(bar); D.appendChild(num);
+  });
+  var L=$("bigline");
+  if(r===0) L.innerHTML="At <b>0%</b>, a harm counts the same whenever it lands. 500 years away, it's still the full 100.";
+  else { var ratio=Math.pow(1+r/100,499); L.innerHTML="At <b>"+r+"%</b>, one death next year counts for as much as <b>"+bigNum(ratio)+"</b> deaths 500 years from now."; }
+}
+function noteRate(){ REC.disc.rates[+$("rate").value]=true; }   /* records only what the student chose; never touches the lead record */
+$("rate").addEventListener("input",function(){ discDraw(); noteRate(); });
+[].forEach.call(document.querySelectorAll(".presets .btn"),function(b){ b.addEventListener("click",function(){ $("rate").value=b.getAttribute("data-r"); discDraw(); noteRate(); }); });
+discDraw();
+var DQ=[
+ {q:"Set the rate to <b>3%</b>. Of the 100 units of harm landing <b>100 years</b> from now, about how much still counts today?",
+  o:[["a","About 52"],["b","About 5"],["c","About 0.5"]], a:"b",
+  ok:"About 5 (5.2, to be precise). A 3% yearly cut sounds tiny, but compounded over a century it wipes out about 95% of the harm.",
+  no:{a:"That's roughly what 3% does after about 22 years, not 100. Read the 100-year bar at 3%.",c:"Too small. That's closer to what 5% does over 100 years. Read the 100-year bar at 3%."}},
+ {q:"Set the rate to <b>5%</b>. Read the result box under the bars. One death next year counts for as much as about how many deaths 500 years from now?",
+  o:[["a","About 400 million"],["b","About 4 billion"],["c","About 40 billion"]], a:"c",
+  ok:"About 40 billion (37.5 billion, to be precise). That's why Parfit could safely say \"more than a billion\". At that rate, a catastrophe five centuries away barely registers.",
+  no:{a:"Too small by about a hundred times. Compounding multiplies year after year for 500 years. Check the result box at 5%.",b:"Still about ten times too small. Check the result box at 5%."}},
+ {q:"Which of these is <b>pure time preference</b>, the reason philosophers attack hardest?",
+  o:[["a","The harm might never happen, so we weigh it less"],["b","Future people will be richer, so a dollar matters less to them"],["c","A harm counts less simply because it comes later on"]], a:"c",
+  ok:"The other two are real reasons, but they're about odds and money. Pure time preference discounts a person's suffering just for its date, which is what Ramsey and Parfit reject.",
+  no:{a:"That's uncertainty. A fair reason, but it's about probability, not the date itself.",b:"That's the richer-descendants reason (diminishing marginal utility). It discounts money, not well-being."}}
+];
+var dqDone=0;
+DQ.forEach(function(item,qi){
+  REC.disc.q[qi]={misses:0, done:false};
+  var wrap=el("div",{class:"mq"}); var p=el("p",{class:"small"}); p.innerHTML="<b>Q"+(qi+1)+".</b> "+item.q; wrap.appendChild(p);
+  var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
+  shuffle(item.o).forEach(function(o){
+    var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-o":o[0]}); b.textContent=o[1];
+    b.addEventListener("click",function(){
+      if(REC.disc.q[qi].done) return;
+      wrap.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      if(o[0]===item.a){ REC.disc.q[qi].done=true; setFb(fb,"good",vword("g2","ok"),item.ok); wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); dqDone++; focusFb(fb);
+        if(dqDone===DQ.length){ $("dScore").textContent="All three cracked. Try 1% and 10% too: even 1% leaves less than 1% of a harm 500 years out."; clear("g2"); } }
+      else { REC.disc.q[qi].misses++; setFb(fb,"bad",vword("g2","no"),(qi<2?"Your slider is on "+$("rate").value+"%. ":"")+item.no[o[0]]); }
+      touch("g2");
+    });
+    wrap.appendChild(b);
+  });
+  wrap.appendChild(fb); $("dqs").appendChild(wrap);
+});
+function discLines(){
+  var done=Object.keys(REC.disc.q).filter(function(k){return REC.disc.q[k].done;}).length;
+  if(!touched.g2 && !done) return ["Lead 2 Vanishing Future: not started"];
+  var tried=Object.keys(REC.disc.rates).map(Number).sort(function(a,b){return a-b;});
+  var answered=Object.keys(REC.disc.q).filter(function(k){return REC.disc.q[k].done || REC.disc.q[k].misses;}).length;
+  var first=Object.keys(REC.disc.q).filter(function(k){return REC.disc.q[k].done && !REC.disc.q[k].misses;}).length;
+  return ["Lead 2 Vanishing Future: rates I tried: "+(tried.length?tried.map(function(r){return r+"%";}).join(", "):"none")+"; questions "+done+" of "+answered+" answered right, "+first+" first try"];
+}
+
+/* ================= LEAD 3: WHO IS HARMED ================= */
+var WHO=shuffle([
+ {n:"Smoky living room", t:"A dad smokes indoors around his 6-year-old son for years. The boy develops breathing problems.", a:"yes",
+  why:"Same boy either way. If his dad hadn't smoked, <i>he</i> would breathe better. He's worse off than he would otherwise have been: a clear harm."},
+ {n:"Jo", t:"Sam and Alex have a child in a chaotic year instead of waiting two years. Their child, Jo, has a tougher start but a good life.", a:"no",
+  why:"If they'd waited, Jo wouldn't exist; Kit would. Jo isn't worse off than Jo would otherwise have been. The classic non-identity case."},
+ {n:"The forgotten vitamin", t:"A doctor forgets to mention a cheap vitamin, which the patient would gladly have taken, that would protect a pregnant patient's baby from a lifelong allergy. The baby is born with the allergy.", a:"yes",
+  why:"The baby is already on the way, so the same child is born either way. If the doctor had mentioned it, <i>that very child</i> would have been better off. (Compare Jo: the timing of conception changes who exists; a vitamin during pregnancy doesn't.)"},
+ {n:"The 500-year leak", t:"A country picks a cheap energy plan that changes how millions of people live and work. Its waste starts leaking in 500 years, making life harder (but still worth living) for the people there then.", a:"no",
+  why:"A plan that changes millions of lives changes who meets whom and when children are conceived. In 500 years, the people living there wouldn't have existed under a different plan. No one is worse off than they'd otherwise be."},
+ {n:"The poisoned lake", t:"A factory dumps chemicals that will poison a lake in 10 years. Kids who are already alive now will get sick swimming in it.", a:"yes",
+  why:"These kids already exist, so they'd exist either way. Without the dumping, they'd be healthier. Future harm, but to particular people: it passes the test."},
+ {n:"Use it up", t:"A society uses up a precious resource instead of saving it. People 300 years later have harder lives that are still worth living.", a:"no",
+  why:"Parfit's depletion case. After a few generations, everyone born is someone who wouldn't exist under \"save it\". No particular victim."}
+]);
+var WL={yes:"Yes: a particular person is worse off", no:"No: no one is worse off than otherwise"};
+var MW=[["wrong","Wrong anyway"],["ok","Not wrong"],["unsure","Not sure"]];
+WHO.forEach(function(c,i){
+  REC.who[i]={misses:0, done:false, mine:null};
+  var box=el("div",{class:"who"}); box.innerHTML='<h3>'+(i+1)+'. '+c.n+'</h3><p class="small">'+c.t+'</p><p class="step-lbl">1. Is a particular person worse off than they would otherwise have been?</p>';
+  var g1=el("div",{role:"group","aria-label":"Harm test"});
+  var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
+  shuffle(["yes","no"]).forEach(function(v){
+    var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v}); b.textContent=WL[v];
+    b.addEventListener("click",function(){
+      var R=REC.who[i]; if(R.done) return;
+      g1.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+      if(v===c.a){ R.done=true; g1.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb(fb,"good",vword("g3","ok"),c.why); showMine(); }
+      else { R.misses++; setFb(fb,"bad",vword("g3","no"), c.a==="no" ? "Ask: if the other choice had been made, would this same person exist at all?" : "Ask: does this person exist either way? If so, compare their two possible lives.");}
+      touch("g3");
+    });
+    g1.appendChild(b);
+  });
+  box.appendChild(g1); box.appendChild(fb);
+  function showMine(){
+    var lbl=el("p",{class:"step-lbl"}); lbl.textContent="2. Your call: was the choice wrong anyway? (not graded)"; box.appendChild(lbl);
+    var g2=el("div",{class:"row",role:"group","aria-label":"Your own call"});
+    MW.forEach(function(o){
+      var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false","data-m":o[0]}); b.textContent=o[1];
+      b.addEventListener("click",function(){
+        REC.who[i].mine=o[0]; box.classList.add("done");
+        g2.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost";});
+        whoTally(); touch("g3");
+      });
+      g2.appendChild(b);
+    });
+    box.appendChild(g2); g2.querySelector("button").focus({preventScroll:true});
+  }
+  $("whoList").appendChild(box);
+});
+var whoGap=0, whoNoAns=0;
+function whoTally(){
+  var T=$("whoTally"); T.innerHTML="";
+  var all=WHO.every(function(_,i){return REC.who[i].done && REC.who[i].mine;});
+  var noCases=WHO.map(function(c,i){return c.a==="no"?i:-1;}).filter(function(i){return i>=0;});
+  var noAns=noCases.filter(function(i){return REC.who[i].mine;});
+  whoGap=noAns.filter(function(i){return REC.who[i].mine==="wrong";}).length; whoNoAns=noAns.length;
+  var answered=WHO.filter(function(_,i){return REC.who[i].mine;}).length;
+  var s=el("span",{class:"on"}); s.textContent="Answered "+answered+"/"+WHO.length; T.appendChild(s);
+  if(all){
+    var s2=el("span",{class:"on"}); s2.textContent="No-victim cases you called wrong: "+whoGap+"/"+noCases.length; T.appendChild(s2);
+    var msg = whoGap>0 ? "You called "+whoGap+" of the "+noCases.length+" no-victim cases wrong anyway. That's the non-identity problem showing up in your own answers: you think something went wrong, but the \"worse off than otherwise\" test finds no victim. Either the test isn't the whole story, or those choices weren't wrong after all."
+                       : "You didn't call any of the no-victim cases wrong. That fits a simple rule you'll meet by name on the next screen: no victim, no wrong. Be ready: Rocky may ask whether \"use it up\" really is fine.";
+    setFb($("whoFb"),"good","Pattern.",msg); focusFb($("whoFb"));
+    clear("g3");
+  }
+}
+function whoLines(){
+  var done=WHO.filter(function(_,i){return REC.who[i].done;}).length;
+  if(!done) return ["Lead 3 Who is harmed?: not started"];
+  var first=WHO.filter(function(_,i){return REC.who[i].done && !REC.who[i].misses;}).length;
+  var ML={wrong:"wrong anyway",ok:"not wrong",unsure:"not sure"};
+  var mine=WHO.map(function(c,i){return REC.who[i].mine ? c.n+" = "+ML[REC.who[i].mine] : null;}).filter(Boolean);
+  return ["Lead 3 Who is harmed?: harm test "+done+" of "+done+" answered right, "+first+" first try", "Lead 3 my calls on whether each was wrong: "+(mine.length?mine.join("; "):"none yet")+(whoNoAns?" (no-victim cases I called wrong: "+whoGap+" of "+whoNoAns+" answered)":"")];
+}
+
+/* ================= LEAD 4: PREDICTED-VERDICT POLL ================= */
+var POLL=[
+ {n:"Use it up or save it?", d:"A simpler version of Parfit's depletion case. Neither choice makes any difference to how well anyone lives now or in the next few generations (though it still changes who meets whom, so after a few generations different people are born). After that, \"save it\" leads to better lives, with more well-being in total; \"use it up\" leads to harder lives that are still worth living. Different people are born depending on the choice.",
+  o:[["x","Saving it is better"],["y","Using it up is better"],["n","Neither is better"]], pa:"n", tot:"x",
+  paWhy:"Nobody alive in the next few generations is affected, and nobody later is worse off than they would otherwise be (they wouldn't exist otherwise). So neither outcome is worse for anyone. This is the strict view's weak spot.",
+  totWhy:"More well-being in total under \"save it\", so it's better. Who exactly has the well-being doesn't matter."},
+ {n:"Harder for one, two new lives?", d:"A couple can make their existing child's life a little harder in order to afford two more children, who would both have very happy lives. Or they can stop at one child. The parents would be equally happy either way.",
+  o:[["x","Having the two extra children is better"],["y","Stopping at one child is better"],["n","Neither is better"]], pa:"y", tot:"x",
+  paWhy:"The existing child is a particular person, and they'd be worse off. The extra children wouldn't be made better off by being created (on the strict view, existing isn't a benefit to them). So stopping is better for someone and worse for no one.",
+  totWhy:"Two very happy lives add far more well-being than the existing child loses, so having them is better."},
+ {n:"Clean the river?", d:"A town can clean up a river by 2040, or not. The same people, all already born, will live by the river either way. Cleaning it makes their lives better.",
+  o:[["x","Cleaning it is better"],["y","Leaving it is better"],["n","Neither is better"]], pa:"x", tot:"x",
+  paWhy:"Same people either way, and cleaning makes them better off. Person-affecting views have no trouble here.",
+  totWhy:"More total well-being, so cleaning is better. Here the two views agree: future harms to people who will exist either way aren't puzzling."},
+ {n:"World A or World Z?", d:"World A: 10 billion people with wonderful lives. World Z: vastly more people, each with a life barely worth living, but more total well-being. Completely different people live in each.",
+  o:[["x","World A is better"],["y","World Z is better"],["n","Neither is better"]], pa:"n", tot:"y",
+  paWhy:"No one in A would exist in Z, or the other way around, so neither world is worse for anyone. That dodges Parfit's problem, but only by refusing to rank the worlds at all, which many find just as odd.",
+  totWhy:"The total view goes where its math goes: Z has more total well-being, so Z is better. That's the Repugnant Conclusion."}
+];
+var THEO={pa:"strict person-affecting view", tot:"total view"};
+var qI=0;
+function optText(P,k){ return P.o.filter(function(o){return o[0]===k;})[0][1]; }
+function pollRender(){
+  var P=POLL[qI];
+  if(!REC.poll[qI] || REC.poll[qI].tot) REC.poll[qI]={mine:null, pa:false, tot:false, misses:0};   /* replay starts the dilemma fresh */
+  $("pollNav").textContent="Dilemma "+(qI+1)+" of "+POLL.length; $("pollNext").hidden=true; $("pollFb").className="fb"; $("pollFb").innerHTML="";
+  var C=$("pollCard"); C.innerHTML='<h3>'+P.n+'</h3><p class="small">'+P.d+'</p><p class="step-lbl">1. Your verdict (not graded)</p>';
+  var g0=el("div",{class:"opts",role:"group","aria-label":"Your verdict"});
+  shuffle(P.o).forEach(function(o){
+    var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-o":o[0]}); b.textContent=o[1];
+    b.addEventListener("click",function(){
+      var R=REC.poll[qI]; if(R.mine) return; R.mine=o[0];
+      g0.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b)); x.disabled=true;});
+      predict("pa"); touch("g4");
+    });
+    g0.appendChild(b);
+  });
+  C.appendChild(g0);
+  function predict(th){
+    var lbl=el("p",{class:"step-lbl"}); lbl.textContent=(th==="pa"?"2. ":"3. ")+"What does the "+THEO[th]+" say?"; C.appendChild(lbl);
+    var g=el("div",{class:"opts",role:"group","aria-label":"Prediction for the "+THEO[th],"data-th":th});
+    shuffle(P.o).forEach(function(o){
+      var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-o":o[0]}); b.textContent=o[1];
+      b.addEventListener("click",function(){
+        var R=REC.poll[qI]; if(R[th]) return;
+        g.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
+        if(o[0]===P[th]){ R[th]=true; g.querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
+          if(th==="pa"){ setFb($("pollFb"),"good",vword("g4","ok"),"The strict person-affecting view says: "+optText(P,P.pa).toLowerCase()+". Now the total view."); predict("tot"); }
+          else { setFb($("pollFb"),"good",vword("g4","ok"),"<b>Strict person-affecting:</b> "+P.paWhy+"<br><br><b>Total view:</b> "+P.totWhy); finishOne(); } }
+        else { R.misses++; setFb($("pollFb"),"bad",vword("g4","no"), th==="pa" ? "Ask: is any particular person, who exists under both options, worse off under one of them?" : "Ask: which option has more well-being added up across everyone?"); }
+        touch("g4");
+      });
+      g.appendChild(b);
+    });
+    C.appendChild(g); g.querySelector(".choice").focus({preventScroll:true});
+  }
+  function finishOne(){
+    var R=REC.poll[qI];
+    $("pollFb").innerHTML+='<br><br><b>You said:</b> '+esc(optText(P,R.mine))+'. '+(R.mine===P.pa&&R.mine===P.tot?"Both theories agree with you.":R.mine===P.pa?"You sided with the strict person-affecting view.":R.mine===P.tot?"You sided with the total view.":"Neither theory agrees with you here.");
+    pollTally();
+    if(qI<POLL.length-1){ $("pollNext").hidden=false; $("pollNext").focus({preventScroll:true}); }
+    else { focusFb($("pollFb")); $("pollFb").innerHTML+="<br><br><b>All four done.</b> If you sided with different theories on different dilemmas, you're in good company: that tension is exactly why population ethics is still unsolved."; clear("g4"); }
+  }
+}
+var pollPA=0, pollTOT=0, pollN=0;
+function pollTally(){
+  var T=$("pollTally"); T.innerHTML=""; pollPA=0; pollTOT=0; pollN=0;
+  POLL.forEach(function(P,i){ var R=REC.poll[i]; if(!R||!R.tot) return; pollN++; if(R.mine===P.pa) pollPA++; if(R.mine===P.tot) pollTOT++; });
+  if(!pollN) return;
+  var a=el("span",{class:"on"}); a.textContent="Agreed with strict person-affecting: "+pollPA+"/"+pollN; T.appendChild(a);
+  var b=el("span",{class:"on"}); b.textContent="Agreed with total view: "+pollTOT+"/"+pollN; T.appendChild(b);
+}
+$("pollNext").addEventListener("click",function(){ qI++; pollRender(); $("pollCard").querySelector(".choice").focus(); });
+pollRender();
+function vpLines(){
+  var keys=Object.keys(REC.poll).filter(function(k){return REC.poll[k].mine;});
+  if(!keys.length) return ["Lead 4 Predict the verdict: not started"];
+  var preds=0, asked=0; Object.keys(REC.poll).forEach(function(k){ var R=REC.poll[k]; if(R.pa) preds++; if(R.tot) preds++; if(R.mine) asked++; if(R.pa) asked++; });
+  var misses=Object.keys(REC.poll).reduce(function(s,k){return s+REC.poll[k].misses;},0);
+  var mine=POLL.map(function(P,i){ var R=REC.poll[i]; if(!R||!R.mine) return null; return P.n.replace("?","")+" = "+optText(P,R.mine); }).filter(Boolean);
+  return ["Lead 4 my own verdicts: "+mine.join("; "), "Lead 4 theory predictions: "+preds+" right, "+misses+" "+(misses===1?"miss":"misses")+" along the way; of "+plural(pollN,"finished dilemma")+", I agreed with the strict person-affecting view "+plural(pollPA,"time")+" and the total view "+plural(pollTOT,"time")];
+}
+
+/* ================= LEAD 5: NAME THAT TOOL ================= */
+var TOOLS=[["disc","Discounting"],["nonid","Non-identity problem"],["rep","Repugnant conclusion"],["recip","No reciprocity"]];
+var TN={}; TOOLS.forEach(function(t){TN[t[0]]=t[1];});
+var TQ=shuffle([
+ {t:"\"A disaster 300 years from now barely matters to our plans, because we count each year ahead as 4% less.\"", a:"disc", why:"A yearly percentage cut, compounded: discounting. (And with no reason given beyond the date, it's pure time preference.)"},
+ {t:"\"People in 2300 can't vote for us, trade with us or thank us. Why should we owe them anything?\"", a:"recip", why:"The give-and-take worry: future people can't pay us back, so a deal-based morality leaves them out."},
+ {t:"\"The people living with our choice in 2300 wouldn't even exist if we'd chosen differently. So who exactly is the victim?\"", a:"nonid", why:"The choice decides who exists, so no one is worse off than otherwise: non-identity."},
+ {t:"\"A trillion lives that are barely worth living would beat ten billion wonderful lives, as long as the total is bigger.\"", a:"rep", why:"That's the total view arriving at Parfit's Repugnant Conclusion."},
+ {t:"\"Our great-grandchildren will be much richer, so a dollar of cost matters less to them than to us.\"", a:"disc", why:"A reason for discounting money (diminishing marginal utility), not well-being. Still discounting, but a far more defensible kind."},
+ {t:"\"Parents who could easily wait a year to have a better-off child, but don't, haven't harmed the child they actually have.\"", a:"nonid", why:"Waiting would have produced a different child. This is Jo and Kit again."}
+]);
+var tqI=0, tqMiss=0;
+function toolRender(){
+  var c=TQ[tqI]; $("toolNav").textContent=(tqI+1)+" of "+TQ.length;
+  $("toolClue").textContent=c.t; $("toolFb").className="fb"; $("toolFb").innerHTML=""; $("toolNext").hidden=true; tqMiss=0;
+  var B=$("toolBtns"); B.innerHTML="";
+  shuffle(TOOLS).forEach(function(t){
+    var b=el("button",{class:"pick",type:"button","data-t":t[0]}); b.textContent=t[1];
+    b.addEventListener("click",function(){
+      if(t[0]===c.a){
+        b.classList.add("right"); B.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
+        REC.tool.done++; if(!tqMiss){ REC.tool.first++; REC.tool.streak++; REC.tool.best=Math.max(REC.tool.best,REC.tool.streak); }
+        $("toolStreak").textContent="Streak "+REC.tool.streak;
+        setFb($("toolFb"),"good", vword("g5","ok"), c.why);
+        if(tqI<TQ.length-1){ $("toolNext").hidden=false; $("toolNext").focus(); }
+        else { focusFb($("toolFb")); $("toolFb").innerHTML+="<br><br><b>Toolkit complete.</b> Longest streak: "+REC.tool.best+"/"+TQ.length+". You can now spot the four big moves in any argument about the future."; clear("g5"); }
+      } else {
+        tqMiss++; b.disabled=true; REC.tool.streak=0; $("toolStreak").textContent="Streak 0"; if(REC.tool.misses.indexOf(t[0])<0) REC.tool.misses.push(t[0]);
+        setFb($("toolFb"),"bad",vword("g5","no"), "Ask: is it about time shrinking value, about who exists, about adding up lives, or about give-and-take?");
+      }
+      touch("g5");
+    });
+    B.appendChild(b);
+  });
+}
+$("toolNext").addEventListener("click",function(){ tqI++; toolRender(); $("toolBtns").querySelector(".pick").focus(); });
+toolRender();
+function toolLines(){
+  if(!REC.tool.done) return ["Lead 5 Name that tool: not started"];
+  return ["Lead 5 Name that tool: "+REC.tool.done+" of "+REC.tool.done+" named, "+REC.tool.first+" first try, longest streak "+REC.tool.best+"/"+TQ.length+(REC.tool.misses.length?"; wrong guesses included: "+REC.tool.misses.map(function(k){return TN[k];}).join(", "):"")];
+}
+
+/* ================= FINALE ================= */
+var VIEWS=shuffle([
+ ["full","Future people count fully: when you live can't change how much you matter"],
+ ["less","Future people count, but people alive now (or soon) should come first"],
+ ["pa","Our duties are to people who exist or will exist anyway; there's no duty to create extra happy people"],
+ ["stuck","We owe them something, but the non-identity problem or the repugnant conclusion blocks every answer I try"]
+]);
+var pendingView=null;
+VIEWS.forEach(function(v){
+  var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
+  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  $("finOpts").appendChild(b);
+});
+function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
+function freezeFinale(){
+  $("finOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
+  $("finReason").readOnly=true; $("finMoved").disabled=true; $("finBtn").disabled=true; $("finBtn").textContent="Verdict filed";
+}
+function finRender(){
+  var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
+  $("finCompare").innerHTML='<div><span class="hd">START OF FILE</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">END OF FILE</span><br>'+esc(viewText(FIN.view))+'</div>';
+  var shift="";
+  if(COVER.locked && COVER.v==="press" && FIN.view==="full") shift="You pressed the button, but now say future people count fully. Which gives? Or is there a reason the button is OK anyway?";
+  else if(COVER.locked && COVER.v==="no" && FIN.view==="pa") shift="You refused the button, but a strict person-affecting view struggles to explain why: see the twist below.";
+  else if(COVER.locked) shift="Your gut call and your verdict sit together comfortably. Rocky will test that.";
+  $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p><p class="small"><b>Plot twist:</b> the 300-Year Button is a non-identity case. A change that big would change who gets born, so the people of 2326 with harder lives wouldn&rsquo;t exist if you hadn&rsquo;t pressed. Does that change your answer?</p>';
+  $("finCard").hidden=false;
+}
+$("finBtn").addEventListener("click",function(){
+  if(FIN.done) return;
+  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
+  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
+  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  FIN.view=pendingView; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
+  setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
+  $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState(); focusFb($("finFb"));
+  toast("Case closed: verdict filed", "var(--stamp)");
+  try{ $("rcard").scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){}
+});
+function finLines(){
+  if(!FIN.done) return ["Final verdict: not locked yet"];
+  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+}
+
+var LIVE={g1:tlLines,g2:discLines,g3:whoLines,g4:vpLines,g5:toolLines};
+var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");}, g5:function(){return linesFor("g5");},
+  all:function(){ return [].concat(coverLines(), tapLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+wireCopies();
+refreshGot();
+window.__c3m04={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report};
+
+/* ---------- restore saved progress, if any ---------- */
+if(SAVED){
+  restoring=true;
+  try{
+    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ if(SAVED.polls[k] && PT[k][SAVED.polls[k]]) POLLS[k]=SAVED.polls[k]; }); syncPolls(); }
+    var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
+    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
+    if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
+      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true; pendingView=FIN.view;
+      $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
+      $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
+      freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
+    }
+    refreshGot();
+  }catch(e){}
+  restoring=false; saveState();   /* outside the try, so a throw can't leave saving off */
+}
+updateProg();
+})();
+</script>
+</body>
+</html>
