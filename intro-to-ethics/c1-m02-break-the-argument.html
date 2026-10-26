@@ -104,13 +104,14 @@ h3{font-size:1.08rem; margin:0 0 .5em}
 .exhibit{position:relative; background:var(--card); border-radius:4px; margin:18px 0; padding:18px 18px 16px 34px;
   background-image:linear-gradient(90deg, transparent 22px, var(--card-margin) 22px 24px, transparent 24px),
   repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
-  background-position:0 0, 0 14px; box-shadow:0 2px 0 #00000014, 0 6px 14px -6px #0006; font-size:1rem; line-height:28px}
+  background-position:0 0, 0 18px; box-shadow:0 2px 0 #00000014, 0 6px 14px -6px #0006; font-size:1rem; line-height:28px}
 .exhibit p{margin:0}
 .exhibit p+p{margin-top:28px}
-.exhibit .lbl{font-family:var(--type); font-weight:700; font-size:.88rem; display:inline-block; background:var(--hl-c,var(--hl-y)); color:var(--hl-ink);
-  padding:1px 8px; margin:0 0 8px; transform:rotate(-1deg)}
+.exhibit .lbl{font-family:var(--type); font-weight:700; font-size:.88rem; display:table; background:var(--hl-c,var(--hl-y)); color:var(--hl-ink);
+  line-height:28px; padding:0 8px; margin:0; transform:rotate(-1deg)}
 .exhibit ol, .exhibit ul{margin:0; padding-left:1.3em}
-.exhibit .concl{border-top:2px solid var(--ink); margin-top:6px; padding-top:4px}
+.exhibit .concl{position:relative; margin:0; padding:0}
+.exhibit .concl::before{content:""; position:absolute; left:0; right:0; top:0; border-top:2px solid var(--ink)}
 .argline{display:block}
 
 /* ---------- margin note & sealed file ---------- */
@@ -310,8 +311,8 @@ html,body{overflow-x:clip}
 .attack{color:var(--stamp); font-family:var(--type); font-weight:700}
 .rcard{position:relative; max-width:440px; margin:18px auto 8px; background:var(--card); border-radius:6px; padding:20px 22px 18px 40px;
   background-image:linear-gradient(90deg, transparent 26px, var(--card-margin) 26px 28px, transparent 28px), repeating-linear-gradient(180deg, transparent 0 27px, var(--card-line) 27px 28px);
-  box-shadow:0 2px 0 #00000014, 0 10px 20px -8px #0008; font-size:.98rem; line-height:28px}
-.rcard h3{font-size:1.25rem; line-height:28px; margin:0 0 4px}
+  background-position:0 0, 0 20px; box-shadow:0 2px 0 #00000014, 0 10px 20px -8px #0008; font-size:.98rem; line-height:28px}
+.rcard h3{font-size:1.25rem; line-height:28px; margin:0}
 .rcard .stamp{position:absolute; right:10px; top:-14px; transform:rotate(8deg); font-size:.9rem}
 .rcard b{font-family:var(--type)}
 </style>
@@ -548,7 +549,7 @@ html,body{overflow-x:clip}
   </ul>
 </section>
 
-<p class="foot">Case file written for Intro to Ethics on Recess. The clips are MIT's; this page, its games and its wording are our own, not MIT's.</p>
+<p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT. The clips are MIT's, linked from their original pages.</p>
 </main>
 <script>
 (function(){
@@ -566,12 +567,12 @@ var KEY="goodlife-m01b-v1", BKEY="goodlife-button-v1", canSave=false, SAVED=null
 try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); SHARED=JSON.parse(localStorage.getItem(BKEY)||"null"); }catch(e){ canSave=false; SAVED=null; SHARED=null; }
 if(!SAVED || typeof SAVED!=="object") SAVED=null;
 if(!SHARED || typeof SHARED!=="object") SHARED=null;
-var touched={}, restoring=false;
+var touched={}, restoring=false, FINAL={}, FIN_WRONG=null;
 function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, finale:FIN.pick, rf:REC.rf, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, finale:FIN.pick, finaleTry:FIN_WRONG, rf:REC.rf, lines:lines}));
     if(COVER.v && COVER.reason) localStorage.setItem(BKEY, JSON.stringify({v:COVER.v, reason:COVER.reason}));
   }catch(e){}
 }
@@ -611,6 +612,8 @@ function clear(id, quiet){
   var g=GAMES.filter(function(x){return x.id===id;})[0];
   $(id).classList.add("is-cleared");
   var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  /* freeze the record the moment a lead clears: a replay (this visit or after a reload) never rewrites it */
+  if(!FINAL[id]) FINAL[id]=finalRecord(id);
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet){
@@ -666,7 +669,17 @@ $("lockBtn").addEventListener("click",function(){
 });
 
 /* ---------- copy for Rocky (shared machinery) ---------- */
-function linesFor(g){ if(!touched[g] && SAVED && SAVED.lines && SAVED.lines[g]) return SAVED.lines[g].concat(); return LIVE[g](); }
+function finalRecord(g){
+  var sv = SAVED && SAVED.lines && SAVED.lines[g];
+  if(restoring && Array.isArray(sv) && sv.length && sv.every(function(x){return typeof x==="string";})){
+    var ok = g==="g3" ? /: 4 of 4 arguments solved$/.test(sv[0]) : g==="g6" ? /: 3 of 3 repaired, \d+ on the first try$/.test(sv[0]) : true;
+    if(ok) return sv.concat();
+  }
+  if(restoring && g==="g3") return ["Lead 2 Counterexample machine: 4 of 4 arguments solved"];
+  if(restoring && g==="g6") return ["Lead 3 Missing piece: 3 of 3 repaired"];
+  return LIVE[g]();
+}
+function linesFor(g){ if(cleared[g] && FINAL[g]) return FINAL[g].concat(); if(!touched[g] && SAVED && SAVED.lines && SAVED.lines[g]) return SAVED.lines[g].concat(); return LIVE[g](); }
 function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(COVER.reason?". My reason: "+COVER.reason:"")]; }
 function report(key){ return "C1-M02 case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -692,7 +705,10 @@ function rfLines(){ return ["Lead 1 Sound/valid/broken: "+(REC.rf.rounds? "best 
 function mLines(){ return ["Lead 2 Counterexample machine: "+REC.m.solved+" of 4 arguments solved"].concat(REC.m.notes); }
 function bLines(){ return ["Lead 3 Missing piece: "+REC.b.done+" of 3 repaired, "+REC.b.firstTry+" on the first try"]; }
 var LIVE={g4:rfLines,g3:mLines,g6:bLines};
-function finLines(){ return ["Verdict, hidden premise my button argument relies on: "+(FIN.pick||"not done yet")]; }
+function finLines(){
+  if(!FIN.pick && FIN_WRONG) return ["Verdict, hidden premise my button argument relies on: not done yet (I tried \""+FIN_WRONG.t+"\", which "+(FIN_WRONG.k==="is"?"only says what people do":"just repeats my conclusion")+")"];
+  return ["Verdict, hidden premise my button argument relies on: "+(FIN.pick||"not done yet")];
+}
 var BUILDERS={ g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");},
   all:function(){ return [].concat(coverLines(), linesFor("g4"), linesFor("g3"), linesFor("g6"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of 3"]); } };
 wireCopies();
@@ -1032,7 +1048,7 @@ function renderFinale(){
       $("finOwnWrap").hidden = o.k!=="own";
       if(o.k==="own"){ $("finFb").className="fb"; $("finFb").innerHTML="Write it as a general rule that links your reason to your conclusion, then press <b>Use my premise</b>."; $("finOwn").focus(); return; }
       if(o.k==="bridge") finishFinale(o.t, '<span class="attack">This is the premise a critic would attack.</span> '+o.atk);
-      else setFb($("finFb"),"bad", o.k==="is"?"That can't bridge it.":"Begging the question.", o.fb);
+      else { FIN_WRONG={t:o.t, k:o.k}; saveState(); setFb($("finFb"),"bad", o.k==="is"?"That can't bridge it.":"Begging the question.", o.fb); }
     });
     O.appendChild(b);
   });
@@ -1089,6 +1105,8 @@ if(SAVED){
     if(SAVED.rf && SAVED.rf.rounds){ REC.rf.rounds=SAVED.rf.rounds; REC.rf.best=SAVED.rf.best; }
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence stays."; b.insertBefore(n,b.firstChild); } });
     if(SAVED.finale){ FIN.pick=SAVED.finale; if(finOpen){ restoreFinale(); } }
+    var ft=SAVED.finaleTry;
+    if(ft && typeof ft.t==="string" && (ft.k==="is"||ft.k==="circ") && ["press","nopress"].some(function(v){ return FINOPTS[v].some(function(o){ return o.t===ft.t && o.k===ft.k; }); })) FIN_WRONG={t:ft.t, k:ft.k};
   }catch(e){}
   restoring=false; saveState();
 }
