@@ -16,7 +16,7 @@
   th{color:#ff2bd6}
   button{font:bold 18px "Courier New",monospace;margin:8px;padding:12px 20px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
   button:active{background:#ffe600;color:#07070f}
-  #round,#final{display:none}
+  #round,#final,#oops{display:none}
   .cardwin{display:inline-block;margin:8px auto}
   #out{width:95%;max-width:560px;height:90px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
   .note{color:#9fb4c8;font-size:14px}
@@ -59,10 +59,10 @@ body{font-family:"Rubik",system-ui,-apple-system,Segoe UI,Arial,sans-serif !impo
 h1{font-family:"Press Start 2P","Bungee",monospace !important;font-weight:400 !important;font-size:clamp(16px,4.6vw,26px) !important;line-height:1.35 !important;letter-spacing:1px !important;margin:10px 0 !important;
  color:#fff !important;text-shadow:0 0 6px var(--cyan),0 0 16px var(--cyan),3px 3px 0 var(--pink) !important}
 h2{font-family:"Bungee","Arial Black",Impact,sans-serif !important;font-weight:400 !important;font-size:16px !important;letter-spacing:1px !important;color:var(--gold) !important;text-shadow:0 0 8px rgba(255,225,77,.6) !important}
-#pick,#round,#result,#final,.panel{position:relative;margin:14px auto;padding:16px 14px 18px !important;border-radius:18px !important;
+#pick,#round,#result,#final,#oops,.panel{position:relative;margin:14px auto;padding:16px 14px 18px !important;border-radius:18px !important;
  background:linear-gradient(180deg,rgba(14,42,26,.96),rgba(6,26,16,.98)) !important;
  border:4px solid var(--cyan) !important;box-shadow:0 0 0 4px #12321e,0 0 0 7px var(--pink),0 0 26px rgba(166,240,74,.35),inset 0 0 30px rgba(166,240,74,.12) !important}
-#pick::before,#round::before,#result::before,#final::before,.panel::before{content:"✦ ❖ ✧ ❂" !important;display:block;font-size:12px;letter-spacing:10px;color:rgba(166,240,74,.45) !important;margin-bottom:4px}
+#pick::before,#round::before,#result::before,#final::before,#oops::before,.panel::before{content:"✦ ❖ ✧ ❂" !important;display:block;font-size:12px;letter-spacing:10px;color:rgba(166,240,74,.45) !important;margin-bottom:4px}
 .bar{gap:10px !important}
 .box{min-width:96px;border:3px solid var(--cyan) !important;border-radius:8px !important;padding:6px 12px 8px !important;
  background:#031008 !important;box-shadow:0 0 0 3px #1d3a14,0 0 12px rgba(166,240,74,.35) !important;
@@ -78,7 +78,7 @@ button:nth-of-type(4n+4){background:radial-gradient(circle at 50% 30%,#6dffb0,va
 button:active{transform:translateY(4px)}
 button.on{background:radial-gradient(circle at 50% 30%,#fffbd0,var(--gold) 65%) !important;color:#2a2000 !important;text-shadow:none;box-shadow:0 6px 0 #8a7400,0 0 20px 6px rgba(255,225,77,.7) !important}
 button:disabled{filter:grayscale(1) brightness(.6);cursor:default}
-#next,button.big,#final button,#go{background:linear-gradient(180deg,#d6ffa0,var(--cyan) 50%,#6fb82a) !important;color:#0f2a05 !important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+#next,button.big,#final button,#go,#oopsbtn,#oopsnext{background:linear-gradient(180deg,#d6ffa0,var(--cyan) 50%,#6fb82a) !important;color:#0f2a05 !important;text-shadow:0 1px 0 rgba(255,255,255,.5);
  border:3px solid #f3ffe0 !important;border-radius:10px !important;box-shadow:0 6px 0 #3d6e10,0 0 22px rgba(166,240,74,.55) !important;padding:12px 22px !important}
 table{background:rgba(0,0,0,.35);border-radius:8px;overflow:hidden;border-collapse:separate !important;border-spacing:0}
 td,th{border:1px solid rgba(166,240,74,.45) !important;color:#eef4ff}
@@ -112,7 +112,7 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 .shower span{position:absolute;top:-30px;width:14px;height:14px;border-radius:2px !important;border:none !important;box-shadow:0 0 8px currentColor;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
-@media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+@media (max-width:480px){#pick,#round,#result,#final,#oops,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
 
 a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
@@ -147,6 +147,20 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
   <p class="note" id="lesson"></p>
   <button id="next" onclick="nextRun()">NEXT</button>
 </div>
+<div id="oops">
+  <h2>THE OOPS ROUND</h2>
+  <div id="oopsintro">
+    <p class="note">Now players sometimes slip and grab by accident. Every move has a 10% chance to flip, even for your bot. Same bots, 20 rounds a match, and the slips are the same every time you play.</p>
+    <p class="note" id="oopsbot"></p>
+    <button id="oopsbtn" onclick="runOops()">PLAY THE OOPS ROUND</button>
+  </div>
+  <div id="oopsres" style="display:none">
+    <h2 id="oopshead"></h2>
+    <table class="standings" id="oopstable"></table>
+    <p class="note" id="oopswhy"></p>
+    <button id="oopsnext" onclick="finish()">SEE FINAL RESULTS</button>
+  </div>
+</div>
 <div id="final">
   <h1>TOURNAMENT OVER</h1>
   <div class="cardwin tape">STRATEGY CARD UNLOCKED: <b>Tit for Tat</b><br><a id="decklink" href="gn3-deck.html?card=1">See your deck</a></div>
@@ -177,11 +191,14 @@ var NAMES={SSG:"Tit for Tat",SSS:"Always Share",GGG:"Always Grab",GSG:"Suspiciou
 var choice=[null,null,null],run=0,runs=[],best=null;
 function W(x){return x==="S"?"SHARE":"GRAB"}
 function mybot(c){return {n:"YOUR BOT",f:function(h){if(!h.length)return c[0];return h[h.length-1].them==="S"?c[1]:c[2]}}}
-function match(a,b){var ha=[],hb=[],sa=0,sb=0;
- for(var r=0;r<ROUNDS;r++){var ma=a.f(ha),mb=b.f(hb),p=P[ma+"|"+mb];sa+=p[0];sb+=p[1];ha.push({me:ma,them:mb});hb.push({me:mb,them:ma})}
+var SLIP=0.1,OSEED=14,OROUNDS=20,oopsDone=false,oops=null,finished=false;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function flip(m){return m==="S"?"G":"S"}
+function match(a,b,seed){var ha=[],hb=[],sa=0,sb=0,noisy=seed!==undefined,rnd=noisy?mulberry32(seed):null,N=noisy?OROUNDS:ROUNDS;
+ for(var r=0;r<N;r++){var ma=a.f(ha),mb=b.f(hb);if(noisy){if(rnd()<SLIP)ma=flip(ma);if(rnd()<SLIP)mb=flip(mb)}var p=P[ma+"|"+mb];sa+=p[0];sb+=p[1];ha.push({me:ma,them:mb});hb.push({me:mb,them:ma})}
  return [sa,sb,ha]}
-function tourney(c){var all=BOTS.concat([mybot(c)]),tot=all.map(function(){return 0}),mine=[];
- for(var i=0;i<all.length;i++)for(var j=i+1;j<all.length;j++){var m=match(all[i],all[j]);tot[i]+=m[0];tot[j]+=m[1];
+function tourney(c,noisy){var all=BOTS.concat([mybot(c)]),tot=all.map(function(){return 0}),mine=[];
+ for(var i=0;i<all.length;i++)for(var j=i+1;j<all.length;j++){var m=match(all[i],all[j],noisy?OSEED*1000+i*10+j:undefined);tot[i]+=m[0];tot[j]+=m[1];
    if(j===all.length-1)mine.push({vs:all[i].n,me:m[1],them:m[0]})}
  var order=all.map(function(b,i){return {n:b.n,s:tot[i]}}).sort(function(x,y){return (y.s-x.s)||((y.n==="YOUR BOT")-(x.n==="YOUR BOT"))});
  var my=tot[all.length-1],rank=1,tie=false;order.forEach(function(o){if(o.s>my)rank++;if(o.s===my&&o.n!=="YOUR BOT")tie=true});
@@ -202,15 +219,25 @@ function runIt(){var t=tourney(choice),key=choice.join("");
  el("lesson").textContent=t.rank===1?"Champion! Notice how you did against the grabbers AND the sharers.":"Look at which bots beat you, and which bots you beat. Can a different rule do better?";
  el("next").textContent=run<2?"TRY ANOTHER BOT":"SEE FINAL RESULTS";
  show("pick",false);show("round",true)}
-function nextRun(){run++;if(run>=3){finish();return}setup()}
-function finish(){show("round",false);show("pick",false);
+function nextRun(){run++;if(run>=3){showOops();return}setup()}
+function showOops(){show("round",false);show("pick",false);
+ el("oopsbot").innerHTML="Your best bot, <b>"+best.name+"</b>, plays too.";
+ show("oops",true)}
+function runOops(){if(oopsDone)return;oopsDone=true;el("oopsbtn").disabled=true;
+ var t=tourney(best.key.split(""),true),by={};t.order.forEach(function(o){by[o.n]=o.s});
+ oops={score:t.my,rank:t.rank,tie:t.tie,winner:t.order[0].n,cora:by["Copycat Cora"],fiona:by["Forgiving Fiona"]};
+ el("oopshead").textContent=best.name+" finished "+(t.tie?"tied for ":"")+"#"+t.rank+" of 6 in the oops round";
+ el("oopstable").innerHTML="<tr><th>#</th><th>Bot</th><th>Total</th></tr>"+t.order.map(function(o,i){return "<tr"+(o.n==="YOUR BOT"?" class=\"me\"":"")+"><td>"+(i+1)+"</td><td>"+o.n+"</td><td>"+o.s+"</td></tr>"}).join("");
+ el("oopswhy").innerHTML="With slips, strict Tit for Tat (Copycat Cora, <b>"+oops.cora+"</b>) can get stuck in a revenge loop: one accidental grab makes the other bot grab back, and they keep trading grabs. Forgiving Fiona (<b>"+oops.fiona+"</b>) only hits back after two grabs in a row, so one slip fades away. Forgiveness won.";
+ show("oopsintro",false);show("oopsres",true)}
+function finish(){if(finished)return;finished=true;show("round",false);show("pick",false);show("oops",false);
  var tft=tourney(["S","S","G"]);
  var rank=best.rank===1?"CHAMPION":(best.rank<=2?"CONTENDER":"ROOKIE BOT");
  el("verdict").innerHTML="<p>Best bot: <b>"+best.name+"</b> with <b>"+best.score+"</b> points, rank <b>#"+best.rank+"</b> of 6.</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Tit for Tat (share first, then copy) in this arena scores <b>"+tft.my+"</b> and finishes <b>"+(tft.tie?"tied for ":"")+"#"+tft.rank+"</b> (Copycat Cora and Grudge Greta score the same).</div>"+
  "<p class=\"note\">Tit for Tat never scores more than its partner in any single match. It wins by getting lots of 3-point rounds with nice bots, and refusing to be a pushover against grabbers.</p>"+
  "<div class=\"fact\">Around 1980 the political scientist Robert Axelrod ran a computer tournament like this. The winner was Tit for Tat, sent in by Anatol Rapoport.</div>";
- el("out").value="GN3-M01 | runs: "+runs.map(function(r){return r.name+" "+r.score+" (#"+r.rank+")"}).join(", ")+" | best: "+best.name+" "+best.score+" points, rank "+best.rank+" of 6 | rank "+rank;
+ el("out").value="GN3-M01 | runs: "+runs.map(function(r){return r.name+" "+r.score+" (#"+r.rank+")"}).join(", ")+" | best: "+best.name+" "+best.score+" points, rank "+best.rank+" of 6 | rank "+rank+(oops?" | oops round: "+best.name+" "+oops.score+" (#"+oops.rank+"), winner "+oops.winner:"");
  if(rank==="CHAMPION"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
  show("final",true)}
 setup();

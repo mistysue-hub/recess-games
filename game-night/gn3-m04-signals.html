@@ -34,6 +34,7 @@
  .cand.sel{border-color:#ffe14d;box-shadow:0 0 12px rgba(255,225,77,.6)}
  .cand b{font-size:15px}
  .badge{display:inline-block;margin-top:4px;padding:2px 6px;border-radius:6px;background:#ff8a3d;color:#1a0d00;font-weight:800;font-size:11px}
+ .badge.no{background:#4a5568;color:#e8f7ff}
  .fast{color:#6dffb0;font-weight:800}.slow{color:#ff9a8a;font-weight:800}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,10 +116,14 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 
 a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
+<style>
+.cand button.chk{margin:6px 0 0 !important;padding:6px 8px !important;min-height:44px !important;font-size:11px !important;border-radius:8px !important;border-width:2px !important;box-shadow:0 3px 0 #0d3a8a !important;background:radial-gradient(circle at 50% 30%,#7fb0ff,#2d7bff 65%) !important}
+.cand{box-sizing:border-box;width:calc(50% - 4px) !important;max-width:200px}
+</style>
 </head>
 <body>
 <h1>SIGNALS</h1>
-<p class="note">You're the coach picking 3 runners for the relay team. Every runner says "I'm fast!" Only some really are.</p>
+<p class="note">You're the coach picking 3 runners for the relay team. Every runner says "I'm fast!" Only some really are. Will you trust the talk, or pay to check?</p>
 <div class="bar">
   <div class="box">STAGE<b id="rn">1/3</b></div>
   <div class="box">SCORE<b id="sc">0</b></div>
@@ -153,38 +158,48 @@ function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rint(n){try{var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}}
 
-var stage=0,score=0,sel=[],picksA=0,picksB=0,dec=[],qi=0;
-var A=[{n:"Ava",f:1,b:1},{n:"Ben",f:0,b:0},{n:"Cleo",f:1,b:1},{n:"Dev",f:0,b:0},{n:"Eli",f:1,b:1},{n:"Faye",f:0,b:0}];
-var B=[{n:"Gus",f:1},{n:"Hana",f:0},{n:"Ivan",f:0},{n:"Jo",f:1},{n:"Kai",f:1},{n:"Lia",f:0}];
+var stage=0,score=0,sel=[],picksA=0,picksB=0,dec=[],qi=0,chk=[],checks=0,s1=0,qc=0;
+var A=[{n:"Ben",f:0,b:0},{n:"Ava",f:1,b:1},{n:"Dev",f:0,b:0},{n:"Cleo",f:1,b:1},{n:"Eli",f:1,b:1},{n:"Faye",f:0,b:0}];
+var B=[{n:"Gus",f:1,b:1},{n:"Hana",f:0,b:1},{n:"Ivan",f:0,b:1},{n:"Jo",f:1,b:1},{n:"Kai",f:1,b:1},{n:"Lia",f:0,b:1}];
 var CL=["I'm fast!","I'm super fast!","Trust me, I'm fast!","Fastest kid in school!","I'm really fast!","I'm fast, promise!"];
-function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=rint(i+1),t=a[i];a[i]=a[j];a[j]=t}return a}
+var BADGE="<span class=\"badge\">FINISHED IRON CAMP</span>";
 var cur=[];
-function card(c,i,showTruth){return "<div class=\"cand"+(sel.indexOf(i)>=0?" sel":"")+"\" "+(showTruth?"":"onclick=\"tog("+i+")\"")+"><b>"+c.n+"</b><br>\""+CL[i]+"\""+(stage===0&&c.b?"<br><span class=\"badge\">FINISHED IRON CAMP</span>":"")+(showTruth?"<br><span class=\""+(c.f?"fast\">FAST":"slow\">SLOW")+"</span>":"")+"</div>"}
+function card(c,i,rev){var bd="",btn="";
+ if(rev){bd=c.b?BADGE:(stage===0?"<span class=\"badge no\">NO CAMP</span>":"")}
+ else if(stage===1){bd=BADGE}
+ else if(chk[i]){bd=c.b?BADGE:"<span class=\"badge no\">NO CAMP RECORD</span>"}
+ else btn="<br><button class=\"chk\" onclick=\"event.stopPropagation();check("+i+")\">CHECK CAMP (-1)</button>";
+ return "<div class=\"cand"+(sel.indexOf(i)>=0?" sel":"")+"\" "+(rev?"":"onclick=\"tog("+i+")\"")+"><b>"+c.n+"</b><br>\""+CL[i]+"\""+(bd?"<br>"+bd:"")+btn+(rev?"<br><span class=\""+(c.f?"fast\">FAST":"slow\">SLOW")+"</span>":"")+"</div>"}
 function draw(){el("cands").innerHTML=cur.map(function(c,i){return card(c,i,false)}).join("");el("go").style.display=sel.length===3?"inline-block":"none"}
 function tog(i){var k=sel.indexOf(i);if(k>=0)sel.splice(k,1);else if(sel.length<3)sel.push(i);draw()}
+function check(i){if(chk[i])return;chk[i]=1;checks++;score--;el("sc").textContent=score;draw()}
 function setup(){show("round",false);show("pick",true);el("rn").textContent=(stage+1)+"/3";sel=[];el("choices").innerHTML="";
- if(stage===0){cur=shuffle(A);el("ptitle").textContent="STAGE 1: TRYOUTS";el("ask").innerHTML="Some runners finished <b>Iron Camp</b>: 6 weeks of 5 a.m. sprints. Fast runners breeze through it. Slow runners almost always quit. Tap 3 runners.";draw()}
- else if(stage===1){cur=shuffle(B);el("ptitle").textContent="STAGE 2: CAMP CANCELLED";el("ask").innerHTML="This year Iron Camp was cancelled. All you have is what they <b>say</b>. Tap 3 runners.";draw()}
+ if(stage===0){cur=A;el("ptitle").textContent="STAGE 1: TRYOUTS";el("ask").innerHTML="Pick 3 runners. Every one says \"I'm fast!\" but talk is free, so slow runners say it too. Fast runners breeze through <b>Iron Camp</b> (6 weeks of 5 a.m. sprints); slow runners almost always quit. Tap <b>CHECK CAMP</b> to see a runner's record for <b>1 point</b>. Pick a fast runner: +3. Pick a slow one: -2.";draw()}
+ else if(stage===1){cur=B;el("ptitle").textContent="STAGE 2: CHEAP CAMP";el("ask").innerHTML="New season: Iron Camp got easier. It now costs a slow runner only <b>3</b>, so slow runners get <b>10 - 3 = 7</b> for going, which beats 4. Every record is posted free. Pick 3. Fast runner: +1.";draw()}
  else{el("cands").innerHTML="";el("go").style.display="none";el("ptitle").textContent="STAGE 3: YOU ARE THE RUNNER";askQ()}}
 var Q=[{t:"You are a <b>FAST</b> runner. Iron Camp costs you <b>2</b> points of effort (easy for you). Coaches pay <b>10</b> points to runners who finished camp and <b>4</b> to everyone else. Do you do the camp?",a:0,w:"Camp: 10 - 2 = 8. Skip: 4. Do the camp!"},
  {t:"Now you are a <b>SLOW</b> runner. Iron Camp costs you <b>8</b> points of effort (brutal for you). Same pay: <b>10</b> with camp, <b>4</b> without. Do you do the camp?",a:1,w:"Camp: 10 - 8 = 2. Skip: 4. Skip it! That's exactly why the camp badge is believable."}];
 function askQ(){var q=Q[qi];el("ask").innerHTML=q.t;el("choices").innerHTML="<button onclick=\"answer(0)\">DO THE CAMP</button><button onclick=\"answer(1)\">SKIP IT</button>"}
-function answer(i){var q=Q[qi],ok=i===q.a;if(ok){score++;el("sc").textContent=score}dec.push((qi===0?"fast":"slow")+": "+(i===0?"camp":"skip")+(ok?" (right)":" (wrong)"));
+function answer(i){var q=Q[qi],ok=i===q.a;if(ok){score++;qc++;el("sc").textContent=score}dec.push((qi===0?"fast":"slow")+": "+(i===0?"camp":"skip")+(ok?" (right)":" (wrong)"));
  el("headline").textContent=ok?"RIGHT!":"Not quite.";el("reveal").innerHTML="";el("detail").innerHTML=q.w;
  qi++;el("next").textContent=qi<2?"NEXT QUESTION":"SEE RESULTS";show("pick",false);show("round",true)}
-function lockIn(){var f=0;sel.forEach(function(i){f+=cur[i].f});
- if(stage===0){picksA=f;score+=f}else{picksB=f}
- el("sc").textContent=score;el("headline").textContent="You picked "+f+" fast runner"+(f===1?"":"s")+" out of 3.";
+function lockIn(){var f=0,u=0;sel.forEach(function(i){f+=cur[i].f;if(!cur[i].f&&!chk[i])u++});var s=3-f;
+ if(stage===0){picksA=f;var pts=3*f-2*s;score+=pts;s1=pts-checks;
+  el("headline").textContent="Stage 1: "+(s1>=0?"+":"")+s1+" points";
+  el("detail").innerHTML="You picked "+f+" fast and "+s+" slow ("+pts+" points), and paid "+checks+" for checks = <b>"+s1+"</b>. "+(u?u+" slow runner"+(u===1?"":"s")+" slipped in on talk alone. ":"")+"Every camp finisher was fast and every slow runner said \"I'm fast!\" anyway: the badge was <b>costly to fake</b>, the talk was free."}
+ else{picksB=f;score+=f;
+  el("headline").textContent="You picked "+f+" fast runner"+(f===1?"":"s")+" out of 3.";
+  el("detail").innerHTML="Look: <b>every</b> runner has the badge, and 3 are slow. Slow runners get 10 - 3 = 7, which beats 4, so they fake it too. When the badge is cheap to fake, it tells you nothing."}
+ el("sc").textContent=score;
  el("reveal").innerHTML=cur.map(function(c,i){return card(c,i,true)}).join("");
- el("detail").innerHTML=stage===0?"Every camp finisher was fast. The badge was <b>costly to fake</b>, so it told the truth.":"Everybody said \"I'm fast!\" because talk is free. Without a costly signal, picking is mostly luck. (This round doesn't count toward your score.)";
  el("next").textContent="NEXT STAGE";show("pick",false);show("round",true)}
 function nextStage(){if(stage===2){if(qi<2){show("round",false);show("pick",true);askQ();return}finish();return}stage++;setup()}
 function finish(){show("round",false);show("pick",false);
- var rank=score===5?"SIGNAL READER":(score>=3?"TALENT SCOUT":"ROOKIE SCOUT");
- el("verdict").innerHTML="<p>Stage 1 (with the camp badge): <b>"+picksA+"/3</b> fast. Stage 2 (talk only): <b>"+picksB+"/3</b> fast. Runner decisions: "+dec.join(", ")+".</p><p>Score: <b>"+score+"</b> of 5.</p><div class=\"rank\">RANK: "+rank+"</div>"+
- "<h2>REPLAY THE TAPE</h2><div class=\"tape\">A signal is believable when it costs <b>more</b> to fake than faking is worth. Fast runners gain by doing camp (8 &gt; 4). Slow runners don't (2 &lt; 4).</div>"+
+ var rank=(s1>=4&&qc===2)?"SIGNAL READER":(score>=3?"TALENT SCOUT":"ROOKIE SCOUT");
+ el("verdict").innerHTML="<p>Stage 1 (badges cost 1 to check): "+picksA+"/3 fast, "+checks+" check"+(checks===1?"":"s")+", <b>"+s1+"</b> points. Stage 2 (cheap camp): "+picksB+"/3 fast. Runner decisions: "+dec.join(", ")+".</p><p>Score: <b>"+score+"</b></p><div class=\"rank\">RANK: "+rank+"</div>"+
+ "<h2>REPLAY THE TAPE</h2><div class=\"tape\">A signal is believable when it costs <b>more</b> to fake than faking is worth. Fast runners gain by doing camp (8 &gt; 4). Slow runners don't (2 &lt; 4). Make camp cheap for slow runners (7 &gt; 4) and the badge stops working.</div>"+
  "<div class=\"fact\">The economist Michael Spence explained job-market signals like diplomas this way in 1973, and later shared a Nobel Prize for it. Biologists use the same idea for the peacock's heavy tail.</div>";
- el("out").value="GN3-M04 | stage 1 with badges: "+picksA+"/3 fast | stage 2 talk only: "+picksB+"/3 fast | runner decisions: "+dec.join(", ")+" | score "+score+"/5 | rank "+rank;
+ el("out").value="GN3-M04 | stage 1: checked "+checks+" badge"+(checks===1?"":"s")+", picked "+picksA+"/3 fast, net "+s1+" | stage 2 cheap camp (all badged): "+picksB+"/3 fast | runner decisions: "+dec.join(", ")+" | score "+score+" | rank "+rank;
  if(rank==="SIGNAL READER"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
  show("final",true)}
 setup();

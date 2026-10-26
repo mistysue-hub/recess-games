@@ -127,7 +127,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>THE GRANDMASTER'S GAUNTLET</h1>
-<p class="note">Boss round! The Grandmaster has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Grandmaster wins.</p>
+<p class="note">Boss round! The Grandmaster has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Grandmaster wins that round. REMATCH then replays only the puzzles you haven't hit, with 3 fresh lives, and his HP stays where you left it.</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/8</b></div>
   <div class="box">GRANDMASTER HP<b id="hp">8</b></div>
@@ -168,12 +168,21 @@ function copyIt(){
 }
 function finalBlock(card,n,rank,foilRanks){var dl=el("decklink");dl.href="gn2-deck.html?card="+n+(foilRanks.indexOf(rank)>=0?"&foil=1":"");if(foilRanks.indexOf(rank)>=0)dl.textContent="Top rank! See your GOLD FOIL card"}
 
+function mkR1(T){var f=T%3,ks=[],k;for(k=f;k<=T;k+=3)ks.push(k);
+ return {t:"ROUND 1: WORK BACKWARD",taunt:"\"Every endgame starts at the end.\"",vt:T===10?0:T,
+  scene:"<div class=\"story\">Race to "+T+": take turns adding <b>1 or 2</b>. Whoever says "+T+" wins. You go first.</div>",
+  q:"What number should you say first?",ch:["1","2","It doesn't matter"],a:f-1,
+  short:"Say "+f+". The key numbers are "+ks.join(", ")+".",
+  why:"Whoever says "+(T-3)+" wins: your rival adds 1 or 2 ("+(T-2)+" or "+(T-1)+"), then you say "+T+". Back up by 3 each time: "+ks.slice(0,-1).reverse().join(", ")+"."}}
+function mkR8(T){var ks=[],k;for(k=1;k<=T;k+=4)ks.push(k);
+ return {t:"ROUND 8: ENDGAME",taunt:"\"Race to "+T+". You may go first. You'll need it.\"",race:true,T:T,keys:ks,vt:T===13?0:T,
+  scene:"<div class=\"story\">Final round: Race to "+T+". Take turns adding <b>1, 2 or 3</b>. Whoever says "+T+" wins the round and lands the hit. The Grandmaster plays perfectly, so don't slip!</div>",
+  q:"Your move.",ch:["+1","+2","+3"],a:-1,
+  short:"Key numbers: "+ks.join(", ")+".",
+  why:"Whoever says "+(T-4)+" wins: your rival reaches "+(T-3)+"-"+(T-1)+", then you say "+T+". Back up by 4: "+ks.slice(0,-1).reverse().join(", ")+". Say 1 first, then always make 4 with the Grandmaster's move."}}
+var VAR1=[10,11,14],VAR8=[13,17,9,21];
 var R=[
- {t:"ROUND 1: WORK BACKWARD",taunt:"\"Every endgame starts at the end.\"",
-  scene:"<div class=\"story\">Race to 10: take turns adding <b>1 or 2</b>. Whoever says 10 wins. You go first.</div>",
-  q:"What number should you say first?",ch:["1","2","It doesn't matter"],a:0,
-  short:"Say 1. The key numbers are 1, 4, 7, 10.",
-  why:"Whoever says 7 wins: your rival adds 1 or 2 (8 or 9), then you say 10. Back up by 3 each time: 7, 4, 1."},
+ mkR1(10),
  {t:"ROUND 2: PIRATE GOLD",taunt:"\"Gold goes to those who think backward.\"",
   scene:"<div class=\"story\">3 pirates: you (captain), Bo and Annie. Split 100 coins; a tied vote passes. If you're kicked off, Bo would keep all 100 and Annie would get 0. Pirates vote yes only for <b>more</b> than they'd get otherwise.</div>",
   q:"Which plan passes and keeps the most for you?",ch:["You 100, Bo 0, Annie 0","You 99, Bo 0, Annie 1","You 99, Bo 1, Annie 0","You 34, Bo 33, Annie 33"],a:1,
@@ -204,83 +213,84 @@ var R=[
   q:"What should decide your next move?",ch:["The 80 you already bid","Only what happens from now on","Winning, no matter what"],a:1,
   short:"Only the future counts. The 80 is a sunk cost.",
   why:"Quit and you pay 80. Keep raising against someone who never quits and you'll pay even more. Past bids are gone either way."},
- {t:"ROUND 8: ENDGAME",taunt:"\"Race to 13. You may go first. You'll need it.\"",race:true,
-  scene:"<div class=\"story\">Final round: Race to 13. Take turns adding <b>1, 2 or 3</b>. Whoever says 13 wins the round and lands the hit. The Grandmaster plays perfectly, so don't slip!</div>",
-  q:"Your move.",ch:["+1","+2","+3"],a:-1,
-  short:"Key numbers: 1, 5, 9, 13.",
-  why:"Whoever says 9 wins: your rival reaches 10-12, then you say 13. Back up by 4: 9, 5, 1. Say 1 first, then always make 4 with the Grandmaster's move."}
+ mkR8(13)
 ];
-var KEY13=[1,5,9,13];
-var r,hp,lives,tries,log,locked,race,attempt=1;
+var r,hp,lives,tries,log,locked,race,attempt=1,queue,qi,hitSet,res,vt,cur,replayed;
 function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%";el("lives").textContent=lives}
-function start(){r=0;hp=8;lives=3;log=[];setHP();setup()}
+function puz(i){return i===0&&vt[0]?mkR1(vt[0]):(i===7&&vt[7]?mkR8(vt[7]):R[i])}
+function sfx(){return cur.vt&&!cur.race?" (race to "+cur.vt+")":""}
+function note(s){log.push(s);res[parseInt(s.slice(1),10)-1]=s.split(":")[1]}
+function begin(){lives=3;log=[];qi=0;r=queue[0];setHP();setup()}
+function start(){attempt=1;hp=8;hitSet=[];res=[];vt=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
+function pickVar(list,prev){var o=list.filter(function(t){return t!==prev&&t!==list[0]});return o[rnd(o.length)]}
 function setup(){
-  var x=R[r];tries=0;locked=false;
+  var x=cur=puz(r);tries=0;locked=false;
   el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE GRANDMASTER: "+x.taunt;el("rtitle").textContent=x.t;
   el("scene").innerHTML=x.scene;el("q").innerHTML=x.q;el("fb").innerHTML="";show("next",false);show("whyb",false);show("whytxt",false);
   var h="";x.ch.forEach(function(c,i){h+="<button id=\"c"+i+"\" onclick=\""+(x.race?"raceAdd":"pick")+"("+i+")\">"+c+"</button>"});el("choices").innerHTML=h;
   el("racecnt").style.display=x.race?"block":"none";el("racetrail").innerHTML="";
-  if(x.race){race={c:0,said:[]};el("racecnt").textContent="0"}
+  if(x.race){race={c:0,said:[],T:x.T};el("racecnt").textContent="0"}
   show("pick",true);show("final",false);
 }
-function showWhy(){el("whytxt").innerHTML=R[r].why;show("whytxt",true);show("whyb",false)}
+function showWhy(){el("whytxt").innerHTML=cur.why;show("whytxt",true);show("whyb",false)}
 function loseLife(){lives--;setHP();if(lives<=0){setTimeout(function(){finish(true)},900);return true}return false}
 function pick(i){
-  if(locked)return;locked=true;var x=R[r];tries++;
+  if(locked)return;locked=true;var x=cur;tries++;
   el("fb").innerHTML="The Grandmaster studies the board...";
   setTimeout(function(){
     if(i===x.a){
       el("c"+i).className="on";
-      if(tries===1){hp--;setHP();log.push("R"+(r+1)+":hit");el("fb").innerHTML="<b>HIT!</b> The Grandmaster loses 1 HP. "+x.short;}
-      else{log.push("R"+(r+1)+":fixed on try 2");el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
+      if(tries===1){hp--;hitSet[r]=true;setHP();note("R"+(r+1)+":hit"+sfx());el("fb").innerHTML="<b>HIT!</b> The Grandmaster loses 1 HP. "+x.short;}
+      else{note("R"+(r+1)+":fixed on try 2"+sfx());el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
       endRound();
     } else if(tries>=2){
-      log.push("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
+      note("R"+(r+1)+":miss"+sfx());el("c"+i).disabled=true;el("c"+x.a).className="on";
       el("fb").innerHTML="<b>The Grandmaster blocks it.</b> The answer: "+x.ch[x.a]+". "+x.short;endRound();
     } else {
       el("c"+i).disabled=true;
-      var out=loseLife();if(out)log.push("R"+(r+1)+":miss (last life)");
+      var out=loseLife();if(out)note("R"+(r+1)+":miss (last life)"+sfx());
       el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
       if(!out)locked=false;
     }
   },650);
 }
-function raceDraw(){el("racecnt").textContent=race.c;for(var k=0;k<3;k++){var b=el("c"+k);if(b)b.disabled=locked||race.c+k+1>13}}
+function raceDraw(){el("racecnt").textContent=race.c;for(var k=0;k<3;k++){var b=el("c"+k);if(b)b.disabled=locked||race.c+k+1>race.T}}
 function raceAdd(i){
-  if(locked)return;var k=i+1;if(race.c+k>13)return;
+  if(locked)return;var k=i+1;if(race.c+k>race.T)return;
   race.c+=k;race.said.push(race.c);el("racetrail").innerHTML+=(el("racetrail").innerHTML?" &rarr; ":"")+"<b>You "+race.c+"</b>";
-  if(race.c===13){locked=true;raceDraw();hp--;setHP();log.push("R8:hit (you said "+race.said.join(",")+")");el("fb").innerHTML="<b>YOU SAID 13! HIT!</b> "+R[r].short;endRound();return}
+  if(race.c===race.T){locked=true;raceDraw();hp--;hitSet[r]=true;setHP();note("R8:hit ("+(cur.vt?"race to "+cur.vt+"; ":"")+"you said "+race.said.join(",")+")");el("fb").innerHTML="<b>YOU SAID "+race.T+"! HIT!</b> "+cur.short;endRound();return}
   locked=true;raceDraw();el("fb").textContent="The Grandmaster moves...";
   setTimeout(function(){
-    var m=0;for(var j=1;j<=3;j++){if(KEY13.indexOf(race.c+j)>=0&&race.c+j<=13){m=j;break}}if(!m)m=1;
+    var m=0;for(var j=1;j<=3;j++){if(cur.keys.indexOf(race.c+j)>=0&&race.c+j<=race.T){m=j;break}}if(!m)m=1;
     race.c+=m;el("racetrail").innerHTML+=" &rarr; GM "+race.c;
-    if(race.c===13){raceDraw();log.push("R8:miss (you said "+race.said.join(",")+")");el("fb").innerHTML="<b>The Grandmaster says 13.</b> No hit, and no life lost. "+R[r].short;endRound();return}
+    if(race.c===race.T){raceDraw();note("R8:miss ("+(cur.vt?"race to "+cur.vt+"; ":"")+"you said "+race.said.join(",")+")");el("fb").innerHTML="<b>The Grandmaster says "+race.T+".</b> No hit, and no life lost. "+cur.short;endRound();return}
     locked=false;el("fb").textContent="The Grandmaster added "+m+". Your move.";raceDraw();
   },700);
 }
 function endRound(){
-  for(var k=0;k<R[r].ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
+  for(var k=0;k<cur.ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
   show("whyb",true);
-  el("next").textContent=(r===7)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
+  el("next").textContent=(qi===queue.length-1)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
 }
-function nextRound(){r++;if(r>=8){finish(false);return}setup()}
+function nextRound(){qi++;if(qi>=queue.length){finish(false);return}r=queue[qi];setup()}
 function rankOf(h){return h===8?"GRANDMASTER":(h>=6?"MASTERMIND":(h>=4?"STRATEGIST":"ROOKIE"))}
 function finish(lost){
   show("pick",false);var hits=8-hp,rank=rankOf(hits);
   el("endt").textContent=lost?"THE GRANDMASTER WINS":(hp===0?"CHECKMATE! YOU WIN!":"GAUNTLET OVER");
-  var rows="";log.forEach(function(s){var n=parseInt(s.slice(1),10);rows+="<tr><td>"+R[n-1].t.replace(/^ROUND \d+: /,"")+"</td><td>"+s.split(":")[1]+"</td></tr>"});
-  var foil=(!lost&&hits===8)?"&foil=1":"";
+  var rows="";for(var n=0;n<8;n++)rows+="<tr><td>"+R[n].t.replace(/^ROUND \d+: /,"")+"</td><td>"+res[n]+"</td></tr>";
+  var foil=(!lost&&hits===8&&attempt===1)?"&foil=1":"";
   var won=(!lost&&hp===0),close=(!lost&&hp>0);
-  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Grandmaster still had "+hp+" HP. Hit REMATCH to try again with 3 fresh lives.</p>":"")+
-   (close?"<p><b>So close!</b> The Grandmaster is hanging on with "+hp+" HP. Checkmate him to unlock the Endgame card. Hit REMATCH to try again.</p>":"")+
+  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you haven't hit (missed or not reached), with 3 fresh lives.</p>":"")+
+   (close?"<p><b>So close!</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you missed, with 3 fresh lives. Checkmate him to unlock the Endgame card.</p>":"")+
    "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
    (!won?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>ENDGAME</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn2-deck.html?card=8"+foil+"\">See your deck</a></div>")+
    "<div class=\"tape\"><b>WANT MORE?</b> See where these ideas come from, and what's next in Game Night. <a href=\"gn2-read.html?m=9\">Go deeper</a></div>";
   show("rematch",!won);
-  el("out").value="GN2-M08 | attempt "+attempt+" | "+(lost?"GRANDMASTER WINS":(won?"CHECKMATE":"GAUNTLET OVER, Grandmaster survived"))+" | round results: "+log.join(", ")+" | lives left "+lives+" | Grandmaster HP left "+hp+" | rank "+rank;
+  el("out").value="GN2-M08 | attempt "+attempt+" | "+(lost?"GRANDMASTER WINS":(won?"CHECKMATE":"GAUNTLET OVER, Grandmaster survived"))+" | round results: "+log.join(", ")+" | lives left "+lives+" | Grandmaster HP left "+hp+" | rank "+rank+(attempt>1?" | replayed puzzles: "+replayed.map(function(i){return "R"+(i+1)}).join(", "):"");
   show("final",true);
 }
-function rematch(){attempt++;start()}
+function rematch(){attempt++;queue=[];for(var i=0;i<8;i++){if(!hitSet[i])queue.push(i);res[i]=hitSet[i]?"hit (earlier)":"not reached"}
+  replayed=queue.slice();var p1=vt[0]||10,p8=vt[7]||13;vt[0]=queue.indexOf(0)>=0?pickVar(VAR1,p1):0;vt[7]=queue.indexOf(7)>=0?pickVar(VAR8,p8):0;begin()}
 start();
 
 </script>

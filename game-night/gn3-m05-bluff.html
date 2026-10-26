@@ -18,7 +18,7 @@
   button:active{background:#ffe600;color:#07070f}
   #round,#final{display:none}
   .cardwin{display:inline-block;margin:8px auto}
-  #out{width:95%;max-width:560px;height:90px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
+  #out{width:95%;max-width:560px;height:150px;background:#0e0e1c;color:#e8f7ff;border:2px solid #39ff14;font:14px "Courier New",monospace}
   .note{color:#9fb4c8;font-size:14px}
   .partner{color:#00e5ff;font-size:18px}
   .promise{color:#ffe600;font-size:17px}
@@ -114,13 +114,13 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>BLUFF</h1>
-<p class="note">Each hand, you and your rival each put 1 point on the prize pile. You get a card: <b>HIGH</b> or <b>LOW</b> (a coin flip). Your rival can't see it.</p>
+<p class="note">Each hand, you and your rival each put 1 point on the prize pile. You get a card: <b>HIGH</b> or <b>LOW</b> (about half of each). Your rival can't see it. 18 hands, 2 rivals.</p>
 <div class="fact" style="text-align:left">
 <b>STAY:</b> cards are shown. HIGH wins the pile (+1), LOW loses (-1).<br>
 <b>PUSH:</b> you add 1 more point. Your rival can <b>BACK DOWN</b> (you win +1, no matter your card) or <b>CHALLENGE</b> (they add 1 too, cards are shown: HIGH +2, LOW -2).
 </div>
 <div class="bar">
-  <div class="box">HAND<b id="rn">1/10</b></div>
+  <div class="box">HAND<b id="rn">1/18</b></div>
   <div class="box">POINTS<b id="pts">0</b></div>
 </div>
 <div id="pick">
@@ -150,39 +150,47 @@ function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=
 try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}fallback()}
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
-function rint(n){try{var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}}
 
-var h=0,pts=0,log=[],deck=[],ptsA=0,ptsB=0,lows=0,bluffs=0,lowsB=0,bluffsB=0;
-function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=rint(i+1),t=a[i];a[i]=a[j];a[j]=t}return a}
-deck=shuffle(["H","H","L","L","L"]).concat(shuffle(["H","H","L","L","L"]));
-function setup(){el("rn").textContent=(h+1)+"/10";var c=deck[h];
- el("who").innerHTML=h<5?"Rival: <b>Trusting Tess</b>"+(h===0?"<br><span class=\"note\">Tess thinks people only push with HIGH cards.</span>":""):"Rival: <b>Watchful Wes</b>"+(h===5?"<br><span class=\"note\">Wes has been watching how you play your LOW cards...</span>":"");
+var TESS=6,TOTAL=18,h=0,pts=0,log=[],ptsA=0,ptsB=0,lowsB=0,bluffsB=0,pushB=0,pushHighB=0;
+/* Fixed, pre-shuffled deck: 6 hands vs Tess (3 HIGH, 3 LOW), 12 vs Wes (6 HIGH, 6 LOW). Same cards every time. */
+var deck="HLLHLH".split("").concat("LHLHLLHHHLLH".split(""));
+/* Wes's "dice": fixed too (hand number picks the die), so every run is reproducible. */
+var dice=[15,17,13,9,5,19,21,1,23,3,11,7];
+/* Wes only knows how OFTEN you push. He never sees your card when he backs down.
+   Pushing on HIGH only = about 1 push in 2. Mixing in a bluff on 1 LOW in 3 = about 2 pushes in 3. Pushing always = 1 in 1.
+   Estimated push rate r (starts as a guess of 1/2, counting only hands with Wes) sets his chance of challenging. */
+function wesChance(r){return r<=0.5?0:(r<=2/3?(r-0.5)*4:2/3+(r-2/3))}
+function wesChallenges(){var n=h-TESS,r=(pushB+1)/(n+2);return dice[n]<wesChance(r)*24}
+function setup(){el("rn").textContent=(h+1)+"/"+TOTAL;var c=deck[h];
+ el("who").innerHTML=h<TESS?"Rival: <b>Trusting Tess</b>"+(h===0?"<br><span class=\"note\">Tess thinks people only push with HIGH cards.</span>":""):"Rival: <b>Watchful Wes</b>"+(h===TESS?"<br><span class=\"note\">Wes can't see your card when he backs down. He just counts how often you push. Now the mix matters: 12 hands.</span>":"");
  el("mycard").innerHTML="<div class=\"cardbig"+(c==="L"?" low":"")+"\">"+(c==="H"?"HIGH":"LOW")+"</div>";
  show("pick",true);show("round",false)}
-var lowHist=[];
-function wesChallenges(){var w=lowHist.slice(-4);var b=0;w.forEach(function(x){b+=x});if(!w.length||b===0)return false;if(b*2>w.length)return true;return rint(3)<2}
-function play(m){var c=deck[h],res,txt,opp="";
+function play(m){var c=deck[h],res,txt,opp="",w=h>=TESS;
  if(m==="STAY"){res=c==="H"?1:-1;txt="You stayed. Cards shown: your "+(c==="H"?"HIGH wins":"LOW loses")+".";}
- else{var ch=h<5?false:wesChallenges();opp=ch?"CHALLENGE":"BACK DOWN";
-  if(!ch){res=1;txt=(h<5?"Tess":"Wes")+" backs down. You win the pile"+(c==="L"?" with a LOW card. Bluff worked!":".")}
+ else{var ch=w?wesChallenges():false;opp=ch?"CHALLENGE":"BACK DOWN";
+  if(!ch){res=1;txt=(w?"Wes":"Tess")+" backs down. You win the pile"+(c==="L"?" with a LOW card. Bluff worked!":".")}
   else{res=c==="H"?2:-2;txt="Wes challenges! Your "+(c==="H"?"HIGH wins +2.":"LOW loses -2. Caught bluffing!")}}
- if(c==="L"){lows++;lowHist.push(m==="PUSH"?1:0);if(h>=5){lowsB++;if(m==="PUSH")bluffsB++}if(m==="PUSH")bluffs++}
- pts+=res;if(h<5)ptsA+=res;else ptsB+=res;el("pts").textContent=pts;
+ if(w){if(c==="L"){lowsB++;if(m==="PUSH")bluffsB++}if(m==="PUSH"){pushB++;if(c==="H")pushHighB++}}
+ pts+=res;if(w)ptsB+=res;else ptsA+=res;el("pts").textContent=pts;
  log.push({c:c,m:m,o:opp,r:res});
  el("headline").textContent="Your card: "+(c==="H"?"HIGH":"LOW")+"   You: "+m;
- el("detail").innerHTML=txt+" <b>"+(res>0?"+":"")+res+"</b>";
- el("next").textContent=h===9?"SEE FINAL SCORE":(h===4?"MEET WATCHFUL WES":"NEXT HAND");
+ el("detail").innerHTML=txt+" <b>"+(res>0?"+":"")+res+"</b>"+(w?"<br><span class=\"note\">Wes's count: you have pushed "+pushB+" of "+(h-TESS+1)+" hands with him.</span>":"");
+ el("next").textContent=h===TOTAL-1?"SEE FINAL SCORE":(h===TESS-1?"MEET WATCHFUL WES":"NEXT HAND");
  show("pick",false);show("round",true)}
-function nextHand(){h++;if(h>=10){finish();return}setup()}
-function finish(){show("round",false);show("pick",false);
+function nextHand(){h++;if(h>=TOTAL){finish();return}setup()}
+function finish(){show("round",false);show("pick",false);var NW=TOTAL-TESS;
  el("log").innerHTML="<tr><th>Hand</th><th>Card</th><th>You</th><th>Rival</th><th>Points</th></tr>"+log.map(function(x,i){return "<tr><td>"+(i+1)+"</td><td>"+(x.c==="H"?"HIGH":"LOW")+"</td><td>"+x.m+"</td><td>"+(x.o||"-")+"</td><td>"+(x.r>0?"+":"")+x.r+"</td></tr>"}).join("");
  var rateB=lowsB?Math.round(100*bluffsB/lowsB):0;
- var rank=(bluffsB>0&&bluffsB*2<=lowsB)?"BLUFF MASTER":(bluffsB*2>lowsB?"BOLD BLUFFER":"HONEST PLAYER");
- el("verdict").innerHTML="<p>Vs Tess: <b>"+ptsA+"</b>. Vs Wes: <b>"+ptsB+"</b>. Total: <b>"+pts+"</b>. With Wes you bluffed on "+bluffsB+" of "+lowsB+" low cards ("+rateB+"%).</p><div class=\"rank\">RANK: "+rank+"</div>"+
+ /* BLUFF MASTER: bluffed on about 1/4 to 1/2 of your LOW cards with Wes AND scored well (+2 or more) with him. */
+ var inBand=lowsB>0&&bluffsB*4>=lowsB&&bluffsB*2<=lowsB;
+ var rank=(inBand&&ptsB>=2)?"BLUFF MASTER":(bluffsB*2>lowsB?"BOLD BLUFFER":"HONEST PLAYER");
+ el("verdict").innerHTML="<p>Vs Tess: <b>"+ptsA+"</b>. Vs Wes: <b>"+ptsB+"</b>. Total: <b>"+pts+"</b>.</p>"+
+ "<p>With Wes you pushed on <b>"+pushB+" of "+NW+"</b> hands: "+pushHighB+" with HIGH, and <b>"+bluffsB+" bluffs</b> on "+lowsB+" LOW cards ("+rateB+"%).</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Tess never challenged, so pushing <b>every</b> hand won +1 every time.</div>"+
- "<div class=\"tape\">Wes looks at your last 4 LOW cards. If you bluffed on most of them, he challenges every push. If you never bluffed, he backs down every time. Bluffing <b>sometimes</b> (about 1 low card in 3) keeps him guessing.</div>"+
+ "<div class=\"tape\">Wes counts how often you push. If you push much more often than your HIGH cards allow (about 1 hand in 2), he guesses you are bluffing and challenges more. If you rarely push on LOW, he backs down. Bluffing on <b>about 1 LOW card in 3</b> keeps him guessing.</div>"+
+ "<div class=\"tape\">Against a smart rival, mixing earns about <b>+1/3 per hand</b>; never bluffing earns <b>0</b>.</div>"+
  "<p class=\"note\">Bluffing isn't lying for fun. It's a mixed strategy: if you only push with HIGH cards, your push gives your card away.</p>";
- el("out").value="GN3-M05 | vs Tess: "+log.slice(0,5).map(function(x){return x.c+" "+x.m}).join(", ")+" ("+ptsA+") | vs Wes: "+log.slice(5).map(function(x){return x.c+" "+x.m+(x.o?" "+x.o:"")}).join(", ")+" ("+ptsB+") | bluffs vs Wes: "+bluffsB+" of "+lowsB+" low cards | total "+pts+" | rank "+rank;
+ el("out").value="GN3-M05 | vs Tess: "+log.slice(0,TESS).map(function(x){return x.c+" "+x.m}).join(", ")+" ("+ptsA+") | vs Wes: "+log.slice(TESS).map(function(x){return x.c+" "+x.m+(x.o?" "+x.o:"")}).join(", ")+" ("+ptsB+") | pushes vs Wes: "+pushB+" of "+NW+" | bluffs vs Wes: "+bluffsB+" of "+lowsB+" low cards | total "+pts+" | rank "+rank;
  if(rank==="BLUFF MASTER"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
  show("final",true)}
 setup();
