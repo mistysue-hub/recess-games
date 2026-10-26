@@ -133,6 +133,8 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
 @media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+
+a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
 </head>
 <body>
@@ -206,8 +208,8 @@ var R=[
   q:"Which of these prices earns <b>you</b> the most profit?",ch:["$7","$6","$5","$2"],a:2,
   short:"$5: you get every buyer and make $3 on each.",
   why:"At $6 you split the buyers and make $4 each, only $2 per buyer on average. At $7 you sell nothing; at $2 you make nothing. That's how price wars start."},
- {t:"ROUND 8: SHOWDOWN",taunt:"\"Rock, paper, scissors. Best of three. I never lose this one.\"",rps:true,
-  scene:"<div class=\"story\">Final round: play rock-paper-scissors against the Glitch, 3 throws. Win at least 2 to land the hit. Word around the arcade is the Glitch <b>has a habit</b>...</div>",
+ {t:"ROUND 8: SHOWDOWN",taunt:"\"Rock, paper, scissors. Five throws. I never lose this one.\"",rps:true,
+  scene:"<div class=\"story\">Final round: play rock-paper-scissors against the Glitch, 5 throws. Win at least 3 to land the hit. Word around the arcade is the Glitch <b>has a habit</b>...</div>",
   q:"Make your throw.",ch:["ROCK","PAPER","SCISSORS"],a:-1,
   short:"The Glitch always throws whatever would have beaten your last throw.",
   why:"So if you just threw ROCK, the Glitch throws PAPER next, and SCISSORS beats it. Spotting a habit and playing the best response to it is exactly how you beat a predictable player."}
@@ -256,11 +258,11 @@ function throwIt(i){
   setTimeout(function(){
     var res=(BEATS[glitch]===me)?"WIN":(glitch===me?"TIE":"LOSS");
     if(res==="WIN")rps.wins++;rps.n++;rps.last=me;rps.hist.push(me[0]+"v"+glitch[0]+":"+res);
-    el("fb").innerHTML="You: <b>"+me+"</b> &nbsp; Glitch: <b>"+glitch+"</b> &nbsp; "+(res==="WIN"?"<b>You win the throw!</b>":(res==="TIE"?"Tie.":"The Glitch takes it."))+" (wins: "+rps.wins+" of "+rps.n+")";
-    if(rps.n<3){locked=false;return}
-    var hit=rps.wins>=2;
-    if(hit){hp--;setHP();log.push("R8:hit ("+rps.wins+"/3)");el("fb").innerHTML+="<br><b>HIT!</b> You beat the Glitch's habit. "+R[r].short;endRound();}
-    else{log.push("R8:miss ("+rps.wins+"/3)");el("fb").innerHTML+="<br><b>The Glitch wins the showdown.</b> No hit. "+R[r].short;endRound();}
+    el("fb").innerHTML="You: <b>"+me+"</b> &nbsp; Glitch: <b>"+glitch+"</b> &nbsp; "+(res==="WIN"?"<b>You win the throw!</b>":(res==="TIE"?"Tie.":"The Glitch takes it."))+" (wins: "+rps.wins+" of "+rps.n+")<br><span class=\"note\">Your throws so far: "+rps.hist.map(function(h){return h.split("v")[0]}).join(", ")+" &middot; Glitch: "+rps.hist.map(function(h){return h.split("v")[1].split(":")[0]}).join(", ")+"</span>";
+    if(rps.n<5){locked=false;return}
+    var hit=rps.wins>=3;
+    if(hit){hp--;setHP();log.push("R8:hit ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>HIT!</b> You beat the Glitch's habit. "+R[r].short;endRound();}
+    else{log.push("R8:miss ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>The Glitch wins the showdown.</b> No hit. "+R[r].short;endRound();}
   },650);
 }
 function endRound(){

@@ -105,6 +105,8 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
 @media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+
+a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
 </head>
 <body>
@@ -212,9 +214,9 @@ function finish(){
     var x=log[i];if(x.hit)hits++;if(!x.open)fails++;
     rows+="<tr><td>"+(i+1)+"</td><td>"+x.me+"</td><td>"+x.oKeep+" of 5</td><td>"+x.keepers+" of 6</td><td>"+(x.open?"open":"failed")+"</td><td>"+x.got+"</td><td>"+x.best+(x.hit?" ✔":"")+"</td></tr>";
   }
-  var rank=hits===3?"STEADY HAND":(hits===2?"QUICK READER":"JUMPY");
+  var rank=hits===3?"SHARP READER":(hits===2?"GOOD READ":"ROUGH DAY");
   el("verdict").innerHTML=
-    "<table>"+rows+"</table>"+
+    "<div style=\"overflow-x:auto;max-width:100%\"><table style=\"font-size:13px\">"+rows+"</table></div>"+
     "<p>Total coins: <b>"+cs+"</b>. Best reply on <b>"+hits+"</b> of 3 days. The bank failed on <b>"+fails+"</b> "+(fails===1?"day":"days")+".</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
     "<h2>REPLAY THE TAPE</h2>"+
@@ -228,7 +230,7 @@ function finish(){
     " | bank: "+log.map(function(x){return x.open?"open":"failed"}).join(", ")+
     " | coins: "+log.map(function(x){return x.got}).join(", ")+" (total "+cs+")"+
     " | best reply on "+hits+" of 3 days";
-  if(rank==="STEADY HAND"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
+  if(rank==="SHARP READER"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
   show("final",true);
 }
 function copyIt(){

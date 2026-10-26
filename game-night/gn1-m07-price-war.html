@@ -105,6 +105,8 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
 @media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+
+a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
 </head>
 <body>
@@ -158,14 +160,16 @@ function bestList(pr,ph){
 }
 function rivalP(){
   if(r===0||r===half)return 10;
-  return bestList(log[r-1].p,phase()).ps[0];
+  var br=bestList(log[r-1].p,phase()).ps[0];
+  if(phase()===1)br=Math.min(br,log[r-1].pr);
+  return br;
 }
 function setup(){
   el("rn").textContent=(r+1)+"/"+total;
   el("rules").textContent=(phase()===1)
     ?"RULE: the sodas are identical. Every customer buys from the cheaper store. Same price: split 50/50."
     :"NEW RULE: your sodas now taste different and each store has fans. Customers = 50 + 5 x (Penny's price minus yours), from 0 to 100.";
-  el("who").textContent=(r===0||r===half)?"Penny opens at a middle price.":"Penny is pricing to beat what you charged last round.";
+  el("who").textContent=(r===0||r===half)?"Penny opens at a middle price.":(phase()===1?"Penny is pricing to beat what you charged last round, and in a price war she never raises her price.":"Penny is pricing to beat what you charged last round.");
   var c="";
   PRICES.forEach(function(p){c+="<button onclick=\"play("+p+")\">"+p+"</button>"});
   el("choices").innerHTML=c;

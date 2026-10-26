@@ -110,6 +110,8 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
 @media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+
+a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
 </head>
 <body>
@@ -149,7 +151,7 @@ function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rint(n){try{var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}}
 
-var s=0,fish=60,tot=0,rule=null,hist=[],mine=[],gilBanned=false,gilTested=false,meBanned=false,meetingDone=false,rows=[];
+var s=0,fish=60,tot=0,rule=null,hist=[],mine=[],gilBanned=false,gilTested=false,meBanned=false,meetingDone=false,rows=[],bx=0;
 var RULES={A:"No rule. Everyone fishes how they like.",B:"A promise: each fisher takes 1 fish for every 10 in the lake. (No one checks.)",C:"A lake council: the same 1-in-10 limit, plus lake watchers, and anyone who takes more is banned for the next season."};
 function upd(){el("fish").textContent=fish;el("tot").textContent=tot;el("lakebar").style.width=Math.round(fish/60*100)+"%"}
 function limit(){return Math.floor(fish/10)}
@@ -165,7 +167,7 @@ function setup(){el("rn").textContent=(s+1)+"/8";upd();show("round",false);show(
 function choose(k){rule=k;meetingDone=true;setup()}
 function cast(me){var lim=limit(),bots,note="";
  if(s<3||rule==="A")bots=[9,9,9];
- else if(rule==="B")bots=[lim,lim,9];
+ else if(rule==="B"){bots=[Math.min(9,lim+bx),Math.min(9,lim+bx),9];if(bx>0)note="Bo and Cam saw Gil get away with 9, so they took more too. ";bx+=2;}
  else{var g;if(gilBanned){g=0;gilBanned=false;note="Gil is banned this season. ";}else if(!gilTested){g=9;gilTested=true;gilBanned=true;note="Gil tested the rule and took 9. The watchers saw. Gil is banned next season. ";}else g=lim;bots=[lim,lim,g]}
  var wasBanned=meBanned;meBanned=false;
  if(rule==="C"&&s>=3&&!wasBanned&&me>lim&&fish>0){meBanned=true;note+="The watchers saw YOU take more than "+lim+"."+(s<7?" You're banned next season. ":" (Lucky for you, it was the last season.) ")}
@@ -183,7 +185,7 @@ function finish(){show("round",false);show("pick",false);
  el("log").innerHTML="<tr><th>Season</th><th>Fish at start</th><th>You</th><th>Bo/Cam/Gil</th><th>Left</th></tr>"+rows.join("");
  var rank=fish>=30?"COMMONS KEEPER":(fish>=10?"GOOD NEIGHBOR":"EMPTY NETS");
  el("verdict").innerHTML="<p>Your catch: <b>"+tot+"</b> fish. Plan chosen: <b>"+rule+"</b>. Fish left for next year: <b>"+fish+"</b>.</p><div class=\"rank\">RANK: "+rank+"</div>"+
- "<h2>REPLAY THE TAPE</h2><div class=\"tape\">With no rule, everyone keeps taking 9 and the lake crashes. With a promise nobody checks, Gil keeps taking 9 anyway, so the rest of you have to hold back extra just to keep the lake alive.</div>"+
+ "<h2>REPLAY THE TAPE</h2><div class=\"tape\">With no rule, everyone keeps taking 9 and the lake crashes. With a promise nobody checks, Gil keeps taking 9. When Bo and Cam see him get away with it, they start taking more too, and unless you hold back almost completely, the lake shrinks.</div>"+
  "<div class=\"tape\">With watchers and a ban, Gil tests the rule once, gets caught, and the lake grows back.</div>"+
  "<div class=\"fact\">The political scientist Elinor Ostrom studied real fishing villages, forests and farms that share resources. She found many communities protect them with local rules, watchers and fair punishments. She won a Nobel Prize for it in 2009.</div>";
  el("out").value="GN3-M06 | my catches: "+mine.join(",")+" | fish at start of each season: "+hist.join(",")+" | plan: "+rule+" | my total "+tot+" | fish left "+fish+" | rank "+rank;

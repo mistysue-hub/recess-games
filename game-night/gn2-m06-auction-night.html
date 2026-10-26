@@ -112,6 +112,8 @@ th{color:var(--gold) !important;font-family:"Rubik",sans-serif;font-weight:800;b
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.marquee i,.rank{animation:none}}
 @media (max-width:480px){#pick,#round,#result,#final,.panel{padding:12px 8px 14px !important}button{margin:8px 5px !important;padding:9px 12px !important}}
+
+a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none !important;background:#ffd23f !important;color:#1a1033 !important;box-shadow:0 0 14px rgba(255,210,63,.65)}
 </style>
 
 </head>
@@ -148,7 +150,7 @@ function copyIt(){
 function finalBlock(card,n,rank,foilRanks){var dl=el("decklink");dl.href="gn2-deck.html?card="+n+(foilRanks.indexOf(rank)>=0?"&foil=1":"");if(foilRanks.indexOf(rank)>=0)dl.textContent="Top rank! See your GOLD FOIL card"}
 
 var L=[{kind:2,n:"Signed skateboard",val:60,other:48},{kind:2,n:"Concert poster",val:60,other:66},{kind:2,n:"Retro game cartridge",val:45,other:33},
- {kind:1,n:"Jar of coins #1",guess:58,real:50,robots:[52,47,44,49,41],opts:[40,45,50,55,60]},{kind:1,n:"Jar of coins #2",guess:72,real:80,robots:[70,66,74,61,68],opts:[60,65,70,75,80]}];
+ {kind:1,n:"Jar of coins #1",guess:58,real:50,robots:[52,47,44,49,41],opts:[40,45,50,55,60]},{kind:1,n:"Jar of coins #2",guess:72,real:80,robots:[62,58,64,55,60],opts:[60,65,70,75,80]}];
 var r=0,pts=0,log=[];
 function setup(){var x=L[r];el("rn").textContent=(r+1)+"/5";
   if(x.kind===2){el("title").textContent="LOT "+(r+1)+": SECOND-PRICE AUCTION";el("rules").innerHTML="<b>Rule:</b> highest bid wins, but the winner pays the <b>second-highest</b> bid, not their own. 3 robot bidders are in.";
@@ -166,12 +168,12 @@ function bid(b){var x=L[r],g,txt,line;
   pts+=g;el("yp").textContent=pts;log.push(line);el("headline").textContent=(g>0?"+":"")+g+" POINTS";el("detail").innerHTML=txt;
   el("next").textContent=r===4?"SEE FINAL SCORE":"NEXT LOT";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=5){finish();return}setup()}
-function finish(){show("round",false);var rank=pts>=29?"AUCTION ACE":(pts>=20?"SHARP BIDDER":"CURSED WINNER");
-  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 29.</p><div class=\"story\">"+log.join("<br>")+"</div>"+
+function finish(){show("round",false);var rank=pts>=34?"AUCTION ACE":(pts>=24?"SHARP BIDDER":"CURSED WINNER");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 39.</p><div class=\"story\">"+log.join("<br>")+"</div>"+
    "<h2>TWO LESSONS</h2><div class=\"tape\"><b>Second-price auctions:</b> bid exactly what the item is worth to you. Your bid only decides <b>whether</b> you win; someone else's bid sets the price. Bid lower and you can miss a bargain. Bid higher and you can overpay (the poster!).</div>"+
    "<div class=\"tape\"><b>Mystery jars:</b> the winner is usually the person who guessed <b>too high</b>. That's the <b>winner's curse</b>. When the value is hidden, bid below your guess.</div>"+
    "<div class=\"fact\">The economist William Vickrey explained second-price auctions in 1961 and shared the 1996 Nobel Prize in economics. The winner's curse was named by oil-company engineers in 1971, after companies kept 'winning' drilling rights that turned out to be worth less than they paid.</div>";
-  el("out").value="GN2-M06 | "+log.join(" | ")+" | total "+pts+" of 29";
+  el("out").value="GN2-M06 | "+log.join(" | ")+" | total "+pts+" of 39";
   finalBlock("",6,rank,["AUCTION ACE"]);show("final",true)}
 setup();
 
