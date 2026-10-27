@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Save It or Scrap It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdfdf8; --grid:#d6e4f0; --margin:#e08a8a; --ink:#1f2a36; --soft:#5a6875;
+    --blue:#2d5f8b; --red:#b3261e; --sticky:#fff2a8; --good:#2e7d4f; --line:#c9d6e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    color:var(--ink); font-family:"Atkinson Hyperlegible",system-ui,sans-serif; font-size:18px; line-height:1.45;
+    min-height:100vh;
+  }
+  .page{max-width:760px;margin:0 auto;padding:20px 16px 40px 40px;position:relative;min-height:100vh}
+  .page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+  h1,h2{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;margin:0 0 8px}
+  h1{font-size:28px} h2{font-size:22px}
+  .tag{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px;margin-bottom:12px}
+  p{margin:8px 0}
+  .sticky{background:var(--sticky);padding:12px 14px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(-.4deg);margin:14px 0}
+  .btn{display:block;width:100%;text-align:left;border:2px solid var(--blue);background:#fff;color:var(--ink);
+       font:inherit;padding:14px 16px;margin:10px 0;border-radius:10px;cursor:pointer;min-height:56px}
+  .btn:active{transform:translateY(1px)}
+  .btn.main{background:var(--blue);color:#fff;text-align:center;font-weight:700}
+  .row{display:flex;gap:12px}
+  .row .btn{text-align:center;font-weight:700}
+  .btn.done{border-color:var(--good);background:#eaf5ee;color:var(--good);cursor:default}
+  .btn.miss{animation:shake .3s}
+  .btn.hint{border-style:dashed;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .slots{list-style:none;padding:0;margin:10px 0}
+  .slots li{border-bottom:1px solid var(--line);padding:8px 2px;min-height:42px}
+  .slots li .n{font-family:"Special Elite",monospace;color:var(--soft);margin-right:8px}
+  .slots li .d{color:var(--red);font-family:"Special Elite",monospace;margin-left:6px}
+  .stmt{font-size:20px;font-weight:700;margin:12px 0}
+  .feedback{border-left:4px solid var(--good);padding:8px 12px;background:#fff;margin:12px 0}
+  .feedback.wrong{border-left-color:var(--red)}
+  .feedback b.v{display:block}
+  .anom{color:var(--red);font-family:"Special Elite",monospace}
+  .progress{font-family:"Special Elite",monospace;color:var(--soft);font-size:15px}
+  .report{background:#fff;border:2px solid var(--ink);padding:12px 14px;margin:14px 0;white-space:pre-wrap;font-family:"Special Elite",monospace;font-size:16px}
+  .hidden{display:none}
+  @media (max-width:480px){.page{padding-left:34px}.page::before{left:18px}h1{font-size:24px}.row{flex-direction:column;gap:0}}
+</style>
+<style>
+  .case{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:14px 16px;margin:12px 0}
+  .case .yr{font-family:"Special Elite",monospace;color:var(--soft)}
+  .case dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+  .case dt{font-weight:700} .case dd{margin:0}
+  .verdict{font-family:"Special Elite",monospace;font-size:18px}
+  @media (max-width:520px){.case dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page" id="app" aria-live="polite"></main>
+<script>
+(function(){
+  var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
+  var app = document.getElementById('app');
+  var MOVES = {
+    save:  'Save the theory: something we haven\'t found yet is causing it',
+    check: 'Check the equipment and the measurements',
+    change:'Change the theory'
+  };
+  var CASES = [
+    { title:'The wandering planet', year:'1840s',
+      theory:{core:'Newton\'s laws of gravity', extended:'Newtonian gravity and Bouvard\'s 1821 tables'},
+      clash:{core:'Uranus keeps drifting away from where Newton\'s laws say it should be.', extended:'Uranus drifts measurably off the positions predicted from Newton\'s laws.'},
+      did:'save', verdict:'The rescue worked',
+      what:{core:'Le Verrier and Adams worked out where an unseen planet would have to be. In 1846 Johann Galle found Neptune less than one degree from Le Verrier\'s spot.',
+            extended:'Le Verrier and Adams computed an unseen planet\'s position. On September 23–24, 1846, Galle found Neptune within an hour, less than a degree from Le Verrier\'s prediction.'} },
+    { title:'Mercury\'s turning orbit', year:'1859',
+      theory:{core:'Newton\'s laws of gravity', extended:'Newtonian gravity'},
+      clash:{core:'Mercury\'s orbit slowly turns a tiny bit more than Newton\'s laws predict.', extended:'Mercury\'s perihelion advances about 43 arcseconds per century more than Newtonian gravity predicts.'},
+      did:'save', verdict:'The rescue failed. The theory changed.',
+      what:{core:'Le Verrier tried the same trick and proposed a hidden planet, Vulcan. Nobody ever found it. In 1915 Einstein\'s new theory of gravity explained Mercury with no new planet.',
+            extended:'Le Verrier proposed an inner planet, later called Vulcan. Claimed sightings never held up. In 1915 general relativity predicted the extra 43 arcseconds exactly, with no new planet.'} },
+    { title:'The missing energy', year:'1930',
+      theory:{core:'Energy is never created or destroyed', extended:'Conservation of energy'},
+      clash:{core:'In one kind of radioactive decay, some energy seems to go missing.', extended:'In beta decay, the emitted electrons carry varying energies, so some energy appears to vanish.'},
+      did:'save', verdict:'The rescue worked, 26 years later',
+      what:{core:'Wolfgang Pauli proposed a tiny, almost undetectable particle carrying the missing energy. It was finally detected in 1956: the neutrino.',
+            extended:'Pauli proposed an undetected neutral particle carrying the missing energy. Cowan and Reines detected it at a nuclear reactor in 1956: the neutrino.'} },
+    { title:'Planet X', year:'1915–1930', extendedOnly:true,
+      theory:{extended:'Newtonian gravity, with Uranus and Neptune\'s measured orbits'},
+      clash:{extended:'Uranus and Neptune still seem to wander slightly from their predicted paths.'},
+      did:'save', verdict:'The rescue "worked," but by luck',
+      what:{extended:'Percival Lowell predicted a Planet X. In 1930 Clyde Tombaugh found Pluto about six degrees from one of Lowell\'s spots. But Pluto proved far too small to explain the wandering. Voyager 2\'s 1989 flyby measured Neptune\'s mass more accurately, and by 1993 the wandering had disappeared: there had been nothing to explain.'} },
+    { title:'Faster than light?', year:'2011',
+      theory:{core:'Nothing travels faster than light', extended:'Special relativity: nothing travels faster than light'},
+      clash:{core:'An experiment called OPERA reports tiny particles arriving a tiny bit faster than light could.', extended:'OPERA reports neutrinos arriving about 60 billionths of a second earlier than light would.'},
+      did:'check', verdict:'It was the equipment',
+      what:{core:'In 2012 the team found a cable in their timing system that wasn\'t fully plugged in. With it fixed, the particles traveled at the speed of light.',
+            extended:'In 2012 OPERA traced the result to a fiber-optic cable that wasn\'t fully screwed in, plus a clock issue. Later measurements matched the speed of light.'} }
+  ].filter(function(c){ return level === 'extended' || !c.extendedOnly; });
+  var picks = [];
+
+  function el(h){ var h0=app.querySelector('h1,h2'); var t0=h0?h0.textContent:null; var y=window.scrollY; app.innerHTML = h; var h1=app.querySelector('h1,h2'); if(t0!==null && h1 && h1.textContent===t0){ window.scrollTo(0,y); } else { window.scrollTo(0,0); } }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;} return a; }
+
+  function intro(){
+    el('<h1>Save It or Scrap It</h1><div class="tag">Lab notebook · Module 5 · '+(level==='core'?'Core':'Extended')+'</div>'+
+      '<p>Each case is a real moment when an observation broke a prediction. You decide what scientists should do first. Then see what really happened.</p>'+
+      '<div class="sticky">There\'s no wrong choice here. Smart scientists have made every one of these moves. History shows how each one turned out.</div>'+
+      '<button class="btn main" id="go">Open the first case</button>');
+    document.getElementById('go').onclick = function(){ show(0); };
+  }
+
+  function show(i){
+    if(i >= CASES.length) return finish();
+    var c = CASES[i];
+    el('<h2>Case '+(i+1)+' of '+CASES.length+'</h2>'+
+      '<div class="case"><div class="yr">'+c.year+'</div><b>'+c.title+'</b><dl>'+
+      '<dt>Trusted idea</dt><dd>'+c.theory[level]+'</dd><dt>The problem</dt><dd>'+c.clash[level]+'</dd></dl></div>'+
+      '<p>What should scientists do first?</p><div id="o"></div>');
+    var box = document.getElementById('o');
+    shuffle(Object.keys(MOVES)).forEach(function(k){ var b=document.createElement('button'); b.className='btn'; b.textContent=MOVES[k];
+      b.onclick=function(){ picks.push({pick:k, did:c.did}); reveal(i, k); }; box.appendChild(b); });
+  }
+
+  function reveal(i, k){
+    var c = CASES[i], same = (k === c.did);
+    el('<h2>Case '+(i+1)+' of '+CASES.length+'</h2>'+
+      '<div class="case"><div class="yr">'+c.year+'</div><b>'+c.title+'</b></div>'+
+      '<p><b>You chose:</b> '+MOVES[k]+'</p>'+
+      '<p><b>Scientists chose:</b> '+MOVES[c.did]+(same ? ' (same as you)' : '')+'</p>'+
+      '<div class="feedback'+(c.verdict.indexOf('failed')>-1 || c.verdict.indexOf('luck')>-1 ? ' wrong' : '')+'"><b class="v verdict">'+c.verdict+'</b>'+c.what[level]+'</div>'+
+      '<button class="btn main" id="next">'+(i < CASES.length-1 ? 'Next case' : 'Close the notebook')+'</button>');
+    document.getElementById('next').onclick = function(){ show(i+1); };
+  }
+
+  function finish(){
+    var matched = picks.filter(function(p){ return p.pick === p.did; }).length;
+    var saves = picks.filter(function(p){ return p.pick === 'save'; }).length;
+    var text = ['done — Save It or Scrap It ('+level+')',
+      'Your first move matched the scientists in '+matched+' of '+picks.length+' cases',
+      'You chose to save the theory '+saves+' time'+(saves===1?'':'s')].join('\n');
+    el('<h1>Notebook closed</h1><div class="tag">Save It or Scrap It · '+(level==='core'?'Core':'Extended')+'</div>'+
+      '<p><b>What you found:</b></p><div class="report">'+text+'</div>'+
+      '<div class="sticky">Notice that scientists tried to save the theory almost every time. Sometimes that worked and sometimes it failed'+(level==='extended' ? ', and once it "worked" by luck' : '')+'. Nobody could tell which at the start.</div>'+
+      '<button class="btn main" id="copy">Copy my results for Rocky</button><p id="copied" class="hidden">Copied! Paste it into your chat with Rocky.</p>'+
+      '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
+    document.getElementById('copy').onclick = function(){
+      var c = document.getElementById('copied');
+      function ok(){ c.classList.remove('hidden'); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
+      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+    };
+    document.getElementById('again').onclick = function(){ picks = []; intro(); };
+  }
+
+  intro();
+})();
+</script>
+</body>
+</html>
