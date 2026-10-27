@@ -146,9 +146,16 @@
         if(isCatch(o.k)){ mistakesFound++; matched = true; head='<b class="v">You caught the mistake.</b> '; }
         else head='<b class="v">This one was a real mistake.</b> ';
       } else {
-        // Not a mistake: at Core, "Fair" matches a non-mistake; at Extended, match on exact verdict.
-        if(level==='core'){ matched = (o.k==='fair'); head='<b class="v">You said: '+NAMES[o.k]+'. The course calls this: '+(it.verdict==='fair'?'Fair':NAMES[it.verdict])+'.</b> '; }
-        else { matched = (o.k===it.verdict); head='<b class="v">You said: '+NAMES[o.k]+'. The course calls this: '+NAMES[it.verdict]+'.</b> '; }
+        // Not a mistake. At Core: "Fair" matches verdict 'fair'; "Needs a fix" matches simp/left.
+        // At Extended: match on exact verdict.
+        if(level==='core'){
+          var courseCoreLabel = (it.verdict==='fair') ? 'fair' : 'fix';
+          matched = (o.k === courseCoreLabel);
+          head='<b class="v">You said: '+NAMES[o.k]+'. The course calls this: '+(it.verdict==='fair'?'Fair':NAMES[it.verdict]+' (needs a fix at Core)')+'.</b> ';
+        } else {
+          matched = (o.k===it.verdict);
+          head='<b class="v">You said: '+NAMES[o.k]+'. The course calls this: '+NAMES[it.verdict]+'.</b> ';
+        }
       }
       if(matched) agreed++;
       el('<h2>Item '+(i+1)+' of '+ITEMS.length+'</h2>'+exhibit(it)+(it.mistake?'<span class="stamp">CORRECTED</span>':'')+
