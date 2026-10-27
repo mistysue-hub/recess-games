@@ -86,8 +86,8 @@
   .panel p{margin:6px 0 14px;font-size:18px}
   .hidden{display:none !important}
   #homeBtns,#tierBtns{display:flex;flex-direction:column;gap:12px;margin:10px 0 14px}
-  #homeBtns .big,#tierBtns .big{font-size:24px;padding:18px}
-  #tierBtns small{display:block;font-size:15px;font-weight:600;opacity:.85}
+  #homeBtns .big{font-size:24px;padding:18px}
+  #homeBtns small{display:block;font-size:15px;font-weight:600;opacity:.85}
   #lessonGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:8px;margin:8px 0 14px}
   #lessonGrid .lvl{justify-content:center;padding:10px 4px;border-radius:16px;border-width:3px}
   #lessonGrid .lvl b{font-size:26px;width:auto}
@@ -145,18 +145,8 @@
   <div class="panel">
     <h1>Word Wheel</h1>
     <div id="scrHome">
-      <p>Swipe across pieces on the wheel to build real words, and watch your matrix grow!</p>
+      <p>Swipe across pieces on the wheel to build real words, and watch your matrix grow! <b>Which level would you like to play?</b></p>
       <div id="homeBtns"></div>
-    </div>
-    <div id="scrLesson" class="hidden">
-      <p>Which lesson do you want to start with?</p>
-      <div id="lessonGrid"></div>
-      <button class="big alt" id="backHome1">← Back</button>
-    </div>
-    <div id="scrTier" class="hidden">
-      <p id="tierQ">How hard should it be?</p>
-      <div id="tierBtns"></div>
-      <button class="big alt" id="backLesson">← Back</button>
     </div>
   </div>
 </div>
@@ -3554,28 +3544,27 @@ function confetti(){
 
 /* ---------- level picker & lesson flow ---------- */
 const TIERS={A:['Easy','🌱'],B:['Medium','🌿'],C:['Hard','🌳']};
-const SEQ=[]; for(const t of ['A','B','C']) for(let n=1;n<=30;n++) SEQ.push(n+t);   // 1A..30A, 1B..30B, 1C..30C
 const lessonOf=id=>parseInt(id), tierOf=id=>id.slice(-1);
 const nice=id=>'Lesson '+lessonOf(id)+' · '+TIERS[tierOf(id)][0];
-let MODEKIND='seq', PICKTIER='A', PICKLESSON=1;
-const show=id=>{ for(const x of ['scrHome','scrLesson','scrTier']) $(x).classList.toggle('hidden',x!==id); };
+let PICKTIER='A';
+const show=id=>{ for(const x of ['scrHome']) $(x).classList.toggle('hidden',x!==id); };
+const passedOf=t=>{ const p=(store.get().passed||{})[t]; return Array.isArray(p)?p:[]; };
+// next lesson in this level that is not passed yet, starting at `from` and wrapping round; null when all 30 are passed
+function nextLesson(t,from){ const p=passedOf(t); for(let i=0;i<30;i++){ const n=((from-1+i)%30)+1; if(!p.includes(n)) return n; } return null; }
+function markPassed(t,n){ const st=store.get(); st.passed=st.passed||{}; const p=passedOf(t).slice(); if(!p.includes(n)) p.push(n); st.passed[t]=p; st.last=st.last||{}; st.last[t]=n; store.set(st); return p.length; }
 function buildPicker(){
-  const st=store.get(); const pos=st.seqPos||0;
-  let h=pos>0&&pos<SEQ.length?`<button class="big" id="bContinue">▶ Continue: ${nice(SEQ[pos])}</button><button class="big alt" id="bBegin">Start again at the beginning</button>`
-        :`<button class="big" id="bBegin">▶ Start at the beginning</button>`;
-  h+=`<button class="big alt" id="bChoose">Choose a level</button>`;
-  $('homeBtns').innerHTML=h; show('scrHome');
-  if($('bContinue')) $('bContinue').onclick=()=>beginSeq(pos);
-  $('bBegin').onclick=()=>beginSeq(0);
-  $('bChoose').onclick=()=>{ show('scrLesson'); };
-  $('lessonGrid').innerHTML=Array.from({length:30},(_,i)=>`<button class="lvl" data-l="${i+1}" aria-label="Lesson ${i+1}"><b>${i+1}</b></button>`).join('');
-  document.querySelectorAll('#lessonGrid .lvl').forEach(b=>b.onclick=()=>{ PICKLESSON=+b.dataset.l; $('tierQ').textContent='Lesson '+PICKLESSON+': how hard should it be?';
-    $('tierBtns').innerHTML=['A','B','C'].map(t=>`<button class="big ${t==='A'?'':'alt'}" data-t="${t}">${TIERS[t][1]} ${TIERS[t][0]}</button>`).join('');
-    document.querySelectorAll('#tierBtns .big').forEach(x=>x.onclick=()=>beginPick(PICKLESSON,x.dataset.t)); show('scrTier'); });
+  $('homeBtns').innerHTML=['A','B','C'].map(t=>{ const n=passedOf(t).length;
+    const sub=n>=30?'You finished all 30 lessons! 🏆':n>0?n+' of 30 lessons done':'30 lessons';
+    return `<button class="big ${t==='A'?'':'alt'}" data-t="${t}">${TIERS[t][1]} Level ${t} · ${TIERS[t][0]}<small>${sub}</small></button>`; }).join('');
+  show('scrHome');
+  document.querySelectorAll('#homeBtns .big').forEach(b=>b.onclick=()=>openTier(b.dataset.t));
 }
-$('backHome1').onclick=()=>show('scrHome'); $('backLesson').onclick=()=>show('scrLesson');
-function beginSeq(pos){ MODEKIND='seq'; const st=store.get(); st.seqPos=pos; store.set(st); startLevel(SEQ[pos]); }
-function beginPick(n,t){ MODEKIND='pick'; startLevel(n+t); }
+// tapping a level starts it at Lesson 1 for a new player, or at the first lesson not passed yet for a returning one (Lesson 1 again once all 30 are done)
+function openTier(t){
+  PICKTIER=t; const last=((store.get().last||{})[t])||0; const nx=nextLesson(t,last+1);
+  beginLesson(nx===null?1:nx,t);
+}
+function beginLesson(n,t){ startLevel(n+t); }
 function nextBase(){
   const pool=BASES.filter(b=>b.level===LV);
   const st=store.get(); const d=(st[LV]&&st[LV].done)||[];
@@ -3597,20 +3586,16 @@ function announce(title,sub,cb){
   $('bannerGo').onclick=()=>{ $('banner').classList.add('hidden'); cb&&cb(); };
 }
 function advance(){
-  // called when the current level is passed
-  const cur=LV;
-  if(MODEKIND==='seq'){
-    const pos=SEQ.indexOf(cur)+1; const st=store.get(); st.seqPos=pos; store.set(st);
-    if(pos>=SEQ.length){ announce('You finished every level! 🏆','Amazing work!',()=>{ $('start').classList.remove('hidden'); buildPicker(); }); return; }
-    const nx=SEQ[pos]; const newTier=tierOf(nx)!==tierOf(cur);
-    sfx('star'); confetti();
-    announce('Lesson '+lessonOf(cur)+' complete! 🎉', statLine(cur)+(newTier?'Back to Lesson 1, now '+TIERS[tierOf(nx)][0]+'!':'Next up: Lesson '+lessonOf(nx)), ()=>startLevel(nx));
-  } else {
-    const nl=lessonOf(cur)+1;
-    if(nl>30){ announce('Lesson 30 complete! 🏆','You finished the last lesson!',()=>{ $('start').classList.remove('hidden'); buildPicker(); }); return; }
-    sfx('star'); confetti();
-    announce('Lesson '+lessonOf(cur)+' complete! 🎉',statLine(cur)+'Next up: Lesson '+nl, ()=>startLevel(nl+tierOf(cur)));
+  // called when the current lesson is passed (3 or more bases each earned a star)
+  const cur=LV, t=tierOf(cur), n=lessonOf(cur);
+  const count=markPassed(t,n);
+  sfx('star'); confetti();
+  const nx=nextLesson(t,n+1);
+  if(nx===null){
+    try{ window.parent.postMessage({source:'word-wheel',type:'levelDone',tier:t,lessons:30},'*'); }catch(e){}
+    announce('You finished Level '+t+'! 🏆', 'All 30 lessons are done. '+statLine(cur)+'Play another level any time!', ()=>{ $('start').classList.remove('hidden'); buildPicker(); }); return;
   }
+  announce('Lesson '+n+' complete! 🎉', statLine(cur)+'Next up: Lesson '+nx+' ('+count+' of 30 done)', ()=>startLevel(nx+t));
 }
 function loadBase(b){
   base=b; found=new Map(); path=[]; starShown=false;
@@ -3930,13 +3915,21 @@ function rockyMessage(){
   const isC=x=>(base.C||[]).includes(x);
   const pre=[...new Set(words.flatMap(w=>w.parts.slice(0,w.parts.indexOf(base.name))))];
   const suf=[...new Set(words.flatMap(w=>w.parts.slice(w.parts.indexOf(base.name)+1)))];
-  return `Rocky, I finished my word matrix!\n\nMy base: ${base.name}${base.meaning?` (“${base.meaning}”)`:''}\nWords I built: ${words.map(w=>w.word).join(', ')}\nPrefixes I used: ${pre.filter(x=>!isC(x)).join(', ')||'none'}\nSuffixes I used: ${suf.filter(x=>!isC(x)).join(', ')||'none'}${(base.C||[]).length?`\nCombining pieces I used: ${[...pre,...suf].filter(isC).join(', ')||'none'}`:''}\nPieces on my wheel I did not use: ${[...unusedP,...unusedS,...unusedC].join(', ')||'none'}`;
+  return `Rocky, I finished my word matrix!\n\nMy base: ${base.name}${base.meaning?` (“${base.meaning}”)`:''}\nWords I built: ${words.map(w=>w.word).join(', ')}\nPrefixes I used: ${pre.filter(x=>!isC(x)).join(', ')||'none'}\nSuffixes I used: ${suf.filter(x=>!isC(x)).join(', ')||'none'}${(base.C||[]).length?`\nCombining pieces I used: ${[...pre,...suf].filter(isC).join(', ')||'none'}`:''}\nPieces on my wheel I did not use: ${[...unusedP,...unusedS,...unusedC].join(', ')||'none'}${levelSection()}`;
+}
+// every base finished so far in this lesson, with all the words built on each (only shown once there is more than one)
+function levelSection(){
+  const lw=(store.get()[LV]||{}).words||{}; const names=Object.keys(lw);
+  if(names.length<2) return '';
+  return `\n\nAll the bases I finished in ${nice(LV)}:\n`+names.map((n,i)=>`${i+1}. ${n}${lw[n].meaning?` (“${lw[n].meaning}”)`:''}: ${lw[n].words.join(', ')}`).join('\n');
 }
 $('doneBtn').onclick=()=>{
   if(uniqFound()<starGoal()) return;
+  const st=store.get(); st[LV]=st[LV]||{done:[]};
+  if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); }
+  st[LV].words=st[LV].words||{}; st[LV].words[base.name]={meaning:base.meaning||'',words:[...new Set([...found.values()].map(w=>w.word))]}; store.set(st);
   const msg=rockyMessage(); $('rockyText').textContent=msg; $('copyNote').textContent=''; $('rocky').classList.remove('hidden');
-  const st=store.get(); st[LV]=st[LV]||{done:[]}; if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); } store.set(st);
-  try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,base:base.name,meaning:base.meaning,words:[...found.values()].map(w=>w.word),message:msg},'*'); }catch(e){}
+  try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,base:base.name,meaning:base.meaning,words:[...found.values()].map(w=>w.word),levelWords:st[LV].words,message:msg},'*'); }catch(e){}
 };
 $('copyBtn').onclick=async()=>{
   const t=$('rockyText').textContent;
