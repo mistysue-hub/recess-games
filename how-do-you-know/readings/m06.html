@@ -217,7 +217,8 @@
 <script>
 (function(){
   const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
-  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  let view=pages.slice(), srcOf=pages.map((_,i)=>i), N=view.length;
+  const book=document.getElementById('book'), wrap=document.getElementById('wrap');
   const L=document.getElementById('slotL'), R=document.getElementById('slotR');
   const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -226,7 +227,7 @@
 
   function pageHTML(i){
     if(i<0||i>=N) return '<div class="page"></div>';
-    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+    return '<div class="page">'+view[i]+'</div><div class="pnum">'+(i+1)+'</div>';
   }
   function watchMore(slot){
     const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
@@ -234,6 +235,34 @@
     pg.addEventListener('scroll',check,{passive:true}); check();
   }
   function step(){ return single?1:2; }
+  // Split any page that would need scrolling into more pages, at block boundaries (phone and desktop).
+  function paginate(){
+    const cur=srcOf[pos]||0;
+    {
+      wrap.classList.toggle('single', single);
+      const m=document.createElement('div'); m.className='page';
+      m.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;visibility:hidden;pointer-events:none';
+      R.appendChild(m);
+      const out=[], src=[];
+      pages.forEach((html,i)=>{
+        const tmp=document.createElement('div'); tmp.innerHTML=html;
+        let chunk=[]; m.innerHTML='';
+        [...tmp.children].forEach(k=>{
+          const c=k.cloneNode(true); m.appendChild(c);
+          if(chunk.length && c.offsetHeight>0 && m.scrollHeight>m.clientHeight+2){
+            out.push(chunk.map(x=>x.outerHTML).join('')); src.push(i);
+            chunk=[]; m.innerHTML=''; m.appendChild(c);
+          }
+          chunk.push(k);
+        });
+        if(chunk.length){ out.push(chunk.map(x=>x.outerHTML).join('')); src.push(i); }
+      });
+      m.remove(); view=out; srcOf=src;
+    }
+    N=view.length;
+    let np=srcOf.indexOf(cur); if(np<0) np=0;
+    pos = single ? np : np-np%2;
+  }
   function render(){
     wrap.classList.toggle('single', single);
     if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
@@ -276,19 +305,23 @@
     if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
     x0=null;
   });
-  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; paginate(); render(); });
+  let rz=null; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(!busy){ paginate(); render(); } },250); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ if(!busy){ paginate(); render(); } });
 
   const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
   function setLevel(ext){
     document.getElementById('reading').classList.toggle('show-ext',ext);
-    [L,R].forEach(watchMore);
+    if(started){ paginate(); render(); } else [L,R].forEach(watchMore);
     bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
     try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
   }
   bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let started=false;
   let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
   setLevel(lvl==='extended');
-  render();
+  if(!document.querySelector('.extended')) document.querySelector('.toggle').style.display='none';
+  paginate(); render(); started=true;
 })();
 </script>
 </body>

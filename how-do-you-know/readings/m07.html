@@ -163,13 +163,14 @@
 </section>
 <section>
   <h2>Saying it like it is</h2>
-  <p>Aristotle gave the oldest and simplest answer, here in W. D. Ross's 1908 translation of his <em>Metaphysics</em>:</p>
+  <p>Aristotle gave the classic and simplest answer, here in W. D. Ross's 1908 translation of his <em>Metaphysics</em>:</p>
   <p class="quote">To say of what is that it is not, or of what is not that it is, is false, while to say of what is that it is, and of what is not that it is not, is true.</p>
   <p>This became the <b>correspondence theory</b>: a belief or sentence is true when it matches the way things are. "The cat is on the mat" is true if, and only if, the cat is actually on the mat. A true belief is like an accurate map.</p>
   <div class="fig"><svg viewBox="0 0 300 130" role="img" aria-label="a sentence on a card connected by a line to the scene it describes, a cat sitting on a mat">
-  <rect x="8" y="34" width="118" height="46" rx="6" fill="#fbf5e6" stroke="#9a7114" stroke-width="2"/>
-  <text x="67" y="62" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="15" fill="#2b2117">"The cat is on the mat."</text>
-  <path class="flow" d="M128 57 C 160 40, 180 70, 200 60" fill="none" stroke="#1d3a7a" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <rect x="8" y="30" width="124" height="56" rx="6" fill="#fbf5e6" stroke="#9a7114" stroke-width="2"/>
+  <text x="70" y="54" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="15" fill="#2b2117">"The cat</text>
+  <text x="70" y="73" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="15" fill="#2b2117">is on the mat."</text>
+  <path class="flow" d="M134 58 C 165 40, 195 95, 220 86" fill="none" stroke="#1d3a7a" stroke-width="2.5" stroke-dasharray="6 5"/>
   <rect x="200" y="96" width="86" height="12" rx="3" fill="#7b3f61" fill-opacity=".35" stroke="#7b3f61" stroke-width="1.5"/>
   <g class="pulse" fill="#2b2117">
     <ellipse cx="243" cy="84" rx="20" ry="14"/><circle cx="258" cy="66" r="10"/>
@@ -202,7 +203,7 @@
   <h2>The trap Protagoras sets for himself</h2>
   <p>Plato's Socrates found a trap built into the view. If every person's opinion is true for them, then the many people who think Protagoras is <em>wrong</em> are also right. In the dialogue Socrates says:</p>
   <p class="quote">he acknowledges the truth of their opinion who believe his own opinion to be false</p>
-  <p>This is called <b>self-refutation</b>: a claim that undermines itself. "There is no truth" has the same problem. If it's true, there's at least one truth, so it's false.</p>
+  <p>This is called <b>self-refutation</b>: a claim that undermines itself. A defender of Protagoras can reply, "My view is true for me, and theirs is true for them." But then Protagoras can no longer say his view is any better than his critics', and that was the whole point of teaching it. "There is no truth" has the same problem. If it's true, there's at least one truth, so it's false.</p>
   <p>Not every "true for me" is a trap. Matters of taste, or facts that depend on us, like what money is worth or what the rules of a game are, can vary between people or places. The trap springs only when <em>every</em> truth is said to be relative, including that one.</p>
   <p class="extended"><span class="tag-ext">Extended</span>Some modern relativists limit their view to particular areas, such as taste or etiquette, precisely to avoid Plato's argument. Whether moral truths belong in that list is one of philosophy's biggest open questions.</p>
 </section>
@@ -226,7 +227,8 @@
 <script>
 (function(){
   const pages=[...document.querySelectorAll('#pages > section')].map(s=>s.innerHTML);
-  const N=pages.length, book=document.getElementById('book'), wrap=document.getElementById('wrap');
+  let view=pages.slice(), srcOf=pages.map((_,i)=>i), N=view.length;
+  const book=document.getElementById('book'), wrap=document.getElementById('wrap');
   const L=document.getElementById('slotL'), R=document.getElementById('slotR');
   const prev=document.getElementById('prev'), next=document.getElementById('next'), where=document.getElementById('where');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -235,7 +237,7 @@
 
   function pageHTML(i){
     if(i<0||i>=N) return '<div class="page"></div>';
-    return '<div class="page">'+pages[i]+'</div><div class="pnum">'+(i+1)+'</div>';
+    return '<div class="page">'+view[i]+'</div><div class="pnum">'+(i+1)+'</div>';
   }
   function watchMore(slot){
     const pg=slot.querySelector('.page'); if(!pg){ slot.classList.remove('more'); return; }
@@ -243,6 +245,34 @@
     pg.addEventListener('scroll',check,{passive:true}); check();
   }
   function step(){ return single?1:2; }
+  // Split any page that would need scrolling into more pages, at block boundaries (phone and desktop).
+  function paginate(){
+    const cur=srcOf[pos]||0;
+    {
+      wrap.classList.toggle('single', single);
+      const m=document.createElement('div'); m.className='page';
+      m.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;visibility:hidden;pointer-events:none';
+      R.appendChild(m);
+      const out=[], src=[];
+      pages.forEach((html,i)=>{
+        const tmp=document.createElement('div'); tmp.innerHTML=html;
+        let chunk=[]; m.innerHTML='';
+        [...tmp.children].forEach(k=>{
+          const c=k.cloneNode(true); m.appendChild(c);
+          if(chunk.length && c.offsetHeight>0 && m.scrollHeight>m.clientHeight+2){
+            out.push(chunk.map(x=>x.outerHTML).join('')); src.push(i);
+            chunk=[]; m.innerHTML=''; m.appendChild(c);
+          }
+          chunk.push(k);
+        });
+        if(chunk.length){ out.push(chunk.map(x=>x.outerHTML).join('')); src.push(i); }
+      });
+      m.remove(); view=out; srcOf=src;
+    }
+    N=view.length;
+    let np=srcOf.indexOf(cur); if(np<0) np=0;
+    pos = single ? np : np-np%2;
+  }
   function render(){
     wrap.classList.toggle('single', single);
     if(single){ R.innerHTML=pageHTML(pos); L.innerHTML=''; }
@@ -285,19 +315,23 @@
     if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) turn(dx<0?1:-1);
     x0=null;
   });
-  narrow.addEventListener('change',()=>{ single=narrow.matches; if(!single) pos-=pos%2; render(); });
+  narrow.addEventListener('change',()=>{ single=narrow.matches; paginate(); render(); });
+  let rz=null; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(!busy){ paginate(); render(); } },250); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ if(!busy){ paginate(); render(); } });
 
   const bCore=document.getElementById('bCore'), bExt=document.getElementById('bExt');
   function setLevel(ext){
     document.getElementById('reading').classList.toggle('show-ext',ext);
-    [L,R].forEach(watchMore);
+    if(started){ paginate(); render(); } else [L,R].forEach(watchMore);
     bCore.classList.toggle('on',!ext); bExt.classList.toggle('on',ext);
     try{ const u=new URL(location.href); u.searchParams.set('level',ext?'extended':'core'); history.replaceState(null,'',u); }catch(e){}
   }
   bCore.onclick=()=>setLevel(false); bExt.onclick=()=>setLevel(true);
+  let started=false;
   let lvl='core'; try{ lvl=new URL(location.href).searchParams.get('level')||'core'; }catch(e){}
   setLevel(lvl==='extended');
-  render();
+  if(!document.querySelector('.extended')) document.querySelector('.toggle').style.display='none';
+  paginate(); render(); started=true;
 })();
 </script>
 </body>

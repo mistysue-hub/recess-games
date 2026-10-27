@@ -14,6 +14,7 @@
   *{box-sizing:border-box}
   html,body{margin:0;min-height:100%;background:var(--bg) ;font-family:Poppins,system-ui,sans-serif;color:var(--ink)}
   button{font-family:inherit;color:inherit}
+  button:focus-visible{outline:3px solid var(--plum);outline-offset:3px}
   .app{max-width:760px;margin:0 auto;padding:16px 16px 40px}
   .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
   .badge{width:48px;height:48px;flex:none}
@@ -34,27 +35,102 @@
   .fb.bad{background:var(--tang-l)}
   .fb b.head{display:block;font:700 18px Poppins,sans-serif;margin-bottom:4px}
   .fb p{margin:0 0 6px;font-size:16px}
+  .acts{display:grid;gap:8px;margin:4px 0 14px;padding:0;list-style:none}
+  .acts li{display:flex;gap:10px;align-items:baseline;font:400 15px/1.4 Poppins,sans-serif}
+  .acts > li > b{flex:none;font:600 12px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--plum);min-width:58px}
 
-  /* chicken scene */
-  .farm{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;margin:4px 0 14px}
-  .farm svg{width:150px;height:auto}
-  .tally{border:1.5px solid #b89b67;border-radius:14px;background:var(--bg);padding:12px 16px;text-align:center}
-  .tally .n{font:700 44px/1 Poppins,sans-serif;color:var(--plum)}
-  .tally .lab{font:500 14px Poppins,sans-serif;color:var(--mute);margin-top:4px}
-  .chick{transform-origin:75px 120px;animation:peck 1.4s ease-in-out infinite}
-  @keyframes peck{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(14deg)}}
-  .chick.alarm{animation:shake .25s linear 6}
-  @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  /* ---------- Act 1: the farm ---------- */
+  .farmhead{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .tally{flex:none;border:1.5px solid #b89b67;border-radius:14px;background:var(--bg);padding:6px 14px;text-align:center;min-width:112px}
+  .tally .n{font:700 32px/1 Poppins,sans-serif;color:var(--plum)}
+  .tally .lab{font:500 12px Poppins,sans-serif;color:var(--mute);margin-top:2px}
+  .thought{flex:1;font:500 16px/1.35 Poppins,sans-serif;font-style:italic;color:var(--ink);min-height:44px;display:flex;align-items:center}
+  .scene{width:100%;height:auto;display:block;border-radius:14px;border:1.5px solid #b89b67;overflow:hidden;background:#2b3f72}
+  #sky{fill:#2b3f72;transition:fill 1.1s ease}
+  .scene.day #sky{fill:#bcdcf0}
+  #sun{transform:translateY(70px);transition:transform 1.3s cubic-bezier(.2,.7,.3,1)}
+  .scene.day #sun{transform:translateY(0)}
+  #farmer{transition:transform .9s ease-in-out, opacity .35s ease}
+  #hen{transition:transform .9s ease-in-out, opacity .35s ease}
+  #hen.lift{transition:transform .45s ease-out}
+  .walk .legL{animation:legL .3s ease-in-out infinite alternate}
+  .walk .legR{animation:legL .3s ease-in-out infinite alternate-reverse}
+  .walk .bob{animation:bob .3s ease-in-out infinite alternate}
+  @keyframes legL{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+  @keyframes bob{to{transform:translateY(-2px)}}
+  .legL,.legR{transform-box:fill-box;transform-origin:50% 0}
+  .peck{transform-box:fill-box;transform-origin:30% 100%}
+  .peck.on{animation:peck .5s ease-in-out 3}
+  @keyframes peck{50%{transform:rotate(-16deg)}}
+  .peck.flap{animation:flap .18s linear 8}
+  @keyframes flap{25%{transform:translateY(-3px) rotate(-4deg)}75%{transform:translateY(1px) rotate(4deg)}}
+  #grain circle{opacity:0;transition:opacity .3s, transform .5s ease-in}
+  #grain.on circle{opacity:1}
+  #door{transform-box:fill-box;transform-origin:0 50%;transition:transform .5s}
+  #door.open{transform:scaleX(.15)}
+  .bets{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0;font:500 13px Poppins,sans-serif;color:var(--mute);align-items:center}
+  .bets span{border:2px solid var(--sand);border-radius:999px;padding:2px 10px;background:var(--bg)}
+  .bets span.set{border-color:var(--plum);color:var(--plum);font-weight:600}
+  .betbox{margin-top:14px;padding:14px 16px;border:1.5px solid #b89b67;border-radius:14px;background:var(--plum-l)}
+  .betbox p{margin:0 0 4px}
+  .opts.four{grid-template-columns:repeat(4,1fr)}
+  .opts.four button{text-align:center;font-size:20px}
+  .chartwrap{margin:14px 0 6px;border:1.5px solid #b89b67;border-radius:14px;background:var(--bg);padding:10px 8px 4px}
+  .chartwrap svg{width:100%;height:auto;display:block}
+  .chartcap{font:600 12px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:0 0 4px 6px}
 
-  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif}
+  /* ---------- Act 2: bins ---------- */
+  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif;position:relative}
   .cardtext.in{animation:pop .4s cubic-bezier(.2,.8,.3,1.3)}
   @keyframes pop{from{transform:scale(.8) rotate(3deg);opacity:0}to{transform:rotate(-.8deg);opacity:1}}
+  .cardtext.dropL,.cardtext.dropR{animation:none;transition:transform .55s cubic-bezier(.5,0,.8,.6), opacity .55s ease-in;opacity:0}
+  .cardtext.dropL{transform:translate(-26%,150px) rotate(-18deg) scale(.25)}
+  .cardtext.dropR{transform:translate(26%,150px) rotate(18deg) scale(.25)}
+  .cardtext.filed{animation:fadein .35s ease-out;transform:none;box-shadow:none;border-style:dashed;opacity:.6;font-size:17px !important}
+  @keyframes fadein{from{opacity:0}to{opacity:.6}}
+  .bins{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+  .bin{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:150px;padding:12px 8px 10px;border:1.5px solid #b89b67;border-radius:12px 12px 22px 22px;
+       background:linear-gradient(#fff 0 80%, var(--sand) 80% 100%);cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18);transition:background .2s}
+  .bin svg.ic{width:46px;height:46px}
+  .bin b{font:700 17px Poppins,sans-serif}
+  .bin small{font:400 13px Poppins,sans-serif;color:var(--mute)}
+  .bin:disabled{cursor:default}
+  .slips{margin-top:auto !important;display:flex;gap:3px;justify-content:center;flex-wrap:wrap;min-height:14px;margin-top:4px}
+  .slips i{width:20px;height:12px;border:2px solid var(--ink);border-radius:3px;background:var(--bg);display:block;animation:slip .35s ease-out}
+  @keyframes slip{from{transform:translateY(-16px);opacity:0}}
+  .bin.ok{background:linear-gradient(var(--teal-l) 0 80%, var(--teal) 80% 100%)}
+  .bin.no{background:linear-gradient(var(--tang-l) 0 80%, var(--tang) 80% 100%);animation:shake .3s linear 2}
+  @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .quoted{font-size:14px !important;color:var(--mute);font-style:italic}
+
+  /* ---------- Act 3: pond ---------- */
+  .rule{display:inline-block;margin:0 0 10px;padding:6px 14px;border:1.5px solid #b89b67;border-radius:999px;background:var(--bg);font:700 17px Poppins,sans-serif}
+  .pond{width:100%;height:auto;display:block;border:1.5px solid #b89b67;border-radius:14px;background:#cfe6c4;touch-action:manipulation}
+  .swan{cursor:pointer;outline:none}
+  .swan .hit{fill:transparent}
+  .swan .bobber{animation:drift var(--d,5s) ease-in-out var(--dl,0s) infinite alternate}
+  @keyframes drift{from{transform:translateX(-4px)}to{transform:translateX(4px)}}
+  .swan .seen{opacity:0;transition:opacity .25s}
+  .swan.obs .seen{opacity:1}
+  .swan.obs .body{fill:#fff6d8}
+  .swan:focus-visible .hit{fill:rgba(91,62,150,.18);stroke:var(--plum);stroke-width:2}
+  .swan.off{cursor:default}
+  .ripple{fill:none;stroke:#fff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ripple .7s ease-out forwards;pointer-events:none}
+  @keyframes ripple{from{transform:scale(.4);opacity:.9}to{transform:scale(2.4);opacity:0}}
+  #black{transition:transform 3.2s cubic-bezier(.25,.6,.35,1)}
+  #black.pick .hit{fill:rgba(27,153,139,.25);stroke:var(--teal);stroke-width:3}
+  #black.flash .hit{animation:flash 1s ease-in-out 3}
+  @keyframes flash{50%{fill:rgba(255,140,66,.35)}}
+  .counter{margin-top:12px;padding:10px 14px;border:1.5px solid #b89b67;border-radius:14px;background:var(--bg);font:500 16px/1.4 Poppins,sans-serif}
+  .counter b{color:var(--plum);font-size:20px}
+  .caption1697{margin-top:10px;padding:10px 14px;border-left:6px solid var(--ink);background:var(--plum-l);border-radius:8px;font:500 15px/1.4 Poppins,sans-serif;animation:pop .4s ease-out}
+
+  /* ---------- shared choose ---------- */
+  .rulecard{display:flex;gap:14px;align-items:center}
+  .rulecard svg{width:54px;height:54px;flex:none}
   .opts{display:grid;gap:10px;margin-top:14px}
-  .opts.two{grid-template-columns:1fr 1fr}
   .opts button{min-height:54px;padding:10px 14px;border:1.5px solid #b89b67;border-radius:12px;background:#fff;font:600 17px/1.3 Poppins,sans-serif;cursor:pointer;text-align:left;box-shadow:0 3px 8px rgba(43,33,23,.18)}
-  .opts.two button{text-align:center}
-  .opts button small{display:block;font-weight:400;font-size:13px;color:var(--mute)}
-  .opts button.right{background:var(--teal);color:#fff} .opts button.right small{color:#fff}
+  .opts button.right{background:var(--teal);color:#fff}
   .opts button.wrong{background:var(--tang)}
   .opts button:disabled{cursor:default}
 
@@ -67,10 +143,23 @@
   .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
   .scores b{display:block;font:700 22px Poppins,sans-serif}
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
-  @media (max-width:560px){ .farm{grid-template-columns:110px 1fr} .farm svg{width:110px} .opts.two{grid-template-columns:1fr} .scores{grid-template-columns:1fr 1fr 1fr} }
-  @media (prefers-reduced-motion:reduce){ .chick,.cardtext.in{animation:none} }
+  @media (max-width:560px){
+    .panel{padding:16px 14px}
+    .opts.four{grid-template-columns:1fr 1fr}
+    .tally{min-width:96px;padding:6px 10px} .tally .n{font-size:26px}
+    .thought{font-size:14px}
+    .bin{min-height:140px} .bin b{font-size:16px} .bin small{font-size:12px;line-height:1.25}
+    .rulecard svg{width:44px;height:44px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cardtext.in,.cardtext.filed,.slips i,.caption1697,.bin.no,.peck.on,.peck.flap,.walk .legL,.walk .legR,.walk .bob,.swan .bobber,.ripple,#black.flash .hit{animation:none !important}
+    #sky,#sun,#farmer,#hen,#door,#black,#grain circle,.cardtext.dropL,.cardtext.dropR{transition:none !important}
+  }
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
+  table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
+  @media (max-width:520px){th,td{font-size:13px;padding:7px 4px}}
+  .opts button.wrong,.opts button.wrong small{color:#fff}
   html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
             background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
@@ -108,6 +197,32 @@
   @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
   @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+  /* ===== shared kit (tools/kit.css) ===== */
+  .hk-dots{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+  .hk-dot{width:11px;height:11px;border-radius:50%;background:#fbf5e6;border:1.5px solid #b89b67;display:inline-block}
+  .hk-dot.ok{background:#2e6b57;border-color:#24543f} .hk-dot.no{background:#b5522e;border-color:#8f3c1f}
+  .hk-dot.now{box-shadow:0 0 0 3px rgba(247,215,116,.7)}
+  .hk-earn{display:flex;gap:14px;align-items:center;background:#0d1b3d;color:#f6ecd6;border-radius:12px;padding:14px 16px;margin:6px 0 10px;border:1.5px solid #c99a2e}
+  .hk-prize{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#2d57a8 0%,#1d3a7a 60%,#0d1b3d 100%);box-shadow:0 0 0 2px #c99a2e,0 0 22px rgba(247,215,116,.45);animation:hkpop .6s cubic-bezier(.2,.8,.3,1.4)}
+  .hk-name{font:700 22px/1.15 "Cormorant Garamond",Georgia,serif;color:#fff}
+  .hk-stars{font-size:26px;line-height:1;margin:4px 0 2px;letter-spacing:2px}
+  .hk-star{color:#3a4a73;display:inline-block} .hk-star.on{color:#f7d774;text-shadow:0 0 10px rgba(247,215,116,.7);animation:hkstar .45s ease-out both}
+  .hk-msg{font:400 13px/1.4 Poppins,sans-serif;color:#d9dff0}
+  .hk-shelf-lab{font:600 11px Poppins,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6f5f47;margin:12px 0 6px}
+  .hk-shelf{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;padding:10px;border-radius:10px;background:linear-gradient(#e6d3a8,#d6c193);border:1px solid #b89b67;box-shadow:inset 0 -5px 0 #b89b67}
+  .hk-slot{aspect-ratio:1;max-width:100%;border-radius:8px;display:grid;place-items:center;background:rgba(43,33,23,.08);border:1.5px dashed #b89b67;font:600 13px Poppins,sans-serif;color:#9a8a6a}
+  .hk-slot.got{background:#0d1b3d;border:1.5px solid #c99a2e}
+  .hk-slot.cur{box-shadow:0 0 0 3px rgba(247,215,116,.8);animation:hkpop .6s .5s both}
+  .hk-slot svg{width:80%;height:80%}
+  details.answers{margin:8px 0 12px;border:1px solid #b89b67;border-radius:10px;background:#fbf5e6;padding:0 12px}
+  details.answers summary{cursor:pointer;padding:10px 0;font:600 14px Poppins,sans-serif;color:#1d3a7a;list-style:none}
+  details.answers summary::-webkit-details-marker{display:none}
+  details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
+  details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
+  @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
+  @media (prefers-reduced-motion:reduce){.hk-prize,.hk-star.on,.hk-slot.cur{animation:none}}
 </style>
 </head>
 <body>
@@ -123,6 +238,71 @@
   <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
   <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
 </svg>
+<script>
+/* How Do You Know? shared game kit (injected by tools/reskin_games.py).
+   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
+   HDYK.shuffle(arr)              -> shuffled copy
+   HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
+   HDYK.resetMisses(lock)         -> call when a new playthrough starts
+   HDYK.misses(lock)              -> array of remembered misses for that lock
+   HDYK.end(el, {lock, right, total})  -> stars + key shelf on the end screen; marks the lock earned
+   Browser storage is optional: everything works (with a simpler shelf) if it is blocked. */
+(function(){
+  const KEYS=[
+    {n:'Copper Key',   c:'#b87333', d:'#7a4a1f', icon:'key'},
+    {n:'Iron Candle',  c:'#7c838c', d:'#3f444a', icon:'candle'},
+    {n:'Glass Compass',c:'#9fd3e6', d:'#3f7f96', icon:'compass'},
+    {n:'Stone Lantern',c:'#a59b8c', d:'#5f574b', icon:'lantern'},
+    {n:'Silver Swan',  c:'#d4d9e0', d:'#7d8794', icon:'swan'},
+    {n:'Bronze Bell',  c:'#b0793f', d:'#6d4720', icon:'bell'},
+    {n:'Quartz Mirror',c:'#eadff7', d:'#8e7bb0', icon:'mirror'},
+    {n:'Star Key',     c:'#f7d774', d:'#9a7114', icon:'star'}
+  ];
+  const ICON={
+    key:(c,d)=>`<circle cx="14" cy="20" r="7" fill="${c}" stroke="${d}" stroke-width="2"/><circle cx="14" cy="20" r="2.6" fill="#0d1b3d"/><path d="M21 20h14v5M30 20v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><path d="M21 20h14" stroke="${c}" stroke-width="1.6"/>`,
+    candle:(c,d)=>`<path d="M20 6c3 4 3 7 0 9-3-2-3-5 0-9z" fill="#f7d774" stroke="#9a7114" stroke-width="1.2"/><rect x="16" y="15" width="8" height="16" rx="1.5" fill="#f3ead6" stroke="${d}" stroke-width="1.5"/><path d="M10 31h20l-3 5H13z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    compass:(c,d)=>`<circle cx="20" cy="21" r="13" fill="${c}" fill-opacity=".55" stroke="${d}" stroke-width="2"/><path d="M20 11l3.5 10L20 31l-3.5-10z" fill="#b5522e"/><path d="M20 21l3.5 0L20 31l-3.5-10z" fill="#e8eef7"/><circle cx="20" cy="21" r="1.8" fill="${d}"/><rect x="18" y="5" width="4" height="4" rx="1" fill="${d}"/>`,
+    lantern:(c,d)=>`<path d="M13 9h14l-2-4H15z" fill="${c}" stroke="${d}" stroke-width="1.6"/><rect x="12" y="9" width="16" height="20" rx="2" fill="${c}" stroke="${d}" stroke-width="2"/><rect x="16" y="13" width="8" height="10" rx="1" fill="#f7d774"/><path d="M10 29h20v5H10z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    swan:(c,d)=>`<path d="M8 27c4 6 20 7 26 0-5 1-9-1-11-4 3-4 4-10 1-13-3-2-7 0-7 4l4 1c-1 4-4 9-2 12z" fill="${c}" stroke="${d}" stroke-width="1.8" stroke-linejoin="round"/><path d="M17 15l-4 1 4 1.4z" fill="#b5522e"/><path d="M6 33h28" stroke="#7fa8e8" stroke-width="2" stroke-linecap="round"/>`,
+    bell:(c,d)=>`<path d="M20 6c-6 0-9 5-9 11v7l-3 5h24l-3-5v-7c0-6-3-11-9-11z" fill="${c}" stroke="${d}" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="32" r="3" fill="${d}"/><rect x="18.5" y="3" width="3" height="4" rx="1.5" fill="${d}"/>`,
+    mirror:(c,d)=>`<ellipse cx="20" cy="16" rx="10" ry="12" fill="${c}" stroke="${d}" stroke-width="2.2"/><path d="M15 11c2-3 5-4 7-3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 28v8M15 36h10" stroke="${d}" stroke-width="3" stroke-linecap="round"/>`,
+    star:(c,d)=>`<path d="M14 4l2.6 5.4 5.9.8-4.3 4.1 1 5.8L14 17.4 8.8 20.1l1-5.8L5.5 10.2l5.9-.8z" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/><path d="M19 21h16v4M30 21v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="11" r="2" fill="#0d1b3d"/>`
+  };
+  function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
+  function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
+  function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
+  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
+  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  let lastR=-1, lastW=-1;
+  function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
+  const H={};
+  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+  H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
+  H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
+  H.miss=(lock,item)=>{ if(!item||!item.q||!item.opts) return; const m=get('hdyk-miss-'+lock,[]); if(m.some(x=>x.q===item.q)) return; m.push({q:String(item.q),opts:item.opts.map(String),a:item.a,why:String(item.why||'')}); put('hdyk-miss-'+lock,m.slice(-12)); };
+  H.misses=lock=>get('hdyk-miss-'+lock,[]);
+  H.keys=KEYS;
+  H.icon=(i,size)=>{ const k=KEYS[i]; return '<svg viewBox="0 0 40 40" width="'+(size||40)+'" height="'+(size||40)+'" aria-hidden="true">'+ICON[k.icon](k.c,k.d)+'</svg>'; };
+  H.end=(el,o)=>{
+    if(!el) return;
+    const lock=o.lock, pct=o.total?o.right/o.total:0, stars=pct>=0.85?3:pct>=0.6?2:1;
+    const s=store(); let earned;
+    if(s){ earned=get('hdyk-keys',{}); earned[lock]=Math.max(earned[lock]||0,stars); put('hdyk-keys',earned); }
+    else { earned={}; for(let i=1;i<lock;i++) earned[i]=0; earned[lock]=stars; }
+    const k=KEYS[lock-1];
+    let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
+    let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
+      shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+    return stars;
+  };
+  window.HDYK=H;
+})();
+</script>
 <div class="app">
   <div class="top">
     <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
@@ -136,52 +316,193 @@
     </div>
   </div>
 
+  <!-- INTRO -->
   <section id="sIntro">
     <div class="panel">
-      <div class="farm">
-        <svg viewBox="0 0 150 140" aria-hidden="true">
-          <ellipse cx="75" cy="128" rx="60" ry="9" fill="#e6d3a8"/>
-          <g class="chick" id="chick">
-            <path d="M48 70 C 40 40, 70 28, 86 44 C 110 40, 122 70, 112 96 C 102 118, 60 120, 50 100 C 44 90, 44 80, 48 70Z" fill="#fff" stroke="#2b2117" stroke-width="3"/>
-            <path d="M70 32 q4 -12 10 -4 q4 -10 10 0 q2 8 -6 10" fill="#b5522e" stroke="#2b2117" stroke-width="2.5"/>
-            <path d="M58 54 l-14 6 l14 4z" fill="#f7d774" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/>
-            <circle cx="68" cy="50" r="3.5" fill="#2b2117"/>
-            <path d="M84 82 q12 -10 22 2" fill="none" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/>
-            <path d="M72 118 v10 M88 118 v10" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/>
-          </g>
-        </svg>
-        <div class="tally"><div class="n" id="days">0</div><div class="lab" id="dayLab">mornings fed so far</div></div>
-      </div>
-      <h2>The chicken's evidence</h2>
-      <p>Every morning of its life, the farmer has come out with food. The chicken is very sure about tomorrow. Bertrand Russell knew how the story ends.</p>
-      <p>Two rounds. <b>Sure Thing or Good Bet?</b> Sort arguments into deductive (the conclusion is guaranteed) and inductive (the conclusion is only likely). <b>Break It!</b> For each rule, find the one observation that could prove it wrong, the way one black swan sinks "all swans are white." Then one last riddle about emeralds.</p>
+      <h2>How sure can a pattern make you?</h2>
+      <p>A chicken, a farmer, a pond full of swans and one strange emerald. Three acts:</p>
+      <ul class="acts">
+        <li><b>Act 1</b><span><strong>A thousand mornings.</strong> Watch the farmer feed the chicken and bet on tomorrow. No score here.</span></li>
+        <li><b>Act 2</b><span><strong>Sure thing or good bet?</strong> Drop each argument in the right bin: guaranteed, or only likely.</span></li>
+        <li><b>Act 3</b><span><strong>Black swan pond.</strong> Find the one observation that breaks each rule. Then a last riddle about emeralds.</span></li>
+      </ul>
       <p class="small">You lock in every answer before the game shows you anything.</p>
-      <div class="center"><button class="big" id="startBtn">Start Round 1</button></div>
+      <div class="center"><button class="big" id="startBtn">Start Act 1</button></div>
     </div>
   </section>
 
+  <!-- ACT 1 -->
+  <section id="sMorn" class="hidden">
+    <div class="panel">
+      <div class="step">Act 1 · A thousand mornings · no score</div>
+      <div class="farmhead">
+        <div class="tally" aria-live="polite"><div class="n" id="dayN">Day 0</div><div class="lab" id="dayLab">fed in a row: 0</div></div>
+        <div class="thought" id="thought">A brand-new chicken. Tap <b style="all:unset;font-weight:600;font-style:normal">&nbsp;Next morning&nbsp;</b> to start its life.</div>
+      </div>
+      <svg class="scene" id="scene" viewBox="0 0 360 200" aria-hidden="true">
+        <rect id="sky" x="0" y="0" width="360" height="200"/>
+        <g id="sun"><circle cx="58" cy="52" r="26" fill="#ffe9a0" opacity=".35"/><circle cx="58" cy="52" r="16" fill="#f7d774"/></g>
+        <path d="M0 150 C 80 128, 170 140, 360 126 V200 H0Z" fill="#9cc58b"/>
+        <rect x="0" y="176" width="360" height="24" fill="#86b374"/>
+        <g stroke="#8a6a44" stroke-width="3" stroke-linecap="round">
+          <path d="M8 150 v30 M38 148 v32 M68 147 v33 M4 158 h70 M4 170 h70"/>
+        </g>
+        <!-- farmhouse -->
+        <g>
+          <rect x="250" y="112" width="100" height="70" fill="#f1e2c2" stroke="#2b2117" stroke-width="2.5"/>
+          <path d="M242 114 L300 72 L358 114Z" fill="#a5452a" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="324" y="78" width="12" height="22" fill="#a5452a" stroke="#2b2117" stroke-width="2"/>
+          <rect x="258" y="124" width="20" height="18" fill="#ffe9a0" stroke="#2b2117" stroke-width="2"/>
+          <path d="M268 124v18M258 133h20" stroke="#2b2117" stroke-width="1.5"/>
+          <rect x="286" y="130" width="30" height="52" fill="#3a2a1e"/>
+          <rect id="door" x="286" y="130" width="30" height="52" fill="#8a5a34" stroke="#2b2117" stroke-width="2.5"/>
+          <circle cx="311" cy="158" r="2" fill="#2b2117"/>
+        </g>
+        <!-- grain -->
+        <g id="grain" fill="#e9b73c" stroke="#9a7114" stroke-width=".6">
+          <circle cx="122" cy="179" r="2.2"/><circle cx="130" cy="181" r="2"/><circle cx="138" cy="178" r="2.3"/><circle cx="126" cy="183" r="1.8"/>
+          <circle cx="144" cy="182" r="2"/><circle cx="117" cy="182" r="1.9"/><circle cx="134" cy="184" r="1.7"/><circle cx="150" cy="180" r="2"/>
+        </g>
+        <!-- hen (faces right) -->
+        <g id="hen">
+          <g transform="translate(144,92) scale(-.7,.7)">
+            <g class="peck" id="peck">
+              <path d="M48 70 C 40 40, 70 28, 86 44 C 110 40, 122 70, 112 96 C 102 118, 60 120, 50 100 C 44 90, 44 80, 48 70Z" fill="#fff" stroke="#2b2117" stroke-width="3"/>
+              <path d="M70 32 q4 -12 10 -4 q4 -10 10 0 q2 8 -6 10" fill="#b5522e" stroke="#2b2117" stroke-width="2.5"/>
+              <path d="M58 54 l-14 6 l14 4z" fill="#f7d774" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/>
+              <circle cx="68" cy="50" r="3.5" fill="#2b2117"/>
+              <path d="M84 82 q12 -10 22 2" fill="none" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/>
+              <path d="M72 118 v10 M88 118 v10" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/>
+            </g>
+          </g>
+        </g>
+        <!-- farmer (origin at feet) -->
+        <g id="farmer" style="transform:translate(300px,182px);opacity:0">
+          <g class="fig">
+            <path class="legL" d="M-6 -34 L-7 0" stroke="#3a2a1e" stroke-width="6" stroke-linecap="round"/>
+            <path class="legR" d="M6 -34 L7 0" stroke="#3a2a1e" stroke-width="6" stroke-linecap="round"/>
+            <g class="bob">
+              <rect x="-14" y="-74" width="28" height="42" rx="7" fill="#4f6fb0" stroke="#2b2117" stroke-width="2.5"/>
+              <rect x="-8" y="-66" width="16" height="12" rx="2" fill="#3f5c98" stroke="#2b2117" stroke-width="1.5"/>
+              <circle cx="0" cy="-86" r="11" fill="#f1c9a5" stroke="#2b2117" stroke-width="2.5"/>
+              <circle cx="-5" cy="-87" r="1.5" fill="#2b2117"/>
+              <ellipse cx="0" cy="-95" rx="19" ry="4.5" fill="#e8c46a" stroke="#2b2117" stroke-width="2"/>
+              <path d="M-9 -96 q1 -10 9 -10 q8 0 9 10z" fill="#e8c46a" stroke="#2b2117" stroke-width="2"/>
+              <g id="armsCarry">
+                <path d="M11 -68 L16 -46" stroke="#2b2117" stroke-width="5" stroke-linecap="round"/>
+                <path d="M-11 -68 L-21 -46" stroke="#2b2117" stroke-width="5" stroke-linecap="round"/>
+                <path d="M-33 -48 q12 -16 24 0" fill="none" stroke="#2b2117" stroke-width="1.8"/>
+                <path d="M-34 -46 h26 l-3 20 h-20z" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M-32 -46 q11 -6 22 0" fill="#e9b73c" stroke="#9a7114" stroke-width="1"/>
+              </g>
+              <g id="armsReach" style="display:none">
+                <path d="M-10 -68 L-36 -60" stroke="#2b2117" stroke-width="5" stroke-linecap="round"/>
+                <path d="M8 -64 L-34 -50" stroke="#2b2117" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="-37" cy="-60" r="3.5" fill="#f1c9a5" stroke="#2b2117" stroke-width="1.5"/>
+                <circle cx="-35" cy="-50" r="3.5" fill="#f1c9a5" stroke="#2b2117" stroke-width="1.5"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div class="bets" id="betRow"></div>
+
+      <div class="betbox hidden" id="betBox">
+        <p id="betQ"></p>
+        <div class="opts four" id="betOpts"></div>
+      </div>
+      <div class="go" id="mornWrap"><button class="big" id="mornBtn">Next morning</button></div>
+
+      <div class="hidden" id="mornEnd">
+        <div class="chartwrap">
+          <div class="chartcap">Your confidence vs. what happened</div>
+          <svg id="chart" viewBox="0 0 340 190" role="img" aria-label="Your bets across the mornings"></svg>
+        </div>
+        <p id="mornPara"></p>
+        <p>Bertrand Russell told this story in 1912, in <i>The Problems of Philosophy</i>. His point: expecting tomorrow to match yesterday can mislead. The chicken needed, in Russell's words, “more refined views as to the uniformity of nature.”</p>
+        <div class="go"><button class="big" id="toAct2">On to Act 2</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACT 2 -->
+  <section id="sSort" class="hidden">
+    <div class="panel">
+      <div class="step" id="sortStep"></div>
+      <div id="sortDots"></div>
+      <h2>Sure thing or good bet?</h2>
+      <p class="small" style="margin-bottom:10px">If the premises are true, is the conclusion guaranteed, or only likely? Tap a bin to drop the card in.</p>
+      <div class="cardtext" id="sortCard"></div>
+      <div class="bins">
+        <button class="bin" id="bin0" data-i="0">
+          <svg class="ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M15 22 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#2b2117" stroke-width="3.5"/><rect x="9" y="21" width="30" height="22" rx="5" fill="#1d3a7a" stroke="#2b2117" stroke-width="3"/><circle cx="24" cy="30" r="3" fill="#f6ecd6"/><rect x="22.5" y="31" width="3" height="6" rx="1.5" fill="#f6ecd6"/></svg>
+          <b>Sure thing</b><small>deductive: guaranteed</small>
+          <div class="slips" id="slips0"></div>
+        </button>
+        <button class="bin" id="bin1" data-i="1">
+          <svg class="ic" viewBox="0 0 48 48" aria-hidden="true"><g stroke="#2b2117" stroke-width="2.6" stroke-linejoin="round"><rect x="5" y="16" width="20" height="20" rx="4" fill="#f6ecd6" transform="rotate(-12 15 26)"/><rect x="23" y="12" width="20" height="20" rx="4" fill="#f7d774" transform="rotate(10 33 22)"/></g><g fill="#2b2117"><circle cx="11" cy="22" r="1.8"/><circle cx="15" cy="26" r="1.8"/><circle cx="19" cy="30" r="1.8"/><circle cx="29" cy="17" r="1.8"/><circle cx="37" cy="18" r="1.8"/><circle cx="28" cy="25" r="1.8"/><circle cx="36" cy="27" r="1.8"/></g></svg>
+          <b>Good bet</b><small>inductive: only likely</small>
+          <div class="slips" id="slips1"></div>
+        </button>
+      </div>
+      <div class="fb hidden" id="sortFb" aria-live="polite"></div>
+      <div class="go hidden" id="sortNextWrap"><button class="big" id="sortNext">Next</button></div>
+    </div>
+  </section>
+
+  <!-- ACT 3: POND -->
+  <section id="sPond" class="hidden">
+    <div class="panel">
+      <div class="step">Act 3 · Break It! · 1 of 5</div>
+      <div id="pondDots"></div>
+      <h2>Black swan pond</h2>
+      <div class="rule">Rule: “All swans are white.”</div>
+      <p class="small" id="pondHelp" style="margin-bottom:8px">Tap swans to observe them. Each one you check is evidence.</p>
+      <svg class="pond" id="pond" viewBox="0 0 360 262">
+        <rect x="0" y="0" width="360" height="262" fill="#cfe6c4"/>
+        <path d="M24 70 C 70 52, 150 60, 200 56 C 260 52, 330 58, 344 84 C 356 120, 350 200, 336 236 C 320 256, 230 254, 180 252 C 110 252, 40 256, 24 234 C 10 200, 8 110, 24 70Z" fill="#7fb8d8" stroke="#5a8fae" stroke-width="3"/>
+        <g stroke="#5f8f4e" stroke-width="2.5" stroke-linecap="round" fill="none">
+          <path d="M14 70 q-2 -24 4 -40 M20 72 q4 -20 2 -34 M330 60 q-3 -22 3 -36 M338 62 q5 -18 2 -30 M180 54 q-2 -16 3 -26"/>
+        </g>
+        <g fill="#8a6a44"><ellipse cx="18" cy="30" rx="3" ry="7"/><ellipse cx="333" cy="24" rx="3" ry="7"/></g>
+        <g id="swans"></g>
+        <g id="ripples"></g>
+      </svg>
+      <div class="counter" id="pondCount" aria-live="polite"></div>
+      <div id="pondCap"></div>
+      <div class="fb hidden" id="pondFb" aria-live="polite"></div>
+      <div class="go hidden" id="pondNextWrap"><button class="big" id="pondNext">Next rule</button></div>
+    </div>
+  </section>
+
+  <!-- QUIZ (Break It + grue) -->
   <section id="sQuiz" class="hidden">
     <div class="panel">
       <div class="step" id="qStep"></div>
+      <div id="qDots"></div>
       <h2 id="qTitle"></h2>
       <div class="cardtext" id="qText"></div>
       <div class="opts" id="qOpts"></div>
-      <div class="fb hidden" id="qFb"></div>
+      <div class="fb hidden" id="qFb" aria-live="polite"></div>
       <div class="go hidden" id="qNextWrap"><button class="big" id="qNext">Next</button></div>
     </div>
   </section>
 
+  <!-- END -->
   <section id="sEnd" class="hidden">
     <div class="panel">
-      <h2>Morning report: what you reported</h2>
+      <div id="shelf"></div>
+      <h2>Morning report</h2>
       <div class="scores" id="scores"></div>
-      <table>
-        <thead><tr><th>Item</th><th>You said</th><th>Answer</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
+      <details class="answers"><summary>See my answers</summary>
+        <table>
+          <thead><tr><th>Item</th><th>You said</th><th>Answer</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores and the code word. Then he'll ask about a pattern you rely on, and what would break it.</p>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll ask you to name a pattern you rely on in something you care about, and the one observation that would break it.</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -189,69 +510,332 @@
 
 <script>
 (function(){
-  const CODE='SILVER SWAN';
+  const CODE='SILVER SWAN', LOCK=5;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $=id=>document.getElementById(id);
+  let gen=0;
+  const wait=ms=>new Promise(r=>setTimeout(r, reduce?Math.min(ms,40):ms));
+
+  /* ---------- content ---------- */
   const R1=[
-    {t:"Every bus this week has come late. So tomorrow's bus will come late.", a:1, why:"Seen cases to an unseen one: a good bet at best. Buses can surprise you."},
-    {t:"All mammals breathe air. Whales are mammals. So whales breathe air.", a:0, why:"If both premises are true, the conclusion has to be. That's deduction."},
+    {t:"Every bus this week has come late. Tomorrow's bus runs the same route. So tomorrow's bus will come late.", a:1, why:"Seen cases to an unseen one: a good bet at best. Buses can surprise you."},
+    {t:"Every mammal breathes air. Whales are mammals. So whales breathe air.", a:0, why:"If both premises are true, the conclusion has to be. That's deduction."},
     {t:"No reptiles have fur. This lizard is a reptile. So this lizard has no fur.", a:0, why:"Guaranteed by the premises: deductive."},
     {t:"The sun has risen every day in recorded history. So it will rise tomorrow.", a:1, why:"Hume's own example. Overwhelming evidence, but the conclusion still isn't guaranteed: inductive."},
     {t:"Nine out of ten dentists we surveyed recommend Brand X. So most dentists recommend it.", a:1, why:"From a sample to the whole group: inductive, and only as good as the sample."},
     {t:"If it's raining, the street is wet. It's raining. So the street is wet.", a:0, why:"Given those two premises, the conclusion can't fail: deductive."}
   ];
+  const BIN=['Sure thing (deductive: guaranteed)','Good bet (inductive: only likely)'];
+  const SWAN={rule:"All swans are white.", opts:["Another white swan","A white goose","A black swan"], a:2, why:"No pile of white swans proves the rule, but one black swan disproves it. That's Popper's point."};
+  const ICONS={
+    metal:'<svg viewBox="0 0 54 54" aria-hidden="true"><rect x="6" y="14" width="42" height="10" rx="3" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.5"/><path d="M14 46c-4-5 4-7 0-13 7 3 9 9 4 13zM28 46c-4-5 4-7 0-13 7 3 9 9 4 13zM42 46c-4-5 4-7 0-13 7 3 9 9 4 13z" fill="#b5522e" stroke="#2b2117" stroke-width="2" stroke-linejoin="round"/></svg>',
+    printer:'<svg viewBox="0 0 54 54" aria-hidden="true"><rect x="15" y="6" width="24" height="14" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><rect x="6" y="18" width="42" height="20" rx="4" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.5"/><rect x="14" y="32" width="26" height="16" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><path d="M18 38h18M18 43h12" stroke="#2b2117" stroke-width="2"/><circle cx="41" cy="25" r="2.4" fill="#2e6b57"/></svg>',
+    plants:'<svg viewBox="0 0 54 54" aria-hidden="true"><path d="M27 46V22" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/><path d="M27 28c-12 0-16-8-16-14 9 0 16 4 16 14zM27 24c0-10 7-15 16-15 0 7-5 15-16 15z" fill="#7bbf6a" stroke="#2b2117" stroke-width="2.4" stroke-linejoin="round"/><path d="M14 46h26l-3 6H17z" fill="#c8814a" stroke="#2b2117" stroke-width="2.2" stroke-linejoin="round"/></svg>',
+    farmer:'<svg viewBox="0 0 54 54" aria-hidden="true"><path d="M14 12q13-14 26 0" fill="none" stroke="#2b2117" stroke-width="2.4"/><path d="M10 16h34l-4 30H14z" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/><path d="M12 16q15-7 30 0" fill="#e9b73c" stroke="#9a7114" stroke-width="1.4"/><path d="M13 28h28" stroke="#2b2117" stroke-width="1.6"/></svg>'
+  };
   const R2=[
-    {rule:"All swans are white.", opts:["Another white swan","A white goose","A black swan"], a:2, why:"No pile of white swans proves the rule, but one black swan disproves it. That's Popper's point."},
-    {rule:"Every metal expands when heated.", opts:["A metal that shrinks when heated","An iron rod that gets longer when heated","A metal that shrinks when cooled"], a:0, why:"The rule only talks about heating. Shrinking when cooled fits it; shrinking when heated breaks it."},
-    {rule:"The library printer never jams on Mondays.", opts:["It works fine on a Monday","It jams on a Monday","It jams on a Tuesday"], a:1, why:"Tuesdays are outside the rule, and a good Monday only fits it. One Monday jam breaks it."},
-    {rule:"Plants need sunlight to grow.", opts:["A plant that grows in sunlight","A plant that dies in sunlight","A plant that grows well in total darkness"], a:2, why:"A plant thriving with no sunlight at all shows sunlight isn't needed. A plant dying in sunlight doesn't touch the rule. (In fact, a few odd plants do this: ghost pipe and an orchid that lives underground in Western Australia feed off fungi instead of sunlight. So the rule, as stated, is false!)"},
-    {rule:"The farmer brings food every morning.", opts:["Another morning with food","A morning with no food","An evening with food"], a:1, why:"The chicken's thousand mornings never proved the rule. One morning without food breaks it, as Russell's chicken found out."}
+    {k:'metal', rule:"Every metal expands when heated.", opts:["A metal that shrinks when heated","An iron rod that gets longer when heated","A metal that shrinks when cooled"], a:0, why:"The rule only talks about heating. Shrinking when cooled fits it; shrinking when heated breaks it."},
+    {k:'printer', rule:"The library printer never jams on Mondays.", opts:["It works fine on a Monday","It jams on a Monday","It jams on a Tuesday"], a:1, why:"Tuesdays are outside the rule, and a good Monday only fits it. One Monday jam breaks it."},
+    {k:'plants', rule:"Plants need sunlight to grow.", opts:["A plant that grows in sunlight","A plant that dies in sunlight","A plant that grows well in total darkness"], a:2, why:"A plant thriving with no sunlight at all shows sunlight isn't needed. A plant dying in sunlight doesn't touch the rule. (In fact, a few odd plants do this: ghost pipe and an orchid that lives underground in Western Australia make no food from light; they feed on fungi, which get their sugars from other plants. So a plant itself can grow without sunlight, and the rule, as stated, is shakier than it looks.)"},
+    {k:'farmer', rule:"The farmer brings food every morning.", opts:["Another morning with food","A morning with no food","An evening with food"], a:1, why:"The chicken's thousand mornings never proved the rule. One morning without food breaks it, as Russell's chicken found out."}
   ];
   const R3={t:"Every emerald anyone has examined so far was green, which also means every one was grue (green if first examined before 2100, blue after). An emerald will first be examined in 2101. Which predictions fit the evidence so far equally well?",
-    opts:["Only \u201cit will be green\u201d","Only \u201cit will be blue\u201d","Both \u201cgreen\u201d and \u201cblue\u201d"], a:2,
+    opts:["Only “it will be green”","Only “it will be blue”","Both “green” and “blue”"], a:2,
     why:"That's Goodman's new riddle. The evidence fits “all emeralds are green” and “all emeralds are grue” equally. We all predict green, and nobody has fully explained why we're entitled to."};
-  const $=id=>document.getElementById(id);
-  let items=[], k=0, s1=0, s2=0, s3=0, log=[];
-  function show(id){ ['sIntro','sQuiz','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
 
-  // tally animation
-  const daysEl=$('days'); let d=0; const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function tick(){ d=Math.min(999, d+Math.ceil((1000-d)/18)); daysEl.textContent=d.toLocaleString(); if(d<999) setTimeout(tick, reduce?0:40); else setTimeout(()=>{ daysEl.textContent='1,000?'; $('dayLab').textContent='tomorrow is morning one thousand'; $('chick').classList.add('alarm'); }, 700); }
-  setTimeout(tick, 400);
+  let res1=[], res2=[], res3=[], log=[];
+  function show(id){ ['sIntro','sMorn','sSort','sPond','sQuiz','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 
-  function build(){
-    items=[];
-    R1.forEach((r,i)=>items.push({round:1, step:'Round 1 · Sure Thing or Good Bet? · '+(i+1)+' of '+R1.length, title:'Sure thing or good bet?', text:r.t,
-      opts:['<b>Sure thing</b><small>deductive: guaranteed</small>','<b>Good bet</b><small>inductive: only likely</small>'], two:true, a:r.a, why:r.why, label:r.t, names:['Deductive','Inductive']}));
-    R2.forEach((r,i)=>items.push({round:2, step:'Round 2 · Break It! · '+(i+1)+' of '+R2.length, title:'Which observation could prove this rule wrong?', text:'Rule: “'+r.rule+'”',
-      opts:r.opts, a:r.a, why:r.why, label:r.rule, names:r.opts}));
-    items.push({round:3, step:'Last riddle', title:'Green or grue?', text:R3.t, opts:R3.opts, a:R3.a, why:R3.why, label:'Green or grue?', names:R3.opts});
+  /* ---------- ACT 1 ---------- */
+  const DAYS=[1,2,5,10,30,100,300,600,999];
+  const CHECK=[1,10,100,999];
+  const THOUGHTS={1:'A stranger with a bucket! Lucky me.',2:'Him again. Nice.',5:'Five for five. He seems reliable.',10:'He always comes. Every single time.',30:'A month of breakfasts. I could set my watch by him.',
+    100:'One hundred mornings. Breakfast is basically a law of nature.',300:'I no longer even look up. Food arrives.',600:'Six hundred mornings. The evidence is overwhelming.',999:'Nine hundred ninety-nine out of nine hundred ninety-nine. Tomorrow is a sure thing.'};
+  let di=0, curDay=0, bets=[];
+  function setDay(n, lab){ $('dayN').textContent='Day '+n.toLocaleString('en-US'); $('dayLab').textContent=lab!=null?lab:'fed in a row: '+n.toLocaleString('en-US'); }
+  function countTo(to, g){
+    return new Promise(res=>{
+      const from=curDay; if(reduce||to-from<=1){ curDay=to; setDay(to); res(); return; }
+      const t0=performance.now(), dur=650;
+      function f(t){ if(g!==gen) return res(); const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3), v=Math.round(from+(to-from)*e); setDay(v); if(p<1) requestAnimationFrame(f); else { curDay=to; res(); } }
+      requestAnimationFrame(f);
+    });
+  }
+  function farmerAt(x, y, op){ const f=$('farmer'); f.style.transform='translate('+x+'px,'+(y||182)+'px)'; if(op!=null) f.style.opacity=op; }
+  function resetScene(){
+    const sc=$('scene'); sc.classList.remove('day');
+    $('armsCarry').style.display=''; $('armsReach').style.display='none';
+    const f=$('farmer'); f.style.transition='none'; farmerAt(300,182,0); void f.getBBox(); f.style.transition='';
+    const h=$('hen'); h.style.transition='none'; h.style.transform='translate(0px,0px)'; h.style.opacity=1; h.classList.remove('lift'); void h.getBBox(); h.style.transition='';
+    $('grain').classList.remove('on'); $('door').classList.remove('open'); $('peck').classList.remove('on','flap');
+    $('farmer').classList.remove('walk');
+  }
+  function sunrise(){ const sc=$('scene'); sc.classList.remove('day'); void sc.getBoundingClientRect(); requestAnimationFrame(()=>requestAnimationFrame(()=>sc.classList.add('day'))); }
+  function renderBets(){
+    $('betRow').innerHTML='<span style="border:0;background:none;padding:0">Your bets:</span>'+CHECK.map((d,i)=>'<span class="'+(bets[i]!=null?'set':'')+'">Day '+d.toLocaleString('en-US')+': '+(bets[i]!=null?bets[i]+'%':'?')+'</span>').join('');
+  }
+  function startAct1(){
+    gen++; di=0; curDay=0; bets=[];
+    resetScene(); setDay(0,'fed in a row: 0');
+    $('thought').innerHTML='A brand-new chicken. Tap <b style="font-style:normal">Next morning</b> to start its life.';
+    $('betBox').classList.add('hidden'); $('mornEnd').classList.add('hidden'); $('mornWrap').classList.remove('hidden');
+    $('mornBtn').disabled=false; $('mornBtn').textContent='Next morning';
+    renderBets(); show('sMorn');
+  }
+  async function feedMorning(){
+    const g=gen, day=DAYS[di]; $('mornBtn').disabled=true;
+    $('door').classList.remove('open'); $('grain').classList.remove('on');
+    sunrise(); countTo(day,g);
+    $('thought').textContent=THOUGHTS[day]||'';
+    await wait(500); if(g!==gen) return;
+    $('door').classList.add('open'); await wait(250); if(g!==gen) return;
+    $('farmer').classList.add('walk'); farmerAt(165,182,1);
+    await wait(950); if(g!==gen) return;
+    $('farmer').classList.remove('walk'); $('grain').classList.add('on'); $('peck').classList.add('on');
+    await wait(900); if(g!==gen) return;
+    $('farmer').classList.add('walk'); farmerAt(300,182,1);
+    await wait(900); if(g!==gen) return;
+    $('farmer').classList.remove('walk'); farmerAt(300,182,0); $('door').classList.remove('open'); $('peck').classList.remove('on');
+    di++;
+    const ci=CHECK.indexOf(day);
+    if(ci>=0){ askBet(ci, day); }
+    else { $('mornBtn').disabled=false; }
+  }
+  function askBet(ci, day){
+    $('mornWrap').classList.add('hidden');
+    const bb=$('betBox'); bb.classList.remove('hidden');
+    $('betQ').innerHTML='<b>Day '+day.toLocaleString('en-US')+'.</b> How sure are you that the farmer brings food tomorrow?';
+    const o=$('betOpts'); o.innerHTML=[50,70,90,99].map(p=>'<button data-p="'+p+'">'+p+'%</button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      bets[ci]=+b.dataset.p; renderBets(); bb.classList.add('hidden');
+      $('mornWrap').classList.remove('hidden');
+      $('mornBtn').textContent= di>=DAYS.length ? 'Morning 1,000' : 'Next morning';
+      $('mornBtn').disabled=false; $('mornBtn').focus({preventScroll:true});
+    });
+  }
+  async function lastMorning(){
+    const g=gen; $('mornBtn').disabled=true; $('mornWrap').classList.add('hidden');
+    $('grain').classList.remove('on');
+    sunrise(); curDay=999; await countTo(1000,g); setDay(1000,'fed in a row: 999');
+    $('thought').textContent='Morning one thousand. Breakfast time, surely...';
+    await wait(700); if(g!==gen) return;
+    $('armsCarry').style.display='none'; $('armsReach').style.display='';
+    $('door').classList.add('open'); await wait(300); if(g!==gen) return;
+    $('farmer').classList.add('walk'); farmerAt(132,182,1);
+    await wait(1000); if(g!==gen) return;
+    $('farmer').classList.remove('walk');
+    $('thought').textContent='No bucket today. His hands are reaching for the chicken.';
+    $('peck').classList.add('flap');
+    await wait(1300); if(g!==gen) return;
+    const h=$('hen'); h.classList.add('lift'); h.style.transform='translate(-6px,-34px)';
+    await wait(600); if(g!==gen) return;
+    h.classList.remove('lift');
+    $('farmer').classList.add('walk'); farmerAt(300,182,1); h.style.transform='translate(162px,-34px)';
+    $('thought').textContent='The farmer carries the chicken off toward the kitchen.';
+    await wait(950); if(g!==gen) return;
+    $('farmer').classList.remove('walk'); $('farmer').style.opacity=0; h.style.opacity=0;
+    await wait(400); if(g!==gen) return;
+    $('door').classList.remove('open'); $('peck').classList.remove('flap');
+    setDay(1000,'streak over at 999');
+    $('thought').textContent='Nine hundred ninety-nine good mornings. They proved nothing about this one.';
+    await wait(500); if(g!==gen) return;
+    drawChart(); $('mornEnd').classList.remove('hidden');
+    $('mornEnd').scrollIntoView({behavior:reduce?'auto':'smooth', block:'start'});
+  }
+  $('mornBtn').onclick=()=>{ if(di<DAYS.length) feedMorning(); else lastMorning(); };
+  function drawChart(){
+    const xs=[46,112,178,244,310], y=p=>150-(p-40)/60*118;
+    let s='';
+    [50,70,90,100].forEach(p=>{ s+='<line x1="30" x2="334" y1="'+y(p)+'" y2="'+y(p)+'" stroke="#d6c193" stroke-dasharray="3 4"/><text x="26" y="'+(y(p)+4)+'" text-anchor="end" font-size="10" fill="#6f5f47">'+p+'%</text>'; });
+    s+='<rect x="282" y="18" width="56" height="140" rx="8" fill="#f6e2d6"/>';
+    const pts=bets.map((b,i)=>xs[i]+','+y(b)).join(' ');
+    s+='<polyline points="'+pts+'" fill="none" stroke="#1d3a7a" stroke-width="3" stroke-linejoin="round"/>';
+    bets.forEach((b,i)=>{ s+='<circle cx="'+xs[i]+'" cy="'+y(b)+'" r="6" fill="#1d3a7a" stroke="#fff" stroke-width="2"/><text x="'+xs[i]+'" y="'+(y(b)-11)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#2b2117">'+b+'%</text>'; });
+    const lx=xs[3], ly=y(bets[3]);
+    s+='<path d="M'+lx+' '+ly+' L'+(xs[4]-10)+' 142" fill="none" stroke="#8f3c1f" stroke-width="2.5" stroke-dasharray="5 4"/>';
+    s+='<path d="M'+(xs[4]-9)+' 133 l18 18 M'+(xs[4]+9)+' 133 l-18 18" stroke="#8f3c1f" stroke-width="4" stroke-linecap="round"/>';
+    s+='<text x="'+xs[4]+'" y="34" text-anchor="middle" font-size="11" font-weight="700" fill="#8f3c1f">No food.</text><text x="'+xs[4]+'" y="48" text-anchor="middle" font-size="10" fill="#8f3c1f">Carried off.</text>';
+    ['Day 1','Day 10','Day 100','Day 999','Day 1,000'].forEach((l,i)=>{ s+='<text x="'+xs[i]+'" y="178" text-anchor="middle" font-size="11" font-weight="600" fill="#2b2117">'+l+'</text>'; });
+    $('chart').innerHTML=s;
+    $('chart').setAttribute('aria-label','Your bets: '+bets.map((b,i)=>'day '+CHECK[i]+', '+b+' percent').join('; ')+'. On morning 1,000 there was no food.');
+    const a=bets[0], z=bets[3];
+    let lead = z>a ? 'Your confidence climbed from '+a+'% to '+z+'%.' : z===a ? 'You kept your bet at '+a+'% the whole way: a cautious chicken.' : 'Your bets actually dropped from '+a+'% to '+z+'%: a suspicious chicken!';
+    $('mornPara').innerHTML=lead+' More mornings make the bet feel safer, and each morning really was evidence. But no number of mornings could guarantee morning 1,000. That is <b>Hume’s problem</b>: the past predicts the future only if the future will resemble the past, and our only evidence for <i>that</i> is the past.';
+  }
+  $('toAct2').onclick=()=>startSort();
+
+  /* ---------- ACT 2 ---------- */
+  let sortList=[], sk=0, sortLocked=false;
+  function startSort(){
+    sortList=HDYK.shuffle(R1); sk=0; res1=[];
+    $('slips0').innerHTML=''; $('slips1').innerHTML='';
+    show('sSort'); showSort();
+  }
+  function showSort(){
+    const it=sortList[sk]; sortLocked=false;
+    $('sortStep').textContent='Act 2 · Sure thing or good bet? · '+(sk+1)+' of '+sortList.length;
+    HDYK.dots($('sortDots'), sortList.length, res1);
+    const c=$('sortCard'); c.className='cardtext'; c.textContent=it.t; void c.offsetWidth; c.classList.add('in');
+    [0,1].forEach(i=>{ const b=$('bin'+i); b.disabled=false; b.classList.remove('ok','no'); });
+    $('sortFb').classList.add('hidden'); $('sortNextWrap').classList.add('hidden');
+  }
+  async function dropIn(i){
+    if(sortLocked) return; sortLocked=true;
+    const g=gen, it=sortList[sk], ok=i===it.a;
+    [0,1].forEach(j=>$('bin'+j).disabled=true);
+    const c=$('sortCard'); c.classList.remove('in'); void c.offsetWidth; c.classList.add(i===0?'dropL':'dropR');
+    await wait(560); if(g!==gen) return;
+    c.classList.remove('dropL','dropR'); c.classList.add('filed'); c.textContent='Filed in the '+(it.a===0?'Sure thing':'Good bet')+' bin: “'+it.t+'”';
+    if(ok){ $('bin'+i).classList.add('ok'); }
+    else { $('bin'+i).classList.add('no'); await wait(450); if(g!==gen) return; $('bin'+it.a).classList.add('ok'); }
+    $('slips'+it.a).insertAdjacentHTML('beforeend','<i></i>');
+    res1.push(ok); HDYK.dots($('sortDots'), sortList.length, res1);
+    if(!ok) HDYK.miss(LOCK,{q:'Sure thing (deductive) or good bet (inductive)? “'+it.t+'”', opts:BIN, a:it.a, why:it.why});
+    log.push({c:it.t, you:i===0?'Sure thing':'Good bet', ans:it.a===0?'Sure thing':'Good bet', ok});
+    const fb=$('sortFb'); fb.className='fb'+(ok?'':' bad');
+    fb.innerHTML='<b class="head">'+HDYK.react(ok)+' It’s a '+(it.a===0?'sure thing':'good bet')+'.</b><p>'+it.why+'</p>';
+    $('sortNext').textContent= sk===sortList.length-1 ? 'On to Act 3' : 'Next card';
+    $('sortNextWrap').classList.remove('hidden');
+  }
+  $('bin0').onclick=()=>dropIn(0); $('bin1').onclick=()=>dropIn(1);
+  $('sortNext').onclick=()=>{ sk++; if(sk<sortList.length) showSort(); else startPond(); };
+
+  /* ---------- ACT 3: pond ---------- */
+  const NS='http://www.w3.org/2000/svg';
+  let observed=0, threshold=9, blackIn=false, pondDone=false, pondLock=false;
+  function swanSVG(black){
+    const body=black?'#23232b':'#ffffff', line=black?'#0b0b10':'#6d7a8c', beak=black?'#d23a3a':'#e8892b';
+    return '<rect class="hit" x="-22" y="-26" width="46" height="38" rx="10"/>'+
+      '<g class="bobber"><ellipse cx="0" cy="10" rx="17" ry="3.2" fill="#5a8fae" opacity=".45"/>'+
+      '<path class="body" d="M-16 2 C -16 -6, 2 -10, 10 -3 C 14 0, 14 6, 8 8 L -10 8 C -15 8, -17 5, -16 2 Z" fill="'+body+'" stroke="'+line+'" stroke-width="1.4"/>'+
+      '<path d="M-9 0 C -3 -4, 3 -3, 7 2" fill="none" stroke="'+line+'" stroke-width="1.2" stroke-linecap="round"/>'+
+      '<path d="M8 -2 C 12 -8, 6 -12, 8 -18 C 9 -22, 13 -22, 14 -19" fill="none" stroke="'+line+'" stroke-width="5.4" stroke-linecap="round"/>'+
+      '<path d="M8 -2 C 12 -8, 6 -12, 8 -18 C 9 -22, 13 -22, 14 -19" fill="none" stroke="'+body+'" stroke-width="3.2" stroke-linecap="round"/>'+
+      '<circle cx="13.5" cy="-19.5" r="3.2" fill="'+body+'" stroke="'+line+'" stroke-width="1.1"/>'+
+      '<path d="M16 -21 l6 1.6 l-6 1.4 z" fill="'+beak+'" stroke="'+line+'" stroke-width=".7"/>'+
+      (black?'<path d="M19.2 -20.4 v2.2" stroke="#fff" stroke-width="1.2"/>':'')+
+      '<circle cx="13.9" cy="-20.2" r=".9" fill="'+(black?'#e33':'#2b2117')+'"/>'+
+      '<g class="seen"><circle cx="-12" cy="-12" r="6" fill="#f7d774" stroke="#9a7114" stroke-width="1.2"/><path d="M-15 -12 l2.2 2.4 l4 -4.6" fill="none" stroke="#2b2117" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g></g>';
+  }
+  function makeSwan(x,y,flip,black){
+    const g=document.createElementNS(NS,'g');
+    g.setAttribute('class','swan'); g.setAttribute('tabindex','0'); g.setAttribute('role','button');
+    g.setAttribute('aria-label', black?'The black swan':'A white swan');
+    const inner=document.createElementNS(NS,'g');
+    inner.setAttribute('transform','scale('+(flip?-1:1)*(black?1.18:1)+','+(black?1.18:1)+')');
+    inner.innerHTML=swanSVG(black);
+    const bob=inner.querySelector('.bobber'); bob.style.setProperty('--d',(4+Math.random()*3).toFixed(2)+'s'); bob.style.setProperty('--dl',(-Math.random()*5).toFixed(2)+'s');
+    g.appendChild(inner);
+    g.style.transform='translate('+x+'px,'+y+'px)';
+    g.dataset.x=x; g.dataset.y=y;
+    const act=e=>{ e.preventDefault(); tapSwan(g, black); };
+    g.addEventListener('click',act);
+    g.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') act(e); });
+    return g;
+  }
+  function ripple(x,y){ if(reduce) return; const c=document.createElementNS(NS,'circle'); c.setAttribute('cx',x); c.setAttribute('cy',+y+8); c.setAttribute('r',10); c.setAttribute('class','ripple'); $('ripples').appendChild(c); setTimeout(()=>c.remove(),800); }
+  function pondCounter(){
+    const n=observed;
+    let tail= n===0 ? 'Tap a swan to check it.' : n<3 ? 'So far, so white.' : 'Does that prove all swans are white?';
+    $('pondCount').innerHTML='White swans observed: <b>'+n+'</b>. '+tail;
+  }
+  function startPond(){
+    observed=0; threshold=8+Math.floor(Math.random()*3); blackIn=false; pondDone=false; pondLock=false;
+    const box=$('swans'); box.innerHTML='';
+    const cells=[];
+    for(let r=0;r<4;r++) for(let c=0;c<6;c++){ if(c===0&&r===2) continue; cells.push([62+c*48, 98+r*42]); }
+    HDYK.shuffle(cells).slice(0,22).forEach(([x,y])=>{
+      box.appendChild(makeSwan(x+Math.round(Math.random()*12-6), y+Math.round(Math.random()*8-4), Math.random()<.5, false));
+    });
+    $('pondCap').innerHTML=''; $('pondFb').classList.add('hidden'); $('pondNextWrap').classList.add('hidden');
+    $('pondHelp').textContent='Tap swans to observe them. Each one you check is evidence.';
+    HDYK.dots($('pondDots'),5,res2);
+    pondCounter(); show('sPond');
+  }
+  async function bringBlack(){
+    const g=gen; blackIn=true; pondLock=true;
+    $('pondHelp').textContent='Wait... something is gliding in from the edge of the pond.';
+    const b=makeSwan(-40,190,false,true); b.id='black'; $('swans').appendChild(b);
+    getComputedStyle(b).transform;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.transform='translate(52px,184px)'; }));
+    await wait(reduce?40:3300); if(g!==gen) return;
+    $('pondCap').innerHTML='<div class="caption1697"><b>1697.</b> Dutch sailors exploring the west coast of Australia saw black swans. For centuries, Europeans had used “a black swan” to mean something that doesn’t exist.</div>';
+    $('pondHelp').textContent='Your turn: tap the one observation that breaks the rule.';
+    $('pondCount').innerHTML='White swans observed: <b>'+observed+'</b>. Which swan could prove “all swans are white” wrong? Tap it.';
+    pondLock=false;
+  }
+  function tapSwan(g, black){
+    if(pondDone||pondLock) return;
+    if(!blackIn){
+      if(black||g.classList.contains('obs')){ ripple(g.dataset.x,g.dataset.y); return; }
+      g.classList.add('obs'); ripple(g.dataset.x,g.dataset.y); observed++; pondCounter();
+      if(observed>=threshold) bringBlack();
+      return;
+    }
+    // the answer tap
+    pondDone=true; ripple(g.dataset.x,g.dataset.y);
+    const ok=black;
+    document.querySelectorAll('#swans .swan').forEach(s=>{ s.classList.add('off'); s.setAttribute('tabindex','-1'); });
+    $('black').classList.add(ok?'pick':'flash');
+    res2.push(ok); HDYK.dots($('pondDots'),5,res2);
+    if(!ok) HDYK.miss(LOCK,{q:'Which observation could prove the rule “'+SWAN.rule+'” wrong?', opts:SWAN.opts, a:SWAN.a, why:SWAN.why});
+    log.push({c:SWAN.rule, you:ok?'A black swan':'Another white swan', ans:'A black swan', ok});
+    const fb=$('pondFb'); fb.className='fb'+(ok?'':' bad');
+    fb.innerHTML='<b class="head">'+HDYK.react(ok)+(ok?' Rule broken.':' That one fits the rule.')+'</b><p>'+(ok?'':'Another white swan is just more of the same. The black swan is the one that breaks it. ')+SWAN.why+' You checked '+observed+' white swans; '+observed+' more, or a million, still wouldn’t prove the rule.</p>';
+    $('pondNextWrap').classList.remove('hidden');
+  }
+  $('pondNext').onclick=()=>startQuiz();
+
+  /* ---------- Break It (rest) + grue ---------- */
+  let items=[], k=0;
+  function startQuiz(){
+    const firstThree=HDYK.shuffle(R2.slice(0,3)), order=firstThree.concat([R2[3]]);
+    items=order.map((r,i)=>{ const idx=HDYK.shuffle([0,1,2]); return {round:2, n:i+2, k:r.k, step:'Act 3 · Break It! · '+(i+2)+' of 5', title:'Which observation could prove this rule wrong?', rule:r.rule,
+      opts:idx.map(j=>r.opts[j]), a:idx.indexOf(r.a), why:r.why, orig:r}; });
+    const gi=HDYK.shuffle([0,1,2]);
+    items.push({round:3, step:'Last riddle', title:'Green or grue?', text:R3.t, opts:gi.map(j=>R3.opts[j]), a:gi.indexOf(R3.a), why:R3.why, orig:R3});
+    k=0; show('sQuiz'); showItem();
   }
   function showItem(){
     const it=items[k];
     $('qStep').textContent=it.step; $('qTitle').textContent=it.title;
-    const c=$('qText'); c.textContent=it.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
-    const o=$('qOpts'); o.className='opts'+(it.two?' two':''); o.innerHTML=it.opts.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
+    if(it.round===2) HDYK.dots($('qDots'),5,res2); else HDYK.dots($('qDots'),1,res3);
+    const c=$('qText'); c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    if(it.round===2) c.innerHTML='<div class="rulecard">'+ICONS[it.k]+'<div>Rule: “'+esc(it.rule)+'”</div></div>';
+    else c.textContent=it.text;
+    const o=$('qOpts'); o.innerHTML=it.opts.map((x,i)=>'<button data-i="'+i+'">'+esc(x)+'</button>').join('');
     o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
     $('qFb').classList.add('hidden'); $('qNextWrap').classList.add('hidden');
   }
   function answer(i){
     const it=items[k], ok=i===it.a;
-    if(ok){ if(it.round===1) s1++; else if(it.round===2) s2++; else s3++; }
     $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===it.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
-    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'Right.':'Not this time.')+'</b><p>'+it.why+'</p>';
-    log.push({c:it.label, you:it.names[i], ans:it.names[it.a], ok});
-    const last=k===items.length-1, nextRound=!last && items[k+1].round!==it.round;
-    $('qNext').textContent= last ? 'See my results' : (nextRound ? (items[k+1].round===2?'On to Break It!':'One last riddle') : 'Next');
+    if(it.round===2){ res2.push(ok); HDYK.dots($('qDots'),5,res2); } else { res3.push(ok); HDYK.dots($('qDots'),1,res3); }
+    if(!ok){
+      if(it.round===2) HDYK.miss(LOCK,{q:'Which observation could prove the rule “'+it.rule+'” wrong?', opts:it.orig.opts, a:it.orig.a, why:it.why});
+      else HDYK.miss(LOCK,{q:R3.t, opts:R3.opts.map(s=>s.replace(/[“”]/g,'"')), a:R3.a, why:R3.why});
+    }
+    log.push({c:it.round===2?it.rule:'Green or grue?', you:it.opts[i], ans:it.opts[it.a], ok});
+    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok)+'</b><p>'+it.why+'</p>';
+    const last=k===items.length-1;
+    $('qNext').textContent= last ? 'See my results' : (items[k+1].round===3 ? 'One last riddle' : 'Next rule');
     $('qNextWrap').classList.remove('hidden');
   }
   $('qNext').onclick=()=>{ k++; if(k<items.length) showItem(); else finish(); };
-  $('startBtn').onclick=()=>{ build(); k=0; show('sQuiz'); showItem(); };
+
+  /* ---------- end ---------- */
   function finish(){
     show('sEnd');
-    $('scores').innerHTML='<div><b>'+s1+' / '+R1.length+'</b><span>sure thing or bet</span></div><div><b>'+s2+' / '+R2.length+'</b><span>break it</span></div><div><b>'+s3+' / 1</b><span>grue riddle</span></div>';
-    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
+    const s1=res1.filter(Boolean).length, s2=res2.filter(Boolean).length, s3=res3.filter(Boolean).length;
+    HDYK.end($('shelf'),{lock:LOCK, right:s1+s2+s3, total:12});
+    $('scores').innerHTML='<div><b>'+s1+' / 6</b><span>sure thing or bet</span></div><div><b>'+s2+' / 5</b><span>break it</span></div><div><b>'+s3+' / 1</b><span>grue riddle</span></div>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+esc(r.c)+'</td><td>'+esc(r.you)+'</td><td class="'+(r.ok?'yes':'nope')+'">'+esc(r.ans)+'</td></tr>').join('');
     $('code').textContent=CODE;
   }
-  $('again').onclick=()=>{ s1=s2=s3=0; log=[]; show('sIntro'); };
+  function begin(){ res1=[]; res2=[]; res3=[]; log=[]; HDYK.resetMisses(LOCK); startAct1(); }
+  $('startBtn').onclick=begin;
+  $('again').onclick=()=>{ gen++; show('sIntro'); };
 })();
 </script>
 </body>

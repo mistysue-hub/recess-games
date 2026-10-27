@@ -10,10 +10,12 @@
   :root{
     --bg:#f6ecd6; --dot:#eadbb8; --ink:#2b2117; --teal:#2e6b57; --teal-d:#24543f; --teal-l:#e4eee3;
     --tang:#b5522e; --tang-d:#8f3c1f; --tang-l:#f6e2d6; --plum:#1d3a7a; --plum-l:#e3e9f5; --sand:#e6d3a8; --mute:#6f5f47;
+    --gold:#f7d774; --gold-d:#9a7114; --night:#0d1b3d;
   }
   *{box-sizing:border-box}
   html,body{margin:0;min-height:100%;background:var(--bg) ;font-family:Poppins,system-ui,sans-serif;color:var(--ink)}
   button{font-family:inherit;color:inherit}
+  button:focus-visible{outline:3px solid var(--plum);outline-offset:3px}
   .app{max-width:760px;margin:0 auto;padding:16px 16px 40px}
   .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
   .badge{width:48px;height:48px;flex:none}
@@ -33,43 +35,107 @@
   .fb.bad{background:var(--tang-l)}
   .fb b.head{display:block;font:700 18px Poppins,sans-serif;margin-bottom:4px}
   .fb p{margin:0 0 6px;font-size:16px}
+  .fb p.tie{margin-top:10px;padding-top:8px;border-top:2px dashed var(--sand)}
+  .rounds{margin:0 0 14px;padding:0;list-style:none;display:grid;gap:8px}
+  .rounds li{display:flex;gap:10px;align-items:baseline;font:400 16px/1.4 Poppins,sans-serif}
+  .rounds b.n{flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--plum);color:#fff;font:700 14px Poppins,sans-serif}
 
-  .stage{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
-  .box{width:120px;height:auto}
-  .lid{transform-origin:20px 44px;transition:transform .6s cubic-bezier(.3,1.5,.5,1)}
-  .box.open .lid{transform:rotate(-38deg)}
-  .crack{opacity:0;transition:opacity .3s}
-  .box.cracked .crack{opacity:1}
-  .box.cracked{animation:jolt .3s linear 3}
-  @keyframes jolt{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
-  .box.paradox{animation:flip 1.4s ease-in-out 2}
-  @keyframes flip{25%{transform:rotate(-8deg) scale(.95)}50%{transform:rotate(8deg) scale(1.05)}75%{transform:rotate(-4deg)}}
-  .sparkle{opacity:0}
-  .box.open .sparkle{opacity:1;animation:twinkle 1s ease-in-out infinite}
-  @keyframes twinkle{50%{opacity:.2}}
-  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif}
+  /* ---------- Round 1: the lockbox ---------- */
+  .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:14px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.6deg);font:600 19px/1.4 Poppins,sans-serif;text-align:center}
   .cardtext.in{animation:pop .4s cubic-bezier(.2,.8,.3,1.3)}
-  @keyframes pop{from{transform:scale(.8) rotate(3deg);opacity:0}to{transform:rotate(-.8deg);opacity:1}}
-  .opts{display:grid;gap:10px;margin-top:14px;grid-template-columns:repeat(3,1fr)}
+  .cardtext .two{display:grid;gap:8px;text-align:left}
+  .cardtext .two span{display:block}
+  .cardtext .two em{font-style:normal;font-family:Poppins,sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:block}
+  @keyframes pop{from{transform:scale(.85) rotate(3deg);opacity:0}to{transform:rotate(-.6deg);opacity:1}}
+  .boxwrap{display:flex;flex-direction:column;align-items:center;margin:8px 0 0}
+  .lockbox{width:min(100%,400px);height:auto;display:block;overflow:visible}
+  .caption{min-height:26px;font:600 15px Poppins,sans-serif;color:var(--plum);text-align:center;margin-top:2px}
+  .lid{transform-box:view-box;transform-origin:34px 104px;transition:transform .5s cubic-bezier(.3,1.5,.5,1)}
+  .key,.kbow{transform-box:view-box}
+  .key{transform:translateX(120px);opacity:0}
+  .key.in{transform:translateX(0);opacity:1;transition:transform .55s cubic-bezier(.3,1.2,.5,1),opacity .25s}
+  .kbow{transform-origin:192px 160px}
+  .glow,.spark,.crack,.snapfx,.tf{opacity:0}
+  .lockbox.open .lid{transform:rotate(-34deg);transition-delay:.15s}
+  .lockbox.open .glow{opacity:1;transition:opacity .5s .3s}
+  .lockbox.open .spark{animation:rise 1.4s ease-out .35s both}
+  .lockbox.open .spark:nth-of-type(2){animation-delay:.5s} .lockbox.open .spark:nth-of-type(3){animation-delay:.65s}
+  @keyframes rise{0%{opacity:0;transform:translateY(16px)}30%{opacity:1}100%{opacity:0;transform:translateY(-34px)}}
+  .lockbox.snap .kbow{animation:fall .9s cubic-bezier(.5,0,.8,.6) .1s both}
+  @keyframes fall{0%{transform:none;opacity:1}20%{transform:translate(4px,-6px) rotate(-14deg)}100%{transform:translate(26px,70px) rotate(70deg);opacity:0}}
+  .lockbox.snap .crack{opacity:1;transition:opacity .15s .1s}
+  .lockbox.snap .snapfx{animation:burst .45s ease-out .1s both}
+  @keyframes burst{0%{opacity:0;transform:scale(.4)}40%{opacity:1}100%{opacity:0;transform:scale(1.4)}}
+  .snapfx{transform-box:fill-box;transform-origin:center}
+  .lockbox.snap .body{animation:jolt .28s linear .1s 3}
+  @keyframes jolt{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .lockbox.flick .lid{animation:flicker 2.6s steps(1,end) .1s both}
+  @keyframes flicker{0%{transform:rotate(-30deg)}12%{transform:none}24%{transform:rotate(-30deg)}36%{transform:none}48%{transform:rotate(-30deg)}60%{transform:none}72%{transform:rotate(-30deg)}84%{transform:none}100%{transform:rotate(-12deg)}}
+  .lockbox.flick .tfT{animation:fT 2.6s steps(1,end) .1s both}
+  .lockbox.flick .tfF{animation:fF 2.6s steps(1,end) .1s both}
+  @keyframes fT{0%{opacity:1}12%{opacity:0}24%{opacity:1}36%{opacity:0}48%{opacity:1}60%{opacity:0}72%{opacity:1}84%{opacity:0}100%{opacity:0}}
+  @keyframes fF{0%{opacity:0}12%{opacity:1}24%{opacity:0}36%{opacity:1}48%{opacity:0}60%{opacity:1}72%{opacity:0}84%{opacity:1}100%{opacity:0}}
+  .lockbox.flick .key{animation:wob .35s ease-in-out .1s 7}
+  @keyframes wob{50%{transform:translateX(4px)}}
+  .opts{display:grid;gap:10px;margin-top:12px;grid-template-columns:repeat(3,1fr)}
   .opts button{min-height:58px;padding:10px 12px;border:1.5px solid #b89b67;border-radius:12px;background:#fff;font:600 17px/1.3 Poppins,sans-serif;cursor:pointer;box-shadow:0 3px 8px rgba(43,33,23,.18)}
   .opts button small{display:block;font-weight:400;font-size:13px;color:var(--mute)}
   .opts button.right{background:var(--teal);color:#fff} .opts button.right small{color:#fff}
   .opts button.wrong{background:var(--tang)}
+  .opts button.picked{outline:3px solid var(--gold);outline-offset:2px}
   .opts button:disabled{cursor:default}
+  .opts.two{grid-template-columns:repeat(2,1fr)}
+  .opts.one{grid-template-columns:1fr}
+  .opts.one button{text-align:left}
 
+  /* ---------- Round 2: two guards ---------- */
+  .scene{width:min(100%,460px);height:auto;display:block;margin:0 auto}
+  .say{margin:10px 0 0;background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:12px 16px;box-shadow:0 3px 8px rgba(43,33,23,.18)}
+  .say .who{display:block;font:600 12px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
+  .say .claim{font:600 19px/1.35 Poppins,sans-serif}
+  .say + .say{margin-top:8px}
+  .rules{font:500 14px/1.4 Poppins,sans-serif;color:var(--mute);text-align:center;margin:4px 0 6px}
+  .ask{font:700 18px/1.3 Poppins,sans-serif;margin:14px 0 0}
+  .leaf{transform-box:fill-box;transform-origin:left center;transition:transform .7s cubic-bezier(.3,1,.4,1)}
+  .door.open .leaf{transform:scaleX(.12)}
+  .door .inSafe,.door .inBad{opacity:0;transition:opacity .3s .25s}
+  .door.open.safe .inSafe,.door.open.bad .inBad{opacity:1}
+  .door .ring{opacity:0}
+  .door.mine .ring{opacity:1}
+  .arrow{opacity:0;transition:opacity .2s}
+  .arrow.on{opacity:1;animation:bob .8s ease-in-out infinite}
+  .arrow{transform-box:fill-box}
+  @keyframes bob{50%{transform:translateY(6px)}}
+  .bub{opacity:0;transition:opacity .2s}
+  .bub.on{opacity:1}
+  .arm{transform-box:view-box;transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+
+  /* ---------- end ---------- */
+  #shelf{margin-bottom:14px}
   table{width:100%;border-collapse:collapse;font:400 15px Poppins,sans-serif;margin:6px 0 12px}
   th,td{text-align:left;padding:8px 6px;border-bottom:2px dashed var(--sand);vertical-align:top}
   th{font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
   .yes{color:var(--teal-d);font-weight:600} .nope{color:var(--tang-d);font-weight:600}
   .code{display:inline-block;margin:6px 0 4px;padding:10px 18px;border:3px dashed var(--ink);border-radius:12px;background:var(--sand);font:700 24px Poppins,sans-serif;letter-spacing:.1em}
-  .scores{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 14px}
+  .scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
   .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
   .scores b{display:block;font:700 22px Poppins,sans-serif}
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
-  @media (max-width:560px){ .opts{grid-template-columns:1fr} .stage{grid-template-columns:80px 1fr} .box{width:80px} }
-  @media (prefers-reduced-motion:reduce){ .box,.lid,.sparkle,.cardtext.in{animation:none;transition:none} }
+  @media (max-width:560px){ .opts{grid-template-columns:1fr} .opts.two{grid-template-columns:repeat(2,1fr)} .opts button{min-height:50px} .panel{padding:16px} .cardtext{font-size:18px} }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;transition-delay:0s !important;animation-delay:0s !important}
+    .lockbox.flick .lid{animation:none;transform:rotate(-12deg)}
+    .lockbox.flick .tfT{animation:none;opacity:1} .lockbox.flick .tfF{animation:none;opacity:0}
+    .lockbox.open .spark{animation:none;opacity:1}
+    .lockbox.snap .kbow{animation:none;opacity:0}
+    .lockbox.snap .snapfx{animation:none;opacity:1}
+    .arrow.on{animation:none}
+  }
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
+  table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
+  @media (max-width:520px){th,td{font-size:13px;padding:7px 4px}}
+  .opts button.wrong,.opts button.wrong small{color:#fff}
   html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
             background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
@@ -107,6 +173,32 @@
   @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
   @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+  /* ===== shared kit (tools/kit.css) ===== */
+  .hk-dots{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+  .hk-dot{width:11px;height:11px;border-radius:50%;background:#fbf5e6;border:1.5px solid #b89b67;display:inline-block}
+  .hk-dot.ok{background:#2e6b57;border-color:#24543f} .hk-dot.no{background:#b5522e;border-color:#8f3c1f}
+  .hk-dot.now{box-shadow:0 0 0 3px rgba(247,215,116,.7)}
+  .hk-earn{display:flex;gap:14px;align-items:center;background:#0d1b3d;color:#f6ecd6;border-radius:12px;padding:14px 16px;margin:6px 0 10px;border:1.5px solid #c99a2e}
+  .hk-prize{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#2d57a8 0%,#1d3a7a 60%,#0d1b3d 100%);box-shadow:0 0 0 2px #c99a2e,0 0 22px rgba(247,215,116,.45);animation:hkpop .6s cubic-bezier(.2,.8,.3,1.4)}
+  .hk-name{font:700 22px/1.15 "Cormorant Garamond",Georgia,serif;color:#fff}
+  .hk-stars{font-size:26px;line-height:1;margin:4px 0 2px;letter-spacing:2px}
+  .hk-star{color:#3a4a73;display:inline-block} .hk-star.on{color:#f7d774;text-shadow:0 0 10px rgba(247,215,116,.7);animation:hkstar .45s ease-out both}
+  .hk-msg{font:400 13px/1.4 Poppins,sans-serif;color:#d9dff0}
+  .hk-shelf-lab{font:600 11px Poppins,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6f5f47;margin:12px 0 6px}
+  .hk-shelf{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;padding:10px;border-radius:10px;background:linear-gradient(#e6d3a8,#d6c193);border:1px solid #b89b67;box-shadow:inset 0 -5px 0 #b89b67}
+  .hk-slot{aspect-ratio:1;max-width:100%;border-radius:8px;display:grid;place-items:center;background:rgba(43,33,23,.08);border:1.5px dashed #b89b67;font:600 13px Poppins,sans-serif;color:#9a8a6a}
+  .hk-slot.got{background:#0d1b3d;border:1.5px solid #c99a2e}
+  .hk-slot.cur{box-shadow:0 0 0 3px rgba(247,215,116,.8);animation:hkpop .6s .5s both}
+  .hk-slot svg{width:80%;height:80%}
+  details.answers{margin:8px 0 12px;border:1px solid #b89b67;border-radius:10px;background:#fbf5e6;padding:0 12px}
+  details.answers summary{cursor:pointer;padding:10px 0;font:600 14px Poppins,sans-serif;color:#1d3a7a;list-style:none}
+  details.answers summary::-webkit-details-marker{display:none}
+  details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
+  details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
+  @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
+  @media (prefers-reduced-motion:reduce){.hk-prize,.hk-star.on,.hk-slot.cur{animation:none}}
 </style>
 </head>
 <body>
@@ -122,6 +214,71 @@
   <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
   <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
 </svg>
+<script>
+/* How Do You Know? shared game kit (injected by tools/reskin_games.py).
+   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
+   HDYK.shuffle(arr)              -> shuffled copy
+   HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
+   HDYK.resetMisses(lock)         -> call when a new playthrough starts
+   HDYK.misses(lock)              -> array of remembered misses for that lock
+   HDYK.end(el, {lock, right, total})  -> stars + key shelf on the end screen; marks the lock earned
+   Browser storage is optional: everything works (with a simpler shelf) if it is blocked. */
+(function(){
+  const KEYS=[
+    {n:'Copper Key',   c:'#b87333', d:'#7a4a1f', icon:'key'},
+    {n:'Iron Candle',  c:'#7c838c', d:'#3f444a', icon:'candle'},
+    {n:'Glass Compass',c:'#9fd3e6', d:'#3f7f96', icon:'compass'},
+    {n:'Stone Lantern',c:'#a59b8c', d:'#5f574b', icon:'lantern'},
+    {n:'Silver Swan',  c:'#d4d9e0', d:'#7d8794', icon:'swan'},
+    {n:'Bronze Bell',  c:'#b0793f', d:'#6d4720', icon:'bell'},
+    {n:'Quartz Mirror',c:'#eadff7', d:'#8e7bb0', icon:'mirror'},
+    {n:'Star Key',     c:'#f7d774', d:'#9a7114', icon:'star'}
+  ];
+  const ICON={
+    key:(c,d)=>`<circle cx="14" cy="20" r="7" fill="${c}" stroke="${d}" stroke-width="2"/><circle cx="14" cy="20" r="2.6" fill="#0d1b3d"/><path d="M21 20h14v5M30 20v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><path d="M21 20h14" stroke="${c}" stroke-width="1.6"/>`,
+    candle:(c,d)=>`<path d="M20 6c3 4 3 7 0 9-3-2-3-5 0-9z" fill="#f7d774" stroke="#9a7114" stroke-width="1.2"/><rect x="16" y="15" width="8" height="16" rx="1.5" fill="#f3ead6" stroke="${d}" stroke-width="1.5"/><path d="M10 31h20l-3 5H13z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    compass:(c,d)=>`<circle cx="20" cy="21" r="13" fill="${c}" fill-opacity=".55" stroke="${d}" stroke-width="2"/><path d="M20 11l3.5 10L20 31l-3.5-10z" fill="#b5522e"/><path d="M20 21l3.5 0L20 31l-3.5-10z" fill="#e8eef7"/><circle cx="20" cy="21" r="1.8" fill="${d}"/><rect x="18" y="5" width="4" height="4" rx="1" fill="${d}"/>`,
+    lantern:(c,d)=>`<path d="M13 9h14l-2-4H15z" fill="${c}" stroke="${d}" stroke-width="1.6"/><rect x="12" y="9" width="16" height="20" rx="2" fill="${c}" stroke="${d}" stroke-width="2"/><rect x="16" y="13" width="8" height="10" rx="1" fill="#f7d774"/><path d="M10 29h20v5H10z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    swan:(c,d)=>`<path d="M8 27c4 6 20 7 26 0-5 1-9-1-11-4 3-4 4-10 1-13-3-2-7 0-7 4l4 1c-1 4-4 9-2 12z" fill="${c}" stroke="${d}" stroke-width="1.8" stroke-linejoin="round"/><path d="M17 15l-4 1 4 1.4z" fill="#b5522e"/><path d="M6 33h28" stroke="#7fa8e8" stroke-width="2" stroke-linecap="round"/>`,
+    bell:(c,d)=>`<path d="M20 6c-6 0-9 5-9 11v7l-3 5h24l-3-5v-7c0-6-3-11-9-11z" fill="${c}" stroke="${d}" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="32" r="3" fill="${d}"/><rect x="18.5" y="3" width="3" height="4" rx="1.5" fill="${d}"/>`,
+    mirror:(c,d)=>`<ellipse cx="20" cy="16" rx="10" ry="12" fill="${c}" stroke="${d}" stroke-width="2.2"/><path d="M15 11c2-3 5-4 7-3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 28v8M15 36h10" stroke="${d}" stroke-width="3" stroke-linecap="round"/>`,
+    star:(c,d)=>`<path d="M14 4l2.6 5.4 5.9.8-4.3 4.1 1 5.8L14 17.4 8.8 20.1l1-5.8L5.5 10.2l5.9-.8z" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/><path d="M19 21h16v4M30 21v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="11" r="2" fill="#0d1b3d"/>`
+  };
+  function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
+  function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
+  function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
+  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
+  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  let lastR=-1, lastW=-1;
+  function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
+  const H={};
+  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+  H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
+  H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
+  H.miss=(lock,item)=>{ if(!item||!item.q||!item.opts) return; const m=get('hdyk-miss-'+lock,[]); if(m.some(x=>x.q===item.q)) return; m.push({q:String(item.q),opts:item.opts.map(String),a:item.a,why:String(item.why||'')}); put('hdyk-miss-'+lock,m.slice(-12)); };
+  H.misses=lock=>get('hdyk-miss-'+lock,[]);
+  H.keys=KEYS;
+  H.icon=(i,size)=>{ const k=KEYS[i]; return '<svg viewBox="0 0 40 40" width="'+(size||40)+'" height="'+(size||40)+'" aria-hidden="true">'+ICON[k.icon](k.c,k.d)+'</svg>'; };
+  H.end=(el,o)=>{
+    if(!el) return;
+    const lock=o.lock, pct=o.total?o.right/o.total:0, stars=pct>=0.85?3:pct>=0.6?2:1;
+    const s=store(); let earned;
+    if(s){ earned=get('hdyk-keys',{}); earned[lock]=Math.max(earned[lock]||0,stars); put('hdyk-keys',earned); }
+    else { earned={}; for(let i=1;i<lock;i++) earned[i]=0; earned[lock]=stars; }
+    const k=KEYS[lock-1];
+    let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
+    let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
+      shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+    return stars;
+  };
+  window.HDYK=H;
+})();
+</script>
 <div class="app">
   <div class="top">
     <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
@@ -135,48 +292,189 @@
     </div>
   </div>
 
+  <!-- ===== Intro ===== -->
   <section id="sIntro">
     <div class="panel">
       <h2>Every sentence is a key</h2>
-      <p>Each sentence goes into the lockbox. Some <b>unlock cleanly</b>: they can simply be true. Some <b>defeat themselves</b>: if they were true, they'd have to be false, so they're just false. And some are <b>paradoxes</b>: true if false and false if true, so they jam the lock.</p>
-      <p>Round 2 is the <b>Theory Desk</b>: match each statement to the theory of truth behind it, correspondence, coherence or pragmatist.</p>
+      <p>Some sentences can simply be true. Some knock themselves down. And a few never settle at all. Three rounds:</p>
+      <ul class="rounds">
+        <li><b class="n">1</b><span><b>The Lockbox.</b> Feed it 8 sentences. Does each one unlock cleanly, defeat itself, or jam it as a paradox?</span></li>
+        <li><b class="n">2</b><span><b>Two Guards.</b> One always tells the truth, one always lies. Use logic to find the safe door.</span></li>
+        <li><b class="n">3</b><span><b>The Theory Desk.</b> Match 6 statements to correspondence, coherence or pragmatism.</span></li>
+      </ul>
       <p class="small">You lock in every answer before the game shows you anything.</p>
       <div class="center"><button class="big" id="startBtn">Try the first key</button></div>
     </div>
   </section>
 
-  <section id="sQuiz" class="hidden">
+  <!-- ===== Round 1 ===== -->
+  <section id="sLock" class="hidden">
     <div class="panel">
-      <div class="step" id="qStep"></div>
-      <h2 id="qTitle"></h2>
-      <div class="stage">
-        <svg class="box" id="box" viewBox="0 0 120 110" aria-hidden="true">
-          <g class="sparkle" fill="#f7d774"><path d="M60 6 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/><circle cx="32" cy="18" r="3"/><circle cx="92" cy="16" r="3"/></g>
-          <rect x="16" y="48" width="88" height="54" rx="8" fill="#e6d3a8" stroke="#2b2117" stroke-width="3"/>
-          <path class="crack" d="M58 50 l-6 14 l8 8 l-7 14 l5 14" fill="none" stroke="#2b2117" stroke-width="3" stroke-linejoin="round"/>
-          <rect x="50" y="62" width="20" height="20" rx="4" fill="#1d3a7a" stroke="#2b2117" stroke-width="2.5"/>
-          <circle cx="60" cy="70" r="3" fill="#f7d774"/><rect x="58.5" y="71" width="3" height="7" rx="1.5" fill="#f7d774"/>
-          <g class="lid"><rect x="12" y="34" width="96" height="16" rx="6" fill="#d6c193" stroke="#2b2117" stroke-width="3"/></g>
+      <div class="step" id="lStep"></div>
+      <div id="lDots"></div>
+      <div class="cardtext" id="lText"></div>
+      <div class="boxwrap">
+        <svg class="lockbox" id="box" viewBox="0 0 300 230" aria-hidden="true">
+          <defs>
+            <radialGradient id="lbGlow" cx="50%" cy="100%" r="70%"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#f7d774" stop-opacity=".7"/><stop offset="1" stop-color="#f7d774" stop-opacity="0"/></radialGradient>
+          </defs>
+          <ellipse cx="150" cy="218" rx="128" ry="9" fill="#2b2117" opacity=".14"/>
+          <g class="glow"><path d="M60 104 L20 10 L280 10 L240 104 Z" fill="url(#lbGlow)" opacity=".85"/></g>
+          <g class="spark" fill="#f7d774"><path d="M150 52 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/></g>
+          <g class="spark" fill="#f7d774"><circle cx="104" cy="66" r="4"/><circle cx="196" cy="60" r="3"/></g>
+          <g class="spark" fill="#fff6c8"><circle cx="128" cy="40" r="3"/><circle cx="178" cy="34" r="4"/></g>
+          <g class="body">
+            <rect x="34" y="104" width="232" height="108" rx="14" fill="#7a4a1f" stroke="#2b2117" stroke-width="3"/>
+            <path d="M34 140 H266 M34 178 H266" stroke="#5c3714" stroke-width="2" opacity=".6"/>
+            <rect x="34" y="104" width="22" height="108" rx="6" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5"/>
+            <rect x="244" y="104" width="22" height="108" rx="6" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5"/>
+            <!-- the key (drawn under the lock plate so its tip looks inserted) -->
+            <g class="key" id="key">
+              <g class="kblade">
+                <rect x="140" y="155" width="54" height="10" rx="3" fill="#f7d774" stroke="#2b2117" stroke-width="2.5"/>
+                <path d="M160 165 v8 h6 v-8 M174 165 v6 h6 v-6" fill="#f7d774" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/>
+              </g>
+              <g class="kbow">
+                <rect x="190" y="155" width="26" height="10" rx="3" fill="#f7d774" stroke="#2b2117" stroke-width="2.5"/>
+                <circle cx="234" cy="160" r="20" fill="#f7d774" stroke="#2b2117" stroke-width="3"/>
+                <circle cx="234" cy="160" r="8" fill="#7a4a1f" stroke="#2b2117" stroke-width="2.5"/>
+              </g>
+            </g>
+            <!-- lock plate -->
+            <path d="M126 130 h48 a6 6 0 0 1 6 6 v38 a24 24 0 0 1 -60 0 v-38 a6 6 0 0 1 6 -6z" fill="#c99a2e" stroke="#2b2117" stroke-width="3"/>
+            <circle cx="150" cy="154" r="7" fill="#2b2117"/><path d="M146 158 h8 l2 14 h-12z" fill="#2b2117"/>
+            <path class="crack" d="M150 132 l-6 10 l8 6 M154 172 l6 8 l-5 10" fill="none" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <g class="snapfx" stroke="#b5522e" stroke-width="4" stroke-linecap="round"><path d="M192 140 l6 -12 M206 146 l12 -8 M210 160 h14 M206 174 l12 8 M192 180 l6 12"/></g>
+          </g>
+          <!-- lid -->
+          <g class="lid">
+            <path d="M28 104 V86 a20 20 0 0 1 20 -20 H252 a20 20 0 0 1 20 20 V104 Z" fill="#8b5a2b" stroke="#2b2117" stroke-width="3"/>
+            <rect x="28" y="96" width="244" height="12" rx="5" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5"/>
+            <rect x="134" y="98" width="32" height="20" rx="4" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5"/>
+          </g>
+          <!-- paradox flags -->
+          <g class="tf tfT"><rect x="96" y="14" width="108" height="34" rx="17" fill="#2e6b57" stroke="#2b2117" stroke-width="2.5"/><text x="150" y="38" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="18" fill="#fff">TRUE?</text></g>
+          <g class="tf tfF"><rect x="96" y="14" width="108" height="34" rx="17" fill="#b5522e" stroke="#2b2117" stroke-width="2.5"/><text x="150" y="38" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="18" fill="#fff">FALSE?</text></g>
         </svg>
-        <div class="cardtext" id="qText"></div>
+        <div class="caption" id="lCap" aria-live="polite"></div>
       </div>
-      <div class="opts" id="qOpts"></div>
-      <div class="fb hidden" id="qFb"></div>
-      <div class="go hidden" id="qNextWrap"><button class="big" id="qNext">Next</button></div>
+      <div class="opts" id="lOpts"></div>
+      <div class="fb hidden" id="lFb" aria-live="polite"></div>
+      <div class="go hidden" id="lNextWrap"><button class="big" id="lNext">Next key</button></div>
     </div>
   </section>
 
+  <!-- ===== Break between rounds ===== -->
+  <section id="sBreak" class="hidden">
+    <div class="panel">
+      <div class="step" id="bStep"></div>
+      <h2 id="bTitle"></h2>
+      <div id="bBody"></div>
+      <div class="go"><button class="big" id="bGo"></button></div>
+    </div>
+  </section>
+
+  <!-- ===== Round 2 ===== -->
+  <section id="sGuards" class="hidden">
+    <div class="panel">
+      <div class="step" id="gStep"></div>
+      <div id="gDots"></div>
+      <div class="rules">One guard always tells the truth. One always lies. You don't know which is which.</div>
+      <svg class="scene" id="scene" viewBox="0 0 360 260" aria-hidden="true">
+        <rect x="0" y="0" width="360" height="236" rx="14" fill="#d6c193"/>
+        <g stroke="#c99a2e" stroke-width="1.5" opacity=".55" fill="none">
+          <path d="M0 50 H360 M0 100 H360 M0 150 H360 M0 200 H360"/>
+          <path d="M40 0 V50 M120 0 V50 M200 0 V50 M280 0 V50 M80 50 V100 M160 50 V100 M240 50 V100 M320 50 V100 M40 150 V200 M320 150 V200 M80 200 V236 M280 200 V236"/>
+        </g>
+        <rect x="0" y="232" width="360" height="28" rx="6" fill="#c99a2e"/>
+        <!-- doors -->
+        <g class="door" id="doorL">
+          <path d="M92 234 V124 a38 38 0 0 1 76 0 V234 Z" fill="#2b2117"/>
+          <g class="inSafe"><path d="M92 234 V124 a38 38 0 0 1 76 0 V234 Z" fill="#f7d774"/><path d="M104 234 h52 v-12 h-8 v-12 h-8 v-12 h-8 v-12 h-8 v-12 h-8 z" fill="#fff6c8" stroke="#c99a2e" stroke-width="2"/><path d="M118 116 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#fff"/></g>
+          <g class="inBad"><ellipse cx="124" cy="200" rx="26" ry="18" fill="#2e6b57" stroke="#24543f" stroke-width="2.5"/><path d="M106 186 l-6 -14 10 8 M142 186 l6 -14 -10 8" fill="#2e6b57" stroke="#24543f" stroke-width="2.5" stroke-linejoin="round"/><circle cx="116" cy="196" r="3" fill="#f7d774"/><circle cx="132" cy="196" r="3" fill="#f7d774"/><path d="M114 208 q10 6 20 0" stroke="#24543f" stroke-width="2.5" fill="none"/><text x="150" y="168" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#f7d774">grr</text></g>
+          <g class="leaf"><path d="M92 234 V124 a38 38 0 0 1 76 0 V234 Z" fill="#8b5a2b" stroke="#2b2117" stroke-width="3"/><path d="M106 230 V130 M130 230 V100 M154 230 V130" stroke="#5c3714" stroke-width="2" opacity=".6"/><circle cx="158" cy="184" r="4" fill="#c99a2e" stroke="#2b2117" stroke-width="1.5"/></g>
+          <path class="ring" d="M88 236 V124 a42 42 0 0 1 84 0 V236" fill="none" stroke="#1d3a7a" stroke-width="5" stroke-linecap="round"/>
+          <text x="130" y="254" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="600" font-size="13" fill="#2b2117">left door</text>
+        </g>
+        <g class="door" id="doorR">
+          <path d="M192 234 V124 a38 38 0 0 1 76 0 V234 Z" fill="#2b2117"/>
+          <g class="inSafe"><path d="M192 234 V124 a38 38 0 0 1 76 0 V234 Z" fill="#f7d774"/><path d="M204 234 h52 v-12 h-8 v-12 h-8 v-12 h-8 v-12 h-8 v-12 h-8 z" fill="#fff6c8" stroke="#c99a2e" stroke-width="2"/><path d="M218 116 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#fff"/></g>
+          <g class="inBad"><ellipse cx="224" cy="200" rx="26" ry="18" fill="#2e6b57" stroke="#24543f" stroke-width="2.5"/><path d="M206 186 l-6 -14 10 8 M242 186 l6 -14 -10 8" fill="#2e6b57" stroke="#24543f" stroke-width="2.5" stroke-linejoin="round"/><circle cx="216" cy="196" r="3" fill="#f7d774"/><circle cx="232" cy="196" r="3" fill="#f7d774"/><path d="M214 208 q10 6 20 0" stroke="#24543f" stroke-width="2.5" fill="none"/><text x="250" y="168" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#f7d774">grr</text></g>
+          <g class="leaf"><path d="M192 234 V124 a38 38 0 0 1 76 0 V234 Z" fill="#8b5a2b" stroke="#2b2117" stroke-width="3"/><path d="M206 230 V130 M230 230 V100 M254 230 V130" stroke="#5c3714" stroke-width="2" opacity=".6"/><circle cx="258" cy="184" r="4" fill="#c99a2e" stroke="#2b2117" stroke-width="1.5"/></g>
+          <path class="ring" d="M188 236 V124 a42 42 0 0 1 84 0 V236" fill="none" stroke="#1d3a7a" stroke-width="5" stroke-linecap="round"/>
+          <text x="230" y="254" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="600" font-size="13" fill="#2b2117">right door</text>
+        </g>
+        <!-- pointing arrows -->
+        <path class="arrow" id="arrL" d="M130 62 v22 M120 76 l10 12 10 -12" fill="none" stroke="#1d3a7a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="arrow" id="arrR" d="M230 62 v22 M220 76 l10 12 10 -12" fill="none" stroke="#1d3a7a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- guards: identical uniforms, plumes differ only in color -->
+        <g id="guardL">
+          <path d="M28 236 v-40 M50 236 v-40" stroke="#2b2117" stroke-width="7" stroke-linecap="round"/>
+          <path d="M22 202 l4 -48 a14 14 0 0 1 28 0 l4 48 z" fill="#1d3a7a" stroke="#2b2117" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M28 168 h24" stroke="#f7d774" stroke-width="3"/>
+          <path d="M14 238 V96" stroke="#2b2117" stroke-width="3.5" stroke-linecap="round"/><path d="M14 84 l-6 14 h12 z" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M26 162 L14 176" stroke="#2b2117" stroke-width="6" stroke-linecap="round"/>
+          <g class="arm" id="armL" style="transform-origin:52px 160px"><path d="M52 160 L64 184" stroke="#2b2117" stroke-width="6" stroke-linecap="round"/></g>
+          <circle cx="39" cy="128" r="14" fill="#e6d3a8" stroke="#2b2117" stroke-width="3"/>
+          <circle cx="34" cy="128" r="1.8" fill="#2b2117"/><circle cx="44" cy="128" r="1.8" fill="#2b2117"/>
+          <path d="M35 135 h8" stroke="#2b2117" stroke-width="2" stroke-linecap="round"/>
+          <path d="M24 124 a15 15 0 0 1 30 0 z" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5"/>
+          <path d="M39 109 c-4 -10 2 -18 12 -18 c-2 8 -6 12 -12 18z" fill="#b5522e" stroke="#2b2117" stroke-width="2"/>
+          <g class="bub" id="bubL"><path d="M58 96 h40 a10 10 0 0 1 10 10 v12 a10 10 0 0 1 -10 10 h-30 l-10 8 v-8 a10 10 0 0 1 -10 -10 v-12 a10 10 0 0 1 10 -10z" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><circle cx="68" cy="112" r="3" fill="#2b2117"/><circle cx="78" cy="112" r="3" fill="#2b2117"/><circle cx="88" cy="112" r="3" fill="#2b2117"/></g>
+          <text x="39" y="254" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="600" font-size="12" fill="#2b2117">left guard</text>
+        </g>
+        <g id="guardR">
+          <path d="M310 236 v-40 M332 236 v-40" stroke="#2b2117" stroke-width="7" stroke-linecap="round"/>
+          <path d="M304 202 l4 -48 a14 14 0 0 1 28 0 l4 48 z" fill="#1d3a7a" stroke="#2b2117" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M308 168 h24" stroke="#f7d774" stroke-width="3"/>
+          <path d="M346 238 V96" stroke="#2b2117" stroke-width="3.5" stroke-linecap="round"/><path d="M346 84 l-6 14 h12 z" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M334 162 L346 176" stroke="#2b2117" stroke-width="6" stroke-linecap="round"/>
+          <g class="arm" id="armR" style="transform-origin:308px 160px"><path d="M308 160 L296 184" stroke="#2b2117" stroke-width="6" stroke-linecap="round"/></g>
+          <circle cx="321" cy="128" r="14" fill="#e6d3a8" stroke="#2b2117" stroke-width="3"/>
+          <circle cx="316" cy="128" r="1.8" fill="#2b2117"/><circle cx="326" cy="128" r="1.8" fill="#2b2117"/>
+          <path d="M317 135 h8" stroke="#2b2117" stroke-width="2" stroke-linecap="round"/>
+          <path d="M306 124 a15 15 0 0 1 30 0 z" fill="#c99a2e" stroke="#2b2117" stroke-width="2.5"/>
+          <path d="M321 109 c4 -10 -2 -18 -12 -18 c2 8 6 12 12 18z" fill="#2e6b57" stroke="#2b2117" stroke-width="2"/>
+          <g class="bub" id="bubR"><path d="M302 96 h-40 a10 10 0 0 0 -10 10 v12 a10 10 0 0 0 10 10 h30 l10 8 v-8 a10 10 0 0 0 10 -10 v-12 a10 10 0 0 0 -10 -10z" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><circle cx="272" cy="112" r="3" fill="#2b2117"/><circle cx="282" cy="112" r="3" fill="#2b2117"/><circle cx="292" cy="112" r="3" fill="#2b2117"/></g>
+          <text x="321" y="254" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="600" font-size="12" fill="#2b2117">right guard</text>
+        </g>
+      </svg>
+      <div id="gSays"></div>
+      <div class="ask" id="gAsk"></div>
+      <div class="opts" id="gOpts"></div>
+      <div class="fb hidden" id="gFb" aria-live="polite"></div>
+      <div class="go hidden" id="gNextWrap"><button class="big" id="gNext">Next</button></div>
+    </div>
+  </section>
+
+  <!-- ===== Round 3 ===== -->
+  <section id="sDesk" class="hidden">
+    <div class="panel">
+      <div class="step" id="dStep"></div>
+      <div id="dDots"></div>
+      <h2>Which theory of truth is this?</h2>
+      <div class="cardtext" id="dText"></div>
+      <div class="opts" id="dOpts"></div>
+      <div class="fb hidden" id="dFb" aria-live="polite"></div>
+      <div class="go hidden" id="dNextWrap"><button class="big" id="dNext">Next</button></div>
+    </div>
+  </section>
+
+  <!-- ===== End ===== -->
   <section id="sEnd" class="hidden">
     <div class="panel">
-      <h2>The box is open: what you reported</h2>
+      <div id="shelf"></div>
+      <h2>The lockbox is open</h2>
       <div class="scores" id="scores"></div>
-      <table>
-        <thead><tr><th>Item</th><th>You said</th><th>Answer</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
+      <details class="answers"><summary>See my answers</summary>
+        <table>
+          <thead><tr><th>Item</th><th>You said</th><th>Answer</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores and the code word. Then Rocky will play Protagoras, and it's your job to catch him in his own trap.</p>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then Rocky will play Protagoras, and it's your job to catch him in his own trap.</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -184,65 +482,314 @@
 
 <script>
 (function(){
-  const CODE='QUARTZ MIRROR';
+  const LOCK=7, CODE='QUARTZ MIRROR';
+  const H=window.HDYK||{react:ok=>ok?'Right.':'Not quite.',dots:()=>{},shuffle:a=>a.slice(),miss:()=>{},resetMisses:()=>{},end:()=>{}};
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const short=s=>s.length>70?s.slice(0,68)+'…':s;
+  const reduce=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Round 1 data: 3 clean, 3 self-defeating, 2 paradox ---------- */
   const K=['<b>Unlocks cleanly</b><small>can simply be true</small>','<b>Defeats itself</b><small>if true, then false</small>','<b>Paradox</b><small>true if false, false if true</small>'];
   const KN=['Unlocks cleanly','Defeats itself','Paradox'];
+  const CAP=['Click. It opens: this one can simply be true.','Snap! The key breaks inside its own lock.','Open… shut… open… It never settles.'];
   const R1=[
-    {t:"There is no truth.", a:1, why:"If it were true, there would be at least one truth (itself), so it would be false. It defeats itself, so it's simply false."},
-    {t:"This sentence has five words.", a:0, why:"Count them: This, sentence, has, five, words. It talks about itself, and it's just true. Self-reference alone isn't a problem."},
-    {t:"This sentence is false.", a:2, why:"The liar. If it's true, it's false; if it's false, it's true. No stable answer: a paradox."},
-    {t:"All generalizations are false.", a:1, why:"It's a generalization itself, so if it were true it would be false. Self-defeating."},
-    {t:"This sentence is written in English.", a:0, why:"It is. Talking about yourself is fine as long as it doesn't loop back on your own truth."},
-    {t:"Whatever anyone believes is true.", a:1, why:"Plato's trap for Protagoras, in its simplest form. Plenty of people believe this sentence is false. If whatever anyone believes is true, then it's true that the sentence is false."},
-    {t:"Front of a card: “The sentence on the back is true.” Back of the card: “The sentence on the front is false.”", a:2, why:"Follow it around: if the front is true, the back is true, so the front is false, and so on forever. A two-step liar, a paradox."},
-    {t:"I know for certain that nobody can ever know anything.", a:1, why:"If nobody can know anything, then you can't know that either. The claim knocks out its own support."}
+    {t:"This sentence has five words.", a:0, why:"Count them: This, sentence, has, five, words. Five. It talks about itself and it's simply true. Talking about yourself isn't the problem; looping back on your own truth is."},
+    {t:"All squares have four sides.", a:0, why:"An “all” sentence can be perfectly fine. This one is about squares, not about itself, and every square really does have four sides."},
+    {t:"Nobody has ever counted all the way to infinity.", a:0, why:"No trap here: it isn't about itself at all, and it's true, since there's no last number to reach. “Nobody” doesn't make a sentence self-defeating."},
+    {t:"There is no truth.", a:1, why:"If it were true, there would be at least one truth (this sentence), so it would be false. It knocks itself down, so it's simply false."},
+    {t:"I know for certain that nobody can ever know anything.", a:1, why:"If nobody can know anything, then the speaker can't know that either. The claim knocks out its own support."},
+    {t:"Whatever anyone believes is true.", a:1, why:"Plato's trap for Protagoras. Plenty of people believe this very sentence is false. If whatever anyone believes is true, then their belief is true too, and the sentence is false. So if it's true, it's false."},
+    {t:"This sentence is false.", a:2, why:"The liar paradox. If it's true, what it says is right, so it's false. If it's false, what it says is wrong, so it's true. It never settles."},
+    {two:["The sentence on the back is true.","The sentence on the front is false."], t:"Front of a card: “The sentence on the back is true.” Back: “The sentence on the front is false.”", a:2, why:"Follow it around. If the front is true, the back is true, so the front is false. If the front is false, the back is false, so the front is true. A two-step liar: a paradox."}
   ];
-  const T=['<b>Correspondence</b><small>matches the facts</small>','<b>Coherence</b><small>fits the whole system</small>','<b>Pragmatist</b><small>works out under testing</small>'];
+
+  /* ---------- Round 3 data: 2 / 2 / 2 ---------- */
   const TN=['Correspondence','Coherence','Pragmatist'];
-  const R2=[
+  const TS=['matches the facts','fits the whole system','works out under testing'];
+  const R3=[
     {t:"“The cat is on the mat” is true because the cat really is on the mat.", a:0, why:"Truth as matching the world: Aristotle's idea, the correspondence theory."},
+    {t:"A map is true when its roads and rivers match the land.", a:0, why:"The accurate map is the classic picture of correspondence."},
     {t:"A belief is true when it fits, without contradiction, into our whole system of beliefs.", a:1, why:"Truth as fit with the whole: the coherence theory."},
-    {t:"True ideas are the ones that keep holding up and guiding us well as we test them.", a:2, why:"William James's pragmatism."},
-    {t:"A map is true when its roads and rivers match the land.", a:0, why:"The map picture is the classic image of correspondence."},
-    {t:"Truth is the opinion that everyone who investigates would end up agreeing on.", a:2, why:"Charles Sanders Peirce's pragmatist definition (1878)."},
-    {t:"No belief is true on its own. It's true by belonging to the one consistent story everything else fits into.", a:1, why:"Truth as membership in a consistent whole: coherence."}
+    {t:"No belief is true on its own. It's true by belonging to the one consistent story everything else fits into.", a:1, why:"Truth as membership in a consistent whole: coherence."},
+    {t:"True ideas are the ones that keep holding up and guiding us well as we test them.", a:2, why:"William James's pragmatism (1907)."},
+    {t:"Truth is the opinion that everyone who investigates would end up agreeing on.", a:2, why:"Charles Sanders Peirce's pragmatist definition (1878)."}
   ];
-  const $=id=>document.getElementById(id);
-  let items=[], k=0, s=[0,0], log=[];
-  function show(id){ ['sIntro','sQuiz','sEnd'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); window.scrollTo(0,0); }
-  function build(){
-    items=[];
-    R1.forEach((r,i)=>items.push({round:0, step:'Round 1 · The Lockbox · '+(i+1)+' of '+R1.length, title:'What happens when this key goes in?', text:r.t, opts:K, a:r.a, why:r.why, names:KN, box:true}));
-    R2.forEach((r,i)=>items.push({round:1, step:'Round 2 · The Theory Desk · '+(i+1)+' of '+R2.length, title:'Which theory of truth is this?', text:r.t, opts:T, a:r.a, why:r.why, names:TN, box:false}));
+
+  /* ---------- Round 2 questions for puzzle 3 ---------- */
+  const QS=[
+    {id:'other', t:"“If I asked the other guard which door is safe, what would he say?”"},
+    {id:'which', t:"“Which door is safe?”"},
+    {id:'you',   t:"“Are you the truth-teller?”"}
+  ];
+
+  let s, log, res;
+  const other=x=>x==='left'?'right':'left';
+  const Cap=x=>x[0].toUpperCase()+x.slice(1);
+  function show(id){ ['sIntro','sLock','sBreak','sGuards','sDesk','sEnd'].forEach(x=>$(x).classList.toggle('hidden',x!==id)); window.scrollTo(0,0); }
+  function fb(el,ok,head,html){ el.className='fb'+(ok?'':' bad'); el.innerHTML='<b class="head">'+H.react(ok)+' '+head+'</b>'+html; }
+
+  /* ================= Round 1 ================= */
+  let L1, k1;
+  function boxReset(){
+    const box=$('box'); box.setAttribute('class','lockbox');
+    const key=$('key'); key.setAttribute('class','key'); void box.getBoundingClientRect();
+    setTimeout(()=>key.setAttribute('class','key in'),60);
   }
-  function showItem(){
-    const it=items[k];
-    $('qStep').textContent=it.step; $('qTitle').textContent=it.title;
-    const box=$('box'); box.setAttribute('class','box'); box.style.visibility = it.box ? 'visible' : 'hidden';
-    const c=$('qText'); c.textContent=it.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
-    const o=$('qOpts'); o.innerHTML=it.opts.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
-    o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
-    $('qFb').classList.add('hidden'); $('qNextWrap').classList.add('hidden');
+  function lockItem(){
+    const it=L1[k1];
+    $('lStep').textContent='Round 1 · The Lockbox · '+(k1+1)+' of '+L1.length;
+    H.dots($('lDots'),L1.length,res.lock);
+    const c=$('lText');
+    c.innerHTML= it.two ? '<div class="two"><span><em>Front of the card</em>“'+esc(it.two[0])+'”</span><span><em>Back of the card</em>“'+esc(it.two[1])+'”</span></div>' : '“'+esc(it.t)+'”';
+    c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    $('lCap').textContent='What happens when this key turns?';
+    boxReset();
+    const o=$('lOpts'); o.className='opts';
+    o.innerHTML=[0,1,2].map(i=>'<button data-i="'+i+'">'+K[i]+'</button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>lockAnswer(+b.dataset.i));
+    $('lFb').classList.add('hidden'); $('lNextWrap').classList.add('hidden');
   }
-  function answer(i){
-    const it=items[k], ok=i===it.a; if(ok) s[it.round]++;
-    if(it.box) $('box').setAttribute('class','box '+['open','cracked','paradox'][it.a]);
-    $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===it.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
-    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'Right.':'Not this time.')+' '+it.names[it.a]+'.</b><p>'+it.why+'</p>';
-    log.push({c:it.text.length>64?it.text.slice(0,62)+'…':it.text, you:it.names[i], ans:it.names[it.a], ok});
-    const last=k===items.length-1, nextRound=!last && items[k+1].round!==it.round;
-    $('qNext').textContent= last ? 'See my results' : (nextRound ? 'On to the Theory Desk' : 'Next key');
-    $('qNextWrap').classList.remove('hidden');
+  function lockAnswer(i){
+    const it=L1[k1], ok=i===it.a;
+    if(ok) s[0]++;
+    res.lock.push(ok);
+    $('key').setAttribute('class','key in');
+    $('box').setAttribute('class','lockbox '+['open','snap','flick'][it.a]);
+    $('lCap').textContent=CAP[it.a];
+    $('lOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); if(j===i) b.classList.add('picked'); });
+    H.dots($('lDots'),L1.length,res.lock);
+    const f=$('lFb'); fb(f,ok,KN[it.a]+'.','<p>'+it.why+'</p>');
+    if(!ok) H.miss(LOCK,{q:'Feed this sentence to the Liar’s Lockbox: "'+it.t+'" Does it unlock cleanly (it can simply be true), defeat itself (if it were true, it would be false), or is it a paradox (true if false, false if true)?', opts:KN.slice(), a:it.a, why:it.why});
+    log.push({c:short(it.t), you:KN[i], ans:KN[it.a], ok});
+    $('lNext').textContent= k1===L1.length-1 ? 'On to the guards' : 'Next key';
+    $('lNextWrap').classList.remove('hidden');
   }
-  $('qNext').onclick=()=>{ k++; if(k<items.length) showItem(); else finish(); };
-  $('startBtn').onclick=()=>{ build(); k=0; show('sQuiz'); showItem(); };
+  $('lNext').onclick=()=>{ k1++; if(k1<L1.length) lockItem(); else breakTo(2); };
+
+  /* ================= breaks ================= */
+  function breakTo(n){
+    show('sBreak');
+    if(n===2){
+      $('bStep').textContent='Round 2 · Two Guards';
+      $('bTitle').textContent='Two doors, two guards';
+      $('bBody').innerHTML='<p>One door is safe. Behind the other is a very grumpy dragon. One guard <b>always</b> tells the truth and one <b>always</b> lies, and they look exactly alike.</p><p>Three puzzles. Reason it out, then pick a door.</p>';
+      $('bGo').textContent='Meet the guards';
+      $('bGo').onclick=startGuards;
+    } else {
+      $('bStep').textContent='Round 3 · The Theory Desk';
+      $('bTitle').textContent='What makes a belief true?';
+      $('bBody').innerHTML='<p>Six statements land on your desk. Is each one about truth as <b>matching the facts</b> (correspondence), <b>fitting the whole system</b> (coherence), or <b>working out under testing</b> (pragmatist)?</p>';
+      $('bGo').textContent='Open the first file';
+      $('bGo').onclick=startDesk;
+    }
+    $('bGo').focus({preventScroll:true});
+  }
+
+  /* ================= Round 2 ================= */
+  // Each puzzle may be mirrored left/right per playthrough so the answers vary.
+  let P, pk, stepIdx, G3;
+  const G_TOTAL=6;
+  function sceneReset(){
+    ['doorL','doorR'].forEach(d=>$(d).setAttribute('class','door'));
+    ['arrL','arrR'].forEach(a=>$(a).setAttribute('class','arrow'));
+    ['bubL','bubR'].forEach(a=>$(a).setAttribute('class','bub'));
+    $('armL').style.transform=''; $('armR').style.transform='';
+  }
+  function speak(side){ $('bub'+(side==='left'?'L':'R')).setAttribute('class','bub on'); }
+  function point(side,door){
+    $('arr'+(door==='left'?'L':'R')).setAttribute('class','arrow on');
+    const arm=$('arm'+(side==='left'?'L':'R'));
+    if(side==='left') arm.style.transform= door==='left' ? 'rotate(-80deg)' : 'rotate(-95deg)';
+    else arm.style.transform= door==='right' ? 'rotate(80deg)' : 'rotate(95deg)';
+  }
+  function says(side,text,add){
+    const h='<div class="say"><span class="who">'+Cap(side)+' guard says</span><span class="claim">'+text+'</span></div>';
+    $('gSays').innerHTML= add ? $('gSays').innerHTML+h : h;
+  }
+  function openDoors(safe,mine){
+    ['left','right'].forEach(d=>{
+      const el=$('door'+(d==='left'?'L':'R'));
+      el.setAttribute('class','door open '+(d===safe?'safe':'bad')+(d===mine?' mine':''));
+    });
+  }
+  function startGuards(){
+    const m1=Math.random()<.5, m2=Math.random()<.5; // independent mirrors so door answers can't be guessed from a pattern
+    const sp1=m1?'right':'left', sp2=m2?'left':'right';
+    const d1=other(sp1);           // puzzle 1: the speaker (truth-teller) names the far door
+    const t2=other(sp2), d2=t2;     // puzzle 2: the truth-teller names his own side's door
+    P=[
+      {kind:'atleast', speaker:sp1, truth:sp1, safe:d1},
+      {kind:'both',    speaker:sp2, truth:t2,  safe:d2},
+      {kind:'classic', truth:Math.random()<.5?'left':'right', safe:other(d1)}
+    ];
+    pk=0; show('sGuards'); guardPuzzle();
+  }
+  function gHeader(){
+    $('gStep').textContent='Round 2 · Two Guards · Puzzle '+(pk+1)+' of 3';
+    H.dots($('gDots'),G_TOTAL,res.guards);
+  }
+  function gClear(){ $('gFb').classList.add('hidden'); $('gNextWrap').classList.add('hidden'); }
+  function setOpts(cls,items,handler){
+    const o=$('gOpts'); o.className='opts '+cls;
+    o.innerHTML=items.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>handler(+b.dataset.i));
+  }
+  function markOpts(rightIdx,picked){
+    $('gOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(rightIdx!==null && j===rightIdx) b.classList.add('right'); else if(j===picked) b.classList.add(rightIdx===null?'picked':'wrong'); if(j===picked) b.classList.add('picked'); });
+  }
+  function guardPuzzle(){
+    sceneReset(); gClear(); gHeader();
+    const p=P[pk];
+    if(p.kind==='classic') return classicStart();
+    const line = p.kind==='atleast' ? '“At least one of us is a liar.”' : '“We are both liars.”';
+    speak(p.speaker); says(p.speaker,line);
+    $('gAsk').textContent='Who is the truth-teller?';
+    const OPT=['The left guard','The right guard','No way to tell yet'];
+    setOpts('',OPT.map(esc),i=>{
+      const ans= p.truth==='left'?0:1, ok=i===ans;
+      if(ok) s[1]++; res.guards.push(ok); markOpts(ans,i); H.dots($('gDots'),G_TOTAL,res.guards);
+      const sp=p.speaker, ot=other(sp);
+      const why = p.kind==='atleast'
+        ? 'Suppose the '+sp+' guard were the liar. Then “At least one of us is a liar” would be false, so neither of them would be a liar. But he is one. Contradiction! So the '+sp+' guard tells the truth, and the '+ot+' guard is the liar.'
+        : 'Suppose the '+sp+' guard told the truth. Then “We are both liars” would be true, which would make him a liar. Impossible. So he’s the liar, his sentence is false, and the '+ot+' guard is the truth-teller.';
+      fb($('gFb'),ok,'The '+p.truth+' guard is the truth-teller.','<p>'+why+'</p>');
+      if(!ok) H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. The '+sp+' guard says, "'+(p.kind==='atleast'?'At least one of us is a liar.':'We are both liars.')+'" Who is the truth-teller?', opts:OPT.slice(), a:ans, why});
+      log.push({c:'Guards '+(pk+1)+': '+line+' Who tells the truth?', you:OPT[i], ans:OPT[ans], ok});
+      $('gNext').textContent='Hear what he says next'; $('gNextWrap').classList.remove('hidden');
+      $('gNext').onclick=doorStep;
+    });
+  }
+  function doorStep(){
+    gClear(); const p=P[pk];
+    sceneReset(); speak(p.truth);
+    says(p.truth,'“The '+p.safe+' door is safe.”', false);
+    $('gAsk').textContent='Which door do you take?';
+    doorPick(p.safe, (i,ok)=>{
+      const why='The '+p.truth+' guard is the truth-teller (you worked that out from the first sentence), so when he says the '+p.safe+' door is safe, you can trust him.';
+      fb($('gFb'),ok,'The '+p.safe+' door is safe.','<p>'+why+'</p>');
+      const first = p.kind==='atleast' ? 'The '+p.speaker+' guard says, "At least one of us is a liar." Then he says, "The '+p.safe+' door is safe."'
+                                       : 'The '+p.speaker+' guard says, "We are both liars." The '+p.truth+' guard says, "The '+p.safe+' door is safe."';
+      if(!ok) H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. '+first+' Which door is safe?', opts:['The left door','The right door'], a:p.safe==='left'?0:1, why});
+      return why;
+    });
+  }
+  function doorPick(safe,after){
+    setOpts('two',['Left door','Right door'],i=>{
+      const pick=i===0?'left':'right', ok=pick===safe;
+      if(ok) s[1]++; res.guards.push(ok);
+      markOpts(safe==='left'?0:1,i); H.dots($('gDots'),G_TOTAL,res.guards);
+      openDoors(safe,pick);
+      const p=P[pk];
+      after(i,ok);
+      log.push({c:'Guards '+(pk+1)+': which door?', you:Cap(pick)+' door', ans:Cap(safe)+' door', ok});
+      $('gNext').textContent= pk<2 ? 'Next puzzle' : 'On to the Theory Desk';
+      $('gNext').onclick=()=>{ pk++; if(pk<3) guardPuzzle(); else breakTo(3); };
+      $('gNextWrap').classList.remove('hidden');
+    });
+  }
+  function classicStart(){
+    const p=P[pk]; G3={q:null, asked:null};
+    $('gSays').innerHTML='<div class="say"><span class="who">The rule this time</span><span class="claim">You may ask ONE guard ONE question. Then you choose a door.</span></div>';
+    $('gAsk').textContent='Which question do you ask?';
+    const order=H.shuffle([0,1,2]);
+    const o=$('gOpts'); o.className='opts one';
+    o.innerHTML=order.map(i=>'<button data-i="'+i+'">'+QS[i].t+'</button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      G3.q=+b.dataset.i;
+      o.querySelectorAll('button').forEach(x=>{ x.disabled=true; if(x===b) x.classList.add('picked'); });
+      setTimeout(classicWho,250);
+    });
+  }
+  function classicWho(){
+    $('gSays').innerHTML='<div class="say"><span class="who">Your question</span><span class="claim">'+QS[G3.q].t+'</span></div>';
+    $('gAsk').textContent='Which guard do you ask?';
+    setOpts('two',['Ask the left guard','Ask the right guard'],i=>{ G3.asked=i===0?'left':'right'; classicAnswer(); });
+  }
+  function classicAnswer(){
+    const p=P[pk], g=G3.asked, liar=g!==p.truth, qid=QS[G3.q].id;
+    let pointed=null, line;
+    if(qid==='other'){ pointed=other(p.safe); line='“He would say the '+pointed+' door.”'; }        // always the unsafe door
+    else if(qid==='which'){ pointed= liar?other(p.safe):p.safe; line='“The '+pointed+' door.”'; } // depends on who you asked
+    else { line='“Yes.”'; }                                                                       // both say yes
+    G3.pointed=pointed;
+    speak(g); if(pointed) point(g,pointed);
+    $('gSays').innerHTML='<div class="say"><span class="who">You ask the '+g+' guard</span><span class="claim">'+QS[G3.q].t+'</span></div>';
+    says(g,line,true);
+    $('gAsk').textContent='Which door do you take?';
+    doorPick(p.safe,(i,ok)=>{
+      const pick=i===0?'left':'right', good=qid==='other';
+      if(good) s[1]++;
+      res.guards.splice(res.guards.length-1,0,good); // question result goes before the door result
+      H.dots($('gDots'),G_TOTAL,res.guards);
+      const whyQ='Whichever guard you ask, “If I asked the other guard which door is safe, what would he say?” points to the unsafe door. The truth-teller honestly reports the liar’s lie; the liar lies about the truth-teller’s honest answer. Either way there is exactly one lie in the chain, so you take the other door.';
+      let body;
+      if(good){
+        body='<p>He pointed to the '+pointed+' door, so the safe one is the '+other(pointed)+' door. '+whyQ+'</p>'+(ok?'':'<p>You had the right question, but went through the door he pointed at. With this question, always take the other one.</p>');
+      } else if(qid==='which'){
+        body='<p>“Which door is safe?” doesn’t help, because you don’t know if you asked the liar. This time you asked the '+(liar?'liar':'truth-teller')+', so he pointed to the '+(liar?'unsafe':'safe')+' door, but you couldn’t have known that. '+(ok?'You got through on luck.':'')+'</p><p>The better question: '+whyQ+'</p>';
+      } else {
+        body='<p>“Are you the truth-teller?” gets “Yes” from both guards: the truth-teller honestly, the liar falsely. So it told you nothing about the doors. '+(ok?'You got through on luck.':'')+'</p><p>The better question: '+whyQ+'</p>';
+      }
+      body+='<p class="tie"><b>Notice:</b> the liar guard is reliable in his own way. He’s wrong every time, so you can flip what he says. The liar <em>sentence</em> can’t be flipped like that: it has no stable truth value at all.</p>';
+      const head = ok ? 'Safe door: the '+p.safe+' one.' : 'The '+p.safe+' door was safe.';
+      fb($('gFb'),ok&&good,head,body);
+      const qOpts=QS.map(q=>q.t.replace(/[“”]/g,'"'));
+      if(!good){
+        H.miss(LOCK,{q:'Two guards guard two doors. One always tells the truth and one always lies, and you don’t know which. You may ask ONE guard ONE question. Which question tells you the safe door?', opts:qOpts, a:0, why:whyQ});
+      }
+      log.push({c:'Guards 3: which question?', you:QS[G3.q].t.replace(/[“”]/g,''), ans:QS[0].t.replace(/[“”]/g,''), ok:good});
+      if(!ok && pointed && good){
+        H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. You ask one of them, "If I asked the other guard which door is safe, what would he say?" He points to the '+pointed+' door. Which door should you take?', opts:['The left door','The right door','No way to tell'], a:p.safe==='left'?0:1, why:whyQ});
+      } else if(!ok && !good){
+        H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. You ask one of them, "If I asked the other guard which door is safe, what would he say?" He points to the '+other(p.safe)+' door. Which door should you take?', opts:['The left door','The right door','No way to tell'], a:p.safe==='left'?0:1, why:whyQ});
+      }
+    });
+  }
+
+  /* ================= Round 3 ================= */
+  let L3, k3;
+  function startDesk(){ L3=H.shuffle(R3); k3=0; show('sDesk'); deskItem(); }
+  function deskItem(){
+    const it=L3[k3];
+    $('dStep').textContent='Round 3 · The Theory Desk · '+(k3+1)+' of '+L3.length;
+    H.dots($('dDots'),L3.length,res.desk);
+    const c=$('dText'); c.textContent=it.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    const order=H.shuffle([0,1,2]);
+    const o=$('dOpts'); o.className='opts';
+    o.innerHTML=order.map(i=>'<button data-i="'+i+'"><b>'+TN[i]+'</b><small>'+TS[i]+'</small></button>').join('');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>deskAnswer(+b.dataset.i));
+    $('dFb').classList.add('hidden'); $('dNextWrap').classList.add('hidden');
+  }
+  function deskAnswer(i){
+    const it=L3[k3], ok=i===it.a;
+    if(ok) s[2]++; res.desk.push(ok);
+    $('dOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); if(j===i) b.classList.add('picked'); });
+    H.dots($('dDots'),L3.length,res.desk);
+    fb($('dFb'),ok,TN[it.a]+'.','<p>'+it.why+'</p>');
+    if(!ok) H.miss(LOCK,{q:'Which theory of truth is this? "'+it.t.replace(/[“”]/g,"'")+'"', opts:TN.slice(), a:it.a, why:it.why});
+    log.push({c:short(it.t), you:TN[i], ans:TN[it.a], ok});
+    $('dNext').textContent= k3===L3.length-1 ? 'See my results' : 'Next';
+    $('dNextWrap').classList.remove('hidden');
+  }
+  $('dNext').onclick=()=>{ k3++; if(k3<L3.length) deskItem(); else finish(); };
+
+  /* ================= end ================= */
   function finish(){
     show('sEnd');
-    $('scores').innerHTML='<div><b>'+s[0]+' / '+R1.length+'</b><span>lockbox</span></div><div><b>'+s[1]+' / '+R2.length+'</b><span>theory desk</span></div>';
-    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
+    document.querySelector('details.answers').open=false;
+    $('scores').innerHTML='<div><b>'+s[0]+' / 8</b><span>lockbox</span></div><div><b>'+s[1]+' / '+G_TOTAL+'</b><span>two guards</span></div><div><b>'+s[2]+' / 6</b><span>theory desk</span></div>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+esc(r.c)+'</td><td>'+esc(r.you)+'</td><td class="'+(r.ok?'yes':'nope')+'">'+esc(r.ans)+'</td></tr>').join('');
     $('code').textContent=CODE;
+    H.end($('shelf'),{lock:LOCK,right:s[0]+s[1]+s[2],total:8+G_TOTAL+6});
   }
-  $('again').onclick=()=>{ s=[0,0]; log=[]; show('sIntro'); };
+  function start(){
+    s=[0,0,0]; log=[]; res={lock:[],guards:[],desk:[]};
+    H.resetMisses(LOCK);
+    L1=H.shuffle(R1); k1=0; show('sLock'); lockItem();
+  }
+  $('startBtn').onclick=start;
+  $('again').onclick=()=>show('sIntro');
 })();
 </script>
 </body>

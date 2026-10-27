@@ -95,6 +95,9 @@
   @media (prefers-reduced-motion:reduce){ .draw{animation:none;stroke-dashoffset:0} .fade{animation:none;opacity:1} .claimcard.in,.chip{animation:none} }
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
+  table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
+  @media (max-width:520px){th,td{font-size:13px;padding:7px 4px}}
+  .opts button.wrong,.opts button.wrong small{color:#fff}
   html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
             background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
@@ -132,6 +135,32 @@
   @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
   @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+  /* ===== shared kit (tools/kit.css) ===== */
+  .hk-dots{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+  .hk-dot{width:11px;height:11px;border-radius:50%;background:#fbf5e6;border:1.5px solid #b89b67;display:inline-block}
+  .hk-dot.ok{background:#2e6b57;border-color:#24543f} .hk-dot.no{background:#b5522e;border-color:#8f3c1f}
+  .hk-dot.now{box-shadow:0 0 0 3px rgba(247,215,116,.7)}
+  .hk-earn{display:flex;gap:14px;align-items:center;background:#0d1b3d;color:#f6ecd6;border-radius:12px;padding:14px 16px;margin:6px 0 10px;border:1.5px solid #c99a2e}
+  .hk-prize{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#2d57a8 0%,#1d3a7a 60%,#0d1b3d 100%);box-shadow:0 0 0 2px #c99a2e,0 0 22px rgba(247,215,116,.45);animation:hkpop .6s cubic-bezier(.2,.8,.3,1.4)}
+  .hk-name{font:700 22px/1.15 "Cormorant Garamond",Georgia,serif;color:#fff}
+  .hk-stars{font-size:26px;line-height:1;margin:4px 0 2px;letter-spacing:2px}
+  .hk-star{color:#3a4a73;display:inline-block} .hk-star.on{color:#f7d774;text-shadow:0 0 10px rgba(247,215,116,.7);animation:hkstar .45s ease-out both}
+  .hk-msg{font:400 13px/1.4 Poppins,sans-serif;color:#d9dff0}
+  .hk-shelf-lab{font:600 11px Poppins,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6f5f47;margin:12px 0 6px}
+  .hk-shelf{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;padding:10px;border-radius:10px;background:linear-gradient(#e6d3a8,#d6c193);border:1px solid #b89b67;box-shadow:inset 0 -5px 0 #b89b67}
+  .hk-slot{aspect-ratio:1;max-width:100%;border-radius:8px;display:grid;place-items:center;background:rgba(43,33,23,.08);border:1.5px dashed #b89b67;font:600 13px Poppins,sans-serif;color:#9a8a6a}
+  .hk-slot.got{background:#0d1b3d;border:1.5px solid #c99a2e}
+  .hk-slot.cur{box-shadow:0 0 0 3px rgba(247,215,116,.8);animation:hkpop .6s .5s both}
+  .hk-slot svg{width:80%;height:80%}
+  details.answers{margin:8px 0 12px;border:1px solid #b89b67;border-radius:10px;background:#fbf5e6;padding:0 12px}
+  details.answers summary{cursor:pointer;padding:10px 0;font:600 14px Poppins,sans-serif;color:#1d3a7a;list-style:none}
+  details.answers summary::-webkit-details-marker{display:none}
+  details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
+  details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
+  @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
+  @media (prefers-reduced-motion:reduce){.hk-prize,.hk-star.on,.hk-slot.cur{animation:none}}
 </style>
 </head>
 <body>
@@ -147,6 +176,71 @@
   <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
   <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
 </svg>
+<script>
+/* How Do You Know? shared game kit (injected by tools/reskin_games.py).
+   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
+   HDYK.shuffle(arr)              -> shuffled copy
+   HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
+   HDYK.resetMisses(lock)         -> call when a new playthrough starts
+   HDYK.misses(lock)              -> array of remembered misses for that lock
+   HDYK.end(el, {lock, right, total})  -> stars + key shelf on the end screen; marks the lock earned
+   Browser storage is optional: everything works (with a simpler shelf) if it is blocked. */
+(function(){
+  const KEYS=[
+    {n:'Copper Key',   c:'#b87333', d:'#7a4a1f', icon:'key'},
+    {n:'Iron Candle',  c:'#7c838c', d:'#3f444a', icon:'candle'},
+    {n:'Glass Compass',c:'#9fd3e6', d:'#3f7f96', icon:'compass'},
+    {n:'Stone Lantern',c:'#a59b8c', d:'#5f574b', icon:'lantern'},
+    {n:'Silver Swan',  c:'#d4d9e0', d:'#7d8794', icon:'swan'},
+    {n:'Bronze Bell',  c:'#b0793f', d:'#6d4720', icon:'bell'},
+    {n:'Quartz Mirror',c:'#eadff7', d:'#8e7bb0', icon:'mirror'},
+    {n:'Star Key',     c:'#f7d774', d:'#9a7114', icon:'star'}
+  ];
+  const ICON={
+    key:(c,d)=>`<circle cx="14" cy="20" r="7" fill="${c}" stroke="${d}" stroke-width="2"/><circle cx="14" cy="20" r="2.6" fill="#0d1b3d"/><path d="M21 20h14v5M30 20v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><path d="M21 20h14" stroke="${c}" stroke-width="1.6"/>`,
+    candle:(c,d)=>`<path d="M20 6c3 4 3 7 0 9-3-2-3-5 0-9z" fill="#f7d774" stroke="#9a7114" stroke-width="1.2"/><rect x="16" y="15" width="8" height="16" rx="1.5" fill="#f3ead6" stroke="${d}" stroke-width="1.5"/><path d="M10 31h20l-3 5H13z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    compass:(c,d)=>`<circle cx="20" cy="21" r="13" fill="${c}" fill-opacity=".55" stroke="${d}" stroke-width="2"/><path d="M20 11l3.5 10L20 31l-3.5-10z" fill="#b5522e"/><path d="M20 21l3.5 0L20 31l-3.5-10z" fill="#e8eef7"/><circle cx="20" cy="21" r="1.8" fill="${d}"/><rect x="18" y="5" width="4" height="4" rx="1" fill="${d}"/>`,
+    lantern:(c,d)=>`<path d="M13 9h14l-2-4H15z" fill="${c}" stroke="${d}" stroke-width="1.6"/><rect x="12" y="9" width="16" height="20" rx="2" fill="${c}" stroke="${d}" stroke-width="2"/><rect x="16" y="13" width="8" height="10" rx="1" fill="#f7d774"/><path d="M10 29h20v5H10z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    swan:(c,d)=>`<path d="M8 27c4 6 20 7 26 0-5 1-9-1-11-4 3-4 4-10 1-13-3-2-7 0-7 4l4 1c-1 4-4 9-2 12z" fill="${c}" stroke="${d}" stroke-width="1.8" stroke-linejoin="round"/><path d="M17 15l-4 1 4 1.4z" fill="#b5522e"/><path d="M6 33h28" stroke="#7fa8e8" stroke-width="2" stroke-linecap="round"/>`,
+    bell:(c,d)=>`<path d="M20 6c-6 0-9 5-9 11v7l-3 5h24l-3-5v-7c0-6-3-11-9-11z" fill="${c}" stroke="${d}" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="32" r="3" fill="${d}"/><rect x="18.5" y="3" width="3" height="4" rx="1.5" fill="${d}"/>`,
+    mirror:(c,d)=>`<ellipse cx="20" cy="16" rx="10" ry="12" fill="${c}" stroke="${d}" stroke-width="2.2"/><path d="M15 11c2-3 5-4 7-3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 28v8M15 36h10" stroke="${d}" stroke-width="3" stroke-linecap="round"/>`,
+    star:(c,d)=>`<path d="M14 4l2.6 5.4 5.9.8-4.3 4.1 1 5.8L14 17.4 8.8 20.1l1-5.8L5.5 10.2l5.9-.8z" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/><path d="M19 21h16v4M30 21v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="11" r="2" fill="#0d1b3d"/>`
+  };
+  function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
+  function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
+  function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
+  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
+  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  let lastR=-1, lastW=-1;
+  function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
+  const H={};
+  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+  H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
+  H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
+  H.miss=(lock,item)=>{ if(!item||!item.q||!item.opts) return; const m=get('hdyk-miss-'+lock,[]); if(m.some(x=>x.q===item.q)) return; m.push({q:String(item.q),opts:item.opts.map(String),a:item.a,why:String(item.why||'')}); put('hdyk-miss-'+lock,m.slice(-12)); };
+  H.misses=lock=>get('hdyk-miss-'+lock,[]);
+  H.keys=KEYS;
+  H.icon=(i,size)=>{ const k=KEYS[i]; return '<svg viewBox="0 0 40 40" width="'+(size||40)+'" height="'+(size||40)+'" aria-hidden="true">'+ICON[k.icon](k.c,k.d)+'</svg>'; };
+  H.end=(el,o)=>{
+    if(!el) return;
+    const lock=o.lock, pct=o.total?o.right/o.total:0, stars=pct>=0.85?3:pct>=0.6?2:1;
+    const s=store(); let earned;
+    if(s){ earned=get('hdyk-keys',{}); earned[lock]=Math.max(earned[lock]||0,stars); put('hdyk-keys',earned); }
+    else { earned={}; for(let i=1;i<lock;i++) earned[i]=0; earned[lock]=stars; }
+    const k=KEYS[lock-1];
+    let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
+    let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
+      shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+    return stars;
+  };
+  window.HDYK=H;
+})();
+</script>
 <div class="app">
   <div class="top">
     <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
@@ -163,7 +257,7 @@
   <section id="sIntro">
     <div class="panel">
       <h2>Two rounds</h2>
-      <p><b>Round 1, the Sand Square.</b> Take the boy's place in Plato's <em>Meno</em>. You start with a square of four square feet and have to find a square exactly twice as big. Predict each answer before Socrates draws it.</p>
+      <p><b>Round 1, the Sand Square.</b> Take the boy's place in Plato's <em>Meno</em>. You start with a square of four square feet and have to find a square exactly twice as big. Predict, test, then draw the answer yourself in the sand.</p>
       <p><b>Round 2, the Source Sorter.</b> Every claim gets two questions:</p>
       <p style="margin-left:14px">1. Could you know it <b>without checking the world</b>? Yes means <em>a priori</em>, no means <em>a posteriori</em>.<br>2. Is it true <b>just because of what the words mean</b>? Yes means <em>analytic</em>, no means <em>synthetic</em>.</p>
       <p>Then the claim drops onto a board with four corners. One corner is the one Kant fought over. One is the corner nearly everyone thinks stays empty.</p>
@@ -180,6 +274,7 @@
           <div class="step" id="sStep"></div>
           <p class="q" id="sQ"></p>
           <div class="opts" id="sOpts"></div>
+          <div class="go" id="sTool"></div>
           <div class="go"><button class="big" id="sLock" disabled>Lock it in</button></div>
         </div>
       </div>
@@ -211,15 +306,18 @@
 
   <section id="sEnd" class="hidden">
     <div class="panel">
+      <div id="shelf"></div>
       <h2>Both rounds done: what you reported</h2>
       <div class="scores" id="scores"></div>
+      <details class="answers"><summary>See my answers</summary>
       <table>
         <thead><tr><th>Claim</th><th>Your corner</th><th>Answer</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
+      </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your two scores and the code word. Then he'll ask for one a priori claim and one a posteriori claim of your own.</p>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then try to stump him with a claim for the empty corner.</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -233,7 +331,7 @@
   function show(id){ ['sIntro','sSand','sSort','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
 
   // ---------- Round 1: the sand square ----------
-  // board: 1 foot = 25 units, origin (10,10); grid lines every foot up to 8 feet
+  // board: 1 foot = 40 units, origin (10,10)
   const U=40, O=10;
   function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||$('sandSvg')).appendChild(e); return e; }
   function grid(){
@@ -242,45 +340,97 @@
   }
   function sq(side, color, cls){ const r=el('rect',{x:O,y:O,width:side*U,height:side*U,fill:color,'fill-opacity':.3,stroke:'#2b2117','stroke-width':3}); if(cls) r.setAttribute('class',cls); return r; }
   function label(x,y,t,c){ const e=el('text',{x:x,y:y,'text-anchor':'middle','font-family':'Poppins,sans-serif','font-weight':700,'font-size':18,fill:c||'#2b2117'}); e.textContent=t; e.setAttribute('class','fade'); return e; }
-  function line(x1,y1,x2,y2,c){ const l=el('line',{x1:O+x1*U,y1:O+y1*U,x2:O+x2*U,y2:O+y2*U,stroke:c,'stroke-width':4,'stroke-linecap':'round'}); const len=Math.hypot((x2-x1)*U,(y2-y1)*U); l.style.setProperty('--len',len); l.setAttribute('class','draw'); return l; }
+  function line(x1,y1,x2,y2,c,cls){ const l=el('line',{x1:O+x1*U,y1:O+y1*U,x2:O+x2*U,y2:O+y2*U,stroke:c,'stroke-width':4,'stroke-linecap':'round'}); const len=Math.hypot((x2-x1)*U,(y2-y1)*U); l.style.setProperty('--len',len); l.setAttribute('class',cls||'draw'); return l; }
   function base(){ grid(); sq(2,'#2e6b57'); label(O+U*0.55,O+U*0.55+6,'4','#24543f'); }
+  // count the unit squares one by one so the area is seen, not just told
+  function countCells(side,color,done){
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches; let n=0;
+    const cells=[]; for(let y=0;y<side;y++) for(let x=0;x<side;x++) cells.push([x,y]);
+    const cnt=label(O+side*U-14,O+side*U+26>220?O+side*U-8:O+side*U+22,'',color);
+    (function step(){ if(n>=cells.length){ done&&done(); return; } const [x,y]=cells[n++];
+      el('rect',{x:O+x*U+3,y:O+y*U+3,width:U-6,height:U-6,rx:4,fill:color,'fill-opacity':.35,class:'fade'}); cnt.textContent=n;
+      setTimeout(step, reduce?0:70); })();
+  }
+  // the four small squares and their diagonals: 1 = top-left to bottom-right, 2 = bottom-left to top-right
+  const SMALL=[[0,0],[2,0],[0,2],[2,2]], GOAL=[2,1,1,2];
+  let diag=[0,0,0,0], built=false, buildTries=0;
+  function drawBuild(){
+    grid();
+    SMALL.forEach(([x,y],i)=>{
+      el('rect',{x:O+x*U,y:O+y*U,width:2*U,height:2*U,fill:'#2e6b57','fill-opacity':.14,stroke:'#2b2117','stroke-width':2});
+      if(diag[i]===1) line(x,y,x+2,y+2,'#1d3a7a','still');
+      if(diag[i]===2) line(x,y+2,x+2,y,'#1d3a7a','still');
+    });
+    if(built){
+      el('polygon',{points:[[2,0],[4,2],[2,4],[0,2]].map(([x,y])=>(O+x*U)+','+(O+y*U)).join(' '),fill:'#1d3a7a','fill-opacity':.32,class:'fade'});
+      SMALL.forEach(([x,y],i)=>{ const cx=O+(x+1)*U+(i===0||i===2?14:-14), cy=O+(y+1)*U+(i<2?14:-14); label(cx,cy+5,'½','#1d3a7a'); });
+      label(O+2*U,O+2*U+6,'8','#1d3a7a');
+    } else {
+      SMALL.forEach(([x,y],i)=>{ const t=el('rect',{x:O+x*U,y:O+y*U,width:2*U,height:2*U,fill:'transparent',style:'cursor:pointer',tabindex:0,role:'button','aria-label':'Small square '+(i+1)+': tap to draw or flip its diagonal'});
+        const tap=()=>{ diag[i]=diag[i]===1?2:1; drawBuild(); updateBuild(); };
+        t.addEventListener('click',tap); t.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tap(); } }); });
+    }
+  }
+  function updateBuild(){ const b=$('sTool').querySelector('button'); if(b) b.disabled=diag.some(d=>d===0); }
 
-  const SAND=[
-    {step:'Step 1 of 4', q:"The boy says: just double the sides. What's the area of a square with 4-foot sides?", opts:['8 square feet','12 square feet','16 square feet'], a:2,
-     draw(){ base(); const r=sq(4,'#b5522e','fade'); label(O+3*U,O+3*U+6,'16','#8f3c1f'); },
-     why:"Four times as big, not twice. Doubling the side quadruples the area: the new square holds four of the old ones. Too big."},
-    {step:'Step 2 of 4', q:"He tries 3-foot sides instead. What's the area now?", opts:['6 square feet','9 square feet','12 square feet'], a:1,
-     draw(){ base(); sq(3,'#1d3a7a','fade'); label(O+2.4*U,O+2.6*U+6,'9','#1d3a7a'); },
-     why:"3 × 3 = 9. Closer, but still bigger than 8. And no whole number of feet squares to 8. Now the boy is stuck, and admits he doesn't know."},
-    {step:'Step 3 of 4', q:"Socrates puts four of the original squares together (a 4 × 4 block) and draws a diagonal across each one. Each diagonal cuts its square exactly in half, and the tilted square in the middle is made of four of those halves. What's the area of the tilted square?", opts:['6 square feet','8 square feet','16 square feet'], a:1,
-     draw(){ grid(); for(const [x,y] of [[0,0],[2,0],[0,2],[2,2]]) el('rect',{x:O+x*U,y:O+y*U,width:2*U,height:2*U,fill:'#2e6b57','fill-opacity':.18,stroke:'#2b2117','stroke-width':2});
-       line(2,0,4,2,'#1d3a7a'); line(4,2,2,4,'#1d3a7a'); line(2,4,0,2,'#1d3a7a'); line(0,2,2,0,'#1d3a7a');
-       el('polygon',{points:[[2,0],[4,2],[2,4],[0,2]].map(([x,y])=>(O+x*U)+','+(O+y*U)).join(' '),fill:'#1d3a7a','fill-opacity':.3,class:'fade'}); label(O+2*U,O+2*U+6,'8','#1d3a7a'); },
-     why:"Four halves of a 4-square-foot square: 4 × 2 = 8. Exactly double the original."},
-    {step:'Step 4 of 4', q:"So which line is the side of a square of exactly 8 square feet?", opts:['A line 3 feet long','The diagonal of the original 4-square-foot square','A line 4 feet long'], a:1,
+  const STAGES=[
+    {step:'Step 1 of 5 · Predict', q:"The boy's first idea: double the sides, from 2 feet to 4 feet. What happens to the area?", opts:['It doubles, to 8 square feet','It triples, to 12 square feet','It quadruples, to 16 square feet'], a:2, scored:true,
+     draw(){ base(); sq(4,'#b5522e','fade'); countCells(4,'#8f3c1f'); },
+     why:"Count them: 16 square feet, four times as big, not twice. The new square holds four of the old ones. Too big."},
+    {step:'Step 2 of 5 · Test', q:"He tries 3-foot sides instead. Tap to draw it in the sand.", tool:'Draw a 3-foot square',
+     draw(){ base(); sq(3,'#1d3a7a','fade'); countCells(3,'#1d3a7a'); },
+     why:"9 square feet. Closer, but still bigger than 8, and no whole number of feet squared makes 8. Now the boy is stuck, and admits he doesn't know. Socrates says that's progress."},
+    {step:'Step 3 of 5 · Your turn', q:"Socrates puts four copies of the original square together. Tap each small square to draw a diagonal in it; tap again to flip it. Make a tilted square in the middle out of four diagonals.", build:true, scored:true},
+    {step:'Step 4 of 5 · Count', q:"Each diagonal cut a 4-square-foot square in half, and your tilted square is made of four of those halves. What's its area?", opts:['6 square feet','8 square feet','16 square feet'], a:1, scored:true,
+     draw(){ built=true; drawBuild(); },
+     why:"Four halves of 4 square feet: 4 × 2 = 8. Exactly double the original."},
+    {step:'Step 5 of 5 · Name it', q:"So which line is the side of a square of exactly 8 square feet?", opts:['A line 3 feet long','The diagonal of the original 4-square-foot square','A line 4 feet long'], a:1, scored:true,
      draw(){ base(); line(0,2,2,0,'#1d3a7a'); el('polygon',{points:[[0,0],[2,2],[0,4],[-2,2]].map(([x,y])=>(O+(x+2)*U)+','+(O+y*U)).join(' '),fill:'#1d3a7a','fill-opacity':.15,stroke:'#1d3a7a','stroke-width':2,'stroke-dasharray':'5 4',class:'fade'}); },
      why:"The square built on the diagonal. Socrates says he only asked questions, and the boy found it himself. Plato's question: where did that answer come from?"}
   ];
-  let si=0, sPick=null, sRight=0;
+  const SAND_SCORED=STAGES.filter(x=>x.scored).length;
+  let si=0, sPick=null, sRight=0, sRes=[];
+  function nextBtn(){ $('sNext').textContent= si===STAGES.length-1 ? 'On to the Source Sorter' : 'Next'; $('sNextWrap').classList.remove('hidden'); }
   function showSand(){
-    const s=SAND[si]; sPick=null; base();
+    const s=STAGES[si]; sPick=null;
     $('sStep').textContent=s.step; $('sQ').textContent=s.q;
-    $('sOpts').innerHTML=s.opts.map((o,i)=>'<button data-i="'+i+'">'+o+'</button>').join('');
+    $('sOpts').innerHTML=''; $('sTool').innerHTML=''; $('sLock').parentElement.classList.add('hidden');
+    $('sFb').classList.add('hidden'); $('sNextWrap').classList.add('hidden');
+    if(s.build){ diag=[0,0,0,0]; built=false; buildTries=0; drawBuild();
+      $('sTool').innerHTML='<button class="big" disabled>Check my square</button>';
+      $('sTool').querySelector('button').onclick=checkBuild; return; }
+    if(si!==3) base();
+    if(s.tool){ $('sTool').innerHTML='<button class="big">'+s.tool+'</button>';
+      $('sTool').querySelector('button').onclick=()=>{ $('sTool').innerHTML=''; s.draw(); const fb=$('sFb'); fb.className='fb'; fb.innerHTML='<b class="head">Too big again.</b><p>'+s.why+'</p>'; nextBtn(); }; return; }
+    const order=s.opts.map((o,i)=>i);
+    $('sOpts').innerHTML=order.map(i=>'<button data-i="'+i+'">'+s.opts[i]+'</button>').join('');
     $('sOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{ sPick=+b.dataset.i; $('sOpts').querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b)); $('sLock').disabled=false; });
     $('sLock').disabled=true; $('sLock').parentElement.classList.remove('hidden');
-    $('sFb').classList.add('hidden'); $('sNextWrap').classList.add('hidden');
+  }
+  function checkBuild(){
+    const s=STAGES[si], hits=diag.filter((d,i)=>d===GOAL[i]).length, ok=hits===4; buildTries++;
+    const fb=$('sFb');
+    if(ok){
+      if(buildTries===1){ sRight++; sRes.push(true); } else { sRes.push(false); HDYK.miss(3,{q:"In Plato's Meno, a square of 4 square feet is copied four times into a 4-by-4 block. Which square has exactly twice the area of the original?", opts:['The whole 4-by-4 block','The tilted square drawn on one diagonal of each copy','A square with 3-foot sides'], a:1, why:'Each diagonal halves a 4-square-foot square, and the tilted square is four halves: 8 square feet.'}); }
+      built=true; drawBuild(); $('sTool').innerHTML='';
+      fb.className='fb'; fb.innerHTML='<b class="head">'+(buildTries===1?HDYK.react(true):'There it is.')+'</b><p>That’s the square Socrates drew: each side is the diagonal of one small square, and the diagonals meet at the middle of each edge of the big block.'+(buildTries>1?' (It took '+buildTries+' tries, so this one doesn’t score, but you built it.)':'')+'</p>';
+      nextBtn();
+    } else {
+      const center=diag.filter((d,i)=>d!==GOAL[i]).length;
+      fb.className='fb bad'; fb.innerHTML='<b class="head">'+HDYK.react(false)+'</b><p>'+(hits===0?'All four of your diagonals run through the middle of the block, so they cross in an X instead of making a square.':hits+' of your 4 diagonals are on the tilted square’s edges.')+' Hint: each edge of the tilted square joins the midpoints of two sides of the big block, and none of them touches the center. Flip some and check again.</p>';
+    }
   }
   $('sLock').onclick=()=>{
-    const s=SAND[si], ok=sPick===s.a; if(ok) sRight++;
+    const s=STAGES[si], ok=sPick===s.a; if(ok) sRight++; sRes.push(ok);
+    if(!ok) HDYK.miss(3,{q:"Plato's Meno: "+s.q, opts:s.opts, a:s.a, why:s.why});
     $('sLock').parentElement.classList.add('hidden');
     $('sOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(+b.dataset.i===s.a) b.classList.add('right'); else if(+b.dataset.i===sPick) b.classList.add('wrong'); });
     s.draw();
-    const fb=$('sFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'Right.':'Not quite.')+'</b><p>'+s.why+'</p>';
-    $('sNext').textContent= si===SAND.length-1 ? 'On to the Source Sorter' : 'Next';
-    $('sNextWrap').classList.remove('hidden');
+    const fb=$('sFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok)+'</b><p>'+s.why+'</p>';
+    nextBtn();
   };
-  $('sNext').onclick=()=>{ si++; if(si<SAND.length) showSand(); else { show('sSort'); showClaim(); } };
-  $('startBtn').onclick=()=>{ show('sSand'); showSand(); };
+  $('sNext').onclick=()=>{ si++; if(si<STAGES.length) showSand(); else { show('sSort'); showClaim(); } };
+  $('startBtn').onclick=()=>{ HDYK.resetMisses(3); CL=HDYK.shuffle(CLAIMS); show('sSand'); showSand(); };
 
   // ---------- Round 2: the source sorter ----------
   const CLAIMS=[
@@ -293,9 +443,9 @@
     {c:"If Ana is taller than Ben, then Ben is shorter than Ana.", ap:1, an:1, why:"“Shorter than” is just “taller than” turned around. You don't need to measure anyone."},
     {c:"Ice floats in water.", ap:0, an:0, why:"Most solids sink in their own liquid. Water is unusual, and only experience tells you so."}
   ];
-  let ci=0, picks={}, sortRight=0, log=[];
+  let ci=0, picks={}, sortRight=0, log=[], CL=CLAIMS;
   function showClaim(){
-    const c=CLAIMS[ci]; picks={ap:null,an:null};
+    const c=CL[ci]; picks={ap:null,an:null};
     $('cStep').textContent='Claim '+(ci+1)+' of '+CLAIMS.length;
     const card=$('cCard'); card.textContent=c.c; card.classList.remove('in'); void card.offsetWidth; card.classList.add('in');
     $('anQ').textContent = c.kant ? "What did Kant say: is it true just because of what the words mean?" : "Is it true just because of what the words mean?";
@@ -309,7 +459,7 @@
     $('cFb').classList.add('hidden'); $('cNextWrap').classList.add('hidden');
   }
   $('cLock').onclick=()=>{
-    const c=CLAIMS[ci]; let n=0;
+    const c=CL[ci]; let n=0;
     $('cLock').parentElement.classList.add('hidden');
     document.querySelectorAll('.qbox').forEach(q=>{
       const k=q.dataset.q, ok=picks[k]===c[k]; if(ok) n++;
@@ -322,7 +472,8 @@
     const chip=document.createElement('span'); chip.className='chip '+(n===2?'ok':'no'); chip.textContent=ci+1;
     $('cell-'+c.ap+c.an).appendChild(chip);
     const fb=$('cFb'); fb.className='fb'+(n===2?'':' bad');
-    fb.innerHTML='<b class="head">'+(n===2?'Both right.':(n===1?'One of two.':'Neither this time.'))+'</b><p>'+c.why+'</p>';
+    fb.innerHTML='<b class="head">'+(n===2?HDYK.react(true):(n===1?'One of two.':HDYK.react(false)))+'</b><p>'+c.why+'</p>';
+    if(n<2) HDYK.miss(3,{q:'Which corner does this claim belong in? \u201c'+c.c+'\u201d'+(c.kant?' (as Kant saw it)':''), opts:['A priori and analytic','A priori and synthetic','A posteriori and synthetic','A posteriori and analytic'], a:c.ap?(c.an?0:1):(c.an?3:2), why:c.why});
     const corner=(p)=>(p.ap?'A priori':'A posteriori')+', '+(p.an?'analytic':'synthetic');
     log.push({c:c.c, you:corner(picks), ans:corner(c), ok:n===2});
     $('cNext').textContent= ci===CLAIMS.length-1 ? 'See my results' : 'Next claim';
@@ -332,11 +483,12 @@
 
   function finish(){
     show('sEnd');
-    $('scores').innerHTML='<div><b>'+sRight+' / '+SAND.length+'</b><span>sand square</span></div><div><b>'+sortRight+' / '+CLAIMS.length*2+'</b><span>source sorter answers</span></div>';
+    $('scores').innerHTML='<div><b>'+sRight+' / '+SAND_SCORED+'</b><span>sand square</span></div><div><b>'+sortRight+' / '+CLAIMS.length*2+'</b><span>source sorter answers</span></div>';
     $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
     $('code').textContent=CODE;
+    HDYK.end($('shelf'),{lock:3, right:sRight+sortRight, total:SAND_SCORED+CLAIMS.length*2});
   }
-  $('again').onclick=()=>{ si=0; ci=0; sRight=0; sortRight=0; log=[]; document.querySelectorAll('.cell .chip').forEach(c=>c.remove()); show('sIntro'); };
+  $('again').onclick=()=>{ si=0; ci=0; sRight=0; sortRight=0; log=[]; sRes=[]; document.querySelectorAll('.cell .chip').forEach(c=>c.remove()); show('sIntro'); };
 })();
 </script>
 </body>

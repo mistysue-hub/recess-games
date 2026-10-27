@@ -64,6 +64,10 @@
   .track{position:relative;height:22px;border:1.5px solid #b89b67;border-radius:8px;background:var(--bg);overflow:hidden}
   .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);width:0;transition:width 1s ease-out}
   .ideal{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--plum)}
+  .meter{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font:500 13px Poppins,sans-serif;color:var(--mute);margin:0 0 12px}
+  .meter .bar{height:10px;border-radius:6px;background:var(--bg);border:1.5px solid var(--sand);overflow:hidden}
+  .meter .bar i{display:block;height:100%;width:0;transition:width .5s}
+  .meter .bc i{background:var(--plum)} .meter .br i{background:var(--teal)}
   .verdict{border:1.5px solid #b89b67;border-radius:14px;padding:12px 14px;background:var(--plum-l);font:500 16px/1.45 Poppins,sans-serif}
   table{width:100%;border-collapse:collapse;font:400 15px Poppins,sans-serif;margin:6px 0 12px}
   th,td{text-align:left;padding:8px 6px;border-bottom:2px dashed var(--sand);vertical-align:top}
@@ -78,6 +82,9 @@
   @media (prefers-reduced-motion:reduce){ .bolt,.dial,.door,.glow,.fill{transition:none} .cardtext.in{animation:none} }
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
+  table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
+  @media (max-width:520px){th,td{font-size:13px;padding:7px 4px}}
+  .opts button.wrong,.opts button.wrong small{color:#fff}
   html,body{background:#0d1b3d radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%) no-repeat;background-attachment:fixed;
             background-image:radial-gradient(ellipse at 70% 0%,#2d57a8 0%,#1d3a7a 28%,#0d1b3d 62%);font-family:Poppins,system-ui,sans-serif}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
@@ -115,6 +122,32 @@
   @keyframes skflow{to{stroke-dashoffset:-280}} @keyframes skspin{to{transform:rotate(360deg)}}
   @keyframes sktw{0%,100%{opacity:1}50%{opacity:.25}} @keyframes skpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.sk-flow,.sk-spin,.sk-tw,.sk-pulse{animation:none}}
+  /* ===== shared kit (tools/kit.css) ===== */
+  .hk-dots{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+  .hk-dot{width:11px;height:11px;border-radius:50%;background:#fbf5e6;border:1.5px solid #b89b67;display:inline-block}
+  .hk-dot.ok{background:#2e6b57;border-color:#24543f} .hk-dot.no{background:#b5522e;border-color:#8f3c1f}
+  .hk-dot.now{box-shadow:0 0 0 3px rgba(247,215,116,.7)}
+  .hk-earn{display:flex;gap:14px;align-items:center;background:#0d1b3d;color:#f6ecd6;border-radius:12px;padding:14px 16px;margin:6px 0 10px;border:1.5px solid #c99a2e}
+  .hk-prize{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#2d57a8 0%,#1d3a7a 60%,#0d1b3d 100%);box-shadow:0 0 0 2px #c99a2e,0 0 22px rgba(247,215,116,.45);animation:hkpop .6s cubic-bezier(.2,.8,.3,1.4)}
+  .hk-name{font:700 22px/1.15 "Cormorant Garamond",Georgia,serif;color:#fff}
+  .hk-stars{font-size:26px;line-height:1;margin:4px 0 2px;letter-spacing:2px}
+  .hk-star{color:#3a4a73;display:inline-block} .hk-star.on{color:#f7d774;text-shadow:0 0 10px rgba(247,215,116,.7);animation:hkstar .45s ease-out both}
+  .hk-msg{font:400 13px/1.4 Poppins,sans-serif;color:#d9dff0}
+  .hk-shelf-lab{font:600 11px Poppins,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6f5f47;margin:12px 0 6px}
+  .hk-shelf{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;padding:10px;border-radius:10px;background:linear-gradient(#e6d3a8,#d6c193);border:1px solid #b89b67;box-shadow:inset 0 -5px 0 #b89b67}
+  .hk-slot{aspect-ratio:1;max-width:100%;border-radius:8px;display:grid;place-items:center;background:rgba(43,33,23,.08);border:1.5px dashed #b89b67;font:600 13px Poppins,sans-serif;color:#9a8a6a}
+  .hk-slot.got{background:#0d1b3d;border:1.5px solid #c99a2e}
+  .hk-slot.cur{box-shadow:0 0 0 3px rgba(247,215,116,.8);animation:hkpop .6s .5s both}
+  .hk-slot svg{width:80%;height:80%}
+  details.answers{margin:8px 0 12px;border:1px solid #b89b67;border-radius:10px;background:#fbf5e6;padding:0 12px}
+  details.answers summary{cursor:pointer;padding:10px 0;font:600 14px Poppins,sans-serif;color:#1d3a7a;list-style:none}
+  details.answers summary::-webkit-details-marker{display:none}
+  details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
+  details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
+  @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
+  @media (prefers-reduced-motion:reduce){.hk-prize,.hk-star.on,.hk-slot.cur{animation:none}}
 </style>
 </head>
 <body>
@@ -130,6 +163,71 @@
   <circle class="sk-pulse" cx="560" cy="90" r="36" fill="url(#skyglow)"/>
   <circle cx="990" cy="66" r="44" fill="url(#skyglow)"/><path d="M990 38 a28 28 0 1 0 22 46 a22 22 0 1 1 -22 -46z" fill="#fff3b0"/>
 </svg>
+<script>
+/* How Do You Know? shared game kit (injected by tools/reskin_games.py).
+   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
+   HDYK.shuffle(arr)              -> shuffled copy
+   HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
+   HDYK.resetMisses(lock)         -> call when a new playthrough starts
+   HDYK.misses(lock)              -> array of remembered misses for that lock
+   HDYK.end(el, {lock, right, total})  -> stars + key shelf on the end screen; marks the lock earned
+   Browser storage is optional: everything works (with a simpler shelf) if it is blocked. */
+(function(){
+  const KEYS=[
+    {n:'Copper Key',   c:'#b87333', d:'#7a4a1f', icon:'key'},
+    {n:'Iron Candle',  c:'#7c838c', d:'#3f444a', icon:'candle'},
+    {n:'Glass Compass',c:'#9fd3e6', d:'#3f7f96', icon:'compass'},
+    {n:'Stone Lantern',c:'#a59b8c', d:'#5f574b', icon:'lantern'},
+    {n:'Silver Swan',  c:'#d4d9e0', d:'#7d8794', icon:'swan'},
+    {n:'Bronze Bell',  c:'#b0793f', d:'#6d4720', icon:'bell'},
+    {n:'Quartz Mirror',c:'#eadff7', d:'#8e7bb0', icon:'mirror'},
+    {n:'Star Key',     c:'#f7d774', d:'#9a7114', icon:'star'}
+  ];
+  const ICON={
+    key:(c,d)=>`<circle cx="14" cy="20" r="7" fill="${c}" stroke="${d}" stroke-width="2"/><circle cx="14" cy="20" r="2.6" fill="#0d1b3d"/><path d="M21 20h14v5M30 20v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><path d="M21 20h14" stroke="${c}" stroke-width="1.6"/>`,
+    candle:(c,d)=>`<path d="M20 6c3 4 3 7 0 9-3-2-3-5 0-9z" fill="#f7d774" stroke="#9a7114" stroke-width="1.2"/><rect x="16" y="15" width="8" height="16" rx="1.5" fill="#f3ead6" stroke="${d}" stroke-width="1.5"/><path d="M10 31h20l-3 5H13z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    compass:(c,d)=>`<circle cx="20" cy="21" r="13" fill="${c}" fill-opacity=".55" stroke="${d}" stroke-width="2"/><path d="M20 11l3.5 10L20 31l-3.5-10z" fill="#b5522e"/><path d="M20 21l3.5 0L20 31l-3.5-10z" fill="#e8eef7"/><circle cx="20" cy="21" r="1.8" fill="${d}"/><rect x="18" y="5" width="4" height="4" rx="1" fill="${d}"/>`,
+    lantern:(c,d)=>`<path d="M13 9h14l-2-4H15z" fill="${c}" stroke="${d}" stroke-width="1.6"/><rect x="12" y="9" width="16" height="20" rx="2" fill="${c}" stroke="${d}" stroke-width="2"/><rect x="16" y="13" width="8" height="10" rx="1" fill="#f7d774"/><path d="M10 29h20v5H10z" fill="${c}" stroke="${d}" stroke-width="1.8"/>`,
+    swan:(c,d)=>`<path d="M8 27c4 6 20 7 26 0-5 1-9-1-11-4 3-4 4-10 1-13-3-2-7 0-7 4l4 1c-1 4-4 9-2 12z" fill="${c}" stroke="${d}" stroke-width="1.8" stroke-linejoin="round"/><path d="M17 15l-4 1 4 1.4z" fill="#b5522e"/><path d="M6 33h28" stroke="#7fa8e8" stroke-width="2" stroke-linecap="round"/>`,
+    bell:(c,d)=>`<path d="M20 6c-6 0-9 5-9 11v7l-3 5h24l-3-5v-7c0-6-3-11-9-11z" fill="${c}" stroke="${d}" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="32" r="3" fill="${d}"/><rect x="18.5" y="3" width="3" height="4" rx="1.5" fill="${d}"/>`,
+    mirror:(c,d)=>`<ellipse cx="20" cy="16" rx="10" ry="12" fill="${c}" stroke="${d}" stroke-width="2.2"/><path d="M15 11c2-3 5-4 7-3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 28v8M15 36h10" stroke="${d}" stroke-width="3" stroke-linecap="round"/>`,
+    star:(c,d)=>`<path d="M14 4l2.6 5.4 5.9.8-4.3 4.1 1 5.8L14 17.4 8.8 20.1l1-5.8L5.5 10.2l5.9-.8z" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/><path d="M19 21h16v4M30 21v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="11" r="2" fill="#0d1b3d"/>`
+  };
+  function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
+  function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
+  function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
+  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
+  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  let lastR=-1, lastW=-1;
+  function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
+  const H={};
+  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+  H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
+  H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
+  H.miss=(lock,item)=>{ if(!item||!item.q||!item.opts) return; const m=get('hdyk-miss-'+lock,[]); if(m.some(x=>x.q===item.q)) return; m.push({q:String(item.q),opts:item.opts.map(String),a:item.a,why:String(item.why||'')}); put('hdyk-miss-'+lock,m.slice(-12)); };
+  H.misses=lock=>get('hdyk-miss-'+lock,[]);
+  H.keys=KEYS;
+  H.icon=(i,size)=>{ const k=KEYS[i]; return '<svg viewBox="0 0 40 40" width="'+(size||40)+'" height="'+(size||40)+'" aria-hidden="true">'+ICON[k.icon](k.c,k.d)+'</svg>'; };
+  H.end=(el,o)=>{
+    if(!el) return;
+    const lock=o.lock, pct=o.total?o.right/o.total:0, stars=pct>=0.85?3:pct>=0.6?2:1;
+    const s=store(); let earned;
+    if(s){ earned=get('hdyk-keys',{}); earned[lock]=Math.max(earned[lock]||0,stars); put('hdyk-keys',earned); }
+    else { earned={}; for(let i=1;i<lock;i++) earned[i]=0; earned[lock]=stars; }
+    const k=KEYS[lock-1];
+    let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
+    let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
+      shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+    return stars;
+  };
+  window.HDYK=H;
+})();
+</script>
 <div class="app">
   <div class="top">
     <svg class="badge" viewBox="0 0 48 48" aria-hidden="true">
@@ -162,8 +260,8 @@
   <section id="sIntro">
     <div class="panel">
       <h2>Seven bolts and a dial</h2>
-      <p>The Vault has seven bolts, one for each lock you've cracked. Answer one question from each lock to slide its bolt back.</p>
-      <p>Then comes the dial: a <b>calibration round</b>. For ten claims, say whether each is true or false <em>and</em> how sure you are. At the end you'll see whether your confidence matched your accuracy. That match, not the score, is what the dial measures.</p>
+      <p>The Vault has seven bolts, one for each lock you've cracked. Answer one question from each lock to slide its bolt back. Watch out: if you missed something in an earlier game, the Vault remembers, and that's the question you'll get.</p>
+      <p>Then comes the dial: a <b>calibration round</b>. For ten claims, from easy to hard, say whether each is true or false <em>and</em> how sure you are. At the end you'll see whether your confidence matched your accuracy. That match, not the score, is what the dial measures.</p>
       <p class="small">You lock in every answer before the game shows you anything.</p>
       <div class="center"><button class="big" id="startBtn">Try the first bolt</button></div>
     </div>
@@ -182,6 +280,7 @@
   <section id="sCal" class="hidden">
     <div class="panel">
       <div class="step" id="cStep"></div>
+      <div class="meter" id="meter" aria-live="polite"></div>
       <div class="cardtext" id="cText"></div>
       <p class="label">True or false?</p>
       <div class="opts row" id="cTF"><button data-v="1">True</button><button data-v="0">False</button></div>
@@ -195,18 +294,21 @@
 
   <section id="sEnd" class="hidden">
     <div class="panel">
+      <div id="shelf"></div>
       <h2>The Vault is open</h2>
       <div class="scores" id="scores"></div>
       <p><b>Your calibration.</b> Each bar shows how often you were right when you chose that confidence. The line marks where a perfectly calibrated thinker would land.</p>
       <div class="calib" id="calib"></div>
       <div class="verdict" id="verdict"></div>
-      <table style="margin-top:14px">
+      <details class="answers" style="margin-top:14px"><summary>See my answers</summary>
+      <table>
         <thead><tr><th>Claim</th><th>You said</th><th>Answer</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
+      </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your calibration verdict and the code word. Then write your own theory of knowledge in five sentences.</p>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars, your calibration verdict and the code word. Then write your own theory of knowledge in five sentences.</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -224,29 +326,18 @@
     {lock:6, t:"A real expert in her field shows no evidence and says only, “Trust me, I'm the expert.” You should…", o:["Believe her: she's the expert","Ask to see the evidence","Assume she's lying"], a:1, why:"Experts are more likely to be right in their field, and can still be wrong. Evidence decides."},
     {lock:7, t:"“There is no truth” is…", o:["Self-defeating","A paradox","True for some people"], a:0, why:"If it were true, there would be a truth. So it defeats itself, and it's simply false."}
   ];
+  // easy to hard; balanced 5 true / 5 false
   const CAL=[
-    {t:"The Pacific is the largest ocean on Earth.", v:1},
-    {t:"Lightning never strikes the same place twice.", v:0},
-    {t:"Octopuses have three hearts.", v:1},
-    {t:"The Great Wall of China is visible from the Moon with the naked eye.", v:0},
-    {t:"Sound travels faster through water than through air.", v:1},
-    {t:"Non-bird dinosaurs and humans lived at the same time.", v:0},
-    {t:"One rotation of Venus takes longer than one Venus year.", v:1},
-    {t:"The chemical symbol for gold is Ag.", v:0},
-    {t:"Botanically speaking, bananas are berries.", v:1},
-    {t:"Mount Everest is the highest mountain above sea level.", v:1}
-  ];
-  const NOTE=[
-    "It covers about a third of the planet's surface.",
-    "It often does: tall buildings like the Empire State Building are struck many times a year.",
-    "Two pump blood through the gills and one through the rest of the body.",
-    "It's long but narrow, and astronauts say it can't be seen from the Moon without help.",
-    "Roughly four times faster in water.",
-    "The last non-bird dinosaurs died out about 66 million years ago, long before any humans.",
-    "Venus spins slowly: about 243 Earth days per rotation, but about 225 Earth days per orbit.",
-    "Gold is Au. Ag is silver.",
-    "Botanists count bananas as berries; strawberries, oddly, are not.",
-    "At about 8,849 meters above sea level."
+    {t:"Edmund Gettier's famous 1963 paper on knowledge is only about three pages long.", v:1, n:"Three pages that broke the recipe, as you read in Lock 1."},
+    {t:"Descartes wrote “I think, therefore I am” in exactly those words in his Meditations.", v:0, n:"The Meditations say “I am, I exist.” The famous slogan is from his Discourse (1637) and Principles (1644)."},
+    {t:"After a fair coin lands heads five times in a row, tails is more likely than heads on the next flip.", v:0, n:"The coin has no memory: it's still 50/50. Expecting tails to be “due” is called the gambler's fallacy."},
+    {t:"Humans use only about 10% of their brains.", v:0, n:"A popular myth. Brain scans show activity across virtually the whole brain, just not all of it at once."},
+    {t:"Studies have found that U.S. National Weather Service forecasters' chances of rain are well calibrated.", v:1, n:"From Lock 8's reading: when they say 70%, it rains on about 70% of those days."},
+    {t:"In a room of just 23 people, there's a better than even chance that two of them share a birthday.", v:1, n:"About 50.7%. There are 253 different pairs of people in a room of 23, so a match is likelier than it feels."},
+    {t:"Earth is closest to the Sun in early January.", v:1, n:"Around January 3. Seasons come from Earth's tilt, not its distance from the Sun."},
+    {t:"Old church windows are thicker at the bottom because glass slowly flows downward like a liquid.", v:0, n:"A myth. Old glass was uneven when it was made, and glaziers often set the thick edge at the bottom. Glass at room temperature doesn't flow in any noticeable way."},
+    {t:"If a test for a rare disease is 99% accurate and you test positive, you are about 99% likely to have the disease.", v:0, n:"When a disease is rare, false alarms from the many healthy people tested can outnumber the true cases, so your chance can be far lower. It depends on how common the disease is."},
+    {t:"There are more ways to shuffle a deck of 52 cards than there are stars in the observable universe.", v:1, n:"52 × 51 × 50 × … × 1 is about 8 × 10⁶⁷. Estimates of the stars in the observable universe are around 10²² to 10²⁴."}
   ];
   const $=id=>document.getElementById(id);
   let bi=0, boltRight=0, ci=0, tf=null, conf=null, calRight=0, cal=[], log=[];
@@ -264,28 +355,41 @@
   }
   function slide(i, ok){ const b=bolts[i]; b.style.transform='translate('+b.dataset.dx+'px,'+b.dataset.dy+'px)'; b.classList.add(ok?'open':'miss'); }
 
-  $('startBtn').onclick=()=>{ show('sBolts'); showBolt(); };
+  let QB=BOLTS;
+  function buildBolts(){
+    QB=BOLTS.map(b=>{
+      const m=HDYK.misses(b.lock);
+      if(!m.length) return Object.assign({own:false},b);
+      const x=m[Math.floor(Math.random()*m.length)];
+      return {lock:b.lock, own:true, t:x.q, o:x.opts, a:x.a, why:x.why};
+    });
+  }
+  $('startBtn').onclick=()=>{ buildBolts(); show('sBolts'); showBolt(); };
   function showBolt(){
-    const q=BOLTS[bi];
-    $('bStep').textContent='Bolt '+(bi+1)+' of 7 · from Lock '+q.lock;
+    const q=QB[bi];
+    $('bStep').textContent='Bolt '+(bi+1)+' of 7 · from Lock '+q.lock+(q.own?' · one you missed before':'');
     const c=$('bText'); c.textContent=q.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
     $('bOpts').innerHTML=q.o.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
     $('bOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>answerBolt(+b.dataset.i));
     $('bFb').classList.add('hidden'); $('bNextWrap').classList.add('hidden');
   }
   function answerBolt(i){
-    const q=BOLTS[bi], ok=i===q.a; if(ok) boltRight++;
+    const q=QB[bi], ok=i===q.a; if(ok) boltRight++;
     $('bOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===q.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
     slide(bi, ok); $('dial').style.transform='rotate('+((bi+1)*51)+'deg)';
-    const fb=$('bFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?'The bolt slides back.':'The bolt sticks, then gives.')+'</b><p>'+q.why+'</p>';
+    const fb=$('bFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?(q.own?'Got it this time. The bolt slides back.':'The bolt slides back.'):'The bolt sticks, then gives.')+'</b><p>'+q.why+'</p>';
     log.push({c:'Lock '+q.lock+': '+(q.t.length>54?q.t.slice(0,52)+'…':q.t), you:q.o[i], ans:q.o[q.a], ok});
-    $('bNext').textContent= bi===BOLTS.length-1 ? 'Turn to the dial' : 'Next bolt';
+    $('bNext').textContent= bi===QB.length-1 ? 'Turn to the dial' : 'Next bolt';
     $('bNextWrap').classList.remove('hidden');
   }
-  $('bNext').onclick=()=>{ bi++; if(bi<BOLTS.length) showBolt(); else { show('sCal'); showCal(); } };
+  $('bNext').onclick=()=>{ bi++; if(bi<QB.length) showBolt(); else { show('sCal'); showCal(); } };
 
+  function meter(){
+    const n=cal.length, ac=n?Math.round(cal.reduce((a,x)=>a+x.conf,0)/n):0, rt=n?Math.round(100*cal.filter(x=>x.ok).length/n):0;
+    $('meter').innerHTML=n?'<span>sure</span><div class="bar bc"><i style="width:'+ac+'%"></i></div><b>'+ac+'%</b><span>right</span><div class="bar br"><i style="width:'+rt+'%"></i></div><b>'+rt+'%</b>':'<span style="grid-column:1/-1">Your running calibration meter fills in after the first claim.</span>';
+  }
   function showCal(){
-    const q=CAL[ci]; tf=null; conf=null;
+    const q=CAL[ci]; tf=null; conf=null; meter();
     $('cStep').textContent='The dial · claim '+(ci+1)+' of '+CAL.length;
     const c=$('cText'); c.textContent=q.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
     ['cTF','cConf'].forEach(g=>$(g).querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; }));
@@ -302,7 +406,7 @@
     $('cConf').querySelectorAll('button').forEach(b=>b.disabled=true);
     $('dial').style.transform='rotate('+(360+ (ci+1)*36)+'deg)';
     const fb=$('cFb'); fb.className='fb'+(ok?'':' bad');
-    fb.innerHTML='<b class="head">'+(q.v?'True.':'False.')+' You were '+(ok?'right':'wrong')+' at '+conf+'% sure.</b><p>'+NOTE[ci]+'</p>';
+    fb.innerHTML='<b class="head">'+(q.v?'True.':'False.')+' You were '+(ok?'right':'wrong')+' at '+conf+'% sure.</b><p>'+q.n+'</p>'; meter();
     log.push({c:q.t, you:(tf?'True':'False')+' ('+conf+'%)', ans:q.v?'True':'False', ok});
     $('cNext').textContent= ci===CAL.length-1 ? 'Open the Vault' : 'Next claim';
     $('cNextWrap').classList.remove('hidden');
@@ -322,13 +426,20 @@
     $('calib').innerHTML=html;
     requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));
     const avgConf=cal.reduce((s,x)=>s+x.conf,0)/cal.length, acc=100*calRight/CAL.length, gap=Math.round(avgConf-acc);
-    let v;
-    if(Math.abs(gap)<=10) v='<b>Well calibrated.</b> Your average confidence ('+Math.round(avgConf)+'%) was close to how often you were right ('+Math.round(acc)+'%).';
+    let v, worst=null;
+    levels.forEach(l=>{
+      const g=cal.filter(x=>x.conf===l); if(g.length<2) return;
+      const k=g.filter(x=>x.ok).length, miss=Math.abs(l-100*k/g.length);
+      if(miss>=25 && (!worst||miss>worst.miss)) worst={l,k,n:g.length,miss,over:l>100*k/g.length};
+    });
+    if(Math.abs(gap)<=10 && !worst) v='<b>Well calibrated.</b> Your average confidence ('+Math.round(avgConf)+'%) was close to how often you were right ('+Math.round(acc)+'%), and no confidence level was far off.';
+    else if(Math.abs(gap)<=10) v='<b>Close on average, with one weak spot.</b> Your average confidence ('+Math.round(avgConf)+'%) was near your accuracy ('+Math.round(acc)+'%), but when you said '+worst.l+'% you were right '+worst.k+' of '+worst.n+' times. '+(worst.over?'That level was overconfident.':'That level was underconfident.');
     else if(gap>10) v='<b>A bit overconfident.</b> You were '+Math.round(avgConf)+'% sure on average but right '+Math.round(acc)+'% of the time. That is the most common pattern there is, and practice shrinks it.';
     else v='<b>A bit underconfident.</b> You were right '+Math.round(acc)+'% of the time but only '+Math.round(avgConf)+'% sure on average. You know more than you give yourself credit for.';
     $('verdict').innerHTML=v+' <span class="small">(Ten claims is a small sample, so treat this as a first reading, not a verdict.)</span>';
     $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
     $('code').textContent=CODE;
+    HDYK.end($('shelf'),{lock:8, right:boltRight+calRight, total:BOLTS.length+CAL.length});
   }
   $('again').onclick=()=>{ bi=0; ci=0; boltRight=0; calRight=0; cal=[]; log=[]; bolts.forEach(b=>{ b.style.transform=''; b.setAttribute('class','bolt'); }); $('dial').style.transform=''; $('vault').classList.remove('swing'); show('sIntro'); };
 })();
