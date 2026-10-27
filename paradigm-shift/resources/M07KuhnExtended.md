@@ -1,6 +1,6 @@
 # Module 7: Revolution: The Drifting Continents
 
-The Atlantic is widening by a few centimeters a year, roughly the rate your fingernails grow. In 1926, a room full of expert geologists was asked to consider that continents move, and most of them said no. They had good reasons. They were also wrong.
+The Atlantic is widening by a few centimeters a year, roughly the rate your fingernails grow. In 1926, a room full of expert geologists was asked to consider that continents move, and most of them said no. They had good reasons. By the 1960s, almost all of them, or their students, had switched sides.
 
 ## An outsider's hypothesis
 

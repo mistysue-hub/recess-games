@@ -1,6 +1,6 @@
 # Module 11: This Course Is a Paradigm
 
-This reading caught a mistake in itself. While the course was being checked, a reviewer noticed that this module's own list of anomalies didn't match Module 5. It's fixed now. Keep that in mind as you read: a course about science changing its mind had to change its own mind, too.
+This reading caught a mistake in itself. While the course was being checked, we noticed that this module's own list of anomalies didn't match Module 5. It's fixed now. Keep that in mind as you read: a course about science changing its mind had to change its own mind, too.
 
 ## Turn the tools around
 

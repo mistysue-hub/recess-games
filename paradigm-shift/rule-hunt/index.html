@@ -69,11 +69,19 @@
 (function(){
   var level = new URLSearchParams(location.search).get('level') === 'extended' ? 'extended' : 'core';
   var app = document.getElementById('app');
-  var OPTIONS = {
-    core: ['Any three numbers that go up','Each number goes up by 2','Only even numbers','Each number goes up by the same amount'],
-    extended: ['Any three numbers that go up','Each number goes up by the same amount','The middle number is the average of the other two','Even numbers going up']
-  }[level];
   var RIGHT = 'Any three numbers that go up';
+  // Loose pattern check for the right rule: any wording that captures "the numbers go up / increase / ascend".
+  // Reject common narrow guesses ("by 2", "even", "same amount") even if they contain "up".
+  function matchesRule(s){
+    var t = (s||'').toLowerCase();
+    if(!t.trim()) return false;
+    // Narrow guesses that mention a step size or evenness are wrong.
+    if(/\bby\s*(2|two|three|3|4|four|five|5|the same|a fixed|equal|constant)\b/.test(t)) return false;
+    if(/\b(even|odd|arithmetic|constant difference|equal (steps|intervals|gaps|amounts?|differences?)|same (step|difference|gap|interval|amount))\b/.test(t)) return false;
+    if(/\baverage\b/.test(t)) return false;
+    // Accept wording that captures ascending.
+    return /\b(go(ing|es)?\s+up|ascend|increas|larger|bigger|rising|get bigger|from small(er)? to (big|larg)|smaller to larger|order from small)\b/.test(t);
+  }
   var tests = [], wrongInRow = 0, guesses = 0, solved = false, revealed = false, hintShown = false;
   var cur = ['', '', ''], active = 0;
 
@@ -134,23 +142,32 @@
   }
 
   function guessRule(){
-    var opts = shuffle(OPTIONS);
-    el('<h2>Name the rule</h2><p>Which rule is it?</p><div id="o"></div><button class="btn" id="back">Keep testing instead</button>');
-    var box = document.getElementById('o');
-    opts.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o;
-      b.onclick=function(){ guesses++;
-        if(o===RIGHT){ solved = true; finish(); }
-        else { wrongInRow++;
-          if(wrongInRow>=2){ revealed = true; finish(); }
-          else lab('<div class="feedback wrong"><b class="v">Not that one.</b>Keep testing. Try a set your guess says should fail.</div>');
-        }
-      }; box.appendChild(b); });
+    el('<h2>Name the rule</h2><p>Type the rule in your own words. Short is fine.</p>'+
+      '<input id="guessbox" type="text" autocomplete="off" style="width:100%;padding:10px 12px;font-size:18px;border:2px solid var(--ink);border-radius:8px;background:#fff;font-family:inherit"/>'+
+      '<button class="btn main" id="submit" style="margin-top:10px">Submit this rule</button> '+
+      '<button class="btn" id="back">Keep testing instead</button>');
+    var inp = document.getElementById('guessbox'); inp.focus();
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ document.getElementById('submit').click(); }});
+    document.getElementById('submit').onclick = function(){
+      var g = inp.value;
+      if(!g.trim()) return;
+      guesses++;
+      if(matchesRule(g)){ solved = true; myGuess = g; finish(); }
+      else {
+        wrongInRow++;
+        myGuess = g;
+        if(wrongInRow>=2){ revealed = true; finish(); }
+        else lab('<div class="feedback wrong"><b class="v">Not quite.</b>Keep testing. Try a set your guess says should fail.</div>');
+      }
+    };
     document.getElementById('back').onclick = function(){ lab(); };
   }
+  var myGuess = '';
 
   function finish(){
     var text = ['done — 2-4-6 Rule Hunt ('+level+')',
       'Tests: '+tests.length+' (breaking tests: '+breaking()+')',
+      'My guess: '+(myGuess||'(none typed)'),
       'Rule: '+(solved ? 'found in '+guesses+(guesses===1?' guess':' guesses') : 'shown after two wrong guesses')].join('\n');
     el('<h1>Notebook closed</h1><div class="tag">2-4-6 Rule Hunt · '+(level==='core'?'Core':'Extended')+'</div>'+
       (solved ? '<div class="feedback"><b class="v">You found it: any three numbers that go up.</b></div>' :
@@ -166,7 +183,7 @@
         try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
       try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
     };
-    document.getElementById('again').onclick = function(){ tests=[]; wrongInRow=0; guesses=0; solved=false; revealed=false; hintShown=false; cur=['','','']; active=0; intro(); };
+    document.getElementById('again').onclick = function(){ tests=[]; wrongInRow=0; guesses=0; solved=false; revealed=false; hintShown=false; cur=['','','']; active=0; myGuess=''; intro(); };
   }
 
   intro();

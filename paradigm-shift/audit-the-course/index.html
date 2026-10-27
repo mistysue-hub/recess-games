@@ -93,37 +93,45 @@
       b.onclick=function(){ onPick(o, b); }; box.appendChild(b); });
   }
 
-  var LABELS = [{k:'fair',label:'Fair'},{k:'simp',label:'Simplified'},{k:'left',label:'Left something out'},{k:'mist',label:'Mistake (fixed)'}];
-  var NAMES = {fair:'Fair', simp:'Simplified', left:'Left something out', mist:'Mistake (fixed)'};
+  var CORE_LABELS = [{k:'fair',label:'Fair'},{k:'fix',label:'Needs a fix'}];
+  var EXT_LABELS = [{k:'fair',label:'Fair'},{k:'simp',label:'Simplified'},{k:'left',label:'Left something out'},{k:'mist',label:'Mistake (fixed)'}];
+  var LABELS = level==='core' ? CORE_LABELS : EXT_LABELS;
+  var NAMES = {fair:'Fair', fix:'Needs a fix', simp:'Simplified', left:'Left something out', mist:'Mistake (fixed)'};
+  function isCatch(k){ return k==='mist' || k==='fix'; }
+  // The course's own verdict on each item: 'mist' means a real factual error; otherwise what label fits best at Extended.
   var ITEMS = [
-    {src:'Module 1, first draft', text:'In August 1774, Priestley tested his gas on a mouse and named it "dephlogisticated air."', mistake:true,
-      note:'A real mistake, caught by fact-checking. The mouse test and the name came in early 1775. The draft squeezed a messy timeline into one tidy moment, the habit Module 1 warns about.'},
-    {src:'Module 1', text:'Scheele made oxygen first. Priestley made it and told the world first. Lavoisier was the first to understand it as we do today.',
-      note:'The course\'s note: a fair summary, but still three neat sentences about three famous men. Other chemists, assistants and instrument makers aren\'t in it.'},
-    {src:'Module 2, first draft', text:'The first Leyden jars were glass jars coated with metal foil.', mistake:true,
-      note:'A real mistake, caught by fact-checking. The first jars were partly filled with water. Foil linings came in 1747.'},
-    {src:'Module 3', text:'The course picked Halley\'s comet, a prediction that worked, as its example of normal science.',
-      note:'The course\'s note: success stories get retold; failed predictions mostly don\'t. Picking only winners makes normal science look more reliable.'},
-    {src:'Module 4', text:'An experiment with 28 Harvard and Radcliffe students in 1949 shows how expectations shape what scientists see.',
-      note:'The course\'s note: the experiment is real, but 28 students from one place is a small, narrow group to carry such a big idea.'},
-    {src:'Module 6', text:'The module\'s title: "Too Many Circles?"',
-      note:'The course\'s note: the title echoes the "epicycles on epicycles" story, which historians call a myth. The question mark was added after fact-checking.'},
-    {src:'The whole course', text:'Kuhn is the main story. Every other thinker appears as a "Side View" on Kuhn\'s ideas.',
-      note:'The course\'s note: a framing choice. Popper or Longino could have been the main story instead, and then Kuhn would be the side view.'},
-    {src:'The whole course', text:'Almost every example comes from physics, chemistry or astronomy.',
-      note:'The course\'s note: biology and medicine are almost absent, and so is most science outside Europe and the United States.'},
-    {src:'Module 9', text:'Five models of the atom in a neat table, each one a step up.', ext:true,
-      note:'The course\'s note: a staircase, the very thing Module 1 warned about. Many scientists and abandoned models were left out.'},
-    {src:'Module 10', text:'The 1965 meeting is told as Kuhn versus Popper.', ext:true,
-      note:'The course\'s note: Lakatos, Feyerabend, Watkins, Toulmin and others wrote for the same book, and several disagreed with both.'}
+    {src:'Module 1', text:'Scheele made oxygen first. Priestley made it and told the world first. Lavoisier was the first to understand it as we do today.', verdict:'simp',
+      note:'A fair summary, but still three neat sentences about three famous men. Marie-Anne Paulze Lavoisier, who translated phlogiston defenders and kept the lab records, isn\'t in it. Nor are the instrument makers and assistants.'},
+    {src:'Module 2', text:'The course picks the Leyden jar as its example of a scientific community with no shared rules.', verdict:'left',
+      note:'Fair, but the course leaves out most of the people who made it work. Benjamin Franklin and William Watson get mentioned; Ewald von Kleist, Pieter van Musschenbroek and the many physicians who used the jar on patients don\'t.'},
+    {src:'Module 3', text:'The course picked Halley\'s comet, a prediction that worked, as its example of normal science.', verdict:'left',
+      note:'Success stories get retold; failed predictions mostly don\'t. Picking only winners makes normal science look more reliable than it is.'},
+    {src:'Module 4', text:'An experiment with 28 Harvard and Radcliffe students in 1949 shows how expectations shape what scientists see.', verdict:'simp',
+      note:'The experiment is real, but 28 students from one place is a small, narrow group to carry such a big idea.'},
+    {src:'Module 5', text:'An early draft said scientists found an extra planet called Vulcan inside Mercury\'s orbit.', mistake:true, verdict:'mist',
+      note:'A real mistake, caught by fact-checking. Vulcan was proposed but never actually found. Mercury\'s puzzle turned out to be a sign that Newton\'s rules themselves needed Einstein\'s fix in 1915.'},
+    {src:'Module 6', text:'The module\'s title: "Too Many Circles?"', verdict:'fair',
+      note:'The title with a question mark is honest. The "epicycles on epicycles" story is a myth, and the course calls that out.'},
+    {src:'The whole course', text:'Kuhn is the main story. Every other thinker appears as a "Side View" on Kuhn\'s ideas.', verdict:'left',
+      note:'A framing choice. Popper or Longino could have been the main story instead, and then Kuhn would be the side view.'},
+    {src:'The whole course', text:'Almost every example comes from physics, chemistry or astronomy.', verdict:'left',
+      note:'Biology and medicine are almost absent, and so is most science outside Europe and the United States.'},
+    {src:'Module 9', text:'Five models of the atom in a neat table, each one a step up.', ext:true, verdict:'simp',
+      note:'A staircase, the very thing Module 1 warned about. Many scientists and abandoned models were left out.'},
+    {src:'Module 10', text:'The 1965 meeting is told as Kuhn versus Popper.', ext:true, verdict:'left',
+      note:'Lakatos, Feyerabend, Watkins, Toulmin and others wrote for the same book, and several disagreed with both.'}
   ].filter(function(x){ return level==='extended' || !x.ext; });
-  var tally = {fair:0,simp:0,left:0,mist:0}, mistakesFound = 0, mistakeTotal = ITEMS.filter(function(x){return x.mistake;}).length;
+  var tally = {fair:0,fix:0,simp:0,left:0,mist:0}, mistakesFound = 0, mistakeTotal = ITEMS.filter(function(x){return x.mistake;}).length;
+  var agreed = 0; // count of items where the learner's label matched the course's verdict
 
   function exhibit(it){ return '<div class="exhibit"><div class="src">'+esc(it.src)+'</div><q>'+esc(it.text)+'</q></div>'; }
   function intro(){
+    var labelStrip = level==='core'
+      ? '<b>Fair</b> · <b>Needs a fix</b>'
+      : '<b>Fair</b> · <b>Simplified</b> · <b>Left something out</b> · <b>Mistake (fixed)</b>';
     el('<h1>Audit the Course</h1>'+tag(11)+
       '<p>You\'re the inspector now. Here are real sentences and choices from this course (some summarized). Label each one.</p>'+
-      '<div class="sticky"><b>Fair</b> · <b>Simplified</b> · <b>Left something out</b> · <b>Mistake (fixed)</b><br>Most items have no single right label. It\'s your judgment. After each one you\'ll see the course\'s own note.</div>'+
+      '<div class="sticky">'+labelStrip+'<br>Most items have no single right label. It\'s your judgment. After each one you\'ll see the course\'s own note.</div>'+
       '<button class="btn main" id="go">Start the audit</button>');
     document.getElementById('go').onclick = function(){ show(0); };
   }
@@ -133,11 +141,18 @@
     el('<h2>Item '+(i+1)+' of '+ITEMS.length+'</h2>'+exhibit(it)+'<p>How would you label it?</p><div class="grid2" id="g"></div>');
     choiceButtons('g', LABELS, function(o){
       tally[o.k]++;
-      var head;
-      if(it.mistake){ if(o.k==='mist'){ mistakesFound++; head='<b class="v">You caught it.</b>'; } else head='<b class="v">This one was a real mistake.</b>'; }
-      else head='<b class="v">You said: '+NAMES[o.k]+'.</b>';
+      var head, matched = false;
+      if(it.mistake){
+        if(isCatch(o.k)){ mistakesFound++; matched = true; head='<b class="v">You caught the mistake.</b> '; }
+        else head='<b class="v">This one was a real mistake.</b> ';
+      } else {
+        // Not a mistake: at Core, "Fair" matches a non-mistake; at Extended, match on exact verdict.
+        if(level==='core'){ matched = (o.k==='fair'); head='<b class="v">You said: '+NAMES[o.k]+'. The course calls this: '+(it.verdict==='fair'?'Fair':NAMES[it.verdict])+'.</b> '; }
+        else { matched = (o.k===it.verdict); head='<b class="v">You said: '+NAMES[o.k]+'. The course calls this: '+NAMES[it.verdict]+'.</b> '; }
+      }
+      if(matched) agreed++;
       el('<h2>Item '+(i+1)+' of '+ITEMS.length+'</h2>'+exhibit(it)+(it.mistake?'<span class="stamp">CORRECTED</span>':'')+
-        '<div class="feedback'+(it.mistake && o.k!=='mist' ? ' wrong':'')+'">'+head+esc(it.note)+'</div>'+
+        '<div class="feedback'+(it.mistake && !isCatch(o.k) ? ' wrong':'')+'">'+head+esc(it.note)+'</div>'+
         '<button class="btn main" id="n">'+(i<ITEMS.length-1?'Next item':'Finish the audit')+'</button>');
       document.getElementById('n').onclick = function(){ show(i+1); };
     });
@@ -149,12 +164,16 @@
       {k:'women',label:'Include more women scientists'},{k:'fail',label:'Tell more stories that failed'},
       {k:'spine',label:'Make someone other than Kuhn the main story'},{k:'other',label:'Something else (I\'ll tell Rocky)'}],
       function(o){
-        var text = ['done — Audit the Course ('+level+')',
-          'Labels: Fair '+tally.fair+', Simplified '+tally.simp+', Left something out '+tally.left+', Mistake '+tally.mist,
-          'Real mistakes caught: '+mistakesFound+' of '+mistakeTotal, 'First change: '+o.label].join('\n');
+        var labelLine = level==='core'
+          ? 'Labels: Fair '+tally.fair+', Needs a fix '+tally.fix
+          : 'Labels: Fair '+tally.fair+', Simplified '+tally.simp+', Left something out '+tally.left+', Mistake '+tally.mist;
+        var text = ['done — Audit the Course ('+level+')', labelLine,
+          'Real mistakes caught: '+mistakesFound+' of '+mistakeTotal,
+          'Agreed with the course: '+agreed+' of '+ITEMS.length,
+          'First change: '+o.label].join('\n');
         finishScreen('Audit the Course', text,
           '<div class="sticky">A course that shows its own mistakes can seem more trustworthy. Is that a reason to trust it, or a clever way to win your trust?</div>',
-          function(){ tally={fair:0,simp:0,left:0,mist:0}; mistakesFound=0; intro(); });
+          function(){ tally={fair:0,fix:0,simp:0,left:0,mist:0}; mistakesFound=0; agreed=0; intro(); });
       });
   }
   intro();

@@ -111,7 +111,7 @@
     {n:'Feyerabend', y:'1975', idea:'No single method fits all of science.', at:[2,1], why:'Against fixed rules; history shows rule-breaking working.'},
     {n:'Laudan', y:'1977', idea:'Progress means solving more and more important problems.', at:[1,2], ext:true, why:'Rational standards, judged by problem-solving rather than truth.'},
     {n:'van Fraassen', y:'1980', idea:'Science only needs to fit what we can observe.', at:[0,2], ext:true, why:'Strict empiricism; the aim is fitting observations, not truth about the unseen.'},
-    {n:'Longino', y:'1990', idea:'Science is trustworthy when a community welcomes criticism.', at:[2,1], why:'Trust comes from community criticism; she doesn\'t give up on truth.'}
+    {n:'Longino', y:'1990', idea:'Science is trustworthy when a community welcomes criticism.', at:[2,0], why:'Trust comes from community criticism, but she doesn\'t give up on truth.'}
   ].filter(function(t){ return level==='extended' || !t.ext; });
   var mine = {};
   function mapHtml(clickable, highlight){
@@ -149,17 +149,42 @@
     el('<h2>Where do you go?</h2><p>What makes science trustworthy to you, and what do you think it\'s for? Tap your square.</p>'+mapHtml(true));
     app.querySelectorAll('.cell').forEach(function(c){ c.onclick=function(){
       mine['You']=[+c.dataset.x,+c.dataset.y];
-      var near = THINKERS.filter(function(t){ return mine[t.n] && mine[t.n][0]===mine['You'][0] && mine[t.n][1]===mine['You'][1]; }).map(function(t){return t.n;});
-      el('<h2>Your map</h2>'+mapHtml(false,{mine:mine['You']})+
-        '<div class="sticky">A map with two lines squeezes every thinker into nine boxes. It makes them easy to compare, and it hides a lot. Kuhn might call it a little paradigm.</div>'+
-        '<button class="btn main" id="n">Close the notebook</button>');
-      document.getElementById('n').onclick = function(){
-        var X=['rules and logic','in between','community and history'], Y=['truth','in between','usefulness'];
-        var lines = THINKERS.map(function(t){ var p=mine[t.n]; return t.n+': '+X[p[0]]+' / '+Y[p[1]]; });
-        var text = ['done — Map the Thinkers ('+level+')', 'You: '+X[mine['You'][0]]+' / '+Y[mine['You'][1]]+(near.length?' (same square as '+near.join(', ')+')':'')].concat(lines).join('\n');
-        finishScreen('Map the Thinkers', text, '', function(){ mine={}; intro(); });
-      };
+      askWhy();
     }; });
+  }
+  var myWhy = '';
+  function askWhy(){
+    var X=['rules and logic','in between on trust','community and history'], Y=['truth','in between on aim','useful predictions'];
+    var p = mine['You'];
+    el('<h2>Why there?</h2><p>You picked <b>trust: '+esc(X[p[0]])+' · aim: '+esc(Y[p[1]])+'</b>. Which fits best?</p><div id="why"></div>');
+    var opts = [
+      {k:'rules',  label:'Science needs strict rules so it stays honest.'},
+      {k:'people', label:'Science is a community checking each other\'s work.'},
+      {k:'true',   label:'Science is slowly getting closer to how the world really is.'},
+      {k:'use',    label:'Science is for making predictions that actually work.'},
+      {k:'both',   label:'A bit of both; it depends on the question.'},
+      {k:'other',  label:'Something else (I\'ll tell Rocky).'}
+    ];
+    choiceButtons('why', opts, function(o){ myWhy = o.label; result(); });
+  }
+  function choiceButtons(boxId, options, onPick){
+    var box = document.getElementById(boxId);
+    options.forEach(function(o){ var b=document.createElement('button'); b.className='btn'; b.textContent=o.label;
+      b.onclick=function(){ onPick(o, b); }; box.appendChild(b); });
+  }
+  function result(){
+    var near = THINKERS.filter(function(t){ return mine[t.n] && mine[t.n][0]===mine['You'][0] && mine[t.n][1]===mine['You'][1]; }).map(function(t){return t.n;});
+    el('<h2>Your map</h2>'+mapHtml(false,{mine:mine['You']})+
+      '<div class="sticky">A map with two lines squeezes every thinker into nine boxes. It makes them easy to compare, and it hides a lot. Kuhn might call it a little paradigm.</div>'+
+      '<button class="btn main" id="n">Close the notebook</button>');
+    document.getElementById('n').onclick = function(){
+      var X=['rules and logic','in between','community and history'], Y=['truth','in between','usefulness'];
+      var lines = THINKERS.map(function(t){ var p=mine[t.n]; return t.n+': '+X[p[0]]+' / '+Y[p[1]]; });
+      var text = ['done — Map the Thinkers ('+level+')',
+        'You: '+X[mine['You'][0]]+' / '+Y[mine['You'][1]]+(near.length?' (same square as '+near.join(', ')+')':''),
+        'Why: '+myWhy].concat(lines).join('\n');
+      finishScreen('Map the Thinkers', text, '', function(){ mine={}; myWhy=''; intro(); });
+    };
   }
   intro();
 })();

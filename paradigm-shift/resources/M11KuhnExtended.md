@@ -1,6 +1,6 @@
 # Module 11: This Course Is a Paradigm
 
-This reading caught a mistake in itself. While the course was being checked, a reviewer noticed that this module's own list of anomalies misdescribed Module 5. It's fixed now. A module about the course's own blind spots had a blind spot of its own, which is roughly what Kuhn would have predicted.
+This reading caught a mistake in itself. While the course was being checked, we noticed that this module's own list of anomalies misdescribed Module 5. It's fixed now. A module about the course's own blind spots had a blind spot of its own, which is roughly what Kuhn would have predicted.
 
 ## The textbook problem, from the inside
 
