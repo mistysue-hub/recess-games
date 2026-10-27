@@ -161,7 +161,7 @@
     <div class="btnrow">
       <button class="big" id="copyBtn">Copy message</button>
       <button class="big alt" id="keepBtn">Keep building</button>
-      <button class="big alt" id="nextBtn">New base</button>
+      <button class="big alt" id="nextBtn">Next lesson ➜</button>
     </div>
     <p id="copyNote" style="font-size:14px;margin:10px 0 0"></p>
   </div>
@@ -3523,7 +3523,7 @@ function updateProgress(justBuilt){
   const got=f>=g; $('progStar').classList.toggle('got',got);
   $('doneBtn').disabled=!got;
   $('doneBtn').textContent=got?"⭐ I'm done! Tell Rocky":'Find '+(g-f)+' more for your ⭐';
-  if(got&&justBuilt&&!starShown){ starShown=true; sfx('star'); confetti(); setTimeout(()=>say('⭐ You earned a star! Keep going for all '+t+', or tell Rocky.','good'),900); }
+  if(got&&justBuilt&&!starShown){ starShown=true; sfx('star'); confetti(); setTimeout(()=>say('⭐ You earned a star! Tell Rocky, then move on or keep building (up to '+t+' words).','good'),900); }
 }
 function statLine(id){ const st=store.get()[id]||{}; const n=(st.done||[]).length; return 'You earned '+n+' ⭐ and built '+(st.wc||0)+' words! '; }
 let AC=null;
@@ -3572,8 +3572,8 @@ function nextBase(){
   if(!left.length){ st[LV]={done:[]}; store.set(st); left=pool.filter(b=>!base||b.name!==base.name); }
   return rnd(left.length?left:pool);
 }
-// a level is passed after 3 matrices (or all of them, if it has fewer)
-const goalFor=id=>Math.min(3,BASES.filter(b=>b.level===id).length);
+// a lesson is passed after 1 finished matrix; kids can keep building or move on
+const goalFor=id=>Math.min(1,BASES.filter(b=>b.level===id).length);
 function startLevel(n,quiet){
   LV=n; const st=store.get(); st[LV]={done:[]}; store.set(st);
   $('start').classList.add('hidden'); $('rocky').classList.add('hidden');
@@ -3586,7 +3586,7 @@ function announce(title,sub,cb){
   $('bannerGo').onclick=()=>{ $('banner').classList.add('hidden'); cb&&cb(); };
 }
 function advance(){
-  // called when the current lesson is passed (3 or more bases each earned a star)
+  // called when the current lesson is passed (1 base earned a star; the kid chose to move on)
   const cur=LV, t=tierOf(cur), n=lessonOf(cur);
   const count=markPassed(t,n);
   sfx('star'); confetti();
