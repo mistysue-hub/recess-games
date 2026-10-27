@@ -84,6 +84,8 @@
   }
   var tests = [], wrongInRow = 0, guesses = 0, solved = false, revealed = false, hintShown = false;
   var cur = ['', '', ''], active = 0;
+  function surprises(){ return tests.filter(function(t){ return (t.predicted !== t.result); }).length; }
+  function unlocked(){ return surprises() >= 1 || tests.length >= 5; }
 
   function el(h){ var h0=app.querySelector('h1,h2'); var t0=h0?h0.textContent:null; var y=window.scrollY; app.innerHTML = h; var h1=app.querySelector('h1,h2'); if(t0!==null && h1 && h1.textContent===t0){ window.scrollTo(0,y); } else { window.scrollTo(0,0); } }
   function fits(t){ return t[0] < t[1] && t[1] < t[2]; }
@@ -106,7 +108,8 @@
       '<p class="progress">Tap a box, then tap its digits (0 to 99).</p><div class="slots3">'+[0,1,2].map(function(i){ return '<button class="slot'+(i===active?' active':'')+'" data-i="'+i+'" aria-label="Number '+(i+1)+'">'+(cur[i]===''?'·':cur[i])+'</button>'; }).join('')+'</div>'+
       '<div class="pad">'+[1,2,3,4,5,6,7,8,9,0].map(function(d){ return '<button class="btn" data-d="'+d+'">'+d+'</button>'; }).join('')+'</div>'+
       '<div class="row"><button class="btn" id="clr">Clear</button><button class="btn main" id="test">Test this set</button></div>'+
-      '<button class="btn" id="know">I know the rule</button>'+ logHtml);
+      '<button class="btn" id="know"'+(unlocked()?'':' disabled aria-label="unlocks after a test that surprises you, or after 5 tests"')+'>I know the rule</button>'+
+      (unlocked()?'':'<p class="progress">Unlocks after a test that surprises you, or after 5 tests.</p>')+ logHtml);
     app.querySelectorAll('.slot').forEach(function(b){ b.onclick = function(){ active = +b.dataset.i; lab(); }; });
     app.querySelectorAll('[data-d]').forEach(function(b){ b.onclick = function(){
       if(cur[active].length >= 2) cur[active] = '';
@@ -130,7 +133,7 @@
       cur = ['','','']; active = 0;
       var surprise = (p !== r);
       var msg = '<div class="feedback'+(r?'':' wrong')+'"><b class="v">'+nums.join(', ')+(r?' fits.':' doesn\'t fit.')+'</b>'+
-        (surprise ? 'That surprised your guess. Surprises are the most useful tests.' : (p ? 'As you expected. Did that test have any chance of proving your guess wrong?' : 'As you expected.'))+'</div>';
+        (surprise ? 'That surprised your guess. Surprises are the most useful tests.' : 'As you expected.')+'</div>';
       if(level==='core' && !hintShown && tests.length >= 6 && breaking() === 0){
         hintShown = true;
         msg += '<div class="sticky">Hint: every test so far was one you expected to fit. Try a set you think will NOT fit.</div>';
