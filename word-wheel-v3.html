@@ -3582,7 +3582,11 @@ function buildPicker(){
 }
 // tapping a level starts it at Lesson 1 for a new player, or at the first lesson not passed yet for a returning one (Lesson 1 again once all 30 are done)
 function openTier(t){
-  PICKTIER=t; const last=((store.get().last||{})[t])||0; const nx=nextLesson(t,last+1);
+  PICKTIER=t;
+  if(passedOf(t).length>=30){   // a finished level can be played again from Lesson 1
+    const st=store.get(); st.passed=st.passed||{}; st.passed[t]=[]; st.last=st.last||{}; st.last[t]=0; store.set(st);
+  }
+  const last=((store.get().last||{})[t])||0; const nx=nextLesson(t,last+1);
   beginLesson(nx===null?1:nx,t);
 }
 function beginLesson(n,t){ startLevel(n+t); }
