@@ -153,6 +153,8 @@
 
 <div id="banner" class="overlay hidden"><div class="panel"><h1 id="bannerTitle" style="font-size:44px"></h1><p id="bannerSub" style="font-size:22px;white-space:pre-line"></p><div class="btnrow"><button class="big" id="bannerGo">Let's go!</button></div></div></div>
 
+<div id="starPop" class="overlay hidden"><div class="panel"><h1 style="font-size:34px">⭐ You earned a star!</h1><p id="starPopText" style="font-size:20px"></p><div class="btnrow"><button class="big" id="starPopOk">Got it!</button></div></div></div>
+
 <div id="rocky" class="overlay hidden">
   <div class="panel">
     <h1 style="font-size:28px">Great building! 🎉</h1>
@@ -3523,8 +3525,15 @@ function updateProgress(justBuilt){
   const got=f>=g; $('progStar').classList.toggle('got',got);
   $('doneBtn').disabled=!got;
   $('doneBtn').textContent=got?"⭐ I'm done! Tell Rocky":'Find '+(g-f)+' more for your ⭐';
-  if(got&&justBuilt&&!starShown){ starShown=true; sfx('star'); confetti(); setTimeout(()=>say('⭐ You earned a star! Tap “I’m done! Tell Rocky” to copy your results to Rocky. Then click “New base” to try another word!','good'),900); }
+  if(got&&justBuilt&&!starShown){ starShown=true; sfx('star'); confetti(); setTimeout(showStarPop,900); }
 }
+function doneCount(){ const st=store.get(); return ((st[LV]&&st[LV].done)||[]).length; }
+function showStarPop(){
+  const goal=goalFor(LV), have=doneCount()+(((store.get()[LV]||{}).done||[]).includes(base.name)?0:1);
+  $('starPopText').textContent='When you are finished with this base, click “I’m done! Tell Rocky” to give Rocky your results. Then click “New base” to try another word. Finish '+goal+' bases to move on to the next lesson ('+Math.min(have,goal)+' of '+goal+' so far).';
+  $('starPop').classList.remove('hidden');
+}
+$('starPopOk').onclick=()=>$('starPop').classList.add('hidden');
 function statLine(id){ const st=store.get()[id]||{}; const n=(st.done||[]).length; return 'You earned '+n+' ⭐ and built '+(st.wc||0)+' words! '; }
 let AC=null;
 function sfx(kind){
@@ -3572,8 +3581,8 @@ function nextBase(){
   if(!left.length){ st[LV]={done:[]}; store.set(st); left=pool.filter(b=>!base||b.name!==base.name); }
   return rnd(left.length?left:pool);
 }
-// a lesson is passed after 1 finished matrix; kids can keep building or move on
-const goalFor=id=>Math.min(1,BASES.filter(b=>b.level===id).length);
+// a lesson is passed after 3 finished matrices (or all of them, if the lesson has fewer)
+const goalFor=id=>Math.min(3,BASES.filter(b=>b.level===id).length);
 function startLevel(n,quiet){
   LV=n; const st=store.get(); st[LV]={done:[]}; store.set(st);
   $('start').classList.add('hidden'); $('rocky').classList.add('hidden');
@@ -3586,7 +3595,7 @@ function announce(title,sub,cb){
   $('bannerGo').onclick=()=>{ $('banner').classList.add('hidden'); cb&&cb(); };
 }
 function advance(){
-  // called when the current lesson is passed (1 base earned a star; the kid chose to move on)
+  // called when the current lesson is passed (3 or more bases each earned a star)
   const cur=LV, t=tierOf(cur), n=lessonOf(cur);
   const count=markPassed(t,n);
   sfx('star'); confetti();
@@ -3928,7 +3937,7 @@ $('doneBtn').onclick=()=>{
   const st=store.get(); st[LV]=st[LV]||{done:[]};
   if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); }
   st[LV].words=st[LV].words||{}; st[LV].words[base.name]={meaning:base.meaning||'',words:[...new Set([...found.values()].map(w=>w.word))]}; store.set(st);
-  const msg=rockyMessage(); $('rockyText').textContent=msg; $('copyNote').textContent=''; $('rocky').classList.remove('hidden');
+  const msg=rockyMessage(); $('rockyText').textContent=msg; { const have=st[LV].done.length, goal=goalFor(LV); $('nextBtn').textContent=have>=goal?'Next lesson ➜':'New base'; $('keepBtn').textContent=have>=goal?'Keep building':'Stay on this base'; } $('copyNote').textContent=''; $('rocky').classList.remove('hidden');
   try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,base:base.name,meaning:base.meaning,words:[...found.values()].map(w=>w.word),levelWords:st[LV].words,message:msg},'*'); }catch(e){}
 };
 $('copyBtn').onclick=async()=>{
