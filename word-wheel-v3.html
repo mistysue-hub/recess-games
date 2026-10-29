@@ -3530,15 +3530,19 @@ function updateProgress(justBuilt){
   const got=f>=g; $('progStar').classList.toggle('got',got);
   $('doneBtn').disabled=!got;
   $('doneBtn').textContent=got?(haveAfter()>=goalFor(LV)?"⭐ I'm done! Tell Rocky":"⭐ I'm done with this base"):'Find '+(g-f)+' more for your ⭐';
+  if(got&&justBuilt){ registerStar(); }
   if(got&&justBuilt&&!starShown){ starShown=true; sfx('star'); confetti(); setTimeout(showStarPop,900); }
+}
+function registerStar(){
+  const st=store.get(); st[LV]=st[LV]||{done:[]}; st[LV].done=st[LV].done||[];
+  if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); }
+  st[LV].words=st[LV].words||{}; st[LV].words[base.name]=baseSummary(); store.set(st);
 }
 function doneCount(){ const st=store.get(); return ((st[LV]&&st[LV].done)||[]).length; }
 function haveAfter(){ return doneCount()+(((store.get()[LV]||{}).done||[]).includes(base.name)?0:1); }
 function showStarPop(){
-  const goal=goalFor(LV), have=doneCount()+(((store.get()[LV]||{}).done||[]).includes(base.name)?0:1);
-  $('starPopText').textContent= have>=goal
-    ? 'When you are finished with this base, click “I’m done! Tell Rocky.” Your results from all '+goal+' bases will be copied so you can paste them to Rocky.'
-    : 'When you are finished with this base, click “I’m done with this base.” Then you can keep building or pick a new base. Finish '+goal+' bases ('+have+' of '+goal+' so far) and your results get copied for Rocky.';
+  const have=doneCount();
+  $('starPopText').textContent='You have '+have+(have===1?' star':' stars')+' in this lesson so far. When you have at least 3 stars, click “I’m done! Tell Rocky” to give Rocky your results. If you are done with this base, click “New base” to try another.';
   $('starPop').classList.remove('hidden');
 }
 $('starPopOk').onclick=()=>$('starPop').classList.add('hidden');
