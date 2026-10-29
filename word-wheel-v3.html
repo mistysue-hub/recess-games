@@ -158,10 +158,11 @@
 <div id="rocky" class="overlay hidden">
   <div class="panel">
     <h1 style="font-size:28px">Great building! 🎉</h1>
-    <p>Send this message to Rocky. Rocky will show you a few more words and talk about them with you.</p>
+    <p id="rockyIntro"><b>Your results are copied!</b> Paste them into your chat with Rocky.</p>
+    <p style="font-weight:700">Would you like to keep building on this base, or start a new base?</p>
     <div id="rockyText"></div>
     <div class="btnrow">
-      <button class="big" id="copyBtn">Copy message</button>
+      <button class="big alt" id="copyBtn">Copy again</button>
       <button class="big alt" id="keepBtn">Keep building</button>
       <button class="big alt" id="nextBtn">Next lesson ➜</button>
     </div>
@@ -3678,18 +3679,20 @@ function addTile(d){
   path.push(id);
   applyPathClasses(); drawPath(); updateBuild(); say('');
 }
+let skipId=null;
 const wheel=$('wheelWrap');
 wheel.addEventListener('pointerdown',e=>{
   e.preventDefault(); dragging=true; try{wheel.setPointerCapture(e.pointerId);}catch(_){}
   const d=tileAt(e.clientX,e.clientY);
   if(d){
     const id=d.dataset.id;
-    if(path.length && path[path.length-1]===id){ path.pop(); applyPathClasses(); drawPath(); updateBuild(); say(''); }   // tap last tile = undo
+    const at=path.indexOf(id);
+    if(at>=0){ path.splice(at,1); skipId=id; applyPathClasses(); drawPath(); updateBuild(); say(''); }   // tap a selected tile = unselect it
     else addTile(d);
   }
 });
-wheel.addEventListener('pointermove',e=>{ if(!dragging) return; const d=tileAt(e.clientX,e.clientY); if(d) addTile(d); drawPath(e); });
-function endDrag(){ dragging=false; drawPath(); }
+wheel.addEventListener('pointermove',e=>{ if(!dragging) return; const d=tileAt(e.clientX,e.clientY); if(d&&d.dataset.id===skipId){ drawPath(e); return; } skipId=null; if(d) addTile(d); drawPath(e); });
+function endDrag(){ dragging=false; skipId=null; drawPath(); }
 wheel.addEventListener('pointerup',endDrag); wheel.addEventListener('pointercancel',endDrag);
 
 function pathParts(){ return path.map(id=>{ const [k,t]=[id.slice(0,id.indexOf(':')),id.slice(id.indexOf(':')+1)]; return {kind:k,text:t}; }); }
@@ -3937,14 +3940,16 @@ $('doneBtn').onclick=()=>{
   const st=store.get(); st[LV]=st[LV]||{done:[]};
   if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); }
   st[LV].words=st[LV].words||{}; st[LV].words[base.name]={meaning:base.meaning||'',words:[...new Set([...found.values()].map(w=>w.word))]}; store.set(st);
-  const msg=rockyMessage(); $('rockyText').textContent=msg; { const have=st[LV].done.length, goal=goalFor(LV); $('nextBtn').textContent=have>=goal?'Next lesson ➜':'New base'; $('keepBtn').textContent=have>=goal?'Keep building':'Stay on this base'; } $('copyNote').textContent=''; $('rocky').classList.remove('hidden');
+  const msg=rockyMessage(); $('rockyText').textContent=msg; { const have=st[LV].done.length, goal=goalFor(LV); $('nextBtn').textContent=have>=goal?'Next lesson ➜':'New base'; $('keepBtn').textContent='Keep building'; } $('copyNote').textContent=''; $('rocky').classList.remove('hidden'); doCopy(true);
   try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,base:base.name,meaning:base.meaning,words:[...found.values()].map(w=>w.word),levelWords:st[LV].words,message:msg},'*'); }catch(e){}
 };
-$('copyBtn').onclick=async()=>{
-  const t=$('rockyText').textContent;
-  try{ await navigator.clipboard.writeText(t); $('copyNote').textContent='Copied! Now paste it to Rocky.'; }
-  catch(e){ const r=document.createRange(); r.selectNodeContents($('rockyText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); try{ document.execCommand('copy'); $('copyNote').textContent='Copied! Now paste it to Rocky.'; }catch(_){ $('copyNote').textContent='Select the message and copy it, then paste it to Rocky.'; } }
-};
+async function doCopy(auto){
+  const t=$('rockyText').textContent, ok='Copied! Now paste it into your chat with Rocky.';
+  try{ await navigator.clipboard.writeText(t); $('copyNote').textContent=ok; }
+  catch(e){ const r=document.createRange(); r.selectNodeContents($('rockyText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); try{ document.execCommand('copy'); $('copyNote').textContent=ok; }catch(_){ $('copyNote').textContent='Select the message above and copy it, then paste it into your chat with Rocky.'; } }
+  $('rockyIntro').innerHTML=$('copyNote').textContent.startsWith('Copied')?'<b>Your results are copied!</b> Paste them into your chat with Rocky.':'<b>Almost!</b> Copy the message below, then paste it into your chat with Rocky.';
+}
+$('copyBtn').onclick=()=>doCopy();
 $('keepBtn').onclick=()=>$('rocky').classList.add('hidden');
 $('nextBtn').onclick=()=>{ $('rocky').classList.add('hidden'); const st=store.get(); if(((st[LV]&&st[LV].done)||[]).length>=goalFor(LV)) advance(); else loadBase(nextBase()); };
 
