@@ -3576,12 +3576,18 @@ function openTier(t){
 }
 function beginLesson(n,t){ startLevel(n+t); }
 function nextBase(){
+  // never hand back a base the student already finished or already saw in this lesson, or the one on screen
   const pool=BASES.filter(b=>b.level===LV);
-  const st=store.get(); const d=(st[LV]&&st[LV].done)||[];
-  let left=pool.filter(b=>!d.includes(b.name) && (!base||b.name!==base.name));
-  if(!left.length){ st[LV]={done:[]}; store.set(st); left=pool.filter(b=>!base||b.name!==base.name); }
+  const st=store.get(); const d=(st[LV]&&st[LV].done)||[], seen=(st[LV]&&st[LV].seen)||[];
+  const cur=base?base.name:null;
+  let left=pool.filter(b=>!d.includes(b.name) && !seen.includes(b.name) && b.name!==cur);
+  if(!left.length) left=pool.filter(b=>!d.includes(b.name) && b.name!==cur);   // seen but unfinished bases may return
+  if(!left.length) left=pool.filter(b=>b.name!==cur && b.name!==lastDone());   // everything finished: still avoid the one just finished
+  if(!left.length) left=pool.filter(b=>b.name!==cur);
   return rnd(left.length?left:pool);
 }
+function lastDone(){ const d=(store.get()[LV]||{}).done||[]; return d.length?d[d.length-1]:null; }
+function markSeen(name){ const st=store.get(); st[LV]=st[LV]||{done:[]}; st[LV].seen=st[LV].seen||[]; if(!st[LV].seen.includes(name)){ st[LV].seen.push(name); store.set(st); } }
 // a lesson is passed after 3 finished matrices (or all of them, if the lesson has fewer)
 const goalFor=id=>Math.min(3,BASES.filter(b=>b.level===id).length);
 function startLevel(n,quiet){
@@ -3608,7 +3614,7 @@ function advance(){
   announce('Lesson '+n+' complete! 🎉', statLine(cur)+'Next up: Lesson '+nx+' ('+count+' of 30 done)', ()=>startLevel(nx+t));
 }
 function loadBase(b){
-  base=b; found=new Map(); path=[]; starShown=false;
+  base=b; found=new Map(); path=[]; starShown=false; markSeen(b.name);
   { const l=base.name.slice(-1); base.dbl=base.words.some(w=>w.word.startsWith(base.name+l)&&'aeiouy'.includes(w.word[base.name.length+1]||'')); }
   base.byKey=new Map(base.words.map(w=>[w.key,w]));
   makeLayout(); renderWheel(); renderMatrix(); renderFound(); updateBuild(); say('');
