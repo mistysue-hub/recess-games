@@ -155,11 +155,13 @@
 
 <div id="starPop" class="overlay hidden"><div class="panel"><h1 style="font-size:34px">⭐ You earned a star!</h1><p id="starPopText" style="font-size:20px"></p><div class="btnrow"><button class="big" id="starPopOk">Got it!</button></div></div></div>
 
+<div id="choicePop" class="overlay hidden"><div class="panel"><h1 style="font-size:30px">Great building! 🎉</h1><p id="choiceText" style="font-size:20px"></p><div class="btnrow"><button class="big alt" id="choiceKeep">Keep building</button><button class="big" id="choiceNew">New base</button></div></div></div>
+
 <div id="rocky" class="overlay hidden">
   <div class="panel">
     <h1 style="font-size:28px">Great building! 🎉</h1>
     <p id="rockyIntro"><b>Your results are copied!</b> Paste them into your chat with Rocky.</p>
-    <p style="font-weight:700">Would you like to keep building on this base, or start a new base?</p>
+    <p style="font-weight:700">Would you like to keep building, or move on to the next lesson?</p>
     <div id="rockyText"></div>
     <div class="btnrow">
       <button class="big alt" id="copyBtn">Copy again</button>
@@ -3510,7 +3512,9 @@ let combLabel=p=>p, combSide={}, starShown=false; let LV='1A', base=null, found=
 const store = { get(){ try{ return JSON.parse(localStorage.getItem('wordWheel1')||'{}'); }catch(e){ return {}; } },
                 set(o){ try{ localStorage.setItem('wordWheel1',JSON.stringify(o)); }catch(e){} } };
 
-function speak(t){ try{ if(!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.rate=.85; speechSynthesis.speak(u);}catch(e){} }
+// say stars as "stars" and never read emoji names aloud ("party popper", "white medium star")
+function speakable(t){ return String(t).replace(/(\d+)\s*\u2B50\uFE0F?/g,(m,n)=>n+(n==='1'?' star':' stars')).replace(/\u2B50\uFE0F?/g,'star').replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu,'').replace(/\s{2,}/g,' ').replace(/\s+([.!?,])/g,'$1').replace(/([!?])\./g,'$1').trim(); }
+function speak(t){ try{ if(!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(speakable(t)); u.rate=.85; speechSynthesis.speak(u);}catch(e){} }
 
 /* ---------- progress, stars, sounds, confetti ---------- */
 const art=x=>(/^[aeiou]/i.test(x)&&!/^(uni|use|usu|eu|one|once)/i.test(x)?'an ':'a ')+x;
@@ -3525,13 +3529,16 @@ function updateProgress(justBuilt){
   $('countChip').textContent=f+' / '+t;
   const got=f>=g; $('progStar').classList.toggle('got',got);
   $('doneBtn').disabled=!got;
-  $('doneBtn').textContent=got?"⭐ I'm done! Tell Rocky":'Find '+(g-f)+' more for your ⭐';
+  $('doneBtn').textContent=got?(haveAfter()>=goalFor(LV)?"⭐ I'm done! Tell Rocky":"⭐ I'm done with this base"):'Find '+(g-f)+' more for your ⭐';
   if(got&&justBuilt&&!starShown){ starShown=true; sfx('star'); confetti(); setTimeout(showStarPop,900); }
 }
 function doneCount(){ const st=store.get(); return ((st[LV]&&st[LV].done)||[]).length; }
+function haveAfter(){ return doneCount()+(((store.get()[LV]||{}).done||[]).includes(base.name)?0:1); }
 function showStarPop(){
   const goal=goalFor(LV), have=doneCount()+(((store.get()[LV]||{}).done||[]).includes(base.name)?0:1);
-  $('starPopText').textContent='When you are finished with this base, click “I’m done! Tell Rocky” to give Rocky your results. Then click “New base” to try another word. Finish '+goal+' bases to move on to the next lesson ('+Math.min(have,goal)+' of '+goal+' so far).';
+  $('starPopText').textContent= have>=goal
+    ? 'When you are finished with this base, click “I’m done! Tell Rocky.” Your results from all '+goal+' bases will be copied so you can paste them to Rocky.'
+    : 'When you are finished with this base, click “I’m done with this base.” Then you can keep building or pick a new base. Finish '+goal+' bases ('+have+' of '+goal+' so far) and your results get copied for Rocky.';
   $('starPop').classList.remove('hidden');
 }
 $('starPopOk').onclick=()=>$('starPop').classList.add('hidden');
@@ -3926,34 +3933,43 @@ function renderFound(nw){
 }
 
 /* ---------- done: message for Rocky ---------- */
-function rockyMessage(){
+function baseSummary(){
   const words=[...found.values()];
   const used=new Set(words.flatMap(w=>w.parts));
-  const unusedP=base.P.filter(p=>!used.has(p)), unusedS=base.S.filter(s=>!used.has(s)), unusedC=(base.C||[]).filter(c=>!used.has(c));
   const isC=x=>(base.C||[]).includes(x);
   const pre=[...new Set(words.flatMap(w=>w.parts.slice(0,w.parts.indexOf(base.name))))];
   const suf=[...new Set(words.flatMap(w=>w.parts.slice(w.parts.indexOf(base.name)+1)))];
-  return `Rocky, I finished my word matrix!\n\nMy base: ${base.name}${base.meaning?` (“${base.meaning}”)`:''}\nWords I built: ${words.map(w=>w.word).join(', ')}\nPrefixes I used: ${pre.filter(x=>!isC(x)).join(', ')||'none'}\nSuffixes I used: ${suf.filter(x=>!isC(x)).join(', ')||'none'}${(base.C||[]).length?`\nCombining pieces I used: ${[...pre,...suf].filter(isC).join(', ')||'none'}`:''}\nPieces on my wheel I did not use: ${[...unusedP,...unusedS,...unusedC].join(', ')||'none'}${levelSection()}`;
+  return { meaning:base.meaning||'', words:[...new Set(words.map(w=>w.word))],
+    pre:pre.filter(x=>!isC(x)), suf:suf.filter(x=>!isC(x)), comb:(base.C||[]).length?[...pre,...suf].filter(isC):null,
+    unused:[...base.P.filter(x=>!used.has(x)),...base.S.filter(x=>!used.has(x)),...(base.C||[]).filter(x=>!used.has(x))] };
 }
-// every base finished so far in this lesson, with all the words built on each (only shown once there is more than one)
-function levelSection(){
+// one message for the whole lesson: every base finished so far, with all its words
+function lessonMessage(){
   const lw=(store.get()[LV]||{}).words||{}; const names=Object.keys(lw);
-  if(names.length<2) return '';
-  return `\n\nAll the bases I finished in ${nice(LV)}:\n`+names.map((n,i)=>`${i+1}. ${n}${lw[n].meaning?` (“${lw[n].meaning}”)`:''}: ${lw[n].words.join(', ')}`).join('\n');
+  const parts=names.map((n,i)=>{ const b=lw[n];
+    return `Base ${i+1}: ${n}${b.meaning?` (“${b.meaning}”)`:''}\nWords I built: ${b.words.join(', ')}\nPrefixes I used: ${(b.pre||[]).join(', ')||'none'}\nSuffixes I used: ${(b.suf||[]).join(', ')||'none'}${b.comb?`\nCombining pieces I used: ${b.comb.join(', ')||'none'}`:''}\nPieces on my wheel I did not use: ${(b.unused||[]).join(', ')||'none'}`; });
+  return `Rocky, I finished ${names.length} bases in ${nice(LV)}!\n\n`+parts.join('\n\n');
 }
 $('doneBtn').onclick=()=>{
   if(uniqFound()<starGoal()) return;
   const st=store.get(); st[LV]=st[LV]||{done:[]};
   if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); }
-  st[LV].words=st[LV].words||{}; st[LV].words[base.name]={meaning:base.meaning||'',words:[...new Set([...found.values()].map(w=>w.word))]}; store.set(st);
-  const msg=rockyMessage(); $('rockyText').textContent=msg; { const have=st[LV].done.length, goal=goalFor(LV); $('nextBtn').textContent=have>=goal?'Next lesson ➜':'New base'; $('keepBtn').textContent='Keep building'; } $('copyNote').textContent=''; $('rocky').classList.remove('hidden'); doCopy(true);
-  try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,base:base.name,meaning:base.meaning,words:[...found.values()].map(w=>w.word),levelWords:st[LV].words,message:msg},'*'); }catch(e){}
+  st[LV].words=st[LV].words||{}; st[LV].words[base.name]=baseSummary(); store.set(st);
+  const have=st[LV].done.length, goal=goalFor(LV);
+  if(have<goal){   // not yet: no copying, just choose what to do next
+    $('choiceText').innerHTML='Nice work on <b>'+base.name+'</b>! ('+have+' of '+goal+' bases done.) Would you like to keep building on this base, or pick a new base?';
+    $('choicePop').classList.remove('hidden'); return;
+  }
+  const msg=lessonMessage(); $('rockyText').textContent=msg; $('copyNote').textContent=''; $('rocky').classList.remove('hidden'); doCopy(true);
+  try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,bases:Object.keys(st[LV].words),levelWords:st[LV].words,message:msg},'*'); }catch(e){}
 };
+$('choiceKeep').onclick=()=>$('choicePop').classList.add('hidden');
+$('choiceNew').onclick=()=>{ $('choicePop').classList.add('hidden'); loadBase(nextBase()); };
 async function doCopy(auto){
   const t=$('rockyText').textContent, ok='Copied! Now paste it into your chat with Rocky.';
   try{ await navigator.clipboard.writeText(t); $('copyNote').textContent=ok; }
   catch(e){ const r=document.createRange(); r.selectNodeContents($('rockyText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); try{ document.execCommand('copy'); $('copyNote').textContent=ok; }catch(_){ $('copyNote').textContent='Select the message above and copy it, then paste it into your chat with Rocky.'; } }
-  $('rockyIntro').innerHTML=$('copyNote').textContent.startsWith('Copied')?'<b>Your results are copied!</b> Paste them into your chat with Rocky.':'<b>Almost!</b> Copy the message below, then paste it into your chat with Rocky.';
+  { const n=Object.keys((store.get()[LV]||{}).words||{}).length; $('rockyIntro').innerHTML=$('copyNote').textContent.startsWith('Copied')?'<b>Your results from all '+n+' bases are copied!</b> Paste them into your chat with Rocky.':'<b>Almost!</b> Copy the message below, then paste it into your chat with Rocky.'; }
 }
 $('copyBtn').onclick=()=>doCopy();
 $('keepBtn').onclick=()=>$('rocky').classList.add('hidden');
