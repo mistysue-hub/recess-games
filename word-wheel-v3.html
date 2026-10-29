@@ -161,12 +161,12 @@
   <div class="panel">
     <h1 style="font-size:28px">Great building! 🎉</h1>
     <p id="rockyIntro"><b>Your results are copied!</b> Paste them into your chat with Rocky.</p>
-    <p style="font-weight:700">Would you like to keep building, or move on to the next lesson?</p>
+    <p style="font-weight:700">Would you like to keep building, or are you finished?</p>
     <div id="rockyText"></div>
     <div class="btnrow">
       <button class="big alt" id="copyBtn">Copy again</button>
       <button class="big alt" id="keepBtn">Keep building</button>
-      <button class="big alt" id="nextBtn">Next lesson ➜</button>
+      <button class="big alt" id="nextBtn">I'm finished ✔</button>
     </div>
     <p id="copyNote" style="font-size:14px;margin:10px 0 0"></p>
   </div>
@@ -3508,7 +3508,7 @@ const LEVEL_INFO = {
   3:['Word roots','Bases that are not words on their own'],
   4:['Big matrices','More pieces and longer words']
 };
-let combLabel=p=>p, combSide={}, starShown=false; let LV='1A', base=null, found=new Map(), path=[], tileEls=[], layout=[], dragging=false, wheelW=360;
+let combLabel=p=>p, combSide={}, starShown=false; let LV='runA', base=null, found=new Map(), path=[], tileEls=[], layout=[], dragging=false, wheelW=360;
 const store = { get(){ try{ return JSON.parse(localStorage.getItem('wordWheel1')||'{}'); }catch(e){ return {}; } },
                 set(o){ try{ localStorage.setItem('wordWheel1',JSON.stringify(o)); }catch(e){} } };
 
@@ -3536,13 +3536,15 @@ function updateProgress(justBuilt){
 function registerStar(){
   const st=store.get(); st[LV]=st[LV]||{done:[]}; st[LV].done=st[LV].done||[];
   if(!st[LV].done.includes(base.name)){ st[LV].done.push(base.name); st[LV].wc=(st[LV].wc||0)+uniqFound(); }
-  st[LV].words=st[LV].words||{}; st[LV].words[base.name]=baseSummary(); store.set(st);
+  st[LV].words=st[LV].words||{}; st[LV].words[base.name]=baseSummary(); store.set(st); updateChip();
 }
 function doneCount(){ const st=store.get(); return ((st[LV]&&st[LV].done)||[]).length; }
 function haveAfter(){ return doneCount()+(((store.get()[LV]||{}).done||[]).includes(base.name)?0:1); }
 function showStarPop(){
   const have=doneCount();
-  $('starPopText').textContent='You have '+have+(have===1?' star':' stars')+' in this lesson so far. When you have at least 3 stars, click “I’m done! Tell Rocky” to give Rocky your results. If you are done with this base, click “New base” to try another.';
+  $('starPopText').textContent= have>=GOAL
+    ? 'You have '+have+' stars! Click “I’m done! Tell Rocky” to give Rocky your results. If you want to keep going, click “New base” to try another.'
+    : 'You have '+have+(have===1?' star':' stars')+' so far. When you have at least '+GOAL+' stars, click “I’m done! Tell Rocky” to give Rocky your results. If you are done with this base, click “New base” to try another.';
   $('starPop').classList.remove('hidden');
 }
 $('starPopOk').onclick=()=>$('starPop').classList.add('hidden');
@@ -3563,70 +3565,57 @@ function confetti(){
     if(++t<90) requestAnimationFrame(step); else x.clearRect(0,0,c.width,c.height); })();
 }
 
-/* ---------- level picker & lesson flow ---------- */
+/* ---------- level picker & run flow ---------- */
+// three difficulties (Beginner / Medium / Advanced); a run is finished after 10 bases each earn a star
 const TIERS={A:['Beginner','🌱'],B:['Medium','🌿'],C:['Advanced','🌳']};
-const lessonOf=id=>parseInt(id), tierOf=id=>id.slice(-1);
-const nice=id=>'Lesson '+lessonOf(id)+' · '+TIERS[tierOf(id)][0];
-let PICKTIER='A';
+const GOAL=10;
+const tierOf=id=>id.slice(-1);
+const nice=id=>TIERS[tierOf(id)][0]+' level';
 const show=id=>{ for(const x of ['scrHome']) $(x).classList.toggle('hidden',x!==id); };
-const passedOf=t=>{ const p=(store.get().passed||{})[t]; return Array.isArray(p)?p:[]; };
-// next lesson in this level that is not passed yet, starting at `from` and wrapping round; null when all 30 are passed
-function nextLesson(t,from){ const p=passedOf(t); for(let i=0;i<30;i++){ const n=((from-1+i)%30)+1; if(!p.includes(n)) return n; } return null; }
-function markPassed(t,n){ const st=store.get(); st.passed=st.passed||{}; const p=passedOf(t).slice(); if(!p.includes(n)) p.push(n); st.passed[t]=p; st.last=st.last||{}; st.last[t]=n; store.set(st); return p.length; }
+const runOf=t=>{ const r=store.get()['run'+t]; return (r&&Array.isArray(r.done))?r:{done:[]}; };
+const activeTier=()=>['A','B','C'].find(t=>runOf(t).done.length>0)||null;
+function resetRuns(){ const st=store.get(); for(const t of ['A','B','C']) delete st['run'+t]; store.set(st); }
+function updateChip(){ $('lvlChip').textContent=TIERS[tierOf(LV)][0]+' · '+doneCount()+' of '+GOAL+' bases'; }
 function buildPicker(){
-  $('homeBtns').innerHTML=['A','B','C'].map(t=>{ const n=passedOf(t).length;
-    const sub=n>=30?'You finished all 30 lessons! 🏆':n>0?n+' of 30 lessons done':'30 lessons';
-    return `<button class="big ${t==='A'?'':'alt'}" data-t="${t}">${TIERS[t][1]} Level ${t} · ${TIERS[t][0]}<small>${sub}</small></button>`; }).join('');
+  const act=activeTier(), tiers=act?[act]:['A','B','C'];
+  $('homeBtns').innerHTML=tiers.map(t=>{ const n=runOf(t).done.length;
+    const sub=n>=GOAL?'You finished! Tap to play again 🏆':n>0?n+' of '+GOAL+' bases done · tap to continue':'Finish '+GOAL+' bases';
+    return `<button class="big ${t==='A'?'':'alt'}" data-t="${t}">${TIERS[t][1]} ${TIERS[t][0]}<small>${sub}</small></button>`; }).join('')
+    + (act&&runOf(act).done.length<GOAL?'<p style="font-size:15px;margin:12px 0 0"><a href="#" id="resetRun">Start over with a different level</a></p>':'');
   show('scrHome');
   document.querySelectorAll('#homeBtns .big').forEach(b=>b.onclick=()=>openTier(b.dataset.t));
+  const rr=$('resetRun'); if(rr) rr.onclick=e=>{ e.preventDefault(); resetRuns(); buildPicker(); };
 }
-// tapping a level starts it at Lesson 1 for a new player, or at the first lesson not passed yet for a returning one (Lesson 1 again once all 30 are done)
+// tapping a level starts building right away (or picks up where this student left off; a finished run starts fresh)
 function openTier(t){
-  PICKTIER=t;
-  if(passedOf(t).length>=30){   // a finished level can be played again from Lesson 1
-    const st=store.get(); st.passed=st.passed||{}; st.passed[t]=[]; st.last=st.last||{}; st.last[t]=0; store.set(st);
-  }
-  const last=((store.get().last||{})[t])||0; const nx=nextLesson(t,last+1);
-  beginLesson(nx===null?1:nx,t);
+  if(runOf(t).done.length>=GOAL) resetRuns();
+  startRun(t);
 }
-function beginLesson(n,t){ startLevel(n+t); }
 function nextBase(){
-  // never hand back a base the student already finished or already saw in this lesson, or the one on screen
-  const pool=BASES.filter(b=>b.level===LV);
+  // never hand back a base the student already finished or already saw, or the one on screen
+  const t=tierOf(LV);
+  const pool=[...new Map(BASES.filter(b=>b.level.slice(-1)===t).map(b=>[b.name,b])).values()];
   const st=store.get(); const d=(st[LV]&&st[LV].done)||[], seen=(st[LV]&&st[LV].seen)||[];
   const cur=base?base.name:null;
   let left=pool.filter(b=>!d.includes(b.name) && !seen.includes(b.name) && b.name!==cur);
   if(!left.length) left=pool.filter(b=>!d.includes(b.name) && b.name!==cur);   // seen but unfinished bases may return
-  if(!left.length) left=pool.filter(b=>b.name!==cur && b.name!==lastDone());   // everything finished: still avoid the one just finished
+  if(!left.length) left=pool.filter(b=>b.name!==cur && b.name!==lastDone());
   if(!left.length) left=pool.filter(b=>b.name!==cur);
   return rnd(left.length?left:pool);
 }
 function lastDone(){ const d=(store.get()[LV]||{}).done||[]; return d.length?d[d.length-1]:null; }
 function markSeen(name){ const st=store.get(); st[LV]=st[LV]||{done:[]}; st[LV].seen=st[LV].seen||[]; if(!st[LV].seen.includes(name)){ st[LV].seen.push(name); store.set(st); } }
-// a lesson is passed after 3 finished matrices (or all of them, if the lesson has fewer)
-const goalFor=id=>Math.min(3,BASES.filter(b=>b.level===id).length);
-function startLevel(n,quiet){
-  LV=n; const st=store.get(); st[LV]={done:[]}; store.set(st);
-  $('start').classList.add('hidden'); $('rocky').classList.add('hidden');
-  $('lvlChip').textContent=nice(n); base=null;
-  announce('Lesson '+lessonOf(n), TIERS[tierOf(n)][0]+' level'+(lessonOf(n)===1?'\n\nClick on parts of the word in order to form a new word. Then hit “Build it!” to see what you have made!':''), ()=>loadBase(nextBase()));
+const goalFor=()=>GOAL;
+function startRun(t){
+  LV='run'+t; const st=store.get(); st[LV]=st[LV]||{done:[]}; store.set(st);
+  $('start').classList.add('hidden'); $('rocky').classList.add('hidden'); base=null; updateChip();
+  const fresh=!st[LV].done.length;
+  announce(TIERS[t][0]+' level', fresh?'Click on parts of the word in order to form a new word. Then hit “Build it!” to see what you have made!':'Welcome back! You have '+st[LV].done.length+' of '+GOAL+' bases so far.', ()=>loadBase(nextBase()));
 }
 function announce(title,sub,cb){
   $('bannerTitle').textContent=title; $('bannerSub').textContent=sub; $('banner').classList.remove('hidden');
   speak(title+'. '+sub);
   $('bannerGo').onclick=()=>{ $('banner').classList.add('hidden'); cb&&cb(); };
-}
-function advance(){
-  // called when the current lesson is passed (3 or more bases each earned a star)
-  const cur=LV, t=tierOf(cur), n=lessonOf(cur);
-  const count=markPassed(t,n);
-  sfx('star'); confetti();
-  const nx=nextLesson(t,n+1);
-  if(nx===null){
-    try{ window.parent.postMessage({source:'word-wheel',type:'levelDone',tier:t,lessons:30},'*'); }catch(e){}
-    announce('You finished Level '+t+'! 🏆', 'All 30 lessons are done. '+statLine(cur)+'Play another level any time!', ()=>{ $('start').classList.remove('hidden'); buildPicker(); }); return;
-  }
-  announce('Lesson '+n+' complete! 🎉', statLine(cur)+'Next up: Lesson '+nx+' ('+count+' of 30 done)', ()=>startLevel(nx+t));
 }
 function loadBase(b){
   base=b; found=new Map(); path=[]; starShown=false; markSeen(b.name);
@@ -3951,12 +3940,12 @@ function baseSummary(){
     pre:pre.filter(x=>!isC(x)), suf:suf.filter(x=>!isC(x)), comb:(base.C||[]).length?[...pre,...suf].filter(isC):null,
     unused:[...base.P.filter(x=>!used.has(x)),...base.S.filter(x=>!used.has(x)),...(base.C||[]).filter(x=>!used.has(x))] };
 }
-// one message for the whole lesson: every base finished so far, with all its words
-function lessonMessage(){
+// one message for the whole run: every base finished so far, with all its words
+function runMessage(){
   const lw=(store.get()[LV]||{}).words||{}; const names=Object.keys(lw);
   const parts=names.map((n,i)=>{ const b=lw[n];
     return `Base ${i+1}: ${n}${b.meaning?` (“${b.meaning}”)`:''}\nWords I built: ${b.words.join(', ')}\nPrefixes I used: ${(b.pre||[]).join(', ')||'none'}\nSuffixes I used: ${(b.suf||[]).join(', ')||'none'}${b.comb?`\nCombining pieces I used: ${b.comb.join(', ')||'none'}`:''}\nPieces on my wheel I did not use: ${(b.unused||[]).join(', ')||'none'}`; });
-  return `Rocky, I finished ${names.length} bases in ${nice(LV)}!\n\n`+parts.join('\n\n');
+  return `Rocky, I finished ${names.length} bases at the ${nice(LV)}!\n\n`+parts.join('\n\n');
 }
 $('doneBtn').onclick=()=>{
   if(uniqFound()<starGoal()) return;
@@ -3965,10 +3954,10 @@ $('doneBtn').onclick=()=>{
   st[LV].words=st[LV].words||{}; st[LV].words[base.name]=baseSummary(); store.set(st);
   const have=st[LV].done.length, goal=goalFor(LV);
   if(have<goal){   // not yet: no copying, just choose what to do next
-    $('choiceText').innerHTML='Nice work on <b>'+base.name+'</b>! ('+have+' of '+goal+' bases done.) Would you like to keep building on this base, or pick a new base?';
+    $('choiceText').innerHTML='Nice work on <b>'+base.name+'</b>! ('+have+' of '+goal+' stars so far.) Would you like to keep building on this base, or pick a new base?';
     $('choicePop').classList.remove('hidden'); return;
   }
-  const msg=lessonMessage(); $('rockyText').textContent=msg; $('copyNote').textContent=''; $('rocky').classList.remove('hidden'); doCopy(true);
+  const msg=runMessage(); $('rockyText').textContent=msg; $('copyNote').textContent=''; $('rocky').classList.remove('hidden'); doCopy(true);
   try{ window.parent.postMessage({source:'word-wheel',type:'done',level:LV,bases:Object.keys(st[LV].words),levelWords:st[LV].words,message:msg},'*'); }catch(e){}
 };
 $('choiceKeep').onclick=()=>$('choicePop').classList.add('hidden');
@@ -3981,7 +3970,13 @@ async function doCopy(auto){
 }
 $('copyBtn').onclick=()=>doCopy();
 $('keepBtn').onclick=()=>$('rocky').classList.add('hidden');
-$('nextBtn').onclick=()=>{ $('rocky').classList.add('hidden'); const st=store.get(); if(((st[LV]&&st[LV].done)||[]).length>=goalFor(LV)) advance(); else loadBase(nextBase()); };
+$('nextBtn').onclick=()=>{
+  $('rocky').classList.add('hidden'); const st=store.get(), run=st[LV]||{done:[]};
+  if(run.done.length<GOAL){ loadBase(nextBase()); return; }
+  try{ window.parent.postMessage({source:'word-wheel',type:'levelDone',tier:tierOf(LV),bases:run.done.length},'*'); }catch(e){}
+  sfx('star'); confetti();
+  announce('You finished the challenge! 🏆', statLine(LV)+'You can play again any time!', ()=>{ resetRuns(); $('start').classList.remove('hidden'); buildPicker(); });
+};
 
 buildPicker();
 </script>
