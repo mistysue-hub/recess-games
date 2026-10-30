@@ -29,7 +29,6 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 | Leave a loop early | `break` |
 | Define a function | `function overlaps(a, b) ... return true end` |
 | Call a function that belongs to a table | `sound:play()` |
-
 | Part of a string, positions a to b | `string.sub(s, a, b)` |
 | How many characters in a string | `#s` |
 | Try something that might fail, without crashing | `local ok, result = pcall(love.graphics.newImage, path)` |
