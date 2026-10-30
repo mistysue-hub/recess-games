@@ -100,6 +100,11 @@
     .lights{display:none}
   }
   @media (prefers-reduced-motion:reduce){ .card.in,.imp.zap svg,.imp.foiled svg{animation:none} .imp{transition:none} }
+  .steps{margin:8px 0 12px;padding-left:22px}
+  .steps li{margin:4px 0;font:500 15px/1.4 Poppins,sans-serif}
+  .steps.mini{margin:14px 0 4px;padding:10px 12px 10px 30px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.55)}
+  .steps.mini li{font-size:14px;margin:2px 0}
+  .names button small{display:block;font-size:12px;font-weight:500;opacity:.8}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -273,9 +278,15 @@
         <div style="background:var(--r3)"><b>3 · Deceiver</b> A powerful trickster could fool you about everything, even sums.</div>
         <div style="background:var(--r4)"><b>Untouchable</b> No doubt, however strong, knocks it out.</div>
       </div>
-      <p><b>Your job:</b> for each belief, tap the <em>lowest</em> rung that knocks it out. A stronger doubt would knock it out too, but the question is where it first falls.</p>
-      <p><b>Worked example.</b> "That ship on the horizon is tiny." Things far away are exactly where the senses fool us, so it falls at rung 1. The dream and the deceiver could knock it out too, but rung 1 gets there first.</p>
-      <p class="small">Ten beliefs, then a short round at the Reply Desk. You lock in every answer before the Deceiver shows you anything.</p>
+      <p><b>Your job:</b> find the first rung that knocks each belief out. Just ask these four questions in order and stop at the first yes:</p>
+      <ol class="steps">
+        <li><b>Is it far away, tiny or blurry?</b> Yes → Senses</li>
+        <li><b>Could a dream fake it?</b> Yes → Dream</li>
+        <li><b>Is it math or logic</b> (true even in a dream)? Yes → Deceiver</li>
+        <li><b>Is it that you exist or are thinking?</b> Yes → Untouchable</li>
+      </ol>
+      <p><b>Example.</b> "That ship on the horizon is tiny." Far away? Yes. Stop: it falls at Senses.</p>
+      <p class="small">Eight beliefs, then three quick ones at the Reply Desk. Miss one and you get a hint and a second try. The four questions stay on screen the whole time.</p>
       <div class="center"><button class="big" id="startBtn">Climb the ladder</button></div>
     </div>
   </section>
@@ -308,7 +319,14 @@
           </div>
         </div>
       </div>
+      <ol class="steps mini" id="guide">
+        <li><b>Far, tiny or blurry?</b> → Senses</li>
+        <li><b>Could a dream fake it?</b> → Dream</li>
+        <li><b>Math or logic?</b> → Deceiver</li>
+        <li><b>You exist / you're thinking?</b> → Untouchable</li>
+      </ol>
       <div class="go"><button class="big" id="lock" disabled>Lock it in</button></div>
+      <div class="fb bad hidden" id="hint"></div>
       <div class="fb hidden" id="fb"></div>
       <div class="go hidden" id="nextWrap"><button class="big" id="nextBtn">Next belief</button></div>
     </div>
@@ -322,9 +340,9 @@
       <p>Three philosophers answered the skeptic in three different ways. Who said this?</p>
       <div class="reply" id="dText"></div>
       <div class="names" id="names">
-        <button data-n="Descartes">Descartes</button>
-        <button data-n="Moore">Moore</button>
-        <button data-n="Putnam">Putnam</button>
+        <button data-n="Descartes">Descartes<small>trusts a good God</small></button>
+        <button data-n="Moore">Moore<small>trusts common sense</small></button>
+        <button data-n="Putnam">Putnam<small>brains in vats</small></button>
       </div>
       <div class="fb hidden" id="dFb"></div>
       <div class="go hidden" id="dNextWrap"><button class="big" id="dNext">Next reply</button></div>
@@ -345,7 +363,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll ask you to invent a deceiver of your own.</p>
+      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll ask you one quick question.</p>
       <div class="center"><button class="big alt" id="again">Climb again</button></div>
     </div>
   </section>
@@ -356,26 +374,22 @@
   const CODE='IRON CANDLE';
   const RUNG={1:'Senses',2:'Dream',3:'Deceiver',4:'Untouchable'};
   const BELIEFS=[
-    {c:"I'm sitting by the fire in my dressing gown.", x:"Up close, in good light, wide awake (you think).", r:2,
-     why:"Up close and in good light, the senses aren't the problem. But you've dreamed scenes just like this, so the dream knocks it out."},
-    {c:"That tower in the distance is round.", x:"You're looking across a valley.", r:1,
-     why:"Distant things are exactly where the senses fool us. Descartes's own example: towers that look round from far away turn out to be square."},
-    {c:"2 + 3 = 5", x:"", r:3,
-     why:"It's true in a dream too, so the dream can't touch it. Only the Deceiver could make you go wrong every time you add."},
-    {c:"I exist.", x:"", r:4,
-     why:"If the Deceiver is fooling you, you have to exist to be fooled. Descartes: whenever he thinks “I am, I exist,” it's necessarily true."},
-    {c:"I have hands.", x:"You're looking right at them.", r:2,
-     why:"Your senses are fine at this range, but a dream could fake your hands completely."},
-    {c:"A square has four sides.", x:"", r:3,
+    {c:"That tower in the distance is round.", x:"You're looking across a valley.", r:1, hint:"Is it far away?",
+     why:"Far away: the senses fool us here. Descartes's own example: towers that look round from far off turn out to be square."},
+    {c:"That oar dipped in the lake is bent.", x:"It looks bent where it enters the water.", r:1, hint:"Could your eyes be tricked here?",
+     why:"Water bends light, so your eyes fool you. Pull the oar out and it's straight."},
+    {c:"I have hands.", x:"You're looking right at them, up close.", r:2, hint:"Not far or blurry. But have you ever dreamed about your hands?",
+     why:"Your eyes are fine up close, but a dream could fake your hands completely."},
+    {c:"I'm sitting by the fire in my pajamas.", x:"Up close, in good light.", r:2, hint:"Not far or blurry. Could you dream this exact scene?",
+     why:"Nothing's far or blurry, but you've had dreams just like this, so the dream knocks it out."},
+    {c:"2 + 3 = 5", x:"", r:3, hint:"It's math, and it's true even in a dream.",
+     why:"It's still true in a dream, so the dream can't touch it. Only the Deceiver could trick you every time you add."},
+    {c:"A square has four sides.", x:"", r:3, hint:"It's true by definition, even in a dream.",
      why:"Squares have four sides in dreams too, so only the Deceiver could knock this out."},
-    {c:"That oar dipped in the lake is bent.", x:"It looks bent where it enters the water.", r:1,
-     why:"Water bends light, so the senses fool you here. Pull the oar out and it's straight."},
-    {c:"I'm awake right now.", x:"", r:2,
-     why:"This is the dream argument's main target: no sure sign separates waking from dreaming."},
-    {c:"I am thinking right now.", x:"Even if everything you're thinking about is fake.", r:4,
-     why:"Being fooled, doubting, wondering: all of those are thinking. The Deceiver can fake what you think about, not the fact that you're thinking."},
-    {c:"The small print on that faraway sign says CLOSED.", x:"You're squinting from across the street.", r:1,
-     why:"Tiny, distant and blurry: the senses can fool you here before any dream or deceiver is needed."}
+    {c:"I exist.", x:"", r:4, hint:"To be tricked, what do you need to do first?",
+     why:"If the Deceiver is fooling you, you have to exist to be fooled. Nothing can knock this out."},
+    {c:"I am thinking right now.", x:"Even if everything you're thinking about is fake.", r:4, hint:"Being fooled is a kind of thinking.",
+     why:"Being fooled, doubting, wondering: all of those are thinking. The Deceiver can fake what you think about, not the fact that you're thinking."}
   ];
   const DESK=[
     {t:"“Here is one hand, and here is another.” I can know things I can't prove, and I'm more certain I have hands than I am of any premise in your clever argument.", a:"Moore",
@@ -402,7 +416,7 @@
   $('startBtn').onclick=()=>{ ORDER=HDYK.shuffle(BELIEFS); HDYK.resetMisses(2); show('sLadder'); showBelief(); };
 
   function showBelief(){
-    const b=ORDER[bi]; pick=null;
+    const b=ORDER[bi]; pick=null; tries=0; $('hint').classList.add('hidden');
     $('cNum').textContent='Belief '+(bi+1)+' of '+BELIEFS.length;
     $('cClaim').textContent='“'+b.c+'”';
     $('cCtx').textContent=b.x; $('cCtx').classList.toggle('hidden', !b.x);
@@ -418,8 +432,17 @@
     $('ladder').querySelectorAll('.rung').forEach(x=>x.classList.toggle('pick', x===el));
     $('lock').disabled=false;
   });
+  let tries=0;
   $('lock').onclick=()=>{
-    const b=ORDER[bi], ok=pick===b.r; if(ok) right++;
+    const b=ORDER[bi], ok=pick===b.r;
+    if(!ok && tries===0){
+      tries=1; HDYK.miss(2,{q:'Which is the weakest of Descartes\'s doubts that knocks out this belief, or is it untouchable? \u201c'+b.c+'\u201d'+(b.x?' ('+b.x+')':''), opts:['Senses','Dream','Deceiver','Untouchable'], a:b.r-1, why:b.why});
+      const r=rungEl(pick); r.classList.remove('pick'); r.classList.add('wrong'); r.disabled=true; pick=null; $('lock').disabled=true;
+      const h=$('hint'); h.innerHTML='<b class="head">Not quite. Hint:</b><p>'+b.hint+' Try again.</p>'; h.classList.remove('hidden');
+      return;
+    }
+    $('hint').classList.add('hidden');
+    const first=ok&&tries===0; if(first) right++;
     $('lock').parentElement.classList.add('hidden');
     $('ladder').querySelectorAll('.rung').forEach(x=>{
       x.disabled=true;
@@ -427,15 +450,15 @@
     });
     moveImp(b.r===4?4:b.r);
     const imp=$('imp'); setTimeout(()=>imp.className='imp '+(b.r===4?'foiled':'zap'), 650);
-    lights.children[bi].className= ok?'ok':'no';
+    lights.children[bi].className= first?'ok':'no';
     let extra='';
     if(!ok && pick>b.r && pick<4) extra='<p class="small">'+RUNG[pick]+' would knock it out too, but a weaker doubt gets there first.</p>';
     if(!ok && pick===4) extra='<p class="small">It isn\'t untouchable: the '+RUNG[b.r]+' doubt gets it.</p>';
     if(!ok && pick<b.r) extra='<p class="small">'+RUNG[pick]+' isn\'t strong enough to touch this one.</p>';
     const fb=$('fb'); fb.className='fb'+(ok?'':' bad');
-    if(!ok) HDYK.miss(2,{q:'Which is the weakest of Descartes\'s doubts that knocks out this belief, or is it untouchable? \u201c'+b.c+'\u201d'+(b.x?' ('+b.x+')':''), opts:['Senses','Dream','Deceiver','Untouchable'], a:b.r-1, why:b.why});
+    if(false) HDYK.miss(2,{q:'Which is the weakest of Descartes\'s doubts that knocks out this belief, or is it untouchable? \u201c'+b.c+'\u201d'+(b.x?' ('+b.x+')':''), opts:['Senses','Dream','Deceiver','Untouchable'], a:b.r-1, why:b.why});
     fb.innerHTML='<b class="head">'+HDYK.react(ok)+' '+(b.r===4?'It\'s untouchable.':'It\'s knocked out at '+RUNG[b.r]+'.')+'</b><p>'+b.why+'</p>'+extra;
-    log.push({c:b.c, you:RUNG[pick], ans:RUNG[b.r], ok});
+    log.push({c:b.c, you:(tries?'2nd try: ':'')+(pick?RUNG[pick]:'-'), ans:RUNG[b.r], ok:first});
     $('nextBtn').textContent= bi===BELIEFS.length-1 ? 'To the Reply Desk' : 'Next belief';
     $('nextWrap').classList.remove('hidden');
   };
