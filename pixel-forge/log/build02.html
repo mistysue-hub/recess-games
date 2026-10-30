@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 02: Meteor Drift, part 1 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build02">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>The ship</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Spawning rocks on a timer</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Loops: do this for every rock</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Removing things safely</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Did we hit it? AABB collision</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>Fuel and score</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build02-meteor-drift.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.2.0</span><span class="game">Meteor Drift</span></div>
+    <div class="buildno">Build 02</div>
+    <h1>Meteor Drift, part 1</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a ship, a sky full of falling rocks, fuel to grab, a score, and the one trick behind every game: lists of things. (Next build, the game learns to insult you.)</p></div>
+  </div>
+
+  <section class="intro"><p>Blip was one square. Real games have <em>many</em> things: twenty rocks, a hundred bullets. You don't write twenty variables; you write one <strong>list</strong> and loop over it. Today's game, Meteor Drift, is built on that idea. Make a new folder, <code>build02-meteor-drift</code>, open it in VS Code, and start a fresh <code>main.lua</code>. (Or unzip the starter kit and read along; it's the same code with the Ship-It parts missing.)</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>The ship</h2><div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
+  love.window.setTitle("Meteor Drift")
+  ship = { x = 380, y = 520, w = 40, h = 30, speed = 320 }
+  rocks = {}
+  fuels = {}
+  score = 0
+  spawnTimer = 0
+end</code></pre></div>
+<p>First, change <code>"Meteor Drift"</code> to whatever you want to call your game. It's your ship; name it. The window title is the first thing anyone sees.</p>
+<p>Two new tables, <code>rocks</code> and <code>fuels</code>, start <strong>empty</strong>. The curly braces with nothing inside mean "a list with nothing in it yet." Draw the ship as a triangle and move it left and right the way you moved Blip, but with <code>math.max</code> and <code>math.min</code> so it stays on screen. (You did that in Build 01; do it again here, it's good practice.)</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.draw()
+  love.graphics.setColor(0.6, 0.9, 1)
+  love.graphics.polygon("fill", ship.x, ship.y + ship.h, ship.x + ship.w / 2, ship.y, ship.x + ship.w, ship.y + ship.h)
+end</code></pre></div>
+<p><code>polygon</code> takes pairs of numbers: three corners, six numbers. The ship's <code>x, y</code> is its top-left corner, same as Blip.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Spawning rocks on a timer</h2><p>A timer in a game is just a number you add <code>dt</code> to. When it passes a limit, do the thing and reset it.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.update(dt)
+  spawnTimer = spawnTimer + dt
+  if spawnTimer &gt; 0.8 then
+    spawnTimer = 0
+    local rock = { x = math.random(0, 760), y = -40, w = 40, h = 40, speed = math.random(120, 220) }
+    table.insert(rocks, rock)
+  end
+end</code></pre></div>
+<p>Read that slowly. Every 0.8 seconds we build a new rock table with a random <code>x</code> across the top and a random speed, and <code>table.insert</code> adds it to the end of the list. The <code>local</code> word means "this name only exists inside this block"; use it for anything temporary, which is most things, which is why Jamie never uses it. <code>math.random(a, b)</code> gives a whole number from a to b.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Loops: do this for every rock</h2><div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  for i, rock in ipairs(rocks) do
+    rock.y = rock.y + rock.speed * dt
+  end</code></pre></div>
+<p><code>ipairs</code> walks the list from first to last. Each time around, <code>i</code> is the position (1, 2, 3...) and <code>rock</code> is that rock's table. Lua lists start at <strong>1</strong>, not 0. Drawing uses the same loop:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  love.graphics.setColor(0.7, 0.5, 0.4)
+  for i, rock in ipairs(rocks) do
+    love.graphics.rectangle("fill", rock.x, rock.y, rock.w, rock.h)
+  end</code></pre></div>
+<p>Run it. Rocks should rain. Welcome to the part of game dev where you make a thing and immediately want to dodge it. They never stop falling, though, which brings us to the next problem.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Removing things safely</h2><p>Rocks that fall off the bottom should leave the list, or the game slows down after a few minutes and your laptop fan starts making opinions. Removing from a list while walking forward through it skips items (remove item 3 and item 4 slides into slot 3, which you've already passed). Lua will not warn you about this. Lua is very relaxed. So walk <strong>backward</strong>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  for i = #rocks, 1, -1 do
+    if rocks[i].y &gt; 600 then
+      table.remove(rocks, i)
+    end
+  end</code></pre></div>
+<p><code>#rocks</code> is how many rocks there are. <code>for i = #rocks, 1, -1</code> counts down. <code>rocks[i]</code> is the rock at position <code>i</code>. Keep this loop separate from the movement loop; that's fine and clearer.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Did we hit it? AABB collision</h2><p>Two rectangles overlap unless one is completely to the left, right, above or below the other. That's the whole test, and it has a name: <strong>AABB</strong> (axis-aligned bounding box). Put this function at the bottom of the file:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function overlaps(a, b)
+  return a.x &lt; b.x + b.w and b.x &lt; a.x + a.w
+     and a.y &lt; b.y + b.h and b.y &lt; a.y + a.h
+end</code></pre></div>
+<p><code>return</code> sends the answer back; <code>and</code> means both halves must be true. Now, in the backward loop, before the off-screen check:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    if overlaps(ship, rocks[i]) then
+      score = 0
+      rocks = {}
+      break
+    end</code></pre></div>
+<p>Hitting a rock wipes the score and clears the sky (we'll do a real game-over screen in Build 03). <code>break</code> leaves the loop right away, which we need because we just replaced the whole list.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>Fuel and score</h2><p>Fuel cans spawn like rocks but less often, and touching one is good. Make a second timer, <code>fuelTimer</code>, that spawns a fuel can every 3 seconds, size 24 by 24, speed 150. Move them, remove them off screen, and when the ship overlaps one, add 10 to <code>score</code> and remove that can (<code>table.remove(fuels, i)</code>). Draw them green. Print the score at the top left with <code>love.graphics.print</code>.</p>
+<p>You've now written the loop pattern four times: spawn, move, draw, remove. Every game you build from here uses that same pattern. Bullets, coins, enemies, confetti: all lists, all this loop. You've learned more game dev in one build than most people learn before they give up.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Two kinds of rock.</strong> Some rocks are small and fast; some are big and slow. Each rock decides which kind it is when it spawns. (Hint: a rock can carry a <code>kind</code> field, or you can pick its size and speed together with one <code>math.random(1, 2)</code> and an <code>if</code>.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Fuel runs out.</strong> Add a <code>fuel</code> number that starts at 100 and drops by 10 every second (hint: <code>dt</code>). Grabbing a can adds 30, up to a maximum of 100. Draw it as a bar: a rectangle whose width is <code>fuel * 2</code>. When it reaches 0, treat it like hitting a rock.</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>Rocks spin: give each rock an <code>angle</code>, add to it every frame, and draw it with <code>love.graphics.push</code>, <code>translate</code>, <code>rotate</code>, <code>pop</code> (see the cheat sheet).</li><li>The spawn timer limit shrinks a little every 10 points, so the game gets harder.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-002</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's fuel cans are fine for three seconds, then pour out in a solid stream, one every frame. Jamie calls this "generous." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  fuelTimer = fuelTimer + dt
+  if fuelTimer &gt; 3 then
+    table.insert(fuels, { x = math.random(0, 776), y = -24, w = 24, h = 24, speed = 150 })
+  end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Reread Step 2 and compare Jamie&#x27;s timer with yours, line by line.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build01.html">← Build 01</a><a class="pager" href="build03.html">Build 03 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

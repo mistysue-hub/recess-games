@@ -73,7 +73,7 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 | Triangle or any shape | `love.graphics.polygon("fill", x1, y1, x2, y2, x3, y3)` |
 | Line | `love.graphics.line(x1, y1, x2, y2)` |
 | Text | `love.graphics.print("hi", x, y)` |
-| Load an image (in load, once) | `img = love.graphics.newImage("assets/ship.png")` |
+| Load an image (in load, once) | `img = love.graphics.newImage(pathToPng)` with the path in quotes, like the one in Build Log 03 |
 | Draw an image | `love.graphics.draw(img, x, y)` |
 | Draw an image scaled | `love.graphics.draw(img, x, y, 0, scaleX, scaleY)` |
 | Image size | `img:getWidth()`, `img:getHeight()` |

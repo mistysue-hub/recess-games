@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 01: Day One at the Studio · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build01">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>Install the tools (ask a grown-up to sit with you)</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>The three functions every LÖVE game has</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Meet Blip</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Make it move</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Read the numbers</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>Reacting to a single key press</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build01-blip.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.1.0</span><span class="game">Blip</span></div>
+    <div class="buildno">Build 01</div>
+    <h1>Day One at the Studio</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a window, a square named Blip that you can steer, and your first Lua.</p></div>
+  </div>
+
+  <section class="intro"><p>Welcome to Pixel Forge. We're a two-person studio (now three, counting you). I'm the lead dev. Jamie does the art, names every variable <code>thing</code>, and has never once admitted to a bug. You'll meet Jamie's code soon.</p>
+<p>Here's where you'll be by Build 03: a ship, a sky full of rocks, sound effects you made yourself, and a game-over screen that insults you. Three builds. Every one of them starts the same way: a folder with a file called <code>main.lua</code> inside. That folder <em>is</em> the game. We don't use a giant engine; we use <strong>LÖVE</strong>, a small free framework that runs the <strong>Lua</strong> language, and we write in <strong>VS Code</strong>.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>Install the tools (ask a grown-up to sit with you)</h2><p>This is the boring twenty minutes. I won't pretend otherwise. Get through it once and you never do it again.</p>
+<ol><li><strong>LÖVE 11.5</strong> from love2d.org. Windows: the 64-bit installer. Mac: drag the app into Applications. Linux: use the package for your system.</li><li><strong>VS Code</strong> from code.visualstudio.com.</li><li>Inside VS Code, open the Extensions panel (the four-squares icon on the left), search <strong>Love 2D Support</strong> by Pixelbyte Studios, and install it. This gives you one shortcut: <strong>Ctrl+L</strong> (Windows/Linux) or <strong>Cmd+L</strong> (Mac) runs whatever game folder you have open.</li><li>Mac only: the extension needs to know where LÖVE lives. Open VS Code settings, search "pixelbyte", and set the path to <code>/Applications/love.app/Contents/MacOS/love</code>.</li></ol>
+<p>Make a folder on your computer called <code>pixel-forge</code>. Inside it, make another folder called <code>build01-blip</code>. In VS Code, choose <strong>File → Open Folder</strong> and open <code>build01-blip</code>. Everything you type today goes in a new file there named exactly <code>main.lua</code>.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>The three functions every LÖVE game has</h2><p>A game is a flipbook. Sixty times a second, LÖVE asks your code two questions: <em>what changed?</em> and <em>what should I draw?</em> You answer with three functions.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
+  -- runs once, when the game starts
+end
+
+function love.update(dt)
+  -- runs every frame: move things, check things
+end
+
+function love.draw()
+  -- runs every frame, after update: draw everything
+end</code></pre></div>
+<p>Type exactly that into <code>main.lua</code>, save, and press Ctrl+L / Cmd+L. A black window should open. Congratulations: that's a game with nothing in it. Technically it has a perfect review score, since nobody has found a bug yet. Close it with the window's close button.</p>
+<p>If nothing opens, the three usual reasons are: the file isn't named <code>main.lua</code>, VS Code has the wrong folder open (the folder must be the one that holds <code>main.lua</code>), or LÖVE isn't installed where the extension expects.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Meet Blip</h2><p>Blip is a square. In Lua, a thing with several facts about it is a <strong>table</strong>. Tables use curly braces, and each fact has a name.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
+  blip = { x = 400, y = 300, size = 24, speed = 200 }
+end</code></pre></div>
+<p>Now draw it. The window is a grid of pixels. <code>0, 0</code> is the <strong>top-left</strong> corner. <code>x</code> grows to the right. <code>y</code> grows <strong>downward</strong> (this surprises everyone; it's just how screens count). Our window is 800 wide and 600 tall, so Blip starts in the middle.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.draw()
+  love.graphics.setColor(0.2, 0.9, 1)
+  love.graphics.rectangle("fill", blip.x, blip.y, blip.size, blip.size)
+end</code></pre></div>
+<p>Colors in LÖVE are three numbers from 0 to 1: how much red, green and blue. <code>0.2, 0.9, 1</code> is a bright cyan. Run it. A square should sit in the middle of the window.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Make it move</h2><p>Movement happens in <code>love.update</code>. The <code>dt</code> it hands you is the number of seconds since the last frame, usually about 0.016. Here's the one rule of smooth movement: <strong>multiply every speed by dt.</strong> Then a fast computer and a slow one move Blip the same distance per second.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.update(dt)
+  if love.keyboard.isDown("right") then
+    blip.x = blip.x + blip.speed * dt
+  end
+  if love.keyboard.isDown("left") then
+    blip.x = blip.x - blip.speed * dt
+  end
+end</code></pre></div>
+<p><code>if ... then ... end</code> is how Lua asks a question. <code>love.keyboard.isDown("right")</code> is true while the right arrow is held. Run it and hold the arrow keys.</p>
+<p>Stop for a second. That's the whole secret of every game you've ever played: a number changes, the screen redraws, sixty times a second. Everything else is details. Expensive details, but details.</p>
+<p>Now add <code>up</code> and <code>down</code> yourself (remember which way y grows).</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Read the numbers</h2><p>Debugging means seeing what the computer sees. Add this inside <code>love.draw</code>, after the rectangle:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">love.graphics.setColor(1, 1, 1)
+love.graphics.print("x = " .. math.floor(blip.x) .. "  y = " .. math.floor(blip.y), 10, 10)</code></pre></div>
+<p>Two new things. <code>..</code> glues text together. <code>math.floor</code> chops off decimals so the numbers don't jitter. Run it and watch the numbers change as you move. Drive Blip to the top-left and see what the numbers say. Then drive it off the right edge and keep going. Blip is now somewhere around x = 3,000, alone, in the dark. We'll fix that in Ship-It.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>Reacting to a single key press</h2><p><code>isDown</code> fires every frame while a key is held. For "do this once when the key is pressed," LÖVE gives you a different function. Add this at the bottom of the file:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.keypressed(key)
+  if key == "escape" then
+    love.event.quit()
+  end
+end</code></pre></div>
+<p>Now Escape closes the game. Note <code>==</code> with two equals signs: that's "is equal to." One equals sign <em>sets</em> a value; two <em>compare</em> values. Mixing those up is the most common beginner bug in every language, and also the most common Jamie bug, so say it out loud once: one sets, two compares.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Color change.</strong> Pressing the spacebar changes Blip's color. Pressing it again changes it back. (Hint: store the color inside the <code>blip</code> table, and change it in <code>love.keypressed</code>.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Walls.</strong> Blip cannot leave the window. Drive it into every edge and it stops at the edge. (Hint: the Lua Cheat Sheet has <code>math.max</code> and <code>math.min</code>. The window is 800 by 600, and Blip's right edge is at <code>blip.x + blip.size</code>.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>Give Blip a name of your own, stored in the table, and print it above the square.</li><li>Make Blip grow while you hold <code>s</code> and shrink while you hold <code>a</code>.</li><li>Make it move faster the longer you hold a direction.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-001</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie tried to make Blip speed up when you press <code>f</code>, got a blue error screen, and said the error screen was "a bold design choice." Find the bug before you ask me.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.keypressed(key)
+  if key = "f" then
+    blip.speed = blip.speed + 50
+  end
+end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Reread Step 6, the last paragraph. Say it out loud.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="index.html">← All builds</a><a class="pager" href="build02.html">Build 02 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

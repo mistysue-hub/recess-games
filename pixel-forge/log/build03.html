@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 03: Meteor Drift, part 2 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build03">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 5 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>States: the game is in exactly one mood</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>A font you can read</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Real art (Kenney, CC0)</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Sounds you made yourself</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>The ramp</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build03-meteor-drift.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.3.0</span><span class="game">Meteor Drift</span></div>
+    <div class="buildno">Build 03</div>
+    <h1>Meteor Drift, part 2</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a title screen, a game-over screen, real art, your own sound effects, a bigger font, and a difficulty ramp. Meteor Drift becomes a finished game.</p></div>
+  </div>
+
+  <section class="intro"><p>Open your <code>build02-meteor-drift</code> folder, copy it, and rename the copy <code>build03-meteor-drift</code>. We always keep the old build. Jamie once deleted the only copy of a game to "free up space." Work in the new one.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>States: the game is in exactly one mood</h2><p>Right now the game starts playing the instant it opens, and crashing just wipes the score. Finished games have <strong>states</strong>: title, playing, game over. The game is in exactly one state at a time, and <code>update</code> and <code>draw</code> behave differently in each. This is called a <strong>state machine</strong>, and it's the single most useful idea in this whole course.</p>
+<p>Add to <code>love.load</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  state = "title"</code></pre></div>
+<p>Then split <code>love.update</code> with an <code>if</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.update(dt)
+  if state == "playing" then
+    -- everything you wrote in Build 02 goes here, indented one level
+  end
+end</code></pre></div>
+<p>And in <code>love.draw</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.draw()
+  if state == "title" then
+    love.graphics.print("METEOR DRIFT", 300, 220)
+    love.graphics.print("press space to launch", 300, 260)
+  elseif state == "playing" then
+    -- all your Build 02 drawing
+  elseif state == "gameover" then
+    love.graphics.print("SHIP LOST", 320, 220)
+    love.graphics.print("score: " .. score, 320, 250)
+    love.graphics.print("press space to retry", 300, 290)
+  end
+end</code></pre></div>
+<p><code>elseif</code> chains questions: the first true branch runs, the rest are skipped. Now the only thing that changes state is a key press:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.keypressed(key)
+  if key == "space" then
+    if state == "title" or state == "gameover" then
+      resetGame()
+      state = "playing"
+    end
+  end
+end</code></pre></div>
+<p>Write <code>resetGame()</code> yourself: it sets <code>score</code>, <code>fuel</code>, <code>rocks</code>, <code>fuels</code>, the timers, and the ship's position back to the way <code>love.load</code> had them. Then make <code>love.load</code> call <code>resetGame()</code> too, so the start values live in one place. Finally, where a crash used to wipe the score, set <code>state = "gameover"</code> instead. Run it: title, play, crash, retry.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>A font you can read</h2><p>The default font is tiny. Nobody knows why. Make two in <code>love.load</code> and switch between them:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  bigFont = love.graphics.newFont(40)
+  smallFont = love.graphics.newFont(18)</code></pre></div>
+<p><code>love.graphics.setFont(bigFont)</code> before the title text, <code>setFont(smallFont)</code> before everything else. Fonts are <em>made once</em> in <code>load</code> and <em>used</em> in <code>draw</code>; making one every frame would slow the game down. That rule covers images and sounds too.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Real art (Kenney, CC0)</h2><p>Kenney makes free game art under the CC0 license, which means anyone may use it for anything, no credit required (we credit anyway, because that's what decent studios do). Open the <strong>Space Shooter Redux</strong> pack from the link in this module, download it, and unzip it. Inside you'll find dozens of PNG ships and meteors. Pick one ship and one meteor you like. Make a folder named <code>assets</code> inside your build folder and copy them in. Rename the ship image to <code>ship</code> and the meteor image to <code>rock</code>, keeping the png ending on both.</p>
+<p>Load them once:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  shipImage = love.graphics.newImage("assets/ship.png")
+  rockImage = love.graphics.newImage("assets/rock.png")</code></pre></div>
+<p>Draw the ship with the image instead of the triangle:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  love.graphics.setColor(1, 1, 1)
+  love.graphics.draw(shipImage, ship.x, ship.y, 0, ship.w / shipImage:getWidth(), ship.h / shipImage:getHeight())</code></pre></div>
+<p>Those last two numbers are <strong>scale</strong>: the image's real size divided into the size we want, so a 99-pixel-wide PNG becomes our 40-pixel ship. <code>setColor(1, 1, 1)</code> first, or the image gets tinted by whatever color was set last. Do the same for rocks inside the rock loop. Keep the collision rectangles exactly as they were; the picture is just paint on top of the math.</p>
+<p>Want it to look like yours? Open your PNG in any paint program and recolor it. That's allowed, and it's how real small studios work. (Jamie would like you to know that recoloring is "basically art.")</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Sounds you made yourself</h2><p>Open the sound tool linked in this module (a free in-browser synth, no account). Press the <strong>Pickup/Coin</strong> button until you hear one you like, then export it as a WAV named <code>fuel.wav</code>. Press <strong>Explosion</strong> for a crash sound, <code>crash.wav</code>. Put both in <code>assets</code>. Load once:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  fuelSound = love.audio.newSource("assets/fuel.wav", "static")
+  crashSound = love.audio.newSource("assets/crash.wav", "static")</code></pre></div>
+<p>Then <code>fuelSound:play()</code> where fuel is grabbed and <code>crashSound:play()</code> where the ship is lost. The colon in <code>fuelSound:play()</code> means "call play <em>on</em> this sound"; you'll see colons whenever a table has its own functions.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>The ramp</h2><p>A game that never gets harder gets boring in a minute. Add <code>spawnLimit = 0.8</code> to <code>resetGame</code>, use it instead of the number <code>0.8</code> in the timer check, and every time a rock spawns do:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    spawnLimit = math.max(0.25, spawnLimit - 0.01)</code></pre></div>
+<p><code>math.max</code> keeps it from dropping below a quarter second. Play a round and feel the pressure build. If you last past 30 seconds, you've beaten the lead dev. I'm not proud of that.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Pause.</strong> Pressing <code>p</code> while playing freezes everything and shows "PAUSED"; pressing <code>p</code> again resumes. (Hint: it's one more state. Think about which key presses are allowed in which states.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Best score this session.</strong> Keep a <code>best</code> number that is never reset by <code>resetGame</code>. Game over shows both "score" and "best". (Hint: the trick is <em>where</em> <code>best = 0</code> lives.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>A taunt.</strong> Game over shows one line of text chosen at random from a list of at least four taunts you write, like <code>"The rocks send their regards."</code> Make them yours; the best taunts are the ones your family will quote back at you. Picked once per crash, not every frame. (Hint: <code>taunts[math.random(#taunts)]</code>.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A starfield: 60 tiny white dots in a list, drifting down slowly and wrapping to the top.</li><li>An engine flame drawn under the ship only while a key is held.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-003</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's crash sound plays, and then the window goes completely blank: no "SHIP LOST", no score, nothing. Pressing space does nothing either. Jamie says it's "minimalist." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    if overlaps(ship, rocks[i]) then
+      crashSound:play()
+      state = "game over"
+      break
+    end</code></pre></div>
+<p>(Compare it, character by character, with the <code>draw</code> and <code>keypressed</code> code in Step 1.)</p>
+<details class="hint"><summary>Need a nudge?</summary><p>Compare the state name here with the ones in Step 1&#x27;s draw and keypressed, character by character.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build02.html">← Build 02</a><span class="pager dim">Build 04 ships soon</span></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial. Art: Kenney (kenney.nl), CC0. Sounds: made by you.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
