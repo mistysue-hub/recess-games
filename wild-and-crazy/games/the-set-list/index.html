@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Set List</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .count{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin-bottom:6px}
+  .setup{font-size:1.15rem;font-weight:600;margin:0 0 16px}
+  .choice{display:block;width:100%;text-align:left;background:#fff;border:2px solid #d9c9a0;border-radius:6px;padding:14px 16px;margin:10px 0;font:inherit;font-size:1.02rem;color:var(--ink);cursor:pointer;min-height:56px}
+  .choice:active{transform:translateY(1px)}
+  .choice.pick{border-color:var(--red)}
+  .choice.steve{border-color:var(--green);background:#eef7f0}
+  .choice:disabled{cursor:default}
+  .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+  /* Set List additions */
+  .label{font-family:'Special Elite',monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#8a7a6e;margin:18px 0 4px}
+  .slots{list-style:none;margin:0;padding:0}
+  .slot{display:flex;gap:10px;align-items:flex-start;border:2px dashed #d9c9a0;border-radius:6px;padding:10px 12px;margin:8px 0;min-height:56px;background:rgba(255,255,255,.45)}
+  .slot .num{font-family:'Special Elite',monospace;font-size:1.1rem;color:#8a7a6e;min-width:1.4em}
+  .slot .txt{flex:1;color:#a39383;font-style:italic}
+  .slot.next{border-color:var(--red);background:#fff}
+  .slot.next .txt{color:var(--red)}
+  .slot.filled{border-style:solid;border-color:var(--green);background:#eef7f0}
+  .slot.filled .txt{color:var(--ink);font-style:normal}
+  .choice.hintme{border-color:var(--green);background:#eef7f0;box-shadow:0 0 0 3px rgba(47,125,74,.3)}
+  .choice.shake{animation:shake .4s;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 7 Game</div>
+  <h1>The Set List</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>How it works.</strong> A set is not just jokes in a pile. It has a shape: a <strong>short, confident opener</strong> that sets up one thing, <strong>bits that build</strong> with bigger stakes each time, and a <strong>closer that calls back</strong> to the opener.</p>
+    <p>Three comedians dropped their set lists. Each has five bits, all shuffled. Tap the bits in order to fill slots 1 to 5. The last screen counts how many sets you put in order with no wrong taps.</p>
+    <button class="btn" id="start">Start the show</button>
+  </section>
+
+  <section class="card" id="play" style="display:none"><span class="pin"></span>
+    <div class="count" id="count"></div>
+    <p class="setup" id="who"></p>
+    <div class="label">The set list</div>
+    <ol class="slots" id="slots"></ol>
+    <div class="verdict" id="verdict"></div>
+    <button class="btn" id="next" style="display:none">Next set</button>
+    <div class="label" id="poolLabel">Tap the next bit</div>
+    <div id="pool"></div>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">That's the show!</div>
+    <div class="line" id="line"></div>
+    <p id="closing"></p>
+    <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
+    <button class="btn" id="again">Play again</button>
+    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  // Each set: bits listed in correct order (index 0 = opener, 4 = closer).
+  var SETS=[
+    {who:"Comic #1: Dana, who has a plant.",bits:[
+      "I own one plant. His name is Gary.",
+      "I water Gary every morning. One small cup. He seems fine with it.",
+      "Then I started talking to Gary. About school. About my day. About my feelings. For an hour.",
+      "Last Saturday I threw Gary a birthday party. Twelve guests, a cake, a magician. Gary sat in the corner like it was any other Saturday.",
+      "So yes, I own one plant. His name is Gary. And Gary is now the most popular person in my house."
+    ]},
+    {who:"Comic #2: Marcus, who has a little brother.",bits:[
+      "My little brother got a trumpet.",
+      "At first he only played it in his room, door shut. You could barely hear it.",
+      "Then he moved to the kitchen. Breakfast now comes with a soundtrack, and the cereal is scared.",
+      "Saturday he marched down our whole street at 7 a.m., playing as loud as he could. Every porch light came on. A car alarm joined in.",
+      "Anyway, it was my birthday yesterday, and guess what my family got me. Yep. A trumpet."
+    ]},
+    {who:"Comic #3: Priya, who has a family.",bits:[
+      "My family has a group chat.",
+      "Mostly it's my mom posting photos of food she is about to eat.",
+      "Then Grandpa joined. Every message is in all caps and signed LOVE, GRANDPA. Even the ones that just say OK.",
+      "Last week Grandpa accidentally added the entire church choir. Now forty strangers get our dinner photos, and all of them have opinions about the lasagna.",
+      "So, yeah. My family has a group chat. There are forty-six of us. I have met nine."
+    ]}
+  ];
+  var HINT={
+    closer:"Does this one bring back the opener? That's a closer. Save it for slot 5.",
+    middle1:"An opener is short and sets up one thing. This one already expects you to know what it's about.",
+    tooBig:"Bits build. This beat has bigger stakes. Is there a smaller step that comes first?"
+  };
+  var r=0,slot=0,missesThisSlot=0,roundClean=true,clean=0,setOrder=[],pool=[];
+  var $=function(id){return document.getElementById(id)};
+  function shuffle(a){for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+  function renderSlots(){
+    var set=SETS[setOrder[r]],ol=$('slots');ol.innerHTML='';
+    var names=['Opener','Build','Build','Build','Closer'];
+    for(var s=0;s<5;s++){
+      var li=document.createElement('li');
+      li.className='slot'+(s<slot?' filled':(s===slot?' next':''));
+      li.innerHTML='<span class="num">'+(s+1)+'</span><span class="txt"></span>';
+      li.querySelector('.txt').textContent=s<slot?set.bits[s]:names[s]+(s===slot?' — tap a bit below':'');
+      ol.appendChild(li);
+    }
+  }
+  function renderPool(){
+    var set=SETS[setOrder[r]],box=$('pool');box.innerHTML='';
+    pool.forEach(function(idx){
+      var b=document.createElement('button');
+      b.className='choice';b.textContent=set.bits[idx];b.setAttribute('data-i',idx);
+      b.onclick=function(){tap(idx,b)};
+      box.appendChild(b);
+    });
+  }
+  function startRound(){
+    slot=0;missesThisSlot=0;roundClean=true;
+    pool=shuffle([0,1,2,3,4]);
+    $('count').textContent='Set '+(r+1)+' of '+SETS.length;
+    $('who').textContent=SETS[setOrder[r]].who;
+    $('verdict').style.display='none';$('next').style.display='none';
+    $('poolLabel').style.display='block';
+    renderSlots();renderPool();
+  }
+  function tap(idx,btn){
+    if(idx===slot){
+      pool=pool.filter(function(x){return x!==idx});
+      slot++;missesThisSlot=0;
+      $('verdict').style.display='none';
+      renderSlots();renderPool();
+      if(slot===5) finishRound();
+      return;
+    }
+    roundClean=false;missesThisSlot++;
+    btn.classList.remove('shake');void btn.offsetWidth;btn.classList.add('shake');
+    var h=idx===4?HINT.closer:(slot===0?HINT.middle1:HINT.tooBig);
+    var v=$('verdict');v.textContent=h;v.style.display='block';
+    if(missesThisSlot>=2){
+      var right=$('pool').querySelector('[data-i="'+slot+'"]');
+      if(right) right.classList.add('hintme');
+      v.textContent=h+' The green one goes in slot '+(slot+1)+'.';
+    }
+  }
+  function finishRound(){
+    if(roundClean) clean++;
+    $('poolLabel').style.display='none';
+    var v=$('verdict');
+    v.innerHTML=(roundClean?'<strong>Clean set, first try.</strong> ':'<strong>Set in order.</strong> ')+'Short opener, three beats that get bigger, and a closer that brings the opener back.';
+    v.style.display='block';
+    $('next').textContent=(r===SETS.length-1)?'See results':'Next set';
+    $('next').style.display='inline-block';
+  }
+  $('start').onclick=function(){setOrder=shuffle([0,1,2]);r=0;clean=0;$('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';startRound();window.scrollTo(0,0)};
+  $('next').onclick=function(){
+    r++;
+    if(r<SETS.length){startRound();window.scrollTo(0,0)}
+    else{
+      $('play').style.display='none';
+      $('line').textContent='Sets in order first try: '+clean+' of '+SETS.length;
+      $('closing').textContent=clean===3?'You can feel the shape of a set. Opener, build, callback. Now build your own.':clean>=1?'You found the shape. The callback closer is the easiest bit to spot once you listen for the opener.':'Every set got built in the end. Next time, find the closer first: it is the bit that repeats the opener.';
+      $('done').style.display='block';window.scrollTo(0,0);
+    }
+  };
+  $('again').onclick=function(){$('start').onclick()};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who's the Joke On?</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .count{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin-bottom:6px}
+  .setup{font-size:1.15rem;font-weight:600;margin:0 0 16px}
+  .ask{font-family:'Special Elite',monospace;font-size:.9rem;color:#5e534b;margin:0 0 4px}
+  .choice{display:block;width:100%;text-align:left;background:#fff;border:2px solid #d9c9a0;border-radius:6px;padding:14px 16px;margin:10px 0;font:inherit;font-size:1.02rem;color:var(--ink);cursor:pointer;min-height:56px}
+  .choice:active{transform:translateY(1px)}
+  .choice.pick{border-color:var(--red)}
+  .choice.steve{border-color:var(--green);background:#eef7f0}
+  .choice:disabled{cursor:default}
+  .choice small{display:block;font-size:.85rem;color:#6b5f56;font-style:italic}
+  .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16;min-height:48px}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 3 Game</div>
+  <h1>Who's the Joke On?</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>How it works.</strong> Steve Martin's stage guy was a confident fool in a white suit. The laugh always landed on the character he was playing, never on a real person who couldn't answer back.</p>
+    <p>Ten short jokes, one at a time. For each one, tap who the joke is on: <strong>the character</strong> (the made-up person telling it or in it) or <strong>a real person</strong> (an actual person or group who isn't there to answer back).</p>
+    <p>After each pick, the card shows the course's call. You can disagree; the last screen counts how often you and the course saw it the same way.</p>
+    <button class="btn" id="start">Start the set</button>
+  </section>
+
+  <section class="card" id="play" style="display:none"><span class="pin"></span>
+    <div class="count" id="count"></div>
+    <p class="setup" id="setup"></p>
+    <p class="ask">Who's the joke on?</p>
+    <button class="choice" id="c">The character<small>The made-up person telling it or in it</small></button>
+    <button class="choice" id="r">A real person<small>An actual person or group who can't answer back</small></button>
+    <div class="verdict" id="verdict"></div>
+    <button class="btn" id="next" style="display:none">Next joke</button>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">That's the set!</div>
+    <div class="line" id="line"></div>
+    <p id="closing"></p>
+    <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
+    <button class="btn" id="again">Play again</button>
+    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  var JOKES=[
+    {t:"“I'm a professional chef. Tonight's special is toast, cooked all the way through to the other side. It's called charcoal. You're welcome.”",a:"c",w:"He's the butt of his own joke. The room is safe."},
+    {t:"“Welcome to the city tour! On your left, the famous museum. On your right... also a parking lot. I've been giving this tour for eleven years.”",a:"c",w:"The guide is lost and proud of it. Nobody real gets hurt."},
+    {t:"“For my final trick, I'll make this coin vanish. ... It's still in my hand. That's called reverse vanishing. It's much harder.”",a:"c",w:"The trick fails and he calls it a win. The laugh is on his confidence."},
+    {t:"“I'm the best driver in my family. I've only failed the test four times, and two of those were the cones' fault.”",a:"c",w:"Blaming the cones makes him the fool. That's the white-suit move."},
+    {t:"“I'm basically an Olympic runner. I ran a whole mile today and only stopped for snacks three times.”",a:"c",w:"Big brag, tiny result, and it's all on him. Safe and silly."},
+    {t:"“As your weatherman, I promised sunshine. It's snowing. So I was right about somewhere. Probably.”",a:"c",w:"He's wrong and won't admit it. The character takes the hit."},
+    {t:"“Did you see Jordan's new haircut? Looks like he lost a fight with a lawnmower, and the lawnmower brought friends.”",a:"r",w:"That's pointed at a classmate who isn't there to answer back. Cheap laugh, short life."},
+    {t:"“My sister got a C on her math test. She's so bad at math she counts on her fingers and still gets eleven.”",a:"r",w:"That one lands on a real sister, not the speaker. Easy laugh, and it costs her."},
+    {t:"“Mr. Davis, our science teacher, is so boring the class plants started wilting during his lecture.”",a:"r",w:"A real teacher is the target, and he can't answer back from the audience. Cheap shot."},
+    {t:"“Everybody from Millbrook is so slow, their town clock just says eventually.”",a:"r",w:"That's aimed at a whole town of real people. Punching out instead of at yourself."}
+  ];
+  var i=0,agree=0,order=[];
+  var $=function(id){return document.getElementById(id)};
+  function shuffle(a){for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+  function show(){
+    var j=JOKES[order[i]];
+    $('count').textContent='Joke '+(i+1)+' of '+JOKES.length;
+    $('setup').textContent=j.t;
+    ['c','r'].forEach(function(id){var el=$(id);el.disabled=false;el.className='choice'});
+    $('verdict').style.display='none';$('next').style.display='none';
+  }
+  function pick(id){
+    var j=JOKES[order[i]];
+    $(id).classList.add('pick');$(j.a).classList.add('steve');
+    $('c').disabled=true;$('r').disabled=true;
+    var same=(id===j.a); if(same) agree++;
+    var ans=j.a==='c'?'the character':'a real person';
+    var v=$('verdict');
+    v.innerHTML=(same?'<strong>Same call as the course.</strong> ':'<strong>The course saw it the other way.</strong> ')+'The course says this one is on <strong>'+ans+'</strong> (the green one). '+j.w;
+    v.style.display='block';
+    $('next').textContent=(i===JOKES.length-1)?'See results':'Next joke';
+    $('next').style.display='inline-block';
+  }
+  $('start').onclick=function(){order=shuffle([0,1,2,3,4,5,6,7,8,9]);i=0;agree=0;$('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';show()};
+  $('c').onclick=function(){pick('c')};
+  $('r').onclick=function(){pick('r')};
+  $('next').onclick=function(){i++; if(i<JOKES.length){show()} else {$('play').style.display='none';$('line').textContent='Agreed with the course: '+agree+' of '+JOKES.length;$('closing').textContent=agree>=8?'You can tell a fool-in-a-suit joke from a cheap shot. Now write one where the fool is you.':agree>=5?'You and the course mostly saw it the same way. The ones you split on are worth a second look.':'You and the course saw these differently. Good. Ask yourself who would feel it if they heard the joke.';$('done').style.display='block';window.scrollTo(0,0)}};
+  $('again').onclick=function(){$('start').onclick()};
+})();
+</script>
+</body>
+</html>

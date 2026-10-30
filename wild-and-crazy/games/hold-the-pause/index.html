@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hold the Pause</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .count{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin-bottom:6px}
+  .setup{font-size:1.15rem;font-weight:600;margin:0 0 16px}
+  .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+
+  /* Hold the Pause additions */
+  .stage{position:relative;height:190px;display:flex;align-items:flex-end;justify-content:center;overflow:visible;margin:0 0 8px}
+  .rig{position:relative;display:flex;flex-direction:column;align-items:center;transition:transform 1.6s ease-in,opacity 1.6s ease-in}
+  .balloon{width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8a,var(--red) 55%,#8a1f16);box-shadow:inset -6px -8px 0 rgba(0,0,0,.12),0 4px 8px rgba(0,0,0,.25);transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+  .knot{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid #8a1f16;margin-top:-2px}
+  .string{width:2px;height:46px;background:#8a7a6e}
+  .rig.float{transform:translateY(-260px) rotate(-6deg);opacity:0}
+  .balloon.pop{animation:pop .35s ease-out forwards}
+  @keyframes pop{0%{transform:scale(var(--s,1))}40%{transform:scale(calc(var(--s,1)*1.25))}100%{transform:scale(0);opacity:0}}
+  .popword{position:absolute;bottom:70px;left:50%;transform:translateX(-50%) scale(.4);font-family:'Special Elite',monospace;font-size:2rem;color:var(--red);opacity:0;pointer-events:none}
+  .popword.show{animation:popword .6s ease-out forwards}
+  @keyframes popword{0%{opacity:0;transform:translateX(-50%) scale(.4)}30%{opacity:1;transform:translateX(-50%) scale(1.15)}100%{opacity:0;transform:translateX(-50%) scale(1)}}
+  .meter{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;text-align:center;margin-bottom:10px}
+  .beats{list-style:none;margin:0 0 6px;padding:0}
+  .beats li{background:#fff;border:2px solid #d9c9a0;border-radius:6px;padding:12px 14px;margin:8px 0;font-size:1.05rem}
+  .beats li.now{border-color:var(--red)}
+  .beats li.missed{color:#a99d90;background:#f3eedf;border-style:dashed;font-style:italic}
+  .beats li .n{font-family:'Special Elite',monospace;font-size:.78rem;color:#8a7a6e;display:block}
+  .beats li.missed .n{color:#b8ad9f}
+  .missedlabel{font-family:'Special Elite',monospace;font-size:.8rem;color:#8a7a6e;margin:14px 0 0;display:none}
+  .actions{display:flex;gap:12px;margin-top:12px}
+  .actions .btn{flex:1;min-height:60px;font-size:1.1rem;margin-top:0}
+  .btn.hold{background:var(--green);box-shadow:0 3px 0 #1d5230}
+  .btn.release{background:#fff;color:var(--red);border:2px solid var(--red);box-shadow:0 3px 0 #d9c9a0}
+  .btn:disabled{opacity:.5;cursor:default}
+  #next{min-height:52px}
+  @media (prefers-reduced-motion:reduce){.rig,.balloon{transition:none}.balloon.pop,.popword.show{animation-duration:.01s}}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 4 Game</div>
+  <h1>Hold the Pause</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>How it works.</strong> Each bit is told one beat at a time, and the balloon is the room's tension: it grows with every beat you hold. Steve Martin never let the air out with a punchline, so tap <strong>Hold</strong> to keep the pressure building, or <strong>Release</strong> if you think it's time to let it go.</p>
+    <p>Three bits, five beats each.</p>
+    <button class="btn" id="start">Start</button>
+  </section>
+
+  <section class="card" id="play" style="display:none"><span class="pin"></span>
+    <div class="count" id="count"></div>
+    <p class="setup" id="title"></p>
+    <div class="stage" aria-hidden="true">
+      <div class="rig" id="rig">
+        <div class="balloon" id="balloon"></div>
+        <div class="knot"></div>
+        <div class="string"></div>
+      </div>
+      <div class="popword" id="popword">POP!</div>
+    </div>
+    <div class="meter" id="meter"></div>
+    <ul class="beats" id="beats"></ul>
+    <div class="missedlabel" id="missedlabel">What you would have heard next:</div>
+    <ul class="beats" id="missed"></ul>
+    <div class="actions" id="actions">
+      <button class="btn hold" id="hold">Hold</button>
+      <button class="btn release" id="release">Release</button>
+    </div>
+    <div class="verdict" id="verdict" aria-live="polite"></div>
+    <button class="btn" id="next" style="display:none">Next bit</button>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">That's the set!</div>
+    <div class="line" id="line"></div>
+    <p id="closing"></p>
+    <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
+    <button class="btn" id="again">Play again</button>
+    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  var BITS=[
+    {t:"The Waiter",beats:[
+      "“Your soup is ready. I'm bringing it out right now.”",
+      "“I'm walking it over. It's very hot, so I'm walking very slowly.”",
+      "“Here it is. Oh, wait. First I have to tell you about tonight's specials.”",
+      "“The specials are all soup. Including your soup. Which is still on its way.”",
+      "He sets down a single spoon, nods at it respectfully, and walks back into the kitchen."
+    ]},
+    {t:"The Magician",beats:[
+      "“For my next trick I need a volunteer. You. Think of a card.”",
+      "“Don't tell me. Just think of it. Really picture it. Give it a little frame.”",
+      "“Now put it back in your mind with the other cards. Shuffle your mind. Good.”",
+      "“I'm sensing… a number. Or a letter. Or a king. It's one of those.”",
+      "“You've been a wonderful volunteer. Please take a seat.” He bows. The deck never left his pocket."
+    ]},
+    {t:"The Secret",beats:[
+      "“Okay, I'm going to tell you a secret. You can't tell anyone.”",
+      "“Not even the dog. The dog already almost knows, so be careful around him.”",
+      "“It's about something that happened at school. Well, near school. On the bus.”",
+      "“Wait. Pinky promise first. No, the other pinky. That one's been compromised.”",
+      "“Okay. Here it is.” She leans in close, nods once, and walks away looking deeply satisfied."
+    ]}
+  ];
+  var RELEASE=[
+    "Too early. The pressure had nowhere to go yet.",
+    "Too early. The room was only just starting to lean in.",
+    "You let it go halfway. They laughed, but only a little, and only because you told them to.",
+    "So close. One more beat and they'd have had to find the laugh on their own.",
+    "You gave them the punchline on the very last beat. The pressure was there; it just needed you to walk away instead."
+  ];
+  var b=0,beat=0,total=0,over=false;
+  var $=function(id){return document.getElementById(id)};
+  function scaleFor(n){return 1+n*0.25}
+  function setBalloon(n){var s=scaleFor(n);var el=$('balloon');el.style.setProperty('--s',s);el.style.transform='scale('+s+')'}
+  function li(text,n,cls){var e=document.createElement('li');if(cls)e.className=cls;var s=document.createElement('span');s.className='n';s.textContent='Beat '+n;e.appendChild(s);e.appendChild(document.createTextNode(text));return e}
+  function startBit(){
+    var bit=BITS[b];beat=0;over=false;
+    $('count').textContent='Bit '+(b+1)+' of '+BITS.length;
+    $('title').textContent=bit.t;
+    $('beats').innerHTML='';$('missed').innerHTML='';$('missedlabel').style.display='none';
+    var rig=$('rig');rig.style.transition='none';rig.classList.remove('float');rig.style.opacity='';void rig.offsetWidth;rig.style.transition='';
+    var bl=$('balloon');bl.classList.remove('pop');bl.style.transition='none';setBalloon(0);void bl.offsetWidth;bl.style.transition='';
+    $('verdict').style.display='none';$('next').style.display='none';
+    $('actions').style.display='flex';$('hold').disabled=false;$('release').disabled=false;
+    showBeat();
+  }
+  function showBeat(){
+    var list=$('beats');
+    Array.prototype.forEach.call(list.children,function(c){c.classList.remove('now')});
+    list.appendChild(li(BITS[b].beats[beat],beat+1,'now'));
+    setBalloon(beat+1);
+    $('meter').textContent='Beat '+(beat+1)+' of 5 · Held so far: '+total;
+  }
+  function finish(msg){
+    over=true;$('actions').style.display='none';
+    Array.prototype.forEach.call($('beats').children,function(c){c.classList.remove('now')});
+    $('meter').textContent='Beats held so far: '+total+' of '+((b+1)*5);
+    var v=$('verdict');v.textContent=msg;v.style.display='block';
+    $('next').textContent=(b===BITS.length-1)?'See results':'Next bit';
+    $('next').style.display='inline-block';
+  }
+  $('hold').onclick=function(){
+    if(over)return;total++;
+    if(beat<4){beat++;showBeat()}
+    else{
+      $('rig').classList.add('float');
+      finish("You walked off stage. The room is still laughing.");
+    }
+  };
+  $('release').onclick=function(){
+    if(over)return;
+    $('balloon').classList.add('pop');
+    var pw=$('popword');pw.classList.remove('show');void pw.offsetWidth;pw.classList.add('show');
+    var rest=BITS[b].beats.slice(beat+1);
+    if(rest.length){
+      $('missedlabel').style.display='block';
+      rest.forEach(function(t,k){$('missed').appendChild(li(t,beat+2+k,'missed'))});
+    }
+    finish(RELEASE[beat]);
+  };
+  $('next').onclick=function(){
+    b++;
+    if(b<BITS.length){startBit();window.scrollTo(0,0)}
+    else{
+      $('play').style.display='none';
+      $('line').textContent='Beats held: '+total+' of 15';
+      $('closing').textContent=total===15?'You never blinked. Three bits, no punchlines, and the room had to do all the laughing.':total>=10?'You held the pressure most of the way. That last stretch is where the big laughs hide.':total>=5?'You held some, released some. Next time, see what happens when you wait one beat longer than feels safe.':'You let the air out early. Totally normal: silence on stage feels scary. Holding it is the skill.';
+      $('done').style.display='block';window.scrollTo(0,0);
+    }
+  };
+  $('start').onclick=function(){b=0;total=0;$('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';startBit()};
+  $('again').onclick=function(){$('start').onclick()};
+})();
+</script>
+</body>
+</html>

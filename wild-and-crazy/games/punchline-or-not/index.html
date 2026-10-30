@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Punchline or Not?</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .count{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin-bottom:6px}
+  .setup{font-size:1.15rem;font-weight:600;margin:0 0 16px}
+  .choice{display:block;width:100%;text-align:left;background:#fff;border:2px solid #d9c9a0;border-radius:6px;padding:14px 16px;margin:10px 0;font:inherit;font-size:1.02rem;color:var(--ink);cursor:pointer;min-height:56px}
+  .choice:active{transform:translateY(1px)}
+  .choice.pick{border-color:var(--red)}
+  .choice.steve{border-color:var(--green);background:#eef7f0}
+  .choice:disabled{cursor:default}
+  .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 1 Game</div>
+  <h1>Punchline or Not?</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>How it works.</strong> Eight tiny bits. Each has a setup and two endings. One ending is a regular punchline. The other is Steve Martin's way: no punchline, just something flat, true or beside the point, said straight and then left hanging.</p>
+    <p>Tap the ending that is <strong>Steve's way</strong>. After each pick, the card shows the course's call. You can disagree; the last screen counts how often you and the course saw it the same way.</p>
+    <button class="btn" id="start">Start the set</button>
+  </section>
+
+  <section class="card" id="play" style="display:none"><span class="pin"></span>
+    <div class="count" id="count"></div>
+    <p class="setup" id="setup"></p>
+    <button class="choice" id="a"></button>
+    <button class="choice" id="b"></button>
+    <div class="verdict" id="verdict"></div>
+    <button class="btn" id="next" style="display:none">Next bit</button>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">That's the set!</div>
+    <div class="line" id="line"></div>
+    <p id="closing"></p>
+    <p><strong>Type <em>done</em> to Rocky</strong> and read him the line in the box.</p>
+    <button class="btn" id="again">Play again</button>
+    <p class="fine">All bits written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  var BITS=[
+    {s:"My dog finally learned a trick this week.",p:"He learned how to ignore me in two languages.",v:"He sits now. Not when I ask. Just sometimes. Anyway, that's my dog."},
+    {s:"I'm trying a new diet where I only eat green things.",p:"So far it's been mint chip ice cream and a lot of regret.",v:"It's Tuesday. I had some lettuce. That's the whole update."},
+    {s:"My grandma gave me a watch for my birthday.",p:"It was her way of saying I'm late for everything.",v:"It tells the time. I looked at it. It was 4:15."},
+    {s:"I asked the librarian for a book about procrastination.",p:"She said she'd get to it later.",v:"She found one. I have it now. I haven't started it, but it's on the shelf, which is where books go."},
+    {s:"I decided to learn the banjo.",p:"Now my neighbors have decided to learn how to move.",v:"I've been playing for three years. I know one song. It's a pretty long song, so."},
+    {s:"Last night I cooked dinner for my whole family.",p:"The smoke alarm was the first to give a review.",v:"Everyone ate it. Nobody said anything. We cleared the table. It was a dinner."},
+    {s:"I've been getting really into magic tricks.",p:"My best trick is making my allowance disappear.",v:"Here's one. Watch my hand. ... Okay. That's the trick. I'll do another one later."},
+    {s:"I got a part in the school play.",p:"I'm playing Tree Number Two, which is a huge step up from Rock.",v:"I'm the tree. I stand there. Then at the end I bow, with the other tree."}
+  ];
+  var WHY=["No release. The pressure never gets a door, so it has to leak out of you.","That ending is just... true. Nothing to get. The audience picks its own moment.","Flat, specific, and then he moves on. That's the whole trick.","It stops where a joke should start. The laugh, if it comes, is yours.","A real detail instead of a payoff. The straight face does the work."];
+  var i=0,agree=0,order=[],flipped=false;
+  var $=function(id){return document.getElementById(id)};
+  function shuffle(a){for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+  function show(){
+    var bit=BITS[order[i]];
+    flipped=Math.random()<0.5;
+    $('count').textContent='Bit '+(i+1)+' of '+BITS.length;
+    $('setup').textContent=bit.s;
+    $('a').textContent=flipped?bit.v:bit.p;
+    $('b').textContent=flipped?bit.p:bit.v;
+    ['a','b'].forEach(function(id){var el=$(id);el.disabled=false;el.className='choice'});
+    $('verdict').style.display='none';$('next').style.display='none';
+  }
+  function pick(id){
+    var steveId=flipped?'a':'b';
+    $(id).classList.add('pick');$(steveId).classList.add('steve');
+    $('a').disabled=true;$('b').disabled=true;
+    var same=(id===steveId); if(same) agree++;
+    var v=$('verdict');
+    v.innerHTML=(same?'<strong>Same call as the course.</strong> ':'<strong>The course saw it the other way.</strong> ')+'Steve\'s way is the green one. '+WHY[i%WHY.length];
+    v.style.display='block';
+    $('next').textContent=(i===BITS.length-1)?'See results':'Next bit';
+    $('next').style.display='inline-block';
+  }
+  $('start').onclick=function(){order=shuffle([0,1,2,3,4,5,6,7]);i=0;agree=0;$('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';show()};
+  $('a').onclick=function(){pick('a')};
+  $('b').onclick=function(){pick('b')};
+  $('next').onclick=function(){i++; if(i<BITS.length){show()} else {$('play').style.display='none';$('line').textContent='Agreed with the course: '+agree+' of '+BITS.length;$('closing').textContent=agree>=6?'You already hear the difference. Now go write one.':agree>=3?'Half the time you and the course heard it the same way. That gap is where your own taste lives.':'You and the course mostly disagreed. Good. Steve\'s act divided rooms for years, too.';$('done').style.display='block';window.scrollTo(0,0)}};
+  $('again').onclick=function(){$('start').onclick()};
+})();
+</script>
+</body>
+</html>

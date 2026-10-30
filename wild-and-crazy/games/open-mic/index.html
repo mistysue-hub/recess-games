@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Mic</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .btn:disabled{background:#b9aaa0;box-shadow:0 3px 0 #8a7a6e;cursor:default;transform:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+
+  /* Stage */
+  .stage{text-align:center}
+  .spot{position:relative;width:min(260px,72vw);aspect-ratio:1;margin:4px auto 10px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#fff6cf 0,#ffe9a3 38%,#e9c46a 62%,#2b2320 63%,#1f1a18 100%);box-shadow:inset 0 0 30px rgba(0,0,0,.35),0 0 0 6px #2b2320,0 8px 18px rgba(0,0,0,.35);overflow:hidden}
+  .spot.live{animation:glow 2.4s ease-in-out infinite}
+  @keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.08)}}
+  .spot.flash{animation:flash .25s linear 6}
+  @keyframes flash{0%,100%{filter:brightness(1)}50%{filter:brightness(1.9) saturate(.4)}}
+  /* Microphone (CSS shapes) */
+  .mic{position:absolute;left:50%;top:14%;width:40%;height:78%;transform:translateX(-50%)}
+  .mic .head{position:absolute;left:50%;top:0;width:46%;height:30%;transform:translateX(-50%);border-radius:50% 50% 44% 44%/58% 58% 42% 42%;background:radial-gradient(circle at 35% 30%,#f2f2f2,#9a9a9a 55%,#4a4a4a);box-shadow:0 2px 3px rgba(0,0,0,.4)}
+  .mic .head::after{content:"";position:absolute;inset:12% 14%;border-radius:inherit;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.28) 3px 4px),repeating-linear-gradient(90deg,transparent 0 3px,rgba(0,0,0,.28) 3px 4px)}
+  .mic .band{position:absolute;left:50%;top:27%;width:40%;height:5%;transform:translateX(-50%);background:#2b2320;border-radius:2px}
+  .mic .body{position:absolute;left:50%;top:31%;width:22%;height:16%;transform:translateX(-50%);background:linear-gradient(90deg,#1b1b1b,#555 45%,#1b1b1b);border-radius:0 0 40% 40%}
+  .mic .clip{position:absolute;left:50%;top:44%;width:30%;height:5%;transform:translateX(-50%);background:#333;border-radius:3px}
+  .mic .pole{position:absolute;left:50%;top:48%;width:6%;height:44%;transform:translateX(-50%);background:linear-gradient(90deg,#222,#888 50%,#222)}
+  .mic .base{position:absolute;left:50%;bottom:0;width:90%;height:9%;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 30%,#666,#1b1b1b 70%);border-radius:50%}
+  .timer{font-family:'Special Elite',monospace;font-size:clamp(2.8rem,14vw,4.2rem);letter-spacing:.06em;margin:4px 0 0;line-height:1.1}
+  .timer.time{color:var(--red)}
+  .status{font-family:'Patrick Hand',cursive;font-size:1.15rem;min-height:1.6em;color:#5e534b}
+  .bigbtn{font-size:1.25rem;padding:16px 28px;min-height:60px;min-width:220px}
+  .row{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .applause{margin-top:18px;padding-top:16px;border-top:1px dashed #d9c9a0}
+  .clapwrap{position:relative;display:inline-block}
+  .clap{background:#fff;color:var(--ink);border:2px solid #d9b84a;box-shadow:0 3px 0 #b8962f;font-size:1.2rem;padding:16px 28px;min-height:60px;min-width:220px}
+  .clap:active{transform:translateY(2px);box-shadow:none}
+  .claps{font-family:'Special Elite',monospace;font-size:1.3rem;margin-top:6px}
+  .claps.pop{animation:pop .25s ease-out}
+  @keyframes pop{50%{transform:scale(1.25)}}
+  .burst{position:absolute;left:50%;top:0;font-size:1.8rem;pointer-events:none;animation:rise .8s ease-out forwards}
+  @keyframes rise{0%{opacity:1;transform:translate(-50%,0) scale(.7)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-70px) scale(1.3)}}
+  .hint{font-size:.85rem;color:#8a7a6e;margin:4px 0 0}
+  @media (prefers-reduced-motion:reduce){.spot.live,.spot.flash,.burst,.claps.pop{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 8</div>
+  <h1>Open Mic</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>Tonight is your night.</strong> You'll perform the five-minute set you built in the earlier modules, out loud, to Rocky or to someone in your house.</p>
+    <p>Tap the big button when you're ready to start the clock, and let your audience tap Applause whenever they feel like it.</p>
+    <button class="btn bigbtn" id="start">Start</button>
+  </section>
+
+  <section class="card stage" id="stage" style="display:none"><span class="pin"></span>
+    <div class="spot" id="spot" aria-hidden="true">
+      <div class="mic"><div class="head"></div><div class="band"></div><div class="body"></div><div class="clip"></div><div class="pole"></div><div class="base"></div></div>
+    </div>
+    <div class="timer" id="timer" role="timer" aria-live="off">5:00</div>
+    <div class="status" id="status" aria-live="polite">The mic is yours.</div>
+    <div class="row">
+      <button class="btn bigbtn" id="go">Take the stage</button>
+      <button class="btn bigbtn" id="pause" style="display:none">Pause</button>
+      <button class="btn bigbtn" id="finish" disabled>Finish set</button>
+      <p class="hint" id="finhint">Finish set unlocks after one minute on stage.</p>
+    </div>
+    <div class="applause row">
+      <div class="clapwrap" id="clapwrap">
+        <button class="btn clap" id="clap">&#128079; Applause</button>
+      </div>
+      <div class="claps" id="claps" aria-live="polite">0 claps</div>
+    </div>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">That's the set!</div>
+    <div class="line" id="line"></div>
+    <p>You stood up. That's the whole trick.</p>
+    <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
+    <button class="btn" id="again">Take the stage again</button>
+    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  var TOTAL=300, MAXCLAPS=999;
+  var $=function(id){return document.getElementById(id)};
+  var tick=null, running=false, banked=0, startedAt=0, clapCount=0, timeUp=false;
+
+  function elapsedMs(){return banked+(running?Date.now()-startedAt:0)}
+  function elapsedSec(){return Math.min(TOTAL,Math.floor(elapsedMs()/1000))}
+  function fmt(s){var m=Math.floor(s/60),r=s%60;return m+':'+(r<10?'0':'')+r}
+  function stopTick(){if(tick!==null){clearInterval(tick);tick=null}}
+
+  function render(){
+    var e=elapsedSec();
+    $('timer').textContent=fmt(TOTAL-e);
+    if(e>=60){$('finish').disabled=false;$('finhint').style.display='none'}
+    if(e>=TOTAL&&!timeUp) timeIsUp();
+  }
+  function timeIsUp(){
+    timeUp=true;
+    banked=TOTAL*1000;running=false;stopTick();
+    $('timer').textContent='0:00';
+    $('timer').classList.add('time');
+    $('status').textContent='Time!';
+    $('pause').style.display='none';
+    var s=$('spot');s.classList.remove('live');void s.offsetWidth;s.classList.add('flash');
+  }
+  function play(){
+    if(running||timeUp) return;
+    running=true;startedAt=Date.now();
+    stopTick();tick=setInterval(render,250);
+    $('spot').classList.add('live');
+    $('status').textContent='You’re on.';
+    $('pause').textContent='Pause';
+  }
+  function pause(){
+    if(!running) return;
+    banked+=Date.now()-startedAt;running=false;stopTick();render();
+    $('spot').classList.remove('live');
+    $('status').textContent='Paused. Take a breath.';
+    $('pause').textContent='Resume';
+  }
+  function reset(){
+    stopTick();running=false;banked=0;startedAt=0;clapCount=0;timeUp=false;
+    $('timer').textContent=fmt(TOTAL);$('timer').classList.remove('time');
+    $('status').textContent='The mic is yours.';
+    $('go').style.display='inline-block';
+    $('pause').style.display='none';$('pause').textContent='Pause';
+    $('finish').disabled=true;$('finhint').style.display='block';
+    $('claps').textContent='0 claps';
+    $('spot').classList.remove('live','flash');
+  }
+
+  $('start').onclick=function(){reset();$('intro').style.display='none';$('done').style.display='none';$('stage').style.display='block';window.scrollTo(0,0)};
+  $('go').onclick=function(){$('go').style.display='none';$('pause').style.display='inline-block';play()};
+  $('pause').onclick=function(){running?pause():play()};
+  $('finish').onclick=function(){
+    if($('finish').disabled) return;
+    var e=elapsedSec();
+    running=false;stopTick();
+    $('line').textContent='Set performed: '+fmt(e)+' on stage, applause '+clapCount;
+    $('stage').style.display='none';$('done').style.display='block';window.scrollTo(0,0);
+  };
+  $('again').onclick=function(){$('start').onclick()};
+
+  $('clap').onclick=function(){
+    if(clapCount<MAXCLAPS) clapCount++;
+    var c=$('claps');c.textContent=clapCount+(clapCount===1?' clap':' claps');
+    c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');
+    var b=document.createElement('span');
+    b.className='burst';b.textContent='👏';
+    b.style.setProperty('--dx',(Math.round(Math.random()*80)-40)+'px');
+    b.addEventListener('animationend',function(){if(b.parentNode)b.parentNode.removeChild(b)});
+    setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},1200);
+    $('clapwrap').appendChild(b);
+  };
+})();
+</script>
+</body>
+</html>

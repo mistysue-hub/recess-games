@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Long Road</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .count{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin-bottom:6px}
+  .setup{font-size:1.15rem;font-weight:600;margin:0 0 16px}
+  .choice{display:block;width:100%;text-align:left;background:#fff;border:2px solid #d9c9a0;border-radius:6px;padding:14px 16px;margin:10px 0;font:inherit;font-size:1.02rem;color:var(--ink);cursor:pointer;min-height:56px}
+  .choice:active{transform:translateY(1px)}
+  .choice.pick{border-color:var(--red)}
+  .choice.steve{border-color:var(--green);background:#eef7f0}
+  .choice:disabled{cursor:default}
+  .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16;min-height:56px}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+
+  /* The Long Road additions */
+  .road{list-style:none;margin:0 0 6px;padding:0 0 0 30px;position:relative}
+  .road:before{content:"";position:absolute;left:11px;top:6px;bottom:6px;border-left:4px dashed #b9a77c}
+  .slot{position:relative;min-height:56px;border:2px dashed #d9c9a0;border-radius:6px;padding:10px 14px;margin:8px 0;font-size:.98rem;color:#9a8b78;display:flex;align-items:center}
+  .slot .num{position:absolute;left:-30px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:#d9c9a0;color:#fff;font-family:'Special Elite',monospace;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+  .slot.next{border-color:var(--red);color:var(--red);font-family:'Patrick Hand',cursive;font-size:1.08rem}
+  .slot.next .num{background:var(--red)}
+  .slot.filled{border-style:solid;border-color:var(--green);background:#eef7f0;color:var(--ink);display:block}
+  .slot.filled .num{background:var(--green)}
+  .slot .tag{display:block;font-family:'Special Elite',monospace;font-size:.8rem;color:var(--green)}
+  .slot .star{font-family:'Patrick Hand',cursive;color:#a2741a;margin-left:6px}
+  .pool-label{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin:18px 0 0}
+  .choice .tag{display:block;font-family:'Special Elite',monospace;font-size:.8rem;color:#8a7a6e}
+  .choice.wrong{border-color:var(--red);animation:shake .4s}
+  .choice.hint{border-color:var(--green);background:#eef7f0;box-shadow:0 0 0 3px rgba(47,125,74,.3)}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  @media (prefers-reduced-motion:reduce){.choice.wrong{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 2 Game</div>
+  <h1>The Long Road</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>How it works.</strong> Six stops from Steve Martin's early career are shuffled below the road; tap them in the order they happened, earliest first, to build the road one slot at a time.</p>
+    <p>A wrong tap tells you what he learned at that stop and lets you try again, and after two misses on the same slot the right card lights up.</p>
+    <button class="btn" id="start">Start the road</button>
+  </section>
+
+  <section class="card" id="play" style="display:none"><span class="pin"></span>
+    <div class="count" id="count"></div>
+    <ol class="road" id="road"></ol>
+    <div class="verdict" id="verdict" aria-live="polite"></div>
+    <p class="pool-label">Tap the stop that comes next:</p>
+    <div id="pool"></div>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">You made it to the arena!</div>
+    <div class="line" id="line"></div>
+    <p id="closing"></p>
+    <p><strong>Type <em>done</em> to Rocky and read him the line in the box.</strong></p>
+    <button class="btn" id="again">Play again</button>
+    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  // STOPS are listed in true chronological order (index = correct slot).
+  var STOPS=[
+    {t:"Guidebook kid",s:"Around age 10, he sells guidebooks to visitors at Disneyland.",
+     l:"Not this one yet. Selling guidebooks taught him to walk up to strangers and get their attention fast."},
+    {t:"Magic shop counter",s:"As a teen, he works the counter at Disneyland's magic shop, demonstrating tricks all day.",
+     l:"Not quite. Doing the same tricks all day at the magic shop taught him timing, and how to win over a crowd that just walked up."},
+    {t:"A little stage",s:"He does a small stage show at Knott's Berry Farm's little theater, several shows a day.",
+     l:"Not yet. Several shows a day at Knott's taught him to keep going whether the room laughed or not."},
+    {t:"TV writer",s:"At 22 he writes jokes for The Smothers Brothers Comedy Hour, and at 23 he shares an Emmy.",
+     l:"Not this one yet. Writing for TV taught him to turn out jokes on a deadline, and showed him he wanted to perform his own."},
+    {t:"Empty rooms",s:"He quits TV writing to do his own act in small clubs, against his agents' advice. Years of near-empty rooms.",
+     l:"Not quite. Those near-empty clubs taught him to trust his strange act and keep sharpening it with almost nobody watching."},
+    {t:"Arena headliner",s:"By the late 1970s he is the biggest stand-up draw in America, selling out arenas.",
+     l:"Not yet. The arenas came last, and they showed him that years of slow work had finally added up."}
+  ];
+  var N=STOPS.length;
+  var slot=0,firstTry=0,missesHere=0,pool=[];
+  var $=function(id){return document.getElementById(id)};
+  function shuffle(a){for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+  function isSorted(a){for(var k=1;k<a.length;k++){if(a[k]<a[k-1])return false}return true}
+  function freshPool(){
+    var a;
+    // never deal the cards in the correct order (or exactly reversed)
+    do{a=shuffle([0,1,2,3,4,5])}while(isSorted(a)||isSorted(a.slice().reverse()));
+    return a;
+  }
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  function drawRoad(){
+    var html='';
+    for(var k=0;k<N;k++){
+      if(k<slot){
+        var st=STOPS[k];
+        html+='<li class="slot filled"><span class="num">'+(k+1)+'</span><span class="tag">'+esc(st.t)+(firstMarks[k]?'<span class="star">first try!</span>':'')+'</span>'+esc(st.s)+'</li>';
+      }else if(k===slot){
+        html+='<li class="slot next"><span class="num">'+(k+1)+'</span>'+(k===0?'Where does the road start?':'What comes next?')+'</li>';
+      }else{
+        html+='<li class="slot"><span class="num">'+(k+1)+'</span>&nbsp;</li>';
+      }
+    }
+    $('road').innerHTML=html;
+    $('count').textContent='Slot '+Math.min(slot+1,N)+' of '+N;
+  }
+  function drawPool(){
+    var box=$('pool');box.innerHTML='';
+    pool.forEach(function(idx){
+      var b=document.createElement('button');
+      b.className='choice';b.type='button';
+      b.setAttribute('data-i',idx);
+      b.innerHTML='<span class="tag">'+esc(STOPS[idx].t)+'</span>'+esc(STOPS[idx].s);
+      if(missesHere>=2&&idx===slot)b.classList.add('hint');
+      b.onclick=function(){tap(idx,b)};
+      box.appendChild(b);
+    });
+  }
+  var firstMarks=[];
+  function tap(idx,el){
+    if(idx===slot){
+      var clean=(missesHere===0);
+      if(clean)firstTry++;
+      firstMarks[slot]=clean;
+      pool.splice(pool.indexOf(idx),1);
+      slot++;missesHere=0;
+      var v=$('verdict');
+      v.innerHTML='<strong>Locked in.</strong> '+(clean?'Right on the first try.':'You found it.');
+      v.style.display='block';
+      if(slot>=N){finish();return}
+      drawRoad();drawPool();
+    }else{
+      missesHere++;
+      el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');
+      var v2=$('verdict');
+      v2.innerHTML=esc(STOPS[idx].l)+(missesHere>=2?' <strong>The next stop is lit up in green. Tap it.</strong>':' Try again.');
+      v2.style.display='block';
+      if(missesHere>=2){
+        Array.prototype.forEach.call($('pool').children,function(c){
+          if(+c.getAttribute('data-i')===slot)c.classList.add('hint');
+        });
+      }
+    }
+  }
+  function finish(){
+    $('play').style.display='none';
+    $('line').textContent='Stops in first-try order: '+firstTry+' of '+N;
+    $('closing').textContent=firstTry>=5?'You know this road. Every big act starts in rooms nobody remembers.':firstTry>=3?'Good road work. The middle stretch is the part most people forget, and it is the part that built him.':'Plenty of wrong turns, and you still made it to the arena. That is pretty much how he did it, too.';
+    $('done').style.display='block';window.scrollTo(0,0);
+  }
+  function start(){
+    slot=0;firstTry=0;missesHere=0;firstMarks=[];pool=freshPool();
+    $('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';
+    $('verdict').style.display='none';
+    drawRoad();drawPool();window.scrollTo(0,0);
+  }
+  $('start').onclick=start;
+  $('again').onclick=start;
+})();
+</script>
+</body>
+</html>

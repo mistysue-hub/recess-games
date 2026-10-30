@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cut the Fat</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--green:#2f7d4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.5}
+  header{background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:22px 16px;color:#fff5d6;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.75rem;text-transform:uppercase;opacity:.85}
+  h1{font-family:'Special Elite',monospace;margin:.3em 0 0;font-size:clamp(1.3rem,4vw,2rem)}
+  main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+  .card{background:var(--card);border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:34px 20px 20px;position:relative;margin-bottom:20px}
+  .pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+  .count{font-family:'Special Elite',monospace;font-size:.85rem;color:#8a7a6e;margin-bottom:6px}
+  .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
+  .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  .intro p{margin:0 0 12px}
+  .result{text-align:center}
+  .result .big{font-family:'Special Elite',monospace;font-size:1.5rem;color:var(--red);margin:10px 0}
+  .result .line{font-size:1.2rem;font-weight:600;border:2px solid var(--ink);display:inline-block;padding:10px 18px;margin:8px 0 16px;background:#fff}
+  .fine{font-size:.82rem;color:#5e534b;font-style:italic}
+  /* Cut the Fat additions, built from the same palette */
+  .meter{font-family:'Special Elite',monospace;font-size:1rem;margin:0 0 12px;padding:8px 12px;background:#fff;border:2px solid #d9c9a0;border-radius:6px;display:inline-block}
+  .meter.ok{border-color:var(--green);color:var(--green)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px}
+  .chip{min-height:40px;padding:6px 12px;background:#fff;border:2px solid #d9c9a0;border-radius:6px;font:inherit;font-size:1.02rem;color:var(--ink);cursor:pointer;line-height:1.3}
+  .chip:active{transform:translateY(1px)}
+  .chip.cut{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--red);color:#a99c90;background:#f3ecd8;border-style:dashed}
+  .chip:disabled{cursor:default}
+  .chip.shake{animation:shake .4s;border-color:var(--red)}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .matters{font-family:'Patrick Hand',cursive;font-size:1.05rem;color:var(--red);min-height:1.6em;margin:2px 0}
+  .trimmed{font-family:Lora,Georgia,serif;font-size:1.12rem;font-weight:600;margin:0 0 8px}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .skip{background:none;border:0;color:#8a7a6e;font:inherit;font-size:.9rem;text-decoration:underline;cursor:pointer;padding:12px 6px;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="marquee">Wild and Crazy &middot; Module 6 Game</div>
+  <h1>Cut the Fat</h1>
+</header>
+<main>
+  <section class="card intro" id="intro"><span class="pin"></span>
+    <p><strong>How it works.</strong> Each joke below is stuffed with extra words, so tap any word to cut it (tap again to bring it back) until the joke is 15 words or fewer. Some words hold the joke up and won't cut, so trim around them, then tap <strong>Lock it in</strong>.</p>
+    <button class="btn" id="start">Start trimming</button>
+  </section>
+
+  <section class="card" id="play" style="display:none"><span class="pin"></span>
+    <div class="count" id="count"></div>
+    <div class="meter" id="meter"></div>
+    <div class="chips" id="chips"></div>
+    <div class="matters" id="matters" aria-live="polite"></div>
+    <div class="row">
+      <button class="btn" id="lock" style="display:none">Lock it in</button>
+      <button class="skip" id="skip">Skip this one</button>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <button class="btn" id="next" style="display:none">Next joke</button>
+  </section>
+
+  <section class="card result" id="done" style="display:none"><span class="pin"></span>
+    <div class="big">That's the set!</div>
+    <div class="line" id="line"></div>
+    <p id="closing"></p>
+    <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
+    <button class="btn" id="again">Play again</button>
+    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+  </section>
+</main>
+<script>
+(function(){
+  // Words starting with * are essential: they cannot be cut.
+  // Essentials alone (10-14 words each) read as the finished joke, so 15 or fewer is always reachable.
+  var JOKES=[
+    {t:"So anyway, I was basically sitting at home, like, really bored, and *I *asked *my very smart *dog *what *two *minus *two *is. And I mean, *he basically *said *nothing, which is funny because nothing is zero.",
+     n:"Cut: the scene-setting, \"very smart,\" and the part that explained the joke. If you say nothing is zero, nothing is funny."},
+    {t:"Okay, so I mean, *I basically *tried really hard *to actually *write *a whole *book *about *reverse *psychology. Which is, like, when you tell people the opposite. So anyway, I'm begging you, *please *don't *read *it. Because then you will.",
+     n:"Cut: the definition of reverse psychology and \"because then you will.\" The audience gets there on their own, and that's the laugh."},
+    {t:"So *my really annoying *little *brother basically stood up at dinner and, like, very proudly *announced that *he's officially *quitting *procrastination. Forever. And I mean, that's great, right? Except he said *he'll *start *tomorrow, which is the joke.",
+     n:"Cut: the dinner scene, \"very proudly,\" and \"which is the joke.\" Never tell them where the joke is."},
+    {t:"Okay, so this weekend *I basically finally *cleaned *my super messy *room. Like, for the first time ever. And under the bed *I *found *my *missing *shoe, *two *pencils, *and I mean, honestly, *my little *brother, who was hiding.",
+     n:"Cut: \"super messy,\" \"first time ever,\" and \"who was hiding.\" A list of three lands hardest when the third item arrives with no warning."},
+    {t:"So, like, basically, *I *told *my very patient *mom that *I'd totally *clean *the *kitchen *\"in *a *minute.\" And I mean, to be fair, *that *was back in *March, so it's been a really long minute.",
+     n:"Cut: \"very patient,\" \"to be fair,\" and \"a really long minute.\" Stop on March. The date does all the work."}
+  ];
+  var i=0,score=0,words=[],cut=[],locked=false,mt=null;
+  var $=function(id){return document.getElementById(id)};
+  function parse(s){return s.split(' ').map(function(w){return w.charAt(0)==='*'?{w:w.slice(1),e:true}:{w:w,e:false}})}
+  function left(){var c=0;for(var k=0;k<words.length;k++){if(!cut[k])c++}return c}
+  function tidy(arr){
+    var s=arr.join(' ').replace(/\s+/g,' ').trim();
+    s=s.replace(/[,;]+$/,'');
+    if(!/[.!?"]$/.test(s))s+='.';
+    s=s.replace(/,\./g,'.');
+    s=s.charAt(0).toUpperCase()+s.slice(1);
+    s=s.replace(/([.!?]"?\s+"?)([a-z])/g,function(m,p,c){return p+c.toUpperCase()});
+    return s;
+  }
+  function update(){
+    var n=left(),ok=n<=15;
+    var m=$('meter');m.textContent='Words: '+n+' / target 15 or fewer';
+    m.className='meter'+(ok?' ok':'');
+    $('lock').style.display=(ok&&!locked)?'inline-block':'none';
+  }
+  function show(){
+    var j=JOKES[i];words=parse(j.t);cut=words.map(function(){return false});locked=false;
+    $('count').textContent='Joke '+(i+1)+' of '+JOKES.length;
+    var box=$('chips');box.innerHTML='';
+    words.forEach(function(wd,k){
+      var b=document.createElement('button');b.className='chip';b.textContent=wd.w;b.type='button';
+      b.onclick=function(){tap(k,b)};box.appendChild(b);
+    });
+    $('matters').textContent='';$('verdict').style.display='none';$('next').style.display='none';$('skip').style.display='inline-block';
+    update();
+  }
+  function tap(k,b){
+    if(locked)return;
+    if(words[k].e){
+      b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');
+      $('matters').textContent='That one matters.';
+      clearTimeout(mt);mt=setTimeout(function(){$('matters').textContent=''},1600);
+      return;
+    }
+    cut[k]=!cut[k];b.classList.toggle('cut',cut[k]);update();
+  }
+  function finish(didLock){
+    locked=true;
+    Array.prototype.forEach.call($('chips').children,function(b){b.disabled=true});
+    $('lock').style.display='none';$('skip').style.display='none';$('matters').textContent='';
+    var v=$('verdict');
+    if(didLock){
+      score++;
+      var kept=[];words.forEach(function(wd,k){if(!cut[k])kept.push(wd.w)});
+      v.innerHTML='<p class="trimmed"></p><span></span>';
+      v.firstChild.textContent=tidy(kept);
+      v.lastChild.textContent=JOKES[i].n;
+    } else {
+      var core=[];words.forEach(function(wd){if(wd.e)core.push(wd.w)});
+      v.innerHTML='<strong>Skipped.</strong> Here is one way it trims down: <p class="trimmed"></p>';
+      v.lastChild.textContent=tidy(core);
+    }
+    v.style.display='block';
+    $('next').textContent=(i===JOKES.length-1)?'See results':'Next joke';
+    $('next').style.display='inline-block';
+  }
+  $('lock').onclick=function(){if(left()<=15)finish(true)};
+  $('skip').onclick=function(){finish(false)};
+  $('start').onclick=function(){i=0;score=0;$('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';show();window.scrollTo(0,0)};
+  $('next').onclick=function(){i++; if(i<JOKES.length){show();window.scrollTo(0,0)} else {
+    $('play').style.display='none';
+    $('line').textContent='Jokes trimmed to size: '+score+' of '+JOKES.length;
+    $('closing').textContent=score===5?'Five for five. Every word left standing earned its spot.':score>=3?'Most of the fat is gone. Now try it on a joke of your own.':'Cutting is hard. Every comedian keeps words they love too long. Try one more round.';
+    $('done').style.display='block';window.scrollTo(0,0)}};
+  $('again').onclick=function(){$('start').onclick()};
+})();
+</script>
+</body>
+</html>
