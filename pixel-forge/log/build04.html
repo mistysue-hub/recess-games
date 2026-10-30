@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 04: Tower Hop, part 1 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build04">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>The hero, and gravity</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Landing and jumping</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>A tower that builds itself</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>The camera</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Endless</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>Parallax stars</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build04-tower-hop.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.4.0</span><span class="game">Tower Hop</span></div>
+    <div class="buildno">Build 04</div>
+    <h1>Tower Hop, part 1</h1>
+    <div class="ships"><span class="label">Ships today</span><p>gravity, a jump, a tower of platforms that builds itself forever, a camera that follows you up, and stars that drift at two speeds.</p></div>
+  </div>
+
+  <section class="intro"><p>Meteor Drift was a game about dodging. Tower Hop is a game about falling, and about the one moment per second when you don't. A hero, a stack of platforms, a jump key. Miss a platform and you drop out of the bottom of the screen. The twist is that the tower never ends, because we build it while you climb. Make a new folder, <code>build04-tower-hop</code>, and start a fresh <code>main.lua</code> (or unzip the starter kit). Bring over the title, playing and game-over skeleton from Build 03; the kit already has it.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>The hero, and gravity</h2><div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
+  love.window.setTitle("Tower Hop")
+  gravity = 1400
+  state = "title"
+  resetGame()
+end
+
+function resetGame()
+  player = { x = 384, y = 500, w = 32, h = 32, vy = 0, speed = 280, jump = -640, onGround = false }
+  platforms = { { x = 300, y = 560, w = 200, h = 16 } }
+  cameraY = 0
+  score = 0
+end</code></pre></div>
+<p>New field: <code>vy</code>, the hero's vertical speed in pixels per second. Gravity is not a position; it's a change to speed. Every frame, speed goes up by <code>gravity <em> dt</code>, then position goes up by <code>vy </em> dt</code>. Two lines, and your hero falls like a real thing:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.update(dt)
+  if state ~= "playing" then return end
+  if love.keyboard.isDown("left") then player.x = player.x - player.speed * dt end
+  if love.keyboard.isDown("right") then player.x = player.x + player.speed * dt end
+  if player.x &gt; 800 then player.x = -player.w end
+  if player.x + player.w &lt; 0 then player.x = 800 end
+
+  local feetBefore = player.y + player.h
+  player.vy = player.vy + gravity * dt
+  player.y = player.y + player.vy * dt
+  local feetAfter = player.y + player.h
+end</code></pre></div>
+<p><code>return</code> at the top is a trick: if we're not playing, leave the function right away. The two <code>x</code> checks make the hero wrap around the edges, which is how every good hopper works. Draw the hero as a yellow square and the platform as a green bar, run it, and watch the hero fall straight through the platform and off the bottom of the world. Good. That's correct. We haven't told it what a floor is.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Landing and jumping</h2><p>A landing is: you were above the platform's top before this frame, you're at or below it after, you're over it sideways, and you're moving down. That's why we saved <code>feetBefore</code> and <code>feetAfter</code>.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  player.onGround = false
+  if player.vy &gt;= 0 then
+    for i, p in ipairs(platforms) do
+      if feetBefore &lt;= p.y and feetAfter &gt;= p.y
+         and player.x + player.w &gt; p.x and player.x &lt; p.x + p.w then
+        player.y = p.y - player.h
+        player.vy = 0
+        player.onGround = true
+      end
+    end
+  end</code></pre></div>
+<p>Only the top counts. Jump up through a platform from underneath and you pass right through, which feels great and costs nothing. Jumping is a key press, and only from the ground:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.keypressed(key)
+  if key == "space" and state == "playing" and player.onGround then
+    player.vy = player.jump
+    player.onGround = false
+  end
+end</code></pre></div>
+<p><code>jump</code> is negative because up is negative. Run it. Land, jump, land. If that first jump doesn't make you grin a little, check your pulse.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>A tower that builds itself</h2><p>We never place platforms by hand. A function makes the next one a random distance above the last, and a random distance sideways from it, so it's always reachable:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function spawnPlatform()
+  nextY = nextY - math.random(70, 110)
+  lastX = math.max(0, math.min(680, lastX + math.random(-220, 220)))
+  table.insert(platforms, { x = lastX, y = nextY, w = 120, h = 16 })
+end</code></pre></div>
+<p>Add <code>nextY = 560</code> and <code>lastX = 300</code> to <code>resetGame</code>, then, at the end of <code>resetGame</code>, call it until there's a tower above the screen:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  while nextY &gt; -400 do spawnPlatform() end</code></pre></div>
+<p><code>while</code> repeats until its question is false. Run it and climb. You'll reach the top of the window and keep going, into the part the window doesn't show.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>The camera</h2><p>A camera in a 2D game is a lie we tell <code>love.draw</code>: shift everything down by <code>cameraY</code> before drawing, and the world appears to scroll. <code>cameraY</code> is the world coordinate at the top of the window.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.draw()
+  love.graphics.push()
+  love.graphics.translate(0, -cameraY)
+  love.graphics.setColor(0.45, 0.8, 0.55)
+  for i, p in ipairs(platforms) do
+    love.graphics.rectangle("fill", p.x, p.y, p.w, p.h)
+  end
+  love.graphics.setColor(1, 0.85, 0.3)
+  love.graphics.rectangle("fill", player.x, player.y, player.w, player.h)
+  love.graphics.pop()
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.print("height: " .. score, 10, 10)
+end</code></pre></div>
+<p><code>push</code> remembers where the drawing pen is, <code>translate</code> moves it, <code>pop</code> puts it back. The score is printed after <code>pop</code>, so it stays glued to the window. The camera only ever moves up, and only when the hero gets near the top:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if player.y &lt; cameraY + 250 then cameraY = player.y - 250 end
+  score = math.max(score, math.floor(-cameraY / 10))</code></pre></div>
+<p>Run it. Climb. The tower scrolls, the number climbs with you.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Endless</h2><p>Three jobs at the end of <code>love.update</code>: keep spawning above the camera, delete platforms far below it, and notice when the hero falls out:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  while nextY &gt; cameraY - 100 do spawnPlatform() end
+  for i = #platforms, 1, -1 do
+    if platforms[i].y &gt; cameraY + 700 then table.remove(platforms, i) end
+  end
+  if player.y &gt; cameraY + 650 then state = "gameover" end</code></pre></div>
+<p>Same backward loop as Build 02. Hook the <code>gameover</code> state up to your title screen and retry, and you have a complete endless game. Jamie's record is 41. Jamie claims the platforms "moved on purpose." They don't. Yet.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>Parallax stars</h2><p>Parallax is the oldest trick in 2D: things far away scroll slower. Make eighty stars once, in <code>love.load</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  stars = {}
+  for i = 1, 80 do
+    table.insert(stars, { x = math.random(0, 800), y = math.random(0, 600), size = math.random(1, 3) })
+  end</code></pre></div>
+<p>Draw them first, before <code>push</code>, so they're not part of the world:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  for i, s in ipairs(stars) do
+    local rate = 0.3
+    if s.size == 3 then rate = 0.6 end
+    local sy = (s.y - cameraY * rate) % 600
+    love.graphics.setColor(1, 1, 1, 0.3 + s.size * 0.2)
+    love.graphics.rectangle("fill", s.x, sy, s.size, s.size)
+  end</code></pre></div>
+<p><code>%</code> is remainder: it wraps <code>sy</code> back into 0 to 600 forever, so the sky never runs out. Big stars move at 0.6 of the camera, small ones at 0.3, and your eye reads depth. Run it and climb. It looks like a real sky now.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Moving platforms.</strong> About one platform in four drifts left and right and bounces off the window edges. A hero standing on one moves with it. (Hint: give some platforms a <code>dx</code> field when they spawn; move them in <code>love.update</code>; remember which platform the hero landed on this frame.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Crumbling platforms.</strong> Another kind of platform breaks apart a short time after you land on it, then vanishes from the list. Draw it a different color so the player can choose. (Hint: a <code>timer</code> field that only starts counting once something lands; the backward loop from Step 5 already knows how to remove things.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A thin cloud layer that scrolls at 0.9 of the camera, in front of the stars.</li><li>A "height" marker every 100 that prints a line across the tower.</li><li>Make the gaps between platforms grow slowly with height, so the climb gets harder.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-004</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's hero drops like a dropped brick, lands before you can see it, and no jump ever gets off the ground. Jamie says the game "has a heavy atmosphere." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local feetBefore = player.y + player.h
+  player.vy = player.vy + gravity
+  player.y = player.y + player.vy * dt
+  local feetAfter = player.y + player.h</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Reread Step 1: what does every change of speed get multiplied by, every frame?</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build03.html">← Build 03</a><a class="pager" href="build05.html">Build 05 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

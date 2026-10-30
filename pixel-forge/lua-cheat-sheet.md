@@ -30,6 +30,11 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 | Define a function | `function overlaps(a, b) ... return true end` |
 | Call a function that belongs to a table | `sound:play()` |
 
+| Part of a string, positions a to b | `string.sub(s, a, b)` |
+| How many characters in a string | `#s` |
+| Try something that might fail, without crashing | `local ok, result = pcall(love.graphics.newImage, path)` |
+| Split a file into lines | `for line in text:gmatch("[^\n]+") do ... end` |
+
 **One equals sign sets. Two compare.** `x = 5` stores 5. `x == 5` asks "is x 5?"
 
 ## Math
@@ -46,6 +51,8 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 | Square root | `math.sqrt(16)` → 4 |
 | Distance between two points | `math.sqrt((x2 - x1)^2 + (y2 - y1)^2)` |
 | Pi | `math.pi` |
+| Sine and cosine of an angle (radians) | `math.sin(a)`, `math.cos(a)` |
+| Round to nearest whole number | `math.floor(x + 0.5)` |
 
 ## LÖVE: the loop
 
@@ -94,6 +101,29 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 | Play it | `snd:play()` |
 | Quit the game | `love.event.quit()` |
 | Seconds since the game started | `love.timer.getTime()` |
+
+## LÖVE: physics (Builds 10-11)
+
+| Want to | Write |
+|---|---|
+| Make a world with gravity (pixels per meter first) | `love.physics.setMeter(64)` then `world = love.physics.newWorld(0, 9.8 * 64)` |
+| Step the world (in update) | `world:update(dt)` |
+| A body that never moves / falls / is pushed by you | `love.physics.newBody(world, x, y, "static")`, `"dynamic"`, `"kinematic"` |
+| A shape | `love.physics.newRectangleShape(w, h)`, `love.physics.newCircleShape(r)` |
+| Glue shape to body (density last) | `love.physics.newFixture(body, shape, 1)` |
+| Where and how tilted a body is | `body:getX()`, `body:getY()`, `body:getAngle()` |
+| Push a body | `body:applyForce(fx, fy)`, `body:setLinearVelocity(vx, vy)` |
+| Know when things touch | `world:setCallbacks(beginContact)` with `function beginContact(a, b, contact) end` |
+| Connect two bodies | `love.physics.newDistanceJoint(bodyA, bodyB, x1, y1, x2, y2)`, `love.physics.newRevoluteJoint(bodyA, bodyB, x, y)` |
+
+## LÖVE: files and saving
+
+| Want to | Write |
+|---|---|
+| Save text (goes in LÖVE's save folder, not your game folder) | `love.filesystem.write("best.txt", tostring(best))` |
+| Read it back (nil if missing) | `local text = love.filesystem.read("best.txt")` |
+| Text to number | `tonumber(text)` |
+| Draw an image slice (sprite sheet) | `quad = love.graphics.newQuad(x, y, w, h, img:getWidth(), img:getHeight())` then `love.graphics.draw(img, quad, x, y)` |
 
 ## Reading an error
 

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 06: Circuit Breaker, part 1 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build06">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>The grid</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Drawing a tile</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Clicking a tile</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>A tween of your own</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Which sides are open?</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>Flood-fill: does the power get through?</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build06-circuit-breaker.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.6.0</span><span class="game">Circuit Breaker</span></div>
+    <div class="buildno">Build 06</div>
+    <h1>Circuit Breaker, part 1</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a grid of pipe tiles, a mouse that rotates them, a tween you write yourself, and a flood-fill that knows when the power gets through.</p></div>
+  </div>
+
+  <section class="intro"><p>Tower Hop was all reflexes. Circuit Breaker is the opposite: nothing moves until you click, and the whole game is one question, <em>is the bulb connected to the battery?</em> Puzzle games teach the most useful trick in this course: a <strong>grid</strong> is just a list of lists. Make a new folder, <code>build06-circuit-breaker</code>, open it in VS Code, and start a fresh <code>main.lua</code>. No art today; every tile is lines, and it looks better than you'd think.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>The grid</h2><p>A tile is a table with two facts: its <code>kind</code> and its <code>rot</code> (rotation, 0 to 3, a quarter turn each). The grid is a table of rows, and each row is a table of tiles.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">LAYOUT = {
+  "CSSSSC",
+  "STCSSS",
+  "CSTSCS",
+  "SCSTSS",
+  "TSCSSC",
+}
+KINDS = { S = "straight", C = "corner", T = "tee" }
+
+function love.load()
+  love.window.setTitle("Circuit Breaker")
+  COLS, ROWS, SIZE = 6, 5, 90
+  OX, OY = 130, 75          -- where the grid starts on screen
+  grid = {}
+  for r = 1, ROWS do
+    grid[r] = {}
+    for c = 1, COLS do
+      local letter = string.sub(LAYOUT[r], c, c)
+      grid[r][c] = { kind = KINDS[letter], rot = math.random(0, 3) }
+    end
+  end
+  source = { r = 1, c = 1 }
+  bulb = { r = ROWS, c = COLS }
+end</code></pre></div>
+<p>Two loops, one inside the other: the outer walks rows, the inner walks columns. <code>grid[r][c]</code> is the tile at row r, column c. Say it that way every time and you'll never mix them up. (Jamie's grids are always sideways.) <code>string.sub(text, c, c)</code> pulls out the c-th letter, and <code>KINDS</code> turns a letter into a kind name. The letters are the puzzle; the random <code>rot</code> scrambles it. There is a solution hiding in that layout. The top row and the right column are not a coincidence.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Drawing a tile</h2><p>Each kind is a few lines from the tile's center. Draw every tile as if <code>rot</code> were 0, then let LÖVE spin it.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function drawTile(tile, x, y)
+  love.graphics.push()
+  love.graphics.translate(x + SIZE / 2, y + SIZE / 2)
+  love.graphics.rotate(tile.rot * math.pi / 2)
+  local h = SIZE / 2
+  love.graphics.setLineWidth(8)
+  if tile.kind == "straight" then
+    love.graphics.line(-h, 0, h, 0)
+  elseif tile.kind == "corner" then
+    love.graphics.line(0, 0, h, 0)
+    love.graphics.line(0, 0, 0, h)
+  elseif tile.kind == "tee" then
+    love.graphics.line(-h, 0, h, 0)
+    love.graphics.line(0, 0, 0, h)
+  end
+  love.graphics.pop()
+end
+
+function love.draw()
+  for r = 1, ROWS do
+    for c = 1, COLS do
+      local x, y = OX + (c - 1) * SIZE, OY + (r - 1) * SIZE
+      love.graphics.setColor(0.2, 0.25, 0.3)
+      love.graphics.rectangle("line", x, y, SIZE, SIZE)
+      love.graphics.setColor(0.55, 0.6, 0.65)
+      drawTile(grid[r][c], x, y)
+    end
+  end
+end</code></pre></div>
+<p><code>push</code>, <code>translate</code>, <code>rotate</code>, <code>pop</code> is the cheat-sheet dance: move the origin to the tile's center, spin, draw at 0,0, put everything back. <code>math.pi / 2</code> is a quarter turn in radians. Run it. A board of grey pipes pointing every which way. That's your puzzle, and you haven't written a single rule yet.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Clicking a tile</h2><p>The mouse gives pixels; the grid wants a row and column. Subtract the grid's corner, divide by the tile size, round down, add 1 (Lua lists start at 1).</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.mousepressed(mx, my, button)
+  if button ~= 1 then return end
+  local c = math.floor((mx - OX) / SIZE) + 1
+  local r = math.floor((my - OY) / SIZE) + 1
+  if r &lt; 1 or r &gt; ROWS or c &lt; 1 or c &gt; COLS then return end
+  local tile = grid[r][c]
+  tile.rot = (tile.rot + 1) % 4
+end</code></pre></div>
+<p><code>%</code> is the remainder: 3 + 1 is 4, and 4 % 4 is 0, so the rotation wraps. The <code>return</code> lines are guards: clear the boring cases first and the real code stays short. Run it and click. Tiles snap a quarter turn. Snapping is fine. Snapping is also how you can tell a game had no budget.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>A tween of your own</h2><p>A tween is a value sliding from one number to another over time. You could install a library. You will not. It's twelve lines.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">tweens = {}
+
+function tween(tile, from, to, duration)
+  table.insert(tweens, { tile = tile, from = from, to = to, elapsed = 0, duration = duration })
+end
+
+function love.update(dt)
+  for i = #tweens, 1, -1 do
+    local t = tweens[i]
+    t.elapsed = t.elapsed + dt
+    local p = math.min(1, t.elapsed / t.duration)
+    p = 1 - (1 - p) * (1 - p)          -- ease out: fast start, soft landing
+    t.tile.angle = t.from + (t.to - t.from) * p
+    if p &gt;= 1 then table.remove(tweens, i) end
+  end
+end</code></pre></div>
+<p><code>p</code> runs from 0 to 1; the ease-out line bends it so the tile starts fast and settles gently. <code>angle</code> is the <em>drawn</em> rotation while <code>rot</code> stays the <em>real</em> one. Two changes: in <code>drawTile</code>, rotate by <code>(tile.angle or tile.rot)</code>; in <code>mousepressed</code>, after changing <code>rot</code>, call <code>tween(tile, tile.rot - 1, tile.rot, 0.18)</code>. Run it. Click. The tile <em>swings</em> into place. That's juice, and you wrote it.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Which sides are open?</h2><p>Here's the thinking part. A straight pipe at rot 0 is open left and right; turn it once and it's open top and bottom. Instead of writing every case, write the rot-0 openings once and rotate them.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">OPEN = {
+  straight = { [0] = true,  [1] = false, [2] = true,  [3] = false }, -- right, down, left, up
+  corner   = { [0] = true,  [1] = true,  [2] = false, [3] = false },
+  tee      = { [0] = true,  [1] = true,  [2] = true,  [3] = false },
+}
+
+function isOpen(tile, side)            -- side: 0 right, 1 down, 2 left, 3 up
+  return OPEN[tile.kind][(side - tile.rot) % 4]
+end</code></pre></div>
+<p>Sides are numbered clockwise from the right, the way <code>rotate</code> turns. One rotation moves every opening one side clockwise, so to ask "is side 1 open?" on a rotated tile, ask the unrotated tile about side <code>1 - rot</code>. The <code>% 4</code> keeps it in range even when negative; Lua's <code>%</code> is kind like that.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>Flood-fill: does the power get through?</h2><p>Start at the source, mark it powered, and spread: for each powered tile, look at its four neighbors; if this tile is open toward the neighbor <em>and</em> the neighbor is open back, the neighbor is powered too. Keep going until nothing new lights up. That's a flood-fill: paint buckets, minesweeper and every pipe game run on it.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">DR = { [0] = 0, [1] = 1, [2] = 0, [3] = -1 }
+DC = { [0] = 1, [1] = 0, [2] = -1, [3] = 0 }
+
+function flood()
+  for r = 1, ROWS do for c = 1, COLS do grid[r][c].powered = false end end
+  local queue = { { r = source.r, c = source.c } }
+  grid[source.r][source.c].powered = true
+  while #queue &gt; 0 do
+    local cur = table.remove(queue, 1)
+    for side = 0, 3 do
+      local nr, nc = cur.r + DR[side], cur.c + DC[side]
+      if nr &gt;= 1 and nr &lt;= ROWS and nc &gt;= 1 and nc &lt;= COLS then
+        local here, there = grid[cur.r][cur.c], grid[nr][nc]
+        if isOpen(here, side) and isOpen(there, (side + 2) % 4) and not there.powered then
+          there.powered = true
+          table.insert(queue, { r = nr, c = nc })
+        end
+      end
+    end
+  end
+end</code></pre></div>
+<p><code>(side + 2) % 4</code> is the opposite side. Call <code>flood()</code> at the end of <code>love.load</code> and of <code>love.mousepressed</code>. In <code>love.draw</code>, color a pipe yellow <code>(1, 0.85, 0.3)</code> when <code>tile.powered</code>, draw the bulb's cell as a filled circle that's bright when <code>grid[bulb.r][bulb.c].powered</code>, and print "CONNECTED" at the top when it is. Run it and solve your board. Watch the power creep across the grid one click at a time.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Locked tiles.</strong> Some tiles have <code>locked = true</code>. They draw with a darker square behind them and ignore clicks. Lock the source and the bulb, plus two tiles of your choice. (Hint: one guard line in <code>mousepressed</code>, and one <code>if</code> in <code>love.draw</code>.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Move counter.</strong> Count every rotation and print it in the corner. Clicking a locked tile doesn't count. (Hint: where does the count live so it survives between clicks? Think about <code>resetGame</code> from Build 03.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A fourth kind, <code>cross</code>, open on all four sides.</li><li>Right-click rotates the other way (<code>button == 2</code>, and <code>rot - 1</code>; mind the wrap).</li><li>A faint hum: a looping sound that gets louder as more tiles are powered (<code>source:setVolume</code>).</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-006</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's board lights up the whole grid the instant it loads, every tile, no clicks needed. Jamie says the level is "already won, you're welcome." Find the bug.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function isOpen(tile, side)
+  return OPEN[tile.kind][(side - tile.rot) % 4] or true
+end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Read the last word of Jamie&#x27;s isOpen line out loud, then reread Step 5.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build05.html">← Build 05</a><a class="pager" href="build07.html">Build 07 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

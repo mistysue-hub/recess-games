@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 09: Lantern Keep, part 2 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build09">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 5 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>Wisps and their three moods</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>The dialog box</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>The bag</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Keys and locked doors</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Putting it together</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build09-lantern-keep.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.9.0</span><span class="game">Lantern Keep</span></div>
+    <div class="buildno">Build 09</div>
+    <h1>Lantern Keep, part 2</h1>
+    <div class="ships"><span class="label">Ships today</span><p>wisps with moods, a dialog box that types itself out, a bag, an iron key, and a door that cares whether you have it. Lantern Keep becomes a finished game.</p></div>
+  </div>
+
+  <section class="intro"><p>Copy <code>build08-lantern-keep</code> to <code>build09-lantern-keep</code>. Keep the old build; we always do. Today is about things that <em>decide</em>: an enemy that decides to chase, a door that decides to open. Every one is an <code>if</code> on a piece of state, which you've been writing since Blip. There are just more of them now.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>Wisps and their three moods</h2><p>A wisp is a little light that drifts around the keep. It has three moods, and you know what that is: a state machine, like title/playing/gameover in Build 03, but inside one object. Add a class below <code>Entity</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">Wisp = Class()
+
+function Wisp:init(x, y)
+  self.x, self.y, self.w, self.h = x, y, 20, 20
+  self.homeX, self.homeY = x, y
+  self.speed = 70
+  self.state = "wander"
+  self.timer = 0
+  self.dirX, self.dirY = 1, 0
+end
+Wisp.move = Entity.move
+Wisp.center = Entity.center</code></pre></div>
+<p>The last two lines borrow <code>move</code> and <code>center</code> from <code>Entity</code> so wisps slide along walls too (<code>center</code> returns the middle of a box, and <code>distance</code> measures between two centers; both are in the kit). Now the moods:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function Wisp:update(dt)
+  local d = distance(self, player)
+
+  if self.state == "wander" then
+    self.timer = self.timer - dt
+    if self.timer &lt;= 0 then
+      local angle = math.random() * 2 * math.pi
+      self.dirX, self.dirY = math.cos(angle), math.sin(angle)
+      self.timer = math.random(1, 3)
+    end
+    self:move(self.dirX * self.speed * dt, self.dirY * self.speed * dt)
+    if d &lt; 120 then self.state = "chase" end
+
+  elseif self.state == "chase" then
+    local px, py = player:center()
+    local wx, wy = self:center()
+    local len = math.max(1, math.sqrt((px - wx) ^ 2 + (py - wy) ^ 2))
+    self:move((px - wx) / len * self.speed * dt, (py - wy) / len * self.speed * dt)
+    if d &gt; 220 then self.state = "return" end
+
+  elseif self.state == "return" then
+    local dx, dy = self.homeX - self.x, self.homeY - self.y
+    local len = math.sqrt(dx ^ 2 + dy ^ 2)
+    if len &lt; 4 then
+      self.state = "wander"
+    else
+      self:move(dx / len * self.speed * dt, dy / len * self.speed * dt)
+    end
+  end
+end</code></pre></div>
+<p>Mood by mood. <strong>Wander</strong>: every 1 to 3 seconds pick a random angle and turn it into an x part and a y part with <code>math.cos</code> and <code>math.sin</code> (that is what they're for). Hero within 120 pixels: chase. <strong>Chase</strong>: point at the hero. Dividing by <code>len</code> makes the direction length 1, so the wisp moves at <code>speed</code>, not faster when you're far away. Hero 220 away: give up. <strong>Return</strong>: head home, then wander again. The two distances are different on purpose: with one number, a wisp on the line would flip moods sixty times a second. Draw wisps as circles, a color per mood, so you can <em>see</em> them think. Put two in <code>love.load</code> and run it. Walk near one. It notices you. The first time a thing in your game reacts to you is the whole reason people make games.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>The dialog box</h2><p>Text that appears all at once is a sign. Text that types itself out is a voice. The dialog is one table of state:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">dialog = { lines = {}, index = 1, shown = 0, timer = 0, active = false }
+
+function say(lines)
+  dialog.lines = lines
+  dialog.index = 1
+  dialog.shown = 0
+  dialog.timer = 0
+  dialog.active = true
+end
+
+function updateDialog(dt)
+  if not dialog.active then return end
+  dialog.timer = dialog.timer + dt
+  if dialog.timer &gt; 0.03 then
+    dialog.timer = 0
+    dialog.shown = math.min(dialog.shown + 1, #dialog.lines[dialog.index])
+  end
+end</code></pre></div>
+<p><code>shown</code> is how many characters of the current line are visible; every 0.03 seconds it grows by one. <code>#</code> on a string is its length. Draw <code>string.sub(line, 1, dialog.shown)</code>, the first <code>shown</code> characters, with <code>love.graphics.printf</code> so long lines wrap. Then the space bar:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function advanceDialog()
+  local line = dialog.lines[dialog.index]
+  if dialog.shown &lt; #line then
+    dialog.shown = #line
+  elseif dialog.index &lt; #dialog.lines then
+    dialog.index = dialog.index + 1
+    dialog.shown = 0
+  else
+    dialog.active = false
+  end
+end</code></pre></div>
+<p>Three cases, in order: still typing, finish the line; more lines, next one; nothing left, close. Call it from <code>love.keypressed</code> on space while the dialog is active. At the top of <code>love.update</code>, after <code>updateDialog(dt)</code>, add <code>if dialog.active then return end</code>: the world holds still while someone is talking. Open the game with <code>say({ "The keep is dark. The wisps don't like the lantern.", "Find the iron key. The far door is locked." })</code>.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>The bag</h2><p>An inventory is a list of names. That's all it is.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">bag = {}
+
+function hasItem(name)
+  for i, item in ipairs(bag) do
+    if item == name then return true end
+  end
+  return false
+end</code></pre></div>
+<p>Draw it after <code>love.graphics.pop()</code> so it sticks to the screen: <code>"Bag:"</code>, then one line per item, <code>30 + i * 18</code> pixels down. It fills up in the next step.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Keys and locked doors</h2><p>Room 2 has a new tile number, <code>3</code>: a locked door. Make it solid <em>unless</em> the bag has the key:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function solidAt(px, py)
+  local t = tileAt(px, py)
+  if t == 1 then return true end
+  if t == 3 and not hasItem("iron key") then return true end
+  return false
+end</code></pre></div>
+<p>The key itself is just an <code>Entity</code> lying on the floor of room 1 (<code>keyItem = Entity(16 <em> TILE + 8, 11 </em> TILE + 8, 16, 16)</code>), drawn gold. In <code>love.update</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if keyItem and overlaps(player, keyItem) then
+    table.insert(bag, "iron key")
+    keyItem = nil
+    say({ "You found the iron key." })
+  end</code></pre></div>
+<p><code>keyItem = nil</code> deletes it; the <code>if keyItem and ...</code> guard skips the check once it's gone. Walk over it and the locked door in room 2 stops being a wall. No door code needed; <code>solidAt</code> already asks the bag. Jamie wanted the key to be "more of a vibe." It is a table with four numbers.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Putting it together</h2><p>Order matters. <code>love.update</code>: dialog first (return if active), hero's move, every wisp's <code>update</code>, pickups, camera. <code>love.draw</code>: map, items, wisps, hero inside the camera; bag and dialog outside it. If something draws in the wrong place, check this first.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>An NPC.</strong> Someone stands in the keep and says three lines you write when the hero walks into them. (Hint: an <code>Entity</code> that never moves; <code>overlaps</code> for the bump; and you need a way to make sure one bump means one conversation, not sixty a second. A field like <code>talked</code> that resets when the hero steps away is one way.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A boss room.</strong> Behind the locked door in room 2 lives something bigger: 3 hit points, a different chase speed, and the player can hurt it. You decide how (touching it while it's in <code>return</code> mood? a key press up close?). It leaves when its hit points reach 0. (Hint: a <code>Boss</code> class that borrows <code>Wisp.update</code> the way <code>Wisp</code> borrowed <code>Entity.move</code>, plus <code>hp</code>. Carry over your second-room code from Build 08 to get there.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A lantern radius: draw a dark rectangle over the whole screen with a lighter circle around the hero (search the LÖVE wiki for <code>setBlendMode</code> with the lead dev's blessing; this one is a real puzzle).</li><li>Wisps that flee the lantern instead of chasing, if the bag holds "oil."</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-009</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's wisps all chase the hero from the moment the game starts, from anywhere in the keep. Jamie calls them "motivated." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    self:move(self.dirX * self.speed * dt, self.dirY * self.speed * dt)
+    if d &gt; 120 then self.state = "chase" end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Read the wander mood in Step 1 again and ask which way the chase comparison should point.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build08.html">← Build 08</a><a class="pager" href="build10.html">Build 10 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial. Art: Kenney (kenney.nl), CC0.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

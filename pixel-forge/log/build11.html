@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 11: Stack Attack, part 2 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build11">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 5 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>A hook that swings</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>A menu with a settings screen</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Music that loops</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Game feel</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Ship it as one file</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build11-stack-attack.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.11.0</span><span class="game">Stack Attack</span></div>
+    <div class="buildno">Build 11</div>
+    <h1>Stack Attack, part 2</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a hook that swings, a menu with a settings screen you build from scratch, music that loops, and a game you can hand to another human as one file.</p></div>
+  </div>
+
+  <section class="intro"><p>Copy <code>build10-stack-attack</code> to <code>build11-stack-attack</code>. Jamie's version of this build shipped with the volume slider wired backwards, so quiet meant loud. Jamie called it "a surprise feature." Work in the new folder.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>A hook that swings</h2><p>Right now the crate appears under the crane and drops straight down. Real cranes have a hook on a cable, and a hook on a cable swings. Box2D does this with a <strong>joint</strong>: a rule that ties two bodies together.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
+  -- after the world and ground:
+  anchor = {}
+  anchor.body = love.physics.newBody(world, 400, 30, "kinematic")
+  hook = {}
+  hook.body = love.physics.newBody(world, 400, 110, "dynamic")
+  hook.shape = love.physics.newCircleShape(8)
+  hook.fixture = love.physics.newFixture(hook.body, hook.shape, 2)
+  hook.fixture:setMask(1)
+  cable = love.physics.newDistanceJoint(anchor.body, hook.body, 400, 30, 400, 110)
+end</code></pre></div>
+<p>The anchor is <strong>kinematic</strong>: it moves because you tell it to, not because gravity does. The hook is a small heavy dynamic body hanging from the anchor on a distance joint, which is Box2D for "stay exactly 80 pixels apart." <code>setMask(1)</code> stops the hook from colliding with crates (all fixtures are in category 1 unless you say otherwise). Now the crane moves the anchor instead of a plain number:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  anchor.body:setLinearVelocity(crane.dir * crane.speed, 0)
+  if anchor.body:getX() &gt; 740 or anchor.body:getX() &lt; 60 then
+    crane.dir = -crane.dir
+  end</code></pre></div>
+<p>And a dropped crate appears at the hook's position, moving at the hook's speed:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  c.body:setPosition(hook.body:getX(), hook.body:getY() + 30)
+  c.body:setLinearVelocity(hook.body:getLinearVelocity())</code></pre></div>
+<p>Run it. The hook lags behind the crane and swings when it turns. Drop a crate mid-swing and it flies sideways. The game just got twice as hard and twice as good, and you changed about ten lines.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>A menu with a settings screen</h2><p>Add two states, <code>"menu"</code> and <code>"settings"</code>. The menu shows the title, "space to play" and "s for settings". Settings shows one thing: a volume slider you build out of rectangles.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  volume = 0.7
+  slider = { x = 250, y = 300, w = 300, h = 10, dragging = false }</code></pre></div>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function drawSlider()
+  love.graphics.setColor(0.3, 0.3, 0.35)
+  love.graphics.rectangle("fill", slider.x, slider.y, slider.w, slider.h)
+  love.graphics.setColor(0.9, 0.6, 0.3)
+  love.graphics.rectangle("fill", slider.x, slider.y, slider.w * volume, slider.h)
+  love.graphics.circle("fill", slider.x + slider.w * volume, slider.y + slider.h / 2, 12)
+end</code></pre></div>
+<p>The knob sits at <code>x + w * volume</code>, so volume 0 is the left end and 1 is the right. Dragging is three functions:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.mousepressed(x, y, button)
+  if state == "settings" and y &gt; slider.y - 15 and y &lt; slider.y + 25
+     and x &gt; slider.x - 15 and x &lt; slider.x + slider.w + 15 then
+    slider.dragging = true
+  end
+end
+
+function love.mousereleased(x, y, button)
+  slider.dragging = false
+end
+
+function love.mousemoved(x, y)
+  if slider.dragging then
+    volume = math.max(0, math.min(1, (x - slider.x) / slider.w))
+    love.audio.setVolume(volume)
+  end
+end</code></pre></div>
+<p><code>(x - slider.x) / slider.w</code> turns a mouse position into a number from 0 to 1; <code>math.max</code> and <code>math.min</code> keep it there when the mouse overshoots. <code>love.audio.setVolume</code> is the master volume for every sound in the game. Press escape in settings to go back to the menu.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Music that loops</h2><p>Find a music track you're allowed to use. Kenney's music packs are CC0 (the link is in this module); or make a loop in any free tool. Save it as <code>assets/music.ogg</code>. Then:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local ok, m = pcall(love.audio.newSource, "assets/music.ogg", "stream")
+  if ok then
+    music = m
+    music:setLooping(true)
+    music:play()
+  end</code></pre></div>
+<p><code>"stream"</code> plays the file bit by bit instead of loading all of it, which is right for music and wrong for short sounds. <code>setLooping(true)</code> means it never ends. The <code>pcall</code> means the game still runs if the file is missing, which matters when you hand the game to someone else and forget the folder. Now the slider does something you can hear.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Game feel</h2><p>Right now a crate landing on the tower looks like a crate landing on the tower. It should <em>feel</em> like it. Two tricks, and you'll pick which ones to ship:</p>
+<p><strong>Screen shake.</strong> Keep a <code>shake</code> number. When a heavy landing happens (in <code>beginContact</code>), set <code>shake = 6</code>. In <code>draw</code>, before anything else: <code>love.graphics.translate(math.random(-shake, shake), math.random(-shake, shake))</code>, and in <code>update</code>: <code>shake = math.max(0, shake - 30 * dt)</code>.</p>
+<p><strong>Squash.</strong> When a crate lands, set <code>c.squash = 0.2</code>. Draw its rectangle with width <code>w <em> (1 + c.squash)</code> and height <code>h </em> (1 - c.squash)</code>, and shrink <code>c.squash</code> toward 0 every frame. Crates look like they thump.</p>
+<p>Box2D hands <code>beginContact</code> two fixtures. To find which crate landed, loop over <code>crates</code> and compare <code>c.fixture == a or c.fixture == b</code>.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Ship it as one file</h2><p>A LÖVE game is a folder. A <strong>.love file</strong> is that folder zipped, with a different name. On Windows: open your build folder, select everything inside it (not the folder itself), right-click, Send to, Compressed folder, then rename the result <code>stack-attack.love</code>. On Mac: same, with Compress, then rename. Double-click it on any computer with LÖVE installed and your game runs. That's distribution. Studios with a hundred people do the same thing with more steps.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>The feel pass.</strong> Ship at least two of: screen shake on landing, squash on impact, a dust puff (a short list of particles, as in Build 05), a slow-motion half-second when the tower topples. Each must be visible on screen.</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A real playtester.</strong> Give your <code>.love</code> file to someone in your family. Watch them play one round without helping. Bring back one thing they said or did that surprised you, and tell the lead dev what you'd change because of it. (No code for this one. It's the hardest task in the course.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A "mute" key that remembers its setting between runs (Build 05 showed you how to save).</li><li>A combo counter for consecutive perfect drops.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-011</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's slider stops the instant the mouse slips past either end of the bar, so you can never quite reach silent or full volume, and a quick drag off the end leaves the knob stranded. Jamie says players should "commit to the drag." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.mousemoved(x, y)
+  if slider.dragging and x &gt; slider.x and x &lt; slider.x + slider.w then
+    volume = (x - slider.x) / slider.w
+    love.audio.setVolume(volume)
+  end
+end</code></pre></div>
+<p>(Compare the condition with Step 2. What happens when <code>x</code> leaves the bar for one frame?)</p>
+<details class="hint"><summary>Need a nudge?</summary><p>Compare Jamie&#x27;s if condition with the one in Step 2&#x27;s love.mousemoved, and think about what the clamp does that the range test doesn&#x27;t.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build10.html">← Build 10</a><a class="pager" href="build12.html">Build 12 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial. Physics by Box2D, built into LÖVE. Music: whatever CC0 track you chose; credit the maker in your game.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

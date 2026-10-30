@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 08: Lantern Keep, part 1 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build08">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>A room is a spreadsheet</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Your first class</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Which tiles are solid</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Sliding along walls</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Drawing the keep</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>The camera</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build08-lantern-keep.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.8.0</span><span class="game">Lantern Keep</span></div>
+    <div class="buildno">Build 08</div>
+    <h1>Lantern Keep, part 1</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a keep drawn from a text file, a hero who can't walk through walls, a camera that follows them, and your first class.</p></div>
+  </div>
+
+  <section class="intro"><p>Meteor Drift and Tower Hop were one screen each. Lantern Keep is a <em>place</em>: rooms, walls, doors, things on the floor. A place is too big to type in as rectangles, so today the level lives in a text file and the code reads it. Make a new folder, <code>build08-lantern-keep</code>, with three files: <code>main.lua</code>, <code>class.lua</code>, and <code>maps/room1.csv</code>. The starter kit has all three.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>A room is a spreadsheet</h2><p>Open <code>maps/room1.csv</code> in VS Code: fourteen rows of twenty numbers. <code>1</code> is a wall, <code>0</code> is floor, <code>2</code> is a door. Change a <code>0</code> to a <code>1</code> in the middle and you've built a pillar. That's level design. Jamie would like a credit.</p>
+<p>Reading it is a loop inside a loop:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function loadMap(path)
+  local rows = {}
+  local text = love.filesystem.read(path)
+  for line in text:gmatch("[^\r\n]+") do
+    local row = {}
+    for num in line:gmatch("[^,]+") do
+      table.insert(row, tonumber(num))
+    end
+    table.insert(rows, row)
+  end
+  return rows
+end</code></pre></div>
+<p><code>gmatch</code> is a pattern loop: <code>"[^\r\n]+"</code> means "a run of characters that aren't line breaks," so each trip around is one line; <code>"[^,]+"</code> means "a run that isn't a comma," so each trip is one number. <code>tonumber</code> turns the text <code>"1"</code> into the number <code>1</code>. The result is a list of lists: <code>map[row][col]</code>. Row first, then column, the opposite of x, y. Everyone gets this backwards once.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Your first class</h2><p>So far every thing in your games has been a plain table. That works until ten things all need a <code>draw</code> and a <code>move</code>. A <strong>class</strong> is a recipe for tables that share functions. Lua doesn't have classes built in, so we write ours, in fifteen lines, in <code>class.lua</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">local function Class()
+  local cls = {}
+  cls.__index = cls
+  setmetatable(cls, {
+    __call = function(c, ...)
+      local obj = setmetatable({}, c)
+      if obj.init then obj:init(...) end
+      return obj
+    end
+  })
+  return cls
+end
+return Class</code></pre></div>
+<p>Here's the only idea in it. A <strong>metatable</strong> is a table that tells Lua what to do when it can't find something. <code>cls.__index = cls</code> means: "if an object doesn't have a field, look in the class." So every object made from <code>Entity</code> can call <code>Entity</code>'s functions without owning a copy. The <code>__call</code> part lets you write <code>Entity(10, 20)</code> as if the class were a function; it makes an empty object and runs <code>init</code> on it. Now, in <code>main.lua</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">local Class = require("class")
+
+Entity = Class()
+
+function Entity:init(x, y, w, h)
+  self.x, self.y, self.w, self.h = x, y, w, h
+  self.speed = 140
+end
+
+function Entity:draw()
+  love.graphics.setColor(0.95, 0.85, 0.4)
+  love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+end</code></pre></div>
+<p>The colon in <code>function Entity:draw()</code> is the one from <code>sound:play()</code> in Build 03: it hands the object in as <code>self</code>. <code>player = Entity(3 <em> TILE, 3 </em> TILE, 24, 24)</code> makes your hero. Run it. A yellow square on black. We've been here before; it gets better fast.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Which tiles are solid</h2><p><code>TILE = 32</code> is the size of one tile on screen. To ask "what tile is under this pixel?" divide and round down:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function tileAt(px, py)
+  local col = math.floor(px / TILE) + 1
+  local row = math.floor(py / TILE) + 1
+  if map[row] and map[row][col] then
+    return map[row][col]
+  end
+  return 1
+end
+
+function solidAt(px, py)
+  return tileAt(px, py) == 1
+end</code></pre></div>
+<p>The <code>+ 1</code> is because Lua lists start at 1 and pixels start at 0. Off the edge of the map counts as wall, so the hero can't fall out of the world. A hero is a box, not a point, so check all four corners:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function boxHitsWall(x, y, w, h)
+  return solidAt(x, y) or solidAt(x + w - 1, y)
+      or solidAt(x, y + h - 1) or solidAt(x + w - 1, y + h - 1)
+end</code></pre></div></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Sliding along walls</h2><p>The naive version moves the hero, then undoes it if they're in a wall. That makes them stick to walls like gum. The fix is to move <strong>one axis at a time</strong>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function Entity:move(dx, dy)
+  local nx = self.x + dx
+  if not boxHitsWall(nx, self.y, self.w, self.h) then
+    self.x = nx
+  end
+  local ny = self.y + dy
+  if not boxHitsWall(self.x, ny, self.w, self.h) then
+    self.y = ny
+  end
+end</code></pre></div>
+<p>Try x; if it's clear, take it. Then try y, separately. Walking diagonally into a wall keeps the half of the move that's allowed, so the hero slides. In <code>love.update</code>, build <code>dx</code> and <code>dy</code> from the arrow keys (times <code>speed</code>, times <code>dt</code>) and call <code>player:move(dx, dy)</code>. Run it and walk into things. Nothing stops you cold. A wall you can lean on is the difference between a drawing and a place.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Drawing the keep</h2><p>First, with no art at all:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function drawMap()
+  for row = 1, #map do
+    for col = 1, #map[row] do
+      local t = map[row][col]
+      local x, y = (col - 1) * TILE, (row - 1) * TILE
+      if t == 1 then love.graphics.setColor(0.32, 0.30, 0.36)
+      elseif t == 2 then love.graphics.setColor(0.55, 0.35, 0.2)
+      else love.graphics.setColor(0.16, 0.15, 0.19) end
+      love.graphics.rectangle("fill", x, y, TILE, TILE)
+    end
+  end
+end</code></pre></div>
+<p>Now the real art. Download Kenney's <strong>Tiny Dungeon</strong> pack (the link is in this module), pick the tilemap PNG, and copy it into <code>assets</code> as <code>tiles.png</code>. Its tiles are 16 pixels, so <code>SCALE = 2</code> doubles them. A <strong>quad</strong> is a rectangle cut out of a bigger image, which is how one PNG holds a hundred tiles. In <code>love.load</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local ok, img = pcall(love.graphics.newImage, "assets/tiles.png")
+  if ok then
+    tileset = img
+    quads = {
+      [0] = love.graphics.newQuad(0, 0, 16, 16, tileset:getDimensions()),
+      [1] = love.graphics.newQuad(16, 0, 16, 16, tileset:getDimensions()),
+      [2] = love.graphics.newQuad(32, 0, 16, 16, tileset:getDimensions()),
+    }
+  end</code></pre></div>
+<p><code>pcall</code> means "try this, and if it fails, tell me instead of crashing." No image, <code>tileset</code> stays <code>nil</code>, the colored squares carry on. In <code>drawMap</code>, when <code>tileset</code> exists, draw <code>love.graphics.draw(tileset, quads[t], x, y, 0, SCALE, SCALE)</code> instead of the rectangle. The quads above pick the first three tiles of the top row; open the PNG and change <code>0, 16, 32</code> to pick ones you like. Jamie picked a skull for the floor. We talked about it.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>The camera</h2><p>The room is bigger than the window. A camera in 2D is just a shift of everything you draw:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  camX = player.x + player.w / 2 - love.graphics.getWidth() / 2
+  camY = player.y + player.h / 2 - love.graphics.getHeight() / 2
+  camX = math.max(0, math.min(mapW - love.graphics.getWidth(), camX))
+  camY = math.max(0, math.min(mapH - love.graphics.getHeight(), camY))</code></pre></div>
+<p>That's "center on the hero, then clamp so we never show past the room's edge." <code>mapW</code> is <code>#map[1] * TILE</code>. In <code>love.draw</code>, wrap the world:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  love.graphics.push()
+  love.graphics.translate(-math.floor(camX), -math.floor(camY))
+  drawMap()
+  player:draw()
+  love.graphics.pop()</code></pre></div>
+<p>Anything between <code>push</code> and <code>pop</code> moves with the camera; anything after <code>pop</code> stays stuck to the screen. <code>math.floor</code> keeps pixel art from shimmering.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>A second room.</strong> Make <code>maps/room2.csv</code>. When the hero stands on a door tile (<code>2</code>), load the new room and place them just inside its door. (Hint: <code>tileAt</code> on the hero's center tells you what they're standing on; <code>loadMap</code> already does the loading; you'll need <code>mapW</code> and <code>mapH</code> to update too.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A pushable crate.</strong> A crate entity sits on a floor tile. When the hero walks into it, it moves one whole tile in that direction, but only if the tile beyond it is free. (Hint: make the crate an <code>Entity</code>; check <code>overlaps</code> before accepting the hero's move; <code>solidAt</code> tells you if the far tile is a wall.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A torch tile (<code>4</code>) that draws with a flicker: vary its color a little every frame.</li><li>Footstep sounds that play only while the hero is actually moving.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-008</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's hero sinks one tile deep into every wall on the right, but can't get within a tile of any wall on the left. Jamie says the keep is "asymmetrical, on purpose." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function tileAt(px, py)
+  local col = math.floor(px / TILE)
+  local row = math.floor(py / TILE) + 1
+  if map[row] and map[row][col] then
+    return map[row][col]
+  end
+  return 1
+end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Compare the two lines in tileAt that compute col and row, character by character, against Step 3.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build07.html">← Build 07</a><a class="pager" href="build09.html">Build 09 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial. Art: Kenney (kenney.nl), CC0.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

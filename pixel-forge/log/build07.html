@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 07: Circuit Breaker, part 2 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build07">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 5 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>The level format</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Reading a file</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Winning, then the next one</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Juice</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Undo</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build07-circuit-breaker.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.7.0</span><span class="game">Circuit Breaker</span></div>
+    <div class="buildno">Build 07</div>
+    <h1>Circuit Breaker, part 2</h1>
+    <div class="ships"><span class="label">Ships today</span><p>levels that live in text files, a next-level screen, undo, a flash when the power lands, and three levels nobody but you has ever played. Circuit Breaker becomes a finished game.</p></div>
+  </div>
+
+  <section class="intro"><p>Copy <code>build06-circuit-breaker</code> to <code>build07-circuit-breaker</code> and work in the copy. Right now your only level is a table in <code>main.lua</code>. That's fine for one level and terrible for twenty, because every new puzzle means editing code. Real puzzle games keep levels in <strong>data files</strong>, and the game reads them. Today the game learns to read.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>The level format</h2><p>Make a folder called <code>levels</code> inside the build folder. Each level is a plain text file. First line: the par (the move count a good solve needs). Every line after that is one row of the grid, two characters per tile: a kind letter, then a rotation digit. <code>L</code> instead of a lowercase letter means locked; we'll use capitals for unlocked and lowercase for locked. Here is <code>levels/level1.txt</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">5
+t0S3S1S1S3T2
+C0T0S0T3S1S0
+S1C3S0T2T1S3
+S1C0T0T0T1S3
+C3C3T3C2S1t1</code></pre></div>
+<p>Read that as a grid. Row 1, tile 1 is <code>t0</code>: a tee, rotation 0, locked. The source sits at the top-left and the bulb at the bottom-right, same as Build 06. The rotation digits are the <em>starting</em> scramble, which means a level designer (you, in about an hour) controls exactly how the puzzle begins. Save a second file, <code>level2.txt</code>, with your own grid of the same size and a par you've actually tested.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Reading a file</h2><p>LÖVE reads files from the game folder with <code>love.filesystem.read</code>. It hands back the whole file as one string, newlines included.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function loadLevel(n)
+  local text = love.filesystem.read("levels/level" .. n .. ".txt")
+  if not text then return false end
+  local lines = {}
+  for line in string.gmatch(text, "[^\r\n]+") do
+    table.insert(lines, line)
+  end
+  par = tonumber(lines[1])
+  grid = {}
+  for r = 2, #lines do
+    local row = {}
+    for c = 1, #lines[r] / 2 do
+      local letter = string.sub(lines[r], c * 2 - 1, c * 2 - 1)
+      local digit  = string.sub(lines[r], c * 2, c * 2)
+      row[c] = {
+        kind   = KINDS[string.upper(letter)],
+        rot    = tonumber(digit),
+        locked = (letter == string.lower(letter)),
+      }
+    end
+    grid[r - 1] = row
+  end
+  ROWS, COLS = #grid, #grid[1]
+  source = { r = 1, c = 1 }
+  bulb = { r = ROWS, c = COLS }
+  moves = 0
+  history = {}
+  flood()
+  return true
+end</code></pre></div>
+<p><code>string.gmatch(text, "[^\r\n]+")</code> walks the text one line at a time; the odd-looking pattern means "a run of characters that aren't line breaks." <code>tonumber</code> turns <code>"6"</code> into 6; it's a string until you say otherwise. Tile c sits at characters <code>c*2-1</code> and <code>c*2</code>. The <code>locked</code> line is a small trick: a letter equals its own lowercase only when it already <em>was</em> lowercase. Replace the <code>LAYOUT</code> loop in <code>love.load</code> with <code>level = 1</code> and <code>loadLevel(level)</code>. Run it. Same game, but the puzzle now comes from a file you could email to someone.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Winning, then the next one</h2><p>A finished puzzle needs a moment. Add a state, same idea as Meteor Drift: <code>state = "playing"</code> or <code>"won"</code>.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function checkWin()
+  if grid[bulb.r][bulb.c].powered and state == "playing" then
+    state = "won"
+    wonAt = love.timer.getTime()
+  end
+end
+
+function love.keypressed(key)
+  if key == "escape" then love.event.quit() end
+  if key == "space" and state == "won" then
+    level = level + 1
+    if loadLevel(level) then
+      state = "playing"
+    else
+      state = "finished"
+    end
+  end
+  -- Step 5 adds undo here
+end</code></pre></div>
+<p>Call <code>checkWin()</code> at the end of <code>flood()</code>. In <code>love.draw</code>, when <code>state == "won"</code>, print "CONNECTED" big, the move count, and "space for the next level". When <code>state == "finished"</code>, print "That's every level. For now." <code>loadLevel</code> returns false when the file doesn't exist, so the game knows it ran out of levels without you having to count them. In <code>mousepressed</code>, add a guard at the top: <code>if state ~= "playing" then return end</code>. Otherwise a click on the win screen keeps rotating tiles underneath it, which Jamie would call "a secret mode."</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Juice</h2><p>Three small things that make a puzzle feel finished.</p>
+<p><strong>The flash.</strong> When the bulb first lights, the whole board glows for a moment. In <code>love.draw</code>, before the grid:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if state == "won" then
+    local age = love.timer.getTime() - wonAt
+    local glow = math.max(0, 0.6 - age)
+    love.graphics.setColor(1, 0.85, 0.3, glow)
+    love.graphics.rectangle("fill", 0, 0, 800, 600)
+  end</code></pre></div>
+<p>That fourth number in <code>setColor</code> is alpha: how see-through. It starts at 0.6 and fades to 0 over six tenths of a second. <strong>The bulb glow.</strong> Draw a second, bigger circle behind the bulb with alpha 0.25 when it's powered. <strong>The powered pulse.</strong> Make powered pipes breathe: their yellow brightness is <code>0.85 + 0.15 <em> math.sin(love.timer.getTime() </em> 4)</code>. <code>sin</code> wobbles between -1 and 1 forever; multiply it by a small number and you get a pulse. Run it. Solve level 1. It feels like a game now, and the only thing that changed is paint.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Undo</h2><p>Undo is a <strong>stack</strong>: every move pushes a record on top; undo pops the top one off and reverses it. Lua lists make this easy. In <code>mousepressed</code>, right before you rotate a tile:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  table.insert(history, { r = r, c = c })</code></pre></div>
+<p>And in <code>keypressed</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if key == "z" and state == "playing" and #history &gt; 0 then
+    local last = table.remove(history)
+    local tile = grid[last.r][last.c]
+    tile.rot = (tile.rot - 1) % 4
+    tween(tile, tile.rot + 1, tile.rot, 0.18)
+    moves = moves - 1
+    flood()
+  end</code></pre></div>
+<p><code>table.remove(history)</code> with no position takes the last item, which is exactly what a stack wants. Undo a move, and the move counter goes down too; an undo that still cost you a move is the kind of thing players remember. Note what happens to <code>history</code> inside <code>loadLevel</code>: it's emptied, so you can't undo your way into the previous level.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Three original levels.</strong> <code>level3.txt</code>, <code>level4.txt</code>, <code>level5.txt</code>, each solvable, each with a par you reached yourself. At least one must use locked tiles to force a route. At least one must be a different size from the others (the loader already handles that; check that the drawing does). Write the par honestly; you'll be asked to show the solve.</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Star rating.</strong> On the win screen: three stars at or under par, two stars within three moves over par, one star for anything else. Draw them as shapes or type them. (Hint: it's one <code>if</code>/<code>elseif</code> chain, and <code>par</code> is already a number.)</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A level select on the title screen: number keys 1-5 jump straight to a level.</li><li>Remember stars per level with <code>love.filesystem.write</code>, the way Tower Hop saved its high score.</li><li>A "hint" key that flashes one tile that's currently blocking the power. (Harder than it sounds. Think about which tiles are powered on one side and not the other.)</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-007</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's level file is fine, but the game crashes the instant it loads with "attempt to index a nil value" inside <code>isOpen</code>. Jamie says the crash is "a dramatic pause." Find the bug.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    for c = 1, #lines[r] / 2 do
+      local letter = string.sub(lines[r], c * 2, c * 2)
+      local digit  = string.sub(lines[r], c * 2 - 1, c * 2 - 1)
+      row[c] = { kind = KINDS[string.upper(letter)], rot = tonumber(digit) }
+    end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>In Step 2, which character position holds the letter and which holds the digit? Compare Jamie&#x27;s two string.sub calls with yours.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build06.html">← Build 06</a><a class="pager" href="build08.html">Build 08 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

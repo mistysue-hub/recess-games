@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 05: Tower Hop, part 2 · Pixel Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-build="build05">
+<a class="skip" href="#main">Skip to the build</a>
+<header class="masthead">
+  <a class="studio" href="index.html"><span class="mark" aria-hidden="true"></span>Pixel Forge</a>
+  <nav class="builds" aria-label="Builds"><a href="build01.html">01</a><a href="build02.html">02</a><a href="build03.html">03</a><a href="build04.html">04</a><a href="build05.html">05</a><a href="build06.html">06</a><a href="build07.html">07</a><a href="build08.html">08</a><a href="build09.html">09</a><a href="build10.html">10</a><a href="build11.html">11</a><a href="build12.html">12</a><a href="cheat-sheet.html" class="ref">ref</a></nav>
+</header>
+
+<div class="frame">
+<aside class="rail" aria-label="Steps in this build">
+  <div class="rail-inner">
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 5 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>Sprite sheets and quads</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Animation</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Particles</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Screen shake</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Saving to disk</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <a class="kit" href="../build05-tower-hop.zip" download>Starter kit (.zip)</a>
+    <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
+  </div>
+</aside>
+
+<main id="main">
+  <div class="hero">
+    <div class="release"><span class="tag">v0.5.0</span><span class="game">Tower Hop</span></div>
+    <div class="buildno">Build 05</div>
+    <h1>Tower Hop, part 2</h1>
+    <div class="ships"><span class="label">Ships today</span><p>a hero made of real pixels that actually runs, a burst of particles on every jump, screen shake when you fall, and a high score that survives closing the game.</p></div>
+  </div>
+
+  <section class="intro"><p>Copy <code>build04-tower-hop</code> to <code>build05-tower-hop</code> and work in the copy. The yellow square did its job. Today it gets a face.</p></section>
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>Sprite sheets and quads</h2><p>Game art comes on a <strong>sprite sheet</strong>: one PNG holding many small frames in a grid. Open the Kenney <strong>Pixel Platformer</strong> pack from the link in this module, find the characters sheet, and copy it into <code>assets/sheet.png</code>. Each character frame in that pack is 24 by 24 pixels and the frames sit side by side. (Don't want Kenney's hero? Draw your own 48-by-24 PNG in any paint program with two 24-by-24 frames in it. Jamie did this in four minutes and it was, to be fair, pretty good.)</p>
+<p>A <strong>quad</strong> is a rectangle that says "this part of the image." Make one per frame, once:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  sheet = love.graphics.newImage("assets/sheet.png")
+  sheet:setFilter("nearest", "nearest")
+  frameSize = 24
+  frames = {}
+  for i = 0, 1 do
+    table.insert(frames, love.graphics.newQuad(i * frameSize, 0, frameSize, frameSize, sheet:getDimensions()))
+  end</code></pre></div>
+<p><code>setFilter("nearest", "nearest")</code> tells LÖVE to scale pixels as crisp squares instead of blurring them, which is the difference between pixel art and a smudge. Now draw the hero with a frame instead of a rectangle:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  love.graphics.setColor(1, 1, 1)
+  love.graphics.draw(sheet, frames[1], player.x, player.y, 0, player.w / frameSize, player.h / frameSize)</code></pre></div>
+<p>Run it. Your square is a person. Keep the collision math exactly as it was; the picture is paint on top of the box.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Animation</h2><p>Animation is a flipbook inside the flipbook: swap which quad you draw every so often. A tiny table keeps track:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  anim = { frame = 1, timer = 0, rate = 0.12 }</code></pre></div>
+<p>In <code>love.update</code>, only while a direction key is held:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local moving = love.keyboard.isDown("left") or love.keyboard.isDown("right")
+  if moving then
+    anim.timer = anim.timer + dt
+    if anim.timer &gt; anim.rate then
+      anim.timer = 0
+      anim.frame = anim.frame % #frames + 1
+    end
+  else
+    anim.frame = 1
+  end</code></pre></div>
+<p><code>anim.frame % #frames + 1</code> is the wrap trick: with two frames it goes 1, 2, 1, 2. Change the draw call to <code>frames[anim.frame]</code>. Run it and hold right. It runs. Change <code>rate</code> and feel how speed of frames is a feeling, not a number.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Particles</h2><p>Particles are the same loop pattern as rocks: a list of tiny things that spawn, move, and die. On every jump, burst eight of them from the hero's feet. Add <code>particles = {}</code> to <code>resetGame</code>, then in the jump code:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    for i = 1, 8 do
+      table.insert(particles, {
+        x = player.x + player.w / 2, y = player.y + player.h,
+        vx = math.random(-120, 120), vy = math.random(-60, 40), life = 0.5
+      })
+    end</code></pre></div>
+<p>Move and age them in <code>love.update</code>, backward loop as always:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  for i = #particles, 1, -1 do
+    local pt = particles[i]
+    pt.x = pt.x + pt.vx * dt
+    pt.y = pt.y + pt.vy * dt
+    pt.life = pt.life - dt
+    if pt.life &lt;= 0 then table.remove(particles, i) end
+  end</code></pre></div>
+<p>Draw them inside the camera's <code>push</code>/<code>pop</code>, fading as they die:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  for i, pt in ipairs(particles) do
+    love.graphics.setColor(1, 1, 1, pt.life * 2)
+    love.graphics.rectangle("fill", pt.x, pt.y, 4, 4)
+  end</code></pre></div>
+<p>The fourth number in <code>setColor</code> is alpha: 1 is solid, 0 is invisible. <code>life * 2</code> starts at 1 and slides to 0. Jump. Dust. This is the first thing a playtester notices and the last thing a programmer thinks to add.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Screen shake</h2><p>Screen shake is a lie told to the camera: for a fraction of a second, draw everything slightly off. Add <code>shake = 0</code> to <code>resetGame</code>. When the hero falls out:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if player.y &gt; cameraY + 650 then
+    shake = 0.5
+    state = "gameover"
+  end</code></pre></div>
+<p>In <code>love.draw</code>, at the very top, before anything else:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if shake &gt; 0 then
+    love.graphics.translate(math.random(-6, 6), math.random(-6, 6))
+    shake = shake - love.timer.getDelta()
+  end</code></pre></div>
+<p><code>love.timer.getDelta()</code> is <code>dt</code> for places that don't get handed it. Since the game-over screen is drawn every frame, the shake plays out there, then stops. Play, fall, feel it. Then halve the 6 and see whether you like it better. (You will. Everyone overdoes shake the first time.)</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Saving to disk</h2><p>LÖVE gives every game a private save folder, and two functions: <code>love.filesystem.write(name, text)</code> and <code>love.filesystem.read(name)</code>. Let's count how many runs this hero has had. In <code>love.load</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  runs = 0
+  if love.filesystem.getInfo("runs.txt") then
+    runs = tonumber(love.filesystem.read("runs.txt"))
+  end</code></pre></div>
+<p><code>getInfo</code> answers "does this file exist?" so the first launch doesn't crash; <code>tonumber</code> turns the saved text back into a number. Every time a game starts, in <code>resetGame</code>:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  runs = runs + 1
+  love.filesystem.write("runs.txt", tostring(runs))</code></pre></div>
+<p>Print <code>runs</code> on the title screen. Quit the game. Open it again. The number remembers. That's persistence, and every save system you've ever used is this with more steps.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Double-jump power-up.</strong> Some platforms spawn with a small glowing pickup floating above them. Touch it and the hero can jump once more in mid-air, until that extra jump is spent. Draw the pickup, and show somewhere on screen whether the hero is holding one. (Hint: the jump code currently asks one question before allowing a jump; think about what second question would also allow it, and what should change when that path is taken.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Best height, forever.</strong> A <code>best</code> that is loaded from disk in <code>love.load</code>, compared against <code>score</code> at game over, saved when beaten, and shown on the title screen with the words "best height". Step 5 shows you the pattern; your job is to apply it to a different number in a different place.</span></label></li></ol></section>
+  <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>Flip the hero to face the way it's moving (a negative x scale, with the x position nudged by the hero's width).</li><li>Bring your Build 03 sound effects over: one for jump, one for the fall.</li><li>A landing squash: draw the hero slightly wider and shorter for the first few frames after landing.</li></ul></section>
+  <section class="bug" id="bug">
+<div class="ticket">
+<div class="ticket-head"><span class="tag">BUG-005</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
+<h2>Bug Hunt</h2>
+<p>Jamie's hero runs for exactly two frames and then the game crashes to the blue screen with "bad argument #2 to 'draw'". Jamie says the hero is "transcending." What's wrong?</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if moving then
+    anim.timer = anim.timer + dt
+    if anim.timer &gt; anim.rate then
+      anim.timer = 0
+      anim.frame = anim.frame + 1
+    end
+  end</code></pre></div>
+<details class="hint"><summary>Need a nudge?</summary><p>Count the frames in Step 1, then ask how high anim.frame can climb in Jamie&#x27;s version of Step 2.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>
+</div></section>
+  
+  <nav class="pagers"><a class="pager" href="build04.html">← Build 04</a><a class="pager" href="build06.html">Build 06 →</a></nav>
+  <p class="credit">This Build Log was written for Pixel Forge. No text or code was copied from any other course, book or tutorial. Art: Kenney (kenney.nl), CC0, or your own.</p>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
