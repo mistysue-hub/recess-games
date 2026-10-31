@@ -58,7 +58,7 @@
 <main>
   <section class="card intro" id="intro"><span class="pin"></span>
     <p><strong>How it works.</strong> Six stops from Steve Martin's early career are shuffled below the road; tap them in the order they happened, earliest first, to build the road one slot at a time.</p>
-    <p>A wrong tap tells you what he learned at that stop and lets you try again, and after two misses on the same slot the right card lights up.</p>
+    <p>Every tap tells you what he learned at that stop. A wrong tap lets you try again, and after two misses on the same slot (one miss on the last two slots) the right card lights up.</p>
     <button class="btn" id="start">Start the road</button>
   </section>
 
@@ -66,8 +66,9 @@
     <div class="count" id="count"></div>
     <ol class="road" id="road"></ol>
     <div class="verdict" id="verdict" aria-live="polite"></div>
-    <p class="pool-label">Tap the stop that comes next:</p>
+    <p class="pool-label" id="pool-label">Tap the stop that comes next:</p>
     <div id="pool"></div>
+    <button class="btn" id="toEnd" type="button" style="display:none">See the results</button>
   </section>
 
   <section class="card result" id="done" style="display:none"><span class="pin"></span>
@@ -76,26 +77,29 @@
     <p id="closing"></p>
     <p><strong>Type <em>done</em> to Rocky and read him the line in the box.</strong></p>
     <button class="btn" id="again">Play again</button>
-    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+    <p class="fine">Written for this course.</p>
   </section>
 </main>
 <script>
 (function(){
   // STOPS are listed in true chronological order (index = correct slot).
   var STOPS=[
-    {t:"Guidebook kid",s:"Around age 10, he sells guidebooks to visitors at Disneyland.",
-     l:"Not this one yet. Selling guidebooks taught him to walk up to strangers and get their attention fast."},
-    {t:"Magic shop counter",s:"As a teen, he works the counter at Disneyland's magic shop, demonstrating tricks all day.",
-     l:"Not quite. Doing the same tricks all day at the magic shop taught him timing, and how to win over a crowd that just walked up."},
+    // w = lead-in shown on a wrong tap; l = what he learned here (shown on every tap of this stop)
+    {t:"Guidebook kid",s:"He sells guidebooks to visitors at Disneyland.",
+     w:"Not this one yet.",l:"Selling guidebooks taught him to walk up to strangers and get their attention fast."},
+    {t:"Magic shop counter",s:"He works the counter at Disneyland's magic shop, demonstrating tricks all day.",
+     w:"Not quite.",l:"Doing the same tricks all day at the magic shop taught him timing, and how to win over a crowd that just walked up."},
     {t:"A little stage",s:"He does a small stage show at Knott's Berry Farm's little theater, several shows a day.",
-     l:"Not yet. Several shows a day at Knott's taught him to keep going whether the room laughed or not."},
-    {t:"TV writer",s:"At 22 he writes jokes for The Smothers Brothers Comedy Hour, and at 23 he shares an Emmy.",
-     l:"Not this one yet. Writing for TV taught him to turn out jokes on a deadline, and showed him he wanted to perform his own."},
-    {t:"Empty rooms",s:"He quits TV writing to do his own act in small clubs, against his agents' advice. Years of near-empty rooms.",
-     l:"Not quite. Those near-empty clubs taught him to trust his strange act and keep sharpening it with almost nobody watching."},
-    {t:"Arena headliner",s:"By the late 1970s he is the biggest stand-up draw in America, selling out arenas.",
-     l:"Not yet. The arenas came last, and they showed him that years of slow work had finally added up."}
+     w:"Not yet.",l:"Several shows a day at Knott's taught him to keep going whether the room laughed or not."},
+    {t:"TV writer",s:"He writes jokes for The Smothers Brothers Comedy Hour and shares an Emmy with the writing team.",
+     w:"Not this one yet.",l:"Writing for TV taught him to turn out jokes on a deadline, and showed him he wanted to perform his own."},
+    {t:"Empty rooms",s:"He quits TV writing to do his own act in small clubs, against his agents' advice. Night after night of near-empty rooms.",
+     w:"Not quite.",l:"Those near-empty clubs taught him to trust his strange act and keep sharpening it with almost nobody watching."},
+    {t:"Arena headliner",s:"He is the biggest stand-up draw in America, selling out arenas.",
+     w:"Not yet.",l:"The arenas came last, and they showed him that all that slow work had finally added up."}
   ];
+  // misses on one slot before the right card lights up: one on the last two slots, two elsewhere
+  function hintAt(k){return k>=N-2?1:2}
   var N=STOPS.length;
   var slot=0,firstTry=0,missesHere=0,pool=[];
   var $=function(id){return document.getElementById(id)};
@@ -130,7 +134,7 @@
       b.className='choice';b.type='button';
       b.setAttribute('data-i',idx);
       b.innerHTML='<span class="tag">'+esc(STOPS[idx].t)+'</span>'+esc(STOPS[idx].s);
-      if(missesHere>=2&&idx===slot)b.classList.add('hint');
+      if(missesHere>=hintAt(slot)&&idx===slot)b.classList.add('hint');
       b.onclick=function(){tap(idx,b)};
       box.appendChild(b);
     });
@@ -144,17 +148,22 @@
       pool.splice(pool.indexOf(idx),1);
       slot++;missesHere=0;
       var v=$('verdict');
-      v.innerHTML='<strong>Locked in.</strong> '+(clean?'Right on the first try.':'You found it.');
+      v.innerHTML='<strong>Locked in.</strong> '+(clean?'Right on the first try.':'You found it.')+' What he learned here: '+esc(STOPS[idx].l);
       v.style.display='block';
-      if(slot>=N){finish();return}
       drawRoad();drawPool();
+      if(slot>=N){
+        // last stop: let the learner read its lesson before the results screen
+        $('pool-label').style.display='none';
+        $('toEnd').style.display='inline-block';
+      }
     }else{
       missesHere++;
       el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');
       var v2=$('verdict');
-      v2.innerHTML=esc(STOPS[idx].l)+(missesHere>=2?' <strong>The next stop is lit up in green. Tap it.</strong>':' Try again.');
+      var lit=missesHere>=hintAt(slot);
+      v2.innerHTML=esc(STOPS[idx].w+' '+STOPS[idx].l)+(lit?' <strong>The next stop is lit up in green. Tap it.</strong>':' Try again.');
       v2.style.display='block';
-      if(missesHere>=2){
+      if(lit){
         Array.prototype.forEach.call($('pool').children,function(c){
           if(+c.getAttribute('data-i')===slot)c.classList.add('hint');
         });
@@ -171,9 +180,11 @@
     slot=0;firstTry=0;missesHere=0;firstMarks=[];pool=freshPool();
     $('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';
     $('verdict').style.display='none';
+    $('pool-label').style.display='';$('toEnd').style.display='none';
     drawRoad();drawPool();window.scrollTo(0,0);
   }
   $('start').onclick=start;
+  $('toEnd').onclick=finish;
   $('again').onclick=start;
 })();
 </script>

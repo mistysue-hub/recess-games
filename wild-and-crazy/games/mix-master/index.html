@@ -44,7 +44,7 @@
 <main>
   <section class="card intro" id="intro"><span class="pin"></span>
     <p><strong>How it works.</strong> Steve Martin played beautiful banjo with a fake arrow through his head. Something high and something low, side by side, and he treated the whole thing with total seriousness. That collision is called <strong>juxtaposition</strong>.</p>
-    <p>Each round gives you something serious and dignified. Tap the partner that makes the <strong>funniest mix</strong>. After each tap, the card shows the course's pick and why. You can disagree; the last screen counts how often you and the course matched.</p>
+    <p>Each round gives you something serious and dignified. Tap the partner that makes the <strong>funniest mix</strong>. After each tap, the card shows the course's pick and why. You can disagree. Taste counts; the course just shows its reasoning. The last screen counts how often you and the course matched.</p>
     <button class="btn" id="start">Start mixing</button>
   </section>
 
@@ -66,57 +66,57 @@
     <p id="closing"></p>
     <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
     <button class="btn" id="again">Play again</button>
-    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+    <p class="fine">Written for this course.</p>
   </section>
 </main>
 <script>
 (function(){
-  // k = course pick (big gap, small specific subject), w = weak match (same tone, no gap), r = random noise (no connection)
+  // k = course pick (big gap, small specific subject), w = weak match (same tone, no gap), b = broad low partner (silly but generic, so the gap is blurry)
   var ROUNDS=[
     {h:"A knight kneels before the king and swears a solemn oath...",
      k:"...to finish every pea on his plate, including the cold ones hiding under the bread.",
      w:"...to defend the realm and its people until his final breath.",
-     r:"...gravel, a lamp sale, the number nine, elbows.",
+     b:"...about his favorite pizza.",
      y:"Biggest gap, smallest subject: the dignity does the work."},
     {h:"A TV meteorologist turns to the camera with a grave face and issues an urgent warning...",
      k:"...of a 90 percent chance that your little brother eats the last waffle before 7 a.m.",
      w:"...of a powerful storm front moving across three counties tonight.",
-     r:"...dolphins, beige, a cousin, Wednesday, hum.",
+     b:"...that breakfast might get a little messy today.",
      y:"The forecast voice is built for life-or-death. Point it at a waffle and the seriousness becomes the joke."},
     {h:"A hushed museum audio guide says, \"Now step closer to the glass and observe...\"",
      k:"...a single, slightly chewed yellow pencil, recovered from the back row of a seventh-grade math class.",
      w:"...a 400-year-old marble statue of a Roman emperor.",
-     r:"...banana, carpet, a whistle, the year 1994.",
+     b:"...some random stuff from a school junk drawer.",
      y:"Reverence for the most ordinary object in the building. The tiny detail (chewed) sells it."},
     {h:"The best man taps his glass, the room goes quiet, and he raises a heartfelt wedding toast...",
      k:"...to a man and the bus stop bench he has sat on every single morning for eleven years.",
      w:"...to two people who met in college and fell deeply in love.",
-     r:"...skateboard, fog, someone's left ear, twelve.",
+     b:"...to snacks, because snacks are great.",
      y:"A real toast, full feeling, aimed at a bench. Play it sincere and it's both funny and a little sweet."},
     {h:"The judge bangs the gavel. The courtroom holds its breath as the verdict is read...",
      k:"...on the question of who put the empty milk carton back in the fridge.",
      w:"...in a major fraud case involving a large company.",
-     r:"...gravy, lightning, sideways, forty.",
+     b:"...on whether pizza is better than tacos.",
      y:"Full legal weight on a household crime everyone has committed. The bigger the ceremony, the smaller the crime should be."},
     {h:"A deep, wise nature documentary narrator whispers, \"Here, in its natural habitat, we find...\"",
      k:"...a single gray sock under the couch, which has not moved in three weeks.",
      w:"...a pride of lions stalking across the savanna at dawn.",
-     r:"...button, parking ticket, ocean, the letter Q.",
+     b:"...a big pile of messy stuff in a teenager's room.",
      y:"The narrator treats the sock like rare wildlife. \"Has not moved in three weeks\" is a true nature fact about a laundry problem."},
     {h:"A graduation speaker grips the podium and begins an inspiring commencement address...",
      k:"...to a goldfish who has just completed one full lap of his bowl.",
      w:"...to a class of seniors heading off to college and careers.",
-     r:"...ladder, waffle iron, Nebraska, maybe.",
+     b:"...to a bunch of family pets.",
      y:"\"Go forth and change the world,\" said to a fish in a bowl. The bigger the speech, the smaller the bowl looks."},
     {h:"The symphony program notes describe, in elegant detail, the stirring final movement of...",
      k:"...a microwave beeping three times because the popcorn is done.",
      w:"...a famous composer's last symphony, performed by a full orchestra.",
-     r:"...glue stick, pigeon, a long hallway, Tuesday.",
+     b:"...some noises from around the house.",
      y:"High-art language for a kitchen sound everyone knows by heart. Specific (three beeps) beats vague every time."}
   ];
   var MISS={
     w:"The one you tapped is too close in tone. Serious plus serious leaves no gap, so nothing collides.",
-    r:"The one you tapped is just noise. With no connection to the high thing, there is nothing to collide with. Juxtaposition needs two things that clearly belong to different worlds."
+    b:"The one you tapped is close, but broad. The gap is there, but the low side is general, so the picture stays blurry. A smaller, more specific thing gives all that seriousness something sharp to land on."
   };
   var CLOSE=[
     [6,"You already hear the gap. Now go build one of your own."],
@@ -128,7 +128,7 @@
   function shuffle(a){for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
   function show(){
     var r=ROUNDS[order[i]];
-    slots=shuffle(['k','w','r']);
+    slots=shuffle(['k','w','b']);
     $('count').textContent='Round '+(i+1)+' of '+ROUNDS.length;
     $('setup').textContent=r.h;
     for(var n=0;n<3;n++){var el=$('c'+n);el.textContent=r[slots[n]];el.disabled=false;el.className='choice'}

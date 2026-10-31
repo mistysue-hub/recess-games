@@ -33,6 +33,12 @@
   .knot{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid #8a1f16;margin-top:-2px}
   .string{width:2px;height:46px;background:#8a7a6e}
   .rig.float{transform:translateY(-260px) rotate(-6deg);opacity:0}
+  .rig.sag{transform:translateY(34px) rotate(14deg)}
+  .balloon.deflate{filter:saturate(.35) brightness(.9);border-radius:50% 50% 46% 46%/60% 60% 40% 40%}
+  .beats li.walkoff{border-color:var(--green);border-width:3px}
+  .beats li .tag{display:inline-block;font-family:'Special Elite',monospace;font-size:.72rem;font-style:normal;padding:2px 7px;border-radius:4px;margin:0 6px 4px 0}
+  .tag.best{background:var(--green);color:#fff}
+  .tag.you{background:var(--red);color:#fff}
   .balloon.pop{animation:pop .35s ease-out forwards}
   @keyframes pop{0%{transform:scale(var(--s,1))}40%{transform:scale(calc(var(--s,1)*1.25))}100%{transform:scale(0);opacity:0}}
   .popword{position:absolute;bottom:70px;left:50%;transform:translateX(-50%) scale(.4);font-family:'Special Elite',monospace;font-size:2rem;color:var(--red);opacity:0;pointer-events:none}
@@ -62,8 +68,9 @@
 </header>
 <main>
   <section class="card intro" id="intro"><span class="pin"></span>
-    <p><strong>How it works.</strong> Each bit is told one beat at a time, and the balloon is the room's tension: it grows with every beat you hold. Steve Martin never let the air out with a punchline, so tap <strong>Hold</strong> to keep the pressure building, or <strong>Release</strong> if you think it's time to let it go.</p>
-    <p>Three bits, five beats each.</p>
+    <p><strong>How it works.</strong> Each bit is told one beat at a time, and the balloon is the room's tension: it grows with every beat you hold. Steve Martin never let the air out with a punchline. He walked off while the tension was at its peak.</p>
+    <p>Every bit has one perfect moment to walk off: the beat where the tension is highest. After it, the next beat would only repeat the joke or explain it, and the air leaks out. Tap <strong>Hold</strong> to hear the next beat, or <strong>Walk off</strong> to end the bit right there.</p>
+    <p>Six bits, up to five beats each. Walk off on the perfect beat for 2 points, one beat early or late for 1.</p>
     <button class="btn" id="start">Start</button>
   </section>
 
@@ -76,15 +83,15 @@
         <div class="knot"></div>
         <div class="string"></div>
       </div>
-      <div class="popword" id="popword">POP!</div>
+      <div class="popword" id="popword">fffft…</div>
     </div>
     <div class="meter" id="meter"></div>
     <ul class="beats" id="beats"></ul>
-    <div class="missedlabel" id="missedlabel">What you would have heard next:</div>
+    <div class="missedlabel" id="missedlabel">The whole bit:</div>
     <ul class="beats" id="missed"></ul>
     <div class="actions" id="actions">
       <button class="btn hold" id="hold">Hold</button>
-      <button class="btn release" id="release">Release</button>
+      <button class="btn release" id="walk">Walk off</button>
     </div>
     <div class="verdict" id="verdict" aria-live="polite"></div>
     <button class="btn" id="next" style="display:none">Next bit</button>
@@ -96,55 +103,90 @@
     <p id="closing"></p>
     <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
     <button class="btn" id="again">Play again</button>
-    <p class="fine">Written for this course. Steve Martin is not involved.</p>
+    <p class="fine">Written for this course.</p>
   </section>
 </main>
 <script>
 (function(){
+  // w = the walk-off beat (1-based). Beats after w repeat or explain, so the air leaks out.
   var BITS=[
-    {t:"The Waiter",beats:[
+    {t:"The Waiter",w:5,beats:[
       "“Your soup is ready. I'm bringing it out right now.”",
       "“I'm walking it over. It's very hot, so I'm walking very slowly.”",
       "“Here it is. Oh, wait. First I have to tell you about tonight's specials.”",
       "“The specials are all soup. Including your soup. Which is still on its way.”",
       "He sets down a single spoon, nods at it respectfully, and walks back into the kitchen."
-    ]},
-    {t:"The Magician",beats:[
+    ],
+    early:"One beat early. Beat 4 was still winding up (the soup is “still on its way”). Beat 5 is the payoff: a spoon, a respectful nod, and no soup, ever. That's where he walks off.",
+    late:""},
+    {t:"The Group Project",w:3,beats:[
+      "“Okay, team. I've divided up the project. Very fairly.”",
+      "“Maya does the research. Jordan does the slides. Sam writes the whole report.”",
+      "“And I'll take the hardest job: telling the teacher how hard we all worked.”",
+      "“So yeah, my part is the telling. I tell her. That we worked. That's my job.”",
+      "“Because, see, I'm not actually doing any work. That's the joke.”"
+    ],
+    early:"One beat early. Beat 2 handed out all the work but hadn't shown the twist yet. Beat 3 is the line that lands: his “hardest job” is taking the credit. Walk off right after it.",
+    late:"One beat late. Beat 3 already landed. Beat 4 just says the same thing again in slower words, and the room can feel the air leaking out."},
+    {t:"The Magician",w:4,beats:[
       "“For my next trick I need a volunteer. You. Think of a card.”",
       "“Don't tell me. Just think of it. Really picture it. Give it a little frame.”",
       "“Now put it back in your mind with the other cards. Shuffle your mind. Good.”",
       "“I'm sensing… a number. Or a letter. Or a king. It's one of those.”",
-      "“You've been a wonderful volunteer. Please take a seat.” He bows. The deck never left his pocket."
-    ]},
-    {t:"The Secret",beats:[
+      "“Get it? I don't actually know any magic. I just guessed every card there is. That's the trick.”"
+    ],
+    early:"One beat early. Beat 3 was still building the fake trick. Beat 4 is the big reveal that reveals nothing (“It's one of those”). That's the peak: walk off while they're still waiting for the magic.",
+    late:"One beat late. Beat 5 explains the joke. Once a comedian says “Get it?”, the audience doesn't have to find the laugh themselves anymore, and the tension is gone."},
+    {t:"The Weather Report",w:4,beats:[
+      "“Good evening. Tomorrow's forecast: sunny, with a high of 72.”",
+      "“Small update: clouds. A few. Friendly ones.”",
+      "“Update: the clouds have been joined by rain. And wind. And a smaller, angrier wind.”",
+      "He glances at the window, calmly opens a tiny umbrella indoors, and keeps smiling at the camera.",
+      "“So, to sum up: the weather is now worse than I said. Earlier. When I said sunny.”"
+    ],
+    early:"One beat early. Beat 3 was big, but beat 4 tops it without a word: the tiny indoor umbrella and the frozen smile. That silent moment is the peak.",
+    late:"One beat late. Beat 5 sums up what everyone already saw. A recap is an explanation in disguise, and it lets the air out."},
+    {t:"The Secret",w:5,beats:[
       "“Okay, I'm going to tell you a secret. You can't tell anyone.”",
       "“Not even the dog. The dog already almost knows, so be careful around him.”",
       "“It's about something that happened at school. Well, near school. On the bus.”",
       "“Wait. Pinky promise first. No, the other pinky. That one's been compromised.”",
       "“Okay. Here it is.” She leans in close, nods once, and walks away looking deeply satisfied."
-    ]}
+    ],
+    early:"One beat early. Beat 4 was still a delay (the pinky promise), so the secret was still coming. Beat 5 is the peak: she leans in, nods, and leaves without ever telling it.",
+    late:""},
+    {t:"The Tour Guide",w:3,beats:[
+      "“Welcome to the museum tour! On your left: our most famous painting.”",
+      "“It's very old. Very valuable. And nobody is allowed to look at it directly.”",
+      "“So please turn around and enjoy this lovely blank wall, which is facing it.”",
+      "“Again, everyone: the wall. Eyes on the wall. Lovely wall.”",
+      "“Because the painting's right behind you and we're looking at a wall. Get it? Okay, gift shop.”"
+    ],
+    early:"One beat early. Beat 2 set up the rule but hadn't shown where it goes. Beat 3 is the picture everyone can see: a whole tour group admiring a blank wall. Walk off on that.",
+    late:"One beat late. Beat 3 already put the image in their heads. Beat 4 just points at the same wall again, so it's repeating, not building."}
   ];
-  var RELEASE=[
-    "Too early. The pressure had nowhere to go yet.",
-    "Too early. The room was only just starting to lean in.",
-    "You let it go halfway. They laughed, but only a little, and only because you told them to.",
-    "So close. One more beat and they'd have had to find the laugh on their own.",
-    "You gave them the punchline on the very last beat. The pressure was there; it just needed you to walk away instead."
-  ];
+  var BEATS=5,MAX=BITS.length*2;
   var b=0,beat=0,total=0,over=false;
   var $=function(id){return document.getElementById(id)};
   function scaleFor(n){return 1+n*0.25}
   function setBalloon(n){var s=scaleFor(n);var el=$('balloon');el.style.setProperty('--s',s);el.style.transform='scale('+s+')'}
-  function li(text,n,cls){var e=document.createElement('li');if(cls)e.className=cls;var s=document.createElement('span');s.className='n';s.textContent='Beat '+n;e.appendChild(s);e.appendChild(document.createTextNode(text));return e}
+  function li(text,n,cls,tags){
+    var e=document.createElement('li');if(cls)e.className=cls;
+    var s=document.createElement('span');s.className='n';s.textContent='Beat '+n;e.appendChild(s);
+    (tags||[]).forEach(function(t){var g=document.createElement('span');g.className='tag '+t[0];g.textContent=t[1];e.appendChild(g)});
+    e.appendChild(document.createTextNode(text));return e}
+  function resetRig(){
+    var rig=$('rig');rig.style.transition='none';rig.classList.remove('float','sag');rig.style.opacity='';void rig.offsetWidth;rig.style.transition='';
+    var bl=$('balloon');bl.classList.remove('pop','deflate');bl.style.transition='none';setBalloon(0);void bl.offsetWidth;bl.style.transition='';
+  }
   function startBit(){
     var bit=BITS[b];beat=0;over=false;
     $('count').textContent='Bit '+(b+1)+' of '+BITS.length;
     $('title').textContent=bit.t;
-    $('beats').innerHTML='';$('missed').innerHTML='';$('missedlabel').style.display='none';
-    var rig=$('rig');rig.style.transition='none';rig.classList.remove('float');rig.style.opacity='';void rig.offsetWidth;rig.style.transition='';
-    var bl=$('balloon');bl.classList.remove('pop');bl.style.transition='none';setBalloon(0);void bl.offsetWidth;bl.style.transition='';
+    $('beats').innerHTML='';$('missed').innerHTML='';$('missedlabel').style.display='none';$('beats').style.display='';
+    resetRig();
     $('verdict').style.display='none';$('next').style.display='none';
-    $('actions').style.display='flex';$('hold').disabled=false;$('release').disabled=false;
+    $('actions').style.display='flex';$('walk').disabled=false;
     showBeat();
   }
   function showBeat(){
@@ -152,42 +194,57 @@
     Array.prototype.forEach.call(list.children,function(c){c.classList.remove('now')});
     list.appendChild(li(BITS[b].beats[beat],beat+1,'now'));
     setBalloon(beat+1);
-    $('meter').textContent='Beat '+(beat+1)+' of 5 · Held so far: '+total;
+    var last=beat===BEATS-1;
+    $('hold').disabled=last;
+    $('hold').textContent=last?'No more beats':'Hold';
+    $('meter').textContent='Beat '+(beat+1)+' of '+BEATS+' · Tension held so far: '+total;
   }
-  function finish(msg){
-    over=true;$('actions').style.display='none';
-    Array.prototype.forEach.call($('beats').children,function(c){c.classList.remove('now')});
-    $('meter').textContent='Beats held so far: '+total+' of '+((b+1)*5);
+  function review(k){
+    // Show every beat, marking the walk-off beat and where the learner walked off.
+    var bit=BITS[b];$('beats').style.display='none';
+    var list=$('missed');list.innerHTML='';
+    bit.beats.forEach(function(t,i){
+      var n=i+1,tags=[],cls=n>k?'missed':'';
+      if(n===bit.w){tags.push(['best','Walk-off beat']);cls+=' walkoff'}
+      if(n===k)tags.push(['you','You walked off here']);
+      list.appendChild(li(t,n,cls.trim(),tags));
+    });
+    $('missedlabel').style.display='block';
+  }
+  function walkOff(k){
+    if(over)return;over=true;
+    var bit=BITS[b],d=k-bit.w,pts,msg;
+    if(d===0){pts=2;msg="You left them wanting more. Beat "+bit.w+" was the peak, and you walked off right on it. +2"}
+    else if(d===-1){pts=1;msg=bit.early+" +1"}
+    else if(d===1){pts=1;msg=bit.late+" +1"}
+    else if(d<0){pts=0;msg="Too early. The tension was still building, and the best beat (beat "+bit.w+") never got its chance. Look below to see what was coming. +0"}
+    else{pts=0;msg="Held too long. The peak was beat "+bit.w+"; every beat after it repeated or explained the joke, and the balloon went soft. Look below to see where the peak was. +0"}
+    total+=pts;
+    var rig=$('rig'),bl=$('balloon');
+    if(pts===2){rig.classList.add('float')}
+    else if(d>0){
+      bl.classList.add('deflate');setBalloon(Math.max(1,bit.w-1));rig.classList.add('sag');
+      var pw=$('popword');pw.classList.remove('show');void pw.offsetWidth;pw.classList.add('show');
+    }
+    $('actions').style.display='none';
+    review(k);
+    $('meter').textContent='Tension held so far: '+total+' of '+((b+1)*2);
     var v=$('verdict');v.textContent=msg;v.style.display='block';
     $('next').textContent=(b===BITS.length-1)?'See results':'Next bit';
     $('next').style.display='inline-block';
   }
   $('hold').onclick=function(){
-    if(over)return;total++;
-    if(beat<4){beat++;showBeat()}
-    else{
-      $('rig').classList.add('float');
-      finish("You walked off stage. The room is still laughing.");
-    }
+    if(over||beat>=BEATS-1)return;
+    beat++;showBeat();
   };
-  $('release').onclick=function(){
-    if(over)return;
-    $('balloon').classList.add('pop');
-    var pw=$('popword');pw.classList.remove('show');void pw.offsetWidth;pw.classList.add('show');
-    var rest=BITS[b].beats.slice(beat+1);
-    if(rest.length){
-      $('missedlabel').style.display='block';
-      rest.forEach(function(t,k){$('missed').appendChild(li(t,beat+2+k,'missed'))});
-    }
-    finish(RELEASE[beat]);
-  };
+  $('walk').onclick=function(){walkOff(beat+1)};
   $('next').onclick=function(){
     b++;
     if(b<BITS.length){startBit();window.scrollTo(0,0)}
     else{
       $('play').style.display='none';
-      $('line').textContent='Beats held: '+total+' of 15';
-      $('closing').textContent=total===15?'You never blinked. Three bits, no punchlines, and the room had to do all the laughing.':total>=10?'You held the pressure most of the way. That last stretch is where the big laughs hide.':total>=5?'You held some, released some. Next time, see what happens when you wait one beat longer than feels safe.':'You let the air out early. Totally normal: silence on stage feels scary. Holding it is the skill.';
+      $('line').textContent='Tension held: '+total+' of '+MAX;
+      $('closing').textContent=total===MAX?'Six bits, six perfect exits. You walked off every time the room was leaning in hardest.':total>=9?'You found the peak most of the time. The trick is noticing when the next beat would only say the same thing again.':total>=5?'You found some peaks and missed some. Next time, ask yourself: is this beat new, or is it repeating?':'Finding the walk-off moment is hard. Watch for the beat where a joke starts repeating or explaining itself, and leave just before it.';
       $('done').style.display='block';window.scrollTo(0,0);
     }
   };
