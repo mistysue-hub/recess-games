@@ -32,7 +32,12 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 | Part of a string, positions a to b | `string.sub(s, a, b)` |
 | How many characters in a string | `#s` |
 | Try something that might fail, without crashing | `local ok, result = pcall(love.graphics.newImage, path)` |
-| Split a file into lines | `for line in text:gmatch("[^\n]+") do ... end` |
+| Split a file into lines | `for line in text:gmatch("[^\r\n]+") do ... end` |
+| Repeat while something is true | `while nextY > -400 do ... end` |
+| Nothing stored here | `nil` (a variable you never set, a missing field) |
+| Use a if it exists, otherwise b | `a or b` as in `(tile.angle or tile.rot)` |
+| Upper or lower case | `string.upper(s)`, `string.lower(s)` |
+| A class and its setup (Builds 08-09) | `Wisp = Class(Entity)` then `function Wisp:init(x, y) ... end` |
 
 **One equals sign sets. Two compare.** `x = 5` stores 5. `x == 5` asks "is x 5?"
 
@@ -45,7 +50,7 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 | The smaller of two numbers | `math.min(a, b)` |
 | The larger of two numbers | `math.max(a, b)` |
 | Keep x between low and high | `x = math.max(low, math.min(high, x))` |
-| Chop off decimals | `math.floor(3.7)` → 3 |
+| Round down | `math.floor(3.7)` → 3 (and `math.floor(-3.7)` → -4) |
 | Absolute value | `math.abs(-4)` → 4 |
 | Square root | `math.sqrt(16)` → 4 |
 | Distance between two points | `math.sqrt((x2 - x1)^2 + (y2 - y1)^2)` |
@@ -79,6 +84,8 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 | Triangle or any shape | `love.graphics.polygon("fill", x1, y1, x2, y2, x3, y3)` |
 | Line | `love.graphics.line(x1, y1, x2, y2)` |
 | Text | `love.graphics.print("hi", x, y)` |
+| Centered text | `love.graphics.printf("hi", 0, y, love.graphics.getWidth(), "center")` |
+| Window size right now | `love.graphics.getWidth()`, `love.graphics.getHeight()` |
 | Load an image (in load, once) | `img = love.graphics.newImage(pathToPng)` with the path in quotes, like the one in Build Log 03 |
 | Draw an image | `love.graphics.draw(img, x, y)` |
 | Draw an image scaled | `love.graphics.draw(img, x, y, 0, scaleX, scaleY)` |
@@ -98,6 +105,9 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 | Mouse position | `love.mouse.getX()`, `love.mouse.getY()` |
 | Load a sound (in load, once) | `snd = love.audio.newSource("assets/fuel.wav", "static")` |
 | Play it | `snd:play()` |
+| Loop it forever (music) | `music:setLooping(true)` |
+| Master volume, 0 to 1 | `love.audio.setVolume(0.7)` |
+| Mouse button released / mouse moved | `function love.mousereleased(x, y, button) end`, `function love.mousemoved(x, y) end` |
 | Quit the game | `love.event.quit()` |
 | Seconds since the game started | `love.timer.getTime()` |
 
@@ -110,6 +120,9 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 | A body that never moves / falls / is pushed by you | `love.physics.newBody(world, x, y, "static")`, `"dynamic"`, `"kinematic"` |
 | A shape | `love.physics.newRectangleShape(w, h)`, `love.physics.newCircleShape(r)` |
 | Glue shape to body (density last) | `love.physics.newFixture(body, shape, 1)` |
+| Grip and bounce | `fixture:setFriction(0.8)`, `fixture:setRestitution(0.1)` |
+| How fast a body is moving | `local vx, vy = body:getLinearVelocity()` |
+| Remove a body for good | `body:destroy()` |
 | Where and how tilted a body is | `body:getX()`, `body:getY()`, `body:getAngle()` |
 | Push a body | `body:applyForce(fx, fy)`, `body:setLinearVelocity(vx, vy)` |
 | Know when things touch | `world:setCallbacks(beginContact)` with `function beginContact(a, b, contact) end` |
@@ -120,9 +133,22 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 | Want to | Write |
 |---|---|
 | Save text (goes in LÖVE's save folder, not your game folder) | `love.filesystem.write("best.txt", tostring(best))` |
-| Read it back (nil if missing) | `local text = love.filesystem.read("best.txt")` |
+| Does the file exist? | `love.filesystem.getInfo("best.txt")` (nil if not) |
+| Read it back (two results: text, then size; keep the text) | `local text = love.filesystem.read("best.txt")` |
 | Text to number | `tonumber(text)` |
 | Draw an image slice (sprite sheet) | `quad = love.graphics.newQuad(x, y, w, h, img:getWidth(), img:getHeight())` then `love.graphics.draw(img, quad, x, y)` |
+
+## Words
+
+| Word | Means |
+|---|---|
+| state | which mood the game is in right now: `"title"`, `"playing"`, `"gameover"` |
+| table | a box of named facts (`ship.x`) or a list (`rocks[3]`), or both |
+| global / local | a global name works everywhere in the file; a `local` one only inside its block |
+| argument | a value you hand to a function: in `overlaps(ship, rock)`, both are arguments |
+| nil | nothing stored there yet |
+| frame | one pass through update and draw; about 60 a second |
+| class | a recipe for making many things that share the same functions (Build 08) |
 
 ## Reading an error
 

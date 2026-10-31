@@ -60,7 +60,7 @@ end</code></pre></div>
   player.y = player.y + player.vy * dt
   local feetAfter = player.y + player.h
 end</code></pre></div>
-<p><code>return</code> at the top is a trick: if we're not playing, leave the function right away. The two <code>x</code> checks make the hero wrap around the edges, which is how every good hopper works. Draw the hero as a yellow square and the platform as a green bar, run it, and watch the hero fall straight through the platform and off the bottom of the world. Good. That's correct. We haven't told it what a floor is.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Landing and jumping</h2><p>A landing is: you were above the platform's top before this frame, you're at or below it after, you're over it sideways, and you're moving down. That's why we saved <code>feetBefore</code> and <code>feetAfter</code>.</p>
+<p><code>return</code> at the top is a trick: if we're not playing, leave the function right away. The two <code>x</code> checks make the hero wrap around the edges, which is how every good hopper works. Draw the hero as a yellow square and the platform as a green bar, run it, and watch the hero fall straight through the platform and off the bottom of the world. Good. That's correct. We haven't told it what a floor is.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>Landing and jumping</h2><p>A landing is: you were above the platform's top before this frame, you're at or below it after, you're over it sideways, and you're moving down. That's why we saved <code>feetBefore</code> and <code>feetAfter</code>. This block goes right after the <code>feetAfter</code> line, inside <code>love.update</code>:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  player.onGround = false
   if player.vy &gt;= 0 then
     for i, p in ipairs(platforms) do
@@ -85,9 +85,17 @@ end</code></pre></div>
   lastX = math.max(0, math.min(680, lastX + math.random(-220, 220)))
   table.insert(platforms, { x = lastX, y = nextY, w = 120, h = 16 })
 end</code></pre></div>
-<p>Add <code>nextY = 560</code> and <code>lastX = 300</code> to <code>resetGame</code>, then, at the end of <code>resetGame</code>, call it until there's a tower above the screen:</p>
-<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  while nextY &gt; -400 do spawnPlatform() end</code></pre></div>
-<p><code>while</code> repeats until its question is false. Run it and climb. You'll reach the top of the window and keep going, into the part the window doesn't show.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>The camera</h2><p>A camera in a 2D game is a lie we tell <code>love.draw</code>: shift everything down by <code>cameraY</code> before drawing, and the world appears to scroll. <code>cameraY</code> is the world coordinate at the top of the window.</p>
+<p><code>spawnPlatform</code> needs two numbers that remember where the last platform went, so <code>resetGame</code> grows. Here's the whole thing now:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function resetGame()
+  player = { x = 384, y = 500, w = 32, h = 32, vy = 0, speed = 280, jump = -640, onGround = false }
+  platforms = { { x = 300, y = 560, w = 200, h = 16 } }
+  cameraY = 0
+  score = 0
+  nextY = 560
+  lastX = 300
+  while nextY &gt; -400 do spawnPlatform() end
+end</code></pre></div>
+<p><code>while</code> repeats until its question is false, so that last line keeps spawning until there's a tower reaching 400 pixels above the window. Run it and climb. You'll reach the top of the window and keep going, into the part the window doesn't show.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>The camera</h2><p>A camera in a 2D game is a lie we tell <code>love.draw</code>: shift everything by <code>-cameraY</code> before drawing, and the world appears to scroll (as you climb, <code>cameraY</code> goes negative, so the world slides down). <code>cameraY</code> is the world coordinate at the top of the window.</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.draw()
   love.graphics.push()
   love.graphics.translate(0, -cameraY)
@@ -101,7 +109,7 @@ end</code></pre></div>
   love.graphics.setColor(1, 1, 1)
   love.graphics.print("height: " .. score, 10, 10)
 end</code></pre></div>
-<p><code>push</code> remembers where the drawing pen is, <code>translate</code> moves it, <code>pop</code> puts it back. The score is printed after <code>pop</code>, so it stays glued to the window. The camera only ever moves up, and only when the hero gets near the top:</p>
+<p><code>push</code> remembers where the drawing pen is, <code>translate</code> moves it, <code>pop</code> puts it back. The score is printed after <code>pop</code>, so it stays glued to the window. The camera only ever moves up, and only when the hero gets near the top (these two lines go at the end of <code>love.update</code>):</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  if player.y &lt; cameraY + 250 then cameraY = player.y - 250 end
   score = math.max(score, math.floor(-cameraY / 10))</code></pre></div>
 <p>Run it. Climb. The tower scrolls, the number climbs with you.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Endless</h2><p>Three jobs at the end of <code>love.update</code>: keep spawning above the camera, delete platforms far below it, and notice when the hero falls out:</p>
@@ -124,7 +132,7 @@ end</code></pre></div>
     love.graphics.rectangle("fill", s.x, sy, s.size, s.size)
   end</code></pre></div>
 <p><code>%</code> is remainder: it wraps <code>sy</code> back into 0 to 600 forever, so the sky never runs out. Big stars move at 0.6 of the camera, small ones at 0.3, and your eye reads depth. Run it and climb. It looks like a real sky now.</p></section>
-  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Moving platforms.</strong> About one platform in four drifts left and right and bounces off the window edges. A hero standing on one moves with it. (Hint: give some platforms a <code>dx</code> field when they spawn; move them in <code>love.update</code>; remember which platform the hero landed on this frame.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Crumbling platforms.</strong> Another kind of platform breaks apart a short time after you land on it, then vanishes from the list. Draw it a different color so the player can choose. (Hint: a <code>timer</code> field that only starts counting once something lands; the backward loop from Step 5 already knows how to remove things.)</span></label></li></ol></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Moving platforms.</strong> About one platform in four drifts left and right and bounces off the window edges. A hero standing on one moves with it. (Hint: give some platforms a <code>dx</code> field when they spawn; move them in <code>love.update</code>; remember which platform the hero landed on this frame.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Crumbling platforms.</strong> Another kind of platform breaks apart a short time after you land on it, then vanishes from the list. Draw it a different color so the player can choose. (Hint: a <code>timer</code> field that only starts counting once something lands; the backward loop from Step 5 already knows how to remove things.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>Wildcard.</strong> Pitch the lead dev a feature of your own, the same size as one above. If they say yes, it replaces any one task.</span></label></li></ol></section>
   <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>Give the hero a name, stored in the <code>player</code> table, and print it next to the height. The hero should have a name before it has a face.</li><li>A thin cloud layer that scrolls at 0.9 of the camera, in front of the stars.</li><li>A "height" marker every 100 that prints a line across the tower.</li><li>Make the gaps between platforms grow slowly with height, so the climb gets harder.</li></ul></section>
   <section class="bug" id="bug">
 <div class="ticket">

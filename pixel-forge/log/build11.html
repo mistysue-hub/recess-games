@@ -34,18 +34,15 @@
   </div>
 
   <section class="intro"><p>Copy <code>build10-stack-attack</code> to <code>build11-stack-attack</code>. Jamie's version of this build shipped with the volume slider wired backwards, so quiet meant loud. Jamie called it "a surprise feature." Work in the new folder.</p></section>
-  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>A hook that swings</h2><p>Right now the crate appears under the crane and drops straight down. Real cranes have a hook on a cable, and a hook on a cable swings. Box2D does this with a <strong>joint</strong>: a rule that ties two bodies together.</p>
-<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
-  -- after the world and ground:
-  anchor = {}
+  <section class="step" id="step-1"><h2><span class="stepnum">Step 1</span>A hook that swings</h2><p>Right now the crate appears under the crane and drops straight down. Real cranes have a hook on a cable, and a hook on a cable swings. Box2D does this with a <strong>joint</strong>: a rule that ties two bodies together. Add these lines to the end of your existing <code>love.load</code>, after the ground (not a second <code>love.load</code>):</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  anchor = {}
   anchor.body = love.physics.newBody(world, 400, 30, "kinematic")
   hook = {}
   hook.body = love.physics.newBody(world, 400, 110, "dynamic")
   hook.shape = love.physics.newCircleShape(8)
   hook.fixture = love.physics.newFixture(hook.body, hook.shape, 2)
   hook.fixture:setMask(1)
-  cable = love.physics.newDistanceJoint(anchor.body, hook.body, 400, 30, 400, 110)
-end</code></pre></div>
+  cable = love.physics.newDistanceJoint(anchor.body, hook.body, 400, 30, 400, 110)</code></pre></div>
 <p>The anchor is <strong>kinematic</strong>: it moves because you tell it to, not because gravity does. The hook is a small heavy dynamic body hanging from the anchor on a distance joint, which is Box2D for "stay exactly 80 pixels apart." <code>setMask(1)</code> stops the hook from colliding with crates (all fixtures are in category 1 unless you say otherwise). Now the crane moves the anchor instead of a plain number:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  anchor.body:setLinearVelocity(crane.dir * crane.speed, 0)
   if anchor.body:getX() &gt; 740 or anchor.body:getX() &lt; 60 then
@@ -82,18 +79,31 @@ function love.mousemoved(x, y)
     love.audio.setVolume(volume)
   end
 end</code></pre></div>
-<p><code>(x - slider.x) / slider.w</code> turns a mouse position into a number from 0 to 1; <code>math.max</code> and <code>math.min</code> keep it there when the mouse overshoots. <code>love.audio.setVolume</code> is the master volume for every sound in the game. Press escape in settings to go back to the menu.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Music that loops</h2><p>Find a music track you're allowed to use. Kenney's music packs are CC0 (the link is in this module); or make a loop in any free tool. Save it as <code>assets/music.ogg</code>. Then:</p>
+<p><code>(x - slider.x) / slider.w</code> turns a mouse position into a number from 0 to 1; <code>math.max</code> and <code>math.min</code> keep it there when the mouse overshoots. <code>love.audio.setVolume</code> is the master volume for every sound in the game. One more thing: Build 10's escape key quits from anywhere, which is rude on a settings screen. Replace <code>love.keypressed</code> with one that asks what state it's in first:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.keypressed(key)
+  if state == "menu" then
+    if key == "space" then resetGame() end
+    if key == "s" then state = "settings" end
+    if key == "escape" then love.event.quit() end
+  elseif state == "settings" then
+    if key == "escape" then state = "menu" end
+  elseif state == "playing" then
+    if key == "space" then dropCrate() end
+    if key == "escape" then state = "menu" end
+  elseif state == "gameover" then
+    if key == "space" then resetGame() end
+    if key == "escape" then state = "menu" end
+  end
+end</code></pre></div>
+<p>Same key, four meanings, one <code>if</code> per state. That's the whole reason state machines exist.</p></section><section class="step" id="step-3"><h2><span class="stepnum">Step 3</span>Music that loops</h2><p>Find a music track you're allowed to use. Kenney's music pack is CC0 (the link is in this module), though most of its tracks are short jingles; any CC0 loop works, or make one in any free tool. Save it in your <code>assets</code> folder with the name the code below uses. Then:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local ok, m = pcall(love.audio.newSource, "assets/music.ogg", "stream")
   if ok then
     music = m
     music:setLooping(true)
     music:play()
   end</code></pre></div>
-<p><code>"stream"</code> plays the file bit by bit instead of loading all of it, which is right for music and wrong for short sounds. <code>setLooping(true)</code> means it never ends. The <code>pcall</code> means the game still runs if the file is missing, which matters when you hand the game to someone else and forget the folder. Now the slider does something you can hear.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Game feel</h2><p>Right now a crate landing on the tower looks like a crate landing on the tower. It should <em>feel</em> like it. Two tricks, and you'll pick which ones to ship:</p>
-<p><strong>Screen shake.</strong> Keep a <code>shake</code> number. When a heavy landing happens (in <code>beginContact</code>), set <code>shake = 6</code>. In <code>draw</code>, before anything else: <code>love.graphics.translate(math.random(-shake, shake), math.random(-shake, shake))</code>, and in <code>update</code>: <code>shake = math.max(0, shake - 30 * dt)</code>.</p>
-<p><strong>Squash.</strong> When a crate lands, set <code>c.squash = 0.2</code>. Draw its rectangle with width <code>w <em> (1 + c.squash)</code> and height <code>h </em> (1 - c.squash)</code>, and shrink <code>c.squash</code> toward 0 every frame. Crates look like they thump.</p>
-<p>Box2D hands <code>beginContact</code> two fixtures. To find which crate landed, loop over <code>crates</code> and compare <code>c.fixture == a or c.fixture == b</code>.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Ship it as one file</h2><p>A LÖVE game is a folder. A <strong>.love file</strong> is that folder zipped, with a different name. On Windows: open your build folder, select everything inside it (not the folder itself), right-click, Send to, Compressed folder, then rename the result <code>stack-attack.love</code>. On Mac: same, with Compress, then rename. Double-click it on any computer with LÖVE installed and your game runs. That's distribution. Studios with a hundred people do the same thing with more steps.</p></section>
-  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>The feel pass.</strong> Ship at least two of: screen shake on landing, squash on impact, a dust puff (a short list of particles, as in Build 05), a slow-motion half-second when the tower topples. Each must be visible on screen.</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A real playtester.</strong> Give your <code>.love</code> file to someone in your family. Watch them play one round without helping. Bring back one thing they said or did that surprised you, and tell the lead dev what you'd change because of it. (No code for this one. It's the hardest task in the course.)</span></label></li></ol></section>
+<p><code>"stream"</code> plays the file bit by bit instead of loading all of it, which is right for music and wrong for short sounds. <code>setLooping(true)</code> means it never ends. The <code>pcall</code> means the game still runs if the file is missing, which matters when you hand the game to someone else and forget the folder. Now the slider does something you can hear.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Game feel</h2><p>You did shake and squash in Build 10, Step 7. Both still work with the hook, because they never touched the physics. Ship-It 1 asks for two <em>more</em> feel effects on top of those; the list is there. The pattern is always the same: <code>beginContact</code> knows when a landing happens and which crate it was (<code>c.fixture == a or c.fixture == b</code>), so that's where every effect starts, and <code>love.update</code> is where it fades.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Ship it as one file</h2><p>A LÖVE game is a folder. A <strong>.love file</strong> is that folder zipped, with a different name. On Windows, first make file endings visible (View, Show, File name extensions), or your rename will silently produce a file ending in <code>.love.zip</code>. Then open your build folder, select everything inside it (not the folder itself), right-click, Send to, Compressed folder, and rename the result <code>stack-attack.love</code>. On Mac: same, with Compress, then rename. One trap: inside a <code>.love</code>, capital letters in file names must match your code exactly; from a folder, Windows and Mac forgive <code>Thud</code> for <code>thud</code>, but the packed file doesn't. Double-click it on any computer with LÖVE installed and your game runs. That's distribution. Studios with a hundred people do the same thing with more steps.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>The feel pass.</strong> Ship at least two of: a dust puff on landing (a short list of particles, as in Build 05), a slow-motion half-second when the tower topples (scale <code>dt</code> before <code>world:update</code>), a flash on the crate that landed, a crane that speeds up every five crates. Each must be visible on screen.</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A real playtester.</strong> Give your <code>.love</code> file to someone in your family (they need LÖVE installed, or they play on your computer). Watch them play one round without helping. Bring back one thing they said or did that surprised you, and tell the lead dev what you'd change because of it. (No code for this one. It's the hardest task in the course.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>Wildcard.</strong> Pitch the lead dev a feature of your own, same size as one above. If they say yes, it replaces any one task.</span></label></li></ol></section>
   <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A "mute" key that remembers its setting between runs (Build 05 showed you how to save).</li><li>A combo counter for consecutive perfect drops.</li></ul></section>
   <section class="bug" id="bug">
 <div class="ticket">

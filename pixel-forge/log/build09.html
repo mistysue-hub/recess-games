@@ -47,7 +47,7 @@ function Wisp:init(x, y)
 end
 Wisp.move = Entity.move
 Wisp.center = Entity.center</code></pre></div>
-<p>The last two lines borrow <code>move</code> and <code>center</code> from <code>Entity</code> so wisps slide along walls too (<code>center</code> returns the middle of a box, and <code>distance</code> measures between two centers; both are in the kit). Now the moods:</p>
+<p>The last two lines borrow <code>move</code> and <code>center</code> from <code>Entity</code> so wisps slide along walls too. <code>center</code> and <code>distance</code> are the two helpers you wrote at the end of Build 08, Step 4; if your Build 08 doesn't have them, copy them from that Build Log now. Now the moods:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function Wisp:update(dt)
   local d = distance(self, player)
 
@@ -78,7 +78,28 @@ Wisp.center = Entity.center</code></pre></div>
     end
   end
 end</code></pre></div>
-<p>Mood by mood. <strong>Wander</strong>: every 1 to 3 seconds pick a random angle and turn it into an x part and a y part with <code>math.cos</code> and <code>math.sin</code> (that is what they're for). Hero within 120 pixels: chase. <strong>Chase</strong>: point at the hero. Dividing by <code>len</code> makes the direction length 1, so the wisp moves at <code>speed</code>, not faster when you're far away. Hero 220 away: give up. <strong>Return</strong>: head home, then wander again. The two distances are different on purpose: with one number, a wisp on the line would flip moods sixty times a second. Draw wisps as circles, a color per mood, so you can <em>see</em> them think. Put two in <code>love.load</code> and run it. Walk near one. It notices you. The first time a thing in your game reacts to you is the whole reason people make games.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>The dialog box</h2><p>Text that appears all at once is a sign. Text that types itself out is a voice. The dialog is one table of state:</p>
+<p>Mood by mood. <strong>Wander</strong>: every 1 to 3 seconds pick a random angle and turn it into an x part and a y part with <code>math.cos</code> and <code>math.sin</code> (that is what they're for). Hero within 120 pixels: chase. <strong>Chase</strong>: point at the hero. Dividing by <code>len</code> makes the direction length 1, so the wisp moves at <code>speed</code>, not faster when you're far away. Hero 220 away: give up. <strong>Return</strong>: head home, then wander again. The two distances are different on purpose: with one number, a wisp on the line would flip moods sixty times a second. Draw wisps as circles, a color per mood, so you can <em>see</em> them think:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function Wisp:draw()
+  if self.state == "chase" then love.graphics.setColor(0.9, 0.4, 0.5)
+  elseif self.state == "return" then love.graphics.setColor(0.5, 0.6, 0.9)
+  else love.graphics.setColor(0.6, 0.9, 0.8) end
+  love.graphics.circle("fill", self.x + self.w / 2, self.y + self.h / 2, self.w / 2)
+end</code></pre></div>
+<p>Now wire them in. In <code>love.load</code>, after the player: <code>wisps = { Wisp(12 <em> TILE, 4 </em> TILE), Wisp(6 <em> TILE, 10 </em> TILE) }</code>. In <code>love.update</code>, after <code>player:move</code>: <code>for i, w in ipairs(wisps) do w:update(dt) end</code>. In <code>love.draw</code>, inside the camera's <code>push</code>/<code>pop</code>, after <code>drawMap()</code>: <code>for i, w in ipairs(wisps) do w:draw() end</code>. Run it. Walk near one. It notices you. The first time a thing in your game reacts to you is the whole reason people make games.</p>
+<p>A wisp that notices you should cost you something, or it's a pet. Give the hero hearts. In <code>love.load</code>: <code>hearts = 3</code> and <code>hurtTimer = 0</code>. In <code>love.update</code>, after the wisps move:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  hurtTimer = math.max(0, hurtTimer - dt)
+  for i, w in ipairs(wisps) do
+    if hurtTimer == 0 and overlaps(player, w) then
+      hearts = hearts - 1
+      hurtTimer = 1.5
+      local px, py = player:center()
+      local wx, wy = w:center()
+      local len = math.max(1, distance(player, w))
+      player:move((px - wx) / len * 40, (py - wy) / len * 40)
+      if hearts &lt;= 0 then state = "done" end
+    end
+  end</code></pre></div>
+<p>A touch costs a heart, shoves the hero 40 pixels away from the wisp, and starts a 1.5-second grace period so one brush isn't three hits. Draw the hearts after <code>pop</code>, top-left, one small red square per heart. Add <code>state = "playing"</code> to <code>love.load</code>, return early from <code>love.update</code> when <code>state ~= "playing"</code>, and print "The lantern went out. Space to try again." in <code>love.draw</code> when it's <code>"done"</code>; space calls <code>love.load()</code> to start over. Now the wisps matter.</p></section><section class="step" id="step-2"><h2><span class="stepnum">Step 2</span>The dialog box</h2><p>Text that appears all at once is a sign. Text that types itself out is a voice. The dialog is one table of state:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">dialog = { lines = {}, index = 1, shown = 0, timer = 0, active = false }
 
 function say(lines)
@@ -97,7 +118,7 @@ function updateDialog(dt)
     dialog.shown = math.min(dialog.shown + 1, #dialog.lines[dialog.index])
   end
 end</code></pre></div>
-<p><code>shown</code> is how many characters of the current line are visible; every 0.03 seconds it grows by one. <code>#</code> on a string is its length. Draw <code>string.sub(line, 1, dialog.shown)</code>, the first <code>shown</code> characters, with <code>love.graphics.printf</code> so long lines wrap. Then the space bar:</p>
+<p><code>shown</code> is how many characters of the current line are visible; every 0.03 seconds it grows by one. <code>#</code> on a string is its length. Draw <code>string.sub(line, 1, dialog.shown)</code>, the first <code>shown</code> characters, with <code>love.graphics.printf</code> so long lines wrap. One warning: <code>#</code> and <code>string.sub</code> count bytes, not letters, so write your lines with plain straight quotes (<code>'</code> and <code>"</code>), no curly quotes or emoji, or a cut-in-half character crashes the draw. Then the space bar:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function advanceDialog()
   local line = dialog.lines[dialog.index]
   if dialog.shown &lt; #line then
@@ -118,7 +139,7 @@ function hasItem(name)
   end
   return false
 end</code></pre></div>
-<p>Draw it after <code>love.graphics.pop()</code> so it sticks to the screen: <code>"Bag:"</code>, then one line per item, <code>30 + i * 18</code> pixels down. It fills up in the next step.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Keys and locked doors</h2><p>Room 2 has a new tile number, <code>3</code>: a locked door. Make it solid <em>unless</em> the bag has the key:</p>
+<p>Draw it after <code>love.graphics.pop()</code> so it sticks to the screen: <code>"Bag:"</code>, then one line per item, <code>30 + i * 18</code> pixels down. It fills up in the next step.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Keys and locked doors</h2><p>Room 2 gets a new tile number, <code>3</code>: a locked door. Use the kit's <code>maps/room2.csv</code>, which has one in the bottom wall, or add a <code>3</code> to the room 2 you drew in Build 08. Make it solid <em>unless</em> the bag has the key:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function solidAt(px, py)
   local t = tileAt(px, py)
   if t == 1 then return true end
@@ -131,14 +152,14 @@ end</code></pre></div>
     keyItem = nil
     say({ "You found the iron key." })
   end</code></pre></div>
-<p><code>keyItem = nil</code> deletes it; the <code>if keyItem and ...</code> guard skips the check once it's gone. Walk over it and the locked door in room 2 stops being a wall. No door code needed; <code>solidAt</code> already asks the bag. Jamie wanted the key to be "more of a vibe." It is a table with four numbers.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Putting it together</h2><p>Order matters. <code>love.update</code>: dialog first (return if active), hero's move, every wisp's <code>update</code>, pickups, camera. <code>love.draw</code>: map, items, wisps, hero inside the camera; bag and dialog outside it. If something draws in the wrong place, check this first.</p></section>
-  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>An NPC.</strong> Someone stands in the keep and says three lines you write when the hero walks into them. (Hint: an <code>Entity</code> that never moves; <code>overlaps</code> for the bump; and you need a way to make sure one bump means one conversation, not sixty a second. A field like <code>talked</code> that resets when the hero steps away is one way.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A boss room.</strong> Behind the locked door in room 2 lives something bigger: 3 hit points, a different chase speed, and the player can hurt it. You decide how (touching it while it's in <code>return</code> mood? a key press up close?). It leaves when its hit points reach 0. (Hint: a <code>Boss</code> class that borrows <code>Wisp.update</code> the way <code>Wisp</code> borrowed <code>Entity.move</code>, plus <code>hp</code>. Carry over your second-room code from Build 08 to get there.)</span></label></li></ol></section>
+<p><code>keyItem = nil</code> deletes it; the <code>if keyItem and ...</code> guard skips the check once it's gone. Walk over it and the locked door in room 2 stops being a wall. No door code needed; <code>solidAt</code> already asks the bag. Jamie wanted the key to be "more of a vibe." It is a table with four numbers.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Putting it together</h2><p>Order matters. <code>love.update</code>: dialog first (return if active), hero's move, every wisp's <code>update</code>, wisp touches, pickups, camera. <code>love.draw</code>: map, items, wisps, hero inside the camera; hearts, bag and dialog outside it. If something draws in the wrong place, check this first.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>An NPC.</strong> Someone stands in the keep and says three lines you write when the hero walks into them. (Hint: an <code>Entity</code> that never moves; <code>overlaps</code> for the bump; and you need a way to make sure one bump means one conversation, not sixty a second. A field like <code>talked</code> that resets when the hero steps away is one way.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A boss room.</strong> Behind the locked door in room 2 lives something bigger: 3 hit points, a different chase speed, and the player can hurt it. You decide how (touching it while it's in <code>return</code> mood? a key press up close?). It leaves when its hit points reach 0. (Hint: a <code>Boss</code> class that borrows <code>Wisp.update</code> the way <code>Wisp</code> borrowed <code>Entity.move</code>, plus <code>hp</code>. Carry over your second-room code from Build 08 to get there.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>Wildcard.</strong> Pitch the lead dev a feature of your own, same size as one above. If they say yes, it replaces any one task.</span></label></li></ol></section>
   <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A lantern radius: draw a dark rectangle over the whole screen with a lighter circle around the hero. The function you want is <code>love.graphics.setBlendMode("multiply", "premultiplied")</code>; working out what to draw under it is the puzzle, and it's a real one.</li><li>Wisps that flee the lantern instead of chasing, if the bag holds "oil."</li></ul></section>
   <section class="bug" id="bug">
 <div class="ticket">
 <div class="ticket-head"><span class="tag">BUG-009</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
 <h2>Bug Hunt</h2>
-<p>Jamie's wisps all chase the hero from the moment the game starts, from anywhere in the keep. Jamie calls them "motivated." What's wrong?</p>
+<p>Jamie's far-off wisps twitch in place and flicker through all three colors, the ones at middle distance chase, and a wisp you walk right up to ignores you completely. Jamie calls them "motivated." What's wrong?</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    self:move(self.dirX * self.speed * dt, self.dirY * self.speed * dt)
     if d &gt; 120 then self.state = "chase" end</code></pre></div>
 <details class="hint"><summary>Need a nudge?</summary><p>Read the wander mood in Step 1 again and ask which way the chase comparison should point.</p><p class="small">Tell the lead dev what you think it is before you look anything else up.</p></details>

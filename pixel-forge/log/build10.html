@@ -18,8 +18,8 @@
 <div class="frame">
 <aside class="rail" aria-label="Steps in this build">
   <div class="rail-inner">
-    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
-    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>A world with gravity</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>The crane</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Dropping a crate</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Drawing a body</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Hearing a landing</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>Score and game over</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 7 steps</span></div>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>A world with gravity</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>The crane</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Dropping a crate</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Drawing a body</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Hearing a landing</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>Score and game over</span></a></li><li><a href="#step-7"><input type="checkbox" data-step="7" aria-label="Mark step 7 done"><span class="num">7</span><span>Game feel</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
     <a class="kit" href="../build10-stack-attack.zip" download>Starter kit (.zip)</a>
     <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
   </div>
@@ -30,7 +30,7 @@
     <div class="release"><span class="tag">v0.10.0</span><span class="game">Stack Attack</span></div>
     <div class="buildno">Build 10</div>
     <h1>Stack Attack, part 1</h1>
-    <div class="ships"><span class="label">Ships today</span><p>a physics world, a crane that never stops moving, crates that tumble and settle like real crates, and a score that climbs as high as your tower does.</p></div>
+    <div class="ships"><span class="label">Ships today</span><p>a physics world, a crane that never stops moving, crates that tumble and settle like real crates, a score that climbs as high as your tower does, and landings that thump.</p></div>
   </div>
 
   <section class="intro"><p>Every game so far, you did the physics by hand: <code>y = y + speed * dt</code>, a box test, a bounce. That's fine for a square named Blip. It is not fine for forty wooden crates landing on each other at angles, which is what Stack Attack needs. So today we hand the physics to <strong>Box2D</strong>, the engine inside LÖVE that handles gravity, friction, bouncing and tipping over, and we learn to talk to it. Make a new folder, <code>build10-stack-attack</code>, open it in VS Code, and start a fresh <code>main.lua</code>. (Or unzip the starter kit.)</p></section>
@@ -92,32 +92,42 @@ end</code></pre></div>
     love.graphics.rectangle("fill", -c.w / 2, -c.h / 2, c.w, c.h)
     love.graphics.pop()
   end</code></pre></div>
-<p><code>push</code> saves the drawing position, <code>translate</code> moves the origin to the crate's center, <code>rotate</code> turns everything by the crate's angle, and <code>pop</code> puts it all back. That's why the rectangle is drawn at <code>-w/2, -h/2</code>: the body's <code>x, y</code> is its center, not its corner. Run it. Drop a crate. Drop another one on top. Drop one on the edge and watch it tip. You wrote none of that physics. That is the payoff of today: forty lines in, and the tower behaves better than anything you could have coded by hand in a month.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Hearing a landing</h2><p>Box2D will tell you when two things touch, if you give it a function to call:</p>
-<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function love.load()
-  -- after creating the world:
-  world:setCallbacks(beginContact)
-  landings = 0
-end
-
-function beginContact(a, b, contact)
+<p><code>push</code> saves the drawing position, <code>translate</code> moves the origin to the crate's center, <code>rotate</code> turns everything by the crate's angle, and <code>pop</code> puts it all back. That's why the rectangle is drawn at <code>-w/2, -h/2</code>: the body's <code>x, y</code> is its center, not its corner. Run it. Drop a crate. Drop another one on top. Drop one on the edge and watch it tip. You wrote none of that physics. That is the payoff of today: forty lines in, and the tower behaves better than anything you could have coded by hand in a month.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Hearing a landing</h2><p>Box2D will tell you when two things touch, if you give it a function to call. Add these two lines to the end of your existing <code>love.load</code> (don't paste a second <code>love.load</code>; a second one replaces the first and <code>world</code> vanishes):</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  world:setCallbacks(beginContact)
+  landings = 0</code></pre></div>
+<p>Then a new function, anywhere in the file:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function beginContact(a, b, contact)
   landings = landings + 1
-end</code></pre></div>
-<p><code>beginContact</code> runs the moment any two fixtures start touching. For now we just count. Print <code>landings</code> in the corner and watch it tick when crates land. (Load a landing sound into <code>thud</code> in <code>love.load</code>, inside <code>pcall</code> so the game still runs without it, and play it here when you have one. Build 11 does the sound pass properly.)</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>Score and game over</h2><p>The score is the height of the tower: the highest crate's top edge, measured from the ground up.</p>
-<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local best = 590
   for i, c in ipairs(crates) do
-    local top = c.body:getY() - c.h / 2
-    if top &lt; best then best = top end
+    if c.fixture == a or c.fixture == b then c.landed = true end
+  end
+end</code></pre></div>
+<p><code>beginContact</code> runs the moment any two fixtures start touching, and hands you the two fixtures. The loop finds which crate that was and marks it <code>landed</code>; Step 6 needs that. Print <code>landings</code> in the corner and watch it tick. (Load a landing sound into <code>thud</code> in <code>love.load</code>, inside <code>pcall</code> so the game still runs without it, and play it here when you have one. Build 11 adds music and a volume control.)</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>Score and game over</h2><p>The score is the height of the tower: the highest <em>landed</em> crate's top edge, measured up from the ground (whose top is at 580).</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local best = 580
+  for i, c in ipairs(crates) do
+    if c.landed then
+      local top = c.body:getY() - c.h / 2
+      if top &lt; best then best = top end
+    end
     if c.body:getY() &gt; 700 then state = "gameover" end
   end
-  score = math.floor((590 - best) / 10)</code></pre></div>
-<p>Lower <code>y</code> means higher on screen, so the smallest <code>top</code> is the tallest point. A crate past <code>y = 700</code> has fallen off the world, and the tower's done. Print the score big at the top and add a game-over screen with a restart on space, the same state-machine pattern as Meteor Drift. (On restart, call <code>body:destroy()</code> on every crate before emptying the list, or Box2D keeps simulating ghosts.)</p></section>
-  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Round crates.</strong> Every third drop is a barrel: a circle shape, radius 24, drawn as a circle. Barrels roll. Barrels on top of a tower are a problem. (Hint: <code>love.physics.newCircleShape(24)</code>, and give each crate a <code>kind</code> so <code>draw</code> knows which shape to draw.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Wind.</strong> A sideways push on any crate that's still falling, shown by an arrow at the top that points the way the wind blows and flips every few seconds. (Hint: <code>body:applyForce(fx, 0)</code> every frame while the crate's <code>body:getLinearVelocity()</code> has a downward part; a timer flips the sign.)</span></label></li></ol></section>
+  score = math.floor((580 - best) / 10)</code></pre></div>
+<p>Lower <code>y</code> means higher on screen, so the smallest <code>top</code> is the tallest point. The <code>landed</code> check matters: without it the crate still falling from the crane counts as the top of the tower, and the score jumps to 50 on every drop and then slides back down. A crate past <code>y = 700</code> has fallen off the world, and the tower's done. Print the score big at the top and add a game-over screen with a restart on space, the same state-machine pattern as Meteor Drift. (On restart, call <code>body:destroy()</code> on every crate before emptying the list, or Box2D keeps simulating ghosts.)</p></section><section class="step" id="step-7"><h2><span class="stepnum">Step 7</span>Game feel</h2><p>Right now a crate landing on the tower looks like a crate landing on the tower. It should <em>feel</em> like it. Two tricks:</p>
+<p><strong>Screen shake.</strong> Add <code>shake = 0</code> to <code>love.load</code>. In <code>beginContact</code>, set <code>shake = 6</code>. At the very top of <code>love.draw</code>, before anything else:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  love.graphics.translate(math.random(-shake, shake), math.random(-shake, shake))</code></pre></div>
+<p>and in <code>love.update</code>, inside the playing branch: <code>shake = math.max(0, shake - 30 * dt)</code>. Six pixels of wobble that dies in a fifth of a second. Run it. Drop a crate. The whole screen thumps.</p>
+<p><strong>Squash.</strong> In the <code>beginContact</code> loop, where you set <code>c.landed</code>, also set <code>c.squash = 0.2</code>. In <code>dropCrate</code>, start every crate with <code>c.squash = 0</code>. Draw the rectangle wider and shorter by that amount:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">    local w = c.w * (1 + c.squash)
+    local h = c.h * (1 - c.squash)
+    love.graphics.rectangle("fill", -w / 2, -h / 2, w, h)</code></pre></div>
+<p>and in <code>love.update</code>, in the crate loop: <code>c.squash = math.max(0, c.squash - 2 * dt)</code>. Crates land like they weigh something. Neither trick touches the physics; it's all in how you draw. Jamie wanted the crates to scream. We settled on squash.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>Round crates.</strong> Every third drop is a barrel: a circle shape, radius 24, drawn as a circle. Barrels roll. Barrels on top of a tower are a problem. (Hint: <code>love.physics.newCircleShape(24)</code>, and give each crate a <code>kind</code> so <code>draw</code> knows which shape to draw.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>Wind.</strong> A sideways push on any crate that's still falling, shown by an arrow at the top that points the way the wind blows and flips every few seconds. (Hint: <code>body:applyForce(fx, 0)</code> every frame while the crate's <code>body:getLinearVelocity()</code> has a downward part; a timer flips the sign.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>Wildcard.</strong> Pitch the lead dev a feature of your own, same size as one above. If they say yes, it replaces any one task.</span></label></li></ol></section>
   <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>Crates get smaller as the tower gets taller.</li><li>A "perfect drop" bonus when a crate lands within 4 pixels of the one below.</li></ul></section>
   <section class="bug" id="bug">
 <div class="ticket">
 <div class="ticket-head"><span class="tag">BUG-010</span><span class="status">open</span><span class="by">filed by Jamie</span></div>
 <h2>Bug Hunt</h2>
-<p>Jamie's crates draw as a single square stuck in the top-left corner, no matter where they fall. Jamie says the game is now "a minimalist meditation on gravity." What's wrong?</p>
+<p>Jamie's crates draw as a single square stuck in the top-left corner, no matter where they fall. Jamie moved the crane to the top-left corner "so it matches." What's wrong?</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  for i, c in ipairs(crates) do
     love.graphics.push()
     love.graphics.rotate(c.body:getAngle())
