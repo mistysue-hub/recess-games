@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lines of Force · Faraday's Basement Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3ead3;--laid:rgba(120,90,40,.08);--ink:#3a2412;--brown:#6b3f1a;--soft:#7a5a3a;--pencil:#5a4632;--red:#8a2f1f;
+        --card:#fbf5e4;--line:#d6c6a0;--tape:rgba(230,215,170,.9);--stampink:#7a3b1c}
+  *{box-sizing:border-box}
+  html,body{margin:0;overflow-x:clip}
+  body{background:var(--paper);
+    background-image:repeating-linear-gradient(0deg,transparent 0 3px,var(--laid) 3px 4px),
+      radial-gradient(ellipse at 20% 0%,rgba(255,250,235,.7),transparent 60%),
+      radial-gradient(ellipse at 100% 100%,rgba(120,80,30,.12),transparent 55%);
+    color:var(--ink);font-family:"Lora",Georgia,serif;font-size:19px;line-height:1.66}
+  .page{max-width:760px;margin:0 auto;padding:26px 22px 60px 72px;position:relative;min-height:100vh;counter-reset:para 12}
+  .page::before{content:"";position:absolute;left:52px;top:0;bottom:0;width:1px;background:var(--brown);opacity:.35}
+  .tag{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--soft);font-size:16px;margin:0 0 10px}
+  h1,h2,h3{font-family:"IM Fell English",Georgia,serif;font-weight:400;line-height:1.15;color:var(--brown);text-wrap:balance}
+  h1{font-size:clamp(30px,6.5vw,42px);margin:0 0 8px}
+  h2{font-size:26px;margin:36px 0 8px}
+  h2 span{border-bottom:2px solid var(--brown);padding-bottom:2px}
+  p{margin:11px 0;max-width:62ch;position:relative} li{max-width:60ch;margin:6px 0} ul,ol{padding-left:26px}
+  .page > p:not(.verdict):not(.tag):not(.colophon)::before{counter-increment:para;content:counter(para);position:absolute;left:-44px;top:3px;
+     font-family:"IM Fell English",Georgia,serif;font-size:15px;color:var(--soft);width:34px;text-align:right}
+  .lede{font-size:1.16em;line-height:1.55;max-width:56ch;font-style:italic}
+  strong{font-weight:700;color:var(--brown)}
+  .sketch{position:relative;margin:18px 0 22px;max-width:380px;background:var(--card);padding:14px 14px 6px;
+          box-shadow:0 1px 0 var(--line),3px 5px 0 rgba(58,36,18,.12);transform:rotate(-1.6deg)}
+  .sketch::before,.sketch::after{content:"";position:absolute;top:-10px;width:70px;height:22px;background:var(--tape)}
+  .sketch::before{left:22px;transform:rotate(-6deg)} .sketch::after{right:22px;transform:rotate(5deg)}
+  .sketch svg{display:block;width:100%;height:auto}
+  .sketch svg path,.sketch svg rect{fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .sketch .ink{stroke:var(--ink);stroke-width:3} .sketch .thin{stroke-width:2}
+  .sketch .pencil{stroke:var(--pencil);stroke-width:2;opacity:.85} .sketch .dash{stroke-dasharray:5 7}
+  .sketch .red{stroke:var(--red);stroke-width:3}
+  .sketch .label{font-family:"IM Fell English",Georgia,serif;font-size:15px;fill:var(--pencil)}
+  .sketch figcaption{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--pencil);font-size:15px;margin:4px 2px 2px}
+  .card{position:relative;background:var(--card);margin:28px 0;padding:16px 18px;max-width:60ch;transform:rotate(.8deg);
+        box-shadow:3px 5px 0 rgba(58,36,18,.12);background-image:linear-gradient(transparent 44px,#dcbfae 44px,#dcbfae 46px,transparent 46px)}
+  .card .tape{position:absolute;top:-11px;left:50%;width:84px;height:22px;margin-left:-42px;background:var(--tape);transform:rotate(-3deg)}
+  .card p::before{content:none}
+  .card-title{font-family:"IM Fell English",Georgia,serif;color:var(--red);font-size:18px;margin:0 0 10px;line-height:1.1}
+  .answercard{margin:16px 0 22px;max-width:60ch}
+  .answercard.locked > p{display:none}
+  .answercard p{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brown);padding:12px 16px;margin:0}
+  .answercard p::before{content:none}
+  .answercard button{font:inherit;font-family:"IM Fell English",Georgia,serif;font-size:17px;padding:8px 14px;border-radius:4px;border:1px solid var(--brown);
+     background:var(--card);color:var(--brown);cursor:pointer;box-shadow:2px 3px 0 rgba(58,36,18,.15)}
+  .answercard button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+  .answercard .note{display:block;font-size:15px;color:var(--soft);margin:6px 0 0;font-style:italic}
+  .verdict{margin:26px 0 10px}
+  .stamp{display:inline-block;padding:9px 16px;border:3px double var(--stampink);color:var(--stampink);border-radius:4px;
+         font-family:"IM Fell English",Georgia,serif;font-size:19px;transform:rotate(-2.5deg);letter-spacing:.02em;opacity:.9}
+  .glossary{background:var(--card);border-left:6px solid var(--brown);padding:4px 18px 10px;margin:30px 0;box-shadow:3px 5px 0 rgba(58,36,18,.1)}
+  .glossary h2{margin-top:14px}
+  .glossary p::before{content:none}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0 8px}
+  .colophon{font-size:15px;color:var(--soft);font-style:italic}
+  .colophon::before{content:none !important}
+  @media (max-width:480px){ .page{padding:18px 14px 44px 50px} .page::before{left:36px} .page > p::before{left:-38px;width:30px} body{font-size:18px} }
+  @media (prefers-reduced-motion:reduce){ .sketch,.card,.stamp{transform:none} }
+</style>
+</head>
+<body>
+<main class="page">
+<p class="tag">Faraday's Basement Lab · Entry for the apprentice. On lines of force.</p>
+<h1>Lines of Force</h1>
+<p class="lede">In 1820 a Danish professor named Hans Christian Ørsted was giving a lecture on electricity. He had a compass ready on the bench, because he'd suspected for two years that electricity and magnetism were connected and had never managed to show it. When he switched on the current in a nearby wire, the compass needle twitched.</p><figure class="sketch"><svg viewBox="0 0 260 200" aria-hidden="true">
+<rect class="ink" x="80" y="88" width="100" height="26" rx="3"/>
+<path class="ink thin" d="M130 88 V114"/>
+<text x="92" y="107" class="label">N</text><text x="152" y="107" class="label">S</text>
+<path class="pencil" d="M80 100 C 20 60, 20 20, 130 24 C 240 20, 240 60, 180 100"/>
+<path class="pencil" d="M80 100 C 40 80, 60 50, 130 48 C 200 50, 220 80, 180 100"/>
+<path class="pencil" d="M80 100 C 20 140, 20 180, 130 176 C 240 180, 240 140, 180 100"/>
+<path class="pencil" d="M80 100 C 40 120, 60 150, 130 152 C 200 150, 220 120, 180 100"/>
+<path class="red" d="M56 70 l10 -4 l-2 10"/>
+<path class="red" d="M204 130 l-10 4 l2 -10"/>
+<text x="196" y="40" class="label">real?</text>
+</svg><figcaption>iron filings over a magnet: the lines</figcaption></figure>
+<p>Nobody had ever seen an electric current move a magnet before. Ørsted had just connected two things that every scientist in Europe thought were strangers. Within weeks, every lab on the continent was switching currents on and off next to compasses.</p>
+<h2><span>The question nobody could answer</span></h2>
+<p>A compass needle is a tiny magnet. Near a bigger magnet it swings round and points. But point <em>through what</em>? There's nothing between the needle and the magnet but air, and the trick works in a vacuum too. Most scientists of the day said the force simply jumped across the gap, instantly, the way they thought gravity did. Faraday didn't like that. It sounded like magic with a Latin name.</p>
+<p>He had a better picture, and he got it from a trick every child knows: iron filings. Sprinkle them on a card over a magnet, tap the card, and the filings arrange themselves into curved lines, looping out of one end of the magnet and back into the other.</p>
+<p>Faraday called them <strong>lines of force</strong>, and he made a bold claim. The lines, he said, are not just a pretty pattern. Something real is there. The space around a magnet is <em>full of something</em>, and a compass needle lines up along the lines because it is sitting in it. (You can draw ten lines or a thousand; the drawing is ours. What the drawing is <em>of</em> is not.)</p>
+<aside class="card"><span class="tape"></span><p class="card-title">Weird but true</p><p>The great mathematicians of the age thought Faraday's lines were a crutch for a man who couldn't do algebra. (He really couldn't. He never learned much beyond arithmetic.) A generation later, James Clerk Maxwell turned Faraday's pictures into a set of equations that describe every radio wave, every ray of light and every magnet in the universe. Maxwell said the ideas were Faraday's; he had only translated them into math.</p></aside>
+<h2><span>Reading the lines</span></h2>
+<p>Here is how lines of force work, and you can check all of it in today's experiment.</p>
+<ol>
+<li>The lines come out of a magnet's north end and curve round to go into its south end.</li>
+<li>A compass needle lines up along the line it sits on, with its own north tip pointing the way the line is going.</li>
+<li>Where the lines are crowded together, the force is strong. Where they spread apart, it's weak.</li>
+</ol>
+<p>Try rule 2 on the Bet. If a line leaves the magnet's north end heading outward, and the compass tip points the way the line is going, which way does the red tip point when the compass sits beside that end?</p>
+<div class="answercard locked"><p>Away from the magnet. The red tip is a north pole, and two north poles push apart. Point the compass at the magnet's south end instead and the red tip swings round to point at it.</p></div>
+<h2><span>Earth is a magnet too</span></h2>
+<p>A compass points north because the whole planet is a giant, slightly wobbly magnet, with lines of force looping from somewhere near Antarctica to somewhere near the Arctic. Faraday's lines run through the whole Earth and out into space.</p>
+<p>Now think about rule 2 again. The red tip of a compass is a north pole, and it points <em>toward</em> the far north. Two north poles push apart. So what kind of magnetic pole is actually sitting up there near the Arctic?</p>
+<div class="answercard locked"><p>A magnetic south pole. The place we call Earth's "magnetic north" is, in Faraday's terms, a south pole. It attracts the north ends of compasses. Nobody has ever bothered to rename it.</p></div>
+<h2><span>From a picture to a field</span></h2>
+<p>Faraday's lines of force were the start of one of the biggest ideas in physics: the <strong>field</strong>. A field is the idea that empty space around a magnet, or an electric charge, or a planet, isn't empty at all. It carries something, at every point, that tells anything placed there which way to move.</p>
+<p>Phones, radios, power grids and MRI machines are all engineered by people drawing fields. Faraday drew the first ones with iron filings and a pen.</p>
+<p class="verdict"><span class="stamp">Verdict: the space is not empty. Make a better compass.</span></p>
+<section class="glossary"><h2><span>Words for your diary</span></h2><ul>
+<li><strong>Lines of force:</strong> Faraday's name for the curved paths that show which way a magnet or current pushes and pulls at each point in space.</li>
+<li><strong>Field:</strong> the modern word for the same idea: a region of space where every point has a push or pull attached to it.</li>
+<li><strong>Electromagnet:</strong> a coil of wire that becomes a magnet while current flows through it, and stops when the current stops.</li>
+</ul></section>
+<hr>
+<p class="colophon">Written for this course. No material was copied. Short quotations in quotation marks are Faraday's own words from the 1800s, now public domain. The paragraph numbers are the apprentice's; Mr. Faraday didn't start counting until 29 August 1831.</p>
+</main>
+<script>
+(function(){
+  var cards=document.querySelectorAll('.answercard.locked');
+  cards.forEach(function(c){
+    var b=document.createElement('button'); b.type='button'; b.textContent='Show the answer';
+    var n=document.createElement('span'); n.className='note'; n.textContent='Decide your answer first. Then look.';
+    b.addEventListener('click',function(){ c.classList.remove('locked'); b.remove(); n.remove(); c.querySelector('p').setAttribute('tabindex','-1'); c.querySelector('p').focus(); });
+    c.appendChild(b); c.appendChild(n);
+  });
+})();
+</script>
+</body>
+</html>

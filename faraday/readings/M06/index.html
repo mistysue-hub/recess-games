@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faraday the Chemist · Faraday's Basement Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3ead3;--laid:rgba(120,90,40,.08);--ink:#3a2412;--brown:#6b3f1a;--soft:#7a5a3a;--pencil:#5a4632;--red:#8a2f1f;
+        --card:#fbf5e4;--line:#d6c6a0;--tape:rgba(230,215,170,.9);--stampink:#7a3b1c}
+  *{box-sizing:border-box}
+  html,body{margin:0;overflow-x:clip}
+  body{background:var(--paper);
+    background-image:repeating-linear-gradient(0deg,transparent 0 3px,var(--laid) 3px 4px),
+      radial-gradient(ellipse at 20% 0%,rgba(255,250,235,.7),transparent 60%),
+      radial-gradient(ellipse at 100% 100%,rgba(120,80,30,.12),transparent 55%);
+    color:var(--ink);font-family:"Lora",Georgia,serif;font-size:19px;line-height:1.66}
+  .page{max-width:760px;margin:0 auto;padding:26px 22px 60px 72px;position:relative;min-height:100vh;counter-reset:para 64}
+  .page::before{content:"";position:absolute;left:52px;top:0;bottom:0;width:1px;background:var(--brown);opacity:.35}
+  .tag{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--soft);font-size:16px;margin:0 0 10px}
+  h1,h2,h3{font-family:"IM Fell English",Georgia,serif;font-weight:400;line-height:1.15;color:var(--brown);text-wrap:balance}
+  h1{font-size:clamp(30px,6.5vw,42px);margin:0 0 8px}
+  h2{font-size:26px;margin:36px 0 8px}
+  h2 span{border-bottom:2px solid var(--brown);padding-bottom:2px}
+  p{margin:11px 0;max-width:62ch;position:relative} li{max-width:60ch;margin:6px 0} ul,ol{padding-left:26px}
+  .page > p:not(.verdict):not(.tag):not(.colophon)::before{counter-increment:para;content:counter(para);position:absolute;left:-44px;top:3px;
+     font-family:"IM Fell English",Georgia,serif;font-size:15px;color:var(--soft);width:34px;text-align:right}
+  .lede{font-size:1.16em;line-height:1.55;max-width:56ch;font-style:italic}
+  strong{font-weight:700;color:var(--brown)}
+  .sketch{position:relative;margin:18px 0 22px;max-width:380px;background:var(--card);padding:14px 14px 6px;
+          box-shadow:0 1px 0 var(--line),3px 5px 0 rgba(58,36,18,.12);transform:rotate(-1.6deg)}
+  .sketch::before,.sketch::after{content:"";position:absolute;top:-10px;width:70px;height:22px;background:var(--tape)}
+  .sketch::before{left:22px;transform:rotate(-6deg)} .sketch::after{right:22px;transform:rotate(5deg)}
+  .sketch svg{display:block;width:100%;height:auto}
+  .sketch svg path,.sketch svg rect{fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .sketch .ink{stroke:var(--ink);stroke-width:3} .sketch .thin{stroke-width:2}
+  .sketch .pencil{stroke:var(--pencil);stroke-width:2;opacity:.85} .sketch .dash{stroke-dasharray:5 7}
+  .sketch .red{stroke:var(--red);stroke-width:3}
+  .sketch .label{font-family:"IM Fell English",Georgia,serif;font-size:15px;fill:var(--pencil)}
+  .sketch figcaption{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--pencil);font-size:15px;margin:4px 2px 2px}
+  .card{position:relative;background:var(--card);margin:28px 0;padding:16px 18px;max-width:60ch;transform:rotate(.8deg);
+        box-shadow:3px 5px 0 rgba(58,36,18,.12);background-image:linear-gradient(transparent 44px,#dcbfae 44px,#dcbfae 46px,transparent 46px)}
+  .card .tape{position:absolute;top:-11px;left:50%;width:84px;height:22px;margin-left:-42px;background:var(--tape);transform:rotate(-3deg)}
+  .card p::before{content:none}
+  .card-title{font-family:"IM Fell English",Georgia,serif;color:var(--red);font-size:18px;margin:0 0 10px;line-height:1.1}
+  .answercard{margin:16px 0 22px;max-width:60ch}
+  .answercard.locked > p{display:none}
+  .answercard p{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brown);padding:12px 16px;margin:0}
+  .answercard p::before{content:none}
+  .answercard button{font:inherit;font-family:"IM Fell English",Georgia,serif;font-size:17px;padding:8px 14px;border-radius:4px;border:1px solid var(--brown);
+     background:var(--card);color:var(--brown);cursor:pointer;box-shadow:2px 3px 0 rgba(58,36,18,.15)}
+  .answercard button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+  .answercard .note{display:block;font-size:15px;color:var(--soft);margin:6px 0 0;font-style:italic}
+  .verdict{margin:26px 0 10px}
+  .stamp{display:inline-block;padding:9px 16px;border:3px double var(--stampink);color:var(--stampink);border-radius:4px;
+         font-family:"IM Fell English",Georgia,serif;font-size:19px;transform:rotate(-2.5deg);letter-spacing:.02em;opacity:.9}
+  .glossary{background:var(--card);border-left:6px solid var(--brown);padding:4px 18px 10px;margin:30px 0;box-shadow:3px 5px 0 rgba(58,36,18,.1)}
+  .glossary h2{margin-top:14px}
+  .glossary p::before{content:none}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0 8px}
+  .colophon{font-size:15px;color:var(--soft);font-style:italic}
+  .colophon::before{content:none !important}
+  @media (max-width:480px){ .page{padding:18px 14px 44px 50px} .page::before{left:36px} .page > p::before{left:-38px;width:30px} body{font-size:18px} }
+  @media (prefers-reduced-motion:reduce){ .sketch,.card,.stamp{transform:none} }
+</style>
+</head>
+<body>
+<main class="page">
+<p class="tag">Faraday's Basement Lab · Entry for the apprentice. Chemistry, and some new words.</p>
+<h1>Faraday the Chemist</h1>
+<p class="lede">People remember Faraday for electricity, but the Royal Institution hired him as a chemist, and he was a very good one. Before the spinning wire and long after it, he spent his days with glass tubes, foul smells and small explosions.</p><figure class="sketch"><svg viewBox="0 0 260 200" aria-hidden="true">
+<path class="ink" d="M40 60 v120 h180 v-120"/><path class="pencil" d="M40 96 h180"/>
+<rect class="ink thin" x="80" y="40" width="22" height="110"/><rect class="ink thin" x="158" y="40" width="22" height="110"/>
+<path class="ink" d="M91 150 v24 M169 150 v24"/>
+<path class="pencil" d="M80 112 h22 M158 72 h22"/>
+<circle class="pencil" cx="88" cy="130" r="3"/><circle class="pencil" cx="95" cy="140" r="3"/><circle class="pencil" cx="86" cy="118" r="2"/>
+<circle class="pencil" cx="165" cy="128" r="3"/><circle class="pencil" cx="172" cy="138" r="3"/><circle class="pencil" cx="168" cy="110" r="3"/><circle class="pencil" cx="163" cy="92" r="3"/><circle class="pencil" cx="174" cy="82" r="2"/>
+<text x="70" y="30" class="label">+</text><text x="162" y="30" class="label">&#8211;</text>
+<text x="190" y="60" class="label">2:1</text>
+</svg><figcaption>two rods in water: twice the bubbles on one side</figcaption></figure>
+<h2><span>A liquid that shouldn't exist</span></h2>
+<p>In 1823 Davy suggested an experiment: seal a chlorine compound in a glass tube and heat it. Faraday did, and a visiting doctor named Paris, walking past, teased him for using a dirty tube with oil in it. Faraday looked closer. The "oil" was chlorine, a yellow-green gas that everyone knew only as a gas, had turned into a liquid. In the next weeks he did it to half a dozen more. Tubes burst, glass flew, and Faraday got splinters in his eyes more than once. He kept going.</p>
+<p>Until then nobody was sure a gas like chlorine <em>could</em> be a liquid. Faraday showed that a gas is just a liquid that hasn't been squeezed or cooled enough. That idea runs every refrigerator in the world.</p>
+<h2><span>The stuff in the lamp gas</span></h2>
+<p>In 1825 he was handed a barrel of oily gunk left over from making lamp gas and asked what was in it. He pulled out a new, clear liquid with a sweet smell and a ring of six carbon atoms, though nobody would know about the ring for forty years. He called it bicarburet of hydrogen. We call it <strong>benzene</strong>. It's in plastics, dyes, medicines and gasoline. It's also poisonous, which Faraday, sniffing it in a basement, did not know.</p>
+<h2><span>Electricity takes chemicals apart</span></h2>
+<p>Davy's great trick had been to run a current through melted chemicals and pull out brand-new metals. Faraday wanted to know the rules. In 1833 and 1834 he measured, carefully, how much chemical came apart for a given amount of electricity.</p>
+<p>He found two rules so clean they are still called <strong>Faraday's laws of electrolysis</strong>.</p>
+<ol>
+<li>The amount of stuff that comes apart is exactly in proportion to how much electricity goes through. Twice the electricity, twice the stuff.</li>
+<li>For the same electricity, different chemicals give amounts that match their chemical combining weights.</li>
+</ol>
+<p>Hidden inside those rules was a thought Faraday couldn't quite finish: electricity seemed to come in <em>fixed amounts</em> tied to atoms. Sixty years later that idea got a name, the electron.</p>
+<p>The simplest electrolysis is pulling water apart. Two metal rods in water with a pinch of something dissolved in it (pure water barely conducts; that's what the word <em>electrolyte</em> is for, a few paragraphs down), a current through them, bubbles on both. Water is H₂O: two hydrogens for every oxygen. Before you run today's experiment, decide which rod you'd expect to bubble faster, and by how much.</p>
+<div class="answercard locked"><p>The negative rod, where hydrogen appears, bubbles about twice as fast as the positive rod, where oxygen appears. Two hydrogens for every oxygen, two volumes of gas for every one. Faraday's second law, in a glass of water.</p></div>
+<h2><span>Letters to a word-maker</span></h2>
+<p>Faraday needed names for the parts of his experiment, and he hated the ones in use, which were tangled up with old theories he didn't believe. So in 1834 he wrote to his friend William Whewell, a scholar at Cambridge who was famous for inventing words. (Whewell also invented the word <em>scientist</em>. Before him, there wasn't one.)</p>
+<p>Faraday already had <strong>electrode</strong> (the metal rod the current enters or leaves by), <strong>electrolyte</strong> (the liquid the current travels through) and <strong>electrolysis</strong> (the taking-apart itself), worked out with another friend, a doctor named Nicholl. Whewell added, from Greek, <strong>anode</strong> (the positive rod, from "way up," the way the sun rises), <strong>cathode</strong> (the negative one, "way down") and <strong>ion</strong> ("goer," the charged bit that travels through the liquid).</p>
+<p>Faraday worried the new words were clumsy and that people would misread them. Whewell told him they were short and simple and would catch on. Every chemistry book on Earth now uses all six.</p>
+<p class="verdict"><span class="stamp">Verdict: the laws are exact. The words will do.</span></p>
+<aside class="card"><span class="tape"></span><p class="card-title">Weird but true</p><p>Whewell built the words from Greek on purpose, so they'd belong to no modern language in particular. It worked. A Japanese chemist, a Brazilian chemist and a Scottish chemist all say "anode."</p></aside>
+<h2><span>Name That Word</span></h2>
+<p>Decide what each word means before you show the card.</p>
+<p>Which word means the charged bit that travels through the liquid?</p>
+<div class="answercard locked"><p>Ion, from the Greek for "going." Faraday imagined it walking from one rod to the other.</p></div>
+<p>Which word is the rod where current enters, named for the way the sun comes up?</p>
+<div class="answercard locked"><p>Anode, the positive electrode. "Ana" means up; "hodos" means way.</p></div>
+<p>Which word is the liquid that lets current through by coming apart?</p>
+<div class="answercard locked"><p>Electrolyte. "Lysis" means loosening or breaking apart, the same root as in "analysis."</p></div>
+<section class="glossary"><h2><span>Words for your diary</span></h2><ul>
+<li><strong>Electrolysis:</strong> using an electric current to split a liquid into its ingredients.</li>
+<li><strong>Liquefy:</strong> to turn a gas into a liquid, by squeezing it, cooling it, or both.</li>
+<li><strong>Benzene:</strong> the sweet-smelling ring of six carbons that Faraday pulled out of lamp-gas sludge in 1825.</li>
+</ul></section>
+<hr>
+<p class="colophon">Written for this course. No material was copied. Short quotations in quotation marks are Faraday's own words from the 1800s, now public domain. The paragraph numbers are the apprentice's; Mr. Faraday didn't start counting until 29 August 1831.</p>
+</main>
+<script>
+(function(){
+  var cards=document.querySelectorAll('.answercard.locked');
+  cards.forEach(function(c){
+    var b=document.createElement('button'); b.type='button'; b.textContent='Show the answer';
+    var n=document.createElement('span'); n.className='note'; n.textContent='Decide your answer first. Then look.';
+    b.addEventListener('click',function(){ c.classList.remove('locked'); b.remove(); n.remove(); c.querySelector('p').setAttribute('tabindex','-1'); c.querySelector('p').focus(); });
+    c.appendChild(b); c.appendChild(n);
+  });
+})();
+</script>
+</body>
+</html>

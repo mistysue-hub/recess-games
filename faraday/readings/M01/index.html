@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Bookbinder's Ticket · Faraday's Basement Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3ead3;--laid:rgba(120,90,40,.08);--ink:#3a2412;--brown:#6b3f1a;--soft:#7a5a3a;--pencil:#5a4632;--red:#8a2f1f;
+        --card:#fbf5e4;--line:#d6c6a0;--tape:rgba(230,215,170,.9);--stampink:#7a3b1c}
+  *{box-sizing:border-box}
+  html,body{margin:0;overflow-x:clip}
+  body{background:var(--paper);
+    background-image:repeating-linear-gradient(0deg,transparent 0 3px,var(--laid) 3px 4px),
+      radial-gradient(ellipse at 20% 0%,rgba(255,250,235,.7),transparent 60%),
+      radial-gradient(ellipse at 100% 100%,rgba(120,80,30,.12),transparent 55%);
+    color:var(--ink);font-family:"Lora",Georgia,serif;font-size:19px;line-height:1.66}
+  .page{max-width:760px;margin:0 auto;padding:26px 22px 60px 72px;position:relative;min-height:100vh;counter-reset:para 0}
+  .page::before{content:"";position:absolute;left:52px;top:0;bottom:0;width:1px;background:var(--brown);opacity:.35}
+  .tag{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--soft);font-size:16px;margin:0 0 10px}
+  h1,h2,h3{font-family:"IM Fell English",Georgia,serif;font-weight:400;line-height:1.15;color:var(--brown);text-wrap:balance}
+  h1{font-size:clamp(30px,6.5vw,42px);margin:0 0 8px}
+  h2{font-size:26px;margin:36px 0 8px}
+  h2 span{border-bottom:2px solid var(--brown);padding-bottom:2px}
+  p{margin:11px 0;max-width:62ch;position:relative} li{max-width:60ch;margin:6px 0} ul,ol{padding-left:26px}
+  .page > p:not(.verdict):not(.tag):not(.colophon)::before{counter-increment:para;content:counter(para);position:absolute;left:-44px;top:3px;
+     font-family:"IM Fell English",Georgia,serif;font-size:15px;color:var(--soft);width:34px;text-align:right}
+  .lede{font-size:1.16em;line-height:1.55;max-width:56ch;font-style:italic}
+  strong{font-weight:700;color:var(--brown)}
+  .sketch{position:relative;margin:18px 0 22px;max-width:380px;background:var(--card);padding:14px 14px 6px;
+          box-shadow:0 1px 0 var(--line),3px 5px 0 rgba(58,36,18,.12);transform:rotate(-1.6deg)}
+  .sketch::before,.sketch::after{content:"";position:absolute;top:-10px;width:70px;height:22px;background:var(--tape)}
+  .sketch::before{left:22px;transform:rotate(-6deg)} .sketch::after{right:22px;transform:rotate(5deg)}
+  .sketch svg{display:block;width:100%;height:auto}
+  .sketch svg path,.sketch svg rect{fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .sketch .ink{stroke:var(--ink);stroke-width:3} .sketch .thin{stroke-width:2}
+  .sketch .pencil{stroke:var(--pencil);stroke-width:2;opacity:.85} .sketch .dash{stroke-dasharray:5 7}
+  .sketch .red{stroke:var(--red);stroke-width:3}
+  .sketch .label{font-family:"IM Fell English",Georgia,serif;font-size:15px;fill:var(--pencil)}
+  .sketch figcaption{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--pencil);font-size:15px;margin:4px 2px 2px}
+  .card{position:relative;background:var(--card);margin:28px 0;padding:16px 18px;max-width:60ch;transform:rotate(.8deg);
+        box-shadow:3px 5px 0 rgba(58,36,18,.12);background-image:linear-gradient(transparent 44px,#dcbfae 44px,#dcbfae 46px,transparent 46px)}
+  .card .tape{position:absolute;top:-11px;left:50%;width:84px;height:22px;margin-left:-42px;background:var(--tape);transform:rotate(-3deg)}
+  .card p::before{content:none}
+  .card-title{font-family:"IM Fell English",Georgia,serif;color:var(--red);font-size:18px;margin:0 0 10px;line-height:1.1}
+  .answercard{margin:16px 0 22px;max-width:60ch}
+  .answercard.locked > p{display:none}
+  .answercard p{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brown);padding:12px 16px;margin:0}
+  .answercard p::before{content:none}
+  .answercard button{font:inherit;font-family:"IM Fell English",Georgia,serif;font-size:17px;padding:8px 14px;border-radius:4px;border:1px solid var(--brown);
+     background:var(--card);color:var(--brown);cursor:pointer;box-shadow:2px 3px 0 rgba(58,36,18,.15)}
+  .answercard button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+  .answercard .note{display:block;font-size:15px;color:var(--soft);margin:6px 0 0;font-style:italic}
+  .verdict{margin:26px 0 10px}
+  .stamp{display:inline-block;padding:9px 16px;border:3px double var(--stampink);color:var(--stampink);border-radius:4px;
+         font-family:"IM Fell English",Georgia,serif;font-size:19px;transform:rotate(-2.5deg);letter-spacing:.02em;opacity:.9}
+  .glossary{background:var(--card);border-left:6px solid var(--brown);padding:4px 18px 10px;margin:30px 0;box-shadow:3px 5px 0 rgba(58,36,18,.1)}
+  .glossary h2{margin-top:14px}
+  .glossary p::before{content:none}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0 8px}
+  .colophon{font-size:15px;color:var(--soft);font-style:italic}
+  .colophon::before{content:none !important}
+  @media (max-width:480px){ .page{padding:18px 14px 44px 50px} .page::before{left:36px} .page > p::before{left:-38px;width:30px} body{font-size:18px} }
+  @media (prefers-reduced-motion:reduce){ .sketch,.card,.stamp{transform:none} }
+</style>
+</head>
+<body>
+<main class="page">
+<p class="tag">Faraday's Basement Lab · Entry for the apprentice. Royal Institution, basement laboratory.</p>
+<h1>The Bookbinder's Ticket</h1>
+<p class="lede">Every great lab needs a good story about how somebody got in the door. Michael Faraday's is the best one, because he walked in holding a book he'd made himself.</p><figure class="sketch"><svg viewBox="0 0 260 200" aria-hidden="true">
+<path class="ink" d="M100 190 L160 190 L158 96 Q130 88 102 96 Z"/>
+<path class="ink thin" d="M110 110 q20 -8 40 0 M110 130 q20 6 40 0"/>
+<path class="ink thin" d="M130 96 V72"/>
+<path class="ink" d="M130 20 q-26 30 -12 50 q12 12 24 0 q14 -20 -12 -50 Z"/>
+<path class="pencil" d="M130 42 q-9 14 -4 24 q4 6 8 0 q5 -10 -4 -24 Z"/>
+<path class="pencil dash" d="M100 72 q30 -14 60 0"/>
+<text x="178" y="70" class="label">vapor?</text>
+<text x="178" y="100" class="label">cup</text>
+<path class="pencil thin" d="M175 96 L160 104"/>
+</svg><figcaption>a candle: the flame never touches the wax</figcaption></figure>
+<h2><span>A boy who read the books he glued</span></h2>
+<p>Faraday was born in 1791 in Newington Butts, a scruffy patch of south London, the son of a blacksmith who was too ill to work much. The family was poor enough that one loaf of bread sometimes had to last young Michael a week. School taught him to read, write and do sums, and not much more. He said later that he got "little more than the rudiments."</p>
+<p>At fourteen he was sent to work for a bookbinder named George Riebau. Apprentices usually just glued, stitched and swept. Faraday did something else: he read the books before he bound them. One was an encyclopedia with a long article on electricity. Another was a chemistry book called <em>Conversations on Chemistry</em>, written by Jane Marcet for girls who weren't allowed into the lecture halls. Faraday said later that it gave him his start in the subject, and he tried every experiment in it he could afford. He saved pennies, built a tiny battery out of coins and zinc, and did the experiments in the back room after hours.</p>
+<p>Riebau, to his everlasting credit, let him.</p>
+<h2><span>The ticket</span></h2>
+<p>In 1812 a customer gave the apprentice four tickets to lectures at the Royal Institution, London's grandest science house. The speaker was Sir Humphry Davy, the most famous chemist in England: a man who had discovered more new elements than anyone before him and had once knocked himself out sniffing laughing gas for science.</p>
+<p>Faraday went to all four lectures. He took notes on every word. Then he went home, rewrote the notes neatly, drew the apparatus, bound the whole thing into a thick book, and sent it to Davy with a letter asking for any kind of scientific work.</p>
+<p>Davy was impressed, and also said no. His advice was to attend to the bookbinding, and he offered Faraday some books to bind.</p>
+<aside class="card"><span class="tape"></span><p class="card-title">Weird but true</p><p>That same autumn Davy had blown himself up. An experiment with an unstable chemical exploded and hurt his eyes, and for a few days he needed someone to write for him, so he borrowed the bookbinder. Then, in early 1813, the Royal Institution's lab assistant was fired for getting into a fistfight, and Davy offered Faraday the job: 25 shillings a week, plus two rooms at the top of the building. He added a warning that science was a harsh mistress who paid badly. Faraday was 21. He never really left.</p></aside>
+<h2><span>The first lesson he ever gave was about a candle</span></h2>
+<p>Years later, when Faraday was the most famous scientist in Britain, he started a series of Christmas lectures for children at the Royal Institution. They have happened almost every year since. His favorite subject was the plainest object in the room: a candle. He said there was "no more open door" into science than a burning candle, and he meant it. If you could really explain a candle, you could explain most of chemistry.</p>
+<p>So here is the question he put to a room full of children in 1848. A candle is a stick of solid wax with a string through the middle. The flame sits an inch above the solid wax and never touches it. What, then, is burning?</p>
+<p>Think about it before you watch the experiment. Candle wax doesn't catch if you briefly hold a match to a cold candle's side. The string by itself would burn up in a second and go out. Something has to carry fuel up to the flame, and something has to change that fuel into a form that can catch fire.</p>
+<p class="verdict"><span class="stamp">Verdict: a question worth a whole evening.</span></p>
+<h2><span>What the diary is for</span></h2>
+<p>Faraday kept a lab diary for over forty years, and for the last thirty of them he numbered every paragraph. The count passed sixteen thousand. When an experiment worked he wrote a verdict beside it. His most famous one, after he made a wire spin around a magnet for the first time, was one sentence: "Very satisfactory, but make more sensible apparatus."</p>
+<p>That's the whole method in one line. Record what happened, judge it honestly, and go make the apparatus more sensible. You'll do the same here: a bet, an experiment, a report in your own words, and a verdict.</p>
+<section class="glossary"><h2><span>Words for your diary</span></h2><ul>
+<li><strong>Royal Institution:</strong> a science house in London founded in 1799, with a famous lecture theater and a basement lab. Faraday lived upstairs.</li>
+<li><strong>Apprentice:</strong> a young worker learning a trade on the job, usually for seven years.</li>
+<li><strong>Vapor:</strong> a gas made from something that is usually a liquid or a solid. Steam is water vapor.</li>
+</ul></section>
+<hr>
+<p class="colophon">Written for this course. No material was copied. Short quotations in quotation marks are Faraday's own words from the 1800s, now public domain. The paragraph numbers are the apprentice's; Mr. Faraday didn't start counting until 29 August 1831.</p>
+</main>
+<script>
+(function(){
+  var cards=document.querySelectorAll('.answercard.locked');
+  cards.forEach(function(c){
+    var b=document.createElement('button'); b.type='button'; b.textContent='Show the answer';
+    var n=document.createElement('span'); n.className='note'; n.textContent='Decide your answer first. Then look.';
+    b.addEventListener('click',function(){ c.classList.remove('locked'); b.remove(); n.remove(); c.querySelector('p').setAttribute('tabindex','-1'); c.querySelector('p').focus(); });
+    c.appendChild(b); c.appendChild(n);
+  });
+})();
+</script>
+</body>
+</html>
