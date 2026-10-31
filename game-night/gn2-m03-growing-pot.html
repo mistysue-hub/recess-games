@@ -119,7 +119,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>THE GROWING POT</h1>
-<p class="note">Two piles of coins. On your turn: <b>TAKE</b> the big pile (your partner gets the small one, game over) or <b>PASS</b> (both piles double and it's your partner's turn). 6 turns. You move first. If nobody takes by the end, you get the big pile.</p>
+<p class="note">Two piles of coins. On your turn: <b>TAKE</b> the big pile (your partner gets the small one, game over) or <b>PASS</b> (both piles double and it's your partner's turn). 6 turns. You move first. <b>Last-turn rule:</b> if nobody takes by turn 6, the piles double one last time and the game ends: you get the big pile (256) and your partner gets the small one (64). So at turn 6 your partner is choosing between taking 128 and passing to get 64.</p>
 <div class="bar"><div class="box">ROUND<b id="rn">1/3</b></div><div class="box">YOUR COINS<b id="yc">0</b></div></div>
 <div id="pick">
   <p class="rival" id="who"></p>
@@ -165,10 +165,12 @@ function partner(){var p=P[r];
   el("fb").textContent=p.n+" passes. Both piles double!";t++;
   if(t>6){done("end",6);return}
   busy=false;draw()}
+function reveal(){var p=P[r],bt=p.takeAt-1;return p.n.split(" ")[1]+" would have "+(p.takeAt===6?"waited until turn 6":"taken at turn "+p.takeAt)+". "+(p.takeAt===6?"Passing until turn 5":"Waiting until turn "+bt)+" was worth "+BEST[r]+"."}
 function done(who,turn){var b=4*Math.pow(2,turn-1),s=Math.pow(2,turn-1),you,them,txt;
   if(who==="you"){you=b;them=s;txt="You took at turn "+turn}else if(who==="partner"){you=s;them=b;txt=P[r].n.split(" ")[1]+" took at turn "+turn}else{you=4*Math.pow(2,6);them=Math.pow(2,6);txt="Nobody took"}
   total+=you;el("yc").textContent=total;log.push({n:P[r].n,txt:txt,you:you});
   el("headline").textContent=txt.toUpperCase()+"!";el("detail").innerHTML="You get <b>"+you+"</b> coins. "+P[r].n+" gets "+them+".";
+  if(who==="you"&&you<BEST[r])el("detail").innerHTML+="<br><span class=\"note\">"+reveal()+"</span>";
   el("next").textContent=r===2?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=3){finish();return}setup()}
 function finish(){show("round",false);var rank=total>=84?"MIND READER":(total>=40?"SMART TRUSTER":"PLAYING IT SAFE");

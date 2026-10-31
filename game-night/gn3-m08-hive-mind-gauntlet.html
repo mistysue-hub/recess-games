@@ -184,10 +184,10 @@ var R=[
   short:"4 tripled is 12. Half of 12 is 6.",
   why:"Your partner receives 4 × 3 = 12 and returns half: 6. You sent 4 and got 6 back, so trusting paid off."},
  {t:"ROUND 3: HAWK OR DOVE",taunt:"\"We fight. Always. Or do we?\"",
-  scene:"<div class=\"story\">Birds fight over food worth 10. A fight costs the loser 40 points of injuries. Hawks always fight; doves back down.</div>",
+  scene:"<div class=\"story\">Birds fight over food worth 10. A fight costs the loser 40 points of injuries, more than the food is worth. Hawks always fight; doves back down.</div>",
   q:"Where does the share of hawks settle?",ch:["10%","25%","50%","75%"],a:1,
-  short:"Food ÷ fight cost = 10 ÷ 40 = 1/4 = 25%.",
-  why:"The mix settles where hawks and doves score the same. With these numbers that's food divided by fight cost: 10 ÷ 40, or 25% hawks."},
+  short:"Food ÷ fight cost = 10 ÷ 40 = 1/4 = 25% (the rule works because a fight costs more than the food).",
+  why:"The mix settles where hawks and doves score the same. When a fight costs more than the food, that's food divided by fight cost: 10 ÷ 40, or 25% hawks. (If fighting were cheaper than the food, everyone would be a hawk.)"},
  {t:"ROUND 4: SIGNALS",taunt:"\"Anyone can SAY they're fast.\"",
   scene:"<div class=\"story\">You're picking a fast runner. Every runner says \"I'm fast!\"</div>",
   q:"Which is the most <b>believable</b> sign of a fast runner?",ch:["Saying \"I'm the fastest\"","Wearing fast-looking shoes","Finishing a brutal training camp that slow runners can't finish","Having a cool nickname"],a:2,
@@ -215,12 +215,14 @@ var R=[
   why:"Share every round for 15. Grab early and it grabs right back, so your score sinks. (Grabbing only in the very last round gets 17, because there's no round left for revenge.)"}
 ];
 var BEATS={ROCK:"PAPER",PAPER:"SCISSORS",SCISSORS:"ROCK"};
-var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1;
+var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1,queue,qi,hitSet,res,replayed,lastAns="";
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
 function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%";el("lives").textContent=lives}
-function start(){r=0;hp=8;lives=3;log=[];setHP();setup()}
+function note(s){log.push(s);res[parseInt(s.slice(1),10)-1]=s.split(":")[1]}
+function begin(){lives=3;log=[];qi=0;r=queue[0];setHP();setup()}
+function start(){attempt=1;hp=8;hitSet=[];res=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
 function setup(){
   var x=R[r];tries=0;locked=false;firstMiss=false;
   el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE HIVE MIND: "+x.taunt;el("rtitle").textContent=x.t;
@@ -230,23 +232,23 @@ function setup(){
   show("pick",true);show("final",false);
 }
 function showWhy(){el("whytxt").innerHTML=R[r].why;show("whytxt",true);show("whyb",false)}
-function loseLife(){lives--;setHP();if(lives<=0){setTimeout(hiveWins,900);return true}return false}
+function loseLife(){lives--;setHP();if(lives<=0){setTimeout(hiveWins,2600);return true}return false}
 function pick(i){
   if(locked)return;locked=true;var x=R[r];tries++;
   el("fb").innerHTML="The Hive Mind buzzes...";
   setTimeout(function(){
     if(i===x.a){
       el("c"+i).className="on";
-      if(tries===1){hp--;setHP();log.push("R"+(r+1)+":hit");el("fb").innerHTML="<b>HIT!</b> The Hive Mind loses 1 HP. "+x.short;}
-      else{log.push("R"+(r+1)+":fixed on try 2");el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
+      if(tries===1){hp--;hitSet[r]=true;setHP();note("R"+(r+1)+":hit");el("fb").innerHTML="<b>HIT!</b> The Hive Mind loses 1 HP. "+x.short;}
+      else{note("R"+(r+1)+":fixed on try 2");el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
       endRound();
     } else if(tries>=2){
-      log.push("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
+      note("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
       el("fb").innerHTML="<b>The Hive Mind blocks it.</b> The answer: "+x.ch[x.a]+". "+x.short;endRound();
     } else {
       el("c"+i).disabled=true;
-      var out=loseLife();if(out)log.push("R"+(r+1)+":miss (last life)");
-      el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
+      var out=loseLife();if(out){note("R"+(r+1)+":miss (last life)");lastAns=x.ch[x.a];el("c"+x.a).className="on";for(var q=0;q<x.ch.length;q++)el("c"+q).disabled=true}
+      el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life. The answer was <b>"+x.ch[x.a]+"</b>. "+x.short:"One more try, but it won't do damage now. Look at the numbers again.");
       if(!out)locked=false;
     }
   },650);
@@ -261,31 +263,35 @@ function throwIt(i){
     el("fb").innerHTML="Round "+rps.n+": You <b>"+me+"</b> &nbsp; Hive Mind <b>"+hive+"</b> &nbsp; +"+p+" (total "+rps.wins+")";
     if(rps.n<5){locked=false;return}
     var hit=rps.wins>=15;
-    if(hit){hp--;setHP();log.push("R8:hit ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>HIT!</b> You played the long game. "+R[r].short;endRound();}
-    else{log.push("R8:miss ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>The Hive Mind holds.</b> No hit. "+R[r].short;endRound();}
+    if(hit){hp--;hitSet[r]=true;setHP();note("R8:hit ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>HIT!</b> You played the long game. "+R[r].short;endRound();}
+    else{note("R8:miss ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>The Hive Mind holds.</b> No hit. "+R[r].short;endRound();}
   },650);
 }
 function endRound(){
   for(var k=0;k<R[r].ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
   show("whyb",true);
-  el("next").textContent=(r===7)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
+  el("next").textContent=(qi===queue.length-1)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
 }
-function nextRound(){r++;if(r>=8){finish(false);return}setup()}
+function nextRound(){qi++;if(qi>=queue.length){finish(false);return}r=queue[qi];setup()}
 function hiveWins(){finish(true)}
 function rankOf(h){return h===8?"GRANDMASTER":(h>=6?"MASTERMIND":(h>=4?"STRATEGIST":"ROOKIE"))}
 function finish(lost){
   show("pick",false);var hits=8-hp,rank=rankOf(hits);
   el("endt").textContent=lost?"THE HIVE MIND WINS":(hp===0?"HIVE MIND DEFEATED!":"GAUNTLET OVER");
-  var rows="";log.forEach(function(s){var n=parseInt(s.slice(1),10);rows+="<tr><td>"+R[n-1].t.replace(/^ROUND \d+: /,"")+"</td><td>"+s.split(":")[1]+"</td></tr>"});
-  var foil=(!lost&&hits===8)?"&foil=1":"";
-  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Hive Mind still had "+hp+" HP. Hit REMATCH to try again with 3 fresh lives.</p>":"")+
+  var rows="";for(var n=0;n<8;n++)rows+="<tr><td>"+R[n].t.replace(/^ROUND \d+: /,"")+"</td><td>"+res[n]+"</td></tr>";
+  var foil=(!lost&&hits===8&&attempt===1)?"&foil=1":"";
+  var won=(!lost&&hp===0),close=(!lost&&hp>0);
+  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Hive Mind has "+hp+" HP left. The answer to your last puzzle was <b>"+lastAns+"</b>. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you haven't hit (missed or not reached), with 3 fresh lives.</p>":"")+
+   (close?"<p><b>So close!</b> The Hive Mind has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you missed, with 3 fresh lives. Beat it to unlock your last Strategy Card.</p>":"")+
    "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
-   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>LONG GAMER</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn3-deck.html?card=8"+foil+"\">See your deck</a></div>")+(lost?"<div class=\"tape\">Hit <b>REMATCH</b> to take on the Hive Mind again with 3 fresh lives. Beat it to unlock your last Strategy Card.</div>":"<div class=\"tape\"><b>YOU FINISHED GAME NIGHT!</b> See the real college course this whole series was built from, plus games and books to go deeper. <a href=\"gn3-read.html?m=9\">Go deeper</a></div>");
-  show("rematch",lost);
-  el("out").value="GN3-M08 | attempt "+attempt+" | "+(lost?"HIVE MIND WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Hive Mind HP left "+hp+" | rank "+rank;
+   (won?"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>LONG GAMER</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn3-deck.html?card=8"+foil+"\">See your deck</a></div>":"")+
+   "<div class=\"tape\"><b>"+(won?"YOU FINISHED GAME NIGHT!":"WANT MORE?")+"</b> See the real college course this whole series was built from, plus games and books to go deeper. <a href=\"gn3-read.html?m=9\">Go deeper</a></div>";
+  show("rematch",!won);
+  el("out").value="GN3-M08 | attempt "+attempt+" | "+(lost?"HIVE MIND WINS":(won?"BEAT THE GAUNTLET":"GAUNTLET OVER, Hive Mind survived"))+" | round results: "+log.join(", ")+" | lives left "+lives+" | Hive Mind HP left "+hp+" | rank "+rank+(attempt>1?" | replayed puzzles: "+replayed.map(function(i){return "R"+(i+1)}).join(", "):"");
   show("final",true);
 }
-function rematch(){attempt++;start()}
+function rematch(){attempt++;queue=[];for(var i=0;i<8;i++){if(!hitSet[i])queue.push(i);res[i]=hitSet[i]?"hit (earlier)":"not reached"}
+  replayed=queue.slice();begin()}
 function copyIt(){
   var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
   function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}

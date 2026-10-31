@@ -164,16 +164,17 @@ function rival(){var x=RV[r],nb=high()+10;
   if(nb<=x.cap){rv=nb;trail.push(x.n.split(" ")[1]+" "+rv);busy=false;el("fb").textContent=x.n+" raises to "+rv+".";draw()}
   else{el("fb").textContent=x.n+" quits!";finishRound(true)}}
 function quitIt(){if(busy)return;finishRound(false)}
+function winCost(cap){var y=10;while(y+10<=cap)y+=20;return y}
 function finishRound(won){busy=true;var x=RV[r],g,txt;
   if(won){g=100-my;txt="You win the prize (100) and pay your bid of "+my+": <b>"+(g>0?"+":"")+g+"</b>. "+x.n+" pays "+rv+" for nothing."}
-  else if(my===0){g=0;txt="You sat out: <b>0</b>. "+(rv>0?"":"Nothing lost.")}
+  else if(my===0){g=0;var wc=winCost(x.cap),wg=100-wc;txt="You sat out: <b>0</b>. Nothing lost.<br><span class=\"note\">"+(wg>0?x.n.split(" ")[1]+" would have quit at "+x.cap+". You'd have won +"+wg+".":x.n.split(" ")[1]+" would have kept going to "+x.cap+". Beating him would have cost "+wc+" for a 100-point prize: "+wg+". Sitting out was the smart move.")+"</span>"}
   else{g=-my;txt="You quit. "+x.n+" wins the prize. You still pay your bid: <b>"+g+"</b>."}
   pts+=g;el("yp").textContent=pts;log.push({n:x.n,won:won,my:my,g:g,sat:(!won&&my===0)});
   el("headline").textContent=(g>0?"+":"")+g+" POINTS";el("detail").innerHTML=txt;el("next").textContent=r===2?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=3){finish();return}setup()}
-function finish(){show("round",false);var rank=pts>=70?"COOL HEAD":(pts>=40?"CAREFUL BIDDER":"CAUGHT IN THE TRAP");
+function finish(){show("round",false);var bystander=log.every(function(l){return l.sat});var rank=bystander?"BYSTANDER":(pts>=70?"COOL HEAD":(pts>=40?"CAREFUL BIDDER":"CAUGHT IN THE TRAP"));
   var rows="<tr><th>Rival</th><th>What happened</th><th>Points</th></tr>";log.forEach(function(l){rows+="<tr><td>"+l.n+"</td><td>"+(l.won?"won, paid "+l.my:(l.sat?"sat out":"quit after bidding "+l.my))+"</td><td>"+l.g+"</td></tr>"});
-  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 70.</p><table>"+rows+"</table>"+
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 70."+(bystander?" You never bid, so you dodged every trap, but you also skipped the one cheap win: Quinn.":"")+"</p><table>"+rows+"</table>"+
    "<h2>THE TRAP</h2><div class=\"tape\">Once you've bid, quitting means losing what you paid, so raising always looks better than quitting. That's how bids climb past the prize. Best plays: win cheaply against Quinn (+70), and <b>never start</b> against Stan or Sam (0).</div>"+
    "<div class=\"tape\">Points you've already bid are gone either way. They're a <b>sunk cost</b>. Decide based on what happens next.</div>"+
    "<div class=\"fact\">The economist Martin Shubik described this 'dollar auction' in 1971. When it's played with a real dollar bill and the both-pay rule, the bidding often goes above a dollar.</div>";

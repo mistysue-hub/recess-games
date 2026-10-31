@@ -153,6 +153,24 @@ function show(id,on){el(id).style.display=on?"block":"none"}
 function rint(n){try{var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}}
 
 var R={A:["ZOO","MUSEUM","WATER PARK"],B:["MUSEUM","WATER PARK","ZOO"],C:["WATER PARK","ZOO","MUSEUM"]};
+var CLASS2=[{n:9,r:["ZOO","WATER PARK","MUSEUM"]},{n:7,r:["MUSEUM","WATER PARK","ZOO"]},{n:5,r:["WATER PARK","MUSEUM","ZOO"]}],TRIPS=["ZOO","MUSEUM","WATER PARK"],revealDone=false,sys4=null;
+function plur(){var t={};TRIPS.forEach(function(x){t[x]=0});CLASS2.forEach(function(g){t[g.r[0]]+=g.n});return t}
+function pairVotes(x,y){var vx=0,vy=0;CLASS2.forEach(function(g){if(g.r.indexOf(x)<g.r.indexOf(y))vx+=g.n;else vy+=g.n});return [vx,vy]}
+function topOf(t){return TRIPS.slice().sort(function(a,b){return t[b]-t[a]})[0]}
+function compute4(){var p=plur(),order=TRIPS.slice().sort(function(a,b){return p[b]-p[a]}),a=order[0],b=order[1],pv=pairVotes(a,b),ro=pv[0]>pv[1]?a:b;
+ var bo={};TRIPS.forEach(function(x){bo[x]=0});CLASS2.forEach(function(g){g.r.forEach(function(x,i){bo[x]+=g.n*(2-i)})});
+ var con=null;TRIPS.forEach(function(x){var all=true;TRIPS.forEach(function(y){if(y!==x){var v=pairVotes(x,y);if(!(v[0]>v[1]))all=false}});if(all)con=x});
+ return {plur:p,pw:topOf(p),a:a,b:b,pv:pv,ro:ro,bo:bo,bw:topOf(bo),con:con}}
+function revealHTML(){var r=compute4(),ws=[r.pw,r.ro,r.bw,r.con||"none"],uniq=ws.filter(function(x,i){return ws.indexOf(x)===i&&x!=="none"}).length;
+ var w=function(x){return "<b>"+x+"</b>"};
+ var h="<table class=\"standings\"><tr><th>System</th><th>Winner</th><th>How</th></tr>"+
+ "<tr><td>Plurality</td><td>"+w(r.pw)+"</td><td>ZOO "+r.plur.ZOO+", MUSEUM "+r.plur.MUSEUM+", WATER PARK "+r.plur["WATER PARK"]+" first-place votes</td></tr>"+
+ "<tr><td>Top-two runoff</td><td>"+w(r.ro)+"</td><td>"+r.a+" vs "+r.b+": "+r.pv[0]+" to "+r.pv[1]+"</td></tr>"+
+ "<tr><td>Borda count (2-1-0 points)</td><td>"+w(r.bw)+"</td><td>ZOO "+r.bo.ZOO+", MUSEUM "+r.bo.MUSEUM+", WATER PARK "+r.bo["WATER PARK"]+"</td></tr>"+
+ "<tr><td>Condorcet winner</td><td>"+w(r.con||"none")+"</td><td>"+(r.con?"beats each other trip head to head":"no trip beats all the others")+"</td></tr></table>";
+ h+="<p>Same ballots (everyone voting honestly), <b>"+uniq+" different winner"+(uniq===1?"":"s")+"</b>.</p>";
+ if(r.con&&r.con!==r.pw)h+="<p class=\"note\"><i>Your vote-splitting can sink the one trip that beats everything head to head.</i> Here "+r.con+" beats every other trip one on one, yet plurality picks "+r.pw+".</p>";
+ sys4=r;return h}
 var stage=0,tries=0,solvedOn=0,score=0,log=[],sincere=null,done=false;
 function h2h(x,y){var vx=0,vy=0;["A","B","C"].forEach(function(g){if(R[g].indexOf(x)<R[g].indexOf(y))vx+=7;else vy+=7});return [vx,vy]}
 var PAIRS=[["ZOO","MUSEUM","WATER PARK"],["MUSEUM","WATER PARK","ZOO"],["ZOO","WATER PARK","MUSEUM"]];
@@ -174,14 +192,16 @@ function cast(v){var t={"ZOO":9,"MUSEUM":7,"WATER PARK":0};t[v]+=5;var w=Object.
  var ok=v==="MUSEUM";if(ok){score+=2;el("sc").textContent=score}
  el("headline").textContent=w+" WINS";
  el("detail").innerHTML="ZOO "+t["ZOO"]+" · MUSEUM "+t["MUSEUM"]+" · WATER PARK "+t["WATER PARK"]+"<br>"+(ok?"Your group couldn't win, so you helped your <b>2nd</b> choice beat your <b>last</b> choice. That's <b>strategic voting</b>.":(v==="WATER PARK"?"You voted for your favorite, and your <b>least</b> favorite (the zoo) won. Voting for the museum would have stopped it.":"You helped your least favorite win!"));
- done=true;el("next").textContent="SEE RESULTS";show("pick",false);show("round",true)}
-function nextStep(){if(stage===0&&!solvedOn&&tries<3){setup();return}if(stage===0){stage=1;setup();return}finish()}
+ done=true;el("next").textContent="FOUR WAYS TO COUNT";show("pick",false);show("round",true)}
+function nextStep(){if(stage===0&&!solvedOn&&tries<3){setup();return}if(stage===0){stage=1;setup();return}
+ if(!revealDone){revealDone=true;el("headline").textContent="FOUR SYSTEMS, FOUR WINNERS?";el("detail").innerHTML=revealHTML();el("next").textContent="SEE RESULTS";return}
+ finish()}
 function finish(){show("round",false);show("pick",false);
  var rank=score===4?"AGENDA ACE":(score>=2?"SMART VOTER":"FIRST-TIME VOTER");
  el("verdict").innerHTML="<p>Agenda tries: "+log.join(" · ")+".</p><p>Your group's vote in stage 2: <b>"+sincere+"</b>. Score: <b>"+score+"</b> of 4.</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Head to head: Zoo beats Museum, Museum beats Water Park, Water Park beats Zoo. It's a circle, so whoever goes <b>last</b> wins. Museum wins if Zoo and Water Park vote first.</div>"+
  "<div class=\"fact\">In 1785 the French thinker Marquis de Condorcet noticed that groups can prefer A to B, B to C, and C to A. Today that's called the Condorcet paradox.</div>";
- el("out").value="GN3-M07 | agenda tries: "+log.join("; ")+" | museum won on try: "+(solvedOn||"never")+" | stage 2 group vote: "+sincere+" | score "+score+"/4 | rank "+rank;
+ el("out").value="GN3-M07 | agenda tries: "+log.join("; ")+" | museum won on try: "+(solvedOn||"never")+" | stage 2 group vote: "+sincere+" | honest ballots: plurality "+sys4.pw+", runoff "+sys4.ro+", Borda "+sys4.bw+", Condorcet "+(sys4.con||"none")+" | score "+score+"/4 | rank "+rank;
  if(rank==="AGENDA ACE"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}
  show("final",true)}
 setup();

@@ -114,13 +114,14 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>BLUFF</h1>
-<p class="note">Each hand, you and your rival each put 1 point on the prize pile. You get a card: <b>HIGH</b> or <b>LOW</b> (about half of each). Your rival can't see it. 18 hands, 2 rivals.</p>
+<p class="note">Each hand, you and your rival each put 1 point on the prize pile. You get a card: <b>HIGH</b> or <b>LOW</b> (about half of each). Your rival can't see it. 14 hands, 2 rivals.</p>
 <div class="fact" style="text-align:left">
+Your rival holds a hidden <b>middle</b> card: your <b>HIGH beats your rival's card</b>, and your <b>LOW loses to it</b>. So when cards are shown, your own card decides who wins.<br>
 <b>STAY:</b> cards are shown. HIGH wins the pile (+1), LOW loses (-1).<br>
 <b>PUSH:</b> you add 1 more point. Your rival can <b>BACK DOWN</b> (you win +1, no matter your card) or <b>CHALLENGE</b> (they add 1 too, cards are shown: HIGH +2, LOW -2).
 </div>
 <div class="bar">
-  <div class="box">HAND<b id="rn">1/18</b></div>
+  <div class="box">HAND<b id="rn">1/14</b></div>
   <div class="box">POINTS<b id="pts">0</b></div>
 </div>
 <div id="pick">
@@ -151,18 +152,23 @@ try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.w
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 
-var TESS=6,TOTAL=18,h=0,pts=0,log=[],ptsA=0,ptsB=0,lowsB=0,bluffsB=0,pushB=0,pushHighB=0;
-/* Fixed, pre-shuffled deck: 6 hands vs Tess (3 HIGH, 3 LOW), 12 vs Wes (6 HIGH, 6 LOW). Same cards every time. */
-var deck="HLLHLH".split("").concat("LHLHLLHHHLLH".split(""));
+var TESS=2,TOTAL=14,h=0,pts=0,log=[],ptsA=0,ptsB=0,lowsB=0,bluffsB=0,pushB=0,pushHighB=0,hist=[],lastGuess=null;
+/* Fixed, pre-shuffled deck: 2 hands vs Tess (1 HIGH, 1 LOW), 12 vs Wes (6 HIGH, 6 LOW). Same cards every time. */
+var deck="HL".split("").concat("LHHHHLLHLLHL".split(""));
 /* Wes's "dice": fixed too (hand number picks the die), so every run is reproducible. */
-var dice=[15,17,13,9,5,19,21,1,23,3,11,7];
-/* Wes only knows how OFTEN you push. He never sees your card when he backs down.
-   Pushing on HIGH only = about 1 push in 2. Mixing in a bluff on 1 LOW in 3 = about 2 pushes in 3. Pushing always = 1 in 1.
-   Estimated push rate r (starts as a guess of 1/2, counting only hands with Wes) sets his chance of challenging. */
-function wesChance(r){return r<=0.5?0:(r<=2/3?(r-0.5)*4:2/3+(r-2/3))}
-function wesChallenges(){var n=h-TESS,r=(pushB+1)/(n+2);return dice[n]<wesChance(r)*24}
+var dice=[13,23,18,19,13,22,13,23,6,20,1,1];
+/* Wes learns from every card he SEES: cards shown when you STAY and cards shown when he CHALLENGES.
+   He only misses your card when he backs down. He knows about half the cards are LOW, so any LOW cards he
+   has not seen must be hiding inside the pushes he backed down from. From that he guesses how likely a push is HIGH.
+   If that guess falls below about 3 in 4, challenging pays more for him than backing down, so he challenges more. */
+function wesGuess(){var n=hist.length,pushes=0,cH=0,cL=0,sL=0;
+ hist.forEach(function(x){if(x.m==="PUSH"){pushes++;if(x.ch){if(x.c==="H")cH++;else cL++}}else if(x.c==="L")sL++});
+ var u=pushes-cH-cL,hidden=Math.max(0,Math.min(u,n/2-sL-cL));
+ return (cH+(u-hidden)+1.5)/(pushes+2)}
+function wesChance(P){return Math.max(0,Math.min(1,(0.8-P)/0.15))}
+function wesChallenges(){var n=h-TESS;return dice[n]<wesChance(wesGuess())*24}
 function setup(){el("rn").textContent=(h+1)+"/"+TOTAL;var c=deck[h];
- el("who").innerHTML=h<TESS?"Rival: <b>Trusting Tess</b>"+(h===0?"<br><span class=\"note\">Tess thinks people only push with HIGH cards.</span>":""):"Rival: <b>Watchful Wes</b>"+(h===TESS?"<br><span class=\"note\">Wes can't see your card when he backs down. He just counts how often you push. Now the mix matters: 12 hands.</span>":"");
+ el("who").innerHTML=h<TESS?"Rival: <b>Trusting Tess</b>"+(h===0?"<br><span class=\"note\">Tess thinks people only push with HIGH cards. She never challenges.</span>":""):"Rival: <b>Watchful Wes</b>"+(h===TESS?"<br><span class=\"note\">Wes learns from every card he sees: cards shown when you STAY, and cards shown when he challenges. He only misses your card when he backs down. Now the mix matters: 12 hands.</span>":"");
  el("mycard").innerHTML="<div class=\"cardbig"+(c==="L"?" low":"")+"\">"+(c==="H"?"HIGH":"LOW")+"</div>";
  show("pick",true);show("round",false)}
 function play(m){var c=deck[h],res,txt,opp="",w=h>=TESS;
@@ -170,11 +176,11 @@ function play(m){var c=deck[h],res,txt,opp="",w=h>=TESS;
  else{var ch=w?wesChallenges():false;opp=ch?"CHALLENGE":"BACK DOWN";
   if(!ch){res=1;txt=(w?"Wes":"Tess")+" backs down. You win the pile"+(c==="L"?" with a LOW card. Bluff worked!":".")}
   else{res=c==="H"?2:-2;txt="Wes challenges! Your "+(c==="H"?"HIGH wins +2.":"LOW loses -2. Caught bluffing!")}}
- if(w){if(c==="L"){lowsB++;if(m==="PUSH")bluffsB++}if(m==="PUSH"){pushB++;if(c==="H")pushHighB++}}
+ if(w){hist.push({m:m,c:c,ch:m==="PUSH"&&opp==="CHALLENGE"});lastGuess=wesGuess();if(c==="L"){lowsB++;if(m==="PUSH")bluffsB++}if(m==="PUSH"){pushB++;if(c==="H")pushHighB++}}
  pts+=res;if(w)ptsB+=res;else ptsA+=res;el("pts").textContent=pts;
  log.push({c:c,m:m,o:opp,r:res});
  el("headline").textContent="Your card: "+(c==="H"?"HIGH":"LOW")+"   You: "+m;
- el("detail").innerHTML=txt+" <b>"+(res>0?"+":"")+res+"</b>"+(w?"<br><span class=\"note\">Wes's count: you have pushed "+pushB+" of "+(h-TESS+1)+" hands with him.</span>":"");
+ el("detail").innerHTML=txt+" <b>"+(res>0?"+":"")+res+"</b>"+(w?"<br><span class=\"note\">Wes now guesses about <b>"+Math.round(100*lastGuess)+"%</b> of your pushes are HIGH. He starts challenging when that drops below about 3 in 4.</span>":"");
  el("next").textContent=h===TOTAL-1?"SEE FINAL SCORE":(h===TESS-1?"MEET WATCHFUL WES":"NEXT HAND");
  show("pick",false);show("round",true)}
 function nextHand(){h++;if(h>=TOTAL){finish();return}setup()}
@@ -187,8 +193,9 @@ function finish(){show("round",false);show("pick",false);var NW=TOTAL-TESS;
  el("verdict").innerHTML="<p>Vs Tess: <b>"+ptsA+"</b>. Vs Wes: <b>"+ptsB+"</b>. Total: <b>"+pts+"</b>.</p>"+
  "<p>With Wes you pushed on <b>"+pushB+" of "+NW+"</b> hands: "+pushHighB+" with HIGH, and <b>"+bluffsB+" bluffs</b> on "+lowsB+" LOW cards ("+rateB+"%).</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Tess never challenged, so pushing <b>every</b> hand won +1 every time.</div>"+
- "<div class=\"tape\">Wes counts how often you push. If you push much more often than your HIGH cards allow (about 1 hand in 2), he guesses you are bluffing and challenges more. If you rarely push on LOW, he backs down. Bluffing on <b>about 1 LOW card in 3</b> keeps him guessing.</div>"+
- "<div class=\"tape\">Against a smart rival, mixing earns about <b>+1/3 per hand</b>; never bluffing earns <b>0</b>.</div>"+
+ "<div class=\"tape\">Wes learns from every card he sees (when you STAY, and when he challenges) and works out how often a push is HIGH. If your pushes are HIGH less than about 3 times in 4, he challenges. If you never bluff, your push always means HIGH and he backs down. Pushing only on LOW cards is the worst: your stays show HIGH, so he catches the pattern fast.</div>"+
+ "<div class=\"tape\"><b>Why 3 in 4?</b> Out of 12 hands: 6 HIGH (always push) + 2 bluffs on the 6 LOW = 8 pushes, and 6 of 8 = 3 in 4 are HIGH. That is the sweet spot: Wes can't gain by challenging or by backing down.</div>"+
+ "<div class=\"tape\">Against a smart rival, mixing earns about <b>+1/3 per hand</b> (about +4 over 12 hands); never bluffing earns <b>0</b>.</div>"+
  "<p class=\"note\">Bluffing isn't lying for fun. It's a mixed strategy: if you only push with HIGH cards, your push gives your card away.</p>";
  el("out").value="GN3-M05 | vs Tess: "+log.slice(0,TESS).map(function(x){return x.c+" "+x.m}).join(", ")+" ("+ptsA+") | vs Wes: "+log.slice(TESS).map(function(x){return x.c+" "+x.m+(x.o?" "+x.o:"")}).join(", ")+" ("+ptsB+") | pushes vs Wes: "+pushB+" of "+NW+" | bluffs vs Wes: "+bluffsB+" of "+lowsB+" low cards | total "+pts+" | rank "+rank;
  if(rank==="BLUFF MASTER"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}

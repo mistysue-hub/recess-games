@@ -155,17 +155,31 @@ function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRan
 function word(s){return s==="L"?"LEFT":"RIGHT"}
 function goalieDive(){
   if(r<half){return rnd(100)<80?"L":"R"}
-  var l=0,i;
-  for(i=0;i<r;i++){if(mine[i]==="L")l++}
-  var pct=l*100/r;
-  if(pct>=40&&pct<=60)return rnd(2)?"L":"R";
-  return pct>60?"L":"R";
+  return scoutDive();
+}
+/* Scout reads your recent pattern. Three readers try to predict each kick from the ones before it:
+   LEAN (majority of the last 3), REPEAT (same as last kick), FLIP (opposite of last kick).
+   Scout trusts whichever reader guessed best over your last 4 kicks and dives to its prediction.
+   If the best readers disagree, Scout flips a coin. A 53% random mix can't be read: every dive gives about 69%. */
+function pLean(h){var w=h.slice(-3),l=0,i;for(i=0;i<w.length;i++)if(w[i]==="L")l++;return l*2>w.length?"L":"R"}
+function pRepeat(h){return h[h.length-1]}
+function pFlip(h){return h[h.length-1]==="L"?"R":"L"}
+function scoutDive(){
+  var readers=[pLean,pRepeat,pFlip],sc=[],best=-1,i,k,s;
+  for(i=0;i<readers.length;i++){
+    s=0;
+    for(k=Math.max(3,mine.length-4);k<mine.length;k++){if(readers[i](mine.slice(0,k))===mine[k])s++}
+    sc.push(s);if(s>best)best=s;
+  }
+  var picks=[];
+  for(i=0;i<readers.length;i++){if(sc[i]===best){var g=readers[i](mine);if(picks.indexOf(g)<0)picks.push(g)}}
+  return picks.length===1?picks[0]:(rnd(2)?"L":"R");
 }
 function setup(){
   el("rn").textContent=(r+1)+"/"+total;
   el("who").textContent=(r<half)
     ?"Goalie: Lefty. Scouting report: dives LEFT most of the time."
-    :"Goalie: Scout. Studies every kick you have taken. If you lean to one side, Scout dives there.";
+    :"Goalie: Scout. Studies your recent kicks for a pattern (a lean, a repeat or a flip-flop) and dives where the pattern says you will go next.";
   show("pick",true);show("round",false);
 }
 var busy=false;
@@ -199,10 +213,7 @@ function finish(){
   var g1=sum(goals,0,half),g2=sum(goals,half,total);
   var l1=count(mine,0,half,"L"),l2=count(mine,half,total,"L");
   var scouted=0;
-  for(var i=half;i<total;i++){
-    var pct=count(mine,0,i,"L")*100/i;
-    if((pct>60&&mine[i]==="L")||(pct<40&&mine[i]==="R"))scouted++;
-  }
+  for(var i=half;i<total;i++){if(dives[i]===mine[i])scouted++}
   var rank=(l2>=2&&l2<=3&&scouted<=3)?"UNREADABLE":(scouted>=4?"OPEN BOOK":"HARD TO PIN DOWN");
   var rows="<tr><th>Kick</th><th>You</th><th>Goalie</th><th>Result</th></tr>";
   for(var j=0;j<total;j++){
@@ -212,12 +223,12 @@ function finish(){
     "<table>"+rows+"</table>"+
     "<p>Goals: <b>"+gs+"</b> out of 10. Kicks 1-5 (Lefty): <b>"+g1+"</b>. Kicks 6-10 (Scout): <b>"+g2+"</b>.</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
-    "<p class=\"note\">Against Scout you kicked LEFT "+l2+" of 5 times. You kicked the side Scout was expecting (when you had been leaning one way) on "+scouted+" of 5 kicks.</p>"+
+    "<p class=\"note\">Against Scout you kicked LEFT "+l2+" of 5 times. Scout dove to the side you kicked on "+scouted+" of 5 kicks (a coin flip would average 2.5).</p>"+
     "<h2>REPLAY THE TAPE</h2>"+"<div class=\"tape\">Against Lefty (dives LEFT 80% of the time), kicking RIGHT scores about <b>77%</b> and LEFT only <b>62%</b>. You kicked RIGHT "+(5-l1)+" of 5 times. Kicking RIGHT is the best response to a known habit.</div>"+
-    "<div class=\"tape\">If you always kicked LEFT, Scout would soon always dive LEFT: only <b>55%</b> go in.</div>"+
-    "<div class=\"tape\">If you always kicked RIGHT, Scout would soon always dive RIGHT: only <b>45%</b> go in.</div>"+
+    "<div class=\"tape\">If you kept kicking LEFT, Scout would soon always dive LEFT: only <b>55%</b> go in.</div>"+
+    "<div class=\"tape\">If you kept kicking RIGHT, Scout would soon always dive RIGHT: only <b>45%</b> go in.</div>"+
     "<div class=\"tape\">The best plan is to mix: kick LEFT about <b>53%</b> of the time. Then every dive gives about <b>69%</b>.</div>"+
-    "<div class=\"tape\">Scout's secret: if <b>40% to 60%</b> of your kicks so far went LEFT, Scout can't read you and dives at random. Lean further one way and Scout dives that way.</div>"+
+    "<div class=\"tape\">Scout's secret: Scout watches your last few kicks for a lean, a repeat or a flip-flop. Streaks and neat patterns get read within a kick or two. A random mix gives Scout nothing to read, so every dive still gives you about <b>69%</b>.</div>"+
     "<p class=\"note\">Notice what happened to your choices once Scout started reading you.</p>"+
     "<div class=\"fact\">Studies of real penalty kicks in pro soccer leagues in France and Italy found that kickers and goalies mix their sides in roughly this way. Why is a mixed plan the only plan that can't be exploited?</div>";
   el("out").value="GN1-M06 | kicks: "+mine.join("")+" | goalie dives: "+dives.join("")+" | goals: "+goals.join("")+

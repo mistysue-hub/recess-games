@@ -155,28 +155,30 @@ var M=[{n:"Random Rook",first:"you",bot:"random",intro:"Random Rook picks at ran
  {n:"Bishop Bea",first:"you",bot:"perfect",intro:"Bishop Bea knows the secret. Slip once and she pounces."},
  {n:"Knight Nico",first:"bot",bot:"perfect",open:2,intro:"Knight Nico goes first this time, and opens with a shaky move."}];
 var KEY=[1,5,9,13,17,21];
-var m=0,c=0,wins=0,busy=false,said=[],trail=[],res=[];
+var m=0,c=0,wins=0,busy=false,said=[],trail=[],res=[],mv=[];
 function botMove(){var x=M[m];
   if(x.open&&c===0)return x.open;
   if(21-c<=3)return 21-c;
   if(x.bot==="perfect"){for(var k=1;k<=3;k++){if(KEY.indexOf(c+k)>=0)return k}}
   return 1+rnd(3);}
-function setup(){var x=M[m];c=0;said=[];trail=[];busy=false;
+function setup(){var x=M[m];c=0;said=[];trail=[];mv=[];busy=false;
   el("mn").textContent=(m+1)+"/3";el("who").innerHTML="Match "+(m+1)+" vs <b>"+x.n+"</b><br><span class=\"note\">"+x.intro+"</span>";
   el("fb").textContent="";draw();show("pick",true);show("round",false);
   if(x.first==="bot"){busy=true;el("prompt").textContent=x.n+" is thinking...";setTimeout(bot,700)}else el("prompt").textContent="Your move. Add 1, 2 or 3.";}
 function draw(){el("cnt").textContent=c;el("trail").innerHTML=trail.join(" &rarr; ");
   for(var k=1;k<=3;k++)el("b"+k).disabled=busy||c+k>21;}
-function add(k){if(busy||c+k>21)return;c+=k;said.push(c);trail.push("<b>You "+c+"</b>");
+function add(k){if(busy||c+k>21)return;mv.push({f:c,t:c+k});c+=k;said.push(c);trail.push("<b>You "+c+"</b>");
   if(c===21){draw();end(true);return}
   busy=true;el("prompt").textContent=M[m].n+" is thinking...";draw();setTimeout(bot,700);}
 function bot(){var k=botMove();c+=k;trail.push(M[m].n.split(" ")[1]+" "+c);
   if(c===21){busy=true;draw();end(false);return}
   busy=false;el("prompt").textContent=M[m].n+" added "+k+". Your move.";draw();}
+function missed(){for(var i=0;i<mv.length;i++){var f=mv[i].f,t=mv[i].t;if(KEY.indexOf(f)>=0)continue;for(var k=1;k<=3;k++){if(KEY.indexOf(f+k)>=0&&f+k!==t)return {f:f,to:f+k}}}return null}
 function end(won){if(won)wins++;el("wn").textContent=wins;var keys=said.filter(function(v){return KEY.indexOf(v)>=0}).length;
   res.push({n:M[m].n,won:won,said:said.slice(),keys:keys});
   el("headline").textContent=won?"YOU SAID 21. YOU WIN!":M[m].n.toUpperCase()+" SAID 21.";
-  el("detail").innerHTML="You said: "+said.join(", ")+".<br><span class=\"note\">Key numbers you landed on: "+keys+".</span>";
+  el("detail").innerHTML="You said: "+said.join(", ")+".<br><span class=\"note\">Key numbers you landed on: "+keys+". (Key numbers are the safe spots, 1, 5, 9, 13, 17 and 21: hit one, keep hitting them, and 21 is yours.)</span>";
+  var ms=won?null:missed();if(ms)el("detail").innerHTML+="<br><span class=\"note\">Hint: at "+ms.f+", saying "+ms.to+" would have "+(ms.to===21?"won it":"locked it")+".</span>";
   el("next").textContent=m===2?"SEE FINAL SCORE":"NEXT MATCH";show("pick",false);show("round",true);}
 function nextMatch(){m++;if(m>=3){finish();return}setup()}
 function finish(){show("round",false);

@@ -151,7 +151,7 @@ function finalBlock(card,n,rank,foilRanks){var dl=el("decklink");dl.href="gn2-de
 
 var L=[{kind:2,n:"Signed skateboard",val:60,other:48},{kind:2,n:"Concert poster",val:60,other:66},{kind:2,n:"Retro game cartridge",val:45,other:33},
  {kind:1,n:"Jar of coins #1",guess:58,real:50,robots:[52,47,44,49,41],opts:[40,45,50,55,60]},{kind:1,n:"Jar of coins #2",guess:72,real:80,robots:[62,58,64,55,60],opts:[60,65,70,75,80]}];
-var r=0,pts=0,log=[];
+var r=0,pts=0,log=[],over=null;
 function setup(){var x=L[r];el("rn").textContent=(r+1)+"/5";
   if(x.kind===2){el("title").textContent="LOT "+(r+1)+": SECOND-PRICE AUCTION";el("rules").innerHTML="<b>Rule:</b> highest bid wins, but the winner pays the <b>second-highest</b> bid, not their own. 3 robot bidders are in.";
     el("item").innerHTML="<b>"+x.n+"</b>: worth <b>"+x.val+"</b> points to you.";var o=[x.val-20,x.val-10,x.val,x.val+10,x.val+20];
@@ -160,7 +160,7 @@ function setup(){var x=L[r];el("rn").textContent=(r+1)+"/5";
     el("item").innerHTML="<b>"+x.n+"</b>: you peek and guess it's worth about <b>"+x.guess+"</b>.";var h="";x.opts.forEach(function(b){h+="<button onclick=\"bid("+b+")\">BID "+b+"</button>"});el("choices").innerHTML=h;}
   show("pick",true);show("round",false)}
 function bid(b){var x=L[r],g,txt,line;
-  if(x.kind===2){if(b>x.other){g=x.val-x.other;txt="You win! You pay the second-highest bid, <b>"+x.other+"</b>. Points: "+x.val+" − "+x.other+" = <b>"+(g>0?"+":"")+g+"</b>.";line=x.n.split(" ").slice(-1)[0]+" (worth "+x.val+"): bid "+b+", won, paid "+x.other+", "+(g>0?"+":"")+g}
+  if(x.kind===2){if(b>x.other){g=x.val-x.other;if(g<0&&!over)over=x;txt="You win! You pay the second-highest bid, <b>"+x.other+"</b>. Points: "+x.val+" − "+x.other+" = <b>"+(g>0?"+":"")+g+"</b>.";line=x.n.split(" ").slice(-1)[0]+" (worth "+x.val+"): bid "+b+", won, paid "+x.other+", "+(g>0?"+":"")+g}
     else{g=0;txt="A robot bid "+x.other+" and won. You pay nothing and get nothing: 0 points.";line=x.n.split(" ").slice(-1)[0]+" (worth "+x.val+"): bid "+b+", lost, 0"}
     txt+="<br><span class=\"note\">The top robot bid was "+x.other+". Bidding exactly "+x.val+" would have "+(x.val>x.other?"won and paid "+x.other:"lost, which was the right result")+".</span>";}
   else{var top=Math.max.apply(null,x.robots);if(b>top){g=x.real-b;txt="You win the jar and pay <b>"+b+"</b>. The jar is opened: it's really worth <b>"+x.real+"</b>. Points: <b>"+(g>0?"+":"")+g+"</b>.";line="jar "+(r-2)+" (guess "+x.guess+", really "+x.real+"): bid "+b+", won, "+(g>0?"+":"")+g}
@@ -170,7 +170,7 @@ function bid(b){var x=L[r],g,txt,line;
 function nextRound(){r++;if(r>=5){finish();return}setup()}
 function finish(){show("round",false);var rank=pts>=34?"AUCTION ACE":(pts>=24?"SHARP BIDDER":"CURSED WINNER");
   el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 39.</p><div class=\"story\">"+log.join("<br>")+"</div>"+
-   "<h2>TWO LESSONS</h2><div class=\"tape\"><b>Second-price auctions:</b> bid exactly what the item is worth to you. Your bid only decides <b>whether</b> you win; someone else's bid sets the price. Bid lower and you can miss a bargain. Bid higher and you can overpay (the poster!).</div>"+
+   "<h2>TWO LESSONS</h2><div class=\"tape\"><b>Second-price auctions:</b> bid exactly what the item is worth to you. Your bid only decides <b>whether</b> you win; someone else's bid sets the price. Bid lower and you can miss a bargain. Bid higher and you can overpay"+(over?" (you did on the "+over.n.toLowerCase().replace("concert ","")+": paid "+over.other+" for something worth "+over.val+")":" (on the poster, a bid of 70 would have won at 66 for something worth 60)")+".<br>Bidding your true value is never worse than any other bid, and sometimes better: other bids can tie it, but none beats it.</div>"+
    "<div class=\"tape\"><b>Mystery jars:</b> the winner is usually the person who guessed <b>too high</b>. That's the <b>winner's curse</b>. When the value is hidden, bid below your guess.</div>"+
    "<div class=\"fact\">The economist William Vickrey explained second-price auctions in 1961 and shared the 1996 Nobel Prize in economics. The winner's curse was named by oil-company engineers in 1971, after companies kept 'winning' drilling rights that turned out to be worth less than they paid.</div>";
   el("out").value="GN2-M06 | "+log.join(" | ")+" | total "+pts+" of 39";

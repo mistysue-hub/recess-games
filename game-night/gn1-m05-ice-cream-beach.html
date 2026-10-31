@@ -15,13 +15,15 @@
   td,th{border:2px solid #00e5ff;padding:6px 9px;font-size:14px}
   th{color:#ff2bd6}
   .line{display:flex;justify-content:center;gap:2px;flex-wrap:nowrap;margin:10px 0}
-  .spot{flex:0 0 34px;width:34px;box-sizing:border-box;border:2px solid #00e5ff;border-radius:6px;padding:4px 0;font-size:9px;min-height:48px;background:rgba(0,0,0,.25);overflow:hidden}
+  .spot{flex:0 0 34px;width:34px;box-sizing:border-box;border:2px solid #00e5ff;border-radius:6px;padding:4px 0;font-size:9px;min-height:66px;background:rgba(0,0,0,.25);overflow:hidden}
   .spot b{display:block;font-size:16px}
   .spot.tap{cursor:pointer;border-color:#ffe600;color:#ffe600;box-shadow:0 0 6px #ffe60066}
   .spot.tap:active{background:#ffe600;color:#07070f}
   .squeeze{color:#ffd84d;font-weight:700}
   .spot.rival{border-color:#ff2bd6;color:#ff2bd6}
   .spot.you{border-color:#ffe600;color:#ffe600}
+  .tk{display:block;font-size:17px;line-height:18px}
+  .spot.sy{background:rgba(0,229,255,.30)}.spot.sr{background:rgba(255,43,214,.30)}.spot.st{background:rgba(255,230,0,.30)}
   .v{height:14px;margin-top:3px}
   .v.y{background:#00e5ff}.v.rv{background:#ff2bd6}.v.t{background:#ffe600}
   button{font:bold 18px "Courier New",monospace;margin:4px;padding:10px 0;min-width:48px;background:#07070f;color:#ffe600;border:3px solid #ffe600;border-radius:6px;cursor:pointer;box-shadow:0 0 10px #ffe60066}
@@ -136,7 +138,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <div id="result">
   <h2 id="headline"></h2>
   <div class="line" id="votes"></div>
-  <p class="key"><span style="background:#00e5ff">you</span><span style="background:#ff2bd6">Fran</span><span style="background:#ffe600">split</span></p>
+  <p class="key"><span style="background:#00e5ff">you</span><span style="background:#ff2bd6">Fran</span><span style="background:#ffe600">split</span> &nbsp; 🍦 your truck &nbsp; 🚚 Fran's truck</p>
   <p id="detail"></p>
   <button class="big" id="next" onclick="nextRound()">NEXT ROUND</button>
 </div>
@@ -186,10 +188,10 @@ function drawLine(target,me,opp,color,tap){
     var cls="spot"+(s===opp?" rival":"")+(s===me?" you":"")+(tap&&s!==opp?" tap":"");
     var v="";
     if(color){
-      var dm=Math.abs(s-me),dr=Math.abs(s-opp);
-      v="<div class=\"v "+(dm<dr?"y":(dm===dr?"t":"rv"))+"\"></div>";
+      var dm=Math.abs(s-me),dr=Math.abs(s-opp),w=(dm<dr?"y":(dm===dr?"t":"rv"));
+      v="<div class=\"v "+w+"\"></div>";cls+=" s"+(w==="rv"?"r":w);
     }
-    h+="<div class=\""+cls+"\""+(tap&&s!==opp?" onclick=\"play("+s+")\"":"")+"><b>"+s+"</b>"+(s===opp?"FRAN":"")+(s===me?"YOU":"")+v+"</div>";
+    h+="<div class=\""+cls+"\""+(tap&&s!==opp?" onclick=\"play("+s+")\"":"")+"><b>"+s+"</b>"+(s===opp?"<span class=\"tk\">🚚</span>FRAN":"")+(s===me?"<span class=\"tk\">🍦</span>YOU":"")+v+"</div>";
   }
   el(target).innerHTML=h;
 }
@@ -216,7 +218,7 @@ function reveal(me,opp){
   el("tv").textContent=tvTotal;
   drawLine("votes",me,opp,true,false);
   el("headline").textContent="You: spot "+me+"   Fran: spot "+opp+(r===2?" (revealed!)":"");
-  var d="You got "+got+"% of the beach. Fran got "+(100-got)+"%.";
+  var d="Shaded: each side of the beach goes to the nearer truck. You got "+got+"% of the beach. Fran got "+(100-got)+"%.";
   if(r===3){var side=opp>me?"right":"left";
     d="<span class=\"squeeze\">SQUEEZE! Fran parked right next to you on your "+side+", the bigger side of the beach.</span><br>"+d;}
   el("detail").innerHTML=d;

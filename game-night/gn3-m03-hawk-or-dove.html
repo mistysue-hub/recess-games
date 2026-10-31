@@ -118,7 +118,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <p class="note">Birds fight over food worth <b>10</b> points. A HAWK always fights. A DOVE shows off, then backs away if attacked.</p>
 <table>
   <tr><th>You ↓ · Rival →</th><th>HAWK</th><th>DOVE</th></tr>
-  <tr><th>HAWK</th><td>You <span id="hh">-5</span> (fight: win 10 half the time, lose 20 half the time)</td><td>You 10 (dove runs)</td></tr>
+  <tr><th>HAWK</th><td>You <span id="hh">-5</span> (fight: win 10 half the time, lose <span id="fc">20</span> half the time)</td><td>You 10 (dove runs)</td></tr>
   <tr><th>DOVE</th><td>You 0 (you run)</td><td>You 5 (share)</td></tr>
 </table>
 <p class="note" id="costnote">A fight costs the loser 20 points of injuries. Two hawks each win half the time: 10 - 20, split in half = -5 each.</p>
@@ -161,7 +161,7 @@ function evolve(p,C){var out=[p];for(var g=0;g<24;g++){var fh=10+p*((10-C)/2)+(1
 function setup(){show("round",false);show("pick",true);el("rn").textContent=(stage+1)+"/3";
  if(stage===0){el("ptitle").textContent="STAGE 1: YOU ARE THE BIRD";el("ask").innerHTML="Encounter "+(enc+1)+" of 4. A rival bird lands next to your food. You can't tell what kind it is. Will you be a HAWK or a DOVE?";
   el("choices").innerHTML="<button onclick=\"meet('HAWK')\">HAWK</button><button onclick=\"meet('DOVE')\">DOVE</button>";}
- else{var C=stage===1?20:30;el("hh").textContent=(10-C)/2;el("costnote").textContent="A fight costs the loser "+C+" points of injuries. Two hawks: (10 - "+C+") / 2 = "+((10-C)/2)+" each.";
+ else{var C=stage===1?20:30;el("hh").textContent=(10-C)/2;el("fc").textContent=C;el("costnote").textContent="A fight costs the loser "+C+" points of injuries. Two hawks: (10 - "+C+") / 2 = "+((10-C)/2)+" each.";
   el("ptitle").textContent="STAGE "+(stage+1)+": PREDICT EVOLUTION"+(stage===2?" (FIGHTS GET WORSE)":"");
   el("ask").innerHTML="A big flock starts with <b>90% hawks</b>. Each generation, birds that score more have more chicks, who copy them. Fights cost <b>"+C+"</b>. Where will the share of hawks settle?";
   el("choices").innerHTML="<div class=\"preds\">"+[["Almost all hawks",1],["About half hawks",0.5],["About a third hawks",1/3],["Almost no hawks",0]].map(function(o,i){return "<button onclick=\"predict("+i+")\">"+o[0].toUpperCase()+"</button><br>"}).join("")+"</div>";}
@@ -176,7 +176,7 @@ function predict(i){var C=stage===1?20:30,target=stage===1?1:2,ok=(i===target);i
  var traj=evolve(0.9,C),end=traj[traj.length-1];
  el("chart").style.display="flex";el("chart").innerHTML=traj.map(function(p){return "<div style=\"height:"+Math.max(2,Math.round(p*100))+"%\"></div>"}).join("");
  el("headline").textContent=(ok?"RIGHT! ":"Not quite. ")+"Hawks settled at "+Math.round(end*100)+"%";
- el("detail").innerHTML="Each bar is one generation (orange = share of hawks). When hawks are common, they keep fighting each other and doves do better. When hawks are rare, they bully doves and do better. The mix settles where both score the same: <b>food ÷ fight cost = 10 ÷ "+C+" = "+(C===20?"1/2":"1/3")+"</b>.";
+ el("detail").innerHTML="Each bar is one generation (orange = share of hawks). When hawks are common, they keep fighting each other and doves do better. When hawks are rare, they bully doves and do better. The mix settles where both score the same: <b>food ÷ fight cost = 10 ÷ "+C+" = "+(C===20?"1/2":"1/3")+"</b> (this works when a fight costs more than the food).";
  el("next").textContent=stage===1?"NEXT STAGE":"SEE RESULTS";show("pick",false);show("round",true)}
 function nextStep(){if(stage===0&&enc<4){setup();return}stage++;if(stage>2){finish();return}setup()}
 function finish(){show("round",false);show("pick",false);

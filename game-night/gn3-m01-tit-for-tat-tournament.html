@@ -150,7 +150,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <div id="oops">
   <h2>THE OOPS ROUND</h2>
   <div id="oopsintro">
-    <p class="note">Now players sometimes slip and grab by accident. Every move has a 10% chance to flip, even for your bot. Same bots, 20 rounds a match, and the slips are the same every time you play.</p>
+    <p class="note">Now players sometimes slip by accident. Every move has a 5% chance to flip, even for your bot (about one slip in every 20 moves). Same bots, but 50 rounds a match, and the slips are the same every time you play.</p>
     <p class="note" id="oopsbot"></p>
     <button id="oopsbtn" onclick="runOops()">PLAY THE OOPS ROUND</button>
   </div>
@@ -158,6 +158,19 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
     <h2 id="oopshead"></h2>
     <table class="standings" id="oopstable"></table>
     <p class="note" id="oopswhy"></p>
+    <h2>ONE SLIP, TWO TIT FOR TAT PLAYERS</h2>
+    <p class="note">Two Copycat bots. In round 2, the left one slips and grabs by accident. Watch what happens next.</p>
+    <div id="trace"></div>
+    <p class="note" id="tracewhy"></p>
+    <div class="fact" id="chal">
+      <h2>BONUS CHALLENGE (optional)</h2>
+      <p class="note"><b>Build a bot that beats Tit for Tat in the noisy tournament.</b> Pick a new rule, then see your total next to Copycat Cora's in the same oops round.</p>
+      <div class="q"><p><b>1. First round...</b></p><div class="opt2" id="c0"></div></div>
+      <div class="q"><p><b>2. If they SHARED last round...</b></p><div class="opt2" id="c1"></div></div>
+      <div class="q"><p><b>3. If they GRABBED last round...</b></p><div class="opt2" id="c2"></div></div>
+      <button id="cgo" onclick="runChal()" style="display:none">TRY IT</button>
+      <p class="note" id="cres"></p>
+    </div>
     <button id="oopsnext" onclick="finish()">SEE FINAL RESULTS</button>
   </div>
 </div>
@@ -191,7 +204,7 @@ var NAMES={SSG:"Tit for Tat",SSS:"Always Share",GGG:"Always Grab",GSG:"Suspiciou
 var choice=[null,null,null],run=0,runs=[],best=null;
 function W(x){return x==="S"?"SHARE":"GRAB"}
 function mybot(c){return {n:"YOUR BOT",f:function(h){if(!h.length)return c[0];return h[h.length-1].them==="S"?c[1]:c[2]}}}
-var SLIP=0.1,OSEED=14,OROUNDS=20,oopsDone=false,oops=null,finished=false;
+var SLIP=0.05,OSEED=882,OROUNDS=50,oopsDone=false,oops=null,finished=false;
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function flip(m){return m==="S"?"G":"S"}
 function match(a,b,seed){var ha=[],hb=[],sa=0,sb=0,noisy=seed!==undefined,rnd=noisy?mulberry32(seed):null,N=noisy?OROUNDS:ROUNDS;
@@ -225,11 +238,32 @@ function showOops(){show("round",false);show("pick",false);
  show("oops",true)}
 function runOops(){if(oopsDone)return;oopsDone=true;el("oopsbtn").disabled=true;
  var t=tourney(best.key.split(""),true),by={};t.order.forEach(function(o){by[o.n]=o.s});
- oops={score:t.my,rank:t.rank,tie:t.tie,winner:t.order[0].n,cora:by["Copycat Cora"],fiona:by["Forgiving Fiona"]};
+ oops={score:t.my,rank:t.rank,tie:t.tie,winner:t.order[0].n,cora:by["Copycat Cora"],fiona:by["Forgiving Fiona"],gus:by["Grabby Gus"]};
  el("oopshead").textContent=best.name+" finished "+(t.tie?"tied for ":"")+"#"+t.rank+" of 6 in the oops round";
  el("oopstable").innerHTML="<tr><th>#</th><th>Bot</th><th>Total</th></tr>"+t.order.map(function(o,i){return "<tr"+(o.n==="YOUR BOT"?" class=\"me\"":"")+"><td>"+(i+1)+"</td><td>"+o.n+"</td><td>"+o.s+"</td></tr>"}).join("");
- el("oopswhy").innerHTML="With slips, strict Tit for Tat (Copycat Cora, <b>"+oops.cora+"</b>) can get stuck in a revenge loop: one accidental grab makes the other bot grab back, and they keep trading grabs. Forgiving Fiona (<b>"+oops.fiona+"</b>) only hits back after two grabs in a row, so one slip fades away. Forgiveness won.";
+ var w="With slips, strict Tit for Tat (Copycat Cora, <b>"+oops.cora+"</b>) can get stuck in a revenge loop: one accidental grab makes the other bot grab back, and they keep trading grabs (see the trace below). Forgiving Fiona (<b>"+oops.fiona+"</b>) only hits back after two grabs in a row, so one slip fades away. ";
+ if(oops.fiona>oops.cora)w+="In this table Fiona finished ahead of Cora"+(oops.fiona>oops.gus?" and ahead of Grabby Gus ("+oops.gus+").":", though Grabby Gus ("+oops.gus+") scored more than she did.");
+ else if(oops.fiona<oops.cora)w+="Not in this table, though: Cora ("+oops.cora+") finished ahead of Fiona ("+oops.fiona+"). Slips are random, so one run can go either way.";
+ else w+="In this table Fiona and Cora tied.";
+ w+="<br><br><b>The honest caveat:</b> we replayed this arena with 2000 different random slip patterns (using a Tit for Tat bot as yours). On average Fiona scored about 563, Tit for Tat 551, Grudge Greta 536, Grabby Gus 517 and Saint Sam 498. Fiona finished ahead of Cora in about 6 runs out of 10 and ahead of Grabby Gus in about 19 out of 20. So forgiveness helps here, but only a little against strict Tit for Tat. With more slips and short matches (we tried 20 rounds with 10% slips), quick grabbers do better and the forgiving bot often loses. How much forgiveness pays depends on how often slips happen and how long you play.";
+ el("oopswhy").innerHTML=w;
+ el("trace").innerHTML=traceHTML();
+ opts2();
  show("oopsintro",false);show("oopsres",true)}
+function traceHTML(){var cora=BOTS[2],ha=[],hb=[],sa=0,sb=0,h="<table class=\"standings\"><tr><th>Round</th><th>Left Copycat</th><th>Right Copycat</th><th>Points</th></tr>";
+ for(var r=1;r<=8;r++){var ma=cora.f(ha),mb=cora.f(hb),slip=(r===2);if(slip)ma=flip(ma);var p=P[ma+"|"+mb];sa+=p[0];sb+=p[1];
+  h+="<tr><td>"+r+"</td><td>"+W(ma)+(slip?" (slip!)":"")+"</td><td>"+W(mb)+"</td><td>"+p[0]+"-"+p[1]+"</td></tr>";ha.push({me:ma,them:mb});hb.push({me:mb,them:ma})}
+ el("tracewhy").innerHTML="After one slip the two bots swap grabs forever: each time one gets a 5, the other gets a 0, so each averages about 2.5 a round instead of 3. Nobody meant to start a feud, but strict Tit for Tat never lets it end. Over these 8 rounds: left <b>"+sa+"</b>, right <b>"+sb+"</b> (two bots that kept sharing would each have 24).";
+ return h+"</table>"}
+var cchoice=[null,null,null],cbest=null;
+function opts2(){[0,1,2].forEach(function(k){var h="";["S","G"].forEach(function(m){h+="<button id=\"c"+k+m+"\" onclick=\"cpick("+k+",'"+m+"')\">"+W(m)+"</button>"});el("c"+k).innerHTML=h})}
+function cpick(k,m){cchoice[k]=m;["S","G"].forEach(function(x){el("c"+k+x).classList.toggle("on",x===m)});if(cchoice[0]&&cchoice[1]&&cchoice[2])el("cgo").style.display="inline-block"}
+function runChal(){if(!(cchoice[0]&&cchoice[1]&&cchoice[2]))return;var key=cchoice.join(""),t=tourney(cchoice,true),by={};t.order.forEach(function(o){by[o.n]=o.s});
+ var diff=t.my-by["Copycat Cora"];if(!cbest||diff>cbest.diff)cbest={name:NAMES[key],my:t.my,cora:by["Copycat Cora"],diff:diff};
+ var h="<b>"+NAMES[key]+"</b>: you "+t.my+", Copycat Cora "+by["Copycat Cora"]+" ("+(diff>0?"you beat her by "+diff:(diff===0?"a tie":"she wins by "+(-diff)))+"). Your matches: "+t.mine.map(function(m){return m.vs+" "+m.me+"-"+m.them}).join(" · ")+".";
+ h+="<br>Best so far: <b>"+cbest.name+"</b> ("+cbest.my+" vs "+cbest.cora+", "+(cbest.diff>0?"+"+cbest.diff:cbest.diff)+").";
+ if(diff>0)h+="<br>Look at your match scores: a bot can pass Tit for Tat's total by squeezing points out of Saint Sam, not by being a better partner.";
+ el("cres").innerHTML=h}
 function finish(){if(finished)return;finished=true;show("round",false);show("pick",false);show("oops",false);
  var tft=tourney(["S","S","G"]);
  var rank=best.rank===1?"CHAMPION":(best.rank<=2?"CONTENDER":"ROOKIE BOT");

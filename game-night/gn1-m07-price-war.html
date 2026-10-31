@@ -143,7 +143,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 
 <script>
 var total=6,half=3,r=0,log=[],ms=0,PRICES=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-var TAUNTS={win:["Penny: \"Enjoy it while it lasts.\"","Penny: \"Hmph. Nice price.\""],lose:["Penny: \"Two coins cheaper and they all came to me!\"","Penny: \"My customers say thanks.\""],tie:["Penny: \"Split the street? Fine. For now.\""]};
+var TAUNTS={win:["Penny: \"Enjoy it while it lasts.\"","Penny: \"Hmph. Nice price.\""],lose:["","Penny: \"My customers say thanks.\""],tie:["Penny: \"Split the street? Fine. For now.\""]};
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function phase(){return r<half?1:2}
@@ -182,6 +182,11 @@ function play(p){
   el("ms").textContent=ms;
   el("headline").textContent="You charged "+p+". Penny charged "+pr+". You sold "+n+" sodas.";
   var tk=mine>his?"win":(mine<his?"lose":"tie"),tl=TAUNTS[tk][r%TAUNTS[tk].length];
+  if(tk==="lose"){
+    if(p>pr&&r%2===0){var gap=p-pr;tl="Penny: \""+gap+(gap===1?" coin":" coins")+" cheaper and "+(ph===1?"they all":"more of them")+" came to me!\""}
+    else if(p<=pr){tl="Penny: \"Cheap isn't the same as profitable, friend.\""}
+    else tl=TAUNTS.lose[1];
+  }
   el("detail").innerHTML="Your profit: <b>"+mine+"</b>. Penny's profit: <b>"+his+"</b>.<br><span class=\"rival\">"+tl+"</span><br><span class=\"note\">Your best reply to Penny's "+pr+" was "+showBest(b)+" ("+b.profit+" coins).</span>";
   el("next").textContent=(r===total-1)?"SEE FINAL SCORE":(r===half-1?"NEW RULE AHEAD":"NEXT ROUND");
   show("pick",false);show("round",true);
@@ -206,7 +211,7 @@ function finish(){
     "<p>Profit with same soda: <b>"+p1+"</b>. Profit with fans: <b>"+p2+"</b>. Best reply in <b>"+hits+"</b> of 6 rounds.</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
     "<h2>REPLAY THE TAPE</h2>"+
-    "<div class=\"tape\">Same soda: whoever is a coin cheaper gets everyone, so prices race down to <b>2 or 3</b>, barely above cost.</div>"+
+    "<div class=\"tape\">Same soda: whoever is a coin cheaper gets everyone, so prices keep racing down toward cost (with whole-coin prices they stall at <b>2 or 3</b>, barely above it).</div>"+
     "<div class=\"tape\">With fans: undercutting only steals a few customers, so prices settle at <b>12</b> each and each store earns <b>500</b>.</div>"+
     "<p class=\"note\">Same street, same cost. What made the second half so different?</p>"+
     "<div class=\"fact\">This is one reason companies spend so much on making their products feel different, even when they are nearly the same.</div>";

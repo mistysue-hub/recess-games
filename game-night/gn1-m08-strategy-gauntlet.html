@@ -139,7 +139,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>STRATEGY GAUNTLET</h1>
-<p class="note">Boss round! The Glitch has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Glitch wins.</p>
+<p class="note">Boss round! The Glitch has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Glitch wins that round. REMATCH then replays only the puzzles you haven't hit, with 3 fresh lives, and the Glitch's HP stays where you left it. (Gold foil needs a perfect first attempt.)</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/8</b></div>
   <div class="box">GLITCH HP<b id="hp">8</b></div>
@@ -215,12 +215,14 @@ var R=[
   why:"So if you just threw ROCK, the Glitch throws PAPER next, and SCISSORS beats it. Spotting a habit and playing the best response to it is exactly how you beat a predictable player."}
 ];
 var BEATS={ROCK:"PAPER",PAPER:"SCISSORS",SCISSORS:"ROCK"};
-var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1;
+var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1,queue,qi,hitSet,res,replayed,pendingLoss,lastMiss;
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
 function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%";el("lives").textContent=lives}
-function start(){r=0;hp=8;lives=3;log=[];setHP();setup()}
+function note(s){log.push(s);res[parseInt(s.slice(1),10)-1]=s.split(":")[1]}
+function begin(){lives=3;log=[];qi=0;r=queue[0];pendingLoss=false;lastMiss=null;setHP();setup()}
+function start(){attempt=1;hp=8;hitSet=[];res=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
 function setup(){
   var x=R[r];tries=0;locked=false;firstMiss=false;
   el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE GLITCH: "+x.taunt;el("rtitle").textContent=x.t;
@@ -230,24 +232,26 @@ function setup(){
   show("pick",true);show("final",false);
 }
 function showWhy(){el("whytxt").innerHTML=R[r].why;show("whytxt",true);show("whyb",false)}
-function loseLife(){lives--;setHP();if(lives<=0){setTimeout(glitchWins,900);return true}return false}
+function loseLife(){lives--;setHP();if(lives<=0){pendingLoss=true;return true}return false}
 function pick(i){
   if(locked)return;locked=true;var x=R[r];tries++;
   el("fb").innerHTML="The Glitch flips a tile...";
   setTimeout(function(){
     if(i===x.a){
       el("c"+i).className="on";
-      if(tries===1){hp--;setHP();log.push("R"+(r+1)+":hit");el("fb").innerHTML="<b>HIT!</b> The Glitch loses 1 HP. "+x.short;}
-      else{log.push("R"+(r+1)+":fixed on try 2");el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
+      if(tries===1){hp--;hitSet[r]=true;setHP();note("R"+(r+1)+":hit");el("fb").innerHTML="<b>HIT!</b> The Glitch loses 1 HP. "+x.short;}
+      else{note("R"+(r+1)+":fixed on try 2");el("fb").innerHTML="<b>Got it on try 2.</b> No damage this time. "+x.short;}
       endRound();
     } else if(tries>=2){
-      log.push("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
+      note("R"+(r+1)+":miss");el("c"+i).disabled=true;el("c"+x.a).className="on";
       el("fb").innerHTML="<b>The Glitch blocks it.</b> The answer: "+x.ch[x.a]+". "+x.short;endRound();
     } else {
       el("c"+i).disabled=true;
-      var out=loseLife();if(out)log.push("R"+(r+1)+":miss (last life)");
-      el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
-      if(!out)locked=false;
+      var out=loseLife();
+      if(out){note("R"+(r+1)+":miss (last life)");lastMiss=r;el("c"+x.a).className="on";
+        el("fb").innerHTML="<b>Miss! That was your last life.</b> The answer: <b>"+x.ch[x.a]+"</b>. "+x.short;endRound();return}
+      el("fb").innerHTML="<b>Miss! You lose a life.</b> One more try, but it won't do damage now. Look at the numbers again.";
+      locked=false;
     }
   },650);
 }
@@ -261,31 +265,36 @@ function throwIt(i){
     el("fb").innerHTML="You: <b>"+me+"</b> &nbsp; Glitch: <b>"+glitch+"</b> &nbsp; "+(res==="WIN"?"<b>You win the throw!</b>":(res==="TIE"?"Tie.":"The Glitch takes it."))+" (wins: "+rps.wins+" of "+rps.n+")<br><span class=\"note\">Your throws so far: "+rps.hist.map(function(h){return h.split("v")[0]}).join(", ")+" &middot; Glitch: "+rps.hist.map(function(h){return h.split("v")[1].split(":")[0]}).join(", ")+"</span>";
     if(rps.n<5){locked=false;return}
     var hit=rps.wins>=3;
-    if(hit){hp--;setHP();log.push("R8:hit ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>HIT!</b> You beat the Glitch's habit. "+R[r].short;endRound();}
-    else{log.push("R8:miss ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>The Glitch wins the showdown.</b> No hit. "+R[r].short;endRound();}
+    if(hit){hp--;hitSet[r]=true;setHP();note("R8:hit ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>HIT!</b> You beat the Glitch's habit. "+R[r].short;endRound();}
+    else{note("R8:miss ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>The Glitch wins the showdown.</b> No hit. "+R[r].short;endRound();}
   },650);
 }
 function endRound(){
   for(var k=0;k<R[r].ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
   show("whyb",true);
-  el("next").textContent=(r===7)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
+  el("next").textContent=pendingLoss?"SEE RESULT":((qi===queue.length-1)?"SEE FINAL SCORE":"NEXT ROUND");show("next",true);
 }
-function nextRound(){r++;if(r>=8){finish(false);return}setup()}
-function glitchWins(){finish(true)}
+function nextRound(){if(pendingLoss){finish(true);return}qi++;if(qi>=queue.length){finish(false);return}r=queue[qi];setup()}
 function rankOf(h){return h===8?"GRANDMASTER":(h>=6?"MASTERMIND":(h>=4?"STRATEGIST":"ROOKIE"))}
 function finish(lost){
   show("pick",false);var hits=8-hp,rank=rankOf(hits);
   el("endt").textContent=lost?"THE GLITCH WINS":(hp===0?"GLITCH DEFEATED!":"GAUNTLET OVER");
-  var rows="";log.forEach(function(s){var n=parseInt(s.slice(1),10);rows+="<tr><td>"+R[n-1].t.replace(/^ROUND \d+: /,"")+"</td><td>"+s.split(":")[1]+"</td></tr>"});
-  var foil=(!lost&&hits===8)?"&foil=1":"";
-  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Glitch still had "+hp+" HP. Hit REMATCH to try again with 3 fresh lives.</p>":"")+
+  var rows="";for(var n=0;n<8;n++)rows+="<tr><td>"+R[n].t.replace(/^ROUND \d+: /,"")+"</td><td>"+res[n]+"</td></tr>";
+  var foil=(!lost&&hits===8&&attempt===1)?"&foil=1":"";
+  var left=hp,plural=left===1?"":"s";
+  var msg="";
+  if(lost){var m=R[lastMiss];msg="<p><b>You ran out of lives</b> on "+m.t.replace(/^ROUND \d+: /,"")+". The answer was <b>"+m.ch[m.a]+"</b>. "+m.short+" The Glitch still has "+left+" HP. REMATCH replays just the "+left+" puzzle"+plural+" you haven't hit, with 3 fresh lives.</p>"}
+  else if(left>0){msg="<p><b>So close!</b> The Glitch has "+left+" HP left. REMATCH replays just the "+left+" puzzle"+plural+" you haven't hit, with 3 fresh lives. A perfect first attempt is the only way to earn gold foil.</p>"}
+  else if(attempt>1){msg="<p>The Glitch is down! Gold foil needs a perfect first attempt, so this one earns the regular card.</p>"}
+  el("verdict").innerHTML=msg+
    "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
    (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>STRATEGIST</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn1-deck.html?card=8"+foil+"\">See your deck</a></div>")+"<div class=\"tape\"><b>WANT MORE?</b> See the real college course this was built from, plus games and books to go deeper. <a href=\"gn1-read.html?m=9\">Go deeper</a></div>";
-  show("rematch",lost);
-  el("out").value="GN1-M08 | attempt "+attempt+" | "+(lost?"GLITCH WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Glitch HP left "+hp+" | rank "+rank;
+  show("rematch",hp>0);
+  el("out").value="GN1-M08 | attempt "+attempt+" | "+(lost?"GLITCH WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Glitch HP left "+hp+" | rank "+rank+(attempt>1?" | replayed puzzles: "+replayed.map(function(i){return "R"+(i+1)}).join(", "):"");
   show("final",true);
 }
-function rematch(){attempt++;start()}
+function rematch(){attempt++;queue=[];for(var i=0;i<8;i++){if(!hitSet[i])queue.push(i);res[i]=hitSet[i]?"hit (earlier)":"not reached"}
+  replayed=queue.slice();begin()}
 function copyIt(){
   var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
   function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
