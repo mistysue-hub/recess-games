@@ -36,7 +36,7 @@ A paradigm tells scientists what to expect. Most of the time that's a huge help:
 - **Anomaly:** something that doesn't fit what you expected. The trick cards were anomalies.
 - **Gestalt switch** (guh-SHTALT): when the same picture suddenly looks completely different to you, like a drawing that flips between a duck and a rabbit.
 
-Side View: Norwood Russell Hanson, an American philosopher, wrote a book in 1958 arguing that seeing isn't just your eyes taking a picture. What you see depends on what you already know. He used drawings that can be seen two ways to make his point. Think of an X-ray: a doctor and someone who has never studied medicine look at the same picture, but they don't notice the same things. Do you think two people looking at the same thing always see the same thing?
+Side View: In 1958, Norwood Russell Hanson argued that what you see depends on what you already know. A doctor and someone who has never studied medicine look at the same X-ray and don't notice the same things — is that a limit, or how seeing works?
 
 ## Your Anomaly Log
 

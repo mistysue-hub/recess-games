@@ -71,9 +71,11 @@
   var RANKS = {1:'A',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7'};
   var WORDS = {1:'Ace',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7'};
   // Cards: rank, suit, ink colour. Trick cards have the wrong colour for their suit.
+  // 10 cards, 2 trick (close to the Bruner & Postman 1949 trick-card ratio).
   var DECK = [
     {r:5,s:'h',ink:'red'}, {r:1,s:'h',ink:'red'}, {r:5,s:'s',ink:'black'}, {r:7,s:'s',ink:'black'},
-    {r:6,s:'s',ink:'red'}, {r:4,s:'h',ink:'black'}, {r:3,s:'h',ink:'black'}, {r:2,s:'s',ink:'red'}
+    {r:3,s:'d',ink:'red'}, {r:2,s:'c',ink:'black'}, {r:4,s:'c',ink:'black'}, {r:6,s:'d',ink:'red'},
+    {r:6,s:'s',ink:'red'}, {r:4,s:'h',ink:'black'}  // the two trick cards
   ];
   var results = [];
 
@@ -100,23 +102,17 @@
       '<g transform="rotate(180 100 140)"><text x="16" y="36" font-size="28" font-family="Georgia,serif" font-weight="700" fill="'+col+'">'+RANKS[c.r]+'</text>'+
       '<text x="16" y="62" font-size="22" fill="'+col+'">'+sym+'</text></g>'+ pips + '</svg>';
   }
+  // Options are the four suits of the card's rank. No colors are named, so the player
+  // can only pick by shape; whether the trick card looked "off" is a separate question.
   function choicesFor(c){
-    var same = SUITS[c.s].color, other = same === 'red' ? 'black' : 'red';
-    var twin = {s:'c', c:'s', h:'d', d:'h'}[c.s];                 // same-colour suit
-    var swap = {s:'h', h:'s', c:'d', d:'c'}[c.s];                 // a suit of the other colour
-    var opts = [
-      label(c.r, c.s, same),            // the card as expected
-      label(c.r, c.s, other),           // same suit, wrong colour
-      label(c.r, twin, same),           // look-alike suit
-      label(c.r, swap, other)           // colour wins over shape
-    ];
-    return {opts: shuffle(opts), right: label(c.r, c.s, c.ink)};
+    var opts = ['s','h','d','c'].map(function(s){ return WORDS[c.r]+' of '+SUITS[s].name; });
+    return {opts: shuffle(opts), right: WORDS[c.r]+' of '+SUITS[c.s].name};
   }
 
   function intro(){
     el('<h1>Odd Card Out</h1><div class="tag">Lab notebook · Module 4 · '+(level==='core'?'Core':'Extended')+'</div>'+
       '<p>In 1949, Harvard students named playing cards flashed for a split second. Now it\'s your turn.</p>'+
-      '<div class="sticky">Tap <b>Flash</b>. A card appears for a moment, then gets covered. Tap the card you saw. If you miss, it flashes again, a little longer. Watch closely: some cards might not be what you expect.</div>'+
+      '<div class="sticky">Tap <b>Flash</b>. A card appears for a moment, then gets covered. Tap the suit you saw. If you miss, it flashes again, a little longer.</div>'+
       '<button class="btn main" id="go">Start</button>');
     document.getElementById('go').onclick = function(){ run(shuffle(DECK), 0); };
   }
@@ -143,14 +139,45 @@
     }
     function answer(o){
       tries++;
-      if(o === ch.right){ results.push({trick:isTrick(c), flashes:tries, got:true}); reveal(true); }
-      else if(tries >= 2){ results.push({trick:isTrick(c), flashes:tries, got:false}); reveal(false); }
+      if(o === ch.right){ askOdd(tries); }
+      else if(tries >= 2){ results.push({trick:isTrick(c), flashes:tries, got:false, flagged:false}); reveal(false, false); }
       else ready('<div class="feedback wrong"><b class="v">Not quite.</b>Here it comes again, a little longer.</div>');
     }
-    function reveal(right){
+    function askOdd(flashes){
       el('<h2>Card '+(i+1)+' of '+deck.length+'</h2>'+
-        '<div class="feedback'+(right?'':' wrong')+'"><b class="v">'+(right?'Yes: ':'It was the ')+ch.right+'.</b>'+
-        (isTrick(c) ? 'That\'s a trick card: '+SUITS[c.s].name+' are normally '+SUITS[c.s].color+'.' : 'A normal card.')+'</div>'+
+        '<p>Got the suit. One more question before the next card:</p>'+
+        '<p><b>Was anything odd about the card?</b></p>'+
+        '<div class="grid2" id="odd">'+
+        '<button class="btn" data-f="1">Something looked off</button>'+
+        '<button class="btn" data-f="0">It looked normal</button>'+
+        '</div>');
+      app.querySelectorAll('#odd button').forEach(function(b){
+        b.onclick = function(){
+          var flagged = b.dataset.f === '1';
+          results.push({trick:isTrick(c), flashes:flashes, got:true, flagged:flagged});
+          reveal(true, flagged);
+        };
+      });
+    }
+    function reveal(right, flagged){
+      var msg = '';
+      if(right){
+        if(isTrick(c)){
+          msg = flagged
+            ? 'You spotted it. That was a trick card: '+SUITS[c.s].name+' are normally '+SUITS[c.s].color+', and this one was '+c.ink+'.'
+            : 'You got the suit, but didn\'t catch the trick. '+SUITS[c.s].name+' are normally '+SUITS[c.s].color+', and this one was '+c.ink+'.';
+        } else {
+          msg = flagged
+            ? 'False alarm — nothing was odd about this one.'
+            : 'Right call. It was a normal card.';
+        }
+      } else {
+        msg = isTrick(c)
+          ? 'That was a trick card: '+SUITS[c.s].name+' are normally '+SUITS[c.s].color+', and this one was '+c.ink+'.'
+          : 'A normal card.';
+      }
+      el('<h2>Card '+(i+1)+' of '+deck.length+'</h2>'+
+        '<div class="feedback'+(right ? (isTrick(c) && !flagged ? ' wrong' : '') : ' wrong')+'"><b class="v">'+(right?'Suit: ':'It was the ')+ch.right+'.</b>'+msg+'</div>'+
         '<div class="stage">'+cardSvg(c)+'</div><button class="btn main" id="next">'+(i < deck.length-1 ? 'Next card' : 'See results')+'</button>');
       document.getElementById('next').onclick = function(){ run(deck, i+1); };
     }
@@ -159,15 +186,17 @@
 
   function summary(trick){
     var set = results.filter(function(r){ return r.trick === trick; });
-    var first = set.filter(function(r){ return r.got && r.flashes === 1; }).length;
+    var suitFirst = set.filter(function(r){ return r.got && r.flashes === 1; }).length;
+    var caught = set.filter(function(r){ return r.got && r.flashes === 1 && r.flagged; }).length;
+    var falseAlarm = set.filter(function(r){ return r.got && r.flagged; }).length;
     var missed = set.filter(function(r){ return !r.got; }).length;
-    return {n:set.length, first:first, missed:missed};
+    return {n:set.length, suitFirst:suitFirst, caught:caught, falseAlarm:falseAlarm, missed:missed};
   }
   function finish(){
     var N = summary(false), T = summary(true);
     var text = ['done — Odd Card Out ('+level+')',
-      'Normal cards: '+N.first+' of '+N.n+' right on the first flash; '+N.missed+' never named',
-      'Trick cards: '+T.first+' of '+T.n+' right on the first flash; '+T.missed+' never named'].join('\n');
+      'Normal cards: '+N.suitFirst+' of '+N.n+' suit named on the first flash; '+N.falseAlarm+' flagged as odd by mistake',
+      'Trick cards: '+T.caught+' of '+T.n+' named AND flagged as odd on the first flash; '+T.missed+' never named'].join('\n');
     el('<h1>Notebook closed</h1><div class="tag">Odd Card Out · '+(level==='core'?'Core':'Extended')+'</div>'+
       '<p><b>What you found:</b></p><div class="report">'+text+'</div>'+
       '<div class="sticky">'+(level==='extended'?'In 1949, normal cards took about 28 thousandths of a second to recognize. Trick cards took about 114 thousandths — roughly four times longer.':'In 1949, normal cards took about three hundredths of a second to recognize. Trick cards took about four times as long.')+' Almost everyone first saw the trick cards as normal cards. Did your trick cards take longer too?</div>'+

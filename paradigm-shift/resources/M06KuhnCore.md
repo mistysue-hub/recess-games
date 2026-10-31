@@ -39,7 +39,7 @@ So was there really a crisis? You'll judge for yourself.
 - **Epicycle:** a small circle carried around on a bigger one.
 - **Crisis (Kuhn's sense):** a time when a paradigm's puzzles keep failing and scientists start to doubt the rules.
 
-Side View: A philosopher named Imre Lakatos said don't judge a theory by whether it has problems, because every theory does. Ask instead: is it still predicting new things nobody expected? Or is it only making patches to fit things already known? Think of two ways to fix a bad video-game strategy: a patch that only fixes yesterday's loss, or a new idea that also wins games you haven't played yet. Which was Kepler's ellipse?
+Side View: Imre Lakatos said don't judge a theory by whether it has problems — every theory does — but by whether it keeps predicting new things nobody expected. His ellipses later predicted a 1631 Mercury transit of the Sun, after he died, and it happened. Patch or new prediction?
 
 ## Your Anomaly Log
 

@@ -16,9 +16,9 @@ Here are three claims about mistakes the checks caught in this course's first dr
 
 1. An early draft said the first Leyden jars were coated in metal foil. The first ones were really partly filled with water.
 2. Module 6 kept its title "Too Many Circles" but added a question mark, because fact-checking showed the "epicycles on epicycles" story is a myth.
-3. The first draft of Module 1 said Priestley tested his gas on a mouse and named it "dephlogisticated air" in August 1774. Those things really happened in 1795.
+3. The first draft of Module 3 said Edmond Halley lived to see his comet return in 1758 and that it proved him right in his lifetime. The checks found that Halley actually died in 1742, sixteen years before the comet came back.
 
-Reveal: Claim 3 is the planted error. The mouse test and the name "dephlogisticated air" really came in early 1775, not 1795. Claims 1 and 2 are real catches. The true Module 1 story is the best one: Module 1 warns about tidy textbook stories, and its own first draft squished a messy timeline into one tidy moment.
+Reveal: Claim 3 is the planted error. It looks like the kind of tidy ending textbooks love — the scientist sees their prediction come true. But Module 3 says plainly that Halley died in 1742 and never got to find out. Claims 1 and 2 are real catches. A story that gives the scientist a satisfying ending is exactly the kind of tidying Module 1 warned about.
 
 ## The anomalies you may have logged
 
@@ -35,15 +35,15 @@ Each module planted an anomaly about the course itself. Tick the ones you caught
 9. Module 9 drew a five-step staircase.
 10. Module 10 made a crowded debate into a duel.
 
-Also left out: almost all science outside Europe and the United States, nearly all biology and medicine, and few women. The ones you met are the mathematician Nicole-Reine Lepaute, the geologist Marie Tharp and the philosopher Helen Longino.
+Also left out: almost all science outside Europe and the United States, nearly all biology and medicine, and few women. The ones you met are Nicole-Reine Lepaute (Module 3), Marie Tharp (Module 7), Venetia Burney, who at age 11 named Pluto (Module 8), and Helen Longino (Module 12).
 
 ## So, is this course a paradigm?
 
-It has **exemplars**, model examples you learned to see the rest through, like the comet and Neptune. It has a **spine** it rarely questioned: Kuhn's story of how science works. And like a textbook, it chose a tidy order.
+It has **exemplars** — Kuhn's word for the model examples you met in Module 2, which you learned to see the rest of science through, like the comet and Neptune. It has a **spine** it rarely questioned: Kuhn's story of how science works. And like a textbook, it chose a tidy order.
 
 **Weird but true:** Every mistake listed in this module was found by checking against sources, not by noticing it was wrong. They all looked right. That's what makes a tidy mistake hard to catch.
 
-Side View: How would each thinker judge this course? Popper would ask which of its claims could be proven wrong. Longino would ask whether it really welcomed criticism. Kuhn might call it a fair textbook: useful, but hiding its own revolutions. Which judgment fits best?
+Side View: Popper would ask which of this course's claims could be proven wrong, and whether anything in it actually could. Which claim could you argue against?
 
 ## Your Anomaly Log
 

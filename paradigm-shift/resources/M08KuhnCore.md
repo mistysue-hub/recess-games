@@ -6,7 +6,7 @@ In 1930, an 11-year-old girl in England came up with the name for a brand-new pl
 
 On New Year's Day, 1801, the Italian astronomer Giuseppe Piazzi spotted a tiny moving dot between Mars and Jupiter. It was named Ceres, and for more than fifty years, astronomy books listed it as a planet.
 
-Then astronomers kept finding more objects in the same zone, dozens of them. Were they all planets? Slowly, during the 1850s and 1860s, astronomers started calling them something else: **asteroids**. Ceres hadn't changed at all. The word "planet" had.
+Then astronomers kept finding more objects in the same zone, dozens of them. Were they all planets? William Herschel had coined the word **asteroid** (small rocky bodies, most circling between Mars and Jupiter) back in 1802, but it caught on slowly. Through the 1850s and 1860s, astronomers quietly moved Ceres and its neighbors out of the planet column into the asteroid column. Ceres hadn't changed at all. The word "planet" had.
 
 ## Pluto's turn
 
@@ -36,7 +36,7 @@ Here's Kuhn's point. When two people argue "Pluto is a planet!" "No, it isn't!",
 - **Dwarf planet:** a round body that orbits the Sun but hasn't cleared its neighborhood.
 - **Talking past each other:** arguing while using the same word to mean different things.
 
-Side View: Scientists and philosophers argue about what science gives us. Some say good science is getting closer and closer to the truth about how the world really is, even the parts we can't see. Others say science only needs to fit what we can observe and make useful predictions, and that's enough. Your friends argue about whether a hot dog is a sandwich. Are they arguing about the hot dog, or about the word? Was Pluto the same kind of argument?
+Side View: Some philosophers say science aims at how the world really is; others say it just needs to fit what we can observe and make useful predictions. When two friends argue whether a hot dog is a sandwich, are they arguing about the hot dog, or about the word?
 
 ## Your Anomaly Log
 

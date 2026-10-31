@@ -18,7 +18,7 @@ It's a neat sentence, and it leaves out most of what really happened. Here's the
 
 But Priestley didn't think he had found a new element. Chemists back then believed that anything burning gave off an invisible stuff called *phlogiston* (say it: flo-JISS-tun). Priestley decided his gas was air with the phlogiston taken out. He called it "dephlogisticated air."
 
-Lavoisier repeated the experiments and came to a completely different conclusion. There is no phlogiston, he argued. This gas is a basic ingredient of the air, an element. When things burn, they grab it instead of giving something off. He named it *oxygen*. Priestley never agreed. For the rest of his life, he kept saying phlogiston was real.
+Lavoisier repeated the experiments and came to a completely different conclusion. There is no phlogiston, he argued. This gas is a basic ingredient of the air, an **element** — a pure substance that can't be split into simpler ones. When things burn, they grab it instead of giving something off (and burned metals weigh more afterward, which fits grabbing, not giving off). He named it *oxygen*. Priestley never agreed. For the rest of his life, he kept saying phlogiston was real.
 
 So who discovered oxygen? Scheele made it first. Priestley made it and told the world first. Lavoisier was the first to understand it as we do today. Three people, three different pieces.
 
@@ -30,7 +30,7 @@ A historian of science named Thomas Kuhn thought that staircase picture was a bi
 
 And here's the sneaky part. After a revolution, the new books make the revolution almost invisible. Priestley becomes "the man who discovered oxygen," as if he agreed with us all along.
 
-**Weird but true:** In 1767, Joseph Priestley lived next to a brewery, used the gas bubbling up from the beer vats, and worked out how to make fizzy water.
+**Weird but true:** In 1767, Joseph Priestley moved next door to a brewery and started trapping the gas bubbling off the beer vats to make fizzy water. He published the recipe in 1772. Soda water begins with a minister and some free gas from the beer across the fence.
 
 ## Words for your notebook
 
@@ -38,7 +38,7 @@ And here's the sneaky part. After a revolution, the new books make the revolutio
 - **Revolution (in science):** a big change in the rules scientists use to see the world.
 - **Textbook history:** the tidy, staircase version of the past that science books often tell.
 
-Side View: In 1620, an English thinker named Francis Bacon said science should gather careful observations and build them up into laws, so knowledge grows like a pile of facts. Kuhn's picture is different: sometimes the pile gets knocked over and rebuilt. Think of LEGO bricks: keep adding forever, or sometimes knock it down and build it a new way? Which fits the oxygen story better?
+Side View: In 1620, Francis Bacon said science grows by piling up careful observations into laws. Does the oxygen story fit a pile that keeps growing, or something messier?
 
 ## Your Anomaly Log starts now
 

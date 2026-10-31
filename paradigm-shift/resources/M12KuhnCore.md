@@ -44,7 +44,7 @@ If you were writing the next edition of this course, what would you add, cut or 
 
 **Weird but true:** Before Kuhn, "paradigm" was best known as a grammar word, used for a model example like a verb you practice so you can do others like it. Kuhn's book turned it into a word people use about business, sports and everyday life.
 
-Side View: Philosophers today still don't agree on who was right, and many think each one saw part of the picture. Pick one thinker on the map to have on your side in an argument about screen time. Who would you pick, and why?
+Side View: Most philosophers today think each of these thinkers caught part of the picture, not one of them whole. If you had one of them on your side in an argument about screen time, who would you pick, and why?
 
 ## Your Anomaly Log
 

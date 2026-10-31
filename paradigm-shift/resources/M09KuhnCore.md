@@ -10,7 +10,7 @@ Nobody has ever looked at an atom the way you look at a marble. So scientists bu
 |---|---|---|
 | Dalton | early 1800s | Atoms are tiny, solid balls that can't be split. They join in fixed, whole-number amounts. |
 | Thomson | 1904 | J.J. Thomson had found the electron in 1897. His atom is a ball of positive charge with tiny negative electrons scattered through it. People later nicknamed it the "plum pudding" model. |
-| Rutherford | 1911 | In an experiment in 1909, a few particles fired at thin gold foil bounced almost straight back. Ernest Rutherford said the atom must have a tiny, heavy center: the **nucleus**. |
+| Rutherford | 1911 | In an experiment in 1909, a few particles (tiny positively charged bullets from radioactive material) fired at thin gold foil bounced almost straight back. Something small and heavy had to be there to kick them back, so Ernest Rutherford said the atom must have a tiny, heavy center: the **nucleus**. |
 | Bohr | 1913 | Niels Bohr put electrons on fixed levels, like rungs on a ladder. It explained exactly which colors of light hydrogen gives off. |
 | Schrödinger | 1926 | Erwin Schrödinger's math describes electrons as fuzzy clouds of where they're likely to be, not tiny balls on paths. |
 
@@ -38,7 +38,7 @@ That's why your science teacher may still draw the Bohr model. Chemists still us
 - **Nucleus:** the tiny, heavy center of an atom.
 - **Progress:** getting better. But better at what? That's the question.
 
-Side View: Karl Popper thought a new theory can be closer to the truth than the old one, even if neither is perfectly true. Each good replacement gets nearer. Kuhn wasn't sure science moves toward a final truth at all. Think of a map of your town that gets better every year, with more streets and fewer mistakes. Is that getting closer to the real town, or just a more useful map?
+Side View: Popper thought each new theory can be closer to the truth than the last; Kuhn thought science moves away from older problems rather than toward a final truth. Is a map that gets better every year getting closer to the real town, or just more useful?
 
 ## Your Anomaly Log
 

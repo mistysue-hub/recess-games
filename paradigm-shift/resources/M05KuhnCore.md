@@ -41,7 +41,7 @@ Only some anomalies refuse every fix. Those are the ones that can push a science
 - **Rescue:** explaining an anomaly by adding something new (like an unseen planet) while keeping the paradigm.
 - **General relativity:** Einstein's 1915 theory of gravity, which replaced Newton's for some problems.
 
-Side View: Two philosophers, Pierre Duhem and W. V. O. Quine, pointed out that you can never test just one idea by itself. Every prediction also depends on other things you assumed, like how many planets there are or whether your telescope works. So when a prediction fails, you can always blame one of those other things and save your main theory. Say you've looked for your lost shoe in three places. When do you stop looking and decide someone moved it? When should scientists stop saving a theory?
+Side View: Pierre Duhem (and later W. V. O. Quine) argued that when a prediction fails, you can always blame one of its parts (your telescope, the number of planets) instead of the main theory. When would you stop looking for the lost shoe and admit someone moved it?
 
 ## Your Anomaly Log
 

@@ -29,7 +29,7 @@ Wegener died in 1930 on an expedition across the ice in Greenland. Continental d
 
 After World War II, scientists mapped the ocean floor in detail. In 1952, a geologist and mapmaker named Marie Tharp noticed something in the data: a deep valley running down the middle of a huge underwater mountain range in the Atlantic. Her research partner, Bruce Heezen, brushed it off at first. Months later, he came around.
 
-In the early 1960s, Harry Hess suggested that new sea floor forms at these underwater ridges and spreads outward. Rocks on the sea floor carry stripes of magnetism. In 1963, Fred Vine and Drummond Matthews suggested the stripes were a record of spreading, so they should match on both sides of a ridge, like a mirror. By 1966, ship surveys showed they did.
+In the early 1960s, Harry Hess suggested that new sea floor forms at these underwater ridges and spreads outward. The clue was striping: when hot rock hardens, it locks in the direction of Earth's magnetic field, and every so often the field flips, leaving a stripe. In 1963, Fred Vine and Drummond Matthews suggested the stripes on the sea floor were a record of spreading, so they should match on both sides of a ridge, like a mirror. By 1966, ship surveys showed they did.
 
 Now there was a mechanism. By the late 1960s, most geologists had switched to a new idea called **plate tectonics**: Earth's surface is broken into giant plates that move a few centimeters a year.
 
@@ -43,7 +43,7 @@ That's a revolution: not just a new fact, but a new way of seeing the whole Eart
 - **Mechanism:** an explanation of *how* something happens.
 - **Plate tectonics:** the modern theory that Earth's surface is made of moving plates.
 
-Side View: Paul Feyerabend, an Austrian philosopher, argued in 1975 that there's no single scientific method that all good science follows. Sometimes, he said, scientists have to stick with an idea even when the evidence and the rules seem to be against it. Wegener's few supporters might be an example. Say your whole class thinks your idea won't work, but you still think it might. When should you keep going, and when should you listen?
+Side View: In 1975, Paul Feyerabend argued there's no one scientific method, and sometimes a scientist should hold on to an idea even when the evidence and the rules seem to be against it. When should you keep going on an idea your class rejects, and when should you listen?
 
 ## Your Anomaly Log
 

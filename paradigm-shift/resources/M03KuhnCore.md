@@ -10,9 +10,9 @@ Thomas Kuhn thought most of the science that scientists do every day works the s
 
 ## The comet that came back
 
-In the late 1600s, the English astronomer Edmond Halley studied old records of comets. Three of them, seen in 1531, 1607 and 1682, had very similar paths across the sky. Halley guessed they weren't three comets at all. They were one comet, coming back about every 76 years.
+In 1705, the English astronomer Edmond Halley studied old records of comets. Three of them, seen in 1531, 1607 and 1682, had very similar paths across the sky. Halley guessed they weren't three comets at all. They were one comet, coming back about every 76 years.
 
-Halley used Isaac Newton's new laws of gravity to work out its path. He predicted the comet would return in 1758. Halley died in 1742, so he never got to find out.
+Halley used Isaac Newton's new laws of gravity to work out its path. (Newton's laws say everything in space pulls on everything else, so passing giant planets can tug a comet off course.) He predicted the comet would return in 1758. Halley died in 1742, so he never got to find out.
 
 As 1758 got closer, three French mathematicians took on the puzzle, including Nicole-Reine Lepaute. They knew the giant planets Jupiter and Saturn would tug on the comet and slow it down. For months they worked through huge calculations by hand. They predicted the comet would make its closest pass by the Sun in mid-April 1759.
 
@@ -34,7 +34,7 @@ Kuhn didn't think this made scientists dull. Normal science makes measurements s
 - **Puzzle (Kuhn's sense):** a problem that is sure to have a solution, where failing means the solver needs to try again.
 - **Perihelion** (PAIR-ih-HEE-lee-un): a comet's or planet's closest point to the Sun.
 
-Side View: Karl Popper, an Austrian-British philosopher, had a very different idea. In a 1934 book he said what makes an idea scientific is that it could be proven wrong. "All swans are white" is scientific, because one black swan would prove it false. Popper thought good scientists should try hard to prove their own ideas wrong, not just protect them. He worried that normal science teaches scientists to stop questioning. Say you think your friend is the fastest runner in class. Would you go looking for a race she might lose, or just keep timing her wins? Who sounds more like good science, Popper or Kuhn?
+Side View: Karl Popper said what makes an idea scientific is that something could prove it wrong; a claim nothing could ever contradict can't be tested. Think of a belief you hold about a person: how would you tell if you were wrong?
 
 ## Your Anomaly Log
 

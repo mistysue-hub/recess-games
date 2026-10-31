@@ -13,7 +13,7 @@ Thomas Kuhn thought science works a lot like that.
 Kuhn's most famous word is **paradigm** (say it: PAIR-uh-dime). It comes from an old Greek word meaning "pattern" or "example." For Kuhn, a paradigm is the shared way a group of scientists sees its part of the world. It includes:
 
 - **Big ideas everyone accepts** (for example: "matter is made of tiny particles").
-- **Model examples** everyone has worked through, the way you learn math by doing practice problems.
+- **Model examples** everyone has worked through, the way you learn math by doing practice problems. Kuhn had a word for these: **exemplars**.
 - **Unwritten rules** about which questions are worth asking and what a good answer looks like.
 
 Scientists mostly learn their paradigm the way you learned that game. Students don't memorize a list of rules. They solve problem after problem until they start seeing new problems the way their teachers do.
@@ -33,9 +33,9 @@ Each theory explained some results well and others badly. Every new book had to 
 
 Then, in 1745 and 1746, experimenters in Germany and the Netherlands invented the **Leyden jar** (say it: LYE-den), a glass jar partly filled with water that could store electricity and give a powerful shock. It was the most dramatic thing anyone had seen, and the old theories struggled to explain it.
 
-In America, Benjamin Franklin came up with an idea: maybe electricity is one single invisible fluid. An object with too much of it is "plus," and an object with too little is "minus." His idea explained the Leyden jar very well. Over time, more and more experimenters started using Franklin's picture as their starting point.
+In America, Benjamin Franklin came up with an idea: maybe electricity is one single invisible fluid. An object with too much of it is "plus," and an object with too little is "minus." That explained the Leyden jar neatly — the shock is extra fluid rushing from the "plus" side of the glass to the "minus" side. Over time, more and more experimenters started using Franklin's picture as their starting point.
 
-That changed everything. Instead of arguing about what electricity was, researchers could work on shared puzzles: How much charge can a jar hold? How does it flow? A paradigm had arrived.
+That changed everything. Instead of arguing about what electricity was, researchers could work on shared puzzles: how much charge (how much of the fluid, in Franklin's picture) can a jar hold? How does it flow? A paradigm had arrived.
 
 (Later science replaced Franklin's fluid idea, but we still use his words "plus" and "minus.")
 
@@ -47,7 +47,7 @@ That changed everything. Instead of arguing about what electricity was, research
 - **Pre-paradigm science:** science before a shared paradigm, when everyone starts from scratch.
 - **Leyden jar:** an early glass jar for storing electric charge, invented in 1745–46.
 
-Side View: Some thinkers in the 1920s and 1930s had a very different picture. For them, science was about two things only: logic and observations anyone can check. There's no room in that picture for unwritten rules or for how a group of scientists was trained. Kuhn said the group matters a lot. Think of a card game your friends play with house rules nobody wrote down. Does a rule book explain how it's really played, or do you have to learn it from the group?
+Side View: In the 1920s and 1930s, the Vienna Circle argued that science is built from only two things: logic and observations anyone can check. Does that leave room for the unwritten know-how a group of scientists picks up by working together?
 
 ## Your Anomaly Log
 

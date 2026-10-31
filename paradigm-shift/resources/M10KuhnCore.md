@@ -38,7 +38,7 @@ So two smart, honest scientists in 1543 could weigh those values differently and
 - **Theory choice:** how scientists decide which of two theories to accept.
 - **Commitment:** sticking with an idea long enough to test what it can do.
 
-Side View: Helen Longino, an American philosopher, said nobody is perfectly unbiased, not even scientists. What makes science trustworthy is that scientists check each other's work, and that criticism from many different people is welcomed and taken seriously. Picture a science fair where every project is checked by kids who disagree with each other. Would that make the winners more trustworthy? Does that sound like Kuhn's side, Popper's side, or something new?
+Side View: Helen Longino said science is trustworthy because scientists welcome criticism from many different people, not because any one scientist is unbiased. Would a science fair where every project is judged by kids who disagree with each other make the winners more trustworthy?
 
 ## Your Anomaly Log
 

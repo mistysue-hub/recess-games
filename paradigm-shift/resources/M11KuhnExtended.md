@@ -16,9 +16,9 @@ Fact-checking caught real errors in this course's first drafts. Here are three c
 
 1. An early Module 2 draft described the first Leyden jars as foil-coated. The first ones were partly filled with water; foil came in 1747.
 2. Module 6 was planned under the title "Too Many Circles," drawing on the "epicycles on epicycles" story. Fact-checking found that story to be a modern myth, so the module kept the title with a question mark.
-3. The first draft of Module 1 placed Priestley's mouse test, his breathing the gas and his naming of "dephlogisticated air" in August 1774. Sources showed they came in 1795, after his October 1774 visit to Lavoisier.
+3. An early Module 3 draft said Edmond Halley lived to see his comet return in 1758, which "confirmed Newton's physics within his lifetime." Fact-checking found that Halley died in 1742, sixteen years before the comet came back, as Module 3 now says.
 
-Reveal: Claim 3 is the planted error. The sources put those events in early 1775, not 1795. Claims 1 and 2 are real. The true version of claim 3 is the irony: a module about textbooks compressing messy history compressed messy history. The fact-checker also flagged traps the course avoided: claiming Copernicus was more accurate or used fewer circles overall (he needed fewer only to explain the backward loops, as Kuhn himself noted), claiming Thomson named the "plum pudding," and claiming Pluto was demoted for being too small. Kuhn would recognize the pattern: errors that fit the expected story are the hardest to see, just like the trick cards in Module 4.
+Reveal: Claim 3 is the planted error. It reads like the kind of satisfying ending that textbooks reach for — scientist predicts, scientist is vindicated, applause — and it contradicts what Module 3 plainly says. Claims 1 and 2 are real catches. The fact-checker also flagged traps the course avoided: claiming Copernicus was more accurate or used fewer circles overall (he needed fewer only to explain the backward loops, as Kuhn himself noted), claiming Thomson named the "plum pudding," and claiming Pluto was demoted for being too small. Kuhn would recognize the pattern: errors that fit the expected story are the hardest to see, just like the trick cards in Module 4.
 
 ## The planted anomalies
 
@@ -35,7 +35,7 @@ Each module ended by pointing at a weakness in the course. Tick the ones you cau
 9. A five-step staircase (Module 9).
 10. A crowded debate told as a duel (Module 10).
 
-Beyond those: biology and medicine are almost absent; science outside Europe and the United States appears only briefly, in Module 6; and the few women you met are the mathematician Nicole-Reine Lepaute, the geologist Marie Tharp and the philosopher Helen Longino.
+Beyond those: biology and medicine are almost absent; science outside Europe and the United States appears only briefly, in Module 6; and the women you met are few: the chemist Marie-Anne Paulze Lavoisier (Module 1), the mathematician Nicole-Reine Lepaute (Module 3), the geologist Marie Tharp (Module 7), the 11-year-old Venetia Burney who named Pluto (Module 8), and the philosopher Helen Longino (Module 12).
 
 ## Is it a paradigm?
 
