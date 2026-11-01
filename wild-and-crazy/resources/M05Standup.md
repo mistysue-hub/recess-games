@@ -2,7 +2,7 @@
 
 ## Two things that don't belong together
 
-In the middle of the bunny ears and the balloon animals and the fake arrow, Steve would sit down and play the banjo, beautifully. Not as a joke. He was, and is, a serious musician; he's won Grammys for bluegrass albums and toured with a real band.
+In the middle of the bunny ears and the balloon animals and the fake arrow, Steve would sit down and play the banjo, beautifully. Not as a joke. He was, and is, a serious musician; he's won Grammys for his banjo music, including Best Bluegrass Album, and toured with a real band.
 
 A man with an arrow through his head playing a gorgeous tune is funny for a reason worth naming: two things that don't belong together, held in one frame, with nobody explaining why. Comedy writers call it juxtaposition. High and low. Serious and silly. The laugh lives in the gap.
 
@@ -12,7 +12,7 @@ The thing that makes you weird is the thing that makes you funny. Steve studied 
 
 ## How to build one
 
-Take something you take seriously. Pair it with something small, dumb or ordinary. Treat the pairing with total seriousness. A knight's oath about finishing his vegetables. A wedding toast for a sandwich. The more dignity you give the dumb half, the funnier it gets.
+Take something you take seriously. Pair it with something small, dumb or ordinary. Treat the pairing with total seriousness. A eulogy for a phone charger. A hostage negotiation over a juice box. The more dignity you give the dumb half, the funnier it gets.
 
 ## Tonight's clip: the banjo, no arrow
 
@@ -24,4 +24,4 @@ Write three high/low pairings, one line each. Pick your favorite and stretch it 
 
 ## Backstage
 
-The play is Picasso at the Lapin Agile (Off-Broadway, 1993). Where this went: most absurdist short-form comedy is juxtaposition with the explanation removed.
+The play is Picasso at the Lapin Agile, first staged in Chicago in 1993. Where this went: most absurdist short-form comedy is juxtaposition with the explanation removed.

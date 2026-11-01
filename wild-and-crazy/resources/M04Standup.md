@@ -2,6 +2,8 @@
 
 ## The balloon
 
+This card is about not finishing things. It ends on time, though. Probably.
+
 Think of tension as a balloon. Each beat of a bit (one line, one look, one pause) adds a little air. A punchline is a pin. Steve's idea was to keep adding air and never bring out the pin, so the audience is squirming, grinning, waiting, and the laugh leaks out around the edges.
 
 One of his old bits: announce a song, start tuning the banjo, and keep tuning. Past the point where it was a joke, through the point where it was annoying, out the other side into something else. The room would laugh, stop, get uncomfortable, and laugh harder, at nothing, because nothing was still happening.
@@ -24,4 +26,4 @@ Write a bit where the tension builds for five beats and the release never comes.
 
 ## Backstage
 
-Where this went: the four-second silences in Nathan Fielder, and every deadpan pause you've laughed at without knowing why.
+You can hear the same idea in the long silences in Nathan Fielder's shows, and in every deadpan pause (deadpan: saying something funny with a totally straight face) you've laughed at without knowing why.

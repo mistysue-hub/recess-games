@@ -4,6 +4,8 @@
 
 ## The man who wouldn't finish the joke
 
+A man walks on stage, tunes a banjo for four minutes, and leaves. People paid for this. Here's why.
+
 In the 1970s a comedian in a white suit walked on stage, tuned his banjo for far too long, announced a trick that never arrived, and said absurd things with a perfectly straight face, then moved on as if nothing had happened. Rooms didn't know what to do. Then they laughed, harder than they expected, and couldn't say why.
 
 That was the plan.
@@ -20,6 +22,8 @@ In 1978 he brought a silly song to Saturday Night Live. There is no joke to "get
 
 Write one joke twice: the normal way, with a punchline, then Steve's way, with the punchline taken out and something flat put in its place. Both go to Rocky.
 
+Two words you'll hear all week: a *bit* is one funny chunk about one thing. A *set* is your bits in a row, the way a comedian does them on stage.
+
 ## Backstage
 
-Steve did stand-up for about eighteen years and quit in 1981 at the top. The no-punchline idea played to near-empty rooms for years before it filled arenas. Where this went: Andy Kaufman, Norm Macdonald's famously long moth joke, and most anti-comedy you've seen online all start here.
+Steve did stand-up for about eighteen years and quit in 1981 at the top. The no-punchline idea played to near-empty rooms for years before it filled arenas. Cousins of this idea: Andy Kaufman, working in the same years (he once read a whole novel aloud on stage until the room cracked), and later Norm Macdonald's moth joke, which runs five minutes to reach one flat pun.

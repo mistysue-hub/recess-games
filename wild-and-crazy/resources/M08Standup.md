@@ -2,7 +2,7 @@
 
 ## Walking away at the top
 
-In 1981 Steve Martin was the biggest stand-up comedian alive, selling out arenas, and he stopped for good. He has said the audience was laughing at the catchphrases before he said them, and that's not real laughter. He didn't want to perform a copy of himself. So he quit, and made movies.
+In 1981 Steve Martin was selling out arenas, one of the biggest draws stand-up had ever seen, and he stopped for good. He has said his act was built on one idea, and once everyone knew the idea there was nothing left to develop. He didn't want to perform a copy of himself. So he quit, and made movies.
 
 It looked like an ending. It was the start of four more careers: actor, writer, banjo player with real Grammys, and lately a TV detective in Only Murders in the Building, alongside his best friend.
 
@@ -22,10 +22,10 @@ Steve and Martin Short on how they met, how they work, and who has the louder in
 
 ## Your turn
 
-Assemble your set: opener, build, callback. Perform it, out loud or typed to Rocky, with the Open Mic page running. Then tell Rocky what got the biggest laugh and what you'd change.
+Assemble your set: opener, build, callback. Perform it, out loud to someone at home or typed to Rocky line by line, with the Open Mic page running. Any length counts; thirty seconds is a real set. Then tell Rocky the line you're proudest of and what you'd change.
 
 That's the course. The stage is yours.
 
 ## Backstage
 
-Where this went: Bo Burnham walked away from stand-up for the same reason, and said so in Make Happy.
+Other comedians have stepped away at a peak too, each for their own reasons; Bo Burnham stopped touring after Make Happy (2016) and later made Inside alone in one room.

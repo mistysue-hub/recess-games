@@ -2,15 +2,17 @@
 
 ## One picture, one line
 
-A cartoon has a picture and a caption. There is nowhere to hide. One extra word and the joke sags; one missing word and nobody gets it. In 2020 Steve started publishing cartoons with the cartoonist Harry Bliss, and he's talked about the precision a single line demands, and about waking in the night to write an idea down before it vanishes.
+This card is about 300 words long. A good joke is about 12. Let's see who wins.
+
+A cartoon has a picture and a caption. There is nowhere to hide. One extra word and the joke sags; one missing word and nobody gets it. In 2019 Steve started writing cartoons with the cartoonist Harry Bliss (their book came out in 2020), and he's talked about the precision a single line demands, and about waking in the night to write an idea down before it vanishes.
 
 That's tonight's rule: every word in a joke has to earn its place. Comedy is the one kind of writing where shorter is almost always funnier, because a laugh is a surprise, and surprises don't survive padding.
 
 ## The comedian who was really a writer
 
-People who know him say that off stage Steve is quiet, and at heart a writer. He wrote his stand-up word by word. He wrote the movies he starred in. He has said he spends a week on a five-minute speech.
+Steve has long described himself as a writer at heart. He wrote his stand-up word by word. He wrote or co-wrote many of the movies he starred in.
 
-He's also joked that writer's block is a fancy name for not sitting down. That's his method: show up, write bad versions, cut. The funny version is usually hiding inside the long one.
+The method: show up, write bad versions, cut. The funny version is usually hiding inside the long one.
 
 ## How to cut
 
@@ -26,4 +28,4 @@ Take the joke you wrote in Module 1 and cut it to half its length without losing
 
 ## Backstage
 
-He wrote The Jerk and Roxanne, plays, novels, and pieces for The New Yorker. Where this went: every good tweet you've ever seen.
+He co-wrote The Jerk, wrote Roxanne, and has written plays, novels, and pieces for The New Yorker. Where this went: every caption that ever got screenshotted.

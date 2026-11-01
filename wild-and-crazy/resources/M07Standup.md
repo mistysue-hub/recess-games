@@ -2,7 +2,7 @@
 
 ## The show after the show
 
-Every night for years, after Steve walked off stage, the work started. What got a laugh, what got silence, where the pause ran a half-second long, which bit should move earlier. He changed one thing. Then he did it again the next night.
+For years, after Steve walked off stage, the work started. What got a laugh, what got silence, where the pause ran a half-second long, which bit should move earlier. He kept notebooks on the act from his teens on, and kept adjusting. Then he tried again the next night.
 
 Not because he was unsure of himself. Because he'd decided his own opinion of the show mattered less than what the show did in the room. The room is the data. The notebook is where you keep it.
 
@@ -14,7 +14,9 @@ His friend Martin Short says Steve has the louder inner critic of the two of the
 
 ## Building a set
 
-A set has an opener (short, confident, tells the room who you are), a build (bits that get a little bigger), and a callback near the end: a line that brings back the opener so the whole thing feels planned. It was.
+A set has an opener (short, confident, tells the room who you are), a build (bits that get a little bigger), and a callback near the end: a line that brings back the opener so the whole thing feels planned. It was. The last bit is called the closer.
+
+"Bigger" in a build means higher stakes or a sillier situation, not more words.
 
 ## Tonight's clip: the acceptance speech
 

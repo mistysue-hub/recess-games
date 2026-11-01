@@ -24,6 +24,7 @@
   .choice.steve{border-color:var(--green);background:#eef7f0}
   .choice:disabled{cursor:default}
   .choice small{display:block;font-size:.85rem;color:#6b5f56;font-style:italic}
+  .tag{display:inline-block;font-family:'Special Elite',monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--green);border-radius:3px;padding:2px 7px;margin-left:8px;vertical-align:middle}
   .verdict{font-family:'Patrick Hand',cursive;font-size:1.12rem;background:#fff2b3;border:1px dashed #d9b84a;padding:12px 14px;margin:14px 0 6px;display:none}
   .btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 3px 0 #8a1f16;min-height:48px}
   .btn:active{transform:translateY(2px);box-shadow:none}
@@ -42,7 +43,7 @@
 <main>
   <section class="card intro" id="intro"><span class="pin"></span>
     <p><strong>How it works.</strong> Steve Martin's stage guy was a confident fool in a white suit. The laugh always landed on the character he was playing, never on a real person who couldn't answer back.</p>
-    <p>Ten short jokes, one at a time. For each one, tap who the joke lands on: <strong>the character</strong> (a made-up or played-up persona who's in on it), <strong>a real person</strong> (someone who isn't there to answer back), or <strong>it depends</strong> (a real person, but they're in on it, or it's about you and your own people).</p>
+    <p>Ten short jokes, one at a time. For each one, tap who the joke lands on: <strong>the character</strong> (a made-up or played-up persona. The performer is in on it; the character never finds out. That gap is the joke.), <strong>a real person</strong> (someone who isn't there to answer back), or <strong>it depends</strong> (a real person, but they're in on it, or it's about you and your own people).</p>
     <p>After each pick, the card shows the course's call. You can disagree; the last screen counts how often you and the course saw it the same way.</p>
     <button class="btn" id="start">Start the set</button>
   </section>
@@ -51,7 +52,7 @@
     <div class="count" id="count"></div>
     <p class="setup" id="setup"></p>
     <p class="ask">Who's the joke on?</p>
-    <button class="choice" id="c">The character<small>A made-up or played-up persona who's in on it</small></button>
+    <button class="choice" id="c">The character<small>The performer is in on it; the character never finds out. That gap is the joke.</small></button>
     <button class="choice" id="r">A real person<small>Someone who isn't there to answer back</small></button>
     <button class="choice" id="d">It depends<small>Real, but willing, or it's about you and your own people</small></button>
     <div class="verdict" id="verdict"></div>
@@ -88,17 +89,19 @@
     var j=JOKES[order[i]];
     $('count').textContent='Joke '+(i+1)+' of '+JOKES.length;
     $('setup').textContent=j.t;
-    ['c','r','d'].forEach(function(id){var el=$(id);el.disabled=false;el.className='choice'});
+    ['c','r','d'].forEach(function(id){var el=$(id);el.disabled=false;el.className='choice';var t=el.querySelector('.tag');if(t)el.removeChild(t)});
     $('verdict').style.display='none';$('next').style.display='none';
   }
   function pick(id){
     var j=JOKES[order[i]];
     $(id).classList.add('pick');$(j.a).classList.add('steve');
+    var tag=document.createElement('span');tag.className='tag';tag.textContent='course pick';
+    $(j.a).insertBefore(tag,$(j.a).querySelector('small'));
     $('c').disabled=true;$('r').disabled=true;$('d').disabled=true;
     var same=(id===j.a); if(same) agree++;
     var ans=j.a==='c'?'is on <strong>the character</strong>':j.a==='r'?'is on <strong>a real person</strong>':'is <strong>it depends</strong>';
     var v=$('verdict');
-    v.innerHTML=(same?'<strong>Same call as the course.</strong> ':'<strong>The course saw it another way.</strong> ')+'The course says this one '+ans+' (the green one). '+j.w;
+    v.innerHTML=(same?'<strong>Same call as the course.</strong> ':'<strong>The course saw it another way.</strong> ')+'The course says this one '+ans+' (marked course pick). '+j.w;
     v.style.display='block';
     $('next').textContent=(i===JOKES.length-1)?'See results':'Next joke';
     $('next').style.display='inline-block';
@@ -107,7 +110,7 @@
   $('c').onclick=function(){pick('c')};
   $('r').onclick=function(){pick('r')};
   $('d').onclick=function(){pick('d')};
-  $('next').onclick=function(){i++; if(i<JOKES.length){show()} else {$('play').style.display='none';$('line').textContent='Agreed with the course: '+agree+' of '+JOKES.length;$('closing').textContent=agree>=8?'You can tell a fool-in-a-suit joke from a cheap shot. Now write one where the fool is you.':agree>=5?'You and the course mostly saw it the same way. The ones you split on are worth a second look.':'You and the course saw these differently. Good. Ask yourself who would feel it if they heard the joke.';$('done').style.display='block';window.scrollTo(0,0)}};
+  $('next').onclick=function(){i++; if(i<JOKES.length){show()} else {$('play').style.display='none';$('line').textContent='Agreed with the course: '+agree+' of '+JOKES.length;$('closing').textContent=agree>=8?'You can tell where a laugh is landing. That\'s the whole skill.':agree>=5?'You and the course mostly saw it the same way. The ones you split on are worth a second look.':'You and the course saw these differently. Good. Ask yourself who would feel it if they heard the joke.';$('done').style.display='block';window.scrollTo(0,0)}};
   $('again').onclick=function(){$('start').onclick()};
 })();
 </script>

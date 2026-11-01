@@ -48,7 +48,7 @@
 </header>
 <main>
   <section class="card intro" id="intro"><span class="pin"></span>
-    <p><strong>How it works.</strong> Each joke below is stuffed with extra words, so tap any word to cut it (tap again to bring it back) until the joke is 15 words or fewer. Then tap <strong>Lock it in</strong>, and you score if the words that carry the joke are still standing.</p>
+    <p><strong>How it works.</strong> You get 3 jokes, each stuffed with extra words. Tap any word to cut it (tap again to bring it back) until the joke is 15 words or fewer. Then tap <strong>Lock it in</strong>. Keep every word that carries the joke for 2 points; lose one and you get 1.</p>
     <button class="btn" id="start">Start trimming</button>
   </section>
 
@@ -66,6 +66,7 @@
   <section class="card result" id="done" style="display:none"><span class="pin"></span>
     <div class="big">That's the set!</div>
     <div class="line" id="line"></div>
+    <p class="fine">(2 points per joke)</p>
     <p id="closing"></p>
     <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
     <button class="btn" id="again">Play again</button>
@@ -77,16 +78,12 @@
   // Every word is tappable. Words starting with * are the hidden essentials: the joke dies without them.
   // c is the course's own trim (15 words or fewer). It keeps every essential, in order, so a full score is always reachable.
   var JOKES=[
-    {t:"So this is kind of a true story. Last night I *asked my *dog what *two *minus *two is. I was sitting there waiting, and he *said *nothing. And honestly, I think he was kind of right, if you think about the math.",
+    {t:"Last night, at home, I *asked my *dog what *two *minus *two is. He *said *nothing. Which, if you think about it, is the right answer.",
      c:"I asked my dog what two minus two is. He said nothing."},
-    {t:"Okay, so I kind of *wrote a whole *book about *reverse *psychology, which, if you don't know, is when you tell people the opposite of what you want. Anyway, I'm honestly begging you: *please *don't *read it. Because, I think, that way you will.",
-     c:"I wrote a book about reverse psychology. Please don't read it."},
-    {t:"So my dad stood up at dinner, at the actual dinner table, in front of everyone, and announced he's *quitting *procrastination for good. Then he said he'll *start *tomorrow. Which, I think, kind of proves he hasn't quit yet, honestly.",
-     c:"My dad announced he's quitting procrastination. He'll start tomorrow."},
-    {t:"So this weekend I finally *cleaned my *room, which, honestly, was kind of a big deal, because it was a really, really messy room. Under the bed I found my missing *shoe, two *pencils, and my little *brother. I think he was hiding in there.",
-     c:"I cleaned my room. I found my shoe, two pencils, and my brother."},
-    {t:"So when I was little, my *mom said I could be *anything I wanted when I grew up. No limits. So I *picked *cat. I was a cat for about a week, honestly. And then she kind of *took it *back, which I think was a little unfair.",
-     c:"Mom said I could be anything. I picked cat. She took it back."}
+    {t:"When I was little, my *mom *said I *could *be *anything I wanted. Anything at all, when I grew up. So I *picked *cat. She took it back.",
+     c:"Mom said I could be anything. I picked cat. She took it back."},
+    {t:"I *wrote a *book about *reverse *psychology, which is when you ask for the opposite. *Please *don't *read it. You see what I did there.",
+     c:"I wrote a book about reverse psychology. Please don't read it."}
   ];
   var i=0,score=0,words=[],cut=[],locked=false;
   var $=function(id){return document.getElementById(id)};
@@ -145,7 +142,7 @@
     var j=JOKES[i],mine=esc(tidy(kept)),html;
     if(missing.length===0){
       score+=2;
-      html='<strong>Still funny. You found the joke.</strong>';
+      html=kept.length<j.c.split(' ').length?'<strong>Shorter than ours. Nice.</strong>':'<strong>Still funny. You found the joke.</strong>';
     } else if(missing.length===1){
       score+=1;
       html='<mark>'+esc(norm(words[missing[0]].w))+'</mark> <strong>That one carried weight.</strong>';
@@ -161,8 +158,8 @@
   $('start').onclick=function(){i=0;score=0;$('intro').style.display='none';$('done').style.display='none';$('play').style.display='block';show();window.scrollTo(0,0)};
   $('next').onclick=function(){i++; if(i<JOKES.length){show();window.scrollTo(0,0)} else {
     $('play').style.display='none';
-    $('line').textContent='Jokes trimmed to size: '+score+' of 10';
-    $('closing').textContent=score===10?'Ten for ten. Every word left standing earned its spot.':score>=6?'Most of the fat is gone. Now try it on a joke of your own.':'Cutting is hard. Every comedian keeps words they love too long. Try one more round.';
+    $('line').textContent='Jokes trimmed to size: '+score+' of 6';
+    $('closing').textContent=score===6?'Six for six. Every word left standing earned its spot.':score>=4?'Most of the fat is gone. Now try it on a joke of your own.':'Cutting is hard. Every comedian keeps words they love too long. Try one more round.';
     $('done').style.display='block';window.scrollTo(0,0)}};
   $('again').onclick=function(){$('start').onclick()};
 })();

@@ -74,7 +74,8 @@
     <div class="spot" id="spot" aria-hidden="true">
       <div class="mic"><div class="head"></div><div class="band"></div><div class="body"></div><div class="clip"></div><div class="pole"></div><div class="base"></div></div>
     </div>
-    <div class="timer" id="timer" role="timer" aria-live="off">5:00</div>
+    <div class="timer" id="timer" role="timer" aria-live="off">3:00</div>
+    <p class="hint">Any length counts. Thirty seconds is a real set.</p>
     <div class="status" id="status" aria-live="polite">The mic is yours.</div>
     <div class="row">
       <button class="btn bigbtn" id="go">Take the stage</button>
@@ -93,7 +94,7 @@
   <section class="card result" id="done" style="display:none"><span class="pin"></span>
     <div class="big">That's the set!</div>
     <div class="line" id="line"></div>
-    <p>You stood up. That's the whole trick.</p>
+    <p id="closing">You stood up. That's the whole trick.</p>
     <p><strong>Type done to Rocky and read him the line in the box.</strong></p>
     <button class="btn" id="again">Take the stage again</button>
     <p class="fine">Written for this course.</p>
@@ -101,7 +102,7 @@
 </main>
 <script>
 (function(){
-  var TOTAL=300, MAXCLAPS=999;
+  var TOTAL=180, MAXCLAPS=999;
   var $=function(id){return document.getElementById(id)};
   var tick=null, running=false, banked=0, startedAt=0, clapCount=0, timeUp=false;
 
@@ -159,6 +160,7 @@
     var e=elapsedSec();
     running=false;stopTick();
     $('line').textContent='Set performed: '+fmt(e)+' on stage, applause '+clapCount;
+    $('closing').textContent=clapCount===0?'Applause: 0. Empty rooms are where Steve started. You\'re in good company.':clapCount>150?'Applause: '+clapCount+'. Our records show most of those were you. Still counts.':'You stood up. That\'s the whole trick.';
     $('stage').style.display='none';$('done').style.display='block';window.scrollTo(0,0);
   };
   $('again').onclick=function(){$('start').onclick()};
