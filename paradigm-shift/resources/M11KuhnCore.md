@@ -41,7 +41,7 @@ Also left out: almost all science outside Europe and the United States, nearly a
 
 It has **exemplars** — Kuhn's word for the model examples you met in Module 2, which you learned to see the rest of science through, like the comet and Neptune. It has a **spine** it rarely questioned: Kuhn's story of how science works. And like a textbook, it chose a tidy order.
 
-**Weird but true:** Every mistake listed in this module was found by checking against sources, not by noticing it was wrong. They all looked right. That's what makes a tidy mistake hard to catch.
+**Weird but true:** Every mistake in this course was caught by checking against sources, not by anyone reading the draft and going "wait, that's wrong." They all read fine. That's why there's a planted error on this page: to show you the feeling of a mistake that looks right.
 
 Side View: Popper would ask which of this course's claims could be proven wrong, and whether anything in it actually could. Which claim could you argue against?
 

@@ -3,6 +3,9 @@
 ## Hook answer
 No single right answer (note how sure they were). The look-back: the reading says Popper and Kuhn agreed on a lot (science goes through big changes and isn't just piling up facts) but disagreed sharply on how scientists should act: Popper said always try to break your theory, so a failure is a reason to ditch it; Kuhn said commit long enough to find out what it can do, so a failure is a puzzle to fix first.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"Imagine a referee at a basketball game who has to defend their call afterwards, in a paper, to a committee that argues for forty years. That's philosophy of science. These people take losing arguments personally."
+
 ## Talk-back (one at a time, after the look-back)
 1. What's one strength of Kuhn's view and one strength of Popper's?
    Any fair answer. Examples: Kuhn: sticking with Newton found Neptune. Popper: always testing catches mistakes.

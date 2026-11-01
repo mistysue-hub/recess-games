@@ -35,7 +35,7 @@ Now there was a mechanism. By the late 1960s, most geologists had switched to a 
 
 That's a revolution: not just a new fact, but a new way of seeing the whole Earth.
 
-**Weird but true:** Marie Tharp mapped the bottom of the ocean without being allowed on the research ships. For years women weren't permitted to work on them, so the men collected the depth measurements and Tharp turned the numbers into maps. She finally went to sea in 1968.
+**Weird but true:** Marie Tharp mapped the entire bottom of the Atlantic without ever being allowed on a research ship. For years women couldn't work on them, so the men brought back the depth numbers and Tharp turned them into a map. The ridge she drew from her desk is one of the things that finally proved continental drift. She first set foot on a research ship in 1968.
 
 ## Words for your notebook
 

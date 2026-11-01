@@ -1,36 +1,30 @@
 # Module 9: Progress Toward What?
 
-Imagine firing a giant artillery shell at a sheet of tissue paper and having it bounce back and hit you. That's how the scientist Ernest Rutherford later described one of the strangest results in the history of the atom.
-
-## Five pictures of one tiny thing
-
-Nobody has ever looked at an atom the way you look at a marble. So scientists built **models**: pictures and rules that explain what experiments show. Over about 120 years, the model of the atom changed again and again.
-
-| Model | When | The picture |
-|---|---|---|
-| Dalton | early 1800s | Atoms are tiny, solid balls that can't be split. They join in fixed, whole-number amounts. |
-| Thomson | 1904 | J.J. Thomson had found the electron in 1897. His atom is a ball of positive charge with tiny negative electrons scattered through it. People later nicknamed it the "plum pudding" model. |
-| Rutherford | 1911 | In an experiment in 1909, a few particles (tiny positively charged bullets from radioactive material) fired at thin gold foil bounced almost straight back. Something small and heavy had to be there to kick them back, so Ernest Rutherford said the atom must have a tiny, heavy center: the **nucleus**. |
-| Bohr | 1913 | Niels Bohr put electrons on fixed levels, like rungs on a ladder. It explained exactly which colors of light hydrogen gives off. |
-| Schrödinger | 1926 | Erwin Schrödinger's math describes electrons as fuzzy clouds of where they're likely to be, not tiny balls on paths. |
-
-Each model explained something the one before couldn't. That sounds like a staircase climbing toward the truth.
-
-## Kuhn's surprising ending
-
-Thomas Kuhn ended his famous book with a comparison to evolution. In evolution, living things don't change *toward* a goal. Giraffes didn't evolve "toward" the perfect giraffe. Living things change *away from* what worked less well where they lived.
-
-Kuhn thought science might be like that. Each new paradigm solves more puzzles than the old one, so there's real progress. But maybe it isn't progress *toward* one final, perfect truth. Maybe it's progress *away from* older problems.
+Your science teacher probably drew an atom on the board with electrons on tidy rings around a nucleus. That picture is a hundred years old and we know it's wrong. We draw it anyway. Why?
 
 ## Something lost
 
-Here's another twist. New models don't only add. They sometimes lose things too.
+Niels Bohr drew his atom in 1913: electrons on fixed levels like rungs on a ladder. You can sketch it in ten seconds. It even predicts the exact colors of light hydrogen gives off.
 
-Bohr's model gives you a picture you can draw: electrons on tidy rings. Schrödinger's model is much more accurate, but it gives up that simple picture. Electrons don't have neat paths at all.
+In 1926, Erwin Schrödinger replaced it with math that treats electrons as fuzzy clouds of where they're likely to be. Schrödinger's model is more accurate. But it gives up the simple picture. You can't draw a cloud of maybe-locations in ten seconds.
 
-That's why your science teacher may still draw the Bohr model. Chemists still use Dalton's idea of atoms joining in whole-number amounts every day. Old models don't vanish. Scientists keep the ones that are good enough for the job.
+So teachers still draw Bohr. Chemists still use John Dalton's 1800s idea of atoms joining in whole-number amounts. Old models don't vanish. Scientists keep the ones that are good enough for the job, and reach for the newer, harder one when they need it.
 
-**Weird but true:** Rutherford's gold-foil team fired particles at foil so thin you could almost see through it. Nearly all of them went straight through. Only a tiny few bounced back, and those few changed the picture of every atom.
+## The three-step story
+
+The road to Bohr went through one of the strangest results in physics. Ernest Rutherford later said it was like firing an artillery shell at tissue paper and having it bounce back and hit you.
+
+1. **Thomson, 1904.** The electron had just been discovered, so J.J. Thomson pictured the atom as a ball of positive charge with tiny negative electrons sprinkled through it. Later people nicknamed it the "plum pudding."
+2. **Rutherford, 1911.** His team fired particles (tiny positively charged bullets from radioactive stuff) at thin gold foil. Nearly all went straight through. A few bounced almost straight back. Something small and heavy had to be in there kicking them back. Rutherford called it the **nucleus**. Plum pudding was out.
+3. **Bohr, 1913.** Rutherford's nucleus with electrons orbiting it should collapse in a split second (electrons on curved paths lose energy). Bohr said: no, the electrons sit on fixed levels and only jump between them. That was weird, but it explained hydrogen's colors exactly.
+
+## Kuhn's twist
+
+Here's where Kuhn ended his famous book. In evolution, living things don't change *toward* a goal. Giraffes didn't evolve toward the perfect giraffe; they drifted away from what worked less well. Kuhn thought science might be like that. Each paradigm beats the old one at solving today's puzzles — that's real progress — but it isn't necessarily heading toward one final, perfect answer.
+
+So: when Schrödinger beat Bohr, did we get *closer to the truth*, or just *better at the job*?
+
+**Weird but true:** Rutherford's gold foil was so thin you could almost see through it. Nearly every bullet went straight through. Only one in several thousand bounced back. One in several thousand changed the picture of every atom in the universe.
 
 ## Words for your notebook
 
@@ -42,9 +36,9 @@ Side View: Popper thought each new theory can be closer to the truth than the la
 
 ## Your Anomaly Log
 
-The table made atoms look like a staircase of five steps. What might the table have left out? Write it in your log, or just tell Rocky.
+This module told the atom story in three steps. In the real history there were many more scientists, dead ends and arguments. What might the three-step story leave out? Write it in your log, or just tell Rocky.
 
-Anomaly: The table shows five neat steps. Lots of other scientists, other models and wrong turns were left out. That's a staircase, the very thing Module 1 warned about.
+Anomaly: Three steps is still a staircase, the very thing Module 1 warned about. The road to Bohr was much messier.
 
 ---
 *This reading was written for this course. No text was copied from Kuhn's book or any other source.*

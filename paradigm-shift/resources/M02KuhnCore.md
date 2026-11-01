@@ -1,6 +1,6 @@
 # Module 2: Rules Nobody Wrote Down
 
-In 1746, in front of the King of France, a scientist named Jean-Antoine Nollet lined up 180 royal guards holding hands. Then he sent one electric shock through all of them. They jumped into the air at the same instant. Everyone could see electricity was real. Nobody could agree on what it was.
+In 1746, Jean-Antoine Nollet lined up 180 royal guards in front of the King of France, told them to hold hands, and sent one electric shock down the line. All 180 of them jumped into the air at the same instant. Everyone saw electricity was real. Nobody could agree on what it was.
 
 ## Learning a game by watching
 
@@ -10,36 +10,29 @@ Thomas Kuhn thought science works a lot like that.
 
 ## What's a paradigm?
 
-Kuhn's most famous word is **paradigm** (say it: PAIR-uh-dime). It comes from an old Greek word meaning "pattern" or "example." For Kuhn, a paradigm is the shared way a group of scientists sees its part of the world. It includes:
+Kuhn's most famous word is **paradigm** (say it: PAIR-uh-dime). It comes from an old Greek word for "pattern" or "example." For Kuhn, a paradigm is the shared way a group of scientists sees its part of the world. It includes:
 
-- **Big ideas everyone accepts** (for example: "matter is made of tiny particles").
+- **Big ideas everyone accepts** ("matter is made of tiny particles").
 - **Model examples** everyone has worked through, the way you learn math by doing practice problems. Kuhn had a word for these: **exemplars**.
 - **Unwritten rules** about which questions are worth asking and what a good answer looks like.
 
-Scientists mostly learn their paradigm the way you learned that game. Students don't memorize a list of rules. They solve problem after problem until they start seeing new problems the way their teachers do.
+Scientists mostly learn their paradigm the way you learned the game. They don't memorize rules. They solve problem after problem until they start seeing new problems the way their teachers do.
 
-## Science before a paradigm: the electricity mess
+## The electricity mess
 
-What does science look like when there *isn't* a shared paradigm yet? Kuhn pointed to the study of electricity in the 1700s.
+What does science look like *before* a paradigm? Back to Nollet's guards.
 
-People had long known that rubbing amber or glass makes it attract bits of paper. In the 1700s, lots of experimenters got interested, but they couldn't agree on what electricity even *was*.
+By 1746, people had been studying electricity for a century. They knew rubbing amber or glass could make it attract paper. They knew electricity could travel along a thread hundreds of feet long. They had just invented the **Leyden jar** (LYE-den), a glass jar partly filled with water that stored up a shock big enough to drop 180 guards. Impressive. Useful. And nobody could agree on what any of it was.
 
-- Some focused on **attraction and pushing apart**: rubbed objects pulling or pushing things.
-- In 1729, an English experimenter found that electricity could **travel** along a thread about 800 feet long.
-- A French scientist decided in the 1730s that there were **two different kinds** of electricity.
-- Others were most excited by **sparks**.
+One researcher said electricity was all about attracting and pushing apart. Another said it was really about sparks. A French scientist decided there were two different kinds of it. An American minister argued it was a single invisible fluid. They weren't just disagreeing on details. They were disagreeing on which experiments mattered, which words meant what, and what counted as an answer. Every new book had to start the argument over.
 
-Each theory explained some results well and others badly. Every new book had to start from scratch, arguing about the basics.
+Then Benjamin Franklin pulled it together. Electricity, he said, is one invisible fluid. An object with too much of it is "plus," an object with too little is "minus." That explained the Leyden jar neatly — the shock is extra fluid rushing from the "plus" side of the glass to the "minus" side. Those 180 guards were just a very long path for the fluid to take.
 
-Then, in 1745 and 1746, experimenters in Germany and the Netherlands invented the **Leyden jar** (say it: LYE-den), a glass jar partly filled with water that could store electricity and give a powerful shock. It was the most dramatic thing anyone had seen, and the old theories struggled to explain it.
+Franklin's picture didn't settle every argument, but it gave experimenters a shared starting point. Instead of arguing about *what electricity was*, they could work on puzzles: how much charge (how much of the fluid) can a jar hold? How does it flow through a wire? A paradigm had arrived.
 
-In America, Benjamin Franklin came up with an idea: maybe electricity is one single invisible fluid. An object with too much of it is "plus," and an object with too little is "minus." That explained the Leyden jar neatly — the shock is extra fluid rushing from the "plus" side of the glass to the "minus" side. Over time, more and more experimenters started using Franklin's picture as their starting point.
+Later science replaced the fluid idea entirely. The actual carrier of electricity turned out to be the **electron**, a tiny negatively charged particle inside atoms. Franklin had guessed which way the fluid flowed, and he got it backwards. Electrons actually move the opposite way from the direction circuit diagrams still draw the current. We never fixed the diagrams. We just kept Franklin's "plus" and "minus."
 
-That changed everything. Instead of arguing about what electricity was, researchers could work on shared puzzles: how much charge (how much of the fluid, in Franklin's picture) can a jar hold? How does it flow? A paradigm had arrived.
-
-(Later science replaced Franklin's fluid idea, but we still use his words "plus" and "minus.")
-
-**Weird but true:** Franklin's choice of which charge to call "plus" and which "minus" was really a guess. Today we know the tiny electrons carry the charge he called minus. So in a wire, electrons actually move the opposite way from the direction circuit diagrams draw the current.
+**Weird but true:** Every circuit diagram you'll ever see is backwards. Current points one way; electrons flow the other. Blame Franklin's lucky-wrong guess from the 1740s.
 
 ## Words for your notebook
 

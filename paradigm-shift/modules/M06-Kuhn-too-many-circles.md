@@ -26,7 +26,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, activity about 10).
 
 **Hook (word for word):**
 
-> Quick vote before you read. True or false: Copernicus's Sun-centered model predicted where the planets would be more accurately than the old Earth-centered model. How sure are you, 0 to 100?
+> Quick bet before you read. In 1543, Copernicus's new Sun-centered model took on Ptolemy's 1,400-year-old Earth-centered one. Were his predictions BETTER, ABOUT THE SAME, or WORSE? How sure, 0 to 100?
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M06/?level=core (or ?level=extended)
 

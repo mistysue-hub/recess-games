@@ -3,6 +3,9 @@
 ## Hook answer
 No. It worked once and failed the second time: the unseen planet Neptune was found in 1846, but Vulcan, the planet blamed for Mercury's orbit, never turned up. The look-back: scientists usually try to fix the problem first and keep the theory. Sometimes that works (Neptune) and sometimes it doesn't (Vulcan). If they said "sometimes," that's right too.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"The Mercury story is why you don't quit a theory the first time it hiccups. Also why you don't marry a theory. Both can trap you for eighty years and then it turns out you needed Einstein the whole time."
+
 ## Talk-back (one at a time, after the look-back)
 1. Uranus and Mercury both broke Newton's predictions. How was the fix for Uranus different from what finally explained Mercury?
    Answer: Uranus was fixed by finding a new planet, Neptune, and Newton's laws stayed. Mercury was explained by a new theory of gravity, Einstein's general relativity (1915); no new planet was found.

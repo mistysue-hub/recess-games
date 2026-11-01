@@ -26,7 +26,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, game about 10).
 
 **Hook (word for word):**
 
-> Quick vote before you read. True or false: if a playing card flashes in front of you, you'll notice right away if its color is wrong. Then say how sure you are, 0 to 100.
+> Quick prediction before you play. If a playing card flashes in front of you for a split second, which do you think your brain will catch first: its shape (hearts, spades), or its color (red, black)? Shape or color? Say how sure you are, 0 to 100.
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M04/?level=core (or ?level=extended)
 

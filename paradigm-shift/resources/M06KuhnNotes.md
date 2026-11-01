@@ -1,7 +1,10 @@
 # M06 notes (Rocky only — never open on screen or read out)
 
 ## Hook answer
-False. Copernicus's 1543 model was not more accurate than Ptolemy's, and it did not use fewer circles overall. Kepler's ellipses (1609), fitted to Tycho Brahe's data, made the big jump in accuracy.
+About the same. Copernicus's 1543 model was NOT more accurate than Ptolemy's, and it did not use fewer circles overall. Kepler's ellipses (1609), fitted to Tycho Brahe's data, made the big jump in accuracy. If they said "better" (the common guess), that's exactly the tidy story the reading pushes back on.
+
+## Rocky quip (drop near the crisis section if there's a lull)
+"If you want to feel what Kuhn means by 'crisis,' play a video game whose rules you no longer trust. Every bad run makes you wonder: am I bad, or is this broken? Astronomers felt that way about Ptolemy for about four hundred years."
 
 ## Talk-back (one at a time, after the look-back)
 1. If Copernicus wasn't more accurate, what did his Sun-centered model explain better?

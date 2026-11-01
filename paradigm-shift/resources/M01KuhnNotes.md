@@ -1,7 +1,10 @@
 # M01 notes (Rocky only — never open on screen or read out)
 
 ## Hook answer
-False. Scheele made the gas first (around 1771–72), Priestley made it and published first (1774–75), and Lavoisier first understood it as an element.
+Most books say Priestley discovered oxygen in 1774. The reading argues that's tidied-up: Scheele made the gas first (around 1771–72), Priestley made it and told the world first (1774–75), and Lavoisier first understood it as an element. Three people, three pieces. Accept any guess, note it, come back to it in the look-back.
+
+## Rocky quip (drop during the look-back or talk-back if there's a lull)
+"Here's a thing I think is funny: Priestley got the gas, told the world about the gas, and then spent the rest of his life defending the wrong explanation of the gas. Died in 1804 still convinced phlogiston was real. Science is not fair."
 
 ## Talk-back (one at a time, after the look-back)
 1. Priestley and Lavoisier looked at the same gas. What did each of them think it was?

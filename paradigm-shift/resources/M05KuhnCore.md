@@ -33,7 +33,7 @@ Kuhn's point: an anomaly almost never makes scientists drop their paradigm right
 
 Only some anomalies refuse every fix. Those are the ones that can push a science into crisis, which is what Module 6 is about.
 
-**Weird but true:** When Galileo saw Neptune in 1612, it had just started its own backward loop and was barely moving. That may be why he thought it was a star. The planet's own odd motion helped it hide.
+**Weird but true:** Galileo looked straight at Neptune in 1612 and wrote "a star" in his notebook. The actual eighth planet was in his telescope. His paradigm said planets move; Neptune happened to be nearly still that night (just starting its own backward loop); so his brain filed it as a star. The right thing was right there and he missed it.
 
 ## Words for your notebook
 

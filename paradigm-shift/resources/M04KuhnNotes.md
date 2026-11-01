@@ -3,8 +3,11 @@
 ## Order for this module
 Play the game first, right after the hook vote, before the reading. It works best unspoiled. Do not explain trick cards before they play. Then the reading, look back, talk-back and the rest as usual.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"Try describing a six of hearts out loud. 'Six hearts in two columns, red, number six at the corners.' Now imagine the hearts were spades. Still red. Your brain refuses to picture that card. That's the whole trick."
+
 ## Hook answer
-False. In the 1949 experiment, trick cards took about four times longer to recognize, and almost everyone first saw them as normal cards. They were also asked how sure they were (0 to 100). If they were very sure and wrong, say so kindly: that feeling of being sure is what the experiment found.
+No single right answer: the prediction matters more than the pick. The 1949 experiment and the game test what the player's own brain does. In practice, most people lock onto shape OR color and don't notice the mismatch, treating a red six of spades as either a six of spades (shape wins) or a six of hearts (color wins). If they were very sure and wrong, say so kindly after the game.
 
 ## Talk-back (one at a time, after the look-back)
 1. What did most students say when they first saw a red six of spades?

@@ -3,6 +3,9 @@
 ## Hook answer
 No single right answer. The reading says scientists learn much of their paradigm by example, the way people learn a game by watching and trying.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"Picture a group chat where nobody can agree what the group is called, what they're talking about, or who's actually in it. That's electricity research in the 1740s. Franklin didn't solve every argument; he just gave people a shared starting point so the arguments could finally be about something."
+
 ## Talk-back (one at a time, after the look-back)
 1. Before Franklin, why did every electricity book have to start from scratch?
    Answer: researchers didn't share a paradigm. Each had their own theory, so nobody could take the basics for granted.

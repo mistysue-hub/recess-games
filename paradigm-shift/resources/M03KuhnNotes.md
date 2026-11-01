@@ -3,6 +3,9 @@
 ## Hook answer
 True. In the comet story, the mathematicians would have checked their own math first, not doubted Newton. In Kuhn's view, scientists spend most of their time solving puzzles inside their paradigm, not trying to prove its big ideas wrong. (Popper thought they should try to prove them wrong; that's the Side View.)
 
+## Rocky quip (drop during the look-back if there's a lull)
+"The Twain thing really did happen. He was born in a Halley year and died in a Halley year, one day apart from the comet both times. If you plotted his life as a graph, it'd be the funniest career arc in all of astronomy."
+
 ## Talk-back (one at a time, after the look-back)
 1. In the Halley's comet story, what were the mathematicians trying to figure out, and what were they NOT questioning?
    Answer: they were working out when the comet would return (how much Jupiter and Saturn would delay it). They were not questioning Newton's laws.

@@ -3,6 +3,9 @@
 ## Hook answer
 About 50 years. Wegener proposed the idea in 1912, most geologists rejected it for decades, and it was accepted only in the 1960s, after sea-floor evidence and a mechanism (sea-floor spreading). Hear their number first; give no hint.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"Imagine walking into a room full of expert geologists in 1912 and announcing that continents go for walks. That is basically what Wegener did. He was also a weatherman, not a geologist. The polite ones said he was wrong; the rude ones said much worse things."
+
 ## Talk-back (one at a time, after the look-back)
 1. What was the biggest reason geologists rejected Wegener?
    Answer: he couldn't explain what force could move the continents (no convincing mechanism). Also accepted: his speed estimate was far too fast; he was an outsider.

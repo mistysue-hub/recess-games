@@ -3,6 +3,9 @@
 ## Hook answer
 Opinion: no single right answer. The look-back: the reading starts from Kuhn's own change of mind, then asks the learner to test his pattern on their own. Later it says a two-line map squashes ideas into boxes, so it's a small paradigm too. The hook gives examples (a rule, a fact, a game strategy), so a small, light example is fine.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"A paradigm shift takes scientists decades. For you this course took about twelve days. That is objectively unfair to the scientists."
+
 ## Talk-back (one at a time, after the look-back)
 1. Tell me about a belief you changed. What didn't fit, and what made you switch?
    Their own story. Keep it light and age-appropriate; if they'd rather not share something personal, they can pick an example about a game, a subject or how something works. Never push for private details.

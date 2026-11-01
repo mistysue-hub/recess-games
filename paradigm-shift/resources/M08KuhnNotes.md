@@ -3,6 +3,9 @@
 ## Hook answer
 No single right answer; the confidence number is the point. If they were very sure either way, say so kindly in the look-back. The look-back: it depends on which definition of "planet" you use. Under the 2006 IAU definition, no; under an older list, or a definition based on roundness alone, yes.
 
+## Rocky quip (drop during the look-back if there's a lull)
+"Alan Stern, the scientist who ran NASA's New Horizons mission to Pluto, still refuses to call it a dwarf planet. The guy went to Pluto. He gets opinions."
+
 ## Talk-back (one at a time, after the look-back)
 1. What changed in 2006: Pluto, or the word "planet"?
    Answer: the word "planet" (its definition). Pluto didn't change.

@@ -26,7 +26,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, activity about 10).
 
 **Hook (word for word):**
 
-> Quick vote before you read. True or false: this course told you history exactly as it happened. How sure are you, 0 to 100?
+> Quick bet before you read. This course has told you history: (a) perfectly accurately, (b) mostly right with some tidying, or (c) with real mistakes it caught and fixed. Pick one. How sure are you, 0 to 100?
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M11/?level=core (or ?level=extended)
 

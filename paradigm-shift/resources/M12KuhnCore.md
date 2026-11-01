@@ -1,20 +1,12 @@
 # Module 12: Your Own Revolution
 
-Kuhn's book has sold more than a million copies, and his word "paradigm" escaped from science into everyday talk. But the idea started with one person changing his own mind about something he thought he understood. This module is about yours.
+In 1947, a young physics grad student was told to teach old Aristotle for a history class. He thought Aristotle sounded ridiculous — until one hot afternoon, something clicked. He suddenly saw that Aristotle's physics wasn't dumb; it was answering different questions than Newton's. That student was Thomas Kuhn, and the click was the seed of his whole book. This module is about your own clicks.
 
 ## The last anomaly is you
 
-You've watched scientists change their minds about oxygen, comets, planets, continents and atoms. Now think about your own mind.
+You've watched scientists change their minds about oxygen, comets, planets, continents and atoms. Now think about yours.
 
-Is there something you used to be sure about, and now see completely differently? Maybe how a game or sport really works, how something in nature works, or a rule you thought was true. Think about:
-
-- **Your old paradigm.** What did you believe, and what did it help you explain?
-- **The anomaly.** What didn't fit? Did you ignore it at first, like the students who saw the trick cards as normal?
-- **The crisis.** Was there a moment when the old view stopped working?
-- **The switch.** What made you change? New evidence, a new explanation, or someone you trusted?
-- **What you lost.** Did the old view do anything the new one doesn't?
-
-If your story doesn't fit Kuhn's pattern, that's interesting too. Maybe minds don't always change the way he said science does.
+Pick one belief you used to hold and don't now. Not a tiny thing — something you were sure about. How did it finally switch? Was it new evidence, a new way of seeing an old thing, or a person you trusted? And when you look back, was there an anomaly you ignored for a while before the switch came?
 
 ## The map of the thinkers
 
@@ -38,11 +30,13 @@ Then you'll place yourself.
 
 Here's one last twist. A map with two lines forces every thinker into nine boxes. That makes the ideas easy to compare, but it also squashes them. Kuhn might say the map is a little paradigm: it helps you see some things and hides others.
 
-## Your next edition
+## My take, so you have something to argue with
 
-If you were writing the next edition of this course, what would you add, cut or change? Which anomaly from your log would you fix first?
+Here's one way to score Kuhn. He is strongest as **history** — the stories of oxygen, Neptune, Pluto and continental drift really do look more like revolutions than like a steady staircase. He is weakest as **philosophy of knowledge** — if different paradigms use words differently, how do we ever say one of them got closer to how the world is? Kuhn mostly left that question open.
 
-**Weird but true:** Before Kuhn, "paradigm" was best known as a grammar word, used for a model example like a verb you practice so you can do others like it. Kuhn's book turned it into a word people use about business, sports and everyday life.
+What's your take? Pick one module where Kuhn's story fit the facts best, and one where it felt like a stretch. And if you only had room for one more thinker — Popper, Lakatos, Feyerabend or Longino — who would you add to the course, and whose part would you cut to make room?
+
+**Weird but true:** Before Kuhn, "paradigm" was a grammar word, like a verb you practice so you can do others like it. Kuhn's book turned it into something people now say about business, sports and bad takes on social media. Watch for someone this week saying "paradigm shift" when they just mean "small change."
 
 Side View: Most philosophers today think each of these thinkers caught part of the picture, not one of them whole. If you had one of them on your side in an argument about screen time, who would you pick, and why?
 

@@ -1,7 +1,10 @@
 # M11 notes (Rocky only — never open on screen or read out)
 
 ## Hook answer
-False. The reading shows the course's own simplifications, choices and corrected mistakes.
+(c) is the honest answer. The reading shows the course's own simplifications (b-flavored) AND real mistakes it caught and fixed (c). (a) is the tidy fiction the whole course has been arguing against. If they picked (a), that's the module's own planted error, basically.
+
+## Rocky quip (drop during the look-back if there's a lull)
+"The planted error isn't hiding. It's standing in the middle of the room with a sign on it saying 'this is fine.' Which is basically what every real textbook mistake looks like."
 
 ## This module is about the course itself
 Critique of the course is the content here. Welcome it; never defend the course. What you can say about how it was made is only what the reading says: designed in October 2026 for Recess by its author, with help from an AI assistant; original readings because Kuhn's book is under copyright; fact-checked against sources. Don't invent anything else. Never name the author.

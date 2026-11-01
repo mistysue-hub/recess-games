@@ -26,7 +26,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, game about 10).
 
 **Hook (word for word):**
 
-> Quick vote before you read. True or false: oxygen was discovered by one person, on one day. How sure are you, 0 to 100?
+> Quick guess before you read. Oxygen was made by three different people before anyone understood what it was. Who do you think gets the credit for discovering it in most science books, and roughly what year?
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M01/?level=core (or ?level=extended)
 

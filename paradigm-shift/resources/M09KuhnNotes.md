@@ -1,7 +1,10 @@
 # M09 notes (Rocky only — never open on screen or read out)
 
 ## Hook answer
-True. Scientists and teachers still use older models, knowing they are wrong in detail, when they're good enough for the job: the Bohr model is still drawn in classrooms, and chemists use Dalton's whole-number ratios every day.
+It's an older one. The ring-orbit picture is Bohr's model from 1913. The current best model is Schrödinger's 1926 math, which describes electrons as fuzzy clouds you can't draw simply. Teachers keep Bohr because you can sketch it; the course's point is that scientists do the same thing.
+
+## Rocky quip (drop during the look-back if there's a lull)
+"Here's the weird part. If Rutherford's atom were literally right (nucleus plus electrons on curved paths), the chair you're sitting on would collapse into a dot roughly right now. Bohr fixed it by inventing a rule with no explanation: the electrons just sit on levels. We took the deal."
 
 ## Talk-back (one at a time, after the look-back)
 1. Why do teachers still draw the Bohr model if it isn't the newest?

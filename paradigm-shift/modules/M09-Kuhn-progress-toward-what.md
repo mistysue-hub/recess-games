@@ -11,7 +11,7 @@ sourceText: "Original text written for this course (no copied material)"
 
 # Progress Toward What?
 
-Summary: Five models of the atom from 1803 to 1926 each solved more puzzles, but some lost things too. Kuhn compared science to evolution: progress away from, not toward.
+Summary: Why your teacher still draws Bohr's 1913 atom, when Schrödinger's 1926 model is more accurate. Kuhn's twist: science progresses away from older problems, not toward one truth.
 
 **Start here:** use the level chosen in M01 → say the hook word for word → open the reading at that level → AGENTS.md session flow.
 
@@ -26,7 +26,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, activity about 10).
 
 **Hook (word for word):**
 
-> Quick vote before you read. True or false: scientists today still use atom models they know are wrong. How sure are you, 0 to 100?
+> Quick guess before you read. Picture the atom your teacher drew: nucleus with electrons on rings. Current best model, or an older one that's wrong in detail but still used? How sure, 0 to 100?
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M09/?level=core (or ?level=extended)
 

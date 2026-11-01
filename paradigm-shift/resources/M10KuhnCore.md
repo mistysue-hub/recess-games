@@ -1,20 +1,26 @@
 # Module 10: Kuhn vs. Popper, 1965
 
-Philosophers can argue fiercely. In 1946, Karl Popper argued so hard with another philosopher, Ludwig Wittgenstein, that (by Popper's account) Wittgenstein waved a fireplace poker at him. People who were in the room remember it differently, and nobody agrees exactly what happened. Nineteen years later, Popper had another big argument, this time with Thomas Kuhn.
+Philosophers can argue fiercely. In 1946, Karl Popper argued so hard with Ludwig Wittgenstein (one of the most famous philosophers of the 1900s) that, by Popper's account, Wittgenstein waved a fireplace poker at him. People in the room remember it differently and nobody agrees what really happened. Nineteen years later, Popper had another big argument, this time with Thomas Kuhn.
 
 ## The big meeting
 
-In July 1965, philosophers from many countries met at Bedford College in London. One session became famous: Thomas Kuhn on one side, Karl Popper and his supporters on the other. (Paul Feyerabend was supposed to be there too, but he couldn't come.) Their papers were later collected in a book, published in 1970.
+In July 1965, philosophers from many countries met at Bedford College in London. One session became famous: Thomas Kuhn on one side, Karl Popper and his supporters on the other. (Paul Feyerabend was supposed to be there too but couldn't come.) Their papers were later collected in a book published in 1970.
 
-They agreed on a lot. Both thought science goes through big changes. Both thought science isn't just piling up facts. But they disagreed sharply about one thing.
+They agreed on a lot. Both thought science goes through big changes. Both thought science isn't just piling up facts. But on one thing they disagreed sharply.
 
-## Defend it, or try to break it?
+## The argument, up close
 
-**Popper's side.** A good scientist should always try to prove their own theory wrong. Science moves forward by bold guesses and tough tests. Popper wrote a paper called "Normal Science and its Dangers." He worried that Kuhn's "normal scientist," who trusts the paradigm and just solves puzzles, was a badly trained scientist who had stopped asking hard questions.
+Picture them in the same room.
 
-**Kuhn's side.** If scientists dropped their theory every time something went wrong, they'd never get anywhere. Remember Neptune: sticking with Newton led to a great discovery. Every theory has problems. Scientists need to commit to a paradigm long enough to find out what it can really do.
+**Popper:** A real scientist should always try to prove her own theory wrong. Science moves forward by bold guesses and tough tests. Your "normal scientist" trusts the paradigm and just solves puzzles. That's not science — that's a badly trained scientist who has stopped asking hard questions.
 
-Some critics went further and said Kuhn made science sound like a crowd that follows whatever its group believes. Kuhn said that's not what he meant.
+**Kuhn:** If scientists dropped their theory every time something went wrong, they'd never get anywhere. Remember Neptune in Module 5? Astronomers stuck with Newton even when Uranus was misbehaving, and the rescue found a planet. Every theory has problems. You have to commit to a paradigm long enough to find out what it can really do.
+
+**Popper:** But what about Mercury? Sticking with Newton there got you Vulcan, a planet that was never found. For eighty years. When does commitment turn into stubbornness?
+
+**Kuhn:** That's exactly the question — and no rule decides it in advance. Scientists share standards (accuracy, simplicity, scope). They weigh them differently. Two honest scientists in the same room can land on different sides and both be doing good science.
+
+Some critics listening said Kuhn made science sound like a crowd that follows whatever its group believes. Kuhn said that wasn't what he meant: a trained community, arguing hard, is different from a crowd. Popper and Kuhn never fully agreed.
 
 ## How scientists choose
 
@@ -30,7 +36,7 @@ Here's the catch. These values can point in different directions. Kuhn used Cope
 
 So two smart, honest scientists in 1543 could weigh those values differently and choose different theories. Neither one would be crazy. That, Kuhn said, is how theory choice really works.
 
-**Weird but true:** The "poker" story shows the problem this whole course is about. Several smart people were in the same room, saw the same thing, and came away telling different stories.
+**Weird but true:** The fight about what actually happened with the poker went on for the rest of Popper's life. In 1998, people were still writing books about who-waved-what-at-whom. Several smart people, same room, same ten minutes, totally different stories. Science has the same problem; it just doesn't usually involve pokers.
 
 ## Words for your notebook
 
