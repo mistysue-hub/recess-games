@@ -169,7 +169,7 @@ def render_html(m):
         if k == "brief": out.append(f"<p>{b[1]}</p>")
         elif k == "code": out.append(editor(b[1], b[2] if len(b) > 2 else "C#", show_run=(len(b) > 2)))
         elif k == "rule":
-            parts = b[1:]; cells = "".join(f"<code>{html.escape(parts[i])}</code><span>{parts[i+1]}</span>" for i in range(0, len(parts), 2))
+            parts = b[1:]; cells = "".join(f"<code>{html.escape(parts[i])}</code><span>{html.escape(parts[i+1])}</span>" for i in range(0, len(parts), 2))
             out.append(f'<div class="rule">{cells}</div>')
         elif k == "tip": out.append(f'<div class="box tip"><div class="h">⚠ HEADS UP</div>{b[1]}</div>')
         elif k == "predict": out.append(f'<div class="box predict"><div class="h">🔮 PREDICT</div>{b[1]}</div>')
@@ -190,7 +190,8 @@ def render_html(m):
 
 def strip_tags(s):
     s = re.sub(r"<code>(.*?)</code>", r"`\1`", s); s = re.sub(r"<b>(.*?)</b>", r"**\1**", s)
-    return html.unescape(re.sub(r"<[^>]+>", "", s))
+    s = re.sub(r"</?(i|br)\s*/?>", "", s)
+    return html.unescape(s)
 
 def render_md(m):
     out = [f"# Mission {m['num']}: {m['title']}", "", f"*{m['tagline']}*", ""]
