@@ -469,6 +469,44 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 
 /* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways (M03 fix) */
 html,body{overflow-x:clip}
+
+/* warm-up: Stick or Budge */
+.warm{border-top:10px solid var(--hl-o)}
+.warm .wtab{font-family:var(--type); font-weight:700; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; display:inline-block; background:var(--hl-o); color:var(--hl-ink); padding:4px 12px; border-radius:999px; margin-bottom:6px}
+.wdots{display:flex; gap:8px; margin:10px 0 12px}
+.wdots i{width:22px; height:22px; border-radius:50%; border:2px solid var(--ink); background:transparent}
+.wdots i.now{background:var(--hl-y); transform:scale(1.15)}
+.wdots i.stick{background:var(--hl-b)} .wdots i.budge{background:var(--hl-p)}
+.wcard{background:var(--card); border:3px solid var(--ink); border-radius:14px; padding:18px 16px 16px; box-shadow:5px 5px 0 var(--hl-o)}
+.wq{font-family:var(--type); font-weight:700; font-size:1.2rem; line-height:1.35; margin:0 0 6px}
+.wcount{margin:0 0 12px; color:var(--ink-soft)}
+.wrow{gap:12px; flex-wrap:nowrap}
+.wbtn{flex:1; min-height:64px; cursor:pointer; border:3px solid var(--ink); border-radius:14px; font-family:var(--type); font-weight:700; font-size:1.25rem; color:var(--hl-ink)}
+.wbtn.stick{background:var(--hl-b)} .wbtn.budge{background:var(--hl-p)}
+.wbtn:not(:disabled):active{transform:translateY(2px)}
+.wbtn:disabled{cursor:default; opacity:.7}
+.wreveal{background:var(--card); border:3px solid var(--ink); border-radius:14px; padding:14px 16px; box-shadow:5px 5px 0 var(--hl-g)}
+.wreveal p{margin:0 0 8px; font-size:1rem}
+.wsum{list-style:none; margin:0 0 10px; padding:0; display:grid; gap:6px}
+.wsum li{display:flex; gap:10px; align-items:center; justify-content:space-between; padding:6px 10px; border-radius:8px; border-left:8px solid var(--hl-b); background:var(--paper-2); font-size:.95rem}
+.wsum li.budge{border-left-color:var(--hl-p)}
+.wsum li b{font-family:var(--type); text-transform:uppercase; font-size:.78rem; flex:none}
+.wline{font-family:var(--type); font-weight:700}
+details.more{margin:12px 0; border:2px dashed var(--ink-soft); border-radius:10px; background:var(--card)}
+details.more > summary{cursor:pointer; min-height:44px; padding:10px 14px; font-family:var(--type); font-size:.9rem; font-weight:700; list-style:none; display:flex; align-items:center}
+details.more > summary::-webkit-details-marker{display:none}
+details.more .inner{padding:0 14px 8px}
+details.more .inner p{font-size:1rem}
+@media (prefers-reduced-motion: reduce){ .wdots i.now{transform:none} .wbtn:not(:disabled):active{transform:none} }
+
+/* ruled-paper alignment: keep every text block on the 28px grid inside notebook cards */
+.exhibit .slot{border:0; outline:2.5px dashed var(--ball); outline-offset:-2.5px; padding:0 12px; margin:0; min-height:28px; line-height:28px}
+.exhibit .slot.filled{outline-style:solid}
+.rcard p{margin:0}
+.rcard p.small{margin-top:28px}
+.rcard h3{margin-bottom:0}
+.rcard b, .rcard i, .rcard .small{line-height:1}
+.rcard p.small{line-height:28px}
 </style>
 </head>
 <body>
@@ -499,7 +537,7 @@ html,body{overflow-x:clip}
     <text x="180" y="80" text-anchor="middle" font-family="Courier New, monospace" font-weight="700" font-size="44" fill="#FFFDF5" stroke="#2A2016" stroke-width="2">?</text>
   </svg>
   <div class="hook">
-    <p>Two claims walk into an argument. Are they the same kind of thing, just two opinions? You already talked this over with Rocky. Lock in your gut call now; at the end of the file you'll make the call again, knowing what philosophers know.</p>
+    <p>Two claims walk into an argument. Are they the same kind of thing, just two opinions? If you already talked this over with Rocky, good. Lock in your gut call now. At the end of the file you'll make the call again, knowing what philosophers know.</p>
   </div>
   <div class="two-claims"><div>"Pineapple on pizza is gross."</div><div>"Bullying is wrong."</div></div>
   <div class="lockin" id="lockin">
@@ -512,26 +550,25 @@ html,body{overflow-x:clip}
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 2: Right, Wrong, and the Great Theories</span><span>Lock your gut call, read, then open each lead</span><span>About 32 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 2: Right, Wrong, and the Great Theories</span><span>Lock your gut call, read, then open each lead</span><span>About 30 minutes</span></div>
 </section>
 
-<!-- ================= 2 RECAP ================= -->
-<section class="sheet" aria-labelledby="b0">
-  <h2 id="b0"><span style="--mark:var(--hl-y)">Thirty-second recap</span></h2>
-  <p>Last case asked where right and wrong come <i>from</i>: is something good because it's commanded, or commanded because it's good? This case asks a sharper question. Is there a right answer <b>at all</b>, or is morality just opinion: yours, mine, or your culture's?</p>
-  <p>Two tools from Challenge 1 come along. An argument is <b>valid</b> when the conclusion has to be true if all the premises are. A valid argument with a false premise is called <b>unsound</b>: it proves nothing. And if you reject a valid argument's conclusion, you owe us the premise you reject.</p>
-  <p class="note">Spoiler-free promise: this file won't tell you which side wins. It will make sure that whichever side you pick, you pick it for a reason that survives a push.</p>
+<!-- ================= WARM-UP: STICK OR BUDGE ================= -->
+<section class="sheet warm" id="warm" aria-labelledby="wuh">
+  <div class="wtab">Warm-up &middot; 30 seconds &middot; no right answers</div>
+  <h2 id="wuh"><span style="--mark:var(--hl-o)">Stick or Budge?</span></h2>
+  <p class="how" id="wHow">Five claims. Picture your best friend, your whole town and an expert all telling you that you're wrong. Do you <b>stick</b> to it or <b>budge</b>? Go with your gut. Each tap locks.</p>
+  <div class="wplay" id="wPlay"></div>
 </section>
 
 <!-- ================= 3 FACT VALUE TASTE ================= -->
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-b)">Three kinds of claim</span></h2>
   <p class="wow">A claim can be totally false and still be a fact claim.</p>
-  <p>Before we can ask whether morality is "just opinion", we need to know what the other options are. Here are three kinds of claim people make all day:</p>
   <div class="kinds">
-    <div style="--kc:var(--hl-b)"><b>Fact claim</b>About how the world is. It's true or false whether anyone likes it, and in principle evidence could settle it. "Sharks are fish" (true). "Bats are blind" (false, and still a fact claim).</div>
-    <div style="--kc:var(--hl-p)"><b>Value claim</b>About what's morally good or bad, right or wrong, what people should or shouldn't do. "Cheating is wrong." "Everyone deserves a fair hearing."</div>
-    <div style="--kc:var(--hl-y)"><b>Taste claim</b>About what pleases <i>you</i>. "This song slaps." "Olives are disgusting." Even with a big word like "best", it's really a report on your likes.</div>
+    <div style="--kc:var(--hl-b)"><b>Fact claim</b>About how the world is. True or false whether anyone likes it, and evidence could settle it. "Sharks are fish" (true). "Bats are blind" (false, still a fact claim).</div>
+    <div style="--kc:var(--hl-p)"><b>Value claim</b>About what's morally good or bad, right or wrong, or what people should do. "Cheating is wrong."</div>
+    <div style="--kc:var(--hl-y)"><b>Taste claim</b>About what pleases <i>you</i>. "This song slaps." "Olives are disgusting."</div>
   </div>
   <div class="poll" id="pSong">
     <p><b>Quick tap:</b> "This song slaps." Could you be <i>wrong</i> about that?</p>
@@ -539,24 +576,20 @@ html,body{overflow-x:clip}
       <button class="btn ghost" type="button" data-r="yes">Yes</button>
       <button class="btn ghost" type="button" data-r="no">No</button>
     </div>
-    <p class="small pollrep" hidden>Many people say no, and that's the mark of a taste claim. Test 3 below turns it into a tool.</p>
+    <p class="small pollrep" hidden></p>
   </div>
-  <p>Here's the live question. A popular picture, which Appiah calls <b>positivism</b> (after a group of 20th-century philosophers), says there are really only two piles: facts, which can be true or false, and everything else, which is feeling or desire. On that picture, value claims are secretly taste claims. "Bullying is wrong" would just be a fancy "I really don't like bullying."</p>
-  <p>The philosopher <b>Kwame Anthony Appiah</b> (born 1954, raised in Ghana; his 2006 book <i>Cosmopolitanism</i> is the reading for MIT's version of this lecture) argues the two piles don't hold up. His best evidence is hiding in ordinary words.</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit A: words that do two jobs</span>
-    <p>Call a remark <span class="tw">cruel</span>, a person <span class="tw">brave</span>, a tip <span class="tw">stingy</span>. Each word <b>describes</b> (it tells you what happened) and <b>judges</b> (it says whether that was good or bad) at the same time. And you can get it wrong: if someone calls a gentle joke "cruel", you can show them they've misdescribed it. Philosophers call these <b>thick</b> terms (Bernard Williams coined the label in 1985). Words that only judge, like <span class="tw thin">good</span>, <span class="tw thin">wrong</span> and <span class="tw thin">should</span>, are <b>thin</b>.</p>
+    <p>Call a remark <span class="tw">cruel</span>, a person <span class="tw">brave</span>, a tip <span class="tw">stingy</span>. Each word <b>describes</b> what happened and <b>judges</b> it as good or bad, both at once. You can get it wrong, too: call a gentle joke "cruel" and someone can show you that you misdescribed it. Philosophers call these <b>thick</b> words. Words that only judge, like <span class="tw thin">good</span>, <span class="tw thin">wrong</span> and <span class="tw thin">should</span>, are <b>thin</b>.</p>
   </div>
-  <p>So a sentence with a thick moral word is a fact claim and a value claim at once. Where's the positivist's line now?</p>
   <div class="tests">
-    <b>Three quick tests when you're sorting a claim</b>
+    <b>Three quick tests for sorting a claim</b>
     <ol>
       <li>Could evidence, in principle, settle it? (Points to fact.)</li>
-      <li>Is it about moral right or wrong, good or bad, or should? (Points to value. Not "good" as in tasty or stylish: that's taste.)</li>
-      <li>If two people disagree, does someone have to be <i>making a mistake</i>? Not for taste: if you love olives and I hate them, neither of us has messed up.</li>
+      <li>Is it about moral right or wrong, or should? (Points to value. "Good" as in tasty is taste.)</li>
+      <li>If two people disagree, must someone be <i>making a mistake</i>? Not for taste: if you love olives and I hate them, neither of us messed up.</li>
     </ol>
   </div>
-  <p class="note">The trap to watch for: "people argue about it, so it must be opinion." People argue about whether the Moon landing happened. That doesn't turn it into a taste.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -587,8 +620,8 @@ html,body{overflow-x:clip}
 <!-- ================= 5 TWO RELATIVISMS ================= -->
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-p)">Two relativisms (don't mix them up)</span></h2>
-  <p class="wow">About 2,500 years ago, a Greek historian told the story of a king who ran a culture-clash experiment.</p>
-  <p>Herodotus tells it in his <i>Histories</i>. King Darius of Persia asked some Greeks what it would take for them to honor their dead fathers the way a people called the Callatians did: by eating the bodies, as a funeral rite of respect. No amount of money, they said. Then he asked some Callatians what it would take for them to honor their dead the Greek way, by burning them. They were horrified. Herodotus's moral, borrowing a line from the poet Pindar: custom is king.</p>
+  <p class="wow">About 2,500 years ago, a king ran a culture-clash experiment.</p>
+  <p>The Greek historian Herodotus tells it. King Darius of Persia asked some Greeks what it would take for them to eat their dead fathers, as a people called the Callatians did to honor them. No amount of money, they said. Then he asked the Callatians to burn their dead, the Greek way. They were horrified. Herodotus's moral, borrowing a line from the poet Pindar: custom is king.</p>
   <div class="poll" id="pFuneral">
     <p><b>Quick tap:</b> Greeks or Callatians: whose funeral custom is right?</p>
     <div class="row" role="group" aria-label="Whose custom is right?">
@@ -596,28 +629,38 @@ html,body{overflow-x:clip}
       <button class="btn ghost" type="button" data-r="callatians">Callatians</button>
       <button class="btn ghost" type="button" data-r="neither">Neither: it's custom</button>
     </div>
-    <p class="small pollrep" hidden>Many people pick "neither". Hold that thought: it's the best case for relativism. The rest of this screen asks how far it stretches.</p>
+    <p class="small pollrep" hidden></p>
   </div>
-  <p>Stories like this lead to two very different claims, both called <b>relativism</b>:</p>
+  <p>Stories like this lead to two different claims, both called <b>relativism</b>:</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit B: the two relativisms</span>
-    <p><b>Descriptive relativism:</b> different cultures in fact hold different moral views. That's a fact claim about what people believe. Anthropologists can check it, and lots of it is true.</p>
-    <p><b>Normative relativism</b> (often just called <b>cultural relativism</b>): what is actually right or wrong for people is fixed by their own culture's moral code. "Wrong" just means "wrong according to our code". There's no standard beyond the codes.</p>
+    <p><b>Descriptive relativism:</b> different cultures in fact hold different moral views. That's a fact claim about what people believe. Anthropologists can check it, and some of it is clearly true (burial customs, for example).</p>
+    <p><b>Cultural relativism</b> (a kind of what philosophers call <b>metaethical relativism</b>): what is actually right or wrong for people is fixed by their own culture's moral code. "Wrong" just means "wrong according to our code". There's no standard beyond the codes. The rival view, <b>moral objectivism</b>, says some moral claims are true or false whatever any person or culture thinks.</p>
   </div>
-  <p>The first is about what people <i>believe</i>. The second is about what's <i>true</i>. Going from one to the other is a jump, a cousin of the is/ought gap from Challenge 1: a fact about what people <i>think</i> doesn't, on its own, tell you what's <i>so</i>. The rival view, <b>moral objectivism</b>, says at least some moral claims are true or false no matter what any person or culture thinks.</p>
-  <h3>Why disagreement doesn't prove it</h3>
-  <p>Here's the argument people usually have in mind, laid out the Challenge 1 way:</p>
+  <p>The first is about what people <i>believe</i>. The second is about what's <i>true</i>. Jumping from one to the other is a mistake. It's a cousin of the is/ought gap from Challenge 1 (facts about what <i>is</i> don't, alone, tell you what <i>ought</i> to be).</p>
+  <details class="more">
+    <summary>Need a refresher on valid and unsound? (tap to open)</summary>
+    <div class="inner"><p>An argument is <b>valid</b> when the conclusion has to be true if all the premises are. A valid argument with a false premise is <b>unsound</b>: it proves nothing. If you reject a valid argument's conclusion, you owe us the premise you reject.</p></div>
+  </details>
+  <p>Here's the argument people usually have in mind:</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit C: the argument from disagreement</span>
     <span class="argline">1. Cultures disagree about right and wrong.</span>
     <span class="argline concl">So, there's no objective truth about right and wrong.</span>
   </div>
-  <p>As it stands, it isn't valid: something is missing between the premise and the conclusion. You'll find the missing piece in Lead 2. Two more things to know first:</p>
+  <p>As it stands, it isn't valid (the conclusion doesn't have to follow from the premises): something is missing. You'll find it in Lead 2. First, two kinds of disagreement that aren't really about values:</p>
   <ul>
-    <li><b>Some disagreements are about customs, not values.</b> One culture greets with a handshake, another with a bow. Underneath, both are showing respect.</li>
-    <li><b>Some are about facts, not values.</b> If two towns both want to keep children healthy, but one wrongly believes a medicine is poison, their "moral" disagreement is really a factual one.</li>
+    <li><b>Customs.</b> One culture greets with a handshake, another with a bow. Underneath, both show respect.</li>
+    <li><b>Facts.</b> Two towns both want healthy children, but one wrongly thinks a medicine is poison. Their "moral" fight is really about a fact.</li>
   </ul>
-  <p>Disagreements left over after you take out customs and facts are called <b>fundamental</b>. They're real, and they're rarer than they first look.</p>
+  <p>What's left after you take out customs and facts is a <b>fundamental</b> disagreement. Those are real, and rarer than they look.</p>
+  <details class="more">
+    <summary>Going deeper: Appiah, positivism and the "two piles" picture (optional)</summary>
+    <div class="inner">
+      <p>The philosopher <b>Kwame Anthony Appiah</b> (born 1954, raised in Ghana) wrote <i>Cosmopolitanism</i> (2006), the reading for MIT's version of this lecture. He attacks a popular picture called <b>positivism</b>, after a group of 20th-century philosophers. It says there are only two piles: facts, which can be true or false, and everything else, which is feeling or desire. On that picture, "Bullying is wrong" is a fancy way of saying "I really don't like bullying."</p>
+      <p>One of his best clues is in ordinary words. On one common view, a sentence with a thick word like "cruel" is a fact claim and a value claim at once. If so, the two piles can't be kept apart.</p>
+    </div>
+  </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -673,7 +716,7 @@ html,body{overflow-x:clip}
     <div class="row" role="group" aria-label="Hardest to accept">
       <button class="btn ghost" type="button" data-r="1">1</button><button class="btn ghost" type="button" data-r="2">2</button><button class="btn ghost" type="button" data-r="3">3</button><button class="btn ghost" type="button" data-r="4">4</button><button class="btn ghost" type="button" data-r="5">5</button><button class="btn ghost" type="button" data-r="none">None</button>
     </div>
-    <p class="small pollrep" hidden>That's the one a relativist would have to persuade you about. Rocky will ask.</p>
+    <p class="small pollrep" hidden></p>
   </div>
   <p>A tough relativist can bite every bullet: "Yes, the reformers were wrong at first. Progress is just change." But most people find at least one of these impossible to believe. Turn that into an argument and it's valid:</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
@@ -727,7 +770,7 @@ html,body{overflow-x:clip}
     <div class="row" role="group" aria-label="Can a relativist say it?">
       <button class="btn ghost" type="button" data-r="yes">Yes</button><button class="btn ghost" type="button" data-r="no">No</button><button class="btn ghost" type="button" data-r="unsure">Not sure</button>
     </div>
-    <p class="small pollrep" hidden>Hang on to your answer; Lead 4 tests it.</p>
+    <p class="small pollrep" hidden></p>
   </div>
   <p>Can you see a crash coming? Lead 4 hands you a third card and lets you find it. If there is a crash, the relativist has three ways out:</p>
   <ul>
@@ -781,11 +824,12 @@ html,body{overflow-x:clip}
     <div class="row" role="group" aria-label="Are they disagreeing?">
       <button class="btn ghost" type="button" data-r="yes">Obviously yes</button><button class="btn ghost" type="button" data-r="no">Not really</button>
     </div>
-    <p class="small pollrep" hidden>Many people say yes. Now watch what subjectivism has to say.</p>
+    <p class="small pollrep" hidden></p>
   </div>
   <p>On subjectivism, Sam means "I disapprove of it" and Jo means "I don't disapprove of it." Both statements are true! They're each reporting a different person's attitude, like "I'm cold" and "I'm not cold." So they aren't disagreeing at all. But it sure looks like they are. That's the <b>disappearing-disagreement problem</b>.</p>
   <p>Second problem: on subjectivism, you can never be wrong about morality, as long as you report your feelings honestly. Nobody has ever held a mistaken moral view. That's a strange thing to believe about humans.</p>
-  <p>A. J. Ayer, a leading logical positivist, tried a cleverer version in <i>Language, Truth and Logic</i> (1936): "stealing is wrong" doesn't <i>report</i> a feeling; it <i>expresses</i> one, more like "Stealing, boo!" Critics nicknamed it the boo-hurrah theory. Ayer bit the bullet on the first problem: he said that when people really argue about morals, they're always arguing about facts. Later emotivists tried to rescue disagreement by saying a "boo" and a "hurrah" clash, as attitudes rather than beliefs. Either way, moral claims aren't true or false the way fact claims are, which is exactly the positivist pile Appiah was attacking.</p>
+  <p>A. J. Ayer, a leading logical positivist (one of the philosophers who said only facts can be true or false), tried a cleverer version in <i>Language, Truth and Logic</i> (1936). "Stealing is wrong" doesn't <i>report</i> a feeling, he said. It <i>expresses</i> one, more like "Stealing, boo!" Critics nicknamed this the boo-hurrah theory.</p>
+  <p>Ayer bit the bullet on the first problem. He said that when people really argue about morals, they're always arguing about facts. Later thinkers rescued disagreement another way: a "boo" and a "hurrah" clash, as attitudes rather than beliefs. Either way, moral claims aren't true or false the way fact claims are. That is exactly the "two piles" picture Appiah attacked.</p>
   <h3>"It's just my opinion"</h3>
   <p>Everyone says it, professors included on a bad day. Here's the problem: it doesn't do anything in an argument. Of course it's your opinion. Every sincere claim anyone makes is something they believe. Saying so doesn't add a reason for anyone else to agree, and it doesn't answer the reasons on the other side. It's a way of leaving the conversation while looking like you're still in it. Even people who think morality is ultimately subjective still argue about it with premises.</p>
   <p class="note">Whether moral claims can be objectively true is a real question; it's the question this whole case file is about. You don't need to settle it to give reasons.</p>
@@ -918,7 +962,7 @@ html,body{overflow-x:clip}
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by; its relativism lecture uses Appiah as the reading.<br><a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>MIT OpenCourseWare 24.230, Meta-ethics</b>. The deep end. Rocky's separate course "Is Anything Really Wrong?" is built from it; ask Rocky.<br><a class="linkbtn" href="https://ocw.mit.edu/courses/24-230-meta-ethics-fall-2015/" target="_blank" rel="noopener">ocw.mit.edu: 24.230</a></li>
-    <li><b>Stanford Encyclopedia of Philosophy, "Moral Relativism"</b>. Free, thorough, written by experts; heavy going in places. Heads up: SEP calls the view this page names "normative relativism" <i>metaethical</i> relativism, and treats the claim that we ought to tolerate other cultures as a separate normative position, not a kind of relativism.<br><a class="linkbtn" href="https://plato.stanford.edu/entries/moral-relativism/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
+    <li><b>Stanford Encyclopedia of Philosophy, "Moral Relativism"</b>. Free, thorough, written by experts; heavy going in places. Heads up: SEP files the cultural relativism described here under <i>metaethical</i> relativism. It treats the claim that we ought to tolerate other cultures as a separate normative position, not a kind of relativism.<br><a class="linkbtn" href="https://plato.stanford.edu/entries/moral-relativism/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
     <li><b>Kwame Anthony Appiah, <i>Cosmopolitanism: Ethics in a World of Strangers</i> (2006)</b>. Short, friendly chapters; chapter 2 is the one MIT uses. Ask a library.</li>
     <li><b>Herodotus, <i>Histories</i>, Book 3, section 38</b>. The Darius story, about a paragraph long. Free on Project Gutenberg (Macaulay's translation, volume 1).<br><a class="linkbtn" href="https://www.gutenberg.org/ebooks/2707" target="_blank" rel="noopener">gutenberg.org</a></li>
     <li><b>A different puzzle with the same name:</b> Karl Popper's "paradox of tolerance" (1945) asks whether a tolerant society should tolerate people who want to destroy tolerance. It's in a note to his book <i>The Open Society and Its Enemies</i>; ask a library.</li>
@@ -960,19 +1004,20 @@ function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, replies:repliesOpen, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, warm:WARM, replies:repliesOpen, lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
 
 var COVER={v:null, reason:"", locked:false}, pendingV=null;
 var FIN={view:null, reason:"", moved:"", done:false}, pendingView=null;
+var WARM=[];
 var POLLS={song:null, funeral:null, hard:null, tol:null, samjo:null};
 
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
  {id:"g1",c:"var(--hl-b)",lead:1,title:"Fact, value, taste",body:"<b>Fact</b>: how the world is (true or false, even if false). <b>Value</b>: moral right, wrong, good, should. <b>Taste</b>: what pleases you. <b>Thick</b> words (cruel, kind) describe and judge at once.",ex:"\"Bats are blind\" is a false fact claim, not an opinion."},
- {id:"g2",c:"var(--hl-p)",lead:2,title:"Disagreement isn't proof",body:"Descriptive relativism (cultures <b>believe</b> different things) doesn't give you normative relativism (nothing is right beyond each code). The missing premise, \"disagreement means no truth\", has counterexamples.",ex:"People disagreed about the Earth and the Sun. There was still an answer."},
+ {id:"g2",c:"var(--hl-p)",lead:2,title:"Disagreement isn't proof",body:"Descriptive relativism (cultures <b>believe</b> different things) doesn't give you cultural relativism (nothing is right beyond each code). The missing premise, \"disagreement means no truth\", has counterexamples.",ex:"People disagreed about the Earth and the Sun. There was still an answer."},
  {id:"g3",c:"var(--hl-o)",lead:3,title:"The reformer problem",body:"On cultural relativism, a reformer is <b>wrong</b> until her society agrees, and moral progress becomes mere change.",ex:"Ada in 1835: mistaken by Millbrook's code, right by the objectivist's."},
  {id:"g4",c:"var(--hl-g)",lead:4,title:"The tolerance trap",body:"Relativism plus \"everyone ought to be tolerant\" clashes. Exits: tolerance becomes optional, or universal (not full relativism), or \"just our value\" (no criticism).",ex:"Zed's code approves of intolerance, so by R it's right for Zed."},
  {id:"g5",c:"var(--hl-y)",lead:5,title:"Subjectivism",body:"\"Wrong\" = \"I disapprove\". Problems: moral disagreements disappear, and nobody is ever mistaken. \"It's just my opinion\" adds no reason.",ex:"Sam: wrong. Jo: not wrong. On subjectivism, both true."},
@@ -1088,7 +1133,7 @@ function linesFor(g){
   var saved = SAVED && SAVED.lines && SAVED.lines[g];
   var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
   if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
-  if(saved && !touched[g]) return saved.concat();
+  /* a lead that was only half finished before a reload is not restored on screen, so its old partial line is dropped: screen and copy agree */
   return LIVE[g]();
 }
 function coverLines(){ return ["Gut call on pizza claim vs bullying claim (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
@@ -1096,6 +1141,37 @@ var PL={song:{yes:"yes",no:"no"}, funeral:{greeks:"Greeks",callatians:"Callatian
 function pollLines(){
   function p(k){ return POLLS[k] ? PL[k][POLLS[k]] : "not answered"; }
   return ["Ungraded taps: could you be wrong that a song slaps = "+p("song")+"; whose funeral custom is right = "+p("funeral")+"; hardest relativist implication to accept = "+p("hard")+"; can a relativist say everyone ought to be tolerant = "+p("tol")+"; are Sam and Jo disagreeing = "+p("samjo")];
+}
+var WU=[["Humans have walked on the Moon.","Moon landing"],["Dogs make better pets than cats.","dogs vs cats"],["Bullying someone just for fun is wrong.","bullying for fun"],["Cheating on a test is wrong, even if nobody would ever find out.","cheating unseen"],["Lying to spare a friend's feelings is okay.","kind lie"]];
+function warmLines(){
+  if(!WARM.length) return ["Warm-up: not played"];
+  return ["Warm-up: stick or budge when everyone says you're wrong (ungraded): "+WARM.map(function(a,i){ return WU[i][1]+" = "+a; }).join("; ")+(WARM.length<WU.length?" (stopped after "+WARM.length+" of "+WU.length+")":"")];
+}
+function warmRender(){
+  var P=$("wPlay"); P.innerHTML="";
+  var n=WARM.length;
+  var dots=el("div",{class:"wdots","aria-hidden":"true"}); WU.forEach(function(_,i){ var d=el("i"); if(i<n) d.className=WARM[i]; else if(i===n) d.className="now"; dots.appendChild(d); }); P.appendChild(dots);
+  if(n<WU.length){
+    var card=el("div",{class:"wcard"}); var q=el("p",{class:"wq"}); q.textContent=WU[n][0]; card.appendChild(q);
+    var cnt=el("p",{class:"small wcount"}); cnt.textContent="Card "+(n+1)+" of "+WU.length; card.appendChild(cnt);
+    var row=el("div",{class:"row wrow",role:"group","aria-label":"Stick or budge?"});
+    [["stick","Stick"],["budge","Budge"]].forEach(function(o){
+      var b=el("button",{class:"wbtn "+o[0],type:"button"}); b.textContent=o[1];
+      b.addEventListener("click",function(){
+        if(WARM.length!==n) return;
+        row.querySelectorAll("button").forEach(function(x){x.disabled=true;});
+        WARM.push(o[0]); saveState(); warmRender();
+        var nb=P.querySelector(".wbtn"); if(nb) nb.focus(); else { var r=P.querySelector(".wreveal"); if(r) focusFb(r); }
+      });
+      row.appendChild(b);
+    });
+    card.appendChild(row); P.appendChild(card);
+  } else {
+    var k=WARM.filter(function(a){return a==="stick";}).length;
+    var rv=el("div",{class:"wreveal",tabindex:"-1","aria-live":"polite"});
+    rv.innerHTML='<p><b>You stuck on '+k+' and budged on '+(WU.length-k)+'.</b></p><ul class="wsum">'+WU.map(function(w,i){ return '<li class="'+WARM[i]+'"><span>'+esc(w[0])+'</span><b>'+WARM[i]+'</b></li>'; }).join("")+'</ul><p class="wline">Sticking feels like "there is a right answer here". Budging feels like "that is just taste". Is that feeling reliable? Lead 1 puts it on trial.</p>';
+    P.appendChild(rv);
+  }
 }
 function report(key){ return MOD+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1118,9 +1194,17 @@ function wireCopies(){
 }
 
 /* ---------- ungraded taps in the reading ---------- */
+var POLLREP={
+ song:{yes:"Then it might not be a pure taste claim. What evidence could prove you wrong? Test 3 below turns that question into a tool.", no:"Many people say no, and that's the mark of a taste claim. Test 3 below turns it into a tool."},
+ funeral:{greeks:"You backed the Greeks. A relativist would ask: right by whose code? The rest of this screen asks how far that idea stretches.", callatians:"You backed the Callatians. A relativist would ask: right by whose code? The rest of this screen asks how far that idea stretches.", neither:"Many people pick \"neither\". Hold that thought: it's the best case for relativism. The rest of this screen asks how far it stretches."},
+ hard:{"1":"That's the one a relativist would have to persuade you about. Rocky will ask.","2":"That's the one a relativist would have to persuade you about. Rocky will ask.","3":"That's the one a relativist would have to persuade you about. Rocky will ask.","4":"That's the one a relativist would have to persuade you about. Rocky will ask.","5":"That's the one a relativist would have to persuade you about. Rocky will ask.",none:"None of them bother you? Then relativism is holding up so far. Leads 3 and 4 push harder."},
+ tol:{yes:"Maybe. Hang on to that answer; Lead 4 tests it.", no:"Hang on to that answer; Lead 4 tests it.", unsure:"Fair. Lead 4 gives you what you need to decide."},
+ samjo:{yes:"Many people say yes. Now watch what subjectivism has to say.", no:"You said not really. Now watch: subjectivism agrees with you, and that turns out to be its problem."}
+};
 function wirePoll(id, key){
   var box=$(id);
   function show(v){
+    box.querySelector(".pollrep").textContent=POLLREP[key][v];
     box.querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; });
     box.querySelector(".pollrep").hidden=false;
   }
@@ -1205,8 +1289,10 @@ shuffle(COURT.map(function(_,i){return i;})).forEach(function(i){
         r.misses.push(v); b.classList.add("wrongpick"); b.disabled=true;
         var trap = it.d && v==="taste";
         if(trap){ REC1.traps++; syncTraps(); setFb(fb,"bad","Trap sprung.","People fighting about a claim doesn't make it taste."); }
-        else if(r.misses.length===1) setFb(fb,"bad",vword("g1","no"),HINT_WRONG[v]);
-        else setFb(fb,"bad",vword("g1","no"),"Run all three tests, one at a time. "+HINT_WRONG[v]);
+        else {
+          var hint = (it.a==="both" && v==="value") ? "Yes, it judges. But it also describes what happened. Can you get it wrong as a description?" : HINT_WRONG[v];
+          setFb(fb,"bad",vword("g1","no"), r.misses.length===1 ? hint : "Run all three tests, one at a time. "+hint);
+        }
       }
       touch("g1");
     });
@@ -1378,7 +1464,7 @@ function tlShow(i){
       b.addEventListener("click",function(){
         if(P.done) return;
         if(k===s.a){ P.done=true; reveal(); setFb(fb,"good",vword("g3","ok"), tlPredDone()+1<TL.length ? "Tap another year on the timeline." : "That was the last year."); focusFb(fb); tlProgress(); }
-        else { P.misses++; b.disabled=true; setFb(fb,"bad",vword("g3","no"),"Ask only one thing: what does Millbrook's code say in "+s.y+"?"); }
+        else { P.misses++; b.disabled=true; setFb(fb,"bad",vword("g3","no"), s.a==="nc" ? "The town is split: half approve, half disapprove. Is there a code that most people share?" : "Ask only one thing: what does Millbrook's code say in "+s.y+"?"); }
         touch("g3");
       });
       row.appendChild(b);
@@ -1472,7 +1558,7 @@ function buildPairs(){
         pairSel=null; setFb($("pairFb"),"good",vword("g4","ok"),{A:"Tolerance becomes a local preference, like a favorite food.",B:"Universal tolerance is an objective moral claim, so objectivism wins at least one point.",C:"\"Our value\" is a report about us. It gives Zed no reason to stop."}[x.k]);
         if(Object.keys(pairDone).length===ROUTES.length){ REC4.pairsDone=true; $("pairFb").innerHTML+="<br><br><b>Every exit costs something.</b> That's the tolerance trap: relativism can't give you tolerance for free."; $("tolMine").hidden=false; }
         focusFb($("pairFb"));
-      } else { REC4.pairMisses++; setFb($("pairFb"),"bad",vword("g4","no"),"Ask: if you took route "+pairSel+", what would you lose?"); }
+      } else { REC4.pairMisses++; setFb($("pairFb"),"bad",vword("g4","no"),"Ask: if you took route "+pairSel+", what would you lose?"+(REC4.pairMisses>=2?" Guessing won't show you the trap. Read each route and ask what it gives up.":"")); }
       touch("g4");
     });
     $("pairR").appendChild(b);
@@ -1629,7 +1715,7 @@ $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
   var reason=$("finReason").value.trim(), moved=$("finMoved").value;
   if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
+  if(reason.length<15){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two (at least 15 characters)."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
   FIN.view=pendingView; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
@@ -1643,7 +1729,7 @@ function finLines(){
 }
 
 var LIVE={g1:courtLines,g2:disLines,g3:tlLines,g4:tolLines,g5:opLines,g6:judgeLines};
-var BUILDERS={ all:function(){ return [].concat(coverLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), linesFor("g6"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+var BUILDERS={ all:function(){ return [].concat(coverLines(), warmLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), linesFor("g6"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
 GAME_IDS.forEach(function(g){ BUILDERS[g]=function(){ return linesFor(g); }; });
 wireCopies();
 refreshGot();
@@ -1654,6 +1740,7 @@ if(SAVED){
   restoring=true;
   try{
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.warm && SAVED.warm.length){ SAVED.warm.slice(0,WU.length).forEach(function(a){ if(a==="stick"||a==="budge") WARM.push(a); }); }
     if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ if(SAVED.polls[k] && PL[k][SAVED.polls[k]]){ POLLS[k]=SAVED.polls[k]; POLLSHOW[k](POLLS[k]); } }); }
     if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
@@ -1668,6 +1755,7 @@ if(SAVED){
   }catch(e){ console.error('RESTORE '+e.message+' '+e.stack); }
   restoring=false; saveState();
 }
+warmRender();
 updateProg();
 })();
 </script>

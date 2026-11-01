@@ -412,7 +412,7 @@ html,body{overflow-x:clip}
 @media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
 .toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
   background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
+  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); pointer-events:none; width:max-content; animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
@@ -431,6 +431,46 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)} }
 .wq .pick.chosen{background:var(--hl-y); color:var(--hl-ink)}
 .jfb:focus, .fb:focus{outline:2px dashed var(--ink-soft); outline-offset:2px}
+
+/* ---------- engagement pass: warm-up game "Pick the life" ---------- */
+.warm{border-top:10px solid var(--hl-g); padding-top:34px}
+.wutab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--hl-g); color:var(--hl-ink);
+  font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
+.warm .how{font-size:1rem; color:var(--ink-soft); margin-bottom:12px}
+.wu-dots{display:flex; gap:8px; margin:0 0 10px}
+.wu-dots i{display:block; width:14px; height:14px; border-radius:50%; border:2px solid var(--ink); background:transparent}
+.wu-dots i.on{background:var(--hl-y)}
+.wu-dots i.now{border-color:var(--stamp); border-width:3px}
+.wu-nav{font-family:var(--type); font-weight:700; font-size:.9rem; margin:0 0 8px}
+.wu-pair{display:grid; grid-template-columns:1fr 1fr; gap:12px; position:relative}
+@media (max-width:330px){ .wu-pair{grid-template-columns:1fr} }
+.wu-card{display:flex; align-items:center; justify-content:center; text-align:center; min-height:132px; padding:14px 12px; cursor:pointer;
+  border:3px solid var(--ink); border-radius:14px; font-family:var(--type); font-weight:700; font-size:1rem; line-height:1.3;
+  color:var(--hl-ink); box-shadow:0 5px 0 var(--ink); transition:transform .15s}
+.wu-card.c0{background:var(--hl-p); transform:rotate(-1.2deg)}
+.wu-card.c1{background:var(--hl-b); transform:rotate(1.2deg)}
+.wu-card:not(:disabled):hover{transform:translateY(-2px) rotate(0)}
+.wu-card:not(:disabled):active{transform:translateY(3px); box-shadow:0 2px 0 var(--ink)}
+.wu-card:disabled{cursor:default; box-shadow:0 2px 0 var(--ink)}
+.wu-card.picked{outline:4px solid var(--hl-y); outline-offset:2px}
+.wu-card.picked::after{content:"\2713"; margin-left:6px}
+@media (prefers-reduced-motion: reduce){ .wu-card{transition:none} }
+.wu-pair.slide{animation:wuIn .22s ease both}
+@keyframes wuIn{from{opacity:0; transform:translateX(16px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion: reduce){ .wu-pair.slide{animation:none} }
+.wu-meter{display:flex; align-items:center; gap:10px; font-family:var(--type); font-size:.82rem; font-weight:700; margin:4px 0 10px}
+.wu-track{position:relative; flex:1 1 auto; height:16px; border-radius:999px; border:2px solid var(--ink);
+  background:linear-gradient(90deg,var(--hl-p),var(--hl-y),var(--hl-b))}
+.wu-track i{position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; background:var(--paper); border:3px solid var(--ink);
+  transition:left .6s cubic-bezier(.3,1.4,.5,1)}
+@media (prefers-reduced-motion: reduce){ .wu-track i{transition:none} }
+.wu-end-l,.wu-end-r{flex:none; max-width:22%}
+.wu-end .fb{margin-top:6px}
+/* the CLEARED badge stamp: gentler landing so it never leaves the card on a 390px phone */
+.clearline{overflow:hidden; padding-left:18px}
+.clearline .stamp{margin:4px 6px 4px 4px; animation:thunkSoft .42s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes thunkSoft{0%{transform:scale(1.5) rotate(-14deg); opacity:0}100%{transform:scale(1) rotate(-6deg); opacity:1}}
+@media (prefers-reduced-motion: reduce){ .clearline .stamp{animation:none} }
 </style>
 </head>
 <body>
@@ -448,7 +488,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 1 · Case #5</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">What Makes a Life Meaningful?</h1>
-  <p class="dek">A philosopher's shopping list for a good life, a man who counts grass, a king pushing a boulder up a hill forever, and one question that splits the whole debate in two.</p>
+  <p class="dek">A man who counts grass, a king pushing a boulder up a hill forever, and one question that splits the whole debate in two.</p>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of a small figure pushing a big round boulder up a green hill, next to a checklist on a clipboard">
     <path d="M6 140 L 210 46 L 236 46 L 236 140 Z" fill="#74E5AA" stroke="#2A2016" stroke-width="4" stroke-linejoin="round"/>
     <circle cx="160" cy="54" r="22" fill="#B9A58A" stroke="#2A2016" stroke-width="4"/>
@@ -463,7 +503,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="plug-hook">
     <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M8 15 l5 5 9 -11" fill="none" stroke="#2A2016" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <p>Before you read anything: can something be <b>good for you</b> even if you never <i>want</i> it and never <i>enjoy</i> it? Think of things like knowing the truth, or getting really good at something. Lock in your gut call. At the end you'll answer again, armed.</p>
+    <p>Before you read anything: can something be <b>good for you</b> even if you never <i>want</i> it and never <i>enjoy</i> it? Lock in your gut call. At the end you'll answer again, armed.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row" role="group" aria-label="Your gut call">
@@ -477,22 +517,32 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 32 minutes</span></div>
 </section>
 
-<!-- ================= 2 RECAP ================= -->
-<section class="sheet" aria-labelledby="b0">
-  <h2 id="b0"><span style="--mark:var(--hl-y)">Thirty-second recap</span></h2>
-  <p>We're still on the <b>well-being</b> question: what makes a life go well <i>for the person living it</i>. Two suspects so far:</p>
-  <ul>
-    <li><b>Hedonism</b> (Case 3): only pleasure is good for you in itself. Your life goes as well as it <i>feels</i>.</li>
-    <li><b>Desire-satisfaction theory</b> (Case 4): your life goes well when the things you want <i>actually happen</i>, whether or not you find out.</li>
-  </ul>
-  <p>Both make what's good for you depend on something in <i>your</i> mind: your feelings, or your wants. Philosophers call theories like that <b>subjective</b> (from "subject", the person doing the feeling and wanting). Change the person's mind, and you change what's good for them. Today's suspect says both missed something.</p>
+<!-- ================= WARM-UP ================= -->
+<section class="sheet warm" id="warm" aria-labelledby="wuh">
+  <div class="wutab">Warm-up · 30 seconds</div>
+  <h2 id="wuh"><span style="--mark:var(--hl-g)">Pick the life</span></h2>
+  <p class="how">Five quick either-or picks for your own life. Go with your gut. Nothing here is graded.</p>
+  <div class="wu-dots" id="wuDots" aria-hidden="true"></div>
+  <div id="wuPlay">
+    <p class="wu-nav" id="wuNav" aria-live="polite"></p>
+    <div class="wu-pair" id="wuPair" role="group" aria-label="Pick one life"></div>
+  </div>
+  <div class="wu-end" id="wuEnd" hidden>
+    <div class="wu-meter" aria-hidden="true"><span class="wu-end-l">Nicer-feeling</span><span class="wu-track"><i id="wuMark"></i></span><span class="wu-end-r">The real thing</span></div>
+    <div class="fb good" id="wuFb" tabindex="-1" aria-live="polite"></div>
+  </div>
 </section>
 
-<!-- ================= 3 OBJECTIVE LIST ================= -->
+<!-- ================= 3 MEET THE THREE JUDGES ================= -->
 <section class="sheet" aria-labelledby="b1">
-  <h2 id="b1"><span style="--mark:var(--hl-b)">The theory: some things are just good for you</span></h2>
-  <p class="wow">The name of today's theory comes from a few pages at the back of a 1984 book.</p>
-  <p>An <b>objective list theory</b> says there's a list of things that are good for you <i>whether or not</i> you want them or enjoy them. "Objective" is the opposite of subjective: the item's value for you doesn't depend on your feelings or wants about it.</p>
+  <h2 id="b1"><span style="--mark:var(--hl-p)">Meet the three judges</span></h2>
+  <p>What makes a life go well <i>for the person living it</i>? Picture three theories as judges. Show them the same life, and each asks one question:</p>
+  <div class="fam">
+    <div style="--fc:var(--hl-p)"><b>The hedonist</b>"How does this life feel?" Only pleasure counts. (Case 3)</div>
+    <div style="--fc:var(--hl-o)"><b>The desire theorist</b>"Did this person's wants come true?" Even if they never find out. (Case 4)</div>
+    <div style="--fc:var(--hl-b)"><b>The list theorist</b>"Does this life have the good stuff on the list?" (New today)</div>
+  </div>
+  <p>An <b>objective list theory</b> says some things are good for you whether or not you want or enjoy them. Here "objective" just means it doesn't depend on your feelings or wants.</p>
   <div class="listcard" aria-label="A typical objective list">
     <span class="lbl">A typical list (theorists argue about the details)</span>
     <ul>
@@ -503,12 +553,33 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
       <li>appreciating real beauty</li>
     </ul>
   </div>
-  <p>The name comes from the British philosopher Derek Parfit, in an appendix to <i>Reasons and Persons</i> (1984). He sorted theories of well-being into three families. His sample list included knowledge, using your mind well, developing your abilities and being aware of true beauty. He also listed things that are <i>bad</i> for you even if you never notice them, like being betrayed or deceived.</p>
-  <div class="fam" aria-label="Three families of theories">
-    <div style="--fc:var(--hl-p)"><b>Hedonism</b><span class="q">How does it feel?</span></div>
-    <div style="--fc:var(--hl-o)"><b>Desire theory</b><span class="q">Did you get what you wanted?</span></div>
-    <div style="--fc:var(--hl-b)"><b>Objective list</b><span class="q">Does your life have the good stuff?</span></div>
+  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+</section>
+
+<!-- ================= LEAD 1: JUDGES ================= -->
+<section class="sheet lab" id="g1" style="--g:var(--hl-p)" aria-labelledby="g1h">
+  <div class="gtab">Lead 1 of 5</div>
+  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
+  <h2 id="g1h">Which life goes better?</h2>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Meet the three judges" above, then press <b>Got it</b>.</span></div>
+  <div class="lab-body" hidden>
+  <p class="how">Four pairs of lives. For each pair, rule like each judge: A, B, or a tie. Take the details as given. The list is the typical one (friendship, knowledge, achievement, developing abilities, beauty). The desire theorist uses the simple, <b>unrestricted</b> version from Case 4: any desire that comes true counts. Then give your own ruling (never graded).</p>
+  <p class="m-nav" id="jNav"></p>
+  <div class="case" id="jCase"></div>
+  <div class="fb" id="jFb" tabindex="-1" aria-live="polite"></div>
+  <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="jNext" hidden>Next pair</button></div>
+  <div class="tally" id="jTally" aria-live="polite"></div>
+  <div class="clearslot"></div>
+  <details class="copymini" data-copy="g1"><summary>Rocky asked about this lead?</summary></details>
   </div>
+</section>
+
+<!-- ================= MORE ON THE LIST THEORY (after Lead 1) ================= -->
+<section class="sheet" aria-labelledby="b1b">
+  <h2 id="b1b"><span style="--mark:var(--hl-b)">More on the list theory</span></h2>
+  <p>Hedonism and desire theory are <b>subjective</b> theories (from "subject", the person doing the feeling and wanting): change the person's mind, and you change what's good for them. The list theory is <b>objective</b>. Today's suspect says both rivals missed something.</p>
+  <p class="wow">Today's theory is named in a few pages at the back of a 1984 book.</p>
+  <p>The philosopher Derek Parfit used the name "Objective List Theories" in an appendix to <i>Reasons and Persons</i> (1984), where he sorted theories of well-being into three kinds. His sample list included knowledge, using your mind well, developing your abilities and being aware of true beauty. He also listed things that are <i>bad</i> for you even if you never notice them, like being betrayed or deceived.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit A: the grass counter returns</span>
     <p>Case 4's strange desire comes from John Rawls, in <i>A Theory of Justice</i> (1971): a clever person whose only pleasure is counting blades of grass in park squares and lawns. Rawls admitted that, on his own definition of a person's good, counting grass really is this man's good. An objective list theorist shakes their head: he's content, he gets what he wants, and his life is <i>still</i> missing goods it could have had.</p>
@@ -522,42 +593,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="grassFb" aria-live="polite"></div>
   </div>
   <p>The best evidence for the list theory is cases where hedonism and desire theory seem to give the wrong answer. If your gut said, back in Case 3, that a fake best friend in the Experience Machine isn't as good for you as a real one, the list theorist can explain why: real friendship is on the list, and the machine can't give it to you.</p>
-</section>
-
-<!-- ================= 4 THREE JUDGES ================= -->
-<section class="sheet" aria-labelledby="b2">
-  <h2 id="b2"><span style="--mark:var(--hl-p)">The Three Judges</span></h2>
-  <p>Here's the trick that makes this topic click. Picture the three theories as judges on a panel. Show them the <i>same</i> life, and each asks just one question:</p>
-  <div class="fam">
-    <div style="--fc:var(--hl-p)"><b>The hedonist</b>"How does this life feel, moment by moment?" Nothing else goes on the scorecard.</div>
-    <div style="--fc:var(--hl-o)"><b>The desire theorist</b>"Did the things this person wants actually happen?" Even if they never find out.</div>
-    <div style="--fc:var(--hl-b)"><b>The list theorist</b>"Does this life have the items on the list?" Feelings and wants don't count unless they're on it.</div>
-  </div>
-  <div class="exhibit" style="--hl-c:var(--hl-y)">
-    <span class="lbl">Exhibit B: the panel meets the Experience Machine</span>
-    <p><b>Hedonist:</b> if the machine life feels better, it's better. <b>Desire theorist:</b> depends what you want. If you want real friends and real wins, the machine leaves those wants unmet, so it's worse. <b>List theorist:</b> worse, no question: no real friendship, no real achievement, and a head full of false beliefs instead of knowledge.</p>
-  </div>
-  <p>Run every new case past all three judges before deciding what <i>you</i> think. The interesting cases are the ones where the judges split.</p>
   <p class="note">Rocky's Three Judges app runs this panel on different cases, and swaps in a judge you'll meet later in this file.</p>
-  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
-</section>
-
-<!-- ================= LEAD 1: JUDGES ================= -->
-<section class="sheet lab" id="g1" style="--g:var(--hl-p)" aria-labelledby="g1h">
-  <div class="gtab">Lead 1 of 5</div>
-  <div class="stamp cleared" aria-hidden="true">CLEARED</div>
-  <h2 id="g1h">Which life goes better?</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The theory" and "The Three Judges" above, then press <b>Got it</b>.</span></div>
-  <div class="lab-body" hidden>
-  <p class="how">Four pairs of lives. For each pair, rule like each judge: A, B, or a tie. Take the details as given. The list is the typical one (friendship, knowledge, achievement, developing abilities, beauty). The desire theorist uses the simple, <b>unrestricted</b> version from Case 4: any desire that comes true counts. Then give your own ruling (never graded).</p>
-  <p class="m-nav" id="jNav"></p>
-  <div class="case" id="jCase"></div>
-  <div class="fb" id="jFb" tabindex="-1" aria-live="polite"></div>
-  <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="jNext" hidden>Next pair</button></div>
-  <div class="tally" id="jTally" aria-live="polite"></div>
-  <div class="clearslot"></div>
-  <details class="copymini" data-copy="g1"><summary>Rocky asked about this lead?</summary></details>
-  </div>
 </section>
 
 <!-- ================= 6 WHO WRITES THE LIST ================= -->
@@ -849,11 +885,11 @@ var MOD="C1-M05";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["The panel agrees.","Gavel down.","Ruling stands.","Clean ruling."], no:["Objection sustained.","The judge frowns.","Not this judge's call."]},
- g2:{ok:["Critic silenced.","Your list holds.","Clean.","Nailed it."], no:["The critic smells blood.","Tempting, but...","Close, but no."]},
- g3:{ok:["Binned.","Clean sort.","Yep.","Nailed it."], no:["Not that bin.","Tempting, but...","Close, but no."]},
+ g1:{ok:["The panel agrees.","Good ruling.","Ruling stands.","Clean ruling."], no:["Not quite.","The judge frowns.","Not this judge's call."]},
+ g2:{ok:["Critic silenced.","Your list holds.","Clean.","Correct."], no:["The critic isn't convinced.","Tempting, but...","Close, but no."]},
+ g3:{ok:["Binned.","Clean sort.","Yep.","Correct."], no:["Not that bin.","Tempting, but...","Close, but no."]},
  g4:{ok:["Dot placed.","Wolf nods.","Yep.","Clean."], no:["Not quite.","Tempting, but...","Close, but no."]},
- g5:{ok:["Wolf would sign that.","Boulder stays put.","Nailed it."], no:["The boulder rolls back.","Tempting, but...","Close, but no."]}
+ g5:{ok:["Wolf would agree.","Matches Wolf's test.","Correct."], no:["Not what Wolf's test says.","Tempting, but...","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -869,7 +905,7 @@ function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, ygut:yGutSaved(), lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, warm:WARM, ygut:yGutSaved(), lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -877,14 +913,15 @@ function touch(g){ touched[g]=true; saveState(); }
 var COVER={v:null, reason:"", locked:false};
 var FIN={view:null, mean:null, reason:"", moved:"", done:false};
 var POLLS={grass:null, stamp:null, piano:null, fish:null, inj:null};
+var WARM=null;   /* warm-up game state, built below */
 
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
- {id:"g1",c:"var(--hl-p)",lead:1,title:"The Three Judges",body:"Hedonist: how does it feel? Desire theorist: did your wants come true? <b>Objective list</b>: does your life have the good stuff (friendship, knowledge, achievement...), whether or not you want or enjoy it?",ex:"Real band vs machine band: the hedonist calls a tie; the other two pick the real one."},
- {id:"g2",c:"var(--hl-o)",lead:2,title:"Who writes the list?",body:"The <b>unprincipled list</b> worry: why these items? Replies: the missing-item test (and only things good in themselves), or one principle underneath, like Aristotle's <b>perfectionism</b>.",ex:"Money fails the test: it's only good for what it gets you."},
- {id:"g3",c:"var(--hl-g)",lead:3,title:"Alienation and hybrids",body:"<b>Alienation</b>: can something be good for you if you couldn't care less? A <b>hybrid</b> theory says you need both halves: good stuff, and caring about it.",ex:"Mira's forced piano: objective half yes, subjective half no."},
- {id:"g4",c:"var(--hl-b)",lead:4,title:"Wolf's two halves",body:"Meaning arises when you love something <b>worth loving</b> and actively engage with it. Meaning is not happiness, and not morality.",ex:"A goldfish devotee: caring that doesn't fit. A bored lab tech: worthwhile, but alienated."},
- {id:"g5",c:"var(--hl-y)",lead:5,title:"Sisyphus",body:"Taylor: inject a desire and the endless task gets meaning \"from within\". Wolf: still pointless, so still not meaningful. Who's to say what's worth loving? <b>No one in particular</b>; anyone can reason about it, and we can be wrong.",ex:"Temple + love = both halves. Temple + boredom = alienated."}
+ {id:"g1",c:"var(--hl-p)",lead:1,title:"Which life goes better?",body:"Hedonist: how does it feel? Desire theorist: did your wants come true? <b>Objective list</b>: does your life have the good stuff (friendship, knowledge, achievement...), whether or not you want or enjoy it?",ex:"Real band vs machine band: the hedonist calls a tie; the other two pick the real one."},
+ {id:"g2",c:"var(--hl-o)",lead:2,title:"Write your own list, then defend it",body:"The <b>unprincipled list</b> worry: why these items? Replies: the missing-item test (and only things good in themselves), or one principle underneath, like Aristotle's <b>perfectionism</b>.",ex:"Money fails the test: it's only good for what it gets you."},
+ {id:"g3",c:"var(--hl-g)",lead:3,title:"Subjective, objective, or both?",body:"<b>Alienation</b>: can something be good for you if you couldn't care less? A <b>hybrid</b> theory says you need both halves: good stuff, and caring about it.",ex:"Mira's forced piano: objective half yes, subjective half no."},
+ {id:"g4",c:"var(--hl-b)",lead:4,title:"Wolf's grid",body:"Meaning arises when you love something <b>worth loving</b> and actively engage with it. Meaning is not happiness, and not morality.",ex:"A goldfish devotee: caring that doesn't fit. A bored lab tech: worthwhile, but alienated."},
+ {id:"g5",c:"var(--hl-y)",lead:5,title:"Four Sisyphuses",body:"Taylor: inject a desire and the endless task gets meaning \"from within\". Wolf: still pointless, so still not meaningful. Who's to say what's worth loving? <b>No one in particular</b>; anyone can reason about it, and we can be wrong.",ex:"Temple + love = both halves. Temple + boredom = alienated."}
 ];
 var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
@@ -975,19 +1012,67 @@ $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
   var r=$("myReason").value.trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Give a real reason, in a sentence or two."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
 });
 
+/* ---------- warm-up game: "Pick the life" (ungraded; each pick locks on the first tap) ---------- */
+var DUELS=[
+ {k:"sim",   f:"Feels amazing, but it's a simulation", r:"Feels ordinary, but it's real", nm:"the simulation"},
+ {k:"mock",  f:"Believe everyone loves you (they secretly mock you)", r:"Know a few people truly like you", nm:"believing everyone loves you"},
+ {k:"fake",  f:"Be praised for a faked discovery nobody catches", r:"Make a real discovery nobody notices", nm:"the faked discovery"},
+ {k:"skill", f:"Ten relaxing years doing only what you enjoy", r:"Ten hard years mastering a skill you never wanted", nm:"ten relaxing years"},
+ {k:"truth", f:"Never learn a painful truth about your family", r:"Learn the truth, even though it hurts", nm:"not learning the family truth"}
+];
+WARM={flip:DUELS.map(function(){ return Math.random()<0.5; }), picks:DUELS.map(function(){ return null; })};
+function warmN(){ return WARM.picks.filter(Boolean).length; }
+function warmReal(){ return WARM.picks.filter(function(p){ return p==="r"; }).length; }
+function warmRender(animate){
+  var n=warmN(), N=DUELS.length, done=(n===N);
+  var D=$("wuDots"); D.innerHTML="";
+  for(var i=0;i<N;i++){ var d=el("i",{class: WARM.picks[i] ? "on" : (i===n ? "now" : "")}); D.appendChild(d); }
+  $("wuPlay").hidden=done; $("wuEnd").hidden=!done; if(done) $("wuPair").innerHTML="";
+  if(done){
+    var r=warmReal();
+    var lead = r>=4 ? "You kept choosing the real thing even when it felt worse." : r<=1 ? "You kept choosing what feels best." : "You split between what feels best and what's real.";
+    $("wuFb").innerHTML='<strong class="v">You picked the real option '+r+' of '+N+' times.</strong> '+lead+' That tug is today\'s whole case, and Lead 1 hands it to three judges.';
+    var mk=$("wuMark"), pos=(8+84*r/N)+"%";
+    if(animate && !reduceMotion){ mk.style.left="50%"; void mk.offsetWidth; setTimeout(function(){ mk.style.left=pos; },30); } else mk.style.left=pos;
+    return;
+  }
+  $("wuNav").textContent="Pick "+(n+1)+" of "+N+": which would you choose for your own life?";
+  var P=$("wuPair"); P.innerHTML="";
+  var sides = WARM.flip[n] ? ["r","f"] : ["f","r"];
+  sides.forEach(function(sd,pos){
+    var b=el("button",{class:"wu-card c"+pos,type:"button","data-side":sd,"data-k":DUELS[n].k}); b.textContent=DUELS[n][sd];
+    b.addEventListener("click",function(){
+      if(WARM.picks[n]) return;   /* locked on the first tap */
+      WARM.picks[n]=sd; P.querySelectorAll(".wu-card").forEach(function(x){ x.disabled=true; });
+      b.classList.add("picked");
+      saveState();
+      var after=function(){ warmRender(true);
+        if(warmN()===N) focusFb($("wuFb")); else { var nb=$("wuPair").querySelector("button"); if(nb) { try{ nb.focus({preventScroll:true}); }catch(e){ nb.focus(); } } } };
+      if(reduceMotion) after(); else setTimeout(after,180);
+    });
+    P.appendChild(b);
+  });
+  if(animate){ P.classList.remove("slide"); void P.offsetWidth; P.classList.add("slide"); }
+}
+function warmLines(){
+  var n=warmN(); if(!n) return ["Warm-up: not played"];
+  var feel=[]; DUELS.forEach(function(d,i){ if(WARM.picks[i]==="f") feel.push(d.nm); });
+  return ["Warm-up: ungraded; picked the real option over the nicer-feeling one in "+warmReal()+" of "+n+" duels"+(n<DUELS.length?" so far":"")+(feel.length?" (chose the nicer-feeling side on: "+feel.join(", ")+")":" (never chose the nicer-feeling side)")];
+}
+warmRender(false);
+
 /* ---------- copy for Rocky (shared machinery) ---------- */
 function linesFor(g){
   var saved = SAVED && SAVED.lines && SAVED.lines[g];
   var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
-  if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
-  if(saved && !touched[g]) return saved.concat();
-  return LIVE[g]();
+  if(saved && wasCleared) return saved.concat();   /* a finished lead's saved record is permanent: a replay never overwrites it */
+  return LIVE[g]();   /* unfinished leads always report what is on screen (partial saved lines are dropped on restore) */
 }
 function coverLines(){ return ["Gut call (locked before reading; can something be good for you even if you never want or enjoy it?): "+(COVER.locked ? (COVER.v==="yes"?"yes":"no")+". My reason: "+COVER.reason : "not locked in")]; }
 var PL={grass:{yes:"yes, he's happy",no:"no, something's missing"}, stamp:{on:"on",off:"off"}, piano:{yes:"yes",bit:"only a bit",no:"no"}, fish:{fits:"fits",misfits:"misfits",unsure:"not sure"}, inj:{yes:"meaningful",no:"not meaningful",unsure:"not sure"}};
@@ -1016,7 +1101,7 @@ function wireCopies(){
 /* ---------- ungraded taps in the reading ---------- */
 function pressPoll(id, v){ $(id).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; }); }
 var POLLFB={
- grass:{fb:"grassFb", t:{yes:"That's the subjective answer, and Rawls's own concession. Hold that thought: Lead 1 puts the same question to three judges.", no:"That's the list theorist's instinct. Hold that thought: Lead 1 puts the same question to three judges."}},
+ grass:{fb:"grassFb", t:{yes:"That's the subjective answer, and Rawls's own concession. Compare it with how the list theorist ruled on Gil in Lead 1.", no:"That's the list theorist's instinct, the same one behind the ruling on Gil in Lead 1."}},
  stamp:{fb:"stampFb", t:{on:"Hold your answer, and run the missing-item test below on it. Does it survive?", off:"Hold your answer, and run the missing-item test below on it. Can you say why it's off?"}},
  piano:{fb:"pianoFb", t:{yes:"That's the pure list theorist's answer. Most people hesitate, and the next paragraph says why.", bit:"An in-between answer is exactly what a hybrid theory predicts. Keep reading.", no:"Then you already feel the pull of the next objection."}},
  fish:{fb:"fishFb", t:{fits:"Wolf's own answer is misfits: this is one of her examples, along with a man who copies <i>War and Peace</i> out by hand. If you disagree, hold on to that; it's a good fight to pick with Rocky.", misfits:"Same as Wolf: this is one of her own examples of a life lacking meaning, along with a man who copies <i>War and Peace</i> out by hand.", unsure:"Wolf says misfits: it's one of her own examples, along with a man who copies <i>War and Peace</i> out by hand. Not sure is a fair place to start."}},
@@ -1129,7 +1214,7 @@ function jTally(){
   var mx=Math.max(jAgree.h,jAgree.d,jAgree.o);
   JUDGES.forEach(function(J){ var s=el("span",{class: jAgree[J[0]]===mx&&mx>0 ? "on":""}); s.textContent="Agreed with "+J[1].replace("The ","")+": "+jAgree[J[0]]+"/"+jN; T.appendChild(s); });
 }
-$("jNext").addEventListener("click",function(){ jI++; jRender(); $("jCase").querySelector(".pick").focus(); });
+$("jNext").addEventListener("click",function(){ if(jI>=PAIRS.length-1) return; jI++; jRender(); $("jCase").querySelector(".pick").focus(); });
 jRender();
 function judgeLines(){
   var ks=Object.keys(REC1).filter(function(k){return Object.keys(REC1[k].done).length;});
@@ -1199,12 +1284,12 @@ var LQ=[
   no:{a:"More items without a reason just makes a bigger pile. What is the critic actually complaining is missing?",c:"Popularity shows people like the items. A list theorist needs them to be good for you whether or not anyone likes them."}},
  {q:"Critic 3: \"Put 'getting whatever you want' on the list. Then it covers everything.\" What goes wrong?",
   o:[["a","Nothing: it's a smart way to cover every case the list might miss"],["b","Its value rests on your wants, so desire theory sneaks back in"],["c","It's too vague, since nobody can say exactly what they want"]], a:"b",
-  ok:"An objective item is good for you whether or not you want it. \"Whatever you want\" is the subjective theory wearing a list costume.",
+  ok:"An objective item is good for you whether or not you want it. \"Whatever you want\" is the subjective theory in disguise: it looks like a list item, but its value comes from your wants.",
   no:{a:"Check the definition: list items are good for you whether or not you want them. What is this item made of?",c:"Vagueness isn't the real problem. Ask whether this item could be good for you even if you didn't want it."}}
 ];
 var lqDone=0;
 $("lDefBtn").addEventListener("click",function(){
-  var item=$("lDefItem").value, def=$("lDef").value.trim();
+  var item=$("lDefItem").value, def=$("lDef").value.trim().replace(/^because\b[\s,:;-]*/i,"").trim();   /* the label already says "because" */
   if(!L.prin){ $("lDefMsg").style.color="var(--bad)"; $("lDefMsg").textContent="Pick what holds your list together."; return; }
   if(!item){ $("lDefMsg").style.color="var(--bad)"; $("lDefMsg").textContent="Pick an item to defend."; $("lDefItem").focus(); return; }
   if(def.length<8){ $("lDefMsg").style.color="var(--bad)"; $("lDefMsg").textContent="Finish the sentence with a real reason."; $("lDef").focus(); return; }
@@ -1253,15 +1338,15 @@ function listLines(){
 /* ================= LEAD 3: SORT ================= */
 var SL={s:"Subjective only",o:"Objective only",b:"Both (hybrid)"};
 var SORT=[
- {k:"happiest", t:"\"Your life went best the year you felt happiest, whatever you were doing.\"", short:"happiest year", a:"s", why:"Judged entirely by how you felt. That's hedonism, a subjective theory."},
- {k:"lied", t:"\"Being lied to by your best friend is bad for you even if you never find out, and even if you don't care whether friends are honest and wouldn't care even after careful thought.\"", short:"lied to", a:"o", why:"Bad for you regardless of your feelings and wants. That's straight off Parfit's list of bad things."},
- {k:"leo", t:"\"Learning to code is good for Leo only because it's real skill and he's grown to love it.\"", short:"Leo's coding", a:"b", why:"Real skill (objective half) plus love (subjective half). Hybrid."},
- {k:"careful", t:"\"Whatever you'd choose after careful thought is what's good for you.\"", short:"careful choice", a:"s", sneaky:true, why:"Sneaky one. \"Careful thought\" sounds objective, but it's still your own choice deciding what counts. That's the informed-desire theory from Case 4: subjective."},
- {k:"family", t:"\"Knowing the truth about my family's past is good for me, even though I don't want to know, wouldn't want to even after careful thought, and it hurts.\"", short:"family truth", a:"o", why:"Good for you against your feelings, your wants, and even your informed wants. Only an objective theory says that."},
- {k:"wish", t:"\"My life went better the moment my secret wish came true, even though I never found out.\"", short:"secret wish", a:"s", sneaky:true, why:"Sneaky one. It's about something out in the world, but what makes it count is that <i>you wished for it</i>. That's desire theory, a subjective theory."},
- {k:"friend", t:"\"A friendship only adds to your life if it's real and you care about it.\"", short:"real and cared-about friendship", a:"b", why:"Real (objective half) and cared about (subjective half). Hybrid."},
- {k:"grass", t:"\"The grass counter's life is going great, simply because he does exactly what he loves.\"", short:"grass counter is fine", a:"s", why:"Judged entirely by what he loves and wants. Subjective."},
- {k:"piano", t:"\"Ten years of forced piano made Mira's life better, even though she hated it and never wanted it.\"", short:"forced piano", a:"o", sneaky:true, why:"Sneaky one, because most people's gut says no. But the claim itself is purely objective: good for her regardless of her wants and feelings. A hybrid theorist would disagree with it."}
+ {k:"happiest", t:"Your life went best the year you felt happiest, whatever you were doing.", short:"happiest year", a:"s", why:"Judged entirely by how you felt. That's hedonism, a subjective theory."},
+ {k:"lied", t:"Being lied to by your best friend is bad for you even if you never find out, and even if you don't care whether friends are honest and wouldn't care even after careful thought.", short:"lied to", a:"o", why:"Bad for you regardless of your feelings and wants. That's straight off Parfit's list of bad things."},
+ {k:"leo", t:"Learning to code is good for Leo only because it's real skill and he's grown to love it.", short:"Leo's coding", a:"b", why:"Real skill (objective half) plus love (subjective half). Hybrid."},
+ {k:"careful", t:"Whatever you'd choose after careful thought is what's good for you.", short:"careful choice", a:"s", sneaky:true, hint:"Look at what does the deciding here. Is it something outside the person, or the person's own choice, even a careful one?", why:"Sneaky one. \"Careful thought\" sounds objective, but it's still your own choice deciding what counts. That's the informed-desire theory from Case 4: subjective."},
+ {k:"family", t:"Knowing the truth about my family's past is good for me, even though I don't want to know, wouldn't want to even after careful thought, and it hurts.", short:"family truth", a:"o", why:"Good for you against your feelings, your wants, and even your informed wants. Only an objective theory says that."},
+ {k:"wish", t:"My life went better the moment my secret wish came true, even though I never found out.", short:"secret wish", a:"s", sneaky:true, hint:"The wish is about the outside world. But ask what makes it count: the thing itself, or the fact that you wished for it?", why:"Sneaky one. It's about something out in the world, but what makes it count is that <i>you wished for it</i>. That's desire theory, a subjective theory."},
+ {k:"friend", t:"A friendship only adds to your life if it's real and you care about it.", short:"real and cared-about friendship", a:"b", why:"Real (objective half) and cared about (subjective half). Hybrid."},
+ {k:"grass", t:"The grass counter's life is going great, simply because he does exactly what he loves.", short:"grass counter is fine", a:"s", why:"Judged entirely by what he loves and wants. Subjective."},
+ {k:"piano", t:"Ten years of forced piano made Mira's life better, even though she hated it and never wanted it.", short:"forced piano", a:"o", sneaky:true, hint:"Set your gut feeling about piano aside and read only the claim. Does it make what is good for Mira depend on what she felt or wanted?", why:"Sneaky one, because most people's gut says no. But the claim itself is purely objective: good for her regardless of her wants and feelings. A hybrid theorist would disagree with it."}
 ];
 var sDone=0, RECS={};
 shuffle(SORT).forEach(function(it){
@@ -1282,7 +1367,7 @@ shuffle(SORT).forEach(function(it){
         if(sDone===SORT.length){ $("sScore").textContent="All "+SORT.length+" sorted. The test is never \"is it about the world?\" but \"does its value depend on the person's feelings or wants?\""; clear("g3"); }
       } else {
         r.misses.push(v);
-        if(r.misses.length===1) setFb(fb,"bad",vword("g3","no"),"Ask: would it still count if the person didn't want it or enjoy it? And would it count if they wanted it but it wasn't genuinely good?");
+        if(r.misses.length===1) setFb(fb,"bad",vword("g3","no"),it.hint || "Ask: would it still count if the person didn't want it or enjoy it? And would it count if they wanted it but it wasn't genuinely good?");
         else setFb(fb,"bad",vword("g3","no"),it.why);
       }
       touch("g3");
@@ -1352,7 +1437,7 @@ function placeDot(i){
   if($("wGrid").querySelector('.dot[data-i="'+i+'"]')) return;
   var d=el("span",{class:"dot","data-i":String(i)}); d.textContent=WC[i].n+(WC[i].w===null?"?":""); cell.appendChild(d);
 }
-$("wNext").addEventListener("click",function(){ wI++; wRender(); $("wCase").querySelector(".pick").focus(); });
+$("wNext").addEventListener("click",function(){ if(wI>=WC.length-1) return; wI++; wRender(); $("wCase").querySelector(".pick").focus(); });
 wRender();
 function wolfLines(){
   var ks=Object.keys(RECW).filter(function(k){return RECW[k].c&&RECW[k].w;});
@@ -1366,7 +1451,7 @@ function wolfLines(){
 
 /* ================= LEAD 5: FOUR SISYPHUSES ================= */
 var SIS=[
- {k:"camus", n:"The rebel", tag:"Camus's", d:"He knows the task is pointless, and he throws himself into the struggle anyway, scorning the gods.", w:"no",
+ {k:"camus", n:"The rebel", tag:"Camus's", d:"He knows the task is pointless, and he throws himself into the struggle anyway, treating the gods with scorn (open contempt).", w:"no",
   why:"Whatever his attitude, the task itself is still pointless, so the objective half fails. On Wolf's test, not meaningful.", note:"Camus thought the struggle itself could fill a person's heart. Wolf's test still asks whether the thing is worth it."},
  {k:"injected", n:"The injection", tag:"Taylor's", d:"The gods put a substance in his veins. Now he wants nothing more than to roll stones and loves every push. The stone still rolls back down every time.", w:"no",
   why:"Wolf: happier, but the task is as pointless as ever. Subjective half only, so not meaningful.", note:"Taylor disagrees: now his life has meaning for him, from within."},
@@ -1436,8 +1521,10 @@ function yReveal(){
   else if(inj==="yes" && bored==="yes") P={t:"Generous judge",b:"Either half is enough for you: love alone counts, worth alone counts. Wolf would say you've let each half do the job of two. Worth asking yourself which half you'd drop if you had to."};
   else P={t:"Still weighing it",b:"You weren't sure on at least one of the key cases (the injection or the bored builder). That's an honest place to be. Those two cases are exactly where Taylor and Wolf split."};
   yPattern=P.t;
+  var committed=SIS.filter(function(v){ return yAns[v.k] && yAns[v.k]!=="unsure"; }).length;
+  var tail = committed ? "You took a side on "+committed+" of 4, and on "+yWithW+" of those your gut matched Wolf's test." : "You weren't sure on any of the four, which is an honest place to be.";
   var R=$("yReveal"); R.hidden=false;
-  R.innerHTML='<div class="pattern"><b>Your pattern: '+P.t+'</b><br>'+P.b+'<br><br>Your gut matched Wolf\'s test on '+yWithW+' of 4.</div><p class="small"><b>One question to clear this lead.</b> '+YQ.q+'</p><div id="yqOpts"></div>';
+  R.innerHTML='<div class="pattern"><b>Your pattern: '+P.t+'</b><br>'+P.b+'<br><br>'+tail+'</div><p class="small"><b>One question to clear this lead.</b> '+YQ.q+'</p><div id="yqOpts"></div>';
   var O=$("yqOpts");
   shuffle(YQ.o).forEach(function(o){
     var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
@@ -1512,10 +1599,10 @@ function finLines(){
 
 var LIVE={g1:judgeLines,g2:listLines,g3:sortLines,g4:wolfLines,g5:sisLines};
 var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");}, g5:function(){return linesFor("g5");},
-  all:function(){ return [].concat(coverLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+  all:function(){ return [].concat(coverLines(), warmLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
 wireCopies();
 refreshGot();
-window.__m05={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report};
+window.__m05={warm:WARM, cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report};
 
 /* ---------- restore saved progress, if any ---------- */
 if(SAVED){
@@ -1523,8 +1610,11 @@ if(SAVED){
   try{
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ var v=SAVED.polls[k]; if(v && PL[k][v]){ POLLS[k]=v; pressPoll(k+"Poll",v); } }); syncInjGut(); }
+    if(SAVED.warm && Array.isArray(SAVED.warm.picks) && Array.isArray(SAVED.warm.flip) && SAVED.warm.picks.length===DUELS.length && SAVED.warm.flip.length===DUELS.length){
+      WARM.flip=SAVED.warm.flip.map(Boolean); WARM.picks=SAVED.warm.picks.map(function(p){ return p==="f"||p==="r" ? p : null; }); warmRender(false);
+    }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
-    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
+    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again for practice if you like; your evidence and your saved record stay exactly as they were."; b.insertBefore(n,b.firstChild); } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
       FIN.view=SAVED.fin.view; FIN.mean=SAVED.fin.mean; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
@@ -1533,6 +1623,15 @@ if(SAVED){
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
     }
     if(SAVED.ygut){ SIS.forEach(function(v){ var g=SAVED.ygut[v.k]; if(g && PL.inj[g]){ setGut(v.k,g); lockGut(v.k); if(v.k==="injected"){ POLLS.inj=g; pressPoll("injPoll",g); } } }); }
+    /* a half-finished lead is not restored, so its saved partial lines are dropped: the copy text then matches the screen */
+    GAME_IDS.forEach(function(g){
+      if(cleared[g]) return;
+      var sl=SAVED.lines && SAVED.lines[g];
+      if(sl && sl.join(" ").search(/not started|not locked yet/)<0 && $(g).classList.contains("is-unlocked")){
+        var lb=$(g).querySelector(".lab-body"), nn=el("p",{class:"pause"}); nn.textContent="Your half-finished answers in this lead were not saved, so it starts fresh. (Locked gut calls stay locked.)"; lb.insertBefore(nn,lb.firstChild);
+      }
+      if(SAVED.lines) SAVED.lines[g]=null;
+    });
     refreshGot();
   }catch(e){}
   restoring=false;

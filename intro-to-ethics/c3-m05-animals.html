@@ -403,7 +403,7 @@ select.reasonbox{min-height:44px}
 /* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
 html,body{overflow-x:clip}
 /* ---- reusable fixes from M03 ---- */
-.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+.toast{pointer-events:none; position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
   background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
   box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
@@ -429,6 +429,21 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 
 [hidden]{display:none!important}
 
+/* warm-up: same pain, whose first? */
+.wucard{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0}
+.wucard .wu{min-height:84px; padding:12px; border-radius:14px; border:3px solid var(--ink); font-family:var(--type); font-weight:700; font-size:1.05rem; line-height:1.25; cursor:pointer; color:var(--hl-ink); box-shadow:0 4px 0 var(--ink); transition:transform .12s}
+.wucard .wu:active:not(:disabled){transform:translateY(3px); box-shadow:0 1px 0 var(--ink)}
+.wucard .wu[data-s="a"]{background:var(--hl-p)} .wucard .wu[data-s="b"]{background:var(--hl-b)}
+.wucard .wu.same{grid-column:1/-1; min-height:48px; background:var(--hl-y); font-size:.95rem}
+.wucard .wu:disabled{cursor:default; box-shadow:none; background:var(--paper-2); color:var(--ink-soft)}
+.wucard .wu.pick-on:disabled{color:var(--hl-ink); outline:4px solid var(--ink); outline-offset:2px}
+.wucard .wu.pick-on[data-s="a"]:disabled{background:var(--hl-p)} .wucard .wu.pick-on[data-s="b"]:disabled{background:var(--hl-b)} .wucard .wu.same.pick-on:disabled{background:var(--hl-y)}
+.wudone{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0}
+.wudone span{font-family:var(--type); font-size:.88rem; background:var(--card); border:2px solid var(--ink-soft); border-radius:999px; padding:4px 12px}
+.deepnote{margin-top:14px}
+@media (max-width:380px){ .wucard .wu{font-size:.95rem} }
+@media (prefers-reduced-motion: reduce){ .wucard .wu{transition:none} }
+
 </style>
 </head>
 <body>
@@ -447,7 +462,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 3 · Case #5</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">What Do We Owe Animals?</h1>
-  <p class="dek">A footnote from 1789 that later inspired a movement, scientists signing declarations about octopus minds, and a very old question with very new evidence: whose pain counts?</p>
+  <p class="dek">Whose pain counts? A footnote from 1789, octopus minds, and some very new evidence.</p>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of a dog, an octopus and a person standing on a set of scales">
     <path d="M40 118 H300" stroke="#2A2016" stroke-width="5" stroke-linecap="round"/>
     <path d="M170 118 V136 M140 140 H200" stroke="#2A2016" stroke-width="5" stroke-linecap="round"/>
@@ -469,10 +484,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <path d="M120 30 q0 -12 12 -12 q12 0 12 10 q0 8 -10 12 v6" fill="none" stroke="#C0152F" stroke-width="4" stroke-linecap="round"/><circle cx="134" cy="54" r="3" fill="#C0152F"/>
     <path d="M206 24 q0 -10 10 -10 q10 0 10 8 q0 7 -8 10 v5" fill="none" stroke="#2443C4" stroke-width="3.5" stroke-linecap="round"/><circle cx="218" cy="44" r="2.6" fill="#2443C4"/>
   </svg>
-  <div class="cnote" role="note"><b>Heads-up before you start.</b> This file talks about how people use animals (for food, research and as pets), but only at the level of ideas: no graphic details. Nobody here will tell you what to eat or how to live, and nothing you eat is graded. Every lead has a <b>Skip</b> button; no reason needed.</div>
+  <div class="cnote" role="note"><b>Heads-up.</b> Animal use (food, research, pets) comes up only as ideas, never graphically. Nobody will tell you what to eat. Every lead has a <b>Skip</b> button.</div>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 4v22M6 9h18M6 9l-4 9h8zM24 9l-4 9h8z" fill="#FFFDF5" stroke="#2A2016" stroke-width="2" stroke-linejoin="round"/></svg></div>
-    <p>A dog, an octopus and a person each get hurt in exactly the same way, with the same amount of pain. Does it matter morally? Does it matter <i>equally</i>? Lock in your gut call now. At the end of the file you'll make the call again, knowing what philosophers know.</p>
+    <p>A dog, an octopus and a person get hurt the same way, with the same amount of pain. Does it matter morally? <i>Equally</i>? Lock in your gut call. You'll make it again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="gut-opts" id="gutOpts" role="group" aria-label="Your gut call"></div>
@@ -480,27 +495,39 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
+  <div class="meta"><span>Intro to Ethics · Challenge 3</span><span>About 30 minutes, plus a 1-minute warm-up</span></div>
+</section>
+
+<!-- ================= WARM-UP ================= -->
+<section class="sheet lab warm" id="warm" style="--g:var(--hl-p)" aria-labelledby="wuh">
+  <div class="gtab">Warm-up · not graded</div>
+  <h2 id="wuh"><span style="--mark:var(--hl-p)">Same pain, whose first?</span></h2>
+  <p class="wow">Five quick pairs. In every pair the pain is exactly the same. Tap who you'd help first. Your first tap on each pair is final.</p>
+  <p class="m-nav" id="wuNav" aria-live="polite"></p>
+  <div class="wucard" id="wuCard"></div>
+  <div class="fb" id="wuFb" aria-live="polite"></div>
 </section>
 
 <!-- ================= 2 MORAL STATUS ================= -->
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-y)">Moral status, and what this file won't do</span></h2>
-  <p class="wow">Kicking a rock and kicking a dog are both kicks. Only one can be unfair to the thing you kicked.</p>
-  <p>A being has <b>moral status</b> if it matters morally <i>for its own sake</i>: what happens to it can <b>wrong</b> it, not just damage it. You have moral status. A rock doesn't.</p>
+  <p class="wow">Kicking a rock and kicking a dog are both kicks. Only one can be unfair to what you kicked.</p>
+  <p>A being has <b>moral status</b> if it matters <i>for its own sake</i>: what happens to it can <b>wrong</b> it, not just damage it. You have it; a rock doesn't.</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit A: wronged, or just damaged?</span>
-    <p>Scratch your neighbor's car and you've done something wrong. But who did you wrong? Your neighbor, not the car. The car has no moral status; it only matters because of the person who owns it. Philosophers call that kind of concern <b>indirect</b>. Concern for a being for its own sake is <b>direct</b>.</p>
+    <p>Scratch your neighbor's car and you wrong your neighbor, not the car. That is <b>indirect</b> concern: it matters only because of someone else. Concern for a being for its own sake is <b>direct</b>.</p>
   </div>
-  <p>So the big question of this file: are animals more like your neighbor or more like the car? Or somewhere in between?</p>
-  <p>Before we start, one tool that keeps this conversation fair. Statements about animals come in three very different kinds:</p>
+  <p>Are animals more like your neighbor, or the car? Claims about this come in three kinds:</p>
   <div class="kinds">
-    <div style="--kc:var(--hl-b)"><b>Science claims</b>What <i>is</i> the case. "Can crabs feel pain?" You settle these with evidence.</div>
-    <div style="--kc:var(--hl-p)"><b>Moral claims</b>What <i>matters</i>, what's right or wrong. "Does a crab's pain count?" You settle these with arguments.</div>
-    <div style="--kc:var(--hl-o)"><b>Personal instructions</b>What one person should do in their own life. "You should stop eating X."</div>
+    <div style="--kc:var(--hl-b)"><b>Science claims</b>What <i>is</i> the case. Settled by evidence.</div>
+    <div style="--kc:var(--hl-p)"><b>Moral claims</b>What <i>matters</i>. Settled by argument.</div>
+    <div style="--kc:var(--hl-o)"><b>Personal instructions</b>What one person should do.</div>
   </div>
-  <p>Science alone can't hand you a moral claim. Knowing that a crab feels pain doesn't, by itself, tell you whether its pain matters. Philosophers call this the <b>is-ought gap</b>, after the Scottish philosopher David Hume, who pointed out that arguments often slide from "is" to "ought" without saying how.</p>
-  <p>And getting from a moral claim to a personal instruction takes even more steps: facts about someone's health, budget, culture, religion, family, what food they can get, and what difference one person's choice makes. Thoughtful people disagree about every one of those steps. <b>This file sticks to science claims and moral claims. Your plate is your business.</b></p>
+  <p><b>This file sticks to science claims and moral claims. Your plate is your business.</b></p>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Optional: why science alone can't give you a moral claim</summary><div class="inner">
+    <p>Knowing that a crab feels pain doesn't, by itself, tell you whether its pain matters. Philosophers call this the <b>is-ought gap</b>, after the Scottish philosopher David Hume, who pointed out that arguments often slide from "is" to "ought" without saying how.</p>
+    <p>Getting from a moral claim to a personal instruction takes even more steps: someone's health, budget, culture, religion, family, what food they can get, and what difference one person's choice makes. Thoughtful people disagree about every one of those steps.</p>
+  </div></details>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -564,13 +591,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p>More markers make a stronger case. None of them is proof. In recent years, groups of scientists have summed up where the evidence points:</p>
   <ul class="decl">
     <li><span class="yr">2012</span><b>The Cambridge Declaration on Consciousness.</b> At a conference in Cambridge, England, scientists declared that humans aren't unique in having the brain machinery for consciousness. They named all mammals and birds, and many other creatures, including octopuses.</li>
-    <li><span class="yr">2021</span><b>A review for the UK government</b>, led by philosopher Jonathan Birch at the London School of Economics, looked at more than 300 studies. It concluded that octopuses and their relatives, and crabs, lobsters and their relatives, should be regarded as sentient. The UK government then added them to a new law, the Animal Welfare (Sentience) Act 2022, which formally recognizes them as sentient and sets up a committee to check how government policies affect sentient animals. (It didn't extend every older animal-welfare protection to them.)</li>
-    <li><span class="yr">2024</span><b>The New York Declaration on Animal Consciousness.</b> Signed at first by 39 researchers. It says there's strong scientific support for consciousness in mammals and birds, and at least a <b>realistic possibility</b> of it in all other vertebrates (fish, reptiles, amphibians) and many invertebrates, including at least octopuses and squid, crabs and lobsters, and insects. Its examples include bumblebees that roll little balls with no obvious reward, as if playing, and crayfish whose anxiety-like behavior changes with anti-anxiety drugs.</li>
+    <li><span class="yr">2021</span><b>A review for the UK government</b>, led by philosopher Jonathan Birch at the London School of Economics, looked at more than 300 studies. It concluded that octopuses and their relatives, and crabs, lobsters and their relatives, should be regarded as sentient. The UK then added them to a new law, the Animal Welfare (Sentience) Act 2022. The law formally recognizes them as sentient. It also sets up a committee to check how government policies affect sentient animals. (It didn't extend every older animal-welfare protection to them.)</li>
+    <li><span class="yr">2024</span><b>The New York Declaration on Animal Consciousness.</b> Announced in April 2024 with 39 researchers signing. It says there's strong scientific support for consciousness in mammals and birds, and at least a <b>realistic possibility</b> of it in all other vertebrates (animals with backbones, such as fish, reptiles and amphibians) and many invertebrates (animals without backbones), including at least octopuses and squid, crabs and lobsters, and insects. Its examples include bumblebees that roll little balls with no obvious reward, as if playing, and crayfish whose anxiety-like behavior changes with anti-anxiety drugs.</li>
   </ul>
   <p class="note">"Realistic possibility" doesn't mean "proven". A declaration isn't a vote that makes something true; it's experts summarizing the evidence.</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit C2: spot the "ought"</span>
-    <p>The New York Declaration's third statement goes further. It says that when there's a realistic possibility an animal is conscious, it's irresponsible to ignore that possibility in decisions that affect it. Notice the switch: the first two statements are science claims about evidence. The third is a <b>moral claim</b> about what we should do. Same document, two kinds of claim. The is-ought gap from screen 2, live.</p>
+    <p>The New York Declaration's third statement goes further. It says that when there's a realistic possibility an animal is conscious, it's irresponsible to ignore that possibility in decisions that affect it. Notice the switch: the first two statements are science claims about evidence. The third is a <b>moral claim</b> about what we should do. Same document, two kinds of claim. That is the is-ought gap from the optional box on the "Moral status" screen, live.</p>
   </div>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -611,7 +638,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <p>Singer's core principle: <b>equal interests deserve equal weight, no matter whose interests they are.</b> If a pig and a child would suffer equally, the two sufferings count equally.</p>
   </div>
   <p>Notice what this does <i>not</i> say. <b>Equal consideration isn't equal treatment.</b> A pig can't vote, so it makes no sense to talk about its right to vote. Different beings have different interests. Singer also doesn't claim every life is the same: a being with plans and hopes for its future may have more to lose by dying. The principle is only about weighing like with like.</p>
-  <p>Singer is a utilitarian: he weighs everyone's interests and asks what gives the best overall result. In his book he applied the principle to how animals are used in farming and research, and argued that a lot of common practice causes suffering that the benefits don't justify. We're not going into the details of those practices here, and you don't have to agree with him. The point for now is the shape of his argument.</p>
+  <p>Singer is a <b>utilitarian</b> (someone who judges actions by their overall results): he weighs everyone's interests and asks what gives the best overall result. In his book he applied the principle to how animals are used in farming and research, and argued that a lot of common practice causes suffering that the benefits don't justify. We're not going into the details of those practices here, and you don't have to agree with him. The point for now is the shape of his argument.</p>
   <p class="note">This screen and Lead 3 touch on farming and research as ideas. If you'd rather skip them, press Got it and use the Skip button inside Lead 3.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -684,7 +711,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g4">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g4">Play it anyway</button></div>
-  <p class="how">Tap a card in the tray, then tap the bin it belongs in. You're sorting by what each <b>test</b> says, not by what you think. For the sentience test, count animals on the top <i>and</i> middle rungs of the evidence ladder as passing (that's the precautionary reading from Exhibit C2). Then one question to finish.</p>
+  <p class="how">Tap a card in the tray, then tap the bin it belongs in. You're sorting by what each <b>test</b> says, not by what you think. For the sentience test, count animals on the top <i>and</i> middle rungs of the evidence ladder as passing (that's the <b>precautionary reading</b>: when it's a realistic possibility an animal can feel, play it safe and count it, as the New York Declaration's third statement urges). Then one question to finish.</p>
   <div class="stray" id="sTray" role="group" aria-label="Cards to sort"></div>
   <div class="bins3" id="sBins"></div>
   <div class="fb" id="sortFb" aria-live="polite"></div>
@@ -699,9 +726,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b6"><span style="--mark:var(--hl-g)">Rights: not up for trade</span></h2>
   <p class="wow">Tom Regan thought Singer and Kant were both wrong, for opposite reasons.</p>
   <p>The American philosopher Tom Regan (1938 to 2017) published <i>The Case for Animal Rights</i> in 1983. His complaint about Singer: utilitarianism weighs everything. In principle, anyone's suffering could be outweighed if it brought enough benefit to others. (You saw this worry in Case 1 of this challenge, about people.) His complaint about Kant: tying moral status to reason leaves out beings who obviously matter, human babies included.</p>
-  <p>Regan's alternative: what matters is being a <b>subject-of-a-life</b>. A subject-of-a-life has beliefs and desires, memory, a sense of its own future, an emotional life, and a welfare: its life can go better or worse <i>for it</i>, whatever use it is to anyone else. Such beings have <b>inherent value</b>, and with it <b>rights</b>. Above all, the right not to be treated merely as a means, even for good results. That's Kant's "never merely as a means", stretched past reason. Regan was confident that at least normal mammals about a year old or older qualify.</p>
+  <p>Regan's alternative: what matters is being a <b>subject-of-a-life</b>. A subject-of-a-life has beliefs and desires, memory, a sense of its own future, an emotional life, and a welfare: its life can go better or worse <i>for it</i>, whatever use it is to anyone else. Such beings have <b>inherent value</b> (worth in themselves, not just as useful to others), and with it <b>rights</b>. Above all, the right not to be treated merely as a means, even for good results. That's Kant's "never merely as a means", stretched past reason. Regan was confident that at least normal mammals about a year old or older qualify.</p>
   <div class="views3">
-    <div style="--vc:var(--hl-p)"><b>Singer (utilitarian)</b>Count every sentient being's interests equally, then weigh for the best outcome.</div>
+    <div style="--vc:var(--hl-p)"><b>Singer (utilitarian: judges by overall results)</b>Count every sentient being's interests equally, then weigh for the best outcome.</div>
     <div style="--vc:var(--hl-b)"><b>Kant (classic)</b>Only rational beings count directly. Cruelty to animals is wrong because of what it does to us.</div>
     <div style="--vc:var(--hl-g)"><b>Regan (rights)</b>Subjects-of-a-life have rights. Rights aren't traded away for good results.</div>
   </div>
@@ -732,7 +759,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
   <p>It's traditionally called the "argument from marginal cases". Some philosophers now prefer the name <b>argument from species overlap</b>, because "marginal" can sound as if those humans are on the edge of mattering. That's the opposite of what the argument assumes: premise 1 says they matter <i>fully</i>. Bentham's newborn-versus-dog comparison was an early version.</p>
   <p class="note">Be careful with this one. The argument is never a reason to think any human matters less. Anyone who uses it that way has thrown out its first premise.</p>
-  <p>Three common replies. Tap each open; Lead 5 opens once you've read all three.</p>
+  <p>Three common replies. Tap each one open (worth a look before Lead 5, but Lead 5 does not require it).</p>
   <details class="reply" style="--rc:var(--hl-o)">
     <summary><b>Reply 1: kind, not ability</b></summary>
     <div class="inner"><p>What counts is the kind of being you are: what's normal for your species.</p><p class="other">The other side says: why should how much I matter depend on other individuals' abilities, not my own?</p><p><b>Rejoinder:</b> defenders say moral status belongs to kinds of beings, not to test scores, and that's exactly why no human ever falls below it.</p></div>
@@ -851,7 +878,8 @@ var MID="C3-M05";
 var $ = function(id){ return document.getElementById(id); };
 function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+var streak=0, nudgeNext=false;
+function setFb(node, kind, verdict, body){ if(kind==="good") streak=0; if(nudgeNext && kind==="bad"){ body+=" <i>That's "+streak+" misses in a row. Take a minute to reread the box above, then try again.</i>"; } nudgeNext=false; node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 function focusFb(node){ if(!node) return; if(!node.hasAttribute("tabindex")) node.setAttribute("tabindex","-1"); try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
@@ -865,7 +893,8 @@ var VERD={
  g5:{ok:["Called it.","Good read of the views.","Yep.","Exactly."], no:["Not quite.","Tempting, but...","Close, but no."]}
 };
 var lastV={};
-function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
+function vword(g,kind){ if(kind==="no"){ streak++; nudgeNext = streak%3===0; } else { streak=0; nudgeNext=false; }
+  var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
 
 /* ---------- optional saving (page works without it) ---------- */
 var KEY="goodlife-c3m05-v2", canSave=false, SAVED=null;
@@ -876,7 +905,7 @@ function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), skipped:Object.keys(skipped), cover:COVER, fin:FIN, polls:POLLS, replies:repliesOpen, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), skipped:Object.keys(skipped), cover:COVER, warm:WARM.picks, fin:FIN, polls:POLLS, replies:repliesOpen, lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -884,6 +913,7 @@ function touch(g){ touched[g]=true; saveState(); }
 /* ---------- state for Rocky's copy ---------- */
 var REC={ claims:{}, lad:{done:0, first:0, misses:[]}, arg:{conclMiss:0, conclDone:false, premTries:0, premDone:false, sciMiss:0, sciDone:false, push:null}, sort:{placed:0, first:0, misses:[], qMiss:0, qDone:false}, poll:{} };
 var COVER={v:null, reason:"", locked:false};
+var WARM={picks:[null,null,null,null,null]};
 var FIN={view:null, reason:"", moved:"", done:false};
 var POLLS={crab:null, rights:null};
 var pendingView=null;
@@ -938,7 +968,7 @@ function toast(msg, color){
 function celebrate(g, isSkip){
   var n=nCleared(), all=Object.keys(cleared).length===NG;
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
-  toast(isSkip ? "Lead "+g.lead+" skipped"+(all?". Final file open!":"") : "Evidence "+n+"/"+NG+" filed: "+g.title+(all?". Final file open!":""), g.c);
+  toast(isSkip ? "Lead "+g.lead+" skipped"+(all?". Final file open!":"") : "Evidence "+n+"/"+NG+" filed"+(all?". Final file open!":""), g.c);
   var slot=$(g.id).querySelector(".clearslot");
   if(slot && !isSkip){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(all?' The final file is open below.':'')+'</p></div>';
     try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
@@ -982,13 +1012,14 @@ var repliesOpen={};
 var replyEls=[].slice.call(document.querySelectorAll("details.reply"));
 var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
 function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
-function extraNeed(k){ if(k===5 && Object.keys(repliesOpen).length<replyEls.length) return "Open all three replies above first."; return ""; }
+function extraNeed(k){ return ""; }
+function replyNudge(){ var n=Object.keys(repliesOpen).length; return n<replyEls.length ? "Tip: the three reply cards above are worth opening before Lead 5 ("+n+" of "+replyEls.length+" opened). Not required." : ""; }
 function refreshGot(){
   gotBtns.forEach(function(b){
     var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
     if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; return; }
     var prevOk = k===1 || cleared[UNLOCKS[k-1]];
-    if(k===unlockedStep+1 && prevOk && !extraNeed(k)){ b.disabled=false; msg.textContent=""; }
+    if(k===unlockedStep+1 && prevOk && !extraNeed(k)){ b.disabled=false; msg.textContent = k===5 ? replyNudge() : ""; }
     else { b.disabled=true; msg.textContent = (k>unlockedStep+1) ? "Open the earlier leads first (scroll up)." : (!prevOk ? "Clear (or skip) Lead "+(k-1)+" first (scroll up)." : extraNeed(k)); }
   });
 }
@@ -1036,7 +1067,7 @@ $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
   var r=$("myReason").value.trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the four first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a real reason, in a sentence."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
@@ -1085,6 +1116,46 @@ function anyAnswered(id){
 function skipLine(id,name){ return skipped[id] && !anyAnswered(id) ? name+": skipped (by choice)" : null; }
 function skipSuffix(id){ return skipped[id] ? " (skipped before finishing)" : ""; }
 
+/* ---------- warm-up: same pain, whose first? (ungraded, locks per pair) ---------- */
+var WU=[["A toddler","A puppy"],["A puppy","A pigeon"],["A chimp","A crab"],["A koala","A spider"],["A person you will never meet","A dog you love"]];
+var WU_PICK={a:"first",b:"second",same:"tie"};
+function wuCount(){ return WARM.picks.filter(function(x){return x;}).length; }
+function wuText(i){ var p=WARM.picks[i]; return WU[i][0].replace(/^A /,"").toLowerCase()+" vs "+WU[i][1].replace(/^A /,"").toLowerCase()+" = "+(p==="a"?WU[i][0].replace(/^A /,"").toLowerCase():p==="b"?WU[i][1].replace(/^A /,"").toLowerCase():"tie"); }
+function wuReveal(){
+  var ties=WARM.picks.filter(function(x){return x==="same";}).length;
+  var msg = ties===5 ? "You called every pair a tie: pain is pain, to you. The file will test that." : "The pain was identical in every pair"+(ties?", yet you picked a side in "+(5-ties)+" of 5":", yet you picked a side every time")+". So something other than the pain tipped you: size, cuteness, brains or how close they feel. Is that a good reason? That is the case. Lead 1 is below.";
+  setFb($("wuFb"),"good","Done.",msg);
+}
+function wuRender(focus){
+  var C=$("wuCard"), n=wuCount();
+  if(n>=5){
+    $("wuNav").textContent="Warm-up done";
+    C.className="wudone"; C.innerHTML=""; WU.forEach(function(_,i){ var sp=el("span"); sp.textContent=wuText(i); C.appendChild(sp); }); wuReveal(); return;
+  }
+  var i=WARM.picks.indexOf(null);
+  C.className="wucard"; C.innerHTML=""; $("wuFb").className="fb"; $("wuFb").innerHTML="";
+  $("wuNav").textContent="Pair "+(i+1)+" of 5. Same pain in both.";
+  var order=shuffle(["a","b"]);
+  order.concat(["same"]).forEach(function(k){
+    var b=el("button",{class:"wu"+(k==="same"?" same":""),type:"button","data-s":k});
+    b.textContent = k==="same" ? "Same: no difference" : WU[i][k==="a"?0:1];
+    b.addEventListener("click",function(){
+      if(WARM.picks[i]) return;
+      WARM.picks[i]=k; C.querySelectorAll(".wu").forEach(function(x){ x.disabled=true; }); b.classList.add("pick-on"); b.setAttribute("aria-pressed","true");
+      saveState();
+      setTimeout(function(){ wuRender(true); }, wuCount()>=5 ? 450 : 500);
+    });
+    C.appendChild(b);
+  });
+  if(focus) C.querySelector(".wu").focus();
+}
+function warmLine(){
+  var n=wuCount(); if(!n) return "Warm-up: not played";
+  var parts=[]; WU.forEach(function(_,i){ if(WARM.picks[i]) parts.push(wuText(i)); });
+  return "Warm-up: same pain in each pair, who I'd help first (ungraded): "+parts.join("; ");
+}
+wuRender(false);
+
 /* ---------- ungraded taps in the reading ---------- */
 function wirePoll(id, key, onPick){
   $(id).querySelectorAll("button[data-r]").forEach(function(b){
@@ -1097,7 +1168,8 @@ function wirePoll(id, key, onPick){
     });
   });
 }
-function crabReply(){ setFb($("crabFb"),"","Noted.","The researchers read it as weighing: a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."); }
+var CRAB_FB={weigh:["That fits.","Many researchers read it that way: a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."],reflex:["Fair guess.","Some scientists would agree it could be a reflex. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."],cant:["Fair.","Scientists argue about this too. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."]};
+function crabReply(v){ var f=CRAB_FB[v]||CRAB_FB.cant; setFb($("crabFb"),"",f[0],f[1]); }
 var RIGHTS_FB={never:"That's Regan's side: rights aren't for trading.",some:"That's closer to Singer: everything goes on the scale.",unsure:"Most people feel both pulls. Lead 5 tests where each view lands."};
 wirePoll("crabPoll","crab",crabReply);
 wirePoll("rightsPoll","rights",function(v){ setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); });
@@ -1331,7 +1403,7 @@ var SORT=[
  {n:"An oak tree", a:"none", why:"No evidence it can feel, and it doesn't reason. Neither test counts it directly."},
  {n:"A crow", a:"sent", why:"Crows are famously clever, but clever isn't Kant's test. They can feel (top rung), so the sentience test counts them."},
  {n:"A robot vacuum", a:"none", why:"No feelings, no reasoning about principles. Avoiding stairs doesn't count."},
- {n:"A chimp who has learned some sign language", a:"sent", tricky:true, why:"The tricky one. On Kant's test, chimps don't pass: signing isn't the same as choosing by principles you can reflect on. The sentience test counts them easily."},
+ {n:"A goldfish", a:"sent", why:"Fish are on the middle rung (2024: a realistic possibility), so on the precautionary reading the sentience test counts a goldfish. Nobody claims fish reason about principles, so Kant's test doesn't."},
  {n:"An octopus", a:"sent", why:"It's on the middle rung, so on the precautionary reading the sentience test counts it. Kant's test doesn't."}
 ];
 var sSel=null, sDone=0, sMiss={};
@@ -1403,10 +1475,10 @@ var POLL=[
   no:{s:"Singer has an easy answer: the dog suffered, for no comparable benefit.",r:"Regan has an easy answer: a dog is a subject-of-a-life, and its rights were violated."},
   mine:[["w","It was wrong"],["nw","Nothing wrong happened"],["u","Not sure"]]},
  {n:"The octopus law", d:"A country debates adding octopuses to its animal-welfare law, with protections like those dogs get.",
-  q:"For which view does the scientific evidence about octopus feelings matter most?",
-  o:[["s","Singer's"],["k","Classic Kant's"],["n","Neither; argument alone settles it"]], a:"s",
+  q:"Which view says the whole question turns on whether octopuses can feel?",
+  o:[["s","Singer's"],["k","Classic Kant's"],["r","Regan's"]], a:"s",
   ok:"On the sentience view the question turns on whether they can suffer, so the science is front and center. For classic Kant, octopuses fail the rationality test however much they feel.",
-  no:{k:"Kant's test is rationality. Evidence about feelings doesn't change his answer.",n:"Not for the sentience view: there, the science does a lot of the work (remember premise 2)."},
+  no:{k:"Kant's test is rationality. Evidence about feelings doesn't change his answer.",r:"Regan's test asks for more than feeling: beliefs, desires, memory, a sense of the future. Feeling is only part of it, so it isn't the whole question."},
   mine:[["y","I'd support the law"],["no","I'd oppose it"],["u","Not sure"]]},
  {n:"The lab trade-off", d:"A study would cause some mice mild, short-lived discomfort, and could lead to a medicine that helps many people. (We'll keep it at that.)",
   q:"Which view says good results can't, by themselves, justify using the mice?",
@@ -1415,10 +1487,10 @@ var POLL=[
   no:{s:"Singer is the one who weighs. If the benefits truly outweigh the suffering, his view can allow it.",k:"Classic Kant has no direct duties to mice at all, so he isn't the one blocking it."},
   mine:[["y","Allow the study"],["no","Don't allow it"],["u","Not sure"]]},
  {n:"The lifeboat", d:"Four people and a dog are in a lifeboat built for four. Someone has to go over the side, or everyone sinks.",
-  q:"Which views say the dog should be the one to go?",
-  o:[["k","Only classic Kant's"],["ks","Kant's and Singer's, not Regan's"],["all","All three views"]], a:"all",
-  ok:"Regan discussed a case like this himself and said the dog: death takes more from a human, who loses more future possibilities (the rights screen). Singer would likely reach the same answer, by weighing what each would lose. Kant gives the dog no direct status at all. So having moral status, even rights, doesn't make every loss the same size.",
-  no:{k:"Singer would also weigh what each would lose by dying, and a human usually loses more.",ks:"Look back at the rights screen: when someone must be harmed, Regan spares the one who would lose more."},
+  q:"Regan discussed a case like this himself. What did his rights view say?",
+  o:[["d","The dog goes: a human has more to lose"],["l","Draw lots: equal rights mean equal claims"],["p","A person goes: the dog is the innocent one"]], a:"d",
+  ok:"Regan said the dog: death takes more from a human, who loses more future possibilities (the rights screen). Singer's weighing might point the same way, but that is a prediction, not something he is on record saying. Classic Kant gives the dog no direct status. So having moral status, even rights, doesn't make every loss the same size.",
+  no:{l:"Equal rights, but not equal losses. Look back at the rights screen: when someone must be harmed, Regan spares the one who would lose more.",p:"Regan didn't count innocence. Look back at the rights screen: his test is who would lose more by dying."},
   mine:[["dog","The dog goes"],["lots","Draw lots, dog included"],["u","Not sure"]]}
 ];
 var pI=0;
@@ -1524,7 +1596,7 @@ function evidenceLine(){
 
 var LIVE={g1:claimLines,g2:ladLines,g3:argLines,g4:sortLines,g5:pollLeadLines};
 var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");}, g5:function(){return linesFor("g5");},
-  all:function(){ return [].concat(coverLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), [evidenceLine()]); } };
+  all:function(){ return [].concat(coverLines(), [warmLine()], pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), [evidenceLine()]); } };
 wireCopies();
 window.__c3m05={cleared:cleared, skipped:skipped, unlockStep:function(){return unlockedStep;}, report:report};
 
@@ -1533,12 +1605,13 @@ if(SAVED){
   restoring=true;
   try{
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
-    if(SAVED.polls){ ["crab","rights"].forEach(function(k){ var v=SAVED.polls[k]; if(!v) return; POLLS[k]=v; var P=$(k==="crab"?"crabPoll":"rightsPoll"); P.querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className=on?"btn":"btn ghost"; x.disabled=true; }); if(k==="crab") crabReply(); else setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); }); }
+    if(SAVED.warm && SAVED.warm.length===5){ WARM.picks=SAVED.warm.map(function(x){ return (x==="a"||x==="b"||x==="same")?x:null; }); wuRender(false); }
+    if(SAVED.polls){ ["crab","rights"].forEach(function(k){ var v=SAVED.polls[k]; if(!v) return; POLLS[k]=v; var P=$(k==="crab"?"crabPoll":"rightsPoll"); P.querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className=on?"btn":"btn ghost"; x.disabled=true; }); if(k==="crab") crabReply(v); else setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); }); }
     if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     var sk=SAVED.skipped||[];
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ var isS=sk.indexOf(id)>=0; clear(id,true,isS);
-      if(!isS){ var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your record stays."; b.insertBefore(n,b.firstChild); } } });
+      if(!isS){ var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like. A replay only changes your record if you finish it."; b.insertBefore(n,b.firstChild); } } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
       FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true; pendingView=FIN.view;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
@@ -1546,6 +1619,8 @@ if(SAVED){
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
     }
     refreshGot();
+    /* half-finished leads restart on screen, so their saved partial copy lines are dropped (screen and copy agree) */
+    if(SAVED.lines){ GAME_IDS.forEach(function(g){ if(!cleared[g]) delete SAVED.lines[g]; }); }
   }catch(e){}
   restoring=false; saveState();
 }

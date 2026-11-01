@@ -395,10 +395,10 @@ html,body{overflow-x:clip}
 .pic{display:block; width:100%; max-width:300px; height:auto; margin:6px auto 14px; color:var(--ink)}
 @media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
 /* on-screen clearing feedback (reusable) */
-.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+.toast{position:fixed; left:50%; top:96px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
   background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
   box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+@keyframes toastIn{0%{transform:translate(-50%,-24px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -444,6 +444,29 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 .bin-pick[data-v="neg"]{--pc:var(--hl-o)}
 :root[data-theme="dark"] .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)} }
+
+/* ---------- fix + engagement pass ---------- */
+@media (max-width:420px){ .dock .evw{display:inline} .dock .evw.evfin{display:none} .dock b{font-size:12px} }
+.setg span, .gauges span{overflow-wrap:anywhere}
+.gnum{font-family:var(--type)}
+details.optbox{margin:14px 0; border-radius:10px; background:var(--card); border-left:8px solid var(--rc,var(--hl-y))}
+details.optbox > summary{cursor:pointer; padding:12px 14px; min-height:44px; font-size:.98rem}
+details.optbox[open] > summary{border-bottom:1.5px dashed var(--ink-soft)}
+details.optbox .inner{padding:10px 14px 12px}
+details.optbox .inner p{margin:0 0 .6em; font-size:1rem}
+/* warm-up game */
+.wu-dots{display:flex; gap:8px; margin:6px 0 10px}
+.wu-dot{width:22px; height:22px; border-radius:50%; border:3px solid var(--ink); background:transparent}
+.wu-dot.on{background:var(--hl-y)}
+.wu-card{display:flex; flex-direction:column; gap:12px; margin:8px 0}
+.wu-q{font-family:var(--type); font-weight:700; margin:0}
+.wu-tile{display:block; width:100%; min-height:64px; text-align:left; padding:12px 14px; border:3px solid var(--ink); border-left:14px solid var(--wc,var(--hl-p)); border-radius:12px; background:var(--card); color:var(--ink); font-family:var(--serif); font-size:1rem; line-height:1.4; cursor:pointer}
+.wu-tile:hover:not(:disabled){background:var(--paper-2)}
+.wu-tile:disabled{cursor:default; opacity:.75}
+.wu-tile[aria-pressed="true"]{opacity:1; background:var(--wc); color:var(--hl-ink)}
+@media (min-width:720px){ .wu-card{flex-direction:row; flex-wrap:wrap} .wu-q{flex-basis:100%} .wu-tile{flex:1 1 280px; width:auto} }
+.wu-reveal{margin-top:10px}
+.wu-card[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -461,7 +484,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 1 · Case #3</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">Is Pleasure Everything?</h1>
-  <p class="dek">A 200-year-old plan to do math with happiness, a fight about Socrates and a fool, and a machine that could give you the best life you can imagine, as long as none of it is real.</p>
+  <p class="dek">A plan from the 1780s to do math with happiness, a fight about Socrates and a fool, and a machine that could give you the best life you can imagine, as long as none of it is real.</p>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of a glowing tank with a plug and a cable leading to a dial marked with hearts and stars">
     <rect x="18" y="20" width="120" height="112" rx="26" fill="#86CFFF" stroke="#2A2016" stroke-width="4"/>
     <rect x="34" y="36" width="88" height="80" rx="16" fill="#C9ECFF" stroke="#2A2016" stroke-width="3"/>
@@ -476,42 +499,53 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="plug-hook">
     <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><rect x="8" y="12" width="14" height="12" rx="3" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M12 12V5M18 12V5M15 24v4" stroke="#2A2016" stroke-width="2.4" stroke-linecap="round"/></svg></div>
-    <p>The offer: plug into a machine that gives you a lifetime of amazing experiences. Once you're in, it all feels completely real, and you won't remember choosing. (That's our simplified version of a famous thought experiment; the original comes later.) You already talked it over with Rocky. Lock in your gut call now. At the end of the file you'll make the call again, knowing what philosophers know.</p>
+    <p>The offer: plug into a machine that gives you a lifetime of amazing experiences. Inside, it feels completely real, and you won't remember choosing. (This is a simplified version of a famous thought experiment.) If you've talked it over with Rocky, great. Either way, lock in a gut call now. At the end you'll make the call again.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row" role="group" aria-label="Your gut call">
       <button class="vbtn" type="button" data-v="in" aria-pressed="false">I'd plug in</button>
       <button class="vbtn" type="button" data-v="out" aria-pressed="false">I'd stay out</button>
+      <button class="vbtn" type="button" data-v="torn" aria-pressed="false">I'm torn</button>
     </div>
     <label for="myReason">My reason, in one sentence</label>
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 30 minutes, warm-up included</span></div>
 </section>
 
-<!-- ================= 2 RECAP ================= -->
-<section class="sheet" aria-labelledby="b0">
-  <h2 id="b0"><span style="--mark:var(--hl-y)">Thirty-second recap</span></h2>
-  <p>Case 1 split ethics into two questions: what makes a life go well <i>for the person living it</i> (<b>well-being</b>), and what we owe each other (<b>morality</b>). This file is about the first: not "is it wrong?" but "is it actually good <i>for you</i>?"</p>
-  <p>Philosophers have three big families of answers. This file tests the oldest and simplest: <b>it's all about how your life feels</b>.</p>
-  <p class="note">Case 2's toolkit comes along: when you meet an argument you don't like, ask which premise you'd reject.</p>
+<!-- ================= WARM-UP ================= -->
+<section class="sheet warmup" aria-labelledby="wu1">
+  <h2 id="wu1"><span style="--mark:var(--hl-y)">Warm-up: Feel or Real?</span></h2>
+  <p class="small">30 seconds. Five quick picks. Go with your gut: there are no right answers, and nothing here is scored.</p>
+  <div class="wu" id="wu">
+    <p class="m-nav" id="wuNav" aria-live="polite"></p>
+    <div class="wu-dots" id="wuDots" aria-hidden="true"></div>
+    <div class="wu-card" id="wuCard" role="group" aria-label="Pick one"></div>
+    <div class="fb wu-reveal" id="wuReveal" aria-live="polite" tabindex="-1" hidden></div>
+  </div>
 </section>
 
 <!-- ================= 3 HEDONISM ================= -->
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-p)">The theory: feel good, live well</span></h2>
   <p class="wow">The most famous ancient hedonist thought the best pleasure was... peace and quiet.</p>
-  <p><b>Hedonism</b> (from <i>hēdonē</i>, the ancient Greek word for pleasure) is the theory that the only thing good for you <i>in itself</i> is pleasure, and the only thing bad for you in itself is pain. How well your life goes is the balance between the two.</p>
+  <p>Case 1 asked what makes a life go well <i>for the person living it</i>. That is called <b>well-being</b>. This file tests one of the oldest and simplest answers: it's all about how your life feels.</p>
+  <p><b>Hedonism</b> is the theory that the only thing good for you <i>in itself</i> is pleasure, and the only thing bad for you in itself is pain. How well your life goes is the balance between the two.</p>
   <div class="eq">well-being = <span class="plus">all your pleasure</span> &minus; <span class="minus">all your pain</span></div>
-  <p>"Pleasure" here means any experience that feels good: laughing so hard you can't breathe, the calm of a quiet morning, finally landing a trick. "Pain" means any experience that feels bad, including boredom, dread and embarrassment, not just stubbed toes.</p>
+  <p>Pleasure is any experience that feels good, like laughing hard or a calm morning. Pain is any experience that feels bad, including boredom, dread and embarrassment.</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit A: two ways to be good for you</span>
-    <p><b>Good in itself</b> (philosophers say <i>intrinsically</i> good): good even if it led to nothing else. <b>Good for what it brings</b> (<i>instrumentally</i> good): good because of what it leads to. Money is the classic instrumental good. Nobody dreams about a pile of paper.</p>
+    <p><b>Good in itself</b> (<i>intrinsically</i> good): good even if it led to nothing else. <b>Good for what it brings</b> (<i>instrumentally</i> good): good because of what it leads to. Money is the classic example. Nobody dreams about a pile of paper.</p>
   </div>
-  <p>Here's the bold part. The hedonist says almost everything you care about is only good for what it brings. How far does "almost everything" go? Lead 1 will test you.</p>
-  <p>And that "peace and quiet" thing? The Greek philosopher Epicurus (341 to 270 BCE) was a hedonist, but not a party animal. He thought the best life came from simple pleasures, friends, and above all freedom from pain in the body and worry in the mind.</p>
+  <p>Here's the bold part. A hedonist says almost everything you care about is only good for what it brings. How far does "almost everything" go? Lead 1 will test you.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+  <details class="optbox" style="--rc:var(--hl-g)">
+    <summary>Optional: who was Epicurus, and where does "hedonism" come from?</summary>
+    <div class="inner">
+      <p>The word comes from <i>hēdonē</i>, the ancient Greek word for pleasure. Epicurus (341 to 270 BCE) was a Greek hedonist, but not a party animal. He thought the best life came from simple pleasures, friends, and above all freedom from pain in the body and worry in the mind.</p>
+    </div>
+  </details>
 </section>
 
 <!-- ================= LEAD 1: BINS ================= -->
@@ -533,7 +567,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-o)">Bentham's pleasure math</span></h2>
   <p class="wow">In the 1780s, an English reformer tried to turn happiness into arithmetic.</p>
-  <svg class="pic" viewBox="0 0 300 140" role="img" aria-label="A dial split into seven colored wedges, one for each of Bentham's dimensions">
+  <svg class="pic" viewBox="0 -6 300 156" role="img" aria-label="A dial split into seven colored wedges labeled Intensity, Duration, Certainty, Nearness, Fecundity, Purity and Extent, one for each of Bentham's dimensions">
     <g transform="translate(150 70)" stroke="#2A2016" stroke-width="3">
       <path d="M0 0 L0 -60 A60 60 0 0 1 46.9 -37.4Z" fill="#FF93C9"/>
       <path d="M0 0 L46.9 -37.4 A60 60 0 0 1 58.5 13.4Z" fill="#FFB25C"/>
@@ -544,10 +578,17 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
       <path d="M0 0 L-46.9 -37.4 A60 60 0 0 1 0 -60Z" fill="#FFB25C"/>
       <circle r="12" fill="#FFFDF5"/>
     </g>
+      <text x="183" y="-0" text-anchor="start" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Intensity</text>
+    <text x="224" y="57" text-anchor="start" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Duration</text>
+    <text x="209" y="121" text-anchor="start" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Certainty</text>
+    <text x="150" y="158" text-anchor="middle" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Nearness</text>
+    <text x="91" y="121" text-anchor="end" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Fecundity</text>
+    <text x="76" y="57" text-anchor="end" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Purity</text>
+    <text x="117" y="-0" text-anchor="end" font-family="Courier New,monospace" font-size="11" font-weight="700" fill="currentColor">Extent</text>
   </svg>
-  <p>Jeremy Bentham, an English philosopher and legal reformer, opened his 1789 book <i>An Introduction to the Principles of Morals and Legislation</i> with a famous line: "Nature has placed mankind under the governance of two sovereign masters, <i>pain</i> and <i>pleasure</i>."</p>
+  <p>Jeremy Bentham was an English philosopher and legal reformer. His 1789 book <i>An Introduction to the Principles of Morals and Legislation</i> opens with a famous line: "Nature has placed mankind under the governance of two sovereign masters, <i>pain</i> and <i>pleasure</i>."</p>
   <p>For Bentham, the only thing that matters about a pleasure is <b>how much</b> of it there is. Not what kind. Push-pin was a simple children's game, and Bentham wrote: "Prejudice apart, the game of push-pin is of equal value with the arts and sciences of music and poetry."</p>
-  <p>So how do you measure "how much"? Bentham listed seven things to check. The method is now usually called the <b>hedonic calculus</b> (or felicific calculus):</p>
+  <p>So how do you measure "how much"? Bentham listed seven things to check. The method is now usually called the <b>hedonic calculus</b> (or felicific calculus). A <i>calculus</i> here just means a method of calculating:</p>
   <div class="dims" aria-label="Bentham's seven dimensions">
     <div style="--dc:var(--hl-p)"><b>Intensity:</b> how strong does it feel?</div>
     <div style="--dc:var(--hl-o)"><b>Duration:</b> how long does it last?</div>
@@ -599,8 +640,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-b)">Mill: not all pleasures are equal</span></h2>
   <p class="wow">John Stuart Mill started learning ancient Greek at age three.</p>
-  <p>Mill grew up inside Bentham's circle: his father, James Mill, was one of Bentham's closest allies. In his twenties Mill went through a long low patch, and he later wrote that poetry, especially Wordsworth's, helped him out of it.</p>
-  <p>In <i>Utilitarianism</i> (1863), Mill stayed a hedonist, with a twist. Pleasures differ in <b>quality</b>, not just quantity. Pleasures of the mind, like understanding, imagination and deep friendship, are <b>higher pleasures</b>. Pleasures we share with other animals, like eating and lounging, are <b>lower pleasures</b>.</p>
+  <p>Mill grew up in Bentham's circle: his father, James Mill, was one of Bentham's closest allies. In his twenties Mill went through a long, sad stretch. He later wrote that poetry, especially Wordsworth's, helped him out of it.</p>
+  <p>In <i>Utilitarianism</i> (1863), Mill stayed a hedonist, with a twist. Pleasures differ in <b>quality</b>, not just quantity. Pleasures of the mind, like understanding, imagination and moral feeling, are <b>higher pleasures</b>. Pleasures we share with other animals, like eating and lounging, are <b>lower pleasures</b>.</p>
   <svg class="pic" viewBox="0 0 300 130" role="img" aria-label="A balance scale tipped toward Socrates, dissatisfied, and away from a pig, satisfied">
     <path d="M150 20 V112 M110 116 H190" stroke="#2A2016" stroke-width="5" stroke-linecap="round"/>
     <path d="M60 52 L240 28" stroke="#2A2016" stroke-width="5" stroke-linecap="round"/>
@@ -619,7 +660,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p>How do you tell which pleasure is higher? Mill's test, often called the <b>competent judges</b> test: ask people who have properly experienced both. If nearly all of them prefer one, even with more hassle attached, and wouldn't swap it for any amount of the other, it's higher in quality.</p>
   <p>Two worries critics have pressed ever since:</p>
   <ul>
-    <li><b>The circle.</b> Who counts as a competent judge? Suppose someone has tried both poetry and video games and prefers the games. If the Millian replies "then they didn't <i>really</i> appreciate poetry," a competent judge just means "someone who agrees with Mill." (Fair to Mill: he thought people can lose the capacity for higher pleasures. Whether that escapes the circle is the fight.)</li>
+    <li><b>The circle.</b> (An argument goes in a circle when its answer is built into its start.) Who counts as a competent judge? Suppose someone has tried both poetry and video games and prefers the games. If a fan of Mill replies "then they didn't <i>really</i> appreciate poetry," a competent judge just means "someone who agrees with Mill." (Fair to Mill: he thought people can lose the capacity for higher pleasures. Whether that escapes the circle is the fight.)</li>
     <li><b>Is it still hedonism?</b> If a higher pleasure can win while feeling <i>less</i> pleasant, something other than pleasantness is doing the work. Quality starts to look like a second ingredient.</li>
   </ul>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
@@ -680,18 +721,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p>In 1974 the Harvard philosopher Robert Nozick published <i>Anarchy, State, and Utopia</i>, a book mostly about government. Tucked inside is the idea from the cover. Here's our simplified version of it:</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit C: the deal</span>
-    <p>Imagine brain scientists who can wire you up so you experience anything you like: writing a hit song, making a best friend, scoring the winning goal. Your body rests safely in a lab the whole time. You pick the experiences in advance. Inside, it feels exactly like real life, and you don't know you're plugged in. Would you plug in for the rest of your life?</p>
+    <p>Imagine brain scientists who can wire you up so you experience anything you like: writing a hit song, making a best friend, scoring the winning goal. Your body rests safely in a lab the whole time, and the machine never breaks. You pick the experiences in advance. Inside, it feels exactly like real life, and you don't know you're plugged in. Would you plug in for the rest of your life?</p>
   </div>
   <p class="small">(In Nozick's original you come out every couple of years to pick the next batch, then forget again. We've simplified.)</p>
-  <p>Nozick's bet: most of us wouldn't. And if that's right, it's a problem for hedonism. Lay it out the Case 2 way:</p>
+  <p>Nozick's bet: most of us wouldn't. And if that's right, it's a problem for hedonism. Lay it out the Case 2 way. (A <b>premise</b> is a starting claim. An argument is <b>valid</b> if the conclusion has to be true whenever the premises are. Ask which premise you'd reject.)</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit D: the argument</span>
     <span class="argline">1. If hedonism is true, a life in the machine with more pleasure would be better for you than your real life.</span>
-    <span class="argline">2. A life in the machine would <i>not</i> be better for you than your real life.</span>
+    <span class="argline">2. Even a machine life with more pleasure would <i>not</i> be better for you than your real life.</span>
     <span class="argline concl">So, hedonism is false.</span>
   </div>
   <div class="poll" id="premPoll">
-    <p><b>It's valid. So if you don't buy the conclusion, which premise would you reject?</b> (Not graded.)</p>
+    <p><b>The argument is valid: if both premises are true, the conclusion has to be true. So if you don't buy the conclusion, which premise would you reject?</b> (Not graded.)</p>
     <div class="row" role="group" aria-label="Which premise would you reject?">
       <button class="btn ghost" type="button" data-r="1">Premise 1</button>
       <button class="btn ghost" type="button" data-r="2">Premise 2</button>
@@ -720,7 +761,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
   <p>A theory that says only your experiences can make your life go better or worse is called a <b>mental-state theory</b>. Hedonism is the classic one. Its rivals say a life can go badly in ways you never feel.</p>
   <div class="poll" id="nagelPoll">
-    <p><b>Thomas Nagel's case (1970):</b> a man is betrayed by his friends and ridiculed behind his back. He never finds out and never feels a thing. Is his life going worse?</p>
+    <p><b>Thomas Nagel's case (1970, simplified):</b> a man is betrayed by his friends and ridiculed behind his back, but he never suffers from it. Is his life going worse?</p>
     <div class="row" role="group" aria-label="Is his life going worse?">
       <button class="btn ghost" type="button" data-r="yes">Yes</button>
       <button class="btn ghost" type="button" data-r="no">No</button>
@@ -757,28 +798,28 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <details class="reply" style="--rc:var(--hl-o)">
     <summary><b>Reply 1:</b> you'd refuse to unplug, too</summary>
     <div class="inner">
-      <p>People tend to prefer whatever they already have. Researchers call this <b>status quo bias</b>. In 2010 the philosopher Felipe De Brigard turned the machine around: he asked students to imagine they had been in a machine all along and could now unplug into a real life they knew nothing about. Almost half chose to stay plugged in. If we refuse to plug in <i>and</i> refuse to unplug, maybe we're not valuing reality. We're valuing <i>where we already are</i>.</p>
+      <p>People tend to prefer whatever they already have. That's <b>status quo bias</b>. In 2010 the philosopher Felipe De Brigard asked students to imagine they had been in a machine all along and could now unplug. Almost half chose to stay plugged in. So maybe we're not valuing reality, just <i>where we already are</i>.</p>
       <p class="other"><b>The other side says:</b> about half did unplug, into a life they knew nothing about. Bias may explain some refusals, not all.</p>
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-y)">
     <summary><b>Reply 2:</b> your imagination is cheating</summary>
     <div class="inner">
-      <p>The story says the machine never breaks, but it's hard to truly believe that. Your "no" may sneak in worries the story already ruled out: glitches, power cuts, someone messing with you.</p>
+      <p>The story says the machine never breaks, but it's hard to truly believe that. Your "no" may sneak in worries the story ruled out, like glitches or power cuts.</p>
       <p class="other"><b>The other side says:</b> even people who picture a perfect, unbreakable machine often still say no.</p>
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-p)">
     <summary><b>Reply 3:</b> that's not a well-being reason</summary>
     <div class="inner">
-      <p>"I can't abandon my family" is a great reason. But use your Case 1 tool: it's about what you owe <i>others</i>. It shows plugging in might be wrong, not that it would be worse <i>for you</i>.</p>
+      <p>"I can't abandon my family" is a great reason, but it's about what you owe <i>others</i>. It shows plugging in might be wrong, not that it would be worse <i>for you</i>.</p>
       <p class="other"><b>The other side says:</b> imagine you're alone and owe nobody anything. Many people still wouldn't plug in.</p>
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-g)">
     <summary><b>Reply 4:</b> reality is usually the best route to pleasure</summary>
     <div class="inner">
-      <p>In normal life, real friends and achievements are the most reliable sources of good feelings, so we learn to care about the real thing. That habit just misfires in a sci-fi case where reality and pleasure come apart.</p>
+      <p>In normal life, real friends and achievements are the most reliable source of good feelings, so we learn to care about the real thing. That habit misfires in a sci-fi case.</p>
       <p class="other"><b>The other side says:</b> explaining where a feeling comes from doesn't show the feeling is mistaken.</p>
     </div>
   </details>
@@ -817,14 +858,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <label class="small" for="finMoved" style="display:block;margin-top:12px"><b>What moved me most in this file</b></label>
   <select class="reasonbox" id="finMoved">
     <option value="">Pick one</option>
-    <option>Nozick's point that we want to actually do things</option>
-    <option>Experience vs reality (the twins, or Nagel's secretly mocked man)</option>
+    <option>Nozick: we want to do things</option>
+    <option>Experience vs reality (twins, Nagel)</option>
     <option>Mill's higher and lower pleasures</option>
-    <option>The circle worry about competent judges</option>
-    <option>Status quo bias and the reversed machine</option>
-    <option>"That's a moral reason, not a well-being reason"</option>
-    <option>Reality is usually the best route to pleasure</option>
-    <option>Bentham's view that only the amount counts</option>
+    <option>The circle worry about judges</option>
+    <option>Status quo bias, reversed machine</option>
+    <option>Moral reason vs well-being reason</option>
+    <option>Reality is the route to pleasure</option>
+    <option>Bentham: only the amount counts</option>
   </select>
   <div class="row" style="margin-top:12px"><button class="btn" type="button" id="finBtn">Lock my verdict</button></div>
   <div class="fb" id="finFb" aria-live="polite" tabindex="-1"></div>
@@ -899,7 +940,7 @@ function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, replies:repliesOpen, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, wu:WU, replies:repliesOpen, lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -909,6 +950,7 @@ var REC={ bins:{}, calc:{done:0, first:0, misses:[], weights:null, verdict:null}
 var COVER={v:null, reason:"", locked:false};
 var FIN={view:null, reason:"", moved:"", done:false, meter:null};
 var POLLS={rat:null, prem:null, nagel:null};
+var WU={picks:[null,null,null,null,null]};
 
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
@@ -946,12 +988,13 @@ function showCard(g){
 var toastTimer=null;
 function toast(msg, color){
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  try{ T.style.top=Math.round($("dock").getBoundingClientRect().bottom+8)+"px"; }catch(e){}
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
 }
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
-  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  toast("Evidence "+n+"/"+NG+" filed"+(n===NG?". Final file open!":""), g.c);
   var slot=$(g.id).querySelector(".clearslot");
   if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':'')+'</p></div>';
     try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
@@ -963,7 +1006,7 @@ function clear(id, quiet){
   $(id).classList.add("is-cleared");
   var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
-  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
+  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw evfin">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
   if(n===NG) openLab("fin");
   refreshGot(); updateProg(); saveState();
@@ -996,10 +1039,17 @@ gotBtns.forEach(function(b){
 replyEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.open){ repliesOpen[i]=true; refreshGot(); saveState(); } }); });
 
 /* ---------- gut call: truly locked after "Lock it in" ---------- */
-var VL={"in":"I'd plug in", out:"I'd stay out"};
+var VL={"in":"I'd plug in", out:"I'd stay out", torn:"I'm torn"};
+/* two-tap lock: first tap arms, second tap locks (a slip is permanent otherwise) */
+function armLock(btn, armedText, normalText){
+  if(btn.getAttribute("data-armed")==="1") return true;
+  btn.setAttribute("data-armed","1"); btn.textContent=armedText;
+  setTimeout(function(){ if(btn.getAttribute("data-armed")==="1" && !btn.disabled){ btn.setAttribute("data-armed","0"); btn.textContent=normalText; } }, 7000);
+  return false;
+}
 function freezeCover(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
-  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
+  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").setAttribute("data-armed","0"); $("lockBtn").textContent="Locked";
 }
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
   b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
@@ -1013,6 +1063,7 @@ $("lockBtn").addEventListener("click",function(){
   var r=$("myReason").value.trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick plug in or stay out first."; return; }
   if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(!armLock($("lockBtn"),"Sure? Tap again to lock for good","Lock it in")){ $("lockMsg").style.color=""; $("lockMsg").textContent="Locking is permanent. Tap again to confirm."; return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
@@ -1022,11 +1073,17 @@ $("lockBtn").addEventListener("click",function(){
 function linesFor(g){
   var saved = SAVED && SAVED.lines && SAVED.lines[g];
   var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
-  if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
-  if(saved && !touched[g]) return saved.concat();
-  return LIVE[g]();
+  if(saved && wasCleared) return saved.concat();   /* a finished lead keeps its first record for good; a replay never overwrites it */
+  return LIVE[g]();                                /* an unfinished lead restarts on reload, so the copy line says what the screen shows */
 }
 function coverLines(){ return ["Gut call on the Experience Machine (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
+var WUSHORT=["praise","goal","friend","grade","holiday"];
+function warmLines(){
+  var f=[], r=[], n=0;
+  WU.picks.forEach(function(p,i){ if(p==="f"){ f.push(WUSHORT[i]); n++; } else if(p==="r"){ r.push(WUSHORT[i]); n++; } });
+  if(!n) return ["Warm-up: skipped (ungraded gut picks, feeling vs real)"];
+  return ["Warm-up: ungraded, "+n+" of 5 picks locked; chose the better feeling on "+f.length+(f.length?" ("+f.join(", ")+")":"")+" and the real thing on "+r.length+(r.length?" ("+r.join(", ")+")":"")];
+}
 function pollLines(){
   var P={press:"would press it",nope:"wouldn't press it","1":"premise 1","2":"premise 2",none:"neither, convinced",yes:"yes",no:"no"};
   return ["Ungraded taps: pleasure button = "+(POLLS.rat?P[POLLS.rat]:"skipped (optional)")+"; premise I'd reject in Nozick's argument = "+(POLLS.prem?P[POLLS.prem]:"not answered")+"; Nagel's betrayed man worse off = "+(POLLS.nagel?P[POLLS.nagel]:"not answered")];
@@ -1050,6 +1107,51 @@ function wireCopies(){
     row.appendChild(b); row.appendChild(st); row.appendChild(ta);
   });
 }
+
+/* ---------- warm-up: Feel or Real? (ungraded, locks on first tap, kept across reloads) ---------- */
+var WUC=[
+ {f:"Everyone tells you your art is amazing. They're only being polite, but you'll never find out.", r:"Two honest people say your art is pretty good."},
+ {f:"Feel the thrill of scoring the winning goal in a super-real dream. It never happened.", r:"Score a small, ordinary goal in a real game."},
+ {f:"A friend who secretly can't stand you but acts perfect. You'll never know, and every hangout is a blast.", r:"A real friend who is sometimes a bit boring."},
+ {f:"You believe you aced the test. You actually got a C, but nobody ever tells you. A great week.", r:"You learn the truth: a C. A so-so week."},
+ {f:"A perfect beach holiday inside a vivid dream. You wake up rested, and it never happened.", r:"A real holiday that's just fine: some rain, some sun."}
+];
+var WUDOTS=[];
+(function(){ for(var i=0;i<WUC.length;i++){ var d=el("span",{class:"wu-dot"}); $("wuDots").appendChild(d); WUDOTS.push(d); } })();
+function wuNext(){ for(var i=0;i<WU.picks.length;i++){ if(!WU.picks[i]) return i; } return -1; }
+function wuPaint(){
+  WU.picks.forEach(function(p,i){ WUDOTS[i].className="wu-dot"+(p?" on "+p:""); });
+}
+function wuReveal(){
+  var n=0; WU.picks.forEach(function(p){ if(p==="f") n++; });
+  var lead = n>=4 ? "Mostly the feeling." : n<=1 ? "Mostly the real thing." : "A mix of both.";
+  var R=$("wuReveal"); R.hidden=false; R.className="fb wu-reveal good";
+  R.innerHTML='<strong class="v">'+lead+'</strong> You picked the better feeling '+n+' of 5 times and the real thing '+(5-n)+' of 5. There is a famous theory that says the feeling is the whole story. Read on to meet it, then test it in Lead 1.';
+  $("wuCard").hidden=true; $("wuNav").textContent="Warm-up done (not scored)";
+}
+function wuRender(focus){
+  wuPaint();
+  var i=wuNext();
+  if(i<0){ wuReveal(); return; }
+  $("wuNav").textContent="Pick "+(i+1)+" of "+WUC.length;
+  var C=$("wuCard"); C.hidden=false; C.innerHTML="";
+  var q=el("p",{class:"wu-q"}); q.textContent="Which would you rather have?"; C.appendChild(q);
+  var sides=shuffle(["f","r"]);
+  sides.forEach(function(sd,pos){
+    var b=el("button",{class:"wu-tile",type:"button","data-side":sd,"data-pos":String(pos)}); b.style.setProperty("--wc", pos===0?"var(--hl-p)":"var(--hl-b)");
+    b.textContent=WUC[i][sd];
+    b.addEventListener("click",function(){
+      if(WU.picks[i]) return;          /* locks on the first tap */
+      WU.picks[i]=sd;
+      C.querySelectorAll(".wu-tile").forEach(function(x){ x.disabled=true; });
+      b.setAttribute("aria-pressed","true");
+      saveState(); wuRender(true);
+    });
+    C.appendChild(b);
+  });
+  if(focus){ var nb=C.querySelector(".wu-tile"); if(nb){ try{ nb.focus({preventScroll:true}); }catch(e){ nb.focus(); } } else focusFb($("wuReveal")); }
+}
+wuRender(false);
 
 /* ---------- ungraded taps in the reading ---------- */
 function wirePoll(id, key, onPick){
@@ -1076,17 +1178,23 @@ wirePoll("nagelPoll","nagel",function(v){
 var BL={"in":"Good in itself","for":"Good for what it brings","neg":"Bad in itself"};
 var BINS=[
  {t:"The warm feeling when a friend laughs at your joke", short:"warm feeling", a:"in",
+  hint:"This one is itself a feeling, and a good one. Which bin do good feelings go in?",
   why:"It's a pleasant experience, and pleasant experiences are exactly what hedonism says are good in themselves."},
  {t:"Money", short:"money", a:"for",
+  hint:"Money isn't a feeling. So what would a hedonist say it's for?",
   why:"Money only matters for what it gets you: fun, comfort, less stress. Classic instrumental good."},
  {t:"Friendship itself", short:"friendship", a:"for", surprise:true,
-  why:"Surprise! A hedonist says friendship is hugely valuable, but only because of the joy and comfort it brings. The friendship itself is a means. Many people find that hard to accept, and that's a clue we'll come back to."},
+  hint:"A friendship isn't a feeling; the joy it brings is. What would a strict hedonist say about the friendship itself?",
+  why:"Surprise! A strict hedonist says friendship is hugely valuable, but only because of the joy and comfort it brings. The friendship itself is a means. (Some Epicureans were less strict about this; scholars still argue over it.) Many people find that hard to accept, and that's a clue we'll come back to."},
  {t:"The sting of embarrassment", short:"embarrassment", a:"neg",
+  hint:"This one is itself a feeling. Is it a good one or a bad one?",
   why:"It's a bad feeling, so it's bad in itself: the minus side of the equation."},
  {t:"Knowing the truth about something, even a hard truth", short:"knowing the truth", a:"for", surprise:true,
+  hint:"Knowing a fact isn't a feeling. What might a hedonist say it's good for?",
   why:"Another surprise. For a hedonist, truth matters only for the good feelings it brings or the pain it saves. A hard truth that only made you feel worse would be bad for you. Plenty of people find that hard to swallow."},
  {t:"The calm feeling of a quiet morning", short:"calm feeling", a:"in",
-  why:"Calm feels good. Epicurus would rate this one very highly."}
+  hint:"This one is itself a feeling. Good or bad?",
+  why:"Calm feels good. Epicurus, the ancient hedonist from the start of this file, would rate this one very highly."}
 ];
 var binDone=0;
 BINS.forEach(function(it,i){
@@ -1108,7 +1216,7 @@ BINS.forEach(function(it,i){
         if(binDone===BINS.length){ $("binScore").textContent="All "+BINS.length+" sorted. Notice how much the hedonist pushes into the \"good for what it brings\" bin."; clear("g1"); }
       } else {
         r.misses.push(v);
-        if(r.misses.length===1) setFb(fb,"bad",vword("g1","no"),"Ask: is this itself a feeling, and is it a good one or a bad one? If it isn't a feeling, what does a hedonist think it's for?");
+        if(r.misses.length===1) setFb(fb,"bad",vword("g1","no"),it.hint);
         else setFb(fb,"bad",vword("g1","no"),it.why);
       }
       touch("g1");
@@ -1137,6 +1245,10 @@ var CLUES=[
  {d:"pur", w:"B", s:"Wrecked Sunday", t:"The all-nighter means feeling wrecked and grumpy all of Sunday.", why:"Pain that tags along after: Plan A is less pure. Point to Plan B."},
  {d:"ext", w:"B", s:"Friends have more fun", t:"Your friends will have more fun because you showed up.", why:"How many people it reaches: extent. Point to Plan B. (Remember, this one counts other people.)"}
 ];
+var HINTS={ "pur>dur":"Purity is about pain that follows the pleasure. The all-nighter's pain comes after it, not during.", "pur>fec":"Fecundity is more pleasure later. This clue is about pain that follows. Which dimension is about pain tagging along?",
+ "nea>cer":"Certainty is about the odds that it happens. This clue is about how soon it happens.", "cer>nea":"Nearness is about how soon. This clue is about the odds it happens at all.",
+ "ext>fec":"Fecundity is more pleasure for you later. This clue is about how many people the pleasure reaches.", "fec>ext":"Extent is about how many people it reaches. This clue is about more pleasure coming later.",
+ "dur>int":"Intensity is how strong. This clue is about how long it lasts.", "int>dur":"Duration is how long. This clue is about how strong it feels." };
 var cOrder=shuffle(CLUES.map(function(_,i){return i;})), cI=0, cScore=0, cMiss=0;
 function needleTo(frac){ $("needle").style.left=Math.max(4,Math.min(96,50+46*frac))+"%"; }
 function cRender(){
@@ -1159,7 +1271,7 @@ function cRender(){
       } else {
         cMiss++; b.disabled=true;
         if(REC.calc.misses.indexOf(c.d)<0) REC.calc.misses.push(c.d);
-        setFb($("calcFb"),"bad",vword("g2","no"), cMiss===1 ? "Ask what the clue is really about: strength, time, odds, how soon, what follows, or who else?" : "Look back at the seven definitions in the reading. Which one matches this clue?");
+        setFb($("calcFb"),"bad",vword("g2","no"), cMiss===1 && HINTS[c.d+">"+d[0]] ? HINTS[c.d+">"+d[0]] : cMiss===1 ? "Ask what the clue is really about: strength, time, odds, how soon, what follows, or who else?" : "Look back at the seven definitions in the reading. Which one matches this clue?");
       }
       touch("g2");
     });
@@ -1201,7 +1313,7 @@ function calcLines(){
 /* ================= LEAD 3: LADDER ================= */
 var LAD=[
  {t:"Finishing a really hard puzzle or problem", s:"finishing a hard puzzle", c:"var(--hl-b)", hi:true},
- {t:"Eating your favorite snack", s:"your favorite snack", j:"his favorite snack", c:"var(--hl-o)", hi:false},
+ {t:"Eating your favorite snack", s:"your favorite snack", j:"a favorite snack", c:"var(--hl-o)", hi:false},
  {t:"A great late-night conversation with a friend", s:"a great late-night talk with a friend", c:"var(--hl-p)", hi:true},
  {t:"A long, lazy afternoon nap", s:"a long afternoon nap", j:"a long afternoon nap", c:"var(--hl-y)", hi:false},
  {t:"A piece of music that gives you chills", s:"music that gives you chills", c:"var(--hl-g)", hi:true}
@@ -1231,10 +1343,10 @@ function buildLQ(Ls, Hs, Lj){
     o:[["a","It lasts longer, so it adds up to more pleasure"],["b","It's higher quality, as judged by people who know both"],["c","It's the more morally admirable way to spend time"]], a:"b",
     ok:"Quality, judged by people who have properly experienced both. Not quantity, and not morality.",
     no:{a:"That's still quantity (duration is one of Bentham's dimensions). Mill's point is that kind matters, not just amount.",c:"Careful: this is about well-being, not morality. Mill's claim is that the pleasure itself is higher in quality."}},
-   {q:"Jordan has honestly tried both and prefers <b>"+Lj+"</b>. A Millian says: \"Then Jordan didn't really appreciate "+Hs+".\" What's the worry?",
-    o:[["a","It's circular: anyone who disagrees gets ruled out"],["b","It blames Jordan's morals instead of the test"],["c","No worry: Mill's test doesn't involve judges"]], a:"a",
+   {q:"A student has honestly tried both and prefers <b>"+Lj+"</b>. A fan of Mill says: \"Then that student didn't really appreciate "+Hs+".\" What's the worry? (Hint: the circle, where the test's answer is built into its start.)",
+    o:[["a","It's circular: anyone who disagrees gets ruled out"],["b","It blames the student's morals instead of the test"],["c","No worry: Mill's test doesn't involve judges"]], a:"a",
     ok:"That's the circle. If any judge who disagrees gets ruled incompetent, the test can't come out against Mill, so it doesn't really test anything.",
-    no:{b:"Nobody's accusing Jordan of anything moral. The worry is about the test itself.",c:"It does: Mill's test is exactly about people who have experienced both. That's where the worry starts."}}
+    no:{b:"Nobody's accusing the student of anything moral. The worry is about the test itself.",c:"It does: Mill's test is exactly about people who have experienced both. That's where the worry starts."}}
   ];
 }
 var lqDone=0;
@@ -1244,7 +1356,7 @@ $("ladLock").addEventListener("click",function(){
   var lowPos=-1, hiPos=-1;
   ladOrder.forEach(function(idx,pos){ if(!LAD[idx].hi && lowPos<0) lowPos=pos; if(LAD[idx].hi && hiPos<0) hiPos=pos; });
   var Ls=LAD[ladOrder[lowPos]].s, Hs=LAD[ladOrder[hiPos]].s;
-  REC.lad.mill = lowPos<hiPos ? "put a lower pleasure ("+Ls+") above a higher one ("+Hs+")" : "ladder agrees with Mill (top higher pleasure "+Hs+" above top lower one "+Ls+")";
+  REC.lad.mill = lowPos<hiPos ? "I put a lower pleasure ("+Ls+") above a higher one ("+Hs+")" : "my ladder agrees with Mill: top higher pleasure "+Hs+" is above top lower one "+Ls;
   var Q=$("ladQs"); Q.hidden=false; Q.innerHTML="";
   var intro=el("p",{class:"pause"});
   intro.textContent = lowPos<hiPos ? "You put "+Ls+" above "+Hs+". Mill would want to know: have you properly tried both? Now, three questions about those two." : "Mill would approve of your ladder: "+Hs+" beats "+Ls+". Bentham would ask: but which gave you more pleasure? Now, three questions about those two.";
@@ -1277,7 +1389,7 @@ function ladLines(){
   if(!REC.lad.order) return ["Lead 3 Pleasure ladder: not locked yet"];
   var first=Object.keys(REC.lad.q).filter(function(k){return REC.lad.q[k].done && !REC.lad.q[k].misses;}).length;
   var done=Object.keys(REC.lad.q).filter(function(k){return REC.lad.q[k].done;}).length;
-  return ["Lead 3 Pleasure ladder, my ranking best to least: "+REC.lad.order.join(" > ")+" (I "+REC.lad.mill+")", "Lead 3 Bentham/Mill questions: "+done+" of 3 right, "+first+" first try"];
+  return ["Lead 3 Pleasure ladder, my ranking best to least: "+REC.lad.order.join(" > ")+" ("+REC.lad.mill+")", "Lead 3 Bentham/Mill questions: "+done+" of 3 right, "+first+" first try"];
 }
 
 /* ================= LEAD 4: PLUG IN (pocket) ================= */
@@ -1299,7 +1411,7 @@ var PLUG=[
 ];
 var MINE=[["in","I'd plug in"],["out","I'd stay out"],["unsure","Can't decide"]];
 var pI=0, pSided=0, pAnswered2=0;
-function gauge(lbl,v,cls){ return '<span>'+lbl+'</span><div class="gbar '+cls+'" role="img" aria-label="'+esc(lbl)+': feels '+v+' out of 5"><i style="width:'+(v*20)+'%"></i></div>'; }
+function gauge(lbl,v,cls){ return '<span>'+lbl+' <b class="gnum">'+v+'/5</b></span><div class="gbar '+cls+'" role="img" aria-label="'+esc(lbl)+': feels '+v+' out of 5"><i style="width:'+(v*20)+'%"></i></div>'; }
 function ownAnswer(R){ return R.m>R.r ? "m" : R.m<R.r ? "r" : "e"; }
 function pRender(){
   var M=PLUG[pI]; REC.plug[pI]=REC.plug[pI]||{misses:0, hed:false, mine:null, r:null, m:null};
@@ -1371,6 +1483,7 @@ function pTally(){
     var R=REC.plug[i]; if(!R||!R.mine) return;
     var h=hedSide(i), nm=M.n.replace("The ","").replace(" Machine","");
     if(h==="either"){ var e=el("span"); e.textContent=nm+": hedonist says it's a tie"; T.appendChild(e); return; }
+    if(R.mine==="unsure"){ var u=el("span"); u.textContent=nm+": undecided (not counted)"; T.appendChild(u); return; }
     pAnswered2++; var same=R.mine===h; if(same) pSided++;
     var s=el("span",{class: same?"on":""}); s.textContent=nm+": "+(same?"with the hedonist":"split"); T.appendChild(s);
   });
@@ -1385,7 +1498,7 @@ function plugLines(){
   var ML={"in":"plug in","out":"stay out","unsure":"can't decide"};
   var mine=PLUG.map(function(M,i){ var R=REC.plug[i]; return R&&R.mine ? M.n.replace("The ","")+" = "+ML[R.mine]+(M.own?" (my gauges: flight "+R.r+", dream "+R.m+")":"") : null; }).filter(Boolean);
   return ["Lead 4 Plug In?: hedonist verdicts "+keys.length+" of "+PLUG.length+" right, "+first+" first try",
-          "Lead 4 my own calls: "+(mine.length?mine.join("; "):"none yet")+(pAnswered2?" (sided with the hedonist on "+pSided+" of "+pAnswered2+" answered machines where the hedonist picks a side)":"")];
+          "Lead 4 my own calls: "+(mine.length?mine.join("; "):"none yet")+(pAnswered2?" (sided with the hedonist on "+pSided+" of "+pAnswered2+" answered machines where the hedonist picks a side; \"can't decide\" not counted)":"")];
 }
 
 /* ================= LEAD 5: FLIP THE MACHINE ================= */
@@ -1471,9 +1584,10 @@ function hedMeter(){
   var s=0;
   if(COVER.locked && COVER.v==="in") s+=25;
   if(pAnswered2) s+=35*pSided/pAnswered2;
-  s+={ "Consistent hedonist pattern":25, "Adventurer pattern":12, "Home-team pattern":12 }[REC.flipPattern]||0;
+  s+={ "Consistent hedonist pattern":25, "Adventurer pattern":12 }[REC.flipPattern]||0;   /* Home-team is status quo, not hedonism: 0 */
   s+={bentham:15, mill:10}[FIN.view]||0;
   s=Math.round(Math.max(0,Math.min(100,s)));
+  if(FIN.view==="mixed" || FIN.view==="other") s=Math.min(s,34);   /* a verdict that is not hedonist cannot read "hedonist" */
   return {score:s, label: s>=65 ? "Card-carrying hedonist" : s>=35 ? "Hedonist with doubts" : "Reality first"};
 }
 function freezeFinale(){
@@ -1482,11 +1596,11 @@ function freezeFinale(){
 }
 function finRender(){
   var M=FIN.meter||hedMeter(); FIN.meter=M;
-  $("hedMeter").innerHTML='<h3>Your hedonism meter</h3><div class="hbar" role="img" aria-label="Hedonism meter: '+M.score+' out of 100, '+M.label+'"><i style="left:'+M.score+'%"></i></div><div class="hlabels"><span>Reality first</span><span>With doubts</span><span>Card-carrying</span></div><p class="hverdict">'+M.label+'</p><p class="small">Worked out from your gut call, your Lead 4 calls, your Lead 5 pattern and your verdict. Just for fun; not a grade.</p>';
+  $("hedMeter").innerHTML='<h3>Your hedonism meter</h3><div class="hbar" role="img" aria-label="Hedonism meter: '+M.score+' out of 100, '+M.label+'"><i style="left:'+M.score+'%"></i></div><div class="hlabels"><span>Reality first</span><span>With doubts</span><span>Card-carrying</span></div><p class="hverdict">'+M.label+'</p><p class="small">Worked out from your gut call, your Lead 4 calls, your Lead 5 pattern and your verdict (a verdict that is not hedonist keeps it under 35). Just for fun; not a grade.</p>';
   var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
   $("finCompare").innerHTML='<div><span class="hd">START OF FILE</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">END OF FILE</span><br>'+esc(ENDTXT[FIN.view])+'</div>';
   var hedView = FIN.view==="bentham"||FIN.view==="mill";
-  var shift = !COVER.locked ? "" : ((COVER.v==="in") === hedView) ? "Your gut call and your verdict line up." : "Your verdict and your gut call point different ways. That's worth a sentence to Rocky: which one gives?";
+  var shift = (!COVER.locked || COVER.v==="torn") ? "" : ((COVER.v==="in") === hedView) ? "Your gut call and your verdict line up." : "Your verdict and your gut call point different ways. That's worth a sentence to Rocky: which one gives?";
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
@@ -1496,6 +1610,7 @@ $("finBtn").addEventListener("click",function(){
   if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  if(!armLock($("finBtn"),"Sure? Tap again to lock my verdict","Lock my verdict")){ setFb($("finFb"),"","Check it once more.","Locking is permanent. Tap the button again to confirm."); return; }
   FIN.reason=reason; FIN.moved=moved; FIN.done=true; FIN.meter=hedMeter(); freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Scroll down for your meter, then copy your case file for Rocky.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
@@ -1509,7 +1624,7 @@ function finLines(){
 
 var LIVE={g1:binLines,g2:calcLines,g3:ladLines,g4:plugLines,g5:flipLines};
 var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");}, g5:function(){return linesFor("g5");},
-  all:function(){ return [].concat(coverLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+  all:function(){ return [].concat(coverLines(), warmLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
 wireCopies();
 refreshGot();
 window.__m03={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report};
@@ -1519,16 +1634,23 @@ if(SAVED){
   restoring=true;
   try{
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.wu && SAVED.wu.picks){ for(var wi=0;wi<WU.picks.length;wi++){ var wp=SAVED.wu.picks[wi]; if(wp==="f"||wp==="r") WU.picks[wi]=wp; else break; } wuRender(false); }
     if(SAVED.polls){ ["rat","prem","nagel"].forEach(function(k){ if(SAVED.polls[k]) POLLS[k]=SAVED.polls[k]; }); }
     if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
-    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
+    (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay exactly as filed."; b.insertBefore(n,b.firstChild); } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
       FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.meter=SAVED.fin.meter||null; FIN.done=true;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
       $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
     }
+    GAME_IDS.forEach(function(id){
+      var sl=SAVED.lines && SAVED.lines[id], wasC=(SAVED.cleared||[]).indexOf(id)>=0;
+      if(!wasC && sl && sl.length && !/not (started|locked)/.test(sl[0]) && $(id).classList.contains("is-unlocked")){
+        var b2=$(id).querySelector(".lab-body"), n2=el("p",{class:"pause"}); n2.textContent="Progress in this lead restarted when the page reloaded. Only finished leads are kept. Start it again from the top."; b2.insertBefore(n2,b2.firstChild);
+      }
+    });
     refreshGot();
   }catch(e){}
   restoring=false; saveState();   /* outside the try, so a throw can't leave saving off */

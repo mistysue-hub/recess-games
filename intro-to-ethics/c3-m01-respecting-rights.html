@@ -432,6 +432,15 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lockin .vbtn[aria-pressed="true"]{color:var(--hl-ink)} }
 .fb:focus{outline:3px solid var(--hl-b); outline-offset:2px}
 .sort-item .row .skipbtn{margin-left:auto}
+
+/* ---------- fix pass: toast at the top, skipped pip, same-case poll buttons ---------- */
+.toast{bottom:auto; top:76px; animation-name:toastInTop}
+@keyframes toastInTop{0%{transform:translate(-50%,-24px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.dock .evsk{font-size:.8em; font-weight:700; margin-left:4px; white-space:nowrap}
+.dock .pip.skipped{background:transparent; color:var(--ink); border:2px dashed var(--c,#FFE15A)}
+.rankpick button:disabled{opacity:.55; text-decoration:line-through}
+.panel .row button:disabled[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink); opacity:1}
+.panel .row button:disabled[aria-pressed="false"]{opacity:.5}
 </style>
 </head>
 <body>
@@ -482,7 +491,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 3 &middot; Case #1</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">Can You Harm One to Help Five?</h1>
-  <p class="dek">A runaway trolley, a surgeon with a terrible idea, and a rule about side effects that's over 700 years old. The question for today: do people have rights that stop you doing the most good?</p>
+  <p class="dek">A runaway trolley, a surgeon with a terrible idea, and a 700-year-old rule about side effects. Can a person's rights stop you from doing the most good?</p>
   <svg class="cover-art" viewBox="0 0 360 150" role="img" aria-label="Cartoon of a runaway trolley racing toward a fork in the track, with a big red lever and a question mark beside it" style="color:var(--ink)">
     <path class="trk" d="M10 70 H350"/><path class="trk" d="M150 70 C 190 70, 200 125, 250 125 H350"/>
     <use href="#s-trolley" x="18" y="40" width="70" height="48"/>
@@ -495,7 +504,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 26 L20 6" stroke="#2A2016" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="6" r="4" fill="#C0152F" stroke="#2A2016" stroke-width="2"/><rect x="7" y="22" width="16" height="6" rx="2" fill="#FFFDF5" stroke="#2A2016" stroke-width="2"/></svg></div>
-    <p>Here's the whole case in its plainest form. Is it ever OK to harm one person who has done nothing wrong, if that's the only way to stop five other people being harmed just as badly? Lock in your gut call now. At the end of the file you'll make the call again, knowing what philosophers know.</p>
+    <p>Is it ever OK to harm one innocent person if that is the only way to save five others? Lock in your gut call. You will call it again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row" role="group" aria-label="Your gut call">
@@ -507,47 +516,33 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <p class="comfort"><b>Heads-up:</b> this file uses philosophy's famous runaway-trolley stories. We keep them cartoon-simple: no gore, and nobody is described getting hurt. If a story isn't for you, press its <b>Skip</b> button. You'll still get the idea, and you can still close the case.</p>
-  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
+  <p class="comfort"><b>Heads-up:</b> the trolley stories here are cartoon-simple, and nobody is described getting hurt. Not for you? Press <b>Skip</b>. Skips show up as skips in your notes for Rocky.</p>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 28 minutes</span></div>
 </section>
 
 <!-- ================= 2 WARM-UP ================= -->
 <section class="sheet" id="warm" aria-labelledby="w0">
   <h2 id="w0"><span style="--mark:var(--hl-y)">Warm-up: Ridiculous Rails</span></h2>
-  <p>Before the serious version, here are four very silly ones we made up. Answer fast. Nothing here is graded, and nobody ends up worse than sticky.</p>
+  <p>Four silly ones. Go with your gut. Nothing is graded, and your first tap is final.</p>
   <div class="row"><button class="skipbtn" type="button" id="warmSkip">Skip the warm-up</button></div>
   <div class="panels" id="panels"></div>
   <div id="warmReveal" hidden></div>
 </section>
 
 
-<!-- ================= 3 RECAP + CALLBACK ================= -->
-<section class="sheet" aria-labelledby="b0">
-  <h2 id="b0"><span style="--mark:var(--hl-b)">Callback: two giants and a surgeon</span></h2>
-  <p>Challenge 2 gave you two giants. <b>Bentham</b> (Case 4): the right act is whatever produces the best overall outcome, everyone counted equally. You met it there as <b>act utilitarianism</b>. Philosophers call the wider family, judging each act by its overall outcome, <b>act consequentialism</b>; utilitarianism is the version where "best" means "most happiness." <b>Kant</b> (Case 6): never treat a person <b>merely</b> as a means, and test it with consent: could they agree to how you're treating them, knowing everything?</p>
-  <p>You also met the act consequentialist's scariest result: <b>the surgeon</b> (philosophers call the case <b>Transplant</b>), who could secretly sacrifice one healthy visitor to save five patients. And you met its comeback: secrets leak, trust collapses, so count <i>all</i> the consequences. The question this file presses is different. Suppose the secret really is safe. Is the theory right <i>in principle</i>?</p>
-  <div class="exhibit" style="--hl-c:var(--hl-p)">
-    <span class="lbl">One new exhibit: the Scapegoat</span>
-    <p>A mob will riot, and several people will die, unless someone is punished for a crime. The judge can't find the culprit. She could frame an innocent person and stop the riot. (Philippa Foot used a case like this in 1967. Remember her: she's back in two screens.)</p>
-  </div>
-  <p>Many people feel the wrong done to the visitor or the framed person has nothing to do with leaks. Each has a <b>right</b> not to be used like that.</p>
-  <p class="note">House rule for this file: when a case compares "one" with "five," each person faces the same kind of harm, unless the case says otherwise.</p>
-</section>
-
-<!-- ================= 4 RIGHTS ================= -->
+<!-- ================= 4 RIGHTS (short: only what Lead 1 needs) ================= -->
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-p)">Rights: the walls of the maze</span></h2>
-  <p class="wow">A right is the one thing in ethics that can say "no" to a bigger number.</p>
-  <p>A <b>moral right</b> is a claim a person has against everyone else. It holds whether or not respecting it brings the best results. Think: your right not to be killed, attacked, robbed or lied to. <b>Negative rights</b> are rights not to be interfered with. <b>Positive rights</b> are rights to be given help. This file is mostly about negative rights.</p>
+  <p class="wow">A right is the one thing in ethics that can say "no" to a bigger number. Think of a maze: chase your goal anywhere, but not through the walls.</p>
+  <p>A <b>moral right</b> is a claim a person has against everyone else, like your right not to be attacked. It holds even when ignoring it would bring better results.</p>
   <div class="vs2" aria-label="Goals versus side-constraints">
     <div class="hd a">A goal</div><div class="hd b">A side-constraint</div>
-    <div>Something to <b>promote</b>. More of it is better, and you should do whatever brings the most.</div>
-    <div>A <b>limit</b> on what you may do while chasing any goal. It isn't something to maximize.</div>
+    <div>Something to <b>promote</b>: more is better, by any means.</div>
+    <div>A <b>limit</b> on what you may do while chasing any goal.</div>
     <div>"Make the world as happy as possible."</div>
     <div>"Whatever you're chasing, don't kill an innocent person to get it."</div>
   </div>
-  <p>The philosopher Robert Nozick drew this line in <i>Anarchy, State, and Utopia</i> (1974). Think of a maze: you can chase your goal anywhere, just not through the walls. His reason for the walls is that each of us is a separate person: "There are only individual people, different individual people, with their own individual lives."</p>
-  <div class="poll" id="mobPoll">
+    <div class="poll" id="mobPoll">
     <p><b>Quick tap (not graded):</b> a mob will frame five innocent people unless you frame one innocent person yourself. Is framing the one OK?</p>
     <div class="row" role="group" aria-label="Is framing the one OK?">
       <button class="btn ghost" type="button" data-r="yes">Yes, one is fewer</button>
@@ -556,11 +551,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="mobFb" aria-live="polite"></div>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
-    <span class="lbl">Exhibit C: the twist that matters most in this file</span>
-    <p>Imagine a consequentialist who loves rights and says, "Let's make the goal <i>as few rights violations as possible</i>." Sounds like respecting rights. It isn't. In the mob case, that goal says: frame the one, since one violation beats five. A <b>side-constraint</b> says: you may not frame anyone, not even to prevent more framings. Nozick's point: putting rights in the goal still lets you sacrifice people. Only a constraint protects each person.</p>
+    <span class="lbl">Exhibit C: the twist that matters most</span>
+    <p>"As few rights violations as possible" sounds like respecting rights, but it is a goal. It says: frame the one, since one violation beats five. A side-constraint says: frame no one.</p>
   </div>
-  <p>Ronald Dworkin had a similar image: rights are <b>trumps</b> that individuals hold against appeals to the general good (<i>Taking Rights Seriously</i>, 1977). <b>How strong are the walls?</b> Some say <b>absolute</b>: never cross them. Others say they have a <b>threshold</b>: they hold against "five instead of one" but give way when the stakes are huge. Critics ask where that line is.</p>
-  <p class="note">The deep puzzle: why should it matter more that <i>I</i> don't violate one person's rights than that five people's rights get violated by someone else? Defenders say a constraint is about what <i>you</i> do, not how many violations the world contains. Reasons like this are called <b>agent-relative</b>: reasons for you in particular.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -579,11 +572,34 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
 </section>
 
+<!-- ================= 3 RECAP + CALLBACK ================= -->
+<section class="sheet" aria-labelledby="b0">
+  <h2 id="b0"><span style="--mark:var(--hl-b)">Callback: two giants and a surgeon</span></h2>
+  <p>Challenge 2 gave you two giants. <b>Bentham</b> (Case 4): the right act is whatever produces the best overall outcome, everyone counted equally. You met it there as <b>act utilitarianism</b>. Judging each act by its overall outcome is called <b>act consequentialism</b>. Utilitarianism is the version where "best" means "most happiness." <b>Kant</b> (Case 6): never treat a person <b>merely</b> as a means (as a tool only, like a hammer). His test is consent: could they agree to how you're treating them, knowing everything?</p>
+  <p>You also met the act consequentialist's scariest result: <b>the surgeon</b> (philosophers call the case <b>Transplant</b>), who could secretly sacrifice one healthy visitor to save five patients. And you met its comeback: secrets leak, trust collapses, so count <i>all</i> the consequences. The question this file presses is different. Suppose the secret really is safe. Is the theory right <i>in principle</i>?</p>
+  <div class="exhibit" style="--hl-c:var(--hl-p)">
+    <span class="lbl">One new exhibit: the Scapegoat</span>
+    <p>A mob will riot, and several people will die, unless someone is punished for a crime. The judge can't find the culprit. She could frame an innocent person and stop the riot. (Philippa Foot used a case like this in 1967. Remember her: she is back on the next sheet.)</p>
+  </div>
+  <p>Many people feel the wrong done to the visitor or the framed person has nothing to do with leaks. Each has a <b>right</b> not to be used like that.</p>
+  <p class="note">House rule for this file: when a case compares "one" with "five," each person faces the same kind of harm, unless the case says otherwise.</p>
+</section>
+
+<!-- ================= 4b HOW STRONG ARE THE WALLS (moved after Lead 1) ================= -->
+<section class="sheet" aria-labelledby="b2b">
+  <h2 id="b2b"><span style="--mark:var(--hl-p)">How strong are the walls?</span></h2>
+  <p>You just sorted goals from walls. The philosopher Robert Nozick drew this line in <i>Anarchy, State, and Utopia</i> (1974). His reason for the walls is that each of us is a separate person: "There are only individual people, different individual people, with their own individual lives."</p>
+  <p>Negative rights are rights not to be interfered with. Positive rights are rights to be given help. This file is mostly about negative rights.</p>
+  <p>Ronald Dworkin had a similar image: rights are <b>trumps</b> that individuals hold against appeals to the general good (<i>Taking Rights Seriously</i>, 1977). A trump beats the other cards in the game.</p>
+  <p>How strong are the walls? Some say <b>absolute</b>: never cross them. Others say they have a <b>threshold</b>, a tipping point. The walls hold against "five instead of one" but give way when the stakes are huge. Critics ask where that line is.</p>
+  <p class="note">The deep puzzle: why should it matter more that <i>I</i> don't violate one person's rights than that five people's rights get violated by someone else? Defenders say a constraint is about what <i>you</i> do, not how many violations the world contains. Reasons like this are called <b>agent-relative</b>: reasons for you in particular.</p>
+</section>
+
 <!-- ================= 6 TROLLEY FAMILY ================= -->
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-o)">Meet the trolley family</span></h2>
   <p class="wow">You met Switch and Footbridge in Challenge 2, Case 3. Here's the whole family, and this time the question is what makes the difference.</p>
-  <p>Quick reminder: <b>Philippa Foot</b> (1920 to 2010) started it all in 1967 with a runaway trolley's driver, and the MIT philosopher <b>Judith Jarvis Thomson</b> (1929 to 2020) named it <b>the trolley problem</b> in 1976 and added new versions in 1985 (in the <i>Yale Law Journal</i>). What's new here: Foot's driver came up as a contrast with the Scapegoat judge. Why may the driver steer, she asked, when the judge may not frame? Each version below changes one thing, like a scientist changing one variable. Nobody thinks they're about trains.</p>
+  <p>Quick reminder: <b>Philippa Foot</b> (1920 to 2010) started it all in 1967 with a runaway trolley's driver. The MIT philosopher <b>Judith Jarvis Thomson</b> (1929 to 2020) named it <b>the trolley problem</b> in 1976. She added new versions in 1985 (in the <i>Yale Law Journal</i>). What's new here: Foot's driver came up as a contrast with the Scapegoat judge. Why may the driver steer, she asked, when the judge may not frame? Each version below changes one thing, like a scientist changing one variable. Nobody thinks they're about trains.</p>
   <div class="cases">
     <div class="case" style="--cc:var(--hl-y)">
       <h3>Driver <em>Foot, 1967</em></h3>
@@ -645,9 +661,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="defs">
     <div style="--dc:var(--hl-g)"><b>Permissible:</b> morally allowed. Not required, just "not wrong."</div>
     <div style="--dc:var(--hl-o)"><b>Doing vs allowing harm:</b> you <i>do</i> harm when your action causes it. You <i>allow</i> harm when you fail to prevent it.</div>
-    <div style="--dc:var(--hl-p)"><b>Using someone merely as a means:</b> Case 6's test was consent: could they agree, knowing everything? Trolley philosophers add a sharper test for one kind of using: <i>does your plan need this person to be harmed?</i> Ask: if they weren't there, would your plan still work? Worked example, Switch: if nobody stood on the side track, the five would be saved just the same. So the one person isn't being used; his harm is a side effect. (The other cases are yours, in Lead 2.)</div>
+    <div style="--dc:var(--hl-p)"><b>Using someone merely as a means:</b> Case 6's test was consent: could they agree, knowing everything? Trolley philosophers add a sharper test for one kind of using: <i>does your plan need this person to be harmed?</i> Ask: if they weren't there, would your plan still work? Worked example, Switch: if nobody stood on the side track, the five would be saved just the same. So the one person isn't being used; his harm is a side effect. Call this the <b>Kant-style test</b>. It is Kant's idea plus that extra question, and a strict Kantian might not agree with every verdict. The other cases are yours, in Lead 2.</div>
   </div>
-  <p><b>The trolley problem</b> is the puzzle of explaining why most people think pulling in Switch is fine but pushing in Footbridge is wrong, when both trade one life for five.</p>
+  <p><b>The trolley problem</b> is a puzzle. Most people think pulling in Switch is fine, but pushing in Footbridge is wrong. Both trade one life for five. Why do they feel so different?</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -658,7 +674,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g2h">Lever, bridge, loop: call the verdicts</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 1, read "Meet the trolley family" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">First, one question about all three cases. Then, case by case: what does <b>Kant's rule</b> (never use a person merely as a means) say? That's graded. Then make <b>your own</b> call, which is never graded. At the end, guess what 70,000 real people said.</p>
+  <p class="how">First, one question about all three cases. Then, case by case: what does the <b>Kant-style test</b> from the sheet above say (is the person used merely as a means, because the plan needs his harm)? That's graded. Then make <b>your own</b> call, which is never graded. At the end, guess what 70,000 real people said.</p>
   <div id="acBox"></div>
   <div id="tvWrap" hidden>
     <p class="m-nav" id="tvNav"></p>
@@ -682,7 +698,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <li><b>Transplant:</b> killing one vs letting five die. The strict duty not to kill wins, so don't operate.</li>
     <li><b>Driver:</b> killing one vs killing five. Both options are doings, so harm fewer people. Steer.</li>
   </ul>
-  <p>In 1975, James Rachels argued the opposite: the bare difference between killing and letting die makes no moral difference. His method was to build twin cases that are identical except for that one difference. His original example was grim. Here's our cartoon version:</p>
+  <p>In 1975, James Rachels argued the opposite: the bare difference between killing and letting die makes no moral difference. His method was to build twin cases that are identical except for that one difference. His original example was upsetting, so here is our cartoon version:</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit D: the Bake-Off twins</span>
     <p><b>Smith</b> wants to win the bake-off, so he knocks his rival's prize cake off the table. <b>Jones</b> wants to win the same way. He sees his rival's cake sliding off the table on its own, could catch it with one hand, and lets it fall. Same motive, same result. One did; one allowed.</p>
@@ -874,10 +890,10 @@ function fairOrder(items, keyOf, avoidFirst){
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Wall spotted.","That's the one.","Nozick nods.","Clean."], no:["Not that one.","Tempting, but...","Close, but no."]},
- g2:{ok:["Test passed.","Exactly.","Kant would sign that.","Clean."], no:["That's the count talking.","Tempting, but...","Run the test again."]},
- g3:{ok:["Tagged.","Exactly.","Nailed it.","Clean."], no:["Close, but no.","Tempting, but...","Check who made it happen."]},
- g4:{ok:["Gate cleared.","Stamped.","Exactly.","Clean."], no:["Gate jammed.","Tempting, but...","Close, but no."]}
+ g1:{ok:["Wall spotted.","That's the one.","Good eye.","Right."], no:["Not that one.","Tempting, but...","Close, but no."]},
+ g2:{ok:["Test passed.","Exactly.","The test agrees.","Right."], no:["That's the count talking.","Tempting, but...","Run the test again."]},
+ g3:{ok:["Tagged.","Exactly.","Correct.","Right."], no:["Close, but no.","Tempting, but...","Check who made it happen."]},
+ g4:{ok:["Gate cleared.","Stamped.","Exactly.","Right."], no:["Gate jammed.","Tempting, but...","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -887,12 +903,12 @@ function focusFb(node){ if(!node.hasAttribute("tabindex")) node.setAttribute("ta
 var KEY="ethics-c3m01-v2", canSave=false, SAVED=null;
 try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ canSave=false; SAVED=null; }
 if(!SAVED || typeof SAVED!=="object") SAVED=null;
-var touched={}, replayCleared={}, restoring=false;
+var touched={}, replayCleared={}, restoring=false, flagged={};   /* flagged[g]: lead cleared only by skipping every item */
 function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, warm:WARM, polls:POLLS, fin:{view:FIN.view,reason:FIN.reason,moved:FIN.moved,done:FIN.done}, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), skippedLeads:flagged, cover:COVER, warm:WARM, polls:POLLS, fin:{view:FIN.view,reason:FIN.reason,moved:FIN.moved,done:FIN.done}, lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -907,7 +923,7 @@ var FIN={pick:null, view:null, reason:"", moved:"", done:false};
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
  {id:"g1",c:"var(--hl-p)",lead:1,title:"Goals vs side-constraints",body:"A <b>goal</b> is something to promote as much as possible. A <b>side-constraint</b> is a wall on what you may do while chasing any goal. Making \"fewest rights violations\" your goal still lets you sacrifice one person to save five.",ex:"\"Don't frame anyone\" is a wall; \"minimize framings\" is a goal."},
- {id:"g2",c:"var(--hl-o)",lead:2,title:"The trolley family",body:"Act consequentialism says pull, push and pull: five beats one every time. Kant's rule (never use a person <b>merely as a means</b>) forbids Footbridge and Loop, where the plan needs the person to be harmed, but not Switch.",ex:"Share saying the man should sacrifice one (42 countries, country averages): Switch 81%, Loop 72%, Footbridge 51%."},
+ {id:"g2",c:"var(--hl-o)",lead:2,title:"The trolley family",body:"Act consequentialism says pull, push and pull: five beats one every time. The Kant-style test (never use a person <b>merely as a means</b>, plus the question \"does the plan need him harmed?\") forbids Footbridge and Loop, but not Switch.",ex:"Share saying the man should sacrifice one (42 countries, country averages): Switch 81%, Loop 72%, Footbridge 51%."},
  {id:"g3",c:"var(--hl-g)",lead:3,title:"Killing vs letting die",body:"Foot: duties not to harm are stricter than duties to help. Rachels: in twin cases the bare difference makes no difference. Thomson's warning: in Switch, pulling <b>kills</b> one, so Foot's principle forbids it.",ex:"Smith knocks the cake off; Jones lets it fall."},
  {id:"g4",c:"var(--hl-y)",lead:4,title:"Double effect",body:"Harm can be permissible if it's <b>foreseen, not intended</b> (neither the goal nor the means) and the good is worth it. Problems: Loop, the closeness problem, and whether intentions judge the act or the person.",ex:"Switch: side effect. Footbridge: means."}
 ];
@@ -919,7 +935,24 @@ GAMES.forEach(function(g){
   b.addEventListener("click",function(){ showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
-$("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
+function renderDock(){
+  var n=Object.keys(cleared).length, sk=Object.keys(flagged).filter(function(g){return cleared[g];}).length, real=n-sk;
+  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+real+"/"+NG+(sk?'<span class="evsk"> +'+sk+' skip</span>':"")+(n===NG?'<span class="evw">: final file open</span>':"");
+  GAMES.forEach(function(g){ var b=$("dock-"+g.id); if(cleared[g.id]) b.setAttribute("aria-label", flagged[g.id] ? "Evidence "+g.lead+": filed as skipped, nothing played. Open the card." : "Evidence "+g.lead+": "+g.title+". Open the card."); b.classList.toggle("skipped", !!(cleared[g.id] && flagged[g.id])); });
+}
+renderDock();
+/* a lead whose every skippable item was skipped counts as skipped, not cleared (Lead 3 always has 4 played tags, so it is never flagged) */
+function allSkipped(g){
+  if(g==="g2"){ var n=(REC.ac.skipped?1:0); TV.forEach(function(C){ if(REC.tv[C.k] && REC.tv[C.k].skipped) n++; }); return n===1+TV.length; }
+  if(g==="g4"){ var m=0; Object.keys(REC.dd).forEach(function(k){ if(REC.dd[k].skipped) m++; }); return m===DD.length; }
+  return false;
+}
+function skipCounts(){
+  var c2=(REC.ac.skipped?1:0), t2=1+TV.length; TV.forEach(function(C){ if(REC.tv[C.k] && REC.tv[C.k].skipped) c2++; });
+  var c3=DA.filter(function(it){return REC.da[it.k].skipped;}).length+(REC.gapQ.skipped?1:0)+(REC.tw.skipped?1:0);
+  var c4=Object.keys(REC.dd).filter(function(k){return REC.dd[k].skipped;}).length;
+  return [["Lead 2",c2,t2],["Lead 3",c3,3],["Lead 4",c4,DD.length]];
+}
 function updateProg(){
   var n=Object.keys(cleared).length+(FIN.done?1:0), max=NG+1;
   $("progFill").style.width=Math.round(100*n/max)+"%";
@@ -938,25 +971,27 @@ function showCard(g){
 /* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
 var toastTimer=null;
 function toast(msg, color){
-  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  var T=$("toast"); T.textContent=msg; try{ T.style.top=(Math.max(0,$("dock").getBoundingClientRect().bottom)+8)+"px"; }catch(e){} T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
 }
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
-  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  var fl=!!flagged[g.id];
+  toast(fl ? "Lead "+g.lead+" filed as SKIPPED: you played none of it, so it counts as skipped." : "Evidence "+(n-Object.keys(flagged).filter(function(k){return cleared[k];}).length)+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
   var slot=$(g.id).querySelector(".clearslot");
-  if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':'')+'</p></div>';
+  if(slot){ slot.innerHTML = fl ? '<div class="clearline"><div class="stamp" aria-hidden="true">SKIPPED</div><p><b>Filed as skipped, not cleared.</b> You skipped every item, so Rocky will count this lead as skipped. Scroll up and replay it any time. Tap pip '+g.lead+' in the top bar to review the evidence.'+(n===NG?' The final file is open below.':'')+'</p></div>'
+      : '<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+(n-Object.keys(flagged).filter(function(k){return cleared[k];}).length)+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':'')+'</p></div>';
     try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
 }
 function clear(id, quiet){
   var g=GAMES.filter(function(x){return x.id===id;})[0];
-  if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
-  cleared[id]=true; if(!quiet) replayCleared[id]=true;
+  if(cleared[id]){ if(!quiet){ replayCleared[id]=true; if(allSkipped(id)) flagged[id]=true; else delete flagged[id]; renderDock(); celebrate(g, Object.keys(cleared).length); saveState(); } return; }
+  cleared[id]=true; if(!quiet){ replayCleared[id]=true; if(allSkipped(id)) flagged[id]=true; }
   $(id).classList.add("is-cleared");
   var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
-  $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
+  renderDock();
   if(!quiet) celebrate(g, n);
   if(n===NG) openLab("fin");
   refreshGot(); updateProg(); saveState();
@@ -1079,13 +1114,13 @@ function railSvg(main, side, label, extra){
 var PIE='<circle cx="16" cy="9" r="4" fill="#FFF3C4" stroke="currentColor" stroke-width="1.2"/><circle cx="26" cy="9" r="4" fill="#FFF3C4" stroke="currentColor" stroke-width="1.2"/>';
 var WARMS=[
  {k:"custard", n:"The Custard Express", svg:railSvg(["bean","bean","bean","bean","bean"],["bean"],"A trolley loaded with custard pies heads for five people; the side track has one",PIE),
-  d:"A runaway trolley full of custard pies will splat five people in their best clothes. Pull the lever and it splats just one person, who happens to love custard.", o:[["pull","Pull"],["stay","Don't pull"]]},
+  d:"A custard-pie trolley will splat five people. Pull, and it splats one custard fan.", o:[["pull","Pull"],["stay","Don't pull"]]},
  {k:"ducks", n:"Ducks or Phone", svg:railSvg(["duck","duck","duck","duck","duck"],["phone"],"A trolley heads for five rubber ducks; the side track holds a phone"),
-  d:"The trolley is heading for five rubber ducks. Pull the lever and it runs over your phone instead. No case, no insurance.", o:[["pull","Save the ducks"],["stay","Save my phone"]]},
+  d:"It is heading for five rubber ducks. Pull, and it hits your phone instead.", o:[["pull","Save the ducks"],["stay","Save my phone"]]},
  {k:"castles", n:"Sandcastle Showdown", svg:railSvg(["castle","castle","castle","castle","castle"],["bigcastle"],"A trolley heads for five small sandcastles; the side track holds one huge sandcastle"),
-  d:"It will flatten five little sandcastles that kids built in ten minutes. Pull, and it flattens one enormous castle that took its builder all week.", o:[["pull","Pull"],["stay","Don't pull"]]},
+  d:"It will flatten five tiny sandcastles. Pull, and it flattens one huge castle that took all week.", o:[["pull","Pull"],["stay","Don't pull"]]},
  {k:"couch", n:"The Couch Lever", svg:railSvg(["bean"],[],"A custard trolley heads for one person; the side track is empty; far away, someone relaxes on a couch",PIE+'<rect x="8" y="58" width="40" height="12" rx="4" fill="#FF93C9" stroke="currentColor" stroke-width="1.5"/><use href="#s-you" x="20" y="44" width="12" height="18"/><use href="#s-lever" x="64" y="44" width="12" height="17"/>'),
-  d:"The trolley will splat one stranger with custard. The lever would send it onto an empty track. The catch: the lever is across the room, and you're extremely comfy on the couch.", o:[["pull","Get up and pull"],["stay","Stay on the couch"]]}
+  d:"It will splat one stranger. The lever to stop it is across the room, and you are very comfy.", o:[["pull","Get up and pull"],["stay","Stay on the couch"]]}
 ];
 var warmBtns={};
 WARMS.forEach(function(w,i){
@@ -1093,46 +1128,44 @@ WARMS.forEach(function(w,i){
   var row=el("div",{class:"row",role:"group","aria-label":w.n}); warmBtns[w.k]=[];
   w.o.forEach(function(o){
     var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false","data-v":o[0]}); b.textContent=o[1];
-    b.addEventListener("click",function(){ WARM.ans[w.k]=o[0]; syncWarm(); if(Object.keys(WARM.ans).length===WARMS.length) warmReveal(); saveState(); });
+    b.addEventListener("click",function(){ if(WARM.ans[w.k]||WARM.skipped) return; WARM.ans[w.k]=o[0]; syncWarm(); if(Object.keys(WARM.ans).length===WARMS.length) warmReveal(); saveState(); });
     row.appendChild(b); warmBtns[w.k].push(b);
   });
   p.appendChild(row); $("panels").appendChild(p);
 });
 function syncWarm(){
   WARMS.forEach(function(w,i){
-    warmBtns[w.k].forEach(function(b){ var on=WARM.ans[w.k]===b.getAttribute("data-v"); b.setAttribute("aria-pressed",String(on)); b.className= on ? "btn" : "btn ghost"; });
+    warmBtns[w.k].forEach(function(b){ var on=WARM.ans[w.k]===b.getAttribute("data-v"); b.setAttribute("aria-pressed",String(on)); b.className= on ? "btn" : "btn ghost"; b.disabled = !!(WARM.ans[w.k] || WARM.skipped); });
     $("panels").children[i].classList.toggle("done", !!WARM.ans[w.k]);
   });
 }
 function warmReveal(){
   var a=WARM.ans, bits=[];
-  bits.push("<b>What you just did, without being told to:</b> you weighed outcomes. ");
-  if(a.custard==="pull") bits.push("In the Custard Express you went for fewer splats, which is counting. ");
-  else if(a.custard) bits.push("In the Custard Express you didn't pull, even though fewer people would be splatted. Something besides the count was steering you. ");
-  if(a.ducks==="stay") bits.push("You saved your phone over five ducks, so you don't think everything counts the same. Good: whose interests count is a real question. ");
-  else if(a.ducks) bits.push("You sacrificed your phone for five rubber ducks. Generous! Do ducks have interests, though? ");
-  if(a.castles) bits.push("The sandcastles asked whether a week of effort outweighs five ten-minute castles: counting isn't just counting heads. ");
-  if(a.couch==="pull") bits.push("And in the Couch Lever you got up. Almost everyone does. But is <i>staying on the couch</i> as bad as pushing the custard trolley at someone yourself? ");
-  else if(a.couch) bits.push("And you stayed on the couch. Is that as bad as steering the custard at the stranger yourself? ");
-  bits.push("That last question has a name, <b>doing vs allowing</b>, and it's coming.");
+  bits.push("<b>You were counting.</b> ");
+  if(a.custard==="pull") bits.push("In the Custard Express you went for fewer splats. ");
+  else if(a.custard) bits.push("In the Custard Express you didn't pull, even though fewer would be splatted, so something besides the count was steering you. ");
+  if(a.ducks==="stay") bits.push("You kept your phone over five ducks, so not everything counts the same. ");
+  else if(a.ducks) bits.push("You gave up your phone for five ducks. Generous! ");
+  bits.push("But is the count all there is? Next: the idea that a person's <b>rights</b> can say \"no\" to the count. That is Lead 1.");
   var R=$("warmReveal"); R.hidden=false; R.innerHTML='<div class="pattern">'+bits.join("")+'</div>';
 }
 $("warmSkip").addEventListener("click",function(){
+  if(WARM.skipped || Object.keys(WARM.ans).length===WARMS.length) return;
   WARM.skipped=true; $("warmSkip").disabled=true; $("warmSkip").textContent="Warm-up skipped";
-  var R=$("warmReveal"); R.hidden=false; R.innerHTML='<div class="pattern">No problem. The one idea to take from it: a trolley case asks you to weigh outcomes, and then asks whether it matters <i>how</i> you bring an outcome about, for instance by doing something rather than just letting it happen.</div>';
-  saveState();
+  var R=$("warmReveal"); R.hidden=false; R.innerHTML='<div class="pattern">No problem. One idea to take with you: the count is not always all there is. A person\'s <b>rights</b> can say "no" to the count. That is Lead 1.</div>';
+  syncWarm(); saveState();
 });
 function warmLines(){
-  if(WARM.skipped && !Object.keys(WARM.ans).length) return ["Warm-up Ridiculous Rails: skipped"];
+  if(WARM.skipped && !Object.keys(WARM.ans).length) return ["Warm-up: Ridiculous Rails skipped"];
   var parts=WARMS.map(function(w){ return WARM.ans[w.k] ? w.n+" = "+w.o.filter(function(o){return o[0]===WARM.ans[w.k];})[0][1] : null; }).filter(Boolean);
-  return ["Warm-up Ridiculous Rails: "+(parts.length?parts.join("; "):"not answered")+(WARM.skipped?" (then skipped)":"")];
+  return ["Warm-up: Ridiculous Rails (ungraded, locked taps only): "+(parts.length?parts.join("; "):"not answered")+(WARM.skipped?" (then skipped the rest)":"")];
 }
 
 /* ================= LEAD 1: GOAL OR WALL ================= */
 var BL={goal:"Goal",con:"Side-constraint"};
 var BINS=[
  {k:"happy", t:"Make the world as happy as possible.", short:"world happiness", a:"goal",
-  why:"Something to produce as much of as possible: a goal. This one is Bentham's."},
+  why:"Something to produce as much of as possible: a goal."},
  {k:"innocent", t:"Never punish someone you know is innocent, whatever the payoff.", short:"never punish the innocent", a:"con",
   why:"\"Whatever the payoff\" gives it away. It forbids a kind of act even when crossing the line would produce more good. A wall."},
  {k:"fewest", t:"Make sure as few people as possible have their rights violated.", short:"fewest rights violations", a:"goal", surprise:true,
@@ -1146,7 +1179,7 @@ var BINS=[
  {k:"score", t:"Raise the school's average test score as high as you can.", short:"raise average score", a:"goal",
   why:"\"As high as you can\" is goal language. Nothing here forbids any method."},
  {k:"diary", t:"Don't read someone's diary without permission, even if that would stop three other diaries being read.", short:"no diary snooping", a:"con",
-  why:"It forbids snooping even when snooping would mean less snooping overall. Same structure as the Scapegoat, lower stakes."}
+  why:"It forbids snooping even when snooping would mean less snooping overall. Same structure as framing an innocent person, with lower stakes."}
 ];
 var binDone=0;
 fairOrder(BINS,function(it){return it.a;},2).forEach(function(i){
@@ -1187,7 +1220,7 @@ function binLines(){
 /* ================= LEAD 2: PREDICTED VERDICTS ================= */
 var AC={q:"First, all three famous cases at once: Switch, Footbridge and Loop. What does an <b>act consequentialist</b> say?",
  o:[["a","Pull, push and pull: five beats one every time"],["b","Pull in Switch only: the other two use a person"],["c","Do nothing in all three: acting makes you guilty"]], a:"a",
- ok:"Outcomes are all it counts, and every case is five against one. Pushing and pulling are the same to it when the results are the same. This is exactly where most people get off the bus.",
+ ok:"Outcomes are all it counts, and every case is five against one. Pushing and pulling are the same to it when the results are the same. This is exactly where most people stop agreeing with it.",
  no:{b:"That's a means-style reason, not a count. The act consequentialist only compares outcomes.",c:"Doing nothing has consequences too: five lost instead of one. The act consequentialist counts those."}};
 function acRender(){
   var B=$("acBox"); B.innerHTML='<div class="mach"><p class="small">'+AC.q+'</p><div id="acOpts"></div><div class="row" style="margin-top:10px"><button class="skipbtn" type="button" id="acSkip">Skip this question</button></div><div class="fb" id="acFb" aria-live="polite" tabindex="-1"></div></div>';
@@ -1212,8 +1245,8 @@ var TV=[
  {k:"footbridge", n:"Footbridge", verb:"push", d:"No side track. You can push the stranger with the strapped-on backpack off the footbridge, and he will stop the trolley before it reaches the five.", a:"no",
   ok:"Run the test: no stranger, no stop. The plan needs him to be harmed, and he can't agree to being used that way. That's using him merely as a means.",
   no:"Run the test: if the stranger weren't on the bridge, would the plan still work? No. And could he agree to being used as a trolley-stopper? So..."},
- {k:"turntable", n:"Turntable", tag:"adapted from Kamm", verb:"spin it", d:"A newer case, adapted from the philosopher Frances Kamm's 'Lazy Susan'. The five are standing on a big turntable over the track. Spin it and they swing clear, but the spin swings one person on the far side of the turntable onto the track.", a:"ok",
-  ok:"Run the test: if nobody stood on the far side, spinning would still save the five. The plan doesn't use him at all, so Kant's rule doesn't forbid it. (Whether harming him as a side effect is OK is a separate question.)",
+ {k:"turntable", n:"Turntable", tag:"inspired by Kamm", verb:"spin it", d:"A newer case, inspired by the philosopher Frances Kamm's 'Lazy Susan'. The five are standing on a big turntable over the track. Spin it and they swing clear, but the spin swings one person on the far side of the turntable onto the track.", a:"ok",
+  ok:"Run the test: if nobody stood on the far side, spinning would still save the five. The plan doesn't use him at all, so the Kant-style test doesn't forbid it. (Whether harming him as a side effect is OK is a separate question.)",
   no:"Run the test: if nobody stood on the far side, would spinning still save the five? Yes. So the plan doesn't need him to be harmed, he isn't being used at all, and the consent question never comes up."},
  {k:"loop", n:"Loop", verb:"pull", d:"The side track loops back to the five. The one person on the loop, carrying a heavy pack, is what would stop the trolley before it comes round.", a:"no",
   ok:"Without the person on the loop, the trolley comes round and reaches the five. The plan needs him in the way, so he's being used merely as a means, just as in Footbridge, even though all you did was pull a lever.",
@@ -1225,8 +1258,8 @@ function startCases(){ $("tvWrap").hidden=false; tvRender(); }
 function tvRender(){
   var C=TV[tvOrder[tI]]; var R=REC.tv[C.k]=REC.tv[C.k]||{miss:0, mp:false, mine:null, skipped:false};
   $("tvNav").textContent="Case "+(tI+1)+" of "+TV.length; $("tvNext").hidden=true; $("tvFb").className="fb"; $("tvFb").innerHTML="";
-  var K=$("tvCard"); K.innerHTML='<h3>'+C.n+(C.tag?' <em class="small">('+C.tag+')</em>':'')+'</h3><p class="small">'+C.d+'</p><p class="step-lbl">1. What does Kant\'s rule say? First: is he being used at all (does the plan need him to be harmed)? Only if he is: could he agree to being used that way?</p>';
-  var g1=el("div",{role:"group","aria-label":"Kant's rule verdict"});
+  var K=$("tvCard"); K.innerHTML='<h3>'+C.n+(C.tag?' <em class="small">('+C.tag+')</em>':'')+'</h3><p class="small">'+C.d+'</p><p class="step-lbl">1. What does the Kant-style test say? First: is he being used at all (does the plan need him to be harmed)? Only if he is: could he agree to being used that way?</p>';
+  var g1=el("div",{role:"group","aria-label":"Kant-style test verdict"});
   var skip=el("button",{class:"skipbtn",type:"button"}); skip.textContent="Skip this case";
   var sr=el("div",{class:"row",style:"margin-top:10px"}); sr.appendChild(skip);
   shuffle(MP).forEach(function(o){
@@ -1244,7 +1277,7 @@ function tvRender(){
   skip.addEventListener("click",function(){
     if(R.mp||R.mine||R.skipped) return;
     R.skipped=true; skip.disabled=true; K.querySelectorAll(".choice, .btn").forEach(function(x){x.disabled=true;});
-    setFb($("tvFb"),"","Skipped.","Short version: Kant's rule "+(C.a==="ok"?"doesn't forbid this one, because the plan doesn't need the person to be harmed.":"forbids this one, because the plan needs the person to be harmed.")+" Nothing is lost by skipping.");
+    setFb($("tvFb"),"","Skipped.","Short version: the Kant-style test "+(C.a==="ok"?"doesn't forbid this one, because the plan doesn't need the person to be harmed.":"forbids this one, because the plan needs the person to be harmed.")+" Nothing is lost by skipping.");
     afterCase(); touch("g2");
   });
   function step2(){
@@ -1275,14 +1308,17 @@ acRender();
 var POLLC=[["switch","Switch"],["loop","Loop"],["footbridge","Footbridge"]];
 function pollShow(){
   var P=$("tvPoll"); if(!P.hidden) return; P.hidden=false;
-  P.innerHTML='<h3>Prediction time (not graded)</h3><p class="small">In 2020, researchers published answers from about 70,000 volunteers in 42 countries. For Switch, Loop and Footbridge, each person was asked what the man in the story <i>should</i> do: sacrifice one to save five, or not. Guess which case got the <b>most</b> "sacrifice" answers, and which got the <b>fewest</b>.</p><p class="step-lbl">Most "sacrifice" answers</p><div class="rankpick" id="pMost"></div><p class="step-lbl">Fewest "sacrifice" answers</p><div class="rankpick" id="pLeast"></div><div class="row" style="margin-top:8px"><button class="skipbtn" type="button" id="pJust">Just show me the numbers</button></div><div id="pOut"></div>';
+  P.innerHTML='<h3>Prediction time (not graded)</h3><p class="small">In 2020, researchers published answers from about 70,000 volunteers in 42 countries. For Switch, Loop and Footbridge, each person was asked what the man in the story <i>should</i> do: sacrifice one to save five, or not. Guess which case got the <b>most</b> "sacrifice" answers, and which got the <b>fewest</b>.</p><p class="step-lbl">Most "sacrifice" answers</p><div class="rankpick" id="pMost"></div><p class="step-lbl">Fewest "sacrifice" answers</p><div class="rankpick" id="pLeast"></div><p class="small">A case you pick in one row is switched off in the other.</p><div class="row" style="margin-top:8px"><button class="skipbtn" type="button" id="pJust">Just show me the numbers</button></div><div id="pOut"></div>';
   [["pMost","most"],["pLeast","least"]].forEach(function(z){
     shuffle(POLLC).forEach(function(c){
-      var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false"}); b.textContent=c[1];
+      var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false","data-case":c[0]}); b.textContent=c[1];
       b.addEventListener("click",function(){
         if(REC.poll.shown) return;
+        var other = z[1]==="most" ? "least" : "most";
+        if(REC.poll[other]===c[0]) return;
         REC.poll[z[1]]=c[0];
         $(z[0]).querySelectorAll("button").forEach(function(x){ var on=x===b; x.setAttribute("aria-pressed",String(on)); x.className=on?"btn":"btn ghost"; });
+        pollLockSame();
         if(REC.poll.most && REC.poll.least) pollReveal();
         touch("g2");
       });
@@ -1290,6 +1326,12 @@ function pollShow(){
     });
   });
   $("pJust").addEventListener("click",function(){ if(!REC.poll.shown){ pollReveal(); touch("g2"); } });
+}
+/* the case picked in one row is switched off in the other, so "most" and "fewest" can never be the same case */
+function pollLockSame(){
+  [["pMost","least"],["pLeast","most"]].forEach(function(z){
+    $(z[0]).querySelectorAll("button").forEach(function(x){ x.disabled = !!REC.poll[z[1]] && x.getAttribute("data-case")===REC.poll[z[1]]; });
+  });
 }
 function bar(lbl,v,cls){ return '<div class="br"><span>'+lbl+'</span><div class="bt '+(cls||"")+'" role="img" aria-label="'+lbl+': '+v+' percent"><i data-w="'+v+'"></i></div><span>'+v+'%</span></div>'; }
 function pollReveal(){
@@ -1306,7 +1348,7 @@ function tvLines(){
   var out=["Lead 2 act consequentialist question: "+(REC.ac.skipped?"skipped":"right"+(REC.ac.misses?" after "+REC.ac.misses+" miss(es)":" first try"))];
   var ML={"do":"would do it","dont":"wouldn't","unsure":"can't decide"};
   var per=TV.map(function(C){ var R=REC.tv[C.k]; if(!R || (!R.mp && !R.skipped)) return null; if(R.skipped) return C.n+" = skipped";
-    return C.n+" = Kant's-rule call right"+(R.miss?" after "+R.miss+" miss(es)":" first try")+"; my call: "+(R.mine?ML[R.mine]:"none"); }).filter(Boolean);
+    return C.n+" = Kant-style-test call right"+(R.miss?" after "+R.miss+" miss(es)":" first try")+"; my call: "+(R.mine?ML[R.mine]:"none"); }).filter(Boolean);
   if(per.length) out.push("Lead 2 cases: "+per.join("; "));
   var nm={switch:"Switch",loop:"Loop",footbridge:"Footbridge"};
   out.push("Lead 2 poll: "+(REC.poll.shown ? ((REC.poll.most||REC.poll.least) ? "predicted most: "+(REC.poll.most?nm[REC.poll.most]:"not guessed")+", fewest: "+(REC.poll.least?nm[REC.poll.least]:"not guessed")+" (real order: Switch > Loop > Footbridge)" : "skipped the prediction, saw the numbers") : "not done"));
@@ -1384,7 +1426,7 @@ var TW={q:"Take Foot's principle from Exhibit E: you may never kill one to save 
  ok:"Pulling is doing: it makes the trolley hit the one (just like the case you tagged in Part 1). So Foot's principle says don't pull, and that clashes with the case most people find easiest. In 2008, Thomson herself came to agree that the bystander may not pull, though she got there by a different argument. Many philosophers weren't persuaded, and the debate goes on.",
  no:{b:"Check the premise: you may <i>never</i> kill one to save others you'd otherwise only let die. Does pulling the lever kill anyone?",c:"Remember Part 1: pulling the lever is doing harm, even though someone else started the trolley rolling."}};
 function part3(){
-  var P=$("daPart3"); if(!P.hidden) return; P.hidden=false;
+  var P=$("daPart3"); if(!P.hidden) return; P.hidden=false; $("daScore").textContent="Parts 1 and 2 done. One last question below.";
   P.innerHTML='<h3>Part 3: Thomson\'s warning</h3><p class="small">'+TW.q+'</p><div id="twOpts"></div><div class="row" style="margin-top:10px"><button class="skipbtn" type="button" id="twSkip">Skip this question</button></div>';
   shuffle(TW.o).forEach(function(o){
     var b=el("button",{class:"choice",type:"button","aria-pressed":"false"}); b.textContent=o[1];
@@ -1430,7 +1472,7 @@ var DD=[
   why:["Max doesn't want the picnics soaked.","The picnics aren't how his plan works; without them, the castle would still be saved.","One sandcastle vs five ruined picnics. Not even close."], end:"DDE: not permissible. It's a side effect, but it fails the proportion test."},
  {n:"Loop", d:"Pull the lever: the trolley goes onto the loop, where the person with the heavy pack is in the way and stops it before it comes round to the five.", g:["no","yes"],
   why:["Nobody aims at his harm for its own sake.","If he weren't on the loop, the trolley would come round to the five. The plan needs him in the way."], end:"DDE: not permissible."},
- {n:"The Rival's Lever", d:"Exactly like Switch, except the bystander pulls mainly because the person on the side track is her rival, and she wants him hit. Saving the five is a bonus.", g:["yes"],
+ {n:"The Rival's Lever", d:"Exactly like Switch, except the bystander pulls only because the person on the side track is her rival, and she wants him hit. Saving the five is just a lucky side effect.", g:["yes"],
   why:["Her goal is the rival's harm. That's intending it."], end:"DDE: not permissible, though the act is identical to Switch."}
 ];
 var dI=0;
@@ -1485,6 +1527,7 @@ function ddLines(){
   var played=ks.filter(function(k){return !REC.dd[k].skipped;});
   var first=played.filter(function(k){return !REC.dd[k].misses;}).length;
   var tricky=played.filter(function(k){return REC.dd[k].misses;}).map(function(k){return DD[k].n;});
+  if(!played.length) return ["Lead 4 Double-effect decoder: "+ks.length+" of "+DD.length+" cases done, none played, all skipped"+(ks.length<DD.length?" so far":"")];
   return ["Lead 4 Double-effect decoder: "+ks.length+" of "+DD.length+" cases done, "+first+" of "+played.length+" played with no wrong gate"+(tricky.length?"; tricky: "+tricky.join(", "):"")+(sk.length?"; skipped: "+sk.join(", "):"")];
 }
 
@@ -1536,7 +1579,16 @@ function finLines(){
 
 var LIVE={g1:binLines,g2:tvLines,g3:daLines,g4:ddLines};
 var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");},
-  all:function(){ return [].concat(coverLines(), warmLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+  all:function(){ return [].concat(coverLines(), warmLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), finLines(), evidenceLines()); } };
+function evidenceLines(){
+  var ids=Object.keys(cleared), fl=ids.filter(function(g){return flagged[g];}), out=[];
+  var leadName=function(g){ return "Lead "+g.slice(1); };
+  if(!fl.length) out.push("Evidence: "+ids.length+" of "+NG);
+  else out.push("Evidence: "+(ids.length-fl.length)+" of "+NG+" leads cleared by playing; "+fl.map(leadName).join(" and ")+" "+(fl.length>1?"were":"was")+" filed only by skipping every item, so count "+(fl.length>1?"them":"it")+" as skipped, not cleared");
+  var sc=skipCounts().filter(function(x){return x[1]>0;});
+  if(sc.length) out.push("Skipped items: "+sc.map(function(x){return x[0]+" "+x[1]+" of "+x[2];}).join("; ")+" (ask me about these)");
+  return out;
+}
 wireCopies();
 refreshGot();
 window.__c3m01={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report};
@@ -1545,6 +1597,8 @@ window.__c3m01={cleared:cleared, unlockStep:function(){return unlockedStep;}, re
 if(SAVED){
   restoring=true;
   try{
+    if(SAVED.lines){ GAME_IDS.forEach(function(g){ if((SAVED.cleared||[]).indexOf(g)<0) delete SAVED.lines[g]; }); }
+    if(SAVED.skippedLeads){ Object.keys(SAVED.skippedLeads).forEach(function(g){ if(GAME_IDS.indexOf(g)>=0 && (SAVED.cleared||[]).indexOf(g)>=0) flagged[g]=true; }); }
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v && VL[SAVED.cover.v]){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(SAVED.warm && typeof SAVED.warm==="object"){
       var wa=SAVED.warm.ans||{}; WARMS.forEach(function(w){ if(wa[w.k]==="pull"||wa[w.k]==="stay") WARM.ans[w.k]=wa[w.k]; });

@@ -452,6 +452,22 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   .streak.pulse, .toast, .dock .pip.pulse, .clearline .stamp, .lab.is-cleared .cleared, .combo button.shake{animation:none !important}
   .prog i, .meter .needle{transition:none !important}
 }
+
+/* ---------- fix + engagement pass ---------- */
+.toast{pointer-events:none}
+.chip, .choice, .pick, .tile, .btn{scroll-margin-top:96px; scroll-margin-bottom:96px}
+.rcard p{margin:0}
+.rcard .small{font-size:.9rem}
+.wu-list{display:grid; gap:8px; margin:8px 0}
+.wu-card{display:flex; align-items:center; gap:12px; width:100%; min-height:44px; text-align:left; cursor:pointer; padding:8px 12px; border-radius:10px;
+  border:2px dashed var(--ink-soft); border-left:10px solid var(--rc,transparent); background:var(--card); color:var(--ink); font-family:var(--serif); font-size:1rem; line-height:1.35}
+.wu-card[aria-pressed="true"]{border-style:solid; border-color:var(--ink); border-left:10px solid var(--rc)}
+.wu-card:disabled{opacity:1; cursor:default; color:var(--ink)}
+.wu-rank{flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; border:2px dashed var(--ink-soft); font-family:var(--type); font-weight:700; color:var(--ink-soft)}
+.wu-card[aria-pressed="true"] .wu-rank{background:var(--rc); color:var(--hl-ink); border:2px solid var(--ink)}
+.wu .row{margin-top:8px}
+/* inline bold/italic with another font must not stretch the 28px ruled line box */
+.rcard b, .rcard i, .rcard strong{line-height:1}
 </style>
 </head>
 <body>
@@ -469,7 +485,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 2 · Case #6</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">Are You Using Me?</h1>
-  <p class="dek">A 240-year-old rule about how to treat people, why your best friend has no price tag, what Kant really said at the door, and the exact spot where Kant and the happiness-maximizers stop being friends.</p>
+  <p class="dek">A 240-year-old rule about how to treat people, and where Kant and the happiness-maximizers part ways.</p>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of a puppet controller with its strings cut, next to a price tag crossed out and a small crown">
     <rect x="22" y="22" width="110" height="14" rx="7" fill="#FFB25C" stroke="#2A2016" stroke-width="4"/>
     <rect x="70" y="10" width="14" height="60" rx="7" fill="#FFB25C" stroke="#2A2016" stroke-width="4"/>
@@ -487,41 +503,45 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="plug-hook">
     <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M6 8h18v12H14l-6 5v-5H6z" fill="#FFE15A" stroke="#2A2016" stroke-width="2" stroke-linejoin="round"/><path d="M11 13h8M11 16h5" stroke="#2A2016" stroke-width="2" stroke-linecap="round"/></svg></div>
-    <p>Tonight is your best friend's surprise party, and you're in on it. At 4 pm she texts you: <i>"Be honest. Is something happening tonight?"</i> Lying keeps the surprise she'll love. What do you text back? Lock in your gut call now; at the end you'll see what Kant would say, and make the call again.</p>
+    <p>Tonight is your best friend's surprise party. At 4 pm she texts: <i>"Be honest. Is something happening tonight?"</i> Lock in your gut call now; at the end you'll see what Kant would say.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row" role="group" aria-label="Your gut call">
       <button class="vbtn" type="button" data-v="lie" aria-pressed="false">Lie: "Nope, quiet night"</button>
       <button class="vbtn" type="button" data-v="nolie" aria-pressed="false">Don't lie: dodge or tell</button>
     </div>
-    <label for="myReason">My reason, in one sentence</label>
+    <label for="myReason">My reason, in one sentence (at least a few words)</label>
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 32 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
 </section>
 
-<!-- ================= 2 RECAP ================= -->
-<section class="sheet" aria-labelledby="b0">
-  <h2 id="b0"><span style="--mark:var(--hl-y)">Thirty-second recap</span></h2>
-  <p>Last case, Kant told us the only thing good without any strings attached is a <b>good will</b>, and that morality speaks in <b>categorical</b> commands (do this, full stop) rather than <b>hypothetical</b> ones (do this <i>if</i> you want that). His first test, the <b>Formula of Universal Law</b>: act only on a <b>maxim</b>, your personal rule for what you're doing, that you could will <i>everyone</i> to follow as a universal law. That test gave two kinds of duty: <b>perfect</b> (never, no exceptions) and <b>imperfect</b> (a goal, with leeway). And you predicted Kant's answer at the door; today you'll see his actual argument.</p>
-  <p>Today: Kant's second way of stating the same supreme rule. He called his formulas "so many formulae of the very same law." Many people find this one easier to feel in their gut: <b>don't use people</b>.</p>
+<!-- ================= WARM-UP ================= -->
+<section class="sheet wu" id="wu" aria-labelledby="wuh">
+  <h2 id="wuh"><span style="--mark:var(--hl-o)">Warm-up: where's your line?</span></h2>
+  <p>Your friend must be at your recital on Saturday. Tap these five ways to get her there: first the one you'd feel best about, last the one that feels worst. Not graded.</p>
+  <p class="mhint" id="wuHint" aria-live="polite">Tap the one you'd feel best about.</p>
+  <div class="wu-list" id="wuList" role="group" aria-label="Five ways to get your friend to the recital"></div>
+  <div class="row"><button class="btn ghost" type="button" id="wuReset" hidden>Start over</button></div>
+  <div class="fb good" id="wuReveal" tabindex="-1" hidden></div>
 </section>
 
 <!-- ================= 3 HUMANITY ================= -->
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-p)">The Formula of Humanity</span></h2>
   <p class="wow">You use people every single day. Kant is fine with that.</p>
-  <p>In the <i>Groundwork of the Metaphysics of Morals</i> (1785), Kant gave a version of his supreme moral rule that philosophers now call the <b>Formula of Humanity</b>. In our words:</p>
+  <p>Kant gave his supreme moral rule a second wording, the <b>Formula of Humanity</b>:</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit A: the rule</span>
     <p>Always treat humanity, in other people <i>and in yourself</i>, as an end, and never <b>merely</b> as a means.</p>
   </div>
   <ul>
-    <li><b>Humanity</b> doesn't mean "the human species." It means <b>rational nature</b>: the ability to think things through, set your own goals, and act for reasons.</li>
-    <li>An <b>end</b> is a goal: something you aim at for its own sake. A <b>means</b> is a tool for getting to a goal. To treat a person <i>as an end</i> is to treat them as someone whose own goals count.</li>
-    <li><b>Merely</b> is the word everything hangs on. When you buy a coffee, you use the barista as a means to get caffeine, and she uses you as a means to get paid. Nobody's wronged. You'd treat her <i>merely</i> as a means only if you treated her as nothing but a tool.</li>
+    <li><b>Humanity</b> here means <b>rational nature</b>: the ability to think and set your own goals.</li>
+    <li>An <b>end</b> is a goal you aim at for its own sake. A <b>means</b> is a tool for reaching one. Treating someone as an end means their goals count.</li>
+    <li><b>Merely</b> means "only a tool, and never also a person." You use a barista to get coffee; she uses you to get paid. Nobody is wronged.</li>
   </ul>
+  <p><b>The test:</b> could they agree to how you're treating them, if they knew exactly what was going on? If your plan only works because they <i>don't</i> know (<b>deception</b>) or have no real choice (<b>coercion</b>), you're using them merely.</p>
   <div class="poll" id="pRide">
     <p><b>Quick tap:</b> you ask a friend for a ride to practice. Are you using her?</p>
     <div class="row" role="group" aria-label="Are you using her?">
@@ -530,12 +550,21 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <p class="small" id="pRideMore" hidden>Both answers are half right. You <i>are</i> using her to get somewhere, and that's fine, because she knows what you're asking and can say no.</p>
   </div>
-  <div class="exhibit" style="--hl-c:var(--hl-y)">
-    <span class="lbl">Exhibit B: the test</span>
-    <p>Remember the lying promise from Case 5? It failed the universal law test because it undermines itself. The new formula condemns it for a different reason. Kant says the lender couldn't possibly <i>agree</i> to how he's being treated. Later Kantians such as Onora O'Neill and Christine Korsgaard turned this into a general test: <b>could the other person agree to the way you're treating them, if they knew exactly what was going on?</b> If your plan only works because they <i>don't</i> know, or because they have no real choice, you're using them merely as a means.</p>
-  </div>
-  <p>So there are two classic ways to use someone merely as a means: <b>deception</b> (tricking them, so they can't agree to what's really happening) and <b>coercion</b> (forcing them, so their agreement doesn't matter). Both go <i>around</i> a person's reasoning instead of <i>through</i> it.</p>
-  <p class="note">The rule has a positive side too. Not using people is the minimum. Treating them fully as ends also means sometimes helping with their goals: an imperfect duty, with leeway about when and how.</p>
+  <details class="reply" style="--rc:var(--hl-y)">
+    <summary><b>Going deeper (optional):</b> where the test comes from</summary>
+    <div class="inner">
+      <p>The rule is from Kant's <i>Groundwork of the Metaphysics of Morals</i> (1785). Remember the lying promise from Case 5? It failed the universal law test because it undermines itself. The new formula condemns it for a different reason: Kant says the lender couldn't possibly <i>agree</i> to how he's being treated.</p>
+      <p>Later Kantians such as Onora O'Neill and Christine Korsgaard turned that into the general test above. Both deception and coercion go <i>around</i> a person's reasoning instead of <i>through</i> it.</p>
+      <p>The rule has a positive side too. Not using people is the minimum. Treating them fully as ends also means sometimes helping with their goals: an imperfect duty, with leeway about when and how.</p>
+    </div>
+  </details>
+  <details class="reply" style="--rc:var(--hl-b)">
+    <summary><b>Refresher (optional):</b> the Case 5 ideas this builds on</summary>
+    <div class="inner">
+      <p>Kant said the only thing good without strings attached is a <b>good will</b>, and that morality gives <b>categorical</b> commands (do this, full stop), not <b>hypothetical</b> ones (do this <i>if</i> you want that). His first test, the <b>Formula of Universal Law</b>: act only on a <b>maxim</b> (your personal rule for what you're doing) that you could will <i>everyone</i> to follow. It gave <b>perfect</b> duties (never, no exceptions) and <b>imperfect</b> ones (a goal, with leeway).</p>
+      <p>He called his formulas "so many formulae of the very same law." Many people find this one easier to feel in the gut: <b>don't use people</b>.</p>
+    </div>
+  </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -546,7 +575,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g1h">Means, or merely means?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The Formula of Humanity" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Eight everyday moves. For each one, is the person being used <b>as a means</b> (fine with Kant) or <b>merely as a means</b> (not fine)? Run Exhibit B's test: could they agree, knowing everything? Two misses on a card and it explains itself.</p>
+  <p class="how">Eight everyday moves. For each one, is the person being used <b>as a means</b> (fine with Kant) or <b>merely as a means</b> (not fine)? Run the test: could they agree, knowing everything? Two misses on a card and it explains itself.</p>
   <div id="binList"></div>
   <p class="score" id="binScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -560,14 +589,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p class="wow">Kant's claim: you are not worth a lot. You're worth something that can't be counted.</p>
   <p>Why should humanity get this special treatment? Kant's answer comes in one of his most quoted passages. Everything, he says, has either a <b>price</b> or a <b>dignity</b>.</p>
   <ul>
-    <li>Something has a <b>price</b> if something else could be put in its place as an <b>equivalent</b>. Your phone has a price: lose it, and another phone (or enough money) makes up for it.</li>
+    <li>Something has a <b>price</b> if something else could be put in its place as an <b>equivalent</b> (a replacement that makes up for it exactly). Your phone has a price: lose it, and another phone (or enough money) makes up for it.</li>
     <li>Something has a <b>dignity</b> if it is above all price: <b>nothing counts as its equivalent</b>.</li>
   </ul>
   <p>Kant splits price into two kinds:</p>
   <div class="dims" aria-label="Kant's kinds of worth">
     <div style="--dc:var(--hl-o)"><b>Market price:</b> worth tied to what people generally need or want. Kant's examples: <b>skill</b> and <b>hard work</b> at a job.</div>
     <div style="--dc:var(--hl-y)"><b>Fancy price</b> (some translators say "affective price"): worth tied to taste, to what people happen to enjoy. Kant's examples: <b>wit</b>, a <b>lively imagination</b>, <b>humor</b>.</div>
-    <div style="--dc:var(--hl-p)"><b>Dignity:</b> what Kant gives to morality, and to <b>humanity</b> because it is capable of morality. His examples of inner worth: <b>keeping your promises</b> and <b>kindness done on principle</b>.</div>
+    <div style="--dc:var(--hl-p)"><b>Dignity:</b> what Kant gives to morality, and to <b>humanity</b> because it is capable of morality. His examples of inner worth: a person who <b>keeps promises because it's right</b>, and <b>kindness done on principle</b>.</div>
   </div>
   <p>Notice the twist. Being hilarious or brilliant at coding is great, but in Kant's scheme those talents have a <i>price</i>: someone else could, in principle, be just as funny or skilled. What has a dignity is <b>the person</b>.</p>
   <div class="poll" id="pFunny">
@@ -672,21 +701,21 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b5">
   <h2 id="b5"><span style="--mark:var(--hl-y)">Back to the door: Kant's actual argument</span></h2>
   <p class="wow">A French writer handed Kant one of the hardest cases in ethics, and Kant didn't blink.</p>
-  <p>Last case you predicted Kant's verdict on the question at the door. Here's how the fight really went. The Swiss-born French political writer <b>Benjamin Constant</b> (1767 to 1830) attacked "a German philosopher" for saying you mustn't lie even to a would-be murderer asking whether your friend is hiding in your house. Kant admitted he'd said it somewhere, though he couldn't remember where, and in 1797, in his seventies, he replied with <i>On a Supposed Right to Lie from Philanthropy</i>. In our words:</p>
+  <p>Last case you predicted Kant's verdict on the question at the door. Here's how the fight really went. The Swiss-born French political writer <b>Benjamin Constant</b> (1767 to 1830) attacked "a German philosopher" for saying you mustn't lie even to a would-be murderer asking whether your friend is hiding in your house. Kant admitted he'd said it somewhere, though he couldn't remember where. In 1797, in his seventies, he replied with <i>On a Supposed Right to Lie from Philanthropy</i> (philanthropy means caring about other people's welfare). In our words:</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit E: Kant's reply</span>
     <span class="argline">1. Being truthful in statements you <b>can't avoid making</b> is a duty you owe to everyone, however great the cost to you or anyone else.</span>
     <span class="argline">2. A lie wrongs <b>humanity in general</b>, not just the person lied to, because it weakens trust in what people declare, which every agreement depends on.</span>
-    <span class="argline">3. Suppose you lie ("he's not here"), but your friend has already slipped out, and the person at the door meets him outside. Then <i>you</i> could fairly be blamed. If you told the truth, maybe the neighbors stop the attacker. Either way, Kant says, if you told the truth, no one can justly hold you responsible for what follows.</span>
+    <span class="argline">3. Suppose you lie ("he's not here"), but your friend has already slipped out, and the person at the door meets him outside. Then <i>you</i> could fairly be blamed. If you had told the truth, maybe the neighbors would stop the attacker. Kant's point: if you lie, you must answer for what follows. If you tell the truth, he says, no one can justly blame you for what follows.</span>
     <span class="argline concl">So: no right to lie, even here.</span>
   </div>
-  <p>Notice the framing. Kant sets the case up as one where you can't avoid answering yes or no, and he never says you must help the attacker. His duty covers <i>statements</i>, so by his own definition, silence or a truthful dodge isn't a lie, though the 1797 essay never considers that way out. He had also been softer earlier: in his ethics lectures (as his students recorded them), he allowed a lie in self-defense when you're being forced and silence won't save you.</p>
+  <p>Notice the framing. Kant sets the case up as one where you can't avoid answering yes or no, and he never says you must help the attacker. His duty covers <i>statements</i>, so by his own definition, silence or a truthful dodge isn't a lie, though the 1797 essay never considers that way out. He had also been softer earlier: in his early ethics lectures (as his students recorded them), he allowed untruthful statements in certain extreme cases. By the 1790s his view had hardened.</p>
   <p><b>Most commentators reject Kant's answer here; many Kantians think he went too far, though some defend a narrower reading of what he meant.</b></p>
-  <p>Case 5 met Korsgaard's repair: the universal law test may allow lying to someone who is deceiving you. Her twist matters for <i>today's</i> formula: the Formula of Humanity seems to <b>forbid</b> the lie, because lying treats someone's reason as a tool.</p>
+  <p>Case 5 met Korsgaard's repair: the universal law test may allow lying to someone who is deceiving you. Her twist matters for <i>today's</i> formula. The Formula of Humanity seems to <b>forbid</b> the lie, because lying treats someone's reason as a tool.</p>
   <details class="reply" style="--rc:var(--hl-y)">
     <summary><b>Korsgaard's way out:</b> two levels of rules</summary>
     <div class="inner">
-      <p>Her solution is a two-level view. The Formula of Humanity is the ideal we live by in ordinary life. When someone is out to do evil, you may fall short of that ideal, but never below the floor set by the universal law test, a bit like the rules for self-defense or war.</p>
+      <p>Her solution is a two-level view. The Formula of Humanity is the ideal we live by in ordinary life. When someone is out to do evil, you may fall short of that ideal. But you never drop below the floor set by the universal law test, a bit like the rules for self-defense or war.</p>
       <p class="other"><b>The other side says:</b> once you allow "special rules for bad people," who decides who counts as bad? Kant's strictness was meant to stop exactly that slide.</p>
     </div>
   </details>
@@ -838,14 +867,15 @@ function focusFb(node){ if(!node) return; if(!node.hasAttribute("tabindex")) nod
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Respect intact.","Clean deal.","Spotted the trick.","Exactly.","Kant would sign that."], no:["Not quite.","Run the test again.","Close, but no."]},
- g2:{ok:["Price tag confirmed.","Off the scale.","Exactly.","Nailed it."], no:["Not that bin.","Close, but no.","Check Kant's list."]},
- g3:{ok:["Spotted.","Case solved.","Sharp eye.","That's the one."], no:["Look again.","Not quite.","Close, but no."]},
- g4:{ok:["Real.","Busted myth.","Correct.","You know your Kant."], no:["Nope.","Not this time.","Half-remembered, but no."]},
- g5:{ok:["Kant nods.","Bentham's calculator agrees.","Right call.","Spot on."], no:["Not quite.","Close, but no.","Other way round."]}
+ /* "ok" pools that depend on the answer are keyed by that answer, so a word can never contradict what the student just got right */
+ g1:{ok:{mean:["Fair deal.","Means, not merely.","Kant would sign that.","Exactly."], mere:["Spotted the trick.","Merely a means.","Respect broken.","Kant says no."]}, no:["Not quite.","Run the test again.","Close, but no."]},
+ g2:{ok:{mkt:["Market price.","Price tag confirmed.","Exactly.","Nailed it."], fan:["Fancy price.","Price tag confirmed.","Exactly.","Nailed it."], dig:["Dignity.","Off the scale.","No equivalent.","Nailed it."]}, no:["Not that bin.","Close, but no.","Check Kant's list."]},
+ g3:{ok:{who:["Spotted.","Sharp eye.","That's the one."], how:["Case solved.","Exactly.","Nailed it."]}, no:["Look again.","Not quite.","Close, but no."]},
+ g4:{ok:{"true":["Real.","Correct.","You know your Kant."], "false":["Myth.","Busted myth.","Correct."]}, no:["Nope.","Not this time.","Half-remembered, but no."]},
+ g5:{ok:{kant:["Kant nods.","Right call.","Spot on."], util:["Bentham's calculator agrees.","Right call.","Spot on."]}, no:["Not quite.","Close, but no.","Other way round."]}
 };
 var lastV={};
-function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
+function vword(g,kind,key){ var pool=VERD[g][kind]; if(!Array.isArray(pool)) pool=pool[String(key)]; var id=g+kind+(key===undefined?"":key), w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[id]); lastV[id]=w; return w; }
 
 /* ---------- optional saving ---------- */
 var KEY="ethics-c2-m06-v2", canSave=false, SAVED=null;
@@ -857,7 +887,7 @@ function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, warm:(WARM.done?WARM:null), lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -865,6 +895,7 @@ function touch(g){ touched[g]=true; saveState(); }
 var REC={ bins:{}, match:{first:0, done:0, misses:[], explained:[]}, det:{}, rf:{}, poll:{} };
 var COVER={v:null, reason:"", locked:false};
 var FIN={view:null, reason:"", moved:"", done:false};
+var WARM={order:[],done:false};
 var POLLS={ride:null, funny:null, chat:null, self:null, door:null};
 
 /* ---------- evidence dock ---------- */
@@ -872,7 +903,7 @@ var GAMES=[
  {id:"g1",c:"var(--hl-p)",lead:1,title:"The Formula of Humanity",body:"Treat humanity (rational nature), in others and yourself, always as an <b>end</b>, never <b>merely</b> as a means. Test: could they agree to how you're treating them, knowing everything?",ex:"Buying a coffee: using the barista as a means, fine. A lying promise to repay: merely as a means."},
  {id:"g2",c:"var(--hl-o)",lead:2,title:"Dignity vs price",body:"A <b>price</b> means something else could replace it as an equivalent (market price: skill, hard work; fancy price: wit, humor). A <b>dignity</b> has no equivalent: persons, and morality.",ex:"A $100 million cargo ship still has a price. Your friend has a dignity."},
  {id:"g3",c:"var(--hl-b)",lead:3,title:"Autonomy and duties to self",body:"<b>Autonomy</b>: giving yourself the moral law; it grounds dignity. The <b>kingdom of ends</b>: everyone is lawmaker and citizen. Using someone merely: deception, coercion, manipulation. You can disrespect yourself too: servility, lying, wasting talents.",ex:"Persuasion goes through someone's reasoning; manipulation goes around it."},
- {id:"g4",c:"var(--hl-y)",lead:4,title:"Kant at the door",body:"Kant (1797): no right to lie, even to a would-be murderer; a lie wrongs humanity, and the liar can be blamed for what follows. Earlier lectures allowed a forced self-defense lie. Korsgaard: universal law may allow the lie, but the Formula of Humanity seems to forbid it; her answer is a two-level view.",ex:"Kant framed it as an unavoidable yes-or-no."},
+ {id:"g4",c:"var(--hl-y)",lead:4,title:"Kant at the door",body:"Kant (1797): no right to lie, even to a would-be murderer; a lie wrongs humanity, and the liar can be blamed for what follows. His early lectures allowed untruthful statements in certain extreme cases. Korsgaard: universal law may allow the lie, but the Formula of Humanity seems to forbid it; her answer is a two-level view.",ex:"Kant framed it as an unavoidable yes-or-no."},
  {id:"g5",c:"var(--hl-g)",lead:5,title:"Kant vs utilitarianism",body:"Utilitarians count everyone's happiness equally and add it up, so one person's loss can be outweighed. Kant: dignity has no equivalent, so you can't use someone even for a bigger total. They agree on most of everyday life.",ex:"Posting a clip she asked you not to share, for charity: utilitarian yes, Kant no."}
 ];
 var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
@@ -949,6 +980,7 @@ gotBtns.forEach(function(b){
 
 /* ---------- gut call: truly locked ---------- */
 var VL={lie:"Lie (\"Nope, quiet night\")", nolie:"Don't lie (dodge or tell)"};
+function goodReason(r){ return r.length>=8 && /\s/.test(r); }
 function freezeCover(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
   $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
@@ -964,7 +996,7 @@ $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
   var r=$("myReason").value.trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick lie or don't lie first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(!goodReason(r)){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Give a real reason, in a few words."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
@@ -975,11 +1007,14 @@ function linesFor(g){
   var saved = SAVED && SAVED.lines && SAVED.lines[g];
   var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
   if(saved && wasCleared && !replayCleared[g]) return saved.concat();
-  if(saved && !touched[g]) return saved.concat();
   return LIVE[g]();
 }
 function coverLines(){ return ["Gut call on the surprise-party text (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
 var PL={ride:{yes:"yes, as a means",no:"no"}, funny:{yes:"kind of",no:"no way"}, chat:{dms:"post anyone's DMs",ask:"ask before sharing photos",admin:"admins can delete anything"}, self:{yes:"yes",no:"no, my choice"}, door:{ul:"universal law (lie can be OK)",hum:"humanity (no lie)",neither:"neither, it's complicated"}};
+function warmLine(){
+  if(!WARM.done) return ["Warm-up: not finished"];
+  return ["Warm-up: ungraded ranking of five ways to get a friend to my recital, feel-best first: "+WARM.order.map(function(id,i){ return (i+1)+" "+WUN[id]; }).join(", ")];
+}
 function pollLines(){
   function v(k){ return POLLS[k] ? PL[k][POLLS[k]] : "not answered"; }
   return ["Ungraded taps: asking a friend for a ride is using her = "+v("ride")+"; funniest friend replaceable = "+v("funny")+"; group-chat rule I'd propose = "+v("chat")+"; can you wrong yourself = "+v("self")+"; formula that gets the door right = "+v("door")];
@@ -1017,6 +1052,51 @@ function wirePoll(id, key, moreId){
 wirePoll("pRide","ride","pRideMore"); wirePoll("pFunny","funny","pFunnyMore"); wirePoll("pChat","chat","pChatMore"); wirePoll("pSelf","self","pSelfMore"); wirePoll("pDoor","door","pDoorMore");
 function showPoll(key, id, moreId){ var v=POLLS[key]; if(!v) return; $(id).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; }); $(moreId).hidden=false; }
 
+/* ================= WARM-UP: where's your line? (ungraded) ================= */
+var WU=[
+ {id:"ask", t:'Just ask: "Want to come? It would mean a lot."', n:"just ask"},
+ {id:"swap", t:'Offer a swap: "Come to mine, I\'ll come to yours."', n:"offer a swap"},
+ {id:"sleepy", t:'Text her half asleep at midnight: "You\'re coming, right? Great!"', n:"text her half asleep"},
+ {id:"lie", t:'Say it\'s a pizza party, so she\'ll show up.', n:"say it's a pizza party"},
+ {id:"threat", t:'Threaten to post her embarrassing photo unless she comes.', n:"threaten to post her photo"}
+];
+var WUN={}; WU.forEach(function(w){ WUN[w.id]=w.n; });
+var WUC=["var(--hl-g)","var(--hl-b)","var(--hl-y)","var(--hl-o)","var(--hl-p)"];
+var WUREVEAL="Most people put \"just ask\" near the top and the trick or the threat near the bottom, because those leave her no honest choice. Hold on to that feeling: Lead 1 is about exactly that difference.";
+var wuCards={};
+shuffle(WU).forEach(function(w){
+  var b=el("button",{class:"wu-card",type:"button","aria-pressed":"false","data-id":w.id});
+  var r=el("span",{class:"wu-rank","aria-hidden":"true"}); r.textContent="?";
+  var t=el("span",{class:"wu-t"}); t.textContent=w.t;
+  b.appendChild(r); b.appendChild(t); wuCards[w.id]=b; $("wuList").appendChild(b);
+  b.addEventListener("click",function(){ wuTap(w.id); });
+});
+var WU_ORD=["first","second","third","fourth"];
+function wuPaint(){
+  WU.forEach(function(w){
+    var b=wuCards[w.id], k=WARM.order.indexOf(w.id), on=k>=0;
+    b.setAttribute("aria-pressed",String(on)); b.disabled=on||WARM.done;
+    b.querySelector(".wu-rank").textContent= on ? String(k+1) : "?";
+    b.style.setProperty("--rc", on ? WUC[k] : "transparent");
+    b.setAttribute("aria-label", (on ? "Ranked "+(k+1)+" of 5: " : "Not ranked yet: ")+w.t);
+  });
+  $("wuReset").hidden = WARM.done || !WARM.order.length;
+  var n=WARM.order.length;
+  $("wuHint").textContent = WARM.done ? "Locked." : n===0 ? "Tap the way you'd feel best about." : "Now the one you'd feel "+(n===1?"next-best":"next-best")+" about ("+(n+1)+" of 5).";
+  if(WARM.done){ $("wuReveal").hidden=false; $("wuReveal").innerHTML='<strong class="v">Filed.</strong> '+WUREVEAL; }
+}
+function wuTap(id){
+  if(WARM.done || WARM.order.indexOf(id)>=0) return;
+  WARM.order.push(id);
+  if(WARM.order.length===4){ WU.forEach(function(w){ if(WARM.order.indexOf(w.id)<0) WARM.order.push(w.id); }); }
+  if(WARM.order.length===5){ WARM.done=true; }
+  wuPaint();
+  if(WARM.done){ saveState(); focusFb($("wuReveal")); }
+  else { var nxt=[].filter.call($("wuList").querySelectorAll(".wu-card"),function(x){return !x.disabled;})[0]; if(nxt) nxt.focus(); }
+}
+$("wuReset").addEventListener("click",function(){ if(WARM.done) return; WARM.order=[]; wuPaint(); var f=$("wuList").querySelector(".wu-card"); if(f) f.focus(); });
+wuPaint();
+
 /* ================= LEAD 1: MEANS OR MERELY MEANS ================= */
 var BL={mean:"As a means (fine)", mere:"Merely as a means (not OK)"};
 var BINS=[
@@ -1051,7 +1131,7 @@ shuffle(BINS.map(function(_,i){return i;})).forEach(function(i){
     b.addEventListener("click",function(){
       var r=REC.bins[i]; if(r.final) return;
       row.querySelectorAll(".pick").forEach(function(x){x.classList.remove("chosen");}); b.classList.add("chosen");
-      if(v===it.a){ r.final=v; setFb(fb,"good", vword("g1","ok"), it.why); finish(); }
+      if(v===it.a){ r.final=v; setFb(fb,"good", vword("g1","ok",it.a), it.why); finish(); }
       else {
         r.misses++;
         if(r.misses>=2){ r.final=it.a; r.explained=true; setFb(fb,"bad","Explained:", "the answer is <b>"+BL[it.a]+"</b>. "+it.why); finish(); }
@@ -1082,7 +1162,7 @@ var MITEMS=[
  {t:"Your friend's hilarious sense of humor", a:"fan", why:"Kant's example: wit and humor have a fancy price, worth tied to taste and enjoyment."},
  {t:"A wildly lively imagination", a:"fan", why:"Kant puts lively imagination with wit and humor: fancy price."},
  {t:"Your little cousin, as a person", a:"dig", why:"A rational being (or one growing into it). No equivalent; you can't swap her for another cousin. Dignity."},
- {t:"Keeping a promise because it's right", a:"dig", why:"Kant gives fidelity in promises as an example of inner worth: morality has dignity."},
+ {t:"A person who keeps promises because it's right", a:"dig", why:"Kant's example of inner worth is keeping promises from principle, not from calculation. Morality, and the people capable of it, have dignity: no equivalent."},
  {t:"You", a:"dig", why:"\"In your own person\": your humanity has dignity too. That's where duties to yourself come from."}
 ];
 var mOrder=shuffle(MITEMS.map(function(_,i){return i;})), mSel=null, mPlaced={}, mMissFor={};
@@ -1117,7 +1197,7 @@ function mDrop(bin){
   var it=MITEMS[mSel];
   if(bin===it.a){
     if(!mMissFor[mSel]) REC.match.first++;
-    mPlace(mSel, bin); setFb($("mFb"),"good", vword("g2","ok"), it.why); mAfter();
+    mPlace(mSel, bin); setFb($("mFb"),"good", vword("g2","ok",it.a), it.why); mAfter();
   } else {
     mMissFor[mSel]=(mMissFor[mSel]||0)+1; if(REC.match.misses.indexOf(it.t)<0) REC.match.misses.push(it.t);
     if(mMissFor[mSel]>=2){ REC.match.explained.push(it.t); mPlace(mSel, it.a); setFb($("mFb"),"bad","Explained:","it goes in <b>"+MBN[it.a]+"</b>. "+it.why); mAfter(); }
@@ -1171,7 +1251,7 @@ function dRender(){
     b.addEventListener("click",function(){
       var R=REC.det[si]; if(R.whoOk) return;
       g1.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
-      if(nm===S.who){ R.whoOk=true; b.classList.add("right"); g1.querySelectorAll(".chip").forEach(function(x){x.disabled=true;}); setFb($("detFb"),"good",vword("g3","ok"), nm==="Nobody" ? "Nobody here is being used merely. Now say what makes it OK." : nm+". Now name the giveaway."); showHow(); }
+      if(nm===S.who){ R.whoOk=true; b.classList.add("right"); g1.querySelectorAll(".chip").forEach(function(x){x.disabled=true;}); setFb($("detFb"),"good",vword("g3","ok","who"), nm==="Nobody" ? "Nobody here is being used merely. Now say what makes it OK." : nm+". Now name the giveaway."); showHow(); }
       else { R.whoMiss++;
         if(R.whoMiss>=2){ R.whoOk=true; R.explained=true; g1.querySelectorAll(".chip").forEach(function(x){ x.disabled=true; if(x.textContent===S.who) x.classList.add("right"); }); setFb($("detFb"),"bad","Explained:", "it's <b>"+S.who+"</b>. Now step 2."); showHow(); }
         else setFb($("detFb"),"bad",vword("g3","no"), nm==="Nobody" ? "Is everyone here able to agree to what's really happening, with a real choice?" : "Ask of each person: do they know what's going on, and do they have a real choice?"); }
@@ -1194,7 +1274,7 @@ function dRender(){
         if(right || R.howMiss>=2){
           if(!right) R.explained=true;
           R.howOk=true; g2.querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
-          setFb($("detFb"), right?"good":"bad", right?vword("g3","ok"):"Explained:", S.ok);
+          setFb($("detFb"), right?"good":"bad", right?vword("g3","ok","how"):"Explained:", S.ok);
           if(dPos<SCENES.length-1){ $("detNext").hidden=false; $("detNext").focus(); }
           else { $("detFb").innerHTML+="<br><br><b>All six scenes solved.</b> Three ways to use others (deception, coercion, manipulation), one way to use yourself, and two cases of people meeting as equals."; focusFb($("detFb")); clear("g3"); }
         } else setFb($("detFb"),"bad",vword("g3","no"), howHint(S.how));
@@ -1230,7 +1310,7 @@ var RF=[
  {t:"Kant made up the murderer case himself, to show off how strict his theory was.", a:false, k:"Kant invented the case", why:"Myth. Benjamin Constant raised it as an objection; Kant was answering him."},
  {t:"Kant argued that if you lie and things go wrong anyway, you can be blamed for what follows.", a:true, k:"liar blamed for consequences", why:"Real. If your friend has slipped out and is found because of your lie, Kant says the blame can land on you."},
  {t:"Kant said your duty is to help the attacker find your friend.", a:false, k:"duty to help the attacker", why:"Myth. His claim is only that you may not lie in a statement you can't avoid. Helping is a different thing entirely."},
- {t:"In his earlier ethics lectures, Kant allowed a lie in self-defense when you're forced and silence won't save you.", a:true, k:"earlier self-defense lie", why:"Real. The 1797 essay is stricter than his own earlier teaching."},
+ {t:"In his early ethics lectures, Kant allowed untruthful statements in certain extreme cases.", a:true, k:"early lectures allowed extreme-case lies", why:"Real. Notes from his early lectures allow it, and by the 1790s his view had hardened. The 1797 essay is stricter than his own earlier teaching."},
  {t:"Kant thought a lie wrongs only the person who is lied to.", a:false, k:"lie wrongs only one person", why:"Myth. He said a lie wrongs humanity in general, because it weakens trust in what people declare."},
  {t:"Korsgaard argued that the Formula of Humanity is the formula that allows lying at the door.", a:false, k:"Korsgaard and the humanity formula", why:"Myth, and a sneaky one. It's the universal law test that may allow it; the Formula of Humanity seems to forbid it."},
  {t:"Kant wrote the reply as a young philosopher, decades before his famous books.", a:false, k:"written when young", why:"Myth. He was in his seventies, and the Groundwork was already 12 years old."}
@@ -1253,7 +1333,7 @@ function rRender(){
       B.querySelectorAll(".btn").forEach(function(x){x.disabled=true;});
       var R=REC.rf[ci], ok=o[0]===c.a;
       if(R.first===null) R.first=ok;
-      if(ok){ R.solved=true; rStreak++; if(rStreak>rBest) rBest=rStreak; b.classList.add("right"); setFb($("rfFb"),"good",vword("g4","ok"),c.why);
+      if(ok){ R.solved=true; rStreak++; if(rStreak>rBest) rBest=rStreak; b.classList.add("right"); setFb($("rfFb"),"good",vword("g4","ok",c.a),c.why);
         $("rfStreak").textContent="Streak "+rStreak; $("rfStreak").className="streak"+(reduceMotion?"":" pulse")+(rStreak>=3?" hot":""); }
       else { rStreak=0; b.classList.add("wrongpick"); B.querySelectorAll(".btn").forEach(function(x){ if(x!==b) x.classList.add("right"); }); setFb($("rfFb"),"bad",vword("g4","no"),c.why+" It'll come back for a second look."); $("rfStreak").textContent=""; rQueue.push(ci); }
       if(rPos<rQueue.length-1){ $("rfNext").hidden=false; $("rfNext").textContent= rPos+1>=rFirstRound ? "Second look" : "Next claim"; $("rfNext").focus(); }
@@ -1327,7 +1407,7 @@ function qRender(){
       b.addEventListener("click",function(){
         var R=REC.poll[qI], key=who==="kant"?"kOk":"uOk"; if(R[key]) return;
         if(v===P[who]){ R[key]=true; b.classList.add("chosen"); g.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
-          var fb=el("div",{class:"fb good",tabindex:"-1"}); fb.innerHTML='<strong class="v">'+vword("g5","ok")+'</strong> '+(who==="kant"?P.kWhy:P.uWhy); C.appendChild(fb); $("pollFb").className="fb"; $("pollFb").innerHTML="";
+          var fb=el("div",{class:"fb good",tabindex:"-1"}); fb.innerHTML='<strong class="v">'+vword("g5","ok",who)+'</strong> '+(who==="kant"?P.kWhy:P.uWhy); C.appendChild(fb); $("pollFb").className="fb"; $("pollFb").innerHTML="";
           if(who==="kant") predict("util");
           else { qTally(); if(qI<POLL.length-1){ $("pollNext").hidden=false; $("pollNext").focus(); } else qDone(); }
         } else { R[who==="kant"?"kMiss":"uMiss"]++; b.disabled=true;
@@ -1373,7 +1453,7 @@ function pollLinesG5(){
   var preds=Object.keys(REC.poll).filter(function(k){return REC.poll[k].uOk;});
   var clean=preds.filter(function(k){return !REC.poll[k].kMiss && !REC.poll[k].uMiss;}).length;
   var a=agree();
-  return ["Lead 5 my own calls: "+mine.join("; "), "Lead 5 predictions: "+preds.length+" of "+ks.length+" answered dilemmas fully predicted, "+clean+" with no misses", "Lead 5 where Kant and utilitarians disagree, I sided with Kant "+a.k+" of "+a.n+" and with the utilitarian "+a.u+" of "+a.n+(pollPattern?" ("+pollPattern.split(".")[0]+")":"")];
+  return ["Lead 5 my own calls: "+mine.join("; "), "Lead 5 predictions: "+preds.length+" of "+ks.length+" answered dilemmas fully predicted, "+clean+" with no misses", (a.n ? "Lead 5 where Kant and utilitarians disagree, I sided with Kant "+a.k+" of "+a.n+" and with the utilitarian "+a.u+" of "+a.n+(pollPattern?" ("+pollPattern.split(".")[0]+")":"") : "Lead 5 where Kant and utilitarians disagree: no clash cases answered (I held back or haven't answered them yet)")];
 }
 
 /* ================= FINALE ================= */
@@ -1404,7 +1484,7 @@ $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
   var reason=$("finReason").value.trim(), moved=$("finMoved").value;
   if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
+  if(!goodReason(reason)){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a few words or a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
   FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
@@ -1418,10 +1498,10 @@ function finLines(){
 
 var LIVE={g1:binLines,g2:matchLines,g3:detLines,g4:rfLines,g5:pollLinesG5};
 var BUILDERS={ g1:function(){return linesFor("g1");}, g2:function(){return linesFor("g2");}, g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");}, g5:function(){return linesFor("g5");},
-  all:function(){ return [].concat(coverLines(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
+  all:function(){ return [].concat(coverLines(), warmLine(), pollLines(), linesFor("g1"), linesFor("g2"), linesFor("g3"), linesFor("g4"), linesFor("g5"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of "+NG]); } };
 wireCopies();
 refreshGot();
-window.__mod={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report, rfOrder:function(){return rQueue.slice(0,RF.length).map(function(i){return RF[i].a;});}, rfAnswer:function(){ return RF[rQueue[rPos]].a; }};
+if(location.hash==="#qa"){ window.__mod={cleared:cleared, unlockStep:function(){return unlockedStep;}, report:report, rfOrder:function(){return rQueue.slice(0,RF.length).map(function(i){return RF[i].a;});}, rfAnswer:function(){ return RF[rQueue[rPos]].a; }}; } /* test hook only with #qa in the address */
 
 /* ---------- restore saved progress ---------- */
 if(SAVED){
@@ -1430,8 +1510,13 @@ if(SAVED){
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ if(SAVED.polls[k]) POLLS[k]=SAVED.polls[k]; }); }
     showPoll("ride","pRide","pRideMore"); showPoll("funny","pFunny","pFunnyMore"); showPoll("chat","pChat","pChatMore"); showPoll("self","pSelf","pSelfMore"); showPoll("door","pDoor","pDoorMore");
+    if(SAVED.warm && SAVED.warm.done && Array.isArray(SAVED.warm.order) && SAVED.warm.order.length===5 && SAVED.warm.order.every(function(id){return WUN[id];}) ){ WARM.order=SAVED.warm.order.slice(); WARM.done=true; wuPaint(); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
+    GAME_IDS.forEach(function(id){
+      var sv=SAVED.lines && SAVED.lines[id]; if(cleared[id] || !sv || !sv.length || /not started/.test(sv[0])) return;
+      var b=$(id).querySelector(".lab-body"), n=el("p",{class:"pause"}); n.textContent="You left this lead half-finished, so it starts fresh. Your case-file copy shows it as not started until you play it."; b.insertBefore(n,b.firstChild);
+    });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
       FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
