@@ -27,6 +27,8 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never say who the thieves were or where the art is, and never suggest the night guard was guilty (never charged).
 
+**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+
 **Hook:**
 
 > Quick vote. Two thieves spent 81 minutes inside a famous Boston museum. How do you think they got in?

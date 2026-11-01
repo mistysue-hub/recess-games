@@ -27,6 +27,8 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. This part is only how they got out; never say whether the men survived (Part 2).
 
+**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+
 **Hook:**
 
 > Quick vote. In 1962, three prisoners fooled the guards at Alcatraz for an entire night. What did they leave in their beds?

@@ -27,6 +27,8 @@ Estimated time: 35 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never say whether Cooper survived or call any suspect Cooper or any verdict wrong; "we can't tell yet" is honest.
 
+**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+
 **Hook:**
 
 > Quick vote. Nine years after Cooper jumped, a kid digging on a beach found some of his money. How much of the $200,000 do you think was there?

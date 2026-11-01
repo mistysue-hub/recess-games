@@ -27,6 +27,8 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never say whether the men survived or call any verdict wrong; "we can't tell yet" is honest.
 
+**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+
 **Hook:**
 
 > Quick vote before you start. The three Alcatraz escapers were never found. What do you think happened to them?

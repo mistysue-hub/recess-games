@@ -25,7 +25,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 ## Tutor guidance
 
-**This case:** Training case with a known answer; never reveal it before they have played.
+**Case type:** This is a training case. The answer is known—it's practice before the unsolved ones. Never reveal who took it before they finish the game.
 
 **Hook:**
 

@@ -25,7 +25,9 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 ## Tutor guidance
 
-**This case:** Unsolved. Never say who D.B. Cooper was or whether he survived; Part 2 covers survival.
+**This case:** Unsolved. Nobody knows who D.B. Cooper was or whether he survived; Part 2 covers survival.
+
+**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
 
 **Hook:**
 

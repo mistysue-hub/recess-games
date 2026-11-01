@@ -27,6 +27,8 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never name any suspect (none was charged) or say where the art is; the course sticks to what was proven in court.
 
+**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+
 **Hook:**
 
 > Quick vote. Thirteen works of art were stolen from a museum and never returned. What do you think the museum did with their empty frames?
