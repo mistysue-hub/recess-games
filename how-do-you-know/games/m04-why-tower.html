@@ -78,6 +78,12 @@
   .scores b{display:block;font:700 22px Poppins,sans-serif}
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
 
+  .guide{margin:16px 0 4px;padding:10px 14px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.55);font:500 15px/1.5 Poppins,sans-serif}
+  .guide b{color:var(--plum)}
+  .callout{margin-top:12px;padding:10px 14px;border:1.5px solid #b89b67;border-radius:12px;background:#f3dcc8;font:600 16px/1.4 Poppins,sans-serif}
+  .opts button small{display:block;font:500 12px Poppins,sans-serif;opacity:.8;margin-top:2px}
+  #qEnd button{text-align:center}
+  .nq{display:grid;gap:10px;margin-top:14px}
   @media (max-width:560px){
     .key3{grid-template-columns:1fr}
     .opts{grid-template-columns:1fr}
@@ -85,6 +91,7 @@
     .towerwrap{padding:0 0 0 30px}
   }
   @media (prefers-reduced-motion:reduce){ .blk,.bed{animation:none} .blk.hl{animation:none} .more,.loop path{animation:none} }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -149,6 +156,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -170,7 +184,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -202,12 +220,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -225,9 +261,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -249,15 +287,16 @@
   <section id="sIntro">
     <div class="panel">
       <h2>How the tower works</h2>
-      <p>Every belief sits on a reason. Every reason sits on another reason. You build the tower: each time someone asks <b>why?</b>, pick one of three reasons and it drops in underneath. Some reasons call for another reason, and some end the chain, sometimes sneakily.</p>
-      <p>Agrippa's trilemma says a chain can end only three ways:</p>
+      <p class="bigq"><b>The question:</b> If every belief needs a reason, where does the chain of reasons end, and is that ending good enough?</p>
+      <p>Every belief sits on a reason, and that reason sits on another. Each time you're asked <b>why?</b>, pick one of three reasons. A chain can end only three ways:</p>
       <div class="key3">
         <div><b>Forever</b>there's always another reason underneath</div>
         <div><b>Circle</b>a reason loops back to something above it</div>
-        <div><b>Stop</b>the chain rests on a belief with no further belief under it</div>
+        <div><b>Stop</b>it rests on a basic belief with nothing under it. (&ldquo;Because I said so&rdquo; is this ending. Parents have used it for centuries.)</div>
       </div>
-      <p>When your tower is done, say how it ended and which objection hits it hardest. Try to end each of the three towers a different way. Then, at the Theory Desk, match what people say to the theory they hold.</p>
-      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <p>Build the tower, then say how it ended. A guide stays on screen.</p>
+      <p class="small">You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
+      <div id="mode"></div>
       <div class="center"><button class="big" id="startBtn">Build the first tower</button></div>
     </div>
   </section>
@@ -272,36 +311,56 @@
         <div class="tower" id="tower"></div>
       </div>
       <div id="whyWrap"><p class="q" id="whyQ">Why?</p><div class="opts" id="qWhy"></div></div>
+      <div class="callout hidden" id="callout"></div>
       <div id="tQs" class="hidden">
-        <p class="q">Your tower is built. 1. How does this chain end?</p>
+        <p class="q">Your tower is built. How does this chain end?</p>
         <div class="opts" id="qEnd"><button data-v="forever">Forever</button><button data-v="circle">Circle</button><button data-v="stop">Stop</button></div>
-        <p class="q">2. Which objection hits this tower hardest?</p>
-        <div class="opts" id="qTh"><button data-v="stop">“What makes your bottom block so special that it needs no reason?”</button><button data-v="circle">“A well-written fantasy novel fits together perfectly too, and it isn't true.”</button><button data-v="forever">“You'll never finish giving reasons, so when are you ever justified?”</button></div>
         <div class="go"><button class="big" id="tLock" disabled>Lock it in</button></div>
       </div>
+      <div class="guide hk-guide" id="guide"><b>How to decide.</b> Pick a reason. Does it need another reason? &rarr; keep going. Does it lean on the belief you started with? &rarr; <b>circle</b>. Did you see or feel it yourself, with nothing under it? &rarr; <b>stop</b>.</div>
+      <div class="fb bad hidden" id="tHint"></div>
       <div class="fb hidden" id="tFb"></div>
       <div class="go hidden" id="tNextWrap"><button class="big" id="tNext">Next tower</button></div>
+    </div>
+  </section>
+
+  <section id="sNorman" class="hidden">
+    <div class="panel">
+      <div class="step">Philosopher extra &middot; argued about</div>
+      <h2>Norman the clairvoyant</h2>
+      <div class="quote" id="nText">Norman has a reliable power of clairvoyance, but no evidence for or against it. One day he suddenly believes the President is in New York. He's right. He has no reason to think his power works.</div>
+      <p class="q">Which theory does this case put the most pressure on?</p>
+      <div class="opts" id="nOpts"><button data-v="F">Foundationalism</button><button data-v="C">Coherentism</button><button data-v="R">Reliabilism</button></div>
+      <div class="fb bad hidden" id="nHint"></div>
+      <div class="fb hidden" id="nFb"></div>
+      <div class="go hidden" id="nNextWrap"><button class="big" id="nNext">Next</button></div>
     </div>
   </section>
 
   <section id="sDesk" class="hidden">
     <div class="panel">
       <div class="step" id="dStep"></div>
+      <div class="step" style="color:var(--tang-d)">Bonus round &middot; not scored</div>
       <h2>The Theory Desk</h2>
-      <p>Who would say this?</p>
+      <p>Who would say this? The clue under each name helps.</p>
       <div class="quote" id="dText"></div>
       <div class="opts four" id="dOpts" style="margin-top:16px">
-        <button data-v="F">Foundationalist</button><button data-v="C">Coherentist</button><button data-v="I">Infinitist</button><button data-v="R">Reliabilist</button>
+        <button data-v="F">Foundationalist<small class="hk-guide">the chain STOPS at a basic belief</small></button>
+        <button data-v="C">Coherentist<small class="hk-guide">beliefs hold each other up like a web</small></button>
+        <button data-v="I">Infinitist<small class="hk-guide">reasons never run out</small></button>
+        <button data-v="R">Reliabilist<small class="hk-guide">ask HOW the belief was made</small></button>
       </div>
+      <div class="fb bad hidden" id="dHint"></div>
       <div class="fb hidden" id="dFb"></div>
       <div class="go hidden" id="dNextWrap"><button class="big" id="dNext">Next</button></div>
+      <div class="go"><button class="big alt" id="dSkip">Skip bonus &rarr;</button></div>
     </div>
   </section>
 
   <section id="sEnd" class="hidden">
     <div class="panel">
       <div id="shelf"></div>
-      <h2>Tower complete: what you reported</h2>
+      <h2>Tower complete</h2>
       <div class="scores" id="scores"></div>
       <details class="answers"><summary>See my answers</summary>
       <table>
@@ -311,7 +370,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll defend a circular argument, and it's your job to break it.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b></p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -323,145 +382,200 @@
   const TH={F:'Foundationalism',C:'Coherentism',I:'Infinitism',R:'Reliabilism'};
   const END={forever:'Forever',circle:'Circle',stop:'Stop'};
   // Each tower: at every level the learner picks one of three reasons.
-  // kind: 'next' needs another reason; 'loop' leans on something above (loopTo = block index, 0 = the belief); 'stop' rests on a basic belief.
-  // At the last level, 'next' becomes the never-ending reason.
+  // kind: 'next' needs another reason; 'loop' leans on something above (to = block index, 0 = the belief); 'stop' rests on a basic belief.
+  // t = normal-mode text; h = subtler Philosopher-mode text. At the last level, 'next' becomes the never-ending reason.
   const TOWERS=[
     {belief:"My news app is reliable.", levels:[
       [{t:"Its stories usually match what other outlets report.",k:'next'},
        {t:"It ranks itself number one for accuracy, and it wouldn't say that if it weren't true.",k:'loop',to:0},
-       {t:"I saw last night's game myself, and the app's score was exactly right. What I saw with my own eyes needs no further reason.",k:'stop'}],
+       {t:"I saw last night's game, and the app's score was exactly right. What I saw with my own eyes needs no further reason.",h:"I watched last night's game myself, and the app's score was exactly right.",k:'stop'}],
       [{t:"Those outlets have teams of fact-checkers.",k:'next'},
        {t:"I trust those outlets because they're the ones my news app recommends.",k:'loop',to:0},
-       {t:"I was at the town meeting one of those stories covered, and I saw for myself it happened as reported.",k:'stop'}],
-      [{t:"The fact-checkers are checked by editors, the editors by other editors, and so on. There's always another check behind the last one.",k:'next'},
-       {t:"And I know the fact-checkers are good because the outlets I trust say so.",k:'loop',to:2},
-       {t:"I sat in on one of their fact-checking meetings and watched them work. That's just what I saw.",k:'stop'}]
+       {t:"I was at the town meeting one of those stories covered, and it happened as reported.",k:'stop'}],
+      [{t:"The fact-checkers are checked by editors, the editors by other editors, and so on.",h:"Those fact-checkers have editors checking them, and those editors have their own checkers.",k:'next'},
+       {t:"I know the fact-checkers are good because the outlets I trust say so.",k:'loop',to:2},
+       {t:"I sat in on one of their fact-checking meetings and watched them work.",k:'stop'}]
     ]},
     {belief:"There's a ripe tomato on the counter.", levels:[
       [{t:"My roommate texted that she left one there.",k:'next'},
        {t:"There must be one there, because I believe there is.",k:'loop',to:0},
-       {t:"I'm in the kitchen looking at it: red, round, right there. I'm not inferring that from anything else.",k:'stop'}],
+       {t:"I'm in the kitchen looking at it: red, round, right there.",k:'stop'}],
       [{t:"She's usually right about what's in the kitchen.",k:'next'},
-       {t:"And I know her text is right because the tomato really is there.",k:'loop',to:0},
+       {t:"I know her text is right because the tomato really is there.",k:'loop',to:0},
        {t:"I watched her set the tomato on the counter myself.",k:'stop'}],
-      [{t:"Her eyesight is good, which her optometrist checked, who was licensed by a board, which was checked by another board... There's always another reason underneath.",k:'next'},
+      [{t:"Her eyesight was checked by an optometrist, whose license was checked by a board, and so on.",h:"Her eyesight was checked by an optometrist, whose license comes from a board, which has its own overseers.",k:'next'},
        {t:"I know she's usually right because she told me she's usually right.",k:'loop',to:2},
-       {t:"Every time she's told me what's in the kitchen, I've looked and seen for myself that she was right.",k:'stop'}]
+       {t:"Every time she's told me what's in the kitchen, I've looked and she was right.",k:'stop'}]
     ]},
     {belief:"This old bridge will hold my weight.", levels:[
       [{t:"It held a delivery truck yesterday.",k:'next'},
-       {t:"It's a safe bridge, and I know it's safe because it holds people like me.",k:'loop',to:0},
-       {t:"I'm already standing in the middle of it, and I can feel it holding me.",k:'stop'}],
-      [{t:"It was in the town newspaper.",k:'next'},
+       {t:"It's a safe bridge, and I know that because it holds people like me.",k:'loop',to:0},
+       {t:"I'm standing in the middle of it, and I can feel it holding me.",k:'stop'}],
+      [{t:"The town newspaper reported it.",k:'next'},
        {t:"I know it held the truck because it's a bridge that holds weight like mine.",k:'loop',to:0},
-       {t:"I watched the truck cross it with my own eyes.",k:'stop'}],
-      [{t:"The paper checks its facts, its fact-checkers are checked by editors, the editors by others, and so on. There's always another check behind the last one.",k:'next'},
-       {t:"The paper is reliable because it reported that the truck crossed, and the truck did cross.",k:'loop',to:1},
-       {t:"I was standing by the bridge and saw the truck cross myself, just as the paper said.",k:'stop'}]
+       {t:"I watched the truck cross it myself.",k:'stop'}],
+      [{t:"The paper's facts are checked by fact-checkers, who are checked by editors, and so on.",h:"The paper's facts are checked by fact-checkers, who have editors, who have their own checkers.",k:'next'},
+       {t:"The paper is reliable because it reported the truck crossing, and the truck did cross.",k:'loop',to:1},
+       {t:"I stood by the bridge and saw the truck cross, just as the paper said.",k:'stop'}]
     ]}
   ];
+  // Philosopher mode only: a tower where "stop" is arguable.
+  const HARDTOWER={belief:"The Battle of Hastings was in 1066.", arguable:true, levels:[
+      [{t:"My history textbook says so.",k:'next'},
+       {t:"It has to be 1066, because that's the date I believe it happened.",k:'loop',to:0},
+       {t:"I just remember learning it in school.",k:'stop'}],
+      [{t:"The textbook's author checked other history books.",k:'next'},
+       {t:"My memory of school is right, because the date really is 1066.",k:'loop',to:0},
+       {t:"I remember it, and my memory is usually right.",k:'stop'}],
+      [{t:"Those books relied on older books, which relied on older chronicles.",k:'next'},
+       {t:"The textbook is trustworthy because it matches what I remember from school.",k:'loop',to:1},
+       {t:"I just remember it. There's nothing underneath that.",k:'stop'}]
+  ]};
   const WHY={
-    stop:"Your chain rests on a basic belief: what you see or feel, which you don't get from any other belief. Foundationalists say that's exactly where chains should stop. The hard question for them: what makes that bottom block special enough to need no reason?",
-    circle:"Look at the loop: one of your reasons leans on something higher up the tower. Coherentists say a circle isn't automatically bad if it's big and fits with everything else you believe, but a tiny loop like this is plain vicious circularity. And even a big, coherent web faces the fantasy-novel objection: it can hang together without touching the world.",
-    forever:"Your chain never hits a last reason. Infinitists, like Peter Klein, say that's fine as long as a further reason is always there when someone asks. Critics reply that a chain you can never finish never gets you justified."
+    stop:"Your chain rests on a basic belief: something you saw or felt, with no reason under it. Foundationalists say chains have to stop somewhere. (“Because I said so” is the same ending, and parents have used it for centuries.) The hard question for them: why does the bottom block get a free pass? Its weak spot is that it leans on trusting your own eyes.",
+    circle:"One of your reasons leans on something higher in the tower, so the belief ends up holding itself up. A tiny loop like this is plain circularity. Coherentists say a BIG web of beliefs that fit together can be fine, and the fantasy-novel objection belongs there: a story can hang together perfectly and still not be true.",
+    forever:"Your chain never reaches a last reason. Infinitists, like Peter Klein, say that's fine as long as a further reason is always there when someone asks. Critics reply that you'd never finish, so when are you ever justified?"
   };
   const DESK=[
-    {t:"My belief that I'm in pain needs no further reason. It's where reasons start.", a:'F', why:"Pain is a classic candidate for a basic belief. Foundationalists build upward from beliefs like it."},
+    {t:"I don't believe I'm in pain because of some other belief. It's where my reasons start.", a:'F', why:"A basic belief: the chain stops there. Pain is a classic candidate, and foundationalists build upward from beliefs like it."},
     {t:"No belief stands alone. Each one is held up by how well it fits with all the rest.", a:'C', why:"Support by fit with the whole web: that's coherentism."},
     {t:"You're justified as long as there's always another reason available, even if you never reach the end.", a:'I', why:"An endless supply of reasons, never a last one: infinitism."},
-    {t:"Never mind your reasons. Was the belief produced by a process that usually gets things right?", a:'R', why:"Goldman's question: how was the belief produced? That's reliabilism, an externalist view."},
+    {t:"Never mind the shape of the reasons. Was the belief produced by a process that usually gets things right?", a:'R', why:"Goldman's question: how was the belief produced? That's reliabilism. It answers a different question from the other three (what makes a belief justified, not what shape the reasons take), so it can sit on top of any structure."},
     {t:"We have to rebuild our ship at sea, one plank at a time, never starting fresh from the bottom.", a:'C', why:"Neurath's boat, the best-known picture of coherentism."},
     {t:"Not all knowledge comes from proof. Some truths are known directly, and proofs start from them.", a:'F', why:"Aristotle's answer to the regress: first principles at the bottom. That's foundationalism."},
-    {t:"The radiologist's quick read of the X-ray is justified because her trained eye is usually right, even if she can't say why.", a:'R', why:"Justified by a reliable process, whether or not she can state her reasons: reliabilism."}
+    {t:"A radiologist's quick read of an X-ray counts as justified because her training makes it a process that usually gets things right, whether or not she can list her reasons.", a:'R', why:"Justified by a reliable process, whatever reasons she can state: reliabilism. (Compare the pain card: that one is about where a chain of reasons stops, not about how a belief was made.)"}
   ];
+  const NORMAN={a:'R', hint:"Norman's power is reliable. Which theory says reliability is what counts?",
+    why:"BonJour (1985) built Norman as an objection to reliabilism: his belief comes from a reliable process, yet it seems unjustified, since he has no reason to trust it. Reliabilists reply that he is justified (or that the case is unfair to us). This one is argued about."};
   const $=id=>document.getElementById(id);
-  let ti=0, pickEnd=null, pickTh=null, towerRight=0, di=0, deskRight=0, log=[], DK=DESK;
-  function show(id){ ['sIntro','sTower','sDesk','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
-
+  let ti=0, pickEnd=null, towerRight=0, towerTotal=0, di=0, deskRight=0, log=[], DK=DESK, tries=0, dTries=0, nTries=0, dSkipped=false;
+  function show(id){ ['sIntro','sTower','sNorman','sDesk','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
   function block(text, cls, tag){
     const d=document.createElement('div'); d.className='blk '+(cls||'');
     d.innerHTML=(tag?'<span class="tag">'+tag+'</span>':'')+text; $('tower').appendChild(d); return d;
   }
-  let lvl=0, ending=null, loopTo=0, ORDERT=TOWERS, endsFound={};
+  let lvl=0, ending=null, loopTo=0, ORDERT=TOWERS;
   function startTower(){
-    const t=ORDERT[ti]; lvl=0; ending=null; pickEnd=null; pickTh=null;
-    $('tStep').textContent='Tower '+(ti+1)+' of '+TOWERS.length+(Object.keys(endsFound).length?' · endings found so far: '+Object.keys(endsFound).map(e=>END[e]).join(', '):'');
-    $('tower').innerHTML=''; $('loop').classList.add('hidden');
+    const t=ORDERT[ti]; lvl=0; ending=null; pickEnd=null; tries=0;
+    $('tStep').textContent='Tower '+(ti+1)+' of '+ORDERT.length;
+    $('tower').innerHTML=''; $('loop').classList.add('hidden'); $('callout').classList.add('hidden'); $('tHint').classList.add('hidden');
     block(t.belief,'belief','Belief');
     $('whyWrap').classList.remove('hidden'); showWhy();
     $('tQs').classList.add('hidden'); $('tFb').classList.add('hidden'); $('tNextWrap').classList.add('hidden');
-    ['qEnd','qTh'].forEach(id=>$(id).querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; }));
+    $('qEnd').querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; });
     $('tLock').disabled=true; $('tLock').parentElement.classList.remove('hidden');
   }
   function showWhy(){
-    const t=ORDERT[ti], opts=HDYK.shuffle(t.levels[lvl]);
+    const t=ORDERT[ti], hard=HDYK.hard(), opts=HDYK.shuffle(t.levels[lvl]);
     $('whyQ').textContent= lvl===0 ? 'Why do you believe that? Pick a reason.' : 'Why? Pick the next reason down.';
-    $('qWhy').innerHTML=opts.map((o,i)=>'<button data-i="'+t.levels[lvl].indexOf(o)+'">'+o.t+'</button>').join('');
+    $('qWhy').innerHTML=opts.map(o=>'<button data-i="'+t.levels[lvl].indexOf(o)+'">'+((hard&&o.h)||o.t)+'</button>').join('');
     $('qWhy').querySelectorAll('button').forEach(b=>b.onclick=()=>{
       const o=t.levels[lvl][+b.dataset.i];
-      block(o.t,'','Why? →');
+      block((hard&&o.h)||o.t,'','Why? →');
       if(o.k==='next' && lvl<t.levels.length-1){ lvl++; showWhy(); return; }
       ending = o.k==='next' ? 'forever' : (o.k==='loop' ? 'circle' : 'stop'); loopTo=o.to||0;
       $('whyWrap').classList.add('hidden'); $('tQs').classList.remove('hidden');
+      if(ending==='circle' && !hard){
+        drawEnding(); const c=$('callout');
+        c.innerHTML='That’s a <b>circle</b>: this reason leans on '+(loopTo===0?'the belief you started with':'a reason already in the tower')+', so the loop is highlighted.';
+        c.classList.remove('hidden');
+      }
     });
   }
+  let drawn=false;
   function drawEnding(){
+    if(drawn) return; drawn=true;
     if(ending==='stop'){ const b=document.createElement('div'); b.className='bed'; $('tower').appendChild(b); }
     if(ending==='forever'){ const m=document.createElement('div'); m.className='more'; m.textContent='• • •'; $('tower').appendChild(m); }
-    if(ending==='circle'){ $('loop').classList.remove('hidden'); const kids=$('tower').children; kids[loopTo].classList.add('hl'); kids[kids.length-1].classList.add('hl'); }
+    if(ending==='circle'){ $('loop').classList.remove('hidden'); const kids=$('tower').querySelectorAll('.blk'); kids[loopTo].classList.add('hl'); kids[kids.length-1].classList.add('hl'); }
   }
-  function wire(groupId, setter){
-    $(groupId).querySelectorAll('button').forEach(b=>b.onclick=()=>{
-      setter(b.dataset.v); $(groupId).querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b));
-      $('tLock').disabled = pickEnd===null || pickTh===null;
-    });
-  }
-  wire('qEnd',v=>pickEnd=v); wire('qTh',v=>pickTh=v);
-  const OBJ={stop:'What makes your bottom block special?',circle:'A fantasy novel fits together too',forever:"You'll never finish giving reasons"};
+  $('qEnd').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    pickEnd=b.dataset.v; $('qEnd').querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b)); $('tLock').disabled=false;
+  });
   $('tLock').onclick=()=>{
-    const t=ORDERT[ti]; const okE=pickEnd===ending, okT=pickTh===ending; towerRight+=(okE?1:0)+(okT?1:0);
-    endsFound[ending]=1;
+    const t=ORDERT[ti], ok=pickEnd===ending, hard=HDYK.hard();
+    const chain=[...$('tower').querySelectorAll('.blk')].map(x=>x.textContent.replace(/^(Belief|Why\? →)/,'').trim()).filter(Boolean).join(' Why? ');
+    if(!ok && tries===0){
+      tries=1; HDYK.miss(4,{q:'How does this chain of reasons end? '+chain, opts:['Forever','Circle','Stop'], a:['forever','circle','stop'].indexOf(ending), why:WHY[ending]});
+      const w=$('qEnd').querySelector('[data-v="'+pickEnd+'"]'); w.classList.remove('pick'); w.classList.add('wrong'); w.disabled=true; pickEnd=null; $('tLock').disabled=true;
+      const h=$('tHint'); h.innerHTML= hard ? '<b class="head">Not quite.</b><p>No hint in Philosopher mode. Try once more.</p>' : '<b class="head">Not quite. Hint:</b><p>Read your last block against the guide, top question first. Does it need another reason? Does it lean on something above? Or did you see it yourself?</p>';
+      h.classList.remove('hidden'); return;
+    }
+    $('tHint').classList.add('hidden');
+    const first=ok&&tries===0; if(first) towerRight++; towerTotal++;
     $('tLock').parentElement.classList.add('hidden');
     drawEnding();
-    [['qEnd',ending,pickEnd],['qTh',ending,pickTh]].forEach(([g,ans,p])=>$(g).querySelectorAll('button').forEach(b=>{
-      b.disabled=true; b.classList.remove('pick'); if(b.dataset.v===ans) b.classList.add('right'); else if(b.dataset.v===p) b.classList.add('wrong'); }));
-    const chain=[...$('tower').children].map(x=>x.textContent.replace(/^(Belief|Why\? →)/,'').trim()).filter(Boolean).join(' Why? ');
-    if(!okE) HDYK.miss(4,{q:'How does this chain of reasons end? '+chain, opts:['Forever','Circle','Stop'], a:['forever','circle','stop'].indexOf(ending), why:WHY[ending]});
-    if(!okT) HDYK.miss(4,{q:'Which objection hits a chain of reasons that ends in a '+END[ending].toLowerCase()+' hardest?', opts:[OBJ.stop,OBJ.circle,OBJ.forever], a:['stop','circle','forever'].indexOf(ending), why:WHY[ending]});
-    const fb=$('tFb'); fb.className='fb'+(okE&&okT?'':' bad');
-    fb.innerHTML='<b class="head">'+(okE&&okT?HDYK.react(true):(okE||okT?'One of two.':HDYK.react(false)))+' It ends: '+END[ending]+'.</b><p>'+WHY[ending]+'</p>';
-    log.push({c:'Tower: '+t.belief, you:END[pickEnd]+' / '+OBJ[pickTh], ans:END[ending]+' / '+OBJ[ending], ok:okE&&okT});
-    $('tNext').textContent= ti===TOWERS.length-1 ? 'To the Theory Desk' : 'Next tower';
+    $('qEnd').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(b.dataset.v===ending) b.classList.add('right'); else if(b.dataset.v===pickEnd) b.classList.add('wrong'); });
+    const fb=$('tFb'); fb.className='fb'+(ok?'':' bad');
+    let extra= (t.arguable&&ending==='stop') ? '<p class="small">Argued about: is a bare memory a basic belief, or does it quietly lean on trusting your memory? Foundationalists disagree with each other here.</p>' : '';
+    fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&tries>0)+' It ends: '+END[ending]+'.</b><p>'+WHY[ending]+'</p>'+extra;
+    HDYK.challenge(fb,4,('Tower: '+t.belief).slice(0,90));
+    log.push({c:'Tower: '+t.belief, you:(tries?'2nd try: ':'')+(pickEnd?END[pickEnd]:'-'), ans:END[ending], ok:first});
+    $('tNext').textContent= ti===ORDERT.length-1 ? (HDYK.hard() ? 'On to the extras' : 'To the bonus round') : 'Next tower';
     $('tNextWrap').classList.remove('hidden');
   };
-  $('tNext').onclick=()=>{ ti++; if(ti<TOWERS.length) startTower(); else { show('sDesk'); showDesk(); } };
-  $('startBtn').onclick=()=>{ HDYK.resetMisses(4); ORDERT=HDYK.shuffle(TOWERS); DK=HDYK.shuffle(DESK); endsFound={}; show('sTower'); startTower(); };
+  $('tNext').onclick=()=>{ drawn=false; ti++; if(ti<ORDERT.length) startTower(); else if(HDYK.hard()){ show('sNorman'); showNorman(); } else { di=0; show('sDesk'); showDesk(); } };
+  HDYK.hardToggle($('mode'));
+  $('startBtn').onclick=()=>{
+    HDYK.resetMisses(4); HDYK.resetChallenges(4);
+    ORDERT=HDYK.shuffle(TOWERS.concat(HDYK.hard()?[HARDTOWER]:[])); DK=HDYK.shuffle(DESK);
+    ti=0; di=0; towerRight=0; towerTotal=0; deskRight=0; log=[]; dSkipped=false; drawn=false;
+    show('sTower'); startTower();
+  };
 
+  // ---- Philosopher extra: Norman ----
+  function showNorman(){
+    nTries=0; $('nOpts').querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; });
+    $('nHint').classList.add('hidden'); $('nFb').classList.add('hidden'); $('nNextWrap').classList.add('hidden');
+  }
+  $('nOpts').querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+    const ok=btn.dataset.v===NORMAN.a;
+    if(!ok && nTries===0){
+      nTries=1; btn.disabled=true; btn.classList.add('wrong');
+      HDYK.miss(4,{q:'Norman has a reliable power of clairvoyance but no reason to trust it. Which theory does this case put most pressure on?', opts:['Foundationalism','Coherentism','Reliabilism'], a:2, why:NORMAN.why});
+      const h=$('nHint'); h.innerHTML='<b class="head">Not quite.</b><p>No hint in Philosopher mode. Try once more.</p>'; h.classList.remove('hidden'); return;
+    }
+    $('nHint').classList.add('hidden'); towerTotal++; if(ok&&nTries===0) towerRight++;
+    $('nOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(b.dataset.v===NORMAN.a) b.className='right'; else if(b===btn) b.className='wrong'; });
+    const fb=$('nFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&nTries>0)+(ok?'':' It was reliabilism.')+'</b><p>'+NORMAN.why+'</p>';
+    HDYK.challenge(fb,4,'Norman the clairvoyant');
+    log.push({c:'Norman the clairvoyant', you:(nTries?'2nd try: ':'')+TH[btn.dataset.v], ans:'Reliabilism', ok:ok&&nTries===0});
+    $('nNext').textContent='To the bonus round'; $('nNextWrap').classList.remove('hidden');
+  });
+  $('nNext').onclick=()=>{ di=0; show('sDesk'); showDesk(); };
+
+  // ---- bonus: Theory Desk (not scored, skippable) ----
   function showDesk(){
-    const d=DK[di];
-    $('dStep').textContent='Card '+(di+1)+' of '+DESK.length; $('dText').textContent='“'+d.t+'”';
+    const d=DK[di]; dTries=0;
+    $('dStep').textContent='Card '+(di+1)+' of '+DK.length; $('dText').textContent='“'+d.t+'”';
     $('dOpts').querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; });
-    $('dFb').classList.add('hidden'); $('dNextWrap').classList.add('hidden');
+    $('dHint').classList.add('hidden'); $('dFb').classList.add('hidden'); $('dNextWrap').classList.add('hidden');
   }
   $('dOpts').querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
-    const d=DK[di], ok=btn.dataset.v===d.a; if(ok) deskRight++;
+    const d=DK[di], ok=btn.dataset.v===d.a;
+    if(!ok && dTries===0){
+      dTries=1; btn.disabled=true; btn.classList.add('wrong');
+      HDYK.miss(4,{q:'Which theory of justification would say this? “'+d.t+'”', opts:['Foundationalism','Coherentism','Infinitism','Reliabilism'], a:['F','C','I','R'].indexOf(d.a), why:d.why});
+      const h=$('dHint'); h.innerHTML= HDYK.hard() ? '<b class="head">Not quite.</b><p>Try once more.</p>' : '<b class="head">Not quite. Hint:</b><p>Match what the speaker cares about to the clue under a name: where reasons stop, how beliefs fit together, whether reasons run out, or how the belief was made.</p>';
+      h.classList.remove('hidden'); return;
+    }
+    $('dHint').classList.add('hidden'); if(ok&&dTries===0) deskRight++;
     $('dOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(b.dataset.v===d.a) b.classList.add('right'); else if(b===btn) b.classList.add('wrong'); });
-    const fb=$('dFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok)+(ok?'':' It\'s '+TH[d.a].toLowerCase()+'.')+'</b><p>'+d.why+'</p>';
-    if(!ok) HDYK.miss(4,{q:'Which theory of justification would say this? \u201c'+d.t+'\u201d', opts:['Foundationalism','Coherentism','Infinitism','Reliabilism'], a:['F','C','I','R'].indexOf(d.a), why:d.why});
-    log.push({c:'Desk: “'+d.t.slice(0,48)+'…”', you:TH[btn.dataset.v], ans:TH[d.a], ok});
-    $('dNext').textContent= di===DESK.length-1 ? 'See my results' : 'Next';
+    const fb=$('dFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&dTries>0)+(ok?'':' It\'s '+TH[d.a].toLowerCase()+'.')+'</b><p>'+d.why+'</p>';
+    HDYK.challenge(fb,4,('Theory Desk: '+d.t).slice(0,90));
+    $('dNext').textContent= di===DK.length-1 ? 'See my results' : 'Next';
     $('dNextWrap').classList.remove('hidden');
   });
-  $('dNext').onclick=()=>{ di++; if(di<DESK.length) showDesk(); else finish(); };
-
+  $('dNext').onclick=()=>{ di++; if(di<DK.length) showDesk(); else finish(); };
+  $('dSkip').onclick=()=>{ dSkipped=true; finish(); };
   function finish(){
     show('sEnd');
-    $('scores').innerHTML='<div><b>'+towerRight+' / '+TOWERS.length*2+'</b><span>tower answers</span></div><div><b>'+deskRight+' / '+DESK.length+'</b><span>theory desk</span></div>';
+    $('scores').innerHTML='<div><b>'+towerRight+' / '+towerTotal+'</b><span>towers (count for stars)</span></div><div><b>bonus</b><span>'+(dSkipped?'skipped':'Theory Desk '+deskRight+' / '+DK.length+', not scored')+'</span></div>';
     $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
     $('code').textContent=CODE;
-    HDYK.end($('shelf'),{lock:4, right:towerRight+deskRight, total:TOWERS.length*2+DESK.length});
+    HDYK.end($('shelf'),{lock:4, right:towerRight, total:towerTotal});
   }
-  $('again').onclick=()=>{ ti=0; di=0; towerRight=0; deskRight=0; log=[]; show('sIntro'); };
+  $('again').onclick=()=>{ show('sIntro'); };
 })();
 </script>
 </body>

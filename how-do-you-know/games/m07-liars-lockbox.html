@@ -40,6 +40,12 @@
   .rounds li{display:flex;gap:10px;align-items:baseline;font:400 16px/1.4 Poppins,sans-serif}
   .rounds b.n{flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--plum);color:#fff;font:700 14px Poppins,sans-serif}
 
+  .hk-guide{margin:12px 0 4px;padding:10px 14px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.6);font:500 14.5px/1.45 Poppins,sans-serif}
+  .hk-guide b.gt{display:block;font:700 12px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--plum);margin-bottom:2px}
+  .hk-guide ol{margin:2px 0 0;padding-left:20px} .hk-guide li{margin:2px 0}
+  .bonus{display:inline-block;margin-bottom:8px;padding:3px 10px;border-radius:999px;background:#f7d774;border:2px solid var(--ink);font:700 12px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+  .skip{background:none;border:0;text-decoration:underline;font:600 15px Poppins,sans-serif;color:var(--mute);cursor:pointer;padding:10px 6px}
+  .skiprow{text-align:center;margin-top:8px}
   /* ---------- Round 1: the lockbox ---------- */
   .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:14px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.6deg);font:600 19px/1.4 Poppins,sans-serif;text-align:center}
   .cardtext.in{animation:pop .4s cubic-bezier(.2,.8,.3,1.3)}
@@ -131,6 +137,7 @@
     .lockbox.snap .snapfx{animation:none;opacity:1}
     .arrow.on{animation:none}
   }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -195,6 +202,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -216,7 +230,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -248,12 +266,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -271,9 +307,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -296,13 +334,11 @@
   <section id="sIntro">
     <div class="panel">
       <h2>Every sentence is a key</h2>
-      <p>Some sentences can simply be true. Some knock themselves down. And a few never settle at all. Three rounds:</p>
-      <ul class="rounds">
-        <li><b class="n">1</b><span><b>The Lockbox.</b> Feed it 8 sentences. Does each one unlock cleanly, defeat itself, or jam it as a paradox?</span></li>
-        <li><b class="n">2</b><span><b>Two Guards.</b> One always tells the truth, one always lies. Use logic to find the safe door.</span></li>
-        <li><b class="n">3</b><span><b>The Theory Desk.</b> Match 6 statements to correspondence, coherence or pragmatism.</span></li>
-      </ul>
-      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <p class="bigq"><b>The question:</b> Can a sentence break the idea of truth itself?</p>
+      <p>Feed 8 sentences to the lockbox. Each one <b>unlocks cleanly</b>, <b>defeats itself</b>, or jams it as a <b>paradox</b>. A short guide stays on screen. Example: "This sentence has five words" talks about itself but is simply true, so it unlocks cleanly.</p>
+      <p>Then two optional bonus rounds (two guards, and a theory desk). They don't count toward stars.</p>
+      <p class="small">You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
+      <div id="mode"></div>
       <div class="center"><button class="big" id="startBtn">Try the first key</button></div>
     </div>
   </section>
@@ -358,7 +394,12 @@
         </svg>
         <div class="caption" id="lCap" aria-live="polite"></div>
       </div>
+      <div class="hk-guide"><b class="gt">How to decide</b><ol>
+        <li><b>Is it about itself?</b> No: unlocks cleanly.</li>
+        <li><b>Yes?</b> Pretend it's true. Does that make it false? No: unlocks cleanly (&ldquo;This sentence has five words&rdquo;).</li>
+        <li><b>Yes?</b> Pretend it's false. Does that make it true? Yes: paradox. No: defeats itself.</li></ol></div>
       <div class="opts" id="lOpts"></div>
+      <div class="fb bad hidden" id="lTry" aria-live="polite"></div>
       <div class="fb hidden" id="lFb" aria-live="polite"></div>
       <div class="go hidden" id="lNextWrap"><button class="big" id="lNext">Next key</button></div>
     </div>
@@ -379,6 +420,7 @@
     <div class="panel">
       <div class="step" id="gStep"></div>
       <div id="gDots"></div>
+      <div class="skiprow" style="text-align:left;margin:0"><span class="bonus">Bonus: no stars riding on it</span> <button class="skip" id="gSkip">Skip bonus &rarr;</button></div>
       <div class="rules">One guard always tells the truth. One always lies. You don't know which is which.</div>
       <svg class="scene" id="scene" viewBox="0 0 360 260" aria-hidden="true">
         <rect x="0" y="0" width="360" height="236" rx="14" fill="#d6c193"/>
@@ -441,7 +483,9 @@
       </svg>
       <div id="gSays"></div>
       <div class="ask" id="gAsk"></div>
+      <div class="hk-guide" id="gGuide"></div>
       <div class="opts" id="gOpts"></div>
+      <div class="fb bad hidden" id="gTry" aria-live="polite"></div>
       <div class="fb hidden" id="gFb" aria-live="polite"></div>
       <div class="go hidden" id="gNextWrap"><button class="big" id="gNext">Next</button></div>
     </div>
@@ -452,9 +496,15 @@
     <div class="panel">
       <div class="step" id="dStep"></div>
       <div id="dDots"></div>
+      <div class="skiprow" style="text-align:left;margin:0"><span class="bonus">Bonus: no stars riding on it</span> <button class="skip" id="dSkip">Skip bonus &rarr;</button></div>
       <h2>Which theory of truth is this?</h2>
       <div class="cardtext" id="dText"></div>
+      <div class="hk-guide"><b class="gt">How to decide</b><ol>
+        <li><b>Matches the facts or the world?</b> Correspondence.</li>
+        <li><b>Fits with all our other beliefs?</b> Coherence.</li>
+        <li><b>Works when tested, or where honest inquiry would end up?</b> Pragmatist.</li></ol></div>
       <div class="opts" id="dOpts"></div>
+      <div class="fb bad hidden" id="dTry" aria-live="polite"></div>
       <div class="fb hidden" id="dFb" aria-live="polite"></div>
       <div class="go hidden" id="dNextWrap"><button class="big" id="dNext">Next</button></div>
     </div>
@@ -474,7 +524,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then Rocky will play Protagoras, and it's your job to catch him in his own trap.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b> Then Rocky will play Protagoras, and it's your job to catch him in his own trap.</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -483,37 +533,42 @@
 <script>
 (function(){
   const LOCK=7, CODE='QUARTZ MIRROR';
-  const H=window.HDYK||{react:ok=>ok?'Right.':'Not quite.',dots:()=>{},shuffle:a=>a.slice(),miss:()=>{},resetMisses:()=>{},end:()=>{}};
+  const H=window.HDYK;
   const $=id=>document.getElementById(id);
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const short=s=>s.length>70?s.slice(0,68)+'…':s;
-  const reduce=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  H.hardToggle($('mode'));
 
-  /* ---------- Round 1 data: 3 clean, 3 self-defeating, 2 paradox ---------- */
-  const K=['<b>Unlocks cleanly</b><small>can simply be true</small>','<b>Defeats itself</b><small>if true, then false</small>','<b>Paradox</b><small>true if false, false if true</small>'];
+  /* ---------- Round 1 data ---------- */
+  const K=['<b>Unlocks cleanly</b><small>no trap: can simply be true</small>','<b>Defeats itself</b><small>can\'t be true, but can be false</small>','<b>Paradox</b><small>can\'t settle on true or false</small>'];
   const KN=['Unlocks cleanly','Defeats itself','Paradox'];
   const CAP=['Click. It opens: this one can simply be true.','Snap! The key breaks inside its own lock.','Open… shut… open… It never settles.'];
   const R1=[
-    {t:"This sentence has five words.", a:0, why:"Count them: This, sentence, has, five, words. Five. It talks about itself and it's simply true. Talking about yourself isn't the problem; looping back on your own truth is."},
-    {t:"All squares have four sides.", a:0, why:"An “all” sentence can be perfectly fine. This one is about squares, not about itself, and every square really does have four sides."},
-    {t:"Nobody has ever counted all the way to infinity.", a:0, why:"No trap here: it isn't about itself at all, and it's true, since there's no last number to reach. “Nobody” doesn't make a sentence self-defeating."},
-    {t:"There is no truth.", a:1, why:"If it were true, there would be at least one truth (this sentence), so it would be false. It knocks itself down, so it's simply false."},
-    {t:"I know for certain that nobody can ever know anything.", a:1, why:"If nobody can know anything, then the speaker can't know that either. The claim knocks out its own support."},
-    {t:"Whatever anyone believes is true.", a:1, why:"Plato's trap for Protagoras. Plenty of people believe this very sentence is false. If whatever anyone believes is true, then their belief is true too, and the sentence is false. So if it's true, it's false."},
-    {t:"This sentence is false.", a:2, why:"The liar paradox. If it's true, what it says is right, so it's false. If it's false, what it says is wrong, so it's true. It never settles."},
-    {two:["The sentence on the back is true.","The sentence on the front is false."], t:"Front of a card: “The sentence on the back is true.” Back: “The sentence on the front is false.”", a:2, why:"Follow it around. If the front is true, the back is true, so the front is false. If the front is false, the back is false, so the front is true. A two-step liar: a paradox."}
+    {t:"This sentence has five words.", a:0, hint:'Guide step 2: pretend it\'s true. Does that make it false?', why:"Count them: This, sentence, has, five, words. Five. It talks about itself and it's simply true. Talking about yourself isn't the problem; looping back on your own truth is."},
+    {t:"All squares have four sides.", a:0, hint:'Guide step 1: is this sentence about itself, or about squares?', why:"An “all” sentence can be perfectly fine. This one is about squares, not about itself, and every square really does have four sides."},
+    {t:"Nobody has ever counted all the way to infinity.", a:0, hint:'Guide step 1: is the sentence talking about itself, or about people and numbers?', why:"No trap here: it isn't about itself at all, and it's true, since there's no last number to reach. “Nobody” doesn't make a sentence self-defeating."},
+    {t:"There is no truth.", a:1, hint:'Guide step 2, then 3: if this were true, it would itself be a truth. What does that do to it? And if it were false, does anything break?', why:"If it were true, there would be at least one truth (this sentence), so it would be false. It knocks itself down, so it's simply false."},
+    {t:"I know for certain that nobody can ever know anything.", a:1, hint:'It includes the speaker. Pretend it\'s true: could the speaker know it? Then check step 3.', why:"If nobody can know anything, then the speaker can't know that either. The claim knocks out its own support."},
+    {t:"Whatever anyone believes is true.", a:1, hint:'Do some people believe this very sentence is false? Use that in guide steps 2 and 3.', why:"Plato's trap for Protagoras. Plenty of people believe this very sentence is false. If whatever anyone believes is true, then their belief is true too, and the sentence is false. So if it's true, it's false."},
+    {t:"This sentence is false.", a:2, hint:'Guide step 3: pretend it\'s false. Does that make it true?', why:"The liar paradox. If it's true, what it says is right, so it's false. If it's false, what it says is wrong, so it's true. It never settles. Don't think about it too hard. (Everyone does.) On one common view it has no stable truth value; philosophers still disagree about the way out.",
+     hardWhy:" Some philosophers (Graham Priest) say the liar is both true and false, and that's fine. That view is called dialetheism, and most philosophers still resist it."},
+    {two:["The sentence on the back is true.","The sentence on the front is false."], t:"Front of a card: “The sentence on the back is true.” Back: “The sentence on the front is false.”", a:2, hint:'Follow it around once: if the front is true, what does that make the back? And then the front?', why:"Follow it around. If the front is true, the back is true, so the front is false. If the front is false, the back is false, so the front is true. A two-step liar: a paradox."}
+  ];
+  const RH=[
+    {t:"This sentence is true.", a:0, why:"Argued about. Pretend it's true: fine, nothing breaks. Pretend it's false: also fine. It never contradicts itself, so it is not a paradox. But nothing settles whether it is true or false either. The truth-teller can be called true or false with equal right, which is a different problem from the liar's."},
+    {t:"Every sentence any Cretan ever says is false. (Said by a Cretan.)", a:1, why:"If it were true, then it, said by a Cretan, would be false. So it can't be true. If it's false, all that follows is that some Cretan sentence is true, which is fine. It defeats itself, and unlike the liar it settles down as simply false."}
   ];
 
-  /* ---------- Round 3 data: 2 / 2 / 2 ---------- */
+  /* ---------- Round 3 data ---------- */
   const TN=['Correspondence','Coherence','Pragmatist'];
-  const TS=['matches the facts','fits the whole system','works out under testing'];
+  const TS=['matches the facts','fits the whole system','works when tested, or where inquiry ends up'];
   const R3=[
-    {t:"“The cat is on the mat” is true because the cat really is on the mat.", a:0, why:"Truth as matching the world: Aristotle's idea, the correspondence theory."},
-    {t:"A map is true when its roads and rivers match the land.", a:0, why:"The accurate map is the classic picture of correspondence."},
-    {t:"A belief is true when it fits, without contradiction, into our whole system of beliefs.", a:1, why:"Truth as fit with the whole: the coherence theory."},
-    {t:"No belief is true on its own. It's true by belonging to the one consistent story everything else fits into.", a:1, why:"Truth as membership in a consistent whole: coherence."},
-    {t:"True ideas are the ones that keep holding up and guiding us well as we test them.", a:2, why:"William James's pragmatism (1907)."},
-    {t:"Truth is the opinion that everyone who investigates would end up agreeing on.", a:2, why:"Charles Sanders Peirce's pragmatist definition (1878)."}
+    {t:"“The cat is on the mat” is true because the cat really is on the mat.", a:0, hint:'What makes the sentence true here: the facts, the other beliefs, or the results?', why:"Truth as matching the world: Aristotle's idea, the correspondence theory."},
+    {t:"A map is true when its roads and rivers match the land.", a:0, hint:'What does the map have to match?', why:"The accurate map is the classic picture of correspondence."},
+    {t:"A belief is true when it fits, without contradiction, into our whole system of beliefs.", a:1, hint:'What is truth being measured against here: the world, the system of beliefs, or the results?', why:"Truth as fit with the whole: the coherence theory."},
+    {t:"No belief is true on its own. It's true by belonging to the one consistent story everything else fits into.", a:1, hint:'"Belonging to one story" is about fitting together. Which theory is that?', why:"Truth as membership in a consistent whole: coherence."},
+    {t:"True ideas are the ones that keep holding up and guiding us well as we test them.", a:2, hint:'What does "holding up as we test them" point to?', why:"William James's pragmatism (1907). James: what works when you test it. Peirce, the other pragmatist: where honest inquiry would end up."},
+    {t:"Truth is the opinion that everyone who investigates would end up agreeing on.", a:2, hint:'Where would honest investigation end up? That is a pragmatist idea too.', why:"Charles Sanders Peirce's pragmatist definition (1878). Peirce: truth is where honest inquiry would end up. James: what works when you test it. Both count as pragmatist, though they weren't the same view."}
   ];
 
   /* ---------- Round 2 questions for puzzle 3 ---------- */
@@ -523,21 +578,22 @@
     {id:'you',   t:"“Are you the truth-teller?”"}
   ];
 
-  let s, log, res;
+  let s, log, res, bonus;
   const other=x=>x==='left'?'right':'left';
   const Cap=x=>x[0].toUpperCase()+x.slice(1);
   function show(id){ ['sIntro','sLock','sBreak','sGuards','sDesk','sEnd'].forEach(x=>$(x).classList.toggle('hidden',x!==id)); window.scrollTo(0,0); }
-  function fb(el,ok,head,html){ el.className='fb'+(ok?'':' bad'); el.innerHTML='<b class="head">'+H.react(ok)+' '+head+'</b>'+html; }
+  function fb(el,ok,head,html,second){ el.className='fb'+(ok?'':' bad'); el.innerHTML='<b class="head">'+H.react(ok,second)+' '+head+'</b>'+html; }
+  function hint(el,text){ if(H.hard()){ el.innerHTML='<b class="head">Not quite.</b><p>One more try.</p>'; el.classList.remove('hidden'); return; } el.innerHTML='<b class="head">Not quite. Hint:</b><p>'+text+' Try again.</p>'; el.classList.remove('hidden'); }
 
   /* ================= Round 1 ================= */
-  let L1, k1;
+  let L1, k1, t1;
   function boxReset(){
     const box=$('box'); box.setAttribute('class','lockbox');
     const key=$('key'); key.setAttribute('class','key'); void box.getBoundingClientRect();
     setTimeout(()=>key.setAttribute('class','key in'),60);
   }
   function lockItem(){
-    const it=L1[k1];
+    const it=L1[k1]; t1=0;
     $('lStep').textContent='Round 1 · The Lockbox · '+(k1+1)+' of '+L1.length;
     H.dots($('lDots'),L1.length,res.lock);
     const c=$('lText');
@@ -547,22 +603,29 @@
     boxReset();
     const o=$('lOpts'); o.className='opts';
     o.innerHTML=[0,1,2].map(i=>'<button data-i="'+i+'">'+K[i]+'</button>').join('');
-    o.querySelectorAll('button').forEach(b=>b.onclick=()=>lockAnswer(+b.dataset.i));
-    $('lFb').classList.add('hidden'); $('lNextWrap').classList.add('hidden');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>lockAnswer(+b.dataset.i,b));
+    $('lFb').classList.add('hidden'); $('lTry').classList.add('hidden'); $('lNextWrap').classList.add('hidden');
   }
-  function lockAnswer(i){
+  function lockAnswer(i,btn){
     const it=L1[k1], ok=i===it.a;
-    if(ok) s[0]++;
-    res.lock.push(ok);
+    if(!ok && t1===0){
+      t1=1; btn.disabled=true; btn.classList.add('wrong');
+      H.miss(LOCK,{q:'Feed this sentence to the Liar’s Lockbox: "'+it.t+'" Does it unlock cleanly (it can simply be true), defeat itself (it can\'t be true, but can be false), or is it a paradox (it can\'t settle on true or false)?', opts:KN.slice(), a:it.a, why:it.why});
+      hint($('lTry'),it.hint); return;
+    }
+    $('lTry').classList.add('hidden');
+    const first=ok&&t1===0, second=ok&&t1===1;
+    if(first) s[0]++;
+    res.lock.push(first);
     $('key').setAttribute('class','key in');
     $('box').setAttribute('class','lockbox '+['open','snap','flick'][it.a]);
     $('lCap').textContent=CAP[it.a];
     $('lOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); if(j===i) b.classList.add('picked'); });
     H.dots($('lDots'),L1.length,res.lock);
-    const f=$('lFb'); fb(f,ok,KN[it.a]+'.','<p>'+it.why+'</p>');
-    if(!ok) H.miss(LOCK,{q:'Feed this sentence to the Liar’s Lockbox: "'+it.t+'" Does it unlock cleanly (it can simply be true), defeat itself (if it were true, it would be false), or is it a paradox (true if false, false if true)?', opts:KN.slice(), a:it.a, why:it.why});
-    log.push({c:short(it.t), you:KN[i], ans:KN[it.a], ok});
-    $('lNext').textContent= k1===L1.length-1 ? 'On to the guards' : 'Next key';
+    const f=$('lFb'); fb(f,ok,KN[it.a]+'.','<p>'+it.why+(H.hard()&&it.hardWhy?it.hardWhy:'')+'</p>',second);
+    H.challenge(f,LOCK,short(it.t));
+    log.push({c:short(it.t), you:(second?'2nd try: ':'')+KN[i], ans:KN[it.a], ok:first});
+    $('lNext').textContent= k1===L1.length-1 ? 'On to the bonus' : 'Next key';
     $('lNextWrap').classList.remove('hidden');
   }
   $('lNext').onclick=()=>{ k1++; if(k1<L1.length) lockItem(); else breakTo(2); };
@@ -571,25 +634,27 @@
   function breakTo(n){
     show('sBreak');
     if(n===2){
-      $('bStep').textContent='Round 2 · Two Guards';
+      $('bStep').textContent='Bonus · Two Guards';
       $('bTitle').textContent='Two doors, two guards';
-      $('bBody').innerHTML='<p>One door is safe. Behind the other is a very grumpy dragon. One guard <b>always</b> tells the truth and one <b>always</b> lies, and they look exactly alike.</p><p>Three puzzles. Reason it out, then pick a door.</p>';
+      $('bBody').innerHTML='<p>The main round is done. These two bonus rounds are optional and don\'t count toward stars.</p><p>One door is safe. Behind the other is a very grumpy dragon. One guard <b>always</b> tells the truth and one <b>always</b> lies, and they look exactly alike. Three puzzles, with a hint on screen.</p><div class="skiprow"><button class="skip" id="bSkip">Skip bonus &rarr;</button></div>';
       $('bGo').textContent='Meet the guards';
       $('bGo').onclick=startGuards;
+      $('bSkip').onclick=()=>{ bonus.g='Skipped'; breakTo(3); };
     } else {
-      $('bStep').textContent='Round 3 · The Theory Desk';
+      $('bStep').textContent='Bonus · The Theory Desk';
       $('bTitle').textContent='What makes a belief true?';
-      $('bBody').innerHTML='<p>Six statements land on your desk. Is each one about truth as <b>matching the facts</b> (correspondence), <b>fitting the whole system</b> (coherence), or <b>working out under testing</b> (pragmatist)?</p>';
+      $('bBody').innerHTML='<p>Six statements land on your desk. Is each one about truth as <b>matching the facts</b> (correspondence), <b>fitting the whole system</b> (coherence), or <b>working out under testing</b> (pragmatist)? Optional, no stars riding on it.</p><div class="skiprow"><button class="skip" id="bSkip">Skip bonus &rarr;</button></div>';
       $('bGo').textContent='Open the first file';
       $('bGo').onclick=startDesk;
+      $('bSkip').onclick=()=>{ bonus.d='Skipped'; finish(); };
     }
     $('bGo').focus({preventScroll:true});
   }
 
-  /* ================= Round 2 ================= */
-  // Each puzzle may be mirrored left/right per playthrough so the answers vary.
-  let P, pk, stepIdx, G3;
+  /* ================= Bonus: two guards ================= */
+  let P, pk, G3;
   const G_TOTAL=6;
+  const GUIDE12='<b class="gt">Trick</b>Pretend one guard is the truth-teller. If his sentence then contradicts itself, he must be the liar.';
   function sceneReset(){
     ['doorL','doorR'].forEach(d=>$(d).setAttribute('class','door'));
     ['arrL','arrR'].forEach(a=>$(a).setAttribute('class','arrow'));
@@ -613,27 +678,28 @@
       el.setAttribute('class','door open '+(d===safe?'safe':'bad')+(d===mine?' mine':''));
     });
   }
+  function guide(html){ const g=$('gGuide'); g.innerHTML=html; g.classList.toggle('hidden',!html); }
   function startGuards(){
-    const m1=Math.random()<.5, m2=Math.random()<.5; // independent mirrors so door answers can't be guessed from a pattern
+    const m1=Math.random()<.5, m2=Math.random()<.5;
     const sp1=m1?'right':'left', sp2=m2?'left':'right';
-    const d1=other(sp1);           // puzzle 1: the speaker (truth-teller) names the far door
-    const t2=other(sp2), d2=t2;     // puzzle 2: the truth-teller names his own side's door
+    const d1=other(sp1);
+    const t2=other(sp2), d2=t2;
     P=[
       {kind:'atleast', speaker:sp1, truth:sp1, safe:d1},
       {kind:'both',    speaker:sp2, truth:t2,  safe:d2},
       {kind:'classic', truth:Math.random()<.5?'left':'right', safe:other(d1)}
     ];
-    pk=0; show('sGuards'); guardPuzzle();
+    pk=0; bonus.g=0; show('sGuards'); guardPuzzle();
   }
   function gHeader(){
-    $('gStep').textContent='Round 2 · Two Guards · Puzzle '+(pk+1)+' of 3';
+    $('gStep').textContent='Bonus · Two Guards · Puzzle '+(pk+1)+' of 3';
     H.dots($('gDots'),G_TOTAL,res.guards);
   }
-  function gClear(){ $('gFb').classList.add('hidden'); $('gNextWrap').classList.add('hidden'); }
+  function gClear(){ $('gFb').classList.add('hidden'); $('gTry').classList.add('hidden'); $('gNextWrap').classList.add('hidden'); }
   function setOpts(cls,items,handler){
     const o=$('gOpts'); o.className='opts '+cls;
     o.innerHTML=items.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
-    o.querySelectorAll('button').forEach(b=>b.onclick=()=>handler(+b.dataset.i));
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>handler(+b.dataset.i,b));
   }
   function markOpts(rightIdx,picked){
     $('gOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(rightIdx!==null && j===rightIdx) b.classList.add('right'); else if(j===picked) b.classList.add(rightIdx===null?'picked':'wrong'); if(j===picked) b.classList.add('picked'); });
@@ -645,17 +711,26 @@
     const line = p.kind==='atleast' ? '“At least one of us is a liar.”' : '“We are both liars.”';
     speak(p.speaker); says(p.speaker,line);
     $('gAsk').textContent='Who is the truth-teller?';
+    guide(GUIDE12);
     const OPT=['The left guard','The right guard','No way to tell yet'];
-    setOpts('',OPT.map(esc),i=>{
+    const h = p.kind==='atleast' ? 'Suppose the '+p.speaker+' guard is the liar. Would “At least one of us is a liar” then be true or false?' : 'Suppose the '+p.speaker+' guard tells the truth. What would his sentence then say about him?';
+    let tr=0;
+    setOpts('',OPT.map(esc),(i,btn)=>{
       const ans= p.truth==='left'?0:1, ok=i===ans;
-      if(ok) s[1]++; res.guards.push(ok); markOpts(ans,i); H.dots($('gDots'),G_TOTAL,res.guards);
       const sp=p.speaker, ot=other(sp);
       const why = p.kind==='atleast'
         ? 'Suppose the '+sp+' guard were the liar. Then “At least one of us is a liar” would be false, so neither of them would be a liar. But he is one. Contradiction! So the '+sp+' guard tells the truth, and the '+ot+' guard is the liar.'
         : 'Suppose the '+sp+' guard told the truth. Then “We are both liars” would be true, which would make him a liar. Impossible. So he’s the liar, his sentence is false, and the '+ot+' guard is the truth-teller.';
-      fb($('gFb'),ok,'The '+p.truth+' guard is the truth-teller.','<p>'+why+'</p>');
-      if(!ok) H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. The '+sp+' guard says, "'+(p.kind==='atleast'?'At least one of us is a liar.':'We are both liars.')+'" Who is the truth-teller?', opts:OPT.slice(), a:ans, why});
-      log.push({c:'Guards '+(pk+1)+': '+line+' Who tells the truth?', you:OPT[i], ans:OPT[ans], ok});
+      if(!ok && tr===0){
+        tr=1; btn.disabled=true; btn.classList.add('wrong');
+        H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. The '+sp+' guard says, "'+(p.kind==='atleast'?'At least one of us is a liar.':'We are both liars.')+'" Who is the truth-teller?', opts:OPT.slice(), a:ans, why});
+        hint($('gTry'),h); return;
+      }
+      $('gTry').classList.add('hidden');
+      const first=ok&&tr===0, second=ok&&tr===1;
+      if(first){ bonus.g++; } res.guards.push(first); markOpts(ans,i); H.dots($('gDots'),G_TOTAL,res.guards);
+      fb($('gFb'),ok,'The '+p.truth+' guard is the truth-teller.','<p>'+why+'</p>',second);
+      log.push({c:'Bonus guards '+(pk+1)+': '+line+' Who tells the truth?', you:OPT[i], ans:OPT[ans], ok:first, bonus:true});
       $('gNext').textContent='Hear what he says next'; $('gNextWrap').classList.remove('hidden');
       $('gNext').onclick=doorStep;
     });
@@ -665,24 +740,23 @@
     sceneReset(); speak(p.truth);
     says(p.truth,'“The '+p.safe+' door is safe.”', false);
     $('gAsk').textContent='Which door do you take?';
+    guide('<b class="gt">Trick</b>You worked out who tells the truth. What does that say about his advice?');
     doorPick(p.safe, (i,ok)=>{
       const why='The '+p.truth+' guard is the truth-teller (you worked that out from the first sentence), so when he says the '+p.safe+' door is safe, you can trust him.';
       fb($('gFb'),ok,'The '+p.safe+' door is safe.','<p>'+why+'</p>');
       const first = p.kind==='atleast' ? 'The '+p.speaker+' guard says, "At least one of us is a liar." Then he says, "The '+p.safe+' door is safe."'
                                        : 'The '+p.speaker+' guard says, "We are both liars." The '+p.truth+' guard says, "The '+p.safe+' door is safe."';
       if(!ok) H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. '+first+' Which door is safe?', opts:['The left door','The right door'], a:p.safe==='left'?0:1, why});
-      return why;
     });
   }
   function doorPick(safe,after){
     setOpts('two',['Left door','Right door'],i=>{
       const pick=i===0?'left':'right', ok=pick===safe;
-      if(ok) s[1]++; res.guards.push(ok);
+      if(ok) bonus.g++; res.guards.push(ok);
       markOpts(safe==='left'?0:1,i); H.dots($('gDots'),G_TOTAL,res.guards);
       openDoors(safe,pick);
-      const p=P[pk];
       after(i,ok);
-      log.push({c:'Guards '+(pk+1)+': which door?', you:Cap(pick)+' door', ans:Cap(safe)+' door', ok});
+      log.push({c:'Bonus guards '+(pk+1)+': which door?', you:Cap(pick)+' door', ans:Cap(safe)+' door', ok, bonus:true});
       $('gNext').textContent= pk<2 ? 'Next puzzle' : 'On to the Theory Desk';
       $('gNext').onclick=()=>{ pk++; if(pk<3) guardPuzzle(); else breakTo(3); };
       $('gNextWrap').classList.remove('hidden');
@@ -692,6 +766,7 @@
     const p=P[pk]; G3={q:null, asked:null};
     $('gSays').innerHTML='<div class="say"><span class="who">The rule this time</span><span class="claim">You may ask ONE guard ONE question. Then you choose a door.</span></div>';
     $('gAsk').textContent='Which question do you ask?';
+    guide('<b class="gt">Trick</b>You won\'t know which guard you asked. Pick a question where the answer is useful whether he lies or not.');
     const order=H.shuffle([0,1,2]);
     const o=$('gOpts'); o.className='opts one';
     o.innerHTML=order.map(i=>'<button data-i="'+i+'">'+QS[i].t+'</button>').join('');
@@ -704,89 +779,99 @@
   function classicWho(){
     $('gSays').innerHTML='<div class="say"><span class="who">Your question</span><span class="claim">'+QS[G3.q].t+'</span></div>';
     $('gAsk').textContent='Which guard do you ask?';
+    guide('');
     setOpts('two',['Ask the left guard','Ask the right guard'],i=>{ G3.asked=i===0?'left':'right'; classicAnswer(); });
   }
   function classicAnswer(){
     const p=P[pk], g=G3.asked, liar=g!==p.truth, qid=QS[G3.q].id;
     let pointed=null, line;
-    if(qid==='other'){ pointed=other(p.safe); line='“He would say the '+pointed+' door.”'; }        // always the unsafe door
-    else if(qid==='which'){ pointed= liar?other(p.safe):p.safe; line='“The '+pointed+' door.”'; } // depends on who you asked
-    else { line='“Yes.”'; }                                                                       // both say yes
+    if(qid==='other'){ pointed=other(p.safe); line='“He would say the '+pointed+' door.”'; }
+    else if(qid==='which'){ pointed= liar?other(p.safe):p.safe; line='“The '+pointed+' door.”'; }
+    else { line='“Yes.”'; }
     G3.pointed=pointed;
     speak(g); if(pointed) point(g,pointed);
     $('gSays').innerHTML='<div class="say"><span class="who">You ask the '+g+' guard</span><span class="claim">'+QS[G3.q].t+'</span></div>';
     says(g,line,true);
     $('gAsk').textContent='Which door do you take?';
+    guide(qid==='other' ? '<b class="gt">Trick</b>One lie in the chain, whoever you asked. Does his answer point at the safe door, or away from it?' : '');
     doorPick(p.safe,(i,ok)=>{
-      const pick=i===0?'left':'right', good=qid==='other';
-      if(good) s[1]++;
-      res.guards.splice(res.guards.length-1,0,good); // question result goes before the door result
+      const good=qid==='other';
+      if(good) bonus.g++;
+      res.guards.splice(res.guards.length-1,0,good);
       H.dots($('gDots'),G_TOTAL,res.guards);
-      const whyQ='Whichever guard you ask, “If I asked the other guard which door is safe, what would he say?” points to the unsafe door. The truth-teller honestly reports the liar’s lie; the liar lies about the truth-teller’s honest answer. Either way there is exactly one lie in the chain, so you take the other door.';
-      let body;
+      const whyQ='If I asked the other guard which door is safe, what would he say?” always points to the unsafe door, so take the other.';
+      let body, head;
       if(good){
-        body='<p>He pointed to the '+pointed+' door, so the safe one is the '+other(pointed)+' door. '+whyQ+'</p>'+(ok?'':'<p>You had the right question, but went through the door he pointed at. With this question, always take the other one.</p>');
-      } else if(qid==='which'){
-        body='<p>“Which door is safe?” doesn’t help, because you don’t know if you asked the liar. This time you asked the '+(liar?'liar':'truth-teller')+', so he pointed to the '+(liar?'unsafe':'safe')+' door, but you couldn’t have known that. '+(ok?'You got through on luck.':'')+'</p><p>The better question: '+whyQ+'</p>';
+        head = ok ? 'Safe door: the '+p.safe+' one.' : 'The '+p.safe+' door was safe.';
+        body='<p>He pointed to the '+pointed+' door, so the safe one is the '+other(pointed)+' door. '+(ok?'This question always points to the unsafe door, so you take the other.':'You had the right question, but took the door he pointed at. With this question, always take the other one.')+'</p>';
       } else {
-        body='<p>“Are you the truth-teller?” gets “Yes” from both guards: the truth-teller honestly, the liar falsely. So it told you nothing about the doors. '+(ok?'You got through on luck.':'')+'</p><p>The better question: '+whyQ+'</p>';
+        head = ok ? 'Right door. Wrong question. You got through on luck (Lock 1 would have something to say about that).' : 'The '+p.safe+' door was safe.';
+        body= qid==='which'
+          ? '<p>“Which door is safe?” only helps if you know who the liar is. Try: “'+whyQ+'</p>'
+          : '<p>“Are you the truth-teller?” gets “Yes” from both, so it says nothing about the doors. Try: “'+whyQ+'</p>';
       }
-      body+='<p class="tie"><b>Notice:</b> the liar guard is reliable in his own way. He’s wrong every time, so you can flip what he says. The liar <em>sentence</em> can’t be flipped like that: it has no stable truth value at all.</p>';
-      const head = ok ? 'Safe door: the '+p.safe+' one.' : 'The '+p.safe+' door was safe.';
-      fb($('gFb'),ok&&good,head,body);
+      const f=$('gFb'); fb(f,ok&&good,'',body);
+      f.querySelector('b.head').innerHTML= (ok&&good? H.react(true)+' ':'')+head;
       const qOpts=QS.map(q=>q.t.replace(/[“”]/g,'"'));
       if(!good){
-        H.miss(LOCK,{q:'Two guards guard two doors. One always tells the truth and one always lies, and you don’t know which. You may ask ONE guard ONE question. Which question tells you the safe door?', opts:qOpts, a:0, why:whyQ});
+        H.miss(LOCK,{q:'Two guards guard two doors. One always tells the truth and one always lies, and you don’t know which. You may ask ONE guard ONE question. Which question tells you the safe door?', opts:qOpts, a:0, why:'“If I asked the other guard which door is safe, what would he say?” always points to the unsafe door. One lie sits in the chain either way, so you take the other door.'});
       }
-      log.push({c:'Guards 3: which question?', you:QS[G3.q].t.replace(/[“”]/g,''), ans:QS[0].t.replace(/[“”]/g,''), ok:good});
-      if(!ok && pointed && good){
-        H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. You ask one of them, "If I asked the other guard which door is safe, what would he say?" He points to the '+pointed+' door. Which door should you take?', opts:['The left door','The right door','No way to tell'], a:p.safe==='left'?0:1, why:whyQ});
-      } else if(!ok && !good){
-        H.miss(LOCK,{q:'Two guards: one always tells the truth and one always lies, and you don’t know which. You ask one of them, "If I asked the other guard which door is safe, what would he say?" He points to the '+other(p.safe)+' door. Which door should you take?', opts:['The left door','The right door','No way to tell'], a:p.safe==='left'?0:1, why:whyQ});
-      }
+      log.push({c:'Bonus guards 3: which question?', you:QS[G3.q].t.replace(/[“”]/g,''), ans:QS[0].t.replace(/[“”]/g,''), ok:good, bonus:true});
     });
   }
+  $('gSkip').onclick=()=>{ bonus.g='Skipped'; breakTo(3); };
 
-  /* ================= Round 3 ================= */
-  let L3, k3;
-  function startDesk(){ L3=H.shuffle(R3); k3=0; show('sDesk'); deskItem(); }
+  /* ================= Bonus: theory desk ================= */
+  let L3, k3, t3;
+  function startDesk(){ L3=H.shuffle(R3); k3=0; bonus.d=0; show('sDesk'); deskItem(); }
   function deskItem(){
-    const it=L3[k3];
-    $('dStep').textContent='Round 3 · The Theory Desk · '+(k3+1)+' of '+L3.length;
+    const it=L3[k3]; t3=0;
+    $('dStep').textContent='Bonus · The Theory Desk · '+(k3+1)+' of '+L3.length;
     H.dots($('dDots'),L3.length,res.desk);
     const c=$('dText'); c.textContent=it.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
     const order=H.shuffle([0,1,2]);
     const o=$('dOpts'); o.className='opts';
     o.innerHTML=order.map(i=>'<button data-i="'+i+'"><b>'+TN[i]+'</b><small>'+TS[i]+'</small></button>').join('');
-    o.querySelectorAll('button').forEach(b=>b.onclick=()=>deskAnswer(+b.dataset.i));
-    $('dFb').classList.add('hidden'); $('dNextWrap').classList.add('hidden');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>deskAnswer(+b.dataset.i,b));
+    $('dFb').classList.add('hidden'); $('dTry').classList.add('hidden'); $('dNextWrap').classList.add('hidden');
   }
-  function deskAnswer(i){
+  function deskAnswer(i,btn){
     const it=L3[k3], ok=i===it.a;
-    if(ok) s[2]++; res.desk.push(ok);
+    if(!ok && t3===0){
+      t3=1; btn.disabled=true; btn.classList.add('wrong');
+      H.miss(LOCK,{q:'Which theory of truth is this? "'+it.t.replace(/[“”]/g,"'")+'" (Correspondence: truth matches the facts. Coherence: truth fits the whole system of beliefs. Pragmatist: truth is what works when tested, or where honest inquiry would end up.)', opts:TN.slice(), a:it.a, why:it.why});
+      hint($('dTry'),it.hint); return;
+    }
+    $('dTry').classList.add('hidden');
+    const first=ok&&t3===0, second=ok&&t3===1;
+    if(first) bonus.d++; res.desk.push(first);
     $('dOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); if(j===i) b.classList.add('picked'); });
     H.dots($('dDots'),L3.length,res.desk);
-    fb($('dFb'),ok,TN[it.a]+'.','<p>'+it.why+'</p>');
-    if(!ok) H.miss(LOCK,{q:'Which theory of truth is this? "'+it.t.replace(/[“”]/g,"'")+'"', opts:TN.slice(), a:it.a, why:it.why});
-    log.push({c:short(it.t), you:TN[i], ans:TN[it.a], ok});
+    const f=$('dFb'); fb(f,ok,TN[it.a]+'.','<p>'+it.why+'</p>',second);
+    H.challenge(f,LOCK,short(it.t));
+    log.push({c:short(it.t), you:(second?'2nd try: ':'')+TN[i], ans:TN[it.a], ok:first, bonus:true});
     $('dNext').textContent= k3===L3.length-1 ? 'See my results' : 'Next';
     $('dNextWrap').classList.remove('hidden');
   }
   $('dNext').onclick=()=>{ k3++; if(k3<L3.length) deskItem(); else finish(); };
+  $('dSkip').onclick=()=>{ bonus.d='Skipped'; finish(); };
 
   /* ================= end ================= */
   function finish(){
     show('sEnd');
     document.querySelector('details.answers').open=false;
-    $('scores').innerHTML='<div><b>'+s[0]+' / 8</b><span>lockbox</span></div><div><b>'+s[1]+' / '+G_TOTAL+'</b><span>two guards</span></div><div><b>'+s[2]+' / 6</b><span>theory desk</span></div>';
-    $('rows').innerHTML=log.map(r=>'<tr><td>'+esc(r.c)+'</td><td>'+esc(r.you)+'</td><td class="'+(r.ok?'yes':'nope')+'">'+esc(r.ans)+'</td></tr>').join('');
+    const n1=L1.length;
+    const gShow= typeof bonus.g==='number' ? bonus.g+' / '+G_TOTAL : 'Skipped';
+    const dShow= typeof bonus.d==='number' ? bonus.d+' / '+R3.length : 'Skipped';
+    $('scores').innerHTML='<div><b>'+s[0]+' / '+n1+'</b><span>lockbox</span></div><div><b>'+gShow+'</b><span>bonus: two guards</span></div><div><b>'+dShow+'</b><span>bonus: theory desk</span></div>';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+(r.bonus?'<i>Bonus</i> ':'')+esc(r.c)+'</td><td>'+esc(r.you)+'</td><td class="'+(r.ok?'yes':'nope')+'">'+esc(r.ans)+'</td></tr>').join('');
     $('code').textContent=CODE;
-    H.end($('shelf'),{lock:LOCK,right:s[0]+s[1]+s[2],total:8+G_TOTAL+6});
+    H.end($('shelf'),{lock:LOCK,right:s[0],total:n1});
   }
   function start(){
-    s=[0,0,0]; log=[]; res={lock:[],guards:[],desk:[]};
-    H.resetMisses(LOCK);
-    L1=H.shuffle(R1); k1=0; show('sLock'); lockItem();
+    s=[0,0,0]; log=[]; res={lock:[],guards:[],desk:[]}; bonus={};
+    H.resetMisses(LOCK); H.resetChallenges(LOCK);
+    L1=H.shuffle(R1.concat(H.hard()?RH:[])); k1=0; show('sLock'); lockItem();
   }
   $('startBtn').onclick=start;
   $('again').onclick=()=>show('sIntro');

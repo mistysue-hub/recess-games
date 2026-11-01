@@ -61,8 +61,9 @@
   .pip.used{background:transparent;border-style:dashed;transform:scale(.8)}
 
   /* clue cards */
-  .clues{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-  .clue{position:relative;padding:0;border:0;background:none;cursor:pointer;perspective:900px;text-align:left;min-height:118px;border-radius:12px}
+  .clues{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+  .clue{position:relative;padding:0;border:0;background:none;cursor:pointer;perspective:900px;text-align:left;min-height:132px;border-radius:12px;flex:0 0 calc(50% - 6px)}
+  @media (min-width:600px){ .clue{flex-basis:calc(33.333% - 8px)} }
   .clue .in3{display:grid;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.3,1.15)}
   .clue.up .in3{transform:rotateY(180deg)}
   .face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
@@ -70,6 +71,7 @@
     background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 6px,transparent 6px 12px)}
   .face.front svg{width:34px;height:34px}
   .face.front .lab{font:700 15px/1.15 Poppins,sans-serif;color:#fff}
+  .face.front .cq{font:500 12.5px/1.25 Poppins,sans-serif;color:#f1e6ff}
   .face.front .tap{font:500 11px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#f7d774}
   .face.back{background:#fff;border:2px solid #b89b67;transform:rotateY(180deg);gap:4px}
   .face.back .lab{font:700 11px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--plum)}
@@ -92,6 +94,11 @@
   .opts button.wrong{background:var(--tang)}
   .opts button:disabled{cursor:default}
   .opts button.dim{opacity:.55}
+  .hk-guide{margin:12px 0 4px;padding:10px 14px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.6);font:500 14.5px/1.45 Poppins,sans-serif}
+  .hk-guide b.gt{display:block;font:700 12px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--plum);margin-bottom:2px}
+  .hk-guide div{margin:2px 0}
+  .bonus{display:inline-block;margin-bottom:8px;padding:3px 10px;border-radius:999px;background:#f7d774;border:2px solid var(--ink);font:700 12px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+  .skip{background:none;border:0;text-decoration:underline;font:600 15px Poppins,sans-serif;color:var(--mute);cursor:pointer;padding:12px 8px}
   .decide{font:600 13px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:16px 0 -6px}
 
   .cardtext{background:var(--bg);border:1.5px solid #b89b67;border-radius:16px;padding:16px 18px;box-shadow:0 3px 8px rgba(43,33,23,.18);transform:rotate(-.8deg);font:600 19px/1.4 Poppins,sans-serif}
@@ -110,12 +117,12 @@
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
   .sleuth{font:500 14px/1.4 Poppins,sans-serif;color:var(--mute);margin:0 0 10px;text-align:center}
   @media (max-width:560px){ .opts.three,.opts.two{grid-template-columns:1fr} .claim{font-size:18px} }
-  @media (max-width:360px){ .clues{grid-template-columns:1fr 1fr} }
   @media (prefers-reduced-motion:reduce){
     .fan .fc,.case.in,.cardtext.in{animation:none}
     .clue .in3,.pip{transition:none}
     .clue:not(:disabled):not(.up):hover .in3{transform:none}
   }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -180,6 +187,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -201,7 +215,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -233,12 +251,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -256,9 +292,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -289,13 +327,15 @@
           <text x="40" y="78" transform="rotate(-16 40 98)">?</text><text x="84" y="62" transform="rotate(-7 84 86)">?</text><text x="156" y="62" transform="rotate(7 156 86)">?</text><text x="200" y="78" transform="rotate(16 200 98)">?</text>
         </g>
       </svg>
+      <p class="bigq"><b>The question:</b> When should you take someone's word for it?</p>
       <h2>Weigh the source</h2>
       <ul class="rules">
-        <li><b class="n">1</b><span><b>Three Clues.</b> Six claims, each with a source. Five clue cards lie face down: Goldman's arguments, agreement, credentials, interests and track record. You may flip only <b>three</b>, so choose the ones that matter. Then decide.</span></li>
-        <li><b class="n">2</b><span><b>Bubble or Chamber?</b> Four groups. Are other voices missing, or distrusted?</span></li>
-        <li><b class="n">3</b><span><b>When a friend disagrees.</b> One last case.</span></li>
+        <li><b class="n">1</b><span><b>Three Clues.</b> Six claims. Each has five clue cards face down, and you may flip only <b>three</b>. Pick the ones that matter, then make your call.</span></li>
+        <li><b class="n">2</b><span><b>Bubble or Chamber?</b> Four groups: is it a bubble or an echo chamber?</span></li>
+        <li><b class="n">3</b><span><b>Bonus:</b> a friend disagrees. Skippable.</span></li>
       </ul>
-      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <p class="small">You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
+      <div id="mode"></div>
       <div class="center"><button class="big" id="startBtn">Deal the first case</button></div>
     </div>
   </section>
@@ -311,7 +351,12 @@
       </div>
       <div class="clues" id="cCards"></div>
       <div class="decide" id="cDecide">Your call</div>
+      <div class="hk-guide"><b class="gt">How to decide</b>
+        <div><b>Trust it:</b> good reasons, others agree, nothing to gain.</div>
+        <div><b>Needs more evidence:</b> some good signs, some missing.</div>
+        <div><b>Set it aside:</b> they gain from it, no real evidence, or outside their field.</div></div>
       <div class="opts three" id="cOpts"></div>
+      <div class="fb bad hidden" id="cTry" aria-live="polite"></div>
       <div class="fb hidden" id="cFb" aria-live="polite"></div>
       <div class="go hidden" id="cNextWrap"><button class="big" id="cNext">Next case</button></div>
     </div>
@@ -323,7 +368,10 @@
       <div id="qDots"></div>
       <h2 id="qTitle"></h2>
       <div class="cardtext" id="qText"></div>
+      <div class="hk-guide" id="qGuide"></div>
       <div class="opts" id="qOpts"></div>
+      <div class="fb bad hidden" id="qTry" aria-live="polite"></div>
+      <div class="go hidden" id="qSkipWrap"><button class="skip" id="qSkip">Skip bonus &rarr;</button></div>
       <div class="fb hidden" id="qFb" aria-live="polite"></div>
       <div class="go hidden" id="qNextWrap"><button class="big" id="qNext">Next</button></div>
     </div>
@@ -343,7 +391,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll ask you to weigh a source you actually use, with two of Goldman's clues.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b> Then one quick pick: which of two sources would you trust, and why?</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -354,18 +402,21 @@
   const LOCK=6, CODE='BRONZE BELL';
   const W=['<b>Trust it, for now</b><small>good grounds</small>','<b>Needs more evidence</b><small>take it seriously, check</small>','<b>Set it aside</b><small>not a good source</small>'];
   const WN=['Trust it, for now','Needs more evidence','Set it aside'];
+  const I='stroke="#f7d774" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"';
   const CLUES=[
-    {k:'arg',  n:'Arguments',    icon:'<path d="M6 10h22v14H14l-6 5v-5H6z" fill="none" stroke="#f7d774" stroke-width="2.4" stroke-linejoin="round"/><path d="M11 15h12M11 19h8" stroke="#f7d774" stroke-width="2.2" stroke-linecap="round"/>'},
-    {k:'agree',n:'Agreement',    icon:'<circle cx="11" cy="13" r="4" fill="none" stroke="#f7d774" stroke-width="2.4"/><circle cx="23" cy="13" r="4" fill="none" stroke="#f7d774" stroke-width="2.4"/><path d="M4 27c1-5 4-7 7-7s6 2 7 7M16 27c1-5 4-7 7-7s6 2 7 7" fill="none" stroke="#f7d774" stroke-width="2.4" stroke-linecap="round"/>'},
-    {k:'cred', n:'Credentials',  icon:'<path d="M17 6l12 5-12 5-12-5z" fill="none" stroke="#f7d774" stroke-width="2.4" stroke-linejoin="round"/><path d="M10 14v6c3 3 11 3 14 0v-6M29 11v8" fill="none" stroke="#f7d774" stroke-width="2.4" stroke-linecap="round"/>'},
-    {k:'int',  n:'Interests',    icon:'<circle cx="17" cy="17" r="11" fill="none" stroke="#f7d774" stroke-width="2.4"/><path d="M21 12.5c-1-1.5-7-2-7 1.5s7 2 7 5.5-6 3-7.5 1M17 9v3M17 23v3" fill="none" stroke="#f7d774" stroke-width="2.2" stroke-linecap="round"/>'},
-    {k:'track',n:'Track record', icon:'<path d="M5 27h24" stroke="#f7d774" stroke-width="2.4" stroke-linecap="round"/><path d="M7 22l6-6 5 4 9-10" fill="none" stroke="#f7d774" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 10h5v5" fill="none" stroke="#f7d774" stroke-width="2.4" stroke-linecap="round"/>'}
+    {k:'arg',  n:'Arguments',    q:'Can I follow their reasons?', icon:'<path d="M6 10h22v14H14l-6 5v-5H6z" '+I+'/><path d="M11 15h12M11 19h8" '+I+'/>'},
+    {k:'agree',n:'Agreement',    q:'Do other experts say the same, separately?', icon:'<circle cx="11" cy="13" r="4" '+I+'/><circle cx="23" cy="13" r="4" '+I+'/><path d="M4 27c1-5 4-7 7-7s6 2 7 7M16 27c1-5 4-7 7-7s6 2 7 7" '+I+'/>'},
+    {k:'cred', n:'Credentials',  q:'Trained in THIS topic?', icon:'<path d="M17 6l12 5-12 5-12-5z" '+I+'/><path d="M10 14v6c3 3 11 3 14 0v-6M29 11v8" '+I+'/>'},
+    {k:'int',  n:'Interests',    q:'Do they gain if I believe it?', icon:'<circle cx="17" cy="17" r="11" '+I+'/><path d="M21 12.5c-1-1.5-7-2-7 1.5s7 2 7 5.5-6 3-7.5 1M17 9v3M17 23v3" '+I+'/>'},
+    {k:'track',n:'Track record', q:'Been right before?', icon:'<path d="M5 27h24" '+I+'/><path d="M7 22l6-6 5 4 9-10" '+I+'/><path d="M22 10h5v5" '+I+'/>'}
   ];
-  // Round 1: answers balanced 2 Trust / 2 Needs more / 2 Set aside (the physicist case also accepts Needs more).
+  const NAME={}; CLUES.forEach(c=>NAME[c.k]=c.n);
+  // Round 1. "any" = other answers that are also fair. "keys" = clues that mattered most (any of them counts for clue sense).
   const R1=[
     {short:'Nobel physicist on nutrition', who:'Dr. Alma Voss, winner of the Nobel Prize in Physics, on a popular podcast',
-     claim:'“Eating just one meal a day will add ten years to your life.”', a:2, any:[1,2], key:'cred',
-     keyLine:'her prize is for work on lasers, and she has no training in nutrition.',
+     claim:'“Eating just one meal a day will add ten years to your life.”', a:2, any:[1,2], keys:['cred','track'],
+     keyLine:'her prize is for work on lasers, with no training or record in nutrition.',
+     hint:'Look at the last words of the "Set it aside" line in the guide. Is this claim inside her field?',
      clues:{arg:'Her reason: she has felt sharper since she started. She names no studies.',
             agree:'The nutrition researchers the show asked afterward said the evidence doesn\'t support a claim this big.',
             cred:'Her Nobel Prize is for work on lasers. She has no training in nutrition.',
@@ -375,44 +426,51 @@
      mq:'A Nobel-winning physicist confidently says on a podcast that eating one meal a day will add ten years to your life. She has no training in nutrition and cites no studies. What is the best response?',
      mopts:['Trust it: a Nobel Prize shows she is a careful thinker','Check it or set it aside: her expertise is in physics, not nutrition','Trust it: she isn\'t selling anything'], ma:1},
     {short:'A company\'s study of its own drink', who:'A study posted on the website of VoltUp, the company that makes the drink',
-     claim:'“VoltUp energy drink improves focus 40% more than coffee.”', a:1, key:'int',
+     claim:'“VoltUp energy drink improves focus 40% more than coffee.”', a:1, any:[1,2], keys:['int'],
      keyLine:'the study was paid for by the company selling the drink, and run by its own staff.',
+     hint:'Does the company gain if you believe it? Compare the "Needs more evidence" and "Set it aside" lines in the guide, and ask whether any evidence is here at all.',
      clues:{arg:'30 people were tested for one afternoon. The page doesn\'t say how focus was measured.',
             agree:'No outside lab has tested VoltUp yet.',
             cred:'The two researchers have real degrees in nutrition science.',
             int:'VoltUp paid for the study, and both researchers work for VoltUp.',
             track:'VoltUp is new. This is the first study it has ever published.'},
-     why:'A paid study isn\'t automatically false, and the researchers are qualified. But the company gains if you believe it, and the test was small. Take it seriously enough to wait for an independent test.'},
+     why:'Two fair answers. The company gains if you believe it and the test was small (leans “Set it aside”), but the researchers are qualified and there is some real, if thin, evidence (leans “Needs more evidence”). Only “Trust it” misses. Either way, wait for an independent test.',
+     mq:'Two researchers employed by a drink company test 30 people for one afternoon and report that its drink beats coffee by 40%. The researchers are properly qualified. What is the best response?',
+     mopts:['Trust it: the researchers are qualified','Wait for an independent test before relying on it','Believe the opposite: the study proves the drink does nothing'], ma:1},
     {short:'Textbook: the continents move', who:'Your Earth-science textbook, summing up what geologists know',
-     claim:'“The continents are moving, a few centimeters a year.”', a:0, key:'agree',
+     claim:'“The continents are moving, a few centimeters a year.”', a:0, keys:['agree'],
      keyLine:'nearly every geologist accepts it, and each of them has looked at the evidence.',
+     hint:'Re-read the "Trust it" line of the guide. Which of those three signs do you see in the clues?',
      clues:{arg:'GPS stations measure the movement directly, and matching rocks and fossils line up on coasts now oceans apart.',
             agree:'Nearly every geologist accepts it. A few argue about details of how and how fast.',
             cred:'The chapter was written by geology professors and checked by other experts.',
             int:'The authors gain nothing special if you believe this particular claim.',
             track:'The idea has passed decades of new tests and still explains what geologists find.'},
-     why:'Broad agreement among the people who study this, backed by evidence you can partly follow yourself. That is about as strong as testimony gets. It is still “for now”: new evidence could change it. Arguing about details is normal science.'},
+     why:'Broad agreement among the people who study this, backed by evidence you can partly follow yourself. Agreement only counts if experts reached it separately. Ten experts quoting one study are one voice. Here, many geologists have checked it independently. That is about as strong as testimony gets. It is still “for now”: new evidence could change it. Arguing about details is normal science.'},
     {short:'A lone scientist vs. the experts', who:'Dr. Rena Takoda, a young plant scientist at a small farm college',
-     claim:'“The blight killing apple trees in our valley is spread by a tiny beetle. It isn\'t caused by cold winters.”', a:1, key:'arg',
+     claim:'“The blight killing apple trees in our valley is spread by a tiny beetle. It isn\'t caused by cold winters.”', a:1, keys:['arg'],
      keyLine:'her evidence is something you can follow: the beetle in every sick tree she sampled, in none of the healthy ones, and sprayed trees recovering.',
+     hint:'Count the good signs and the missing ones. Which line of the guide fits a mix?',
      clues:{arg:'She found the beetle in every sick tree she sampled and in none of the healthy ones. Trees she sprayed for it recovered.',
             agree:'Almost every orchard expert in the region says she\'s wrong. Cold winters are the accepted cause.',
             cred:'Her degree is real, but she is early in her career and has published little.',
             int:'She sells nothing. Going against the experts is risking her reputation.',
             track:'She is too new to have much of one.'},
-     why:'One scientist against the experts, but with real evidence: the spirit of Barry Marshall\'s 1984 ulcer story. It isn\'t proof yet, and experts are usually right about their own field, so don\'t trust it yet. Don\'t toss it either. Evidence is what changes the answer, so test it.'},
+     why:'One scientist against the experts, but with real evidence: the spirit of Barry Marshall\'s 1984 ulcer story. Her evidence backs the beetle; “not cold winters” is a bigger claim she hasn\'t tested. It isn\'t proof yet, and experts are usually right about their own field, so don\'t trust it yet. Don\'t toss it either. Evidence is what changes the answer, so test it.'},
     {short:'A friend\'s taco review', who:'Your friend Jess, texting you after dinner',
-     claim:'“That new taco place on Elm Street is great. Go this weekend.”', a:0, key:'track',
+     claim:'“That new taco place on Elm Street is great. Go this weekend.”', a:0, any:[0,1], keys:['track'],
      keyLine:'her last five food picks were all good, and she has told you honestly when a place was overrated.',
+     hint:'Does Jess gain anything if you believe her? Read the "Set it aside" line of the guide against her.',
      clues:{arg:'She says what she ate and why she liked it: fresh tortillas, big portions, fair prices.',
             agree:'The place is new. Its few online reviews are mostly good.',
             cred:'She isn\'t a chef or a food critic. She just eats out a lot.',
             int:'She doesn\'t know the owners and paid for her own meal.',
             track:'Her last five food picks were all good, and she told you honestly when one spot was overrated.'},
-     why:'You don\'t need credentials to judge tacos. A friend with a strong track record, nothing to gain and specific reasons is a good source for a low-stakes claim. If the tacos disappoint, you update.'},
+     why:'“Trust it” and “Needs more evidence” are both fair; only “Set it aside” misses. You don\'t need credentials to judge tacos. A friend with a strong track record, nothing to gain and specific reasons is a good source for a low-stakes claim. If the tacos disappoint, you update.'},
     {short:'A fitness influencer\'s tea', who:'Coach Brayden Vale, a fitness influencer with 2 million followers',
-     claim:'“My Shred Tea melts 10 pounds of fat a week. No diet changes needed.”', a:2, key:'int',
-     keyLine:'Shred Tea is his own brand, and he earns money every time someone believes him.',
+     claim:'“My Shred Tea melts 10 pounds of fat a week. No diet changes needed.”', a:2, keys:['int','track'],
+     keyLine:'Shred Tea is his own brand, and last year he quietly deleted posts for a different miracle tea.',
+     hint:'Who gains if you believe him? And what real evidence has he shown?',
      clues:{arg:'His proof is before-and-after photos of himself. Asked for a study, he says “the results speak for themselves.”',
             agree:'The doctors and dietitians who replied to his post all say no tea can do that.',
             cred:'He is a certified personal trainer.',
@@ -420,44 +478,84 @@
             track:'Last year he pushed a different miracle tea, then quietly deleted the posts.'},
      why:'He gains from your belief, he shows you nothing but photos, the experts who replied disagree, and the claim is huge. A trainer\'s certificate doesn\'t cover miracle teas. Set it aside.'}
   ];
+  // Philosopher-mode extras
+  const RH=[
+    {short:'Surgeon paid by the supplement maker', who:'Dr. Hal Brandt, a heart surgeon with 25 years of practice, at a webinar sponsored by CardioMax',
+     claim:'“CardioMax fish-oil capsules cut your risk of a heart attack by a third.”', a:1, any:[1,2], keys:['cred','int'],
+     keyLine:'two clues pull opposite ways: he is trained in the right field, and he is paid by the maker.',
+     clues:{arg:'He cites one trial of 90 patients. CardioMax ran it, and the full data isn\'t public.',
+            agree:'Independent cardiology groups say larger trials have not found a clear benefit.',
+            cred:'He is a respected heart surgeon with 25 years of practice. This is his own field.',
+            int:'CardioMax pays him $150,000 a year to speak about it.',
+            track:'His surgical advice has held up for decades. He has never promoted a product before.'},
+     why:'Argued about: “Needs more evidence” and “Set it aside” are both defensible; “Trust it” misses. Credentials say he could know; the paycheck says he might not say. When two clues contradict, the tie-breaker is the clue neither of them can fake: independent evidence. Here the independent groups are doubtful.'},
+    {short:'The "they laughed at Galileo" engine', who:'Mr. Dale Pruitt, a retired car mechanic with a popular video channel',
+     claim:'“My engine makes more energy than it uses. Physicists laugh at me, but they laughed at Galileo too.”', a:2, keys:['arg','track'],
+     keyLine:'he won\'t let anyone test it, and his earlier "breakthroughs" were never shown working.',
+     clues:{arg:'He has a video of it running. He won\'t let anyone else test it, “because they\'d steal it.”',
+            agree:'No physicist who has looked agrees. His subscribers do.',
+            cred:'He is a retired car mechanic with no physics training.',
+            int:'He sells $99 plans to build your own.',
+            track:'He announced two earlier “breakthrough” engines. Neither was ever shown working under independent test.'},
+     why:'Everyone who is right against the experts gets compared to Galileo, and so does everyone who is wrong. Being laughed at is not evidence. Ask what Barry Marshall had that cranks don\'t: evidence anyone could check (the bacterium in patients\' stomachs, and antibiotics that cleared it). Pruitt offers nothing anyone can check. Set it aside.'},
+    {short:'A lone doctor with checkable evidence', who:'Dr. Colm Reyes, a hospital doctor who has published little, against the whole senior staff',
+     claim:'“Most of the “stress” cases on this ward are caused by a common bacterium. Antibiotics clear them.”', a:1, keys:['arg'],
+     keyLine:'his evidence is open to everyone: biopsy results and cleared cases that other doctors can check.',
+     clues:{arg:'He shares biopsy slides and a list of 40 patients who recovered on antibiotics, and invites anyone to repeat it.',
+            agree:'Every senior doctor on the ward says stress is the cause. None has looked at his slides.',
+            cred:'Real medical degree, junior position, few papers.',
+            int:'He earns nothing from it. He may lose standing.',
+            track:'Too new to have much of one.'},
+     why:'A Marshall-style case: a lone voice against the experts, but with evidence anyone could check. That makes it worth testing, not yet worth trusting. “Needs more evidence” is right. The difference between him and the engine man is that he invites the test.'}
+  ];
   const R2=[
-    {t:'Maya only follows accounts about her favorite hobby, so she never sees any news about her town\'s election.', a:0, why:'Other voices are missing by accident, not distrusted. A bubble: showing her the news would fix it.'},
-    {t:'A group tells new members that every outside news source is secretly paid to lie about them.', a:1, why:'Outsiders are discredited in advance. That is the mark of an echo chamber.'},
-    {t:'When a member shares outside evidence, the group says, “See? They\'re trying to fool you,” and trusts its leader even more.', a:1, why:'Outside evidence makes them trust the group more: an echo chamber. Nguyen says the cure is rebuilding trust in outside sources, not just more facts.'},
-    {t:'A town\'s only newspaper closes, and people stop hearing anything about the school board.', a:0, why:'Information has gone missing, not been rejected. A bubble: more information would pop it.'}
+    {t:'Maya only follows accounts about her favorite hobby, so she never sees any news about her town\'s election.', a:0, hint:'Is anyone telling Maya that outsiders lie, or does she just never hear them?', why:'Other voices are missing by accident, not distrusted. A bubble: showing her the news would fix it.'},
+    {t:'A group tells new members that every outside news source is secretly paid to lie about them.', a:1, hint:'Is the group teaching its members to distrust outsiders?', why:'Outsiders are discredited in advance. That is the mark of an echo chamber.'},
+    {t:'When a member shares outside evidence, the group says, “See? They\'re trying to fool you,” and trusts its leader even more.', a:1, hint:'What happens to trust when outside evidence shows up?', why:'Outside evidence makes them trust the group more: an echo chamber. Nguyen says the cure is rebuilding trust in outside sources, not just more facts.'},
+    {t:'A small town loses its only newspaper. Residents never hear about school-board decisions, but they would read about them if they could.', a:0, hint:'Are the residents distrusting outside news, or is it just not reaching them?', why:'Information has gone missing, not been rejected. A bubble: more information would pop it.'}
+  ];
+  const RH2=[
+    {t:'A hiking club gets most of its news from the club chat. When a member posts a university study, the leader says, “Of course the universities say that. They\'re not on our side,” and the replies dry up.', a:1, why:'Hard to tell, because it is mild. But the leader pre-discredits outsiders, so the study makes the group trust the chat more, not less. That is the echo-chamber pattern. If the leader had said nothing, it would just be a bubble.'}
   ];
   const R2O=['<b>Epistemic bubble</b><small>other voices missing</small>','<b>Echo chamber</b><small>other voices distrusted</small>'];
   const R2N=['Epistemic bubble (other voices missing)','Echo chamber (other voices distrusted)'];
-  const R3={t:'You and an equally good friend split a restaurant bill in your heads and get slightly different answers. Neither of you has more information. What do conciliationists say you should do?',
-    opts:['Keep your answer; your friend made the mistake','Lower your confidence and check again','Go with whoever said it first'], a:1,
-    why:'Conciliationists, like David Christensen, say a peer\'s disagreement is itself evidence that one of you slipped, so you should both become less sure. Steadfast thinkers say you may keep an answer you got right, but with the bill, most people agree: check again.'};
+  const R2G='<b class="gt">How to decide</b><div><b>Bubble:</b> other voices are just missing. Nobody told them to distrust anyone. Showing the missing evidence would fix it.</div><div><b>Echo chamber:</b> the group has taught members to distrust outsiders. Outside evidence can make them trust the group more.</div>';
+  const R3={t:'You and an equally good friend split a restaurant bill in your heads and get slightly different answers. Neither of you has more information. What would conciliationists (people who say: meet in the middle) tell you to do?',
+    opts:['Keep your answer; your friend made the mistake','Treat both answers as equally likely and move toward each other','Go with whoever said it first'], a:1,
+    hint:'Neither of you has more information than the other. Should either answer count for more?',
+    why:'Conciliationists, like David Christensen, say a peer\'s disagreement is itself evidence that one of you slipped, so you should both become less sure and move toward each other. Steadfast thinkers say you may keep an answer you got right. With the bill, most people agree: check again.'};
 
   const $=id=>document.getElementById(id);
   const H=window.HDYK;
-  let order=[], ci=0, flipsLeft=3, flipped=[], committed=false;
-  let qitems=[], qi=0, s=[0,0,0], res=[[],[],[]], log=[], keysFound=0;
+  H.hardToggle($('mode'));
+  let R1x=R1, order=[], ci=0, flipsLeft=3, flipped=[], committed=false, tries=0, frozen=false;
+  let qitems=[], qi=0, qtries=0, s=[0,0,0], res=[[],[],[]], log=[], keysFound=0, bonusState='';
 
   const calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function reveal(el){ setTimeout(()=>{ const r=el.getBoundingClientRect(); if(r.bottom>window.innerHeight) el.scrollIntoView({block:'nearest', behavior:calm?'auto':'smooth'}); }, calm?0:700); }
   function show(id){ ['sIntro','sClues','sQuiz','sEnd'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); window.scrollTo(0,0); }
+  const fair=(c,j)=>j===c.a||(c.any||[]).includes(j);
+  const keyList=c=>c.keys.map(k=>NAME[k]);
+  function hintBox(el,text){ if(H.hard()||!text){ el.classList.add('hidden'); return; } el.innerHTML='<b class="head">Not quite. Hint:</b><p>'+text+' Try again.</p>'; el.classList.remove('hidden'); }
+  function hardNote(el){ if(!H.hard()) return; el.innerHTML='<b class="head">Not quite.</b><p>One more try.</p>'; el.classList.remove('hidden'); }
 
   /* ---------- Round 1: Three clues ---------- */
   function dealCase(){
-    const c=order[ci]; flipsLeft=3; flipped=[]; committed=false;
+    const c=order[ci]; flipsLeft=3; flipped=[]; committed=false; tries=0; frozen=false;
     $('cStep').textContent='Round 1 · Three Clues · Case '+(ci+1)+' of '+order.length;
     H.dots($('cDots'), order.length, res[0]);
     $('cWho').textContent=c.who; $('cClaim').textContent=c.claim;
     const cc=$('cCase'); cc.classList.remove('in'); void cc.offsetWidth; cc.classList.add('in');
     $('cCards').innerHTML=CLUES.map(cl=>
-      '<button class="clue" data-k="'+cl.k+'" aria-label="Flip the '+cl.n+' clue">'+
+      '<button class="clue" data-k="'+cl.k+'" aria-label="Flip the '+cl.n+' clue. '+cl.q+'">'+
         '<span class="in3">'+
-          '<span class="face front"><svg viewBox="0 0 34 34" aria-hidden="true">'+cl.icon+'</svg><span class="lab">'+cl.n+'</span><span class="tap">Tap to flip</span></span>'+
+          '<span class="face front"><svg viewBox="0 0 34 34" aria-hidden="true">'+cl.icon+'</svg><span class="lab">'+cl.n+'</span><span class="cq hk-guide">'+cl.q+'</span><span class="tap">Tap to flip</span></span>'+
           '<span class="face back" aria-hidden="true"><span class="lab">'+cl.n+'</span><span class="fact">'+c.clues[cl.k]+'</span><span class="tag"></span></span>'+
         '</span></button>').join('');
     $('cCards').querySelectorAll('.clue').forEach(b=>b.onclick=()=>flip(b));
     $('cOpts').innerHTML=W.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
     $('cOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>commit(+b.dataset.i));
-    $('cFb').classList.add('hidden'); $('cNextWrap').classList.add('hidden');
+    $('cFb').classList.add('hidden'); $('cTry').classList.add('hidden'); $('cNextWrap').classList.add('hidden');
     $('cHint').textContent='Flip the clues you think matter most.';
     updFlips();
   }
@@ -467,101 +565,121 @@
     b.querySelector('.back').removeAttribute('aria-hidden');
   }
   function flip(b){
-    if(committed || flipsLeft<=0 || b.classList.contains('up')) return;
+    if(committed || frozen || flipsLeft<=0 || b.classList.contains('up')) return;
     flipsLeft--; flipped.push(b.dataset.k);
     turnUp(b); b.classList.add('mine'); b.disabled=true;
     b.querySelector('.tag').textContent='You flipped this';
     b.setAttribute('aria-label', b.querySelector('.back .lab').textContent+' clue, flipped');
     updFlips();
   }
+  function spend(){
+    $('cCards').querySelectorAll('.clue:not(.up)').forEach(b=>{ b.disabled=true; b.classList.add('spent'); b.querySelector('.tap').textContent='Face down'; b.setAttribute('aria-label', b.querySelector('.front .lab').textContent+' clue, face down'); });
+  }
   function updFlips(){
     let p=''; for(let i=0;i<3;i++) p+='<i class="pip'+(i>=flipsLeft?' used':'')+'"></i>'; $('cPips').innerHTML=p;
     $('cLeft').textContent= flipsLeft===1 ? '1 flip left' : flipsLeft+' flips left';
-    if(flipsLeft===0 && !committed){
-      $('cHint').textContent='No flips left. Make your call.';
-      $('cCards').querySelectorAll('.clue:not(.up)').forEach(b=>{ b.disabled=true; b.classList.add('spent'); b.querySelector('.tap').textContent='Face down'; b.setAttribute('aria-label', b.querySelector('.front .lab').textContent+' clue, face down'); });
-    }
+    if(flipsLeft===0 && !committed){ $('cHint').textContent='No flips left. Make your call.'; spend(); }
   }
   function commit(i){
-    if(committed) return; committed=true;
-    const c=order[ci], ok=i===c.a||(c.any||[]).includes(i);
-    if(ok) s[0]++; res[0].push(ok);
-    const keyName=CLUES.find(x=>x.k===c.key).n, gotKey=flipped.includes(c.key);
-    if(gotKey) keysFound++;
+    if(committed) return;
+    const c=order[ci], ok=fair(c,i);
+    if(!ok && tries===0){
+      tries=1; frozen=true; spend();
+      if(c.mq) H.miss(LOCK,{q:c.mq, opts:c.mopts, a:c.ma, why:c.why.replace(/<[^>]+>/g,'')});
+      const bt=$('cOpts').querySelector('button[data-i="'+i+'"]'); bt.disabled=true; bt.classList.add('wrong'); bt.dataset.hit='1';
+      $('cHint').textContent='Clues locked in. Try your call again.';
+      H.hard() ? hardNote($('cTry')) : hintBox($('cTry'), c.hint);
+      return;
+    }
+    committed=true; $('cTry').classList.add('hidden');
+    const second=ok&&tries===1, first=ok&&tries===0;
+    if(first) s[0]++; res[0].push(first);
+    const gotKey=flipped.filter(k=>c.keys.includes(k));
+    if(gotKey.length) keysFound++;
     $('cOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i;
-      const fair=j===c.a||(c.any||[]).includes(j);
-      if(fair) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); else b.classList.add('dim'); });
-    // reveal all five, staggered
+      b.classList.remove('right','wrong','dim');
+      if(fair(c,j)) b.classList.add('right'); else if(j===i || b.dataset.hit) b.classList.add('wrong'); else b.classList.add('dim'); });
     const cards=[...$('cCards').querySelectorAll('.clue')];
     cards.forEach((b,n)=>{ b.disabled=true; b.classList.remove('spent');
-      if(b.dataset.k===c.key){ b.classList.add('key'); b.querySelector('.tag').textContent= (gotKey?'You flipped this · ':'')+'★ Mattered most'; }
+      if(c.keys.includes(b.dataset.k)){ b.classList.add('key'); b.querySelector('.tag').textContent= (b.classList.contains('mine')?'You flipped this · ':'')+'★ One of the clues that mattered most'; }
       else if(!b.classList.contains('mine')) b.querySelector('.tag').textContent='You skipped this';
       if(!b.classList.contains('up')) setTimeout(()=>turnUp(b), 120*n);
     });
     $('cHint').textContent='All five clues, face up.';
     $('cLeft').textContent= (3-flipsLeft)+' of 3 flips used';
-    const keyMsg=(gotKey?'You flipped ':'You skipped ')+'<b>'+keyName+'</b>, a clue that mattered most here: '+c.keyLine;
-    const fb=$('cFb'); fb.className='fb'+(ok?'':' bad');
-    fb.innerHTML='<b class="head">'+H.react(ok)+'</b><p class="keynote">'+keyMsg+'</p><p>'+c.why+'</p>';
-    log.push({r:0, c:c.short, you:WN[i], ans:c.any?WN[1]+' or '+WN[2]:WN[c.a], ok});
-    if(!ok){
-      if(c.mq) H.miss(LOCK,{q:c.mq, opts:c.mopts, a:c.ma, why:c.why.replace(/<[^>]+>/g,'')});
-      else H.miss(LOCK,{q:'Source: '+c.who+'. Claim: '+c.claim+' One fact about this source: '+c.clues[c.key]+' How much weight does the claim deserve?', opts:WN, a:c.a, why:c.why});
-    }
+    const keyMsg= gotKey.length ? 'You flipped <b>'+NAME[gotKey[0]]+'</b>, one of the clues that mattered most here: '+c.keyLine
+                : 'You skipped '+keyList(c).map(x=>'<b>'+x+'</b>').join(' and ')+', the clues that mattered most here: '+c.keyLine;
+    const fb=$('cFb'); fb.className='fb'+(first||second?'':' bad');
+    fb.innerHTML='<b class="head">'+H.react(ok,second)+'</b><p class="keynote">'+keyMsg+'</p><p>'+c.why+'</p>';
+    H.challenge(fb, LOCK, c.short);
+    log.push({r:0, c:c.short, you:(tries&&ok?'2nd try: ':'')+WN[i], ans:(c.any? c.any.map(x=>WN[x]).join(' or '):WN[c.a]), ok:first});
     $('cNext').textContent= ci===order.length-1 ? 'On to Bubble or Chamber?' : 'Next case';
     $('cNextWrap').classList.remove('hidden');
     reveal(fb);
   }
   $('cNext').onclick=()=>{ ci++; if(ci<order.length){ dealCase(); window.scrollTo(0,0); } else { show('sQuiz'); qi=0; showItem(); } };
 
-  /* ---------- Rounds 2 and 3 ---------- */
+  /* ---------- Round 2 and the bonus ---------- */
   function buildQ(){
     qitems=[];
-    const r2=H.shuffle(R2);
+    const r2=H.shuffle(R2.concat(H.hard()?RH2:[]));
     r2.forEach((r,i)=>qitems.push({round:1, step:'Round 2 · Bubble or Chamber? · '+(i+1)+' of '+r2.length, total:r2.length, title:'Epistemic bubble or echo chamber?', text:r.t,
-      opts:R2O.map((h,j)=>({h, j})), cls:'two', a:r.a, why:r.why, names:['Bubble','Echo chamber'],
+      guide:R2G, opts:R2O.map((h,j)=>({h, j})), cls:'two', a:r.a, hint:r.hint, why:r.why, names:['Bubble','Echo chamber'],
       mq:'Epistemic bubble or echo chamber? '+r.t, mopts:R2N}));
     const o3=H.shuffle(R3.opts.map((h,j)=>({h:h, j})));
-    qitems.push({round:2, step:'Round 3 · Last case', total:1, title:'When a friend disagrees', text:R3.t, opts:o3, cls:'list', a:R3.a, why:R3.why, names:R3.opts, mq:R3.t, mopts:R3.opts});
+    qitems.push({round:2, bonus:true, step:'Bonus · When a friend disagrees', total:1, title:'Bonus: when a friend disagrees', text:R3.t, guide:'', opts:o3, cls:'list', a:R3.a, hint:R3.hint, why:R3.why, names:R3.opts, mq:R3.t, mopts:R3.opts});
   }
   function showItem(){
-    const it=qitems[qi];
+    const it=qitems[qi]; qtries=0;
     $('qStep').textContent=it.step; $('qTitle').textContent=it.title;
-    H.dots($('qDots'), it.total, res[it.round]);
+    if(it.bonus) $('qDots').innerHTML='<span class="bonus">Bonus: no stars riding on it</span>'; else H.dots($('qDots'), it.total, res[it.round]);
     const c=$('qText'); c.textContent=it.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    const g=$('qGuide'); g.innerHTML=it.guide; g.classList.toggle('hidden', !it.guide);
     const o=$('qOpts'); o.className='opts '+it.cls; o.innerHTML=it.opts.map(x=>'<button data-i="'+x.j+'">'+x.h+'</button>').join('');
-    o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
-    $('qFb').classList.add('hidden'); $('qNextWrap').classList.add('hidden');
+    o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i, b));
+    $('qFb').classList.add('hidden'); $('qTry').classList.add('hidden'); $('qNextWrap').classList.add('hidden');
+    $('qSkipWrap').classList.toggle('hidden', !it.bonus);
   }
-  function answer(i){
-    const it=qitems[qi], ok=i===it.a; if(ok) s[it.round]++; res[it.round].push(ok);
+  function answer(i, btn){
+    const it=qitems[qi], ok=i===it.a;
+    if(!ok && qtries===0){
+      qtries=1; btn.disabled=true; btn.classList.add('wrong');
+      H.miss(LOCK,{q:it.mq, opts:it.mopts, a:it.a, why:it.why});
+      H.hard() ? hardNote($('qTry')) : hintBox($('qTry'), it.hint);
+      return;
+    }
+    $('qTry').classList.add('hidden'); $('qSkipWrap').classList.add('hidden');
+    const first=ok&&qtries===0, second=ok&&qtries===1;
+    if(first) s[it.round]++; if(!it.bonus) res[it.round].push(first);
     $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); });
-    H.dots($('qDots'), it.total, res[it.round]);
-    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+H.react(ok)+'</b><p>'+it.why+'</p>';
-    if(!ok) H.miss(LOCK,{q:it.mq, opts:it.mopts, a:it.a, why:it.why});
-    log.push({r:it.round, c:it.text.length>70?it.text.slice(0,68)+'…':it.text, you:it.names[i], ans:it.names[it.a], ok});
+    if(!it.bonus) H.dots($('qDots'), it.total, res[it.round]);
+    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+H.react(ok,second)+'</b><p>'+it.why+'</p>';
+    H.challenge(fb, LOCK, it.bonus?'Bonus: peer disagreement':it.text.slice(0,80));
+    if(it.bonus) bonusState= first?'Got it':second?'Got it on the second try':'Not this time';
+    log.push({r:it.round, c:it.text.length>70?it.text.slice(0,68)+'…':it.text, you:(qtries&&ok?'2nd try: ':'')+it.names[i], ans:it.names[it.a], ok:first});
     const last=qi===qitems.length-1, nextRound=!last && qitems[qi+1].round!==it.round;
-    $('qNext').textContent= last ? 'See my results' : (nextRound ? 'One last case' : 'Next');
+    $('qNext').textContent= last ? 'See my results' : (nextRound ? 'On to the bonus' : 'Next');
     $('qNextWrap').classList.remove('hidden');
     reveal(fb);
   }
   $('qNext').onclick=()=>{ qi++; if(qi<qitems.length){ showItem(); window.scrollTo(0,0); } else finish(); };
+  $('qSkip').onclick=()=>{ bonusState='Skipped'; finish(); };
 
   function start(){
-    H.resetMisses(LOCK);
-    s=[0,0,0]; res=[[],[],[]]; log=[]; keysFound=0;
-    order=H.shuffle(R1); ci=0; buildQ();
+    H.resetMisses(LOCK); H.resetChallenges(LOCK);
+    s=[0,0,0]; res=[[],[],[]]; log=[]; keysFound=0; bonusState='';
+    order=H.shuffle(R1.concat(H.hard()?RH:[])); ci=0; buildQ();
     show('sClues'); dealCase();
   }
   $('startBtn').onclick=start;
 
   function finish(){
     show('sEnd');
-    const total=R1.length+R2.length+1, right=s[0]+s[1]+s[2];
+    const n2=qitems.filter(x=>!x.bonus).length, total=order.length+n2, right=s[0]+s[1];
     H.end($('shelf'),{lock:LOCK, right, total});
-    $('scores').innerHTML='<div><b>'+s[0]+' / '+R1.length+'</b><span>three clues</span></div><div><b>'+s[1]+' / '+R2.length+'</b><span>bubble or chamber</span></div><div><b>'+s[2]+' / 1</b><span>disagreement</span></div>';
-    $('sleuth').textContent='Clue sense: you flipped the clue that mattered most in '+keysFound+' of '+R1.length+' cases.';
-    const RN=['Three Clues','Bubble or Chamber?','Disagreement'];
+    $('scores').innerHTML='<div><b>'+s[0]+' / '+order.length+'</b><span>three clues</span></div><div><b>'+s[1]+' / '+n2+'</b><span>bubble or chamber</span></div><div><b>'+(bonusState||'Skipped')+'</b><span>bonus: disagreement</span></div>';
+    $('sleuth').textContent='Clue sense (not counted in your stars): you flipped one of the clues that mattered most in '+keysFound+' of '+order.length+' cases.';
+    const RN=['Three Clues','Bubble or Chamber?','Bonus'];
     let h='', prev=-1;
     log.forEach(r=>{ if(r.r!==prev){ h+='<tr><td class="rd" colspan="3">'+RN[r.r]+'</td></tr>'; prev=r.r; }
       h+='<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>'; });

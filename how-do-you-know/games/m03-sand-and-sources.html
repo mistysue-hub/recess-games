@@ -85,6 +85,12 @@
   .scores b{display:block;font:700 22px Poppins,sans-serif}
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
 
+  .guide{margin-top:14px;padding:10px 14px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.6);text-align:left}
+  .guide .gt{display:block;font:700 15px Poppins,sans-serif;margin-bottom:2px}
+  .guide ol{margin:4px 0 0;padding-left:22px}
+  .guide li{margin:3px 0;font:500 15px/1.4 Poppins,sans-serif}
+  .opts button:disabled.wrong{opacity:.85}
+  .qbox .yn button{font-size:15px;line-height:1.2;padding:6px 4px}
   @media (max-width:600px){
     .sandbox{grid-template-columns:1fr}
     .twoq{grid-template-columns:1fr}
@@ -93,6 +99,7 @@
     .cell{min-height:70px}
   }
   @media (prefers-reduced-motion:reduce){ .draw{animation:none;stroke-dashoffset:0} .fade{animation:none;opacity:1} .claimcard.in,.chip{animation:none} }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -157,6 +164,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -178,7 +192,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -210,12 +228,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -233,9 +269,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -257,27 +295,28 @@
   <section id="sIntro">
     <div class="panel">
       <h2>Two rounds</h2>
-      <p><b>Round 1, the Sand Square.</b> Take the boy's place in Plato's <em>Meno</em>. You start with a square of four square feet and have to find a square exactly twice as big. Predict, test, then draw the answer yourself in the sand.</p>
-      <p><b>Round 2, the Source Sorter.</b> Every claim gets two questions:</p>
-      <p style="margin-left:14px">1. Could you know it <b>without checking the world</b>? Yes means <em>a priori</em>, no means <em>a posteriori</em>.<br>2. Is it true <b>just because of what the words mean</b>? Yes means <em>analytic</em>, no means <em>synthetic</em>.</p>
-      <p>Then the claim drops onto a board with four corners. One corner is the one Kant fought over. One is the corner nearly everyone thinks stays empty.</p>
-      <p class="small">You lock in every answer before the game shows you anything.</p>
-      <div class="center"><button class="big" id="startBtn">Start in the sand</button></div>
+      <p class="bigq"><b>The question:</b> Where does knowledge come from: thinking it through, or checking the world?</p>
+      <p><b>Round 1:</b> take the boy's place in Plato's <em>Meno</em> and double a square by drawing. <b>Round 2:</b> sort claims by answering two questions: could you know it with your eyes closed, and is the answer hidden inside the words? You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
+      <p><b>Example.</b> “All bachelors are unmarried.” Eyes closed? Yes. Hidden in the words? Yes. So: a priori and analytic.</p>
+      <div id="mode"></div>
+      <div class="center" style="margin-top:12px"><button class="big" id="startBtn">Start in the sand</button></div>
     </div>
   </section>
 
   <section id="sSand" class="hidden">
     <div class="panel">
       <div class="sandbox">
-        <div class="sand"><svg id="sandSvg" viewBox="0 0 220 220" aria-label="Drawing in the sand"></svg></div>
+        <div class="sand"><svg id="sandSvg" viewBox="0 0 180 180" aria-label="Drawing in the sand"></svg></div>
         <div>
           <div class="step" id="sStep"></div>
           <p class="q" id="sQ"></p>
           <div class="opts" id="sOpts"></div>
+          <div class="guide hk-guide hidden" id="sGuide"></div>
           <div class="go" id="sTool"></div>
           <div class="go"><button class="big" id="sLock" disabled>Lock it in</button></div>
         </div>
       </div>
+      <div class="fb bad hidden" id="sHint"></div>
       <div class="fb hidden" id="sFb"></div>
       <div class="go hidden" id="sNextWrap"><button class="big" id="sNext">Next</button></div>
     </div>
@@ -288,12 +327,20 @@
       <div class="step" id="cStep"></div>
       <div class="claimcard" id="cCard"></div>
       <div class="twoq">
-        <div class="qbox" data-q="ap"><div class="qt">Could you know it without checking the world?</div>
-          <div class="yn"><button data-v="1">Yes</button><button data-v="0">No</button></div><div class="v"></div></div>
-        <div class="qbox" data-q="an"><div class="qt" id="anQ">Is it true just because of what the words mean?</div>
-          <div class="yn"><button data-v="1">Yes</button><button data-v="0">No</button></div><div class="v"></div></div>
+        <div class="qbox" data-q="ap"><div class="qt">Q1 · Could you figure it out with your eyes closed, without checking anything?</div>
+          <div class="yn"><button data-v="1">Yes (a priori)</button><button data-v="0">No (a posteriori)</button></div><div class="v"></div></div>
+        <div class="qbox" data-q="an"><div class="qt">Q2 · Is the answer already hidden inside the words?</div>
+          <div class="yn"><button data-v="1">Yes (analytic)</button><button data-v="0">No (synthetic)</button></div><div class="v"></div></div>
+      </div>
+      <div class="guide hk-guide">
+        <b class="gt">How to sort. Ask Q1, then Q2.</b>
+        <ol>
+          <li><b>Q1:</b> Yes = a priori, No = a posteriori. A priori is about what you need to CHECK, not how you first learned the words.</li>
+          <li><b>Q2:</b> Yes = analytic, No = synthetic. Analytic means the answer is hidden in the words (“bachelor” means “unmarried man”).</li>
+        </ol>
       </div>
       <div class="go"><button class="big" id="cLock" disabled>Drop it on the board</button></div>
+      <div class="fb bad hidden" id="cHint"></div>
       <div class="fb hidden" id="cFb"></div>
       <div class="board" aria-label="Source board">
         <div class="h"></div><div class="h">Analytic<br>(true by meaning)</div><div class="h">Synthetic<br>(adds something new)</div>
@@ -309,6 +356,7 @@
       <div id="shelf"></div>
       <h2>Both rounds done: what you reported</h2>
       <div class="scores" id="scores"></div>
+      <p class="small" id="starNote"></p>
       <details class="answers"><summary>See my answers</summary>
       <table>
         <thead><tr><th>Claim</th><th>Your corner</th><th>Answer</th></tr></thead>
@@ -317,7 +365,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then try to stump him with a claim for the empty corner.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b></p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -329,14 +377,15 @@
   const $=id=>document.getElementById(id);
   const NS='http://www.w3.org/2000/svg';
   function show(id){ ['sIntro','sSand','sSort','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
+  HDYK.hardToggle($('mode'));
 
   // ---------- Round 1: the sand square ----------
-  // board: 1 foot = 40 units, origin (10,10)
+  // board: 4 x 4 feet, 1 foot = 40 units, origin (10,10)
   const U=40, O=10;
   function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||$('sandSvg')).appendChild(e); return e; }
   function grid(){
     const s=$('sandSvg'); s.innerHTML='';
-    for(let i=0;i<=5;i++){ el('line',{x1:O+i*U,y1:O,x2:O+i*U,y2:O+5*U,stroke:'#d9b672','stroke-width':1}); el('line',{x1:O,y1:O+i*U,x2:O+5*U,y2:O+i*U,stroke:'#d9b672','stroke-width':1}); }
+    for(let i=0;i<=4;i++){ el('line',{x1:O+i*U,y1:O,x2:O+i*U,y2:O+4*U,stroke:'#d9b672','stroke-width':1}); el('line',{x1:O,y1:O+i*U,x2:O+4*U,y2:O+i*U,stroke:'#d9b672','stroke-width':1}); }
   }
   function sq(side, color, cls){ const r=el('rect',{x:O,y:O,width:side*U,height:side*U,fill:color,'fill-opacity':.3,stroke:'#2b2117','stroke-width':3}); if(cls) r.setAttribute('class',cls); return r; }
   function label(x,y,t,c){ const e=el('text',{x:x,y:y,'text-anchor':'middle','font-family':'Poppins,sans-serif','font-weight':700,'font-size':18,fill:c||'#2b2117'}); e.textContent=t; e.setAttribute('class','fade'); return e; }
@@ -346,109 +395,181 @@
   function countCells(side,color,done){
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches; let n=0;
     const cells=[]; for(let y=0;y<side;y++) for(let x=0;x<side;x++) cells.push([x,y]);
-    const cnt=label(O+side*U-14,O+side*U+26>220?O+side*U-8:O+side*U+22,'',color);
+    const cnt=label(O+side*U-14,O+side*U+26>176?O+side*U-8:O+side*U+22,'',color);
     (function step(){ if(n>=cells.length){ done&&done(); return; } const [x,y]=cells[n++];
       el('rect',{x:O+x*U+3,y:O+y*U+3,width:U-6,height:U-6,rx:4,fill:color,'fill-opacity':.35,class:'fade'}); cnt.textContent=n;
       setTimeout(step, reduce?0:70); })();
   }
   // the four small squares and their diagonals: 1 = top-left to bottom-right, 2 = bottom-left to top-right
   const SMALL=[[0,0],[2,0],[0,2],[2,2]], GOAL=[2,1,1,2];
-  let diag=[0,0,0,0], built=false, buildTries=0;
+  const DIAMOND=[[2,0],[4,2],[2,4],[0,2]].map(([x,y])=>(O+x*U)+','+(O+y*U)).join(' ');
+  let diag=[0,0,0,0], marks=[null,null,null,null], built=false, checks=0;
   function drawBuild(){
     grid();
     SMALL.forEach(([x,y],i)=>{
       el('rect',{x:O+x*U,y:O+y*U,width:2*U,height:2*U,fill:'#2e6b57','fill-opacity':.14,stroke:'#2b2117','stroke-width':2});
-      if(diag[i]===1) line(x,y,x+2,y+2,'#1d3a7a','still');
-      if(diag[i]===2) line(x,y+2,x+2,y,'#1d3a7a','still');
+    });
+    // faint ghost outline of the target (hidden in Philosopher mode)
+    if(!built) el('polygon',{points:DIAMOND,fill:'#1d3a7a','fill-opacity':.07,stroke:'#1d3a7a','stroke-opacity':.5,'stroke-width':3,'stroke-dasharray':'7 6',class:'hk-guide',style:'pointer-events:none'});
+    SMALL.forEach(([x,y],i)=>{
+      const col = marks[i]==='ok' ? '#2e6b57' : marks[i]==='bad' ? '#b5522e' : '#1d3a7a';
+      if(diag[i]===1) line(x,y,x+2,y+2,col,'still');
+      if(diag[i]===2) line(x,y+2,x+2,y,col,'still');
     });
     if(built){
-      el('polygon',{points:[[2,0],[4,2],[2,4],[0,2]].map(([x,y])=>(O+x*U)+','+(O+y*U)).join(' '),fill:'#1d3a7a','fill-opacity':.32,class:'fade'});
+      el('polygon',{points:DIAMOND,fill:'#1d3a7a','fill-opacity':.32,class:'fade'});
       SMALL.forEach(([x,y],i)=>{ const cx=O+(x+1)*U+(i===0||i===2?14:-14), cy=O+(y+1)*U+(i<2?14:-14); label(cx,cy+5,'½','#1d3a7a'); });
       label(O+2*U,O+2*U+6,'8','#1d3a7a');
     } else {
       SMALL.forEach(([x,y],i)=>{ const t=el('rect',{x:O+x*U,y:O+y*U,width:2*U,height:2*U,fill:'transparent',style:'cursor:pointer',tabindex:0,role:'button','aria-label':'Small square '+(i+1)+': tap to draw or flip its diagonal'});
-        const tap=()=>{ diag[i]=diag[i]===1?2:1; drawBuild(); updateBuild(); };
+        const tap=()=>{ diag[i]=diag[i]===1?2:1; marks[i]=null; drawBuild(); updateBuild(); };
         t.addEventListener('click',tap); t.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tap(); } }); });
     }
   }
-  function updateBuild(){ const b=$('sTool').querySelector('button'); if(b) b.disabled=diag.some(d=>d===0); }
+  function updateBuild(){ const b=$('chk'); if(b) b.disabled=diag.some(d=>d===0); }
 
-  const STAGES=[
-    {step:'Step 1 of 5 · Predict', q:"The boy's first idea: double the sides, from 2 feet to 4 feet. What happens to the area?", opts:['It doubles, to 8 square feet','It triples, to 12 square feet','It quadruples, to 16 square feet'], a:2, scored:true,
+  const GUIDE_MATH=(lines)=>'<b class="gt">How to work it out</b><ol>'+lines.map(l=>'<li>'+l+'</li>').join('')+'</ol>';
+  const BUILD_HINTS=[
+    "The tilted square's corners sit in the middle of each side of the big block.",
+    "So each diagonal joins two of those side-middles. None of them touches the center of the big block.",
+    "In each small square, one diagonal touches the center of the big block and the other doesn't. Keep the one that doesn't."
+  ];
+  const SQRT_ART=function(){ base(); line(0,2,2,0,'#1d3a7a'); el('polygon',{points:[[0,0],[2,2],[0,4],[-2,2]].map(([x,y])=>(O+(x+2)*U)+','+(O+y*U)).join(' '),fill:'#1d3a7a','fill-opacity':.15,stroke:'#1d3a7a','stroke-width':2,'stroke-dasharray':'5 4',class:'fade'}); };
+  const BASE_STAGES=[
+    {kind:'Predict', q:"The boy's first idea: double the sides, from 2 feet to 4 feet. What happens to the area?", opts:['It doubles, to 8 square feet','It triples, to 12 square feet','It quadruples, to 16 square feet'], a:2, scored:true,
+     guide:["Area of a square = side × side.","Count how many of the old 2-by-2 squares fit inside the new one."],
+     hint:"How many of the original 2-by-2 squares fit inside a 4-by-4 block?",
      draw(){ base(); sq(4,'#b5522e','fade'); countCells(4,'#8f3c1f'); },
      why:"Count them: 16 square feet, four times as big, not twice. The new square holds four of the old ones. Too big."},
-    {step:'Step 2 of 5 · Test', q:"He tries 3-foot sides instead. Tap to draw it in the sand.", tool:'Draw a 3-foot square',
+    {kind:'Test', q:"He tries 3-foot sides instead. Tap to draw it in the sand.", tool:'Draw a 3-foot square',
      draw(){ base(); sq(3,'#1d3a7a','fade'); countCells(3,'#1d3a7a'); },
      why:"9 square feet. Closer, but still bigger than 8, and no whole number of feet squared makes 8. Now the boy is stuck, and admits he doesn't know. Socrates says that's progress."},
-    {step:'Step 3 of 5 · Your turn', q:"Socrates puts four copies of the original square together. Tap each small square to draw a diagonal in it; tap again to flip it. Make a tilted square in the middle out of four diagonals.", build:true, scored:true},
-    {step:'Step 4 of 5 · Count', q:"Each diagonal cut a 4-square-foot square in half, and your tilted square is made of four of those halves. What's its area?", opts:['6 square feet','8 square feet','16 square feet'], a:1, scored:true,
+    {kind:'Your turn', q:"Socrates puts four copies of the square together into a 4-by-4 block. Tap each small square to draw a diagonal in it; tap again to flip it. Use the four diagonals to make a tilted square in the middle.", build:true, scored:true,
+     guide:["Aim for the faint dashed tilted square.","Each small square gets exactly one diagonal."]},
+    {kind:'Count', q:"What is the area of your tilted square?", opts:['6 square feet','8 square feet','16 square feet'], a:1, scored:true,
+     guide:["Each small square is 4 square feet.","A diagonal cuts one exactly in half.","The tilted square is made of 4 of those halves."],
+     hint:"How big is half of a 4-square-foot square? Then how many halves make up the tilted square?",
      draw(){ built=true; drawBuild(); },
      why:"Four halves of 4 square feet: 4 × 2 = 8. Exactly double the original."},
-    {step:'Step 5 of 5 · Name it', q:"So which line is the side of a square of exactly 8 square feet?", opts:['A line 3 feet long','The diagonal of the original 4-square-foot square','A line 4 feet long'], a:1, scored:true,
-     draw(){ base(); line(0,2,2,0,'#1d3a7a'); el('polygon',{points:[[0,0],[2,2],[0,4],[-2,2]].map(([x,y])=>(O+(x+2)*U)+','+(O+y*U)).join(' '),fill:'#1d3a7a','fill-opacity':.15,stroke:'#1d3a7a','stroke-width':2,'stroke-dasharray':'5 4',class:'fade'}); },
+    {kind:'Name it', q:"So which line is the side of a square of exactly 8 square feet?", opts:['A line 3 feet long','The diagonal of the original 4-square-foot square','A line 4 feet long'], a:1, scored:true,
+     guide:["The 8-square-foot square is the tilted one in the sand.","Which line forms one of its sides?"],
+     hint:"The 8-square-foot square is the tilted one. Which line did you draw that forms its side?",
+     draw:SQRT_ART,
      why:"The square built on the diagonal. Socrates says he only asked questions, and the boy found it himself. Plato's question: where did that answer come from?"}
   ];
-  const SAND_SCORED=STAGES.filter(x=>x.scored).length;
-  let si=0, sPick=null, sRight=0, sRes=[];
+  const HARD_STAGE={kind:'Philosopher', q:"The side of that 8-square-foot square is √8 ≈ 2.83 feet, an irrational number: no fraction equals it exactly. Could the boy have found it by measuring with a ruler?", scored:true,
+     opts:['Yes: a fine enough ruler would read exactly 2.83 feet','Only approximately: no ruler marked in whole numbers or fractions can show it exactly, but drawing the diagonal gets it exactly','No, and drawing the diagonal does not get it exactly either'], a:1,
+     draw:SQRT_ART,
+     why:"Every ruler reading is a whole number or a fraction, and √8 is neither. The diagonal construction produces exactly that length without ever measuring a number. It is part of why Plato thought the answer came from reason, not from looking."};
+
+  let STAGES=BASE_STAGES, SAND_SCORED=4;
+  let si=0, sPick=null, sRight=0, sTries=0;
   function nextBtn(){ $('sNext').textContent= si===STAGES.length-1 ? 'On to the Source Sorter' : 'Next'; $('sNextWrap').classList.remove('hidden'); }
   function showSand(){
-    const s=STAGES[si]; sPick=null;
-    $('sStep').textContent=s.step; $('sQ').textContent=s.q;
+    const s=STAGES[si]; sPick=null; sTries=0;
+    $('sStep').textContent='Step '+(si+1)+' of '+STAGES.length+' · '+s.kind; $('sQ').textContent=s.q;
     $('sOpts').innerHTML=''; $('sTool').innerHTML=''; $('sLock').parentElement.classList.add('hidden');
-    $('sFb').classList.add('hidden'); $('sNextWrap').classList.add('hidden');
-    if(s.build){ diag=[0,0,0,0]; built=false; buildTries=0; drawBuild();
-      $('sTool').innerHTML='<button class="big" disabled>Check my square</button>';
-      $('sTool').querySelector('button').onclick=checkBuild; return; }
-    if(si!==3) base();
+    $('sFb').classList.add('hidden'); $('sHint').classList.add('hidden'); $('sNextWrap').classList.add('hidden');
+    const g=$('sGuide'); if(s.guide){ g.innerHTML=GUIDE_MATH(s.guide); g.classList.remove('hidden'); } else g.classList.add('hidden');
+    if(s.build){ diag=[0,0,0,0]; marks=[null,null,null,null]; built=false; checks=0; drawBuild();
+      $('sTool').innerHTML='<button class="big" id="chk" disabled>Check my square</button> <button class="big alt hidden" id="showme">Show me</button>';
+      $('chk').onclick=checkBuild; $('showme').onclick=showMe; return; }
+    base();
     if(s.tool){ $('sTool').innerHTML='<button class="big">'+s.tool+'</button>';
       $('sTool').querySelector('button').onclick=()=>{ $('sTool').innerHTML=''; s.draw(); const fb=$('sFb'); fb.className='fb'; fb.innerHTML='<b class="head">Too big again.</b><p>'+s.why+'</p>'; nextBtn(); }; return; }
-    const order=s.opts.map((o,i)=>i);
-    $('sOpts').innerHTML=order.map(i=>'<button data-i="'+i+'">'+s.opts[i]+'</button>').join('');
+    $('sOpts').innerHTML=s.opts.map((o,i)=>'<button data-i="'+i+'">'+o+'</button>').join('');
     $('sOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{ sPick=+b.dataset.i; $('sOpts').querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b)); $('sLock').disabled=false; });
     $('sLock').disabled=true; $('sLock').parentElement.classList.remove('hidden');
   }
-  function checkBuild(){
-    const s=STAGES[si], hits=diag.filter((d,i)=>d===GOAL[i]).length, ok=hits===4; buildTries++;
-    const fb=$('sFb');
-    if(ok){
-      if(buildTries===1){ sRight++; sRes.push(true); } else { sRes.push(false); HDYK.miss(3,{q:"In Plato's Meno, a square of 4 square feet is copied four times into a 4-by-4 block. Which square has exactly twice the area of the original?", opts:['The whole 4-by-4 block','The tilted square drawn on one diagonal of each copy','A square with 3-foot sides'], a:1, why:'Each diagonal halves a 4-square-foot square, and the tilted square is four halves: 8 square feet.'}); }
-      built=true; drawBuild(); $('sTool').innerHTML='';
-      fb.className='fb'; fb.innerHTML='<b class="head">'+(buildTries===1?HDYK.react(true):'There it is.')+'</b><p>That’s the square Socrates drew: each side is the diagonal of one small square, and the diagonals meet at the middle of each edge of the big block.'+(buildTries>1?' (It took '+buildTries+' tries, so this one doesn’t score, but you built it.)':'')+'</p>';
-      nextBtn();
-    } else {
-      const center=diag.filter((d,i)=>d!==GOAL[i]).length;
-      fb.className='fb bad'; fb.innerHTML='<b class="head">'+HDYK.react(false)+'</b><p>'+(hits===0?'All four of your diagonals run through the middle of the block, so they cross in an X instead of making a square.':hits+' of your 4 diagonals are on the tilted square’s edges.')+' Hint: each edge of the tilted square joins the midpoints of two sides of the big block, and none of them touches the center. Flip some and check again.</p>';
-    }
+  function buildFinish(shown){
+    const fb=$('sFb'); built=true; drawBuild(); $('sTool').innerHTML=''; $('sHint').classList.add('hidden');
+    const scored=!shown && checks<=3;
+    if(scored) sRight++;
+    else HDYK.miss(3,{q:"In Plato's Meno, a square of 4 square feet is copied four times into a 4-by-4 block. Which square has exactly twice the area of the original?", opts:['The whole 4-by-4 block','The tilted square drawn on one diagonal of each copy','A square with 3-foot sides'], a:1, why:'Each diagonal halves a 4-square-foot square, and the tilted square is four halves: 8 square feet.'});
+    fb.className='fb';
+    const head = shown ? 'Here it is.' : (checks===1 ? HDYK.react(true) : 'There it is. Built in '+checks+' checks.');
+    fb.innerHTML='<b class="head">'+head+'</b><p>That’s the square Socrates drew: each side is the diagonal of one small square, and the corners sit in the middle of each side of the big block.'+
+      (shown?' This one doesn’t score, and the next step is where you can earn it back.':(!scored?' (More than 3 checks, so this one doesn’t score, but you built it.)':''))+'</p>';
+    if(!shown) HDYK.challenge(fb,3,'Step 3: building the tilted square');
+    nextBtn();
   }
+  function checkBuild(){
+    checks++;
+    const hits=diag.filter((d,i)=>d===GOAL[i]).length;
+    if(hits===4){ buildFinish(false); return; }
+    if(!HDYK.hard()) marks=diag.map((d,i)=>d===GOAL[i]?'ok':'bad');
+    drawBuild(); updateBuild();
+    const fb=$('sFb'); fb.className='fb bad';
+    let t = hits+' of your 4 diagonals '+(hits===1?'is':'are')+' on the tilted square.';
+    if(!HDYK.hard()) t+=' Green ones are right; flip the orange ones. '+BUILD_HINTS[(checks-1)%BUILD_HINTS.length];
+    fb.innerHTML='<b class="head">Not yet.</b><p>'+t+'</p>';
+    if(checks>=3) $('showme').classList.remove('hidden');
+  }
+  function showMe(){ diag=GOAL.slice(); marks=[null,null,null,null]; buildFinish(true); }
+
   $('sLock').onclick=()=>{
-    const s=STAGES[si], ok=sPick===s.a; if(ok) sRight++; sRes.push(ok);
-    if(!ok) HDYK.miss(3,{q:"Plato's Meno: "+s.q, opts:s.opts, a:s.a, why:s.why});
+    const s=STAGES[si], ok=sPick===s.a;
+    if(!ok && sTries===0){
+      sTries=1; HDYK.miss(3,{q:"Plato's Meno: "+s.q, opts:s.opts, a:s.a, why:s.why});
+      const b=$('sOpts').querySelector('button[data-i="'+sPick+'"]'); b.classList.remove('pick'); b.classList.add('wrong'); b.disabled=true; sPick=null; $('sLock').disabled=true;
+      const h=$('sHint'); h.innerHTML='<b class="head">Not quite.</b><p>'+(HDYK.hard()?'Think it through and try once more.':'Hint: '+s.hint+' Try again.')+'</p>'; h.classList.remove('hidden');
+      return;
+    }
+    $('sHint').classList.add('hidden');
+    const first=ok&&sTries===0; if(first) sRight++;
     $('sLock').parentElement.classList.add('hidden');
-    $('sOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(+b.dataset.i===s.a) b.classList.add('right'); else if(+b.dataset.i===sPick) b.classList.add('wrong'); });
+    $('sOpts').querySelectorAll('button').forEach(x=>{
+      x.disabled=true; x.classList.remove('pick');
+      if(+x.dataset.i===s.a) x.classList.add('right'); else if(+x.dataset.i===sPick || x.classList.contains('wrong')) x.classList.add('wrong');
+    });
     s.draw();
-    const fb=$('sFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok)+'</b><p>'+s.why+'</p>';
+    const fb=$('sFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&sTries===1)+'</b><p>'+s.why+'</p>';
+    HDYK.challenge(fb,3,'Step '+(si+1)+': '+s.kind.toLowerCase());
     nextBtn();
   };
   $('sNext').onclick=()=>{ si++; if(si<STAGES.length) showSand(); else { show('sSort'); showClaim(); } };
-  $('startBtn').onclick=()=>{ HDYK.resetMisses(3); CL=HDYK.shuffle(CLAIMS); show('sSand'); showSand(); };
+  $('startBtn').onclick=()=>{
+    HDYK.resetMisses(3); HDYK.resetChallenges(3);
+    STAGES = HDYK.hard() ? BASE_STAGES.concat([HARD_STAGE]) : BASE_STAGES;
+    SAND_SCORED=STAGES.filter(x=>x.scored).length;
+    CL = HDYK.shuffle(CLAIMS.filter(c=>!c.adv)); if(HDYK.hard()) CL=CL.concat(CLAIMS.filter(c=>c.adv));
+    si=0; ci=0; sRight=0; sortRight=0; log=[];
+    show('sSand'); showSand();
+  };
 
   // ---------- Round 2: the source sorter ----------
+  // ap/an: 1 yes, 0 no, 'either' = accepted both ways. h1/h2: hints for Q1/Q2.
   const CLAIMS=[
-    {c:"All bachelors are unmarried.", ap:1, an:1, why:"“Bachelor” already means an unmarried man, so you can know it just by understanding the words."},
-    {c:"Water boils at 100 °C at sea level.", ap:0, an:0, why:"Nothing in the word “water” tells you its boiling point. Someone had to measure it."},
-    {c:"7 + 5 = 12", ap:1, an:0, kant:true, why:"Kant's own example. You know it without any experiment, yet he said “twelve” isn't contained in the idea of “seven plus five,” so it's synthetic a priori. Frege later argued arithmetic is analytic after all, and the debate continues."},
-    {c:"Some swans are black.", ap:0, an:0, why:"Europeans long assumed all swans were white. Black swans had to be seen, in Australia, before anyone knew."},
-    {c:"A triangle has three sides.", ap:1, an:1, why:"Having three sides is part of what “triangle” means."},
-    {c:"The Eiffel Tower is in Paris.", ap:0, an:0, why:"It could have been built somewhere else. You learn where it is from the world: a map, a trip, someone's word."},
-    {c:"If Ana is taller than Ben, then Ben is shorter than Ana.", ap:1, an:1, why:"“Shorter than” is just “taller than” turned around. You don't need to measure anyone."},
-    {c:"Ice floats in water.", ap:0, an:0, why:"Most solids sink in their own liquid. Water is unusual, and only experience tells you so."}
+    {c:"All bachelors are unmarried.", ap:1, an:1, h1:"Q1: do you need to meet any bachelors to know this?", h2:"Q2: is “unmarried” already inside the word “bachelor”?",
+     why:"“Bachelor” already means an unmarried man, so you can know it just by understanding the words. You learned the word from experience, but you don't need to check the world to know the claim. A priori is about what you need to CHECK, not how you first learned the words."},
+    {c:"Water boils at 100 °C at sea level.", ap:0, an:0, h1:"Q1: could you work out a boiling point with your eyes closed?", h2:"Q2: does the word “water” tell you its boiling point?",
+     why:"Nothing in the word “water” tells you its boiling point. Someone had to measure it."},
+    {c:"7 + 5 = 12", ap:1, an:'either', h1:"Q1: would you need a lab to find out what 7 + 5 is?",
+     why:"You know it without any experiment, so it's a priori. For Q2 you can put it either way: Kant said it's synthetic (“twelve” isn't contained in the idea of “seven plus five”), and Frege later argued arithmetic is analytic after all. The debate continues, so both answers count."},
+    {c:"Some swans are black.", ap:0, an:0, h1:"Q1: could anyone know the colors of swans with their eyes closed?", h2:"Q2: does the word “swan” say anything about color?",
+     why:"Europeans long assumed all swans were white. Black swans had to be seen, in Australia, before anyone knew."},
+    {c:"A triangle has three sides.", ap:1, an:1, h1:"Q1: do you need to go and look at triangles to know this?", h2:"Q2: is “three sides” already part of what “triangle” means?",
+     why:"Having three sides is part of what “triangle” means. A priori is about what you need to CHECK, not how you first learned the word."},
+    {c:"The Eiffel Tower is in Paris.", ap:0, an:0, h1:"Q1: could you know where it stands with your eyes closed?", h2:"Q2: does the name “Eiffel Tower” contain the word “Paris”?",
+     why:"It could have been built somewhere else. You learn where it is from the world: a map, a trip, someone's word."},
+    {c:"If Ana is taller than Ben, then Ben is shorter than Ana.", ap:1, an:1, h1:"Q1: do you need to measure Ana and Ben to know this?", h2:"Q2: does “shorter than” just say “taller than” backwards?",
+     why:"“Shorter than” is just “taller than” turned around. You don't need to measure anyone."},
+    {c:"Ice floats in water.", ap:0, an:0, h1:"Q1: could you figure it out with your eyes closed, or does someone have to drop ice in water?", h2:"Q2: does the word “ice” say anything about floating?",
+     why:"Most solids sink in their own liquid. Water is unusual, and only experience tells you so."},
+    // Philosopher mode: advanced, argued about, unscored
+    {c:"Hesperus is Phosphorus.", ap:'either', an:'either', adv:true,
+     why:"Advanced and argued about, so any answer is fine if you can say why. “Hesperus” was the name for the evening star and “Phosphorus” for the morning star. Astronomers had to look to find out they are the same planet, Venus, so most say a posteriori. Saul Kripke added a twist: once it's true it couldn't have been otherwise, which is odd for something learned from the world. Whether it counts as analytic is argued: if both names just meant “Venus,” you'd see it by thinking, yet nobody did. This is a candidate for the “empty” corner."},
+    {c:"The standard metre bar in Paris is one metre long.", ap:'either', an:'either', adv:true,
+     why:"Advanced and contested, so any answer is fine if you can say why. When the bar defined the metre, whoever fixed the unit could know this without measuring anything, which makes it a priori. Yet the bar could have been a different length, so it isn't a necessary truth. Kripke called this a contingent a priori. Whether a definition like this is analytic is still argued."}
   ];
-  let ci=0, picks={}, sortRight=0, log=[], CL=CLAIMS;
+  const WORDAP={1:'a priori (no checking needed)', 0:'a posteriori (you have to check the world)'};
+  const WORDAN={1:'analytic (the meaning gives it away)', 0:'synthetic (it adds something new)'};
+  let ci=0, picks={}, sortRight=0, log=[], CL=CLAIMS, cTries=0, firstN=0;
+  const okq=(c,k,v)=> c[k]==='either' || v===c[k];
   function showClaim(){
-    const c=CL[ci]; picks={ap:null,an:null};
-    $('cStep').textContent='Claim '+(ci+1)+' of '+CLAIMS.length;
+    const c=CL[ci]; picks={ap:null,an:null}; cTries=0;
+    $('cStep').textContent='Claim '+(ci+1)+' of '+CL.length+(c.adv?' · advanced, no wrong answers':'');
     const card=$('cCard'); card.textContent=c.c; card.classList.remove('in'); void card.offsetWidth; card.classList.add('in');
-    $('anQ').textContent = c.kant ? "What did Kant say: is it true just because of what the words mean?" : "Is it true just because of what the words mean?";
     document.querySelectorAll('.qbox').forEach(q=>{
       q.querySelector('.v').textContent=''; q.querySelector('.v').className='v';
       q.querySelectorAll('.yn button').forEach(b=>{ b.disabled=false; b.classList.remove('pick'); b.onclick=()=>{
@@ -456,39 +577,62 @@
         $('cLock').disabled = picks.ap===null || picks.an===null; }; });
     });
     $('cLock').disabled=true; $('cLock').parentElement.classList.remove('hidden');
-    $('cFb').classList.add('hidden'); $('cNextWrap').classList.add('hidden');
+    $('cHint').classList.add('hidden'); $('cFb').classList.add('hidden'); $('cNextWrap').classList.add('hidden');
   }
   $('cLock').onclick=()=>{
-    const c=CL[ci]; let n=0;
+    const c=CL[ci];
+    const r={ap:c.adv||okq(c,'ap',picks.ap), an:c.adv||okq(c,'an',picks.an)}, n=(r.ap?1:0)+(r.an?1:0);
+    if(n<2 && cTries===0){
+      cTries=1; firstN=n;
+      HDYK.miss(3,{q:'Which corner does this claim belong in? “'+c.c+'”'+(c.an==='either'?' (A priori; analytic or synthetic both count)':''), opts:['A priori and analytic','A priori and synthetic','A posteriori and synthetic','A posteriori and analytic'], a:c.ap?(c.an?0:1):(c.an?3:2), why:c.why});
+      const h=$('cHint');
+      h.innerHTML='<b class="head">Not quite.</b><p>'+(HDYK.hard()?'Rethink your answers and lock them in again.':'Hint: '+(!r.ap?c.h1:c.h2)+' Change your answers and lock them in again.')+'</p>';
+      h.classList.remove('hidden');
+      picks={ap:null,an:null};
+      document.querySelectorAll('.qbox').forEach(q=>q.querySelectorAll('.yn button').forEach(b=>b.classList.remove('pick')));
+      $('cLock').disabled=true;
+      return;
+    }
+    $('cHint').classList.add('hidden');
     $('cLock').parentElement.classList.add('hidden');
     document.querySelectorAll('.qbox').forEach(q=>{
-      const k=q.dataset.q, ok=picks[k]===c[k]; if(ok) n++;
+      const k=q.dataset.q, ok=r[k];
       q.querySelectorAll('.yn button').forEach(b=>b.disabled=true);
-      const v=q.querySelector('.v'); v.className='v '+(ok?'ok':'no');
-      const word = k==='ap' ? (c.ap?'a priori':'a posteriori') : (c.an?'analytic':'synthetic');
-      v.textContent = ok ? '✓ '+word : 'answer: '+word;
+      const v=q.querySelector('.v'), W=k==='ap'?WORDAP:WORDAN; v.className='v '+(ok?'ok':'no');
+      if(c.adv) v.textContent='your pick: '+W[picks[k]];
+      else if(c[k]==='either') v.textContent='✓ '+W[picks[k]]+' (either counts)';
+      else v.textContent = ok ? '✓ '+W[c[k]] : 'answer: '+W[c[k]];
     });
-    sortRight+=n;
-    const chip=document.createElement('span'); chip.className='chip '+(n===2?'ok':'no'); chip.textContent=ci+1;
-    $('cell-'+c.ap+c.an).appendChild(chip);
+    const first = cTries===0;
+    if(!c.adv && first) sortRight+=n;
+    const perfect = c.adv || (first && n===2);
+    const apF = c.ap==='either'?picks.ap:c.ap, anF = c.an==='either'?picks.an:c.an;
+    const chip=document.createElement('span'); chip.className='chip '+(perfect?'ok':'no'); chip.textContent=ci+1;
+    $('cell-'+apF+anF).appendChild(chip);
     const fb=$('cFb'); fb.className='fb'+(n===2?'':' bad');
-    fb.innerHTML='<b class="head">'+(n===2?HDYK.react(true):(n===1?'One of two.':HDYK.react(false)))+'</b><p>'+c.why+'</p>';
-    if(n<2) HDYK.miss(3,{q:'Which corner does this claim belong in? \u201c'+c.c+'\u201d'+(c.kant?' (as Kant saw it)':''), opts:['A priori and analytic','A priori and synthetic','A posteriori and synthetic','A posteriori and analytic'], a:c.ap?(c.an?0:1):(c.an?3:2), why:c.why});
-    const corner=(p)=>(p.ap?'A priori':'A posteriori')+', '+(p.an?'analytic':'synthetic');
-    log.push({c:c.c, you:corner(picks), ans:corner(c), ok:n===2});
-    $('cNext').textContent= ci===CLAIMS.length-1 ? 'See my results' : 'Next claim';
+    let head;
+    if(c.adv) head='Your call.';
+    else if(n===2) head=HDYK.react(true, !first);
+    else head=HDYK.react(false);
+    fb.innerHTML='<b class="head">'+head+'</b><p>'+c.why+'</p>';
+    HDYK.challenge(fb,3,c.c);
+    const corner=(ap,an)=>(ap?'A priori':'A posteriori')+', '+(an?'analytic':'synthetic');
+    log.push({c:c.c, you:corner(picks.ap,picks.an), ans:c.adv?'argued':(c.ap==='either'||c.an==='either'?'a priori; either way':corner(c.ap,c.an)), ok:c.adv?null:perfect, second:!first&&n===2});
+    $('cNext').textContent= ci===CL.length-1 ? 'See my results' : 'Next claim';
     $('cNextWrap').classList.remove('hidden');
   };
-  $('cNext').onclick=()=>{ ci++; if(ci<CLAIMS.length) showClaim(); else finish(); };
+  $('cNext').onclick=()=>{ ci++; if(ci<CL.length) showClaim(); else finish(); };
 
   function finish(){
     show('sEnd');
-    $('scores').innerHTML='<div><b>'+sRight+' / '+SAND_SCORED+'</b><span>sand square</span></div><div><b>'+sortRight+' / '+CLAIMS.length*2+'</b><span>source sorter answers</span></div>';
-    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
+    const sortMax=CL.filter(c=>!c.adv).length*2, right=sRight+sortRight, total=SAND_SCORED+sortMax;
+    $('scores').innerHTML='<div><b>'+sRight+' / '+SAND_SCORED+'</b><span>sand square</span></div><div><b>'+sortRight+' / '+sortMax+'</b><span>source sorter answers</span></div>';
+    $('starNote').textContent='Your stars come from these: '+right+' of '+total+'. Second tries and the advanced claims don’t count.';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok===null?'':(r.ok?'yes':'nope'))+'">'+(r.ok===null?'Argued':(r.second?'Second try: ':'')+r.ans)+'</td></tr>').join('');
     $('code').textContent=CODE;
-    HDYK.end($('shelf'),{lock:3, right:sRight+sortRight, total:SAND_SCORED+CLAIMS.length*2});
+    HDYK.end($('shelf'),{lock:3, right:right, total:total});
   }
-  $('again').onclick=()=>{ si=0; ci=0; sRight=0; sortRight=0; log=[]; sRes=[]; document.querySelectorAll('.cell .chip').forEach(c=>c.remove()); show('sIntro'); };
+  $('again').onclick=()=>{ document.querySelectorAll('.cell .chip').forEach(c=>c.remove()); show('sIntro'); };
 })();
 </script>
 </body>

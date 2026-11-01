@@ -22,9 +22,6 @@
   .badge{width:48px;height:48px;flex:none}
   .t1{font:700 clamp(22px,4.5vw,30px)/1.05 Poppins,sans-serif;margin:0}
   .t2{font:500 14px Poppins,sans-serif;color:var(--plum);margin-top:3px}
-  .lights{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:150px}
-  .lights i{width:14px;height:14px;border-radius:50%;border:1.5px solid #b89b67;background:#fff}
-  .lights i.ok{background:var(--teal)} .lights i.no{background:var(--tang)} .lights i.now{background:var(--sand)}
 
   .panel{background:#fff;border:1.5px solid #b89b67;border-radius:20px;box-shadow:0 3px 8px rgba(43,33,23,.18);padding:20px}
   .panel + .panel{margin-top:18px}
@@ -60,7 +57,8 @@
 
   /* gauges */
   .gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-  .gauge{border:1.5px solid #b89b67;border-radius:16px;background:#fff;padding:10px 8px 12px;text-align:center}
+  .gauge{border:1.5px solid #b89b67;border-radius:16px;background:#fff;padding:10px 8px 12px;text-align:center;transition:opacity .2s}
+  .gauge.off{opacity:.4}
   .gauge svg{width:100%;max-width:120px;height:auto;display:block;margin:0 auto}
   .needle{transform-origin:60px 58px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
   .gname{font:700 17px Poppins,sans-serif;margin:2px 0 8px}
@@ -71,6 +69,12 @@
   .verdict{font:500 13px/1.3 Poppins,sans-serif;margin-top:8px;min-height:17px}
   .verdict.ok{color:var(--teal-d)} .verdict.no{color:var(--tang-d)}
 
+  /* decision guide */
+  .guide{margin-top:16px;padding:10px 14px 10px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.6)}
+  .guide .gt{display:block;font:700 15px Poppins,sans-serif;margin-bottom:2px}
+  .guide ol{margin:4px 0 0;padding-left:22px}
+  .guide li{margin:3px 0;font:500 15px/1.4 Poppins,sans-serif}
+
   /* stamps */
   .stamps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
   .stamp{min-height:62px;border:1.5px solid #b89b67;border-radius:14px;font:700 18px Poppins,sans-serif;cursor:pointer;background:#fff;
@@ -78,6 +82,7 @@
   .stamp svg{width:28px;height:28px;flex:none}
   .stamp.k.pick{background:var(--teal);color:#fff} .stamp.n.pick{background:var(--tang)}
   .stamp:disabled{cursor:default}
+  .stamps.wait .stamp{opacity:.45;box-shadow:0 3px 8px rgba(43,33,23,.18)}
   .stamp.miss{background:var(--tang)!important;color:#fff;text-decoration:line-through}
   .label{font:600 13px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:18px 0 0}
   .go{margin-top:16px;text-align:center}
@@ -97,7 +102,8 @@
   .claim.dropL{transform:translate(-30%,80px) rotate(-14deg) scale(.6);opacity:0}
   .claim.dropR{transform:translate(30%,80px) rotate(14deg) scale(.6);opacity:0}
   .jars{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:520px;margin:12px auto 0}
-  .jar{border:0;background:none;padding:0;cursor:pointer}
+  .jar{border:0;background:none;padding:0;cursor:pointer;transition:opacity .2s, filter .2s}
+  .jar:disabled{opacity:.45;filter:grayscale(.6);cursor:default}
   .jar svg{width:100%;height:auto;display:block}
   .jar .tag{display:block;margin:-6px auto 0;width:max-content;font:700 16px Poppins,sans-serif;padding:6px 16px;border:1.5px solid #b89b67;border-radius:10px;background:#fff}
   .jar .hint{display:block;font:500 13px Poppins,sans-serif;color:var(--mute);margin-top:6px}
@@ -108,7 +114,7 @@
   th{font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
   .yes{color:var(--teal-d);font-weight:600} .nope{color:var(--tang-d);font-weight:600}
   .code{display:inline-block;margin:6px 0 4px;padding:10px 18px;border:3px dashed var(--ink);border-radius:12px;background:var(--sand);font:700 24px Poppins,sans-serif;letter-spacing:.1em}
-  .scores{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 14px}
+  .scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 10px}
   .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
   .scores b{display:block;font:700 22px Poppins,sans-serif}
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
@@ -118,12 +124,12 @@
     .yn{flex-direction:column} .yn button{min-height:40px}
     .stamps{grid-template-columns:1fr}
     .scores{grid-template-columns:1fr 1fr}
-    .lights{display:none}
   }
   @media (prefers-reduced-motion:reduce){
     .case.in,.stampmark.on,.belt{animation:none} .stampmark.on{opacity:1;transform:rotate(-12deg)}
     .needle{transition:none}
   }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -188,6 +194,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -209,7 +222,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -241,12 +258,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -264,9 +299,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -283,27 +320,23 @@
       <h1 class="t1">The Gettier Factory</h1>
       <div class="t2">How Do You Know? · Lock 1</div>
     </div>
-    <div class="lights" id="lights" aria-hidden="true"></div>
   </div>
 
   <!-- 1. how it works -->
   <section id="sIntro">
     <div class="panel">
       <h2>How the factory works</h2>
-      <p>Beliefs roll down the line. Your job is quality control. Each one passes three gauges from the recipe, then gets a stamp.</p>
+      <p class="bigq"><b>The question:</b> When is a true belief real knowledge, and when did someone just get lucky?</p>
+      <p>Beliefs roll down the line. Check each one at three gauges, then tap a stamp: KNOWLEDGE or NOT KNOWLEDGE. You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
       <div class="gauges" id="demoGauges"></div>
       <p class="label">Then stamp it</p>
       <div class="stamps">
         <div class="stamp k pick" aria-hidden="true">KNOWLEDGE</div>
         <div class="stamp n" aria-hidden="true">NOT KNOWLEDGE</div>
       </div>
-    </div>
-    <div class="panel">
-      <h2>Two worked examples</h2>
-      <p><b>Dev</b> checks his library's app, which reads the shelf scanners, and believes the book he wants is on shelf 4. It is. Believe <span class="yes">yes</span>, True <span class="yes">yes</span>, Justified <span class="yes">yes</span>, and the app is right <em>because</em> the scanner saw the book there. Reasons and truth are connected: <span class="yes">KNOWLEDGE</span>.</p>
-      <p><b>Smith</b> from the reading believes "the person who gets the job has ten coins in his pocket." All three gauges read yes, but his reasons were about Jones and the truth came from his own pocket. They only meet by luck: <span class="nope">NOT KNOWLEDGE</span>. That's a Gettier case.</p>
-      <p class="small">First a quick warm-up, then nine cases on the line, in a different order every shift. You commit to every answer before the factory shows you anything.</p>
-      <div class="center"><button class="big" id="startBtn">Start the warm-up</button></div>
+      <p style="margin-top:14px"><b>Example.</b> Dev's library app says his book is on shelf 4. It is, because the scanner saw it there. Three Yes, and the reason led to the truth: <span class="yes">KNOWLEDGE</span>.</p>
+      <div id="mode"></div>
+      <div class="center" style="margin-top:12px"><button class="big" id="startBtn">Start</button></div>
     </div>
   </section>
 
@@ -311,7 +344,7 @@
   <section id="sWarm" class="hidden">
     <div class="panel">
       <h2>Warm-up: skill or statement?</h2>
-      <p class="small">Tap the jar each one belongs in.</p>
+      <p class="small">Two quick ones. They don't count toward your stars.</p>
       <div class="claim" id="wClaim"></div>
       <div class="jars" id="wJars">
         <button class="jar" data-pick="how" aria-label="Skill jar: knowing-how">
@@ -343,6 +376,7 @@
   <!-- 3. factory -->
   <section id="sLine" class="hidden">
     <div class="panel">
+      <div id="dots"></div>
       <div class="line">
         <div class="case" id="case">
           <div class="who" id="cWho"></div>
@@ -352,13 +386,31 @@
         <div class="belt" id="belt"></div>
         <div class="stampmark" id="cMark"></div>
       </div>
-      <div class="gauges" id="gauges"></div>
-      <p class="label">Stamp it</p>
-      <div class="stamps" id="stamps">
-        <button class="stamp k" data-s="k"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="2" width="14" height="12" rx="3" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><rect x="3" y="14" width="22" height="8" rx="2" fill="#2e6b57" stroke="#2b2117" stroke-width="2.5"/></svg>KNOWLEDGE</button>
-        <button class="stamp n" data-s="n"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="2" width="14" height="12" rx="3" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><rect x="3" y="14" width="22" height="8" rx="2" fill="#b5522e" stroke="#2b2117" stroke-width="2.5"/></svg>NOT KNOWLEDGE</button>
+
+      <div id="std">
+        <div class="gauges" id="gauges"></div>
+        <div class="guide hk-guide" id="guide">
+          <b class="gt">How to stamp. Go in order, stop at the first No.</b>
+          <ol>
+            <li><b>Believe?</b> Does the person really think it's so?</li>
+            <li><b>True?</b> Is it actually so?</li>
+            <li><b>Justified?</b> A real reason, not a hunch?</li>
+            <li><b>All three Yes?</b> One more check: did the reason lead to the truth, or did luck step in? Luck → NOT KNOWLEDGE.</li>
+          </ol>
+        </div>
+        <p class="label">Stamp it</p>
+        <div class="stamps wait" id="stamps">
+          <button class="stamp k" data-s="k" disabled><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="2" width="14" height="12" rx="3" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><rect x="3" y="14" width="22" height="8" rx="2" fill="#2e6b57" stroke="#2b2117" stroke-width="2.5"/></svg>KNOWLEDGE</button>
+          <button class="stamp n" data-s="n" disabled><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="2" width="14" height="12" rx="3" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><rect x="3" y="14" width="22" height="8" rx="2" fill="#b5522e" stroke="#2b2117" stroke-width="2.5"/></svg>NOT KNOWLEDGE</button>
+        </div>
+        <p class="small center" id="stampNote" style="margin-top:10px">Set the gauges above, then tap a stamp.</p>
       </div>
-      <div class="go"><button class="big" id="send" disabled>Send it through</button></div>
+
+      <div id="gymBox" class="hidden">
+        <div class="luck" id="gymOpts"></div>
+      </div>
+
+      <div class="fb bad hidden" id="hint"></div>
       <div class="fb hidden" id="fb"></div>
       <div class="go hidden" id="nextWrap"><button class="big" id="nextBtn">Next case</button></div>
     </div>
@@ -370,6 +422,7 @@
       <div id="shelf"></div>
       <h2>Shift over: what you reported</h2>
       <div class="scores" id="scores"></div>
+      <p class="small" id="starNote"></p>
       <details class="answers"><summary>See my answers</summary>
       <table>
         <thead><tr><th>Case</th><th>Your stamp</th><th>Right?</th></tr></thead>
@@ -378,7 +431,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll ask you to build a Gettier case of your own.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b></p>
       <div class="center"><button class="big alt" id="again">Run the line again</button></div>
     </div>
   </section>
@@ -387,41 +440,93 @@
 <script>
 (function(){
   const CODE='COPPER KEY';
-  const WARM=[
-    {q:"Maya can parallel park on the first try, but she couldn't explain how she does it.", a:"how", why:"Parking is a skill she shows by doing. She doesn't need to be able to state it."},
-    {q:"Leo is sure that water boils at 100 °C at sea level.", a:"that", why:"It's a claim that's either true or false, so it's knowing-that."},
-    {q:"A toddler zooms around a corner on a scooter without tipping over.", a:"how", why:"She shows a skill by doing it, and couldn't begin to state the physics of balance. That's knowing-how."},
-    {q:"Priya knows the Treaty of Versailles was signed in 1919.", a:"that", why:"A statable fact, true or false: knowing-that."}
-  ];
-  // b,t,j = correct gauge readings; k = is it knowledge; luck = options for Gettier cases (r = right index)
-  const CASES=[
-    {who:"Lena and the coin", text:"Just before a coin flip, Lena shouts “Heads!” She is completely sure. It lands heads.", belief:"Lena believes: it will land heads.",
-     b:1,t:1,j:0,k:0, why:"She believed it and it came true, but a hunch isn't a reason. It fails the recipe at Justified, so it's a lucky guess, not knowledge."},
-    {who:"Priya's chemistry question", text:"Priya asks her chemistry teacher whether gold's symbol is Au. The teacher checks the periodic table on the wall and says yes.", belief:"Priya believes: gold's symbol is Au.",
-     b:1,t:1,j:1,k:1, why:"All three gauges read yes, and her reason (the periodic table, via her teacher) is tied directly to the fact that makes the belief true. Reasons and truth are connected. That's knowledge."},
-    {who:"Ben's parked car", text:"Ben parked on Elm Street this morning. At noon, joyriders took the car and, by sheer chance, dumped it on Elm Street again, a few doors down. At 3 pm, Ben believes his car is still on Elm Street.", belief:"Ben believes (at 3 pm): my car is on Elm Street.",
-     b:1,t:1,j:1,k:0, why:"All three gauges read yes, and it still isn't knowledge. A hidden detail made it a Gettier case.",
-     luck:{opts:["Leaving a car on a street is never a good reason to think it's still there.","His reason was where he parked it, but the car had been moved; it's on Elm Street only because the joyriders happened to dump it there.","The car wasn't really on Elm Street."], r:1}},
-    {who:"Kai's hallway clock", text:"Kai's phone has died, so he checks the hallway clock: a radio-controlled clock that sets itself from an official time signal and is ticking normally. It says 4:05, and it is 4:05.", belief:"Kai believes: it's 4:05.",
-     b:1,t:1,j:1,k:1, why:"Not every clock is a stopped clock. This one is working and keeps itself right, so it shows 4:05 because it is 4:05. Reasons and truth are connected: knowledge."},
-    {who:"Ava's sale", text:"Ava reads on the store's own website, updated this morning, that the sneakers she wants are 30% off. It seems too good to be true, but she believes it, and the sale is real.", belief:"Ava believes: the sneakers are 30% off.",
-     b:1,t:1,j:1,k:1, why:"Surprising isn't the same as lucky. The store's own up-to-date page says so because the sale is real, so her reason is tied to the truth: knowledge."},
-    {who:"Omar's train", text:"Omar's train app, which is almost always right, says his 8:15 train is on time. The train turns up 20 minutes late.", belief:"Omar believes: my train is on time.",
-     b:1,t:0,j:1,k:0, why:"Good reasons, sincere belief, but the belief is false. You can't know something false; you can only think you know it."},
-    {who:"Ruth's field", text:"Driving past a field, Ruth sees a white woolly shape and thinks it's a sheep. The shape is actually a shaggy white dog. But a real sheep is lying behind a rock where she can't see it.", belief:"Ruth believes: there's a sheep in that field.",
-     b:1,t:1,j:1,k:0, why:"Believed, true, and justified, since the dog really did look like a sheep. Still not knowledge. Another Gettier case.",
-     luck:{opts:["What she saw was a dog; the belief came out true because of a sheep she never saw.","A woolly white shape is never a good reason to think something is a sheep.","There was no sheep in the field at all."], r:0}},
-    {who:"Theo's test", text:"Theo's friend, who is usually reliable, tells him the history test is on Friday. Theo is sure his friend is joking and doesn't believe it. The test is on Friday.", belief:"The claim: the test is on Friday.",
-     b:0,t:1,j:1,k:0, any:['j'], anyNote:{j:'either is fair: he had a good reason available, but he rejected it'}, why:"The claim is true and Theo had a good reason available, but he doesn't believe it. You can't know something you don't even accept."},
-    {who:"Henry's drive", text:"Henry drives through a county full of fake barn fronts, flat facades built to look real from the road. He happens to look at the one real barn and thinks, “That's a barn.”", belief:"Henry believes: that's a barn.",
-     b:1,t:1,j:1,k:0, why:"Believed, true, justified, and no false step in his thinking. Still not knowledge. This is the fake barn case.",
-     luck:{opts:["He doesn't really believe it's a barn.","The barn he looked at was one of the fakes.","He picked the one real barn by chance; almost any other barn he looked at would have fooled him."], r:2}}
-  ];
   const $=id=>document.getElementById(id);
-  const lights=$('lights');
-  let wi=0, wRight=0, ci=0, gaugeRight=0, stampRight=0, luckRight=0, picks, stamp, log=[];
+  const WARM=[
+    {q:"A toddler zooms around a corner on a scooter without tipping over.", a:"how", why:"She shows a skill by doing it, and couldn't begin to state the physics of balance. That's knowing-how."},
+    {q:"Leo is sure that water boils at 100 °C at sea level.", a:"that", why:"It's a claim that's either true or false, so it's knowing-that."}
+  ];
+  // b,t,j = correct gauge readings (only gauges up to the first No matter); k = is it knowledge;
+  // luck = options for Gettier cases (r = right index; f = feedback for picking that option); hint = shown after a first miss
+  const CASES=[
+    {first:true, who:"Soraya's chemistry question", text:"Soraya asks her chemistry teacher whether gold's symbol is Au. The teacher checks the periodic table on the wall and says yes.", belief:"Soraya believes: gold's symbol is Au.",
+     b:1,t:1,j:1,k:1,
+     hint:"Run the gauges in order, then line 4: where did her reason come from, and is that the same thing that makes the symbol Au?",
+     why:"All three gauges read Yes, and her reason (the periodic table, via her teacher) is tied directly to the fact that makes the belief true. The reason led to the truth. That's knowledge."},
+    {who:"Lena and the coin", text:"Just before a coin flip, Lena shouts “Heads!” She is completely sure. It lands heads.", belief:"Lena believes: it will land heads.",
+     b:1,t:1,j:0,k:0,
+     hint:"Look at gauge 3. Shouting “Heads!” before the flip: is that a real reason, or a hunch?",
+     why:"She believed it and it came true, but a hunch isn't a reason. It stops at Justified, so it's a lucky guess, not knowledge."},
+    {who:"Ben's parked car", text:"Ben parked on Elm Street this morning. At noon, joyriders took the car and, by sheer chance, dumped it on Elm Street again, a few doors down. At 3 pm, Ben believes his car is still on Elm Street.", belief:"Ben believes (at 3 pm): my car is on Elm Street.",
+     b:1,t:1,j:1,k:0,
+     hint:"What happened to the car between morning and 3 pm? Then line 4: did his reason lead to the truth?",
+     why:"All three gauges read Yes, and it still isn't knowledge. A hidden detail made it a Gettier case.",
+     luck:{r:1, opts:[
+       {t:"Leaving a car on a street is never a good reason to think it's still there.", f:"Not quite. Where you parked is usually a fine reason, which is why Justified reads Yes. The trouble comes after he parked."},
+       {t:"His reason was where he parked it, but the car had been moved; it's on Elm Street only because the joyriders happened to dump it there.", f:"Yes. His reason (where he parked) and the truth (where the car is now) are tied together only by a coincidence."},
+       {t:"The car wasn't really on Elm Street.", f:"It was on Elm Street, which is why True reads Yes. The luck is in how the belief became true."}]}},
+    {who:"Kai's hallway clock", text:"Kai's phone has died, so he checks the hallway clock: a radio-controlled clock that sets itself from an official time signal and is ticking normally. It says 4:05, and it is 4:05.", belief:"Kai believes: it's 4:05.",
+     b:1,t:1,j:1,k:1,
+     hint:"Line 4: what makes this clock say 4:05? Is it doing its job, or did it get lucky?",
+     why:"Not every clock is a stopped clock. This one is working and keeps itself right, so it shows 4:05 because it is 4:05. The reason led to the truth: knowledge."},
+    {who:"Ava's sale", text:"Ava reads on the store's own website, updated this morning, that the sneakers she wants are 30% off. It seems too good to be true, but she believes it, and the sale is real.", belief:"Ava believes: the sneakers are 30% off.",
+     b:1,t:1,j:1,k:1,
+     hint:"Line 4: why does the store's page say 30% off? Is that connected to the sale being real?",
+     why:"Surprising isn't the same as lucky. The store's own up-to-date page says so because the sale is real, so her reason is tied to the truth: knowledge."},
+    {who:"Omar's train", text:"Omar's train app, which is almost always right, says his 8:15 train is on time. The train turns up 20 minutes late.", belief:"Omar believes: my train is on time.",
+     b:1,t:0,j:1,k:0,
+     hint:"Go in order and stop at the first No. Which gauge does a train that turns up late trouble?",
+     why:"Good reasons, sincere belief, but the belief is false. The True gauge is the first No, so you stop there. You can't know something false; you can only think you know it."},
+    {who:"Ruth's field", text:"Driving past a field, Ruth sees a white woolly shape and thinks it's a sheep. The shape is actually a shaggy white dog. But a real sheep is lying behind a rock where she can't see it.", belief:"Ruth believes: there's a sheep in that field.",
+     b:1,t:1,j:1,k:0,
+     hint:"What did she actually see, and is that what made her belief true?",
+     why:"Believed, true, and justified, since the dog really did look like a sheep. Still not knowledge. Another Gettier case.",
+     luck:{r:0, opts:[
+       {t:"What she saw was a dog; the belief came out true because of a sheep she never saw.", f:"Yes. Her reason came from the dog; the truth came from a sheep she never saw. The two only meet by luck."},
+       {t:"A woolly white shape is never a good reason to think something is a sheep.", f:"Not quite. From a car, a white woolly shape is a decent reason, so Justified reads Yes. The trouble is elsewhere."},
+       {t:"There was no sheep in the field at all.", f:"There was one, hidden behind a rock. That's why True reads Yes."}]}},
+    {who:"Theo's test", text:"Theo's friend, who is usually reliable, tells him the history test is on Friday. Theo is sure his friend is joking and doesn't believe it. The test is on Friday.", belief:"The claim: the test is on Friday.",
+     b:0,t:1,j:1,k:0,
+     hint:"Line 1: does Theo actually think it's so?",
+     why:"The claim is true and Theo had a good reason available, but he doesn't believe it. Believe is the first No, so you stop there. You can't know something you don't even accept."},
+    {who:"Mika's cookies", text:"Mika has a tray of cookies in the oven. A beep sounds from the kitchen and he takes the tray out, sure it was his oven's timer. It was really the neighbor's microwave beeping through the wall. By chance, the cookies were done anyway.", belief:"Mika believes: the cookies are done.",
+     b:1,t:1,j:1,k:0,
+     hint:"Line 4: what did Mika's reason actually come from, and is that what made the cookies done?",
+     why:"Believed, true, and justified: an oven beep is a fair reason. But the beep wasn't his oven's, so his reason and the cookies being done only met by luck. A Gettier case in the kitchen.",
+     luck:{r:0, opts:[
+       {t:"The beep was the neighbor's microwave, not his oven; the cookies were done only by coincidence.", f:"Yes. The reason (a beep he took for his oven) had nothing to do with the cookies being done."},
+       {t:"A beep is never a good reason to think food is done.", f:"Not quite. A real oven beep is a fine reason, which is why Justified reads Yes. This beep just wasn't his oven's."},
+       {t:"The cookies weren't actually done.", f:"They were done, which is why True reads Yes."}]}},
+    {who:"Henry's drive", text:"Henry drives through a county full of fake barn fronts, flat facades built to look real from the road. He happens to look at the one real barn and thinks, “That's a barn.”", belief:"Henry believes: that's a barn.",
+     b:1,t:1,j:1,k:0, contested:true,
+     hint:"Could almost anything barn-shaped he looked at have fooled him?",
+     why:"Believed, true, justified, and no false step in his thinking. Most philosophers say this is not knowledge, because he picked the one real barn by luck. But this verdict is one of the most argued in the field, and some philosophers say he does know. If you disagree, challenge it.",
+     luck:{r:2, opts:[
+       {t:"He doesn't really believe it's a barn.", f:"He does, sincerely. That's why Believe reads Yes."},
+       {t:"The barn he looked at was one of the fakes.", f:"No: he looked at the one real barn. That's why True reads Yes."},
+       {t:"He picked the one real barn by chance; almost everything barn-shaped he could have looked at was a fake.", f:"Yes. Nothing about his eyes or his thinking separated the real barn from the fakes. The truth was luck."}]}}
+  ];
+  // Philosopher-mode extras
+  const EXTRA=[
+    {who:"Tomás and the bus", text:"Tomás was born with unusually sharp eyesight. In good light he reads the number on a bus 40 metres away: 42. It is 42.", belief:"Tomás believes: that's bus 42.",
+     b:1,t:1,j:1,k:1,
+     why:"This one is a trap for anyone who thinks all luck ruins knowledge. Tomás was lucky to be born with good eyes, but that luck comes before his reason. His eyes work, and that is exactly why the belief is true. What ruins knowledge is luck between the reason and the truth. Harmless luck: knowledge."},
+    {who:"Mr. Truetemp", text:"Unknown to him, Mr. Truetemp has a device in his head that makes him form accurate beliefs about the temperature. He has no idea why, but he thinks, “It's 22 degrees.” It is.", belief:"Mr. Truetemp believes: it's 22 degrees.",
+     arguable:true,
+     why:"Philosophers split on this. He believes it, it's true, and the process behind it is reliable, so some say he knows. But he has no reason of his own to trust it, so others say he's justified in nothing and knows nothing. There's no official key. If you can say why, you're doing epistemology."}
+  ];
+  // Gettier Gym (Philosopher mode): delete the one sentence that turns the Gettier case into plain knowledge
+  const GYM=[
+    {gym:true, who:"Gettier Gym · Ben's car", text:"This story is a Gettier case. Tap the ONE sentence you would delete to turn it into plain knowledge.",
+     sents:["Ben parked on Elm Street this morning.","At noon, joyriders took the car and, by chance, dumped it on Elm Street again, a few doors down.","At 3 pm, Ben believes his car is on Elm Street.","Nobody told him the car had been moved."], r:1,
+     why:"Delete the joyriders and Ben's reason (where he parked) leads straight to the truth (where the car is). The lucky gap was the whole problem. Delete the others and you lose his reason or his belief instead."},
+    {gym:true, who:"Gettier Gym · Smith's coins", text:"This story is a Gettier case. Tap the ONE sentence you would delete to turn it into plain knowledge.",
+     sents:["The company president tells Smith that Jones will get the job.","Smith counted ten coins in Jones's pocket, so he believes: the person who gets the job has ten coins.","In fact Smith gets the job, not Jones.","Smith also happens to have ten coins in his own pocket."], r:2,
+     why:"Delete “Smith gets the job” and Jones gets it, so Smith's belief is true because of the very coins he counted. Reason and truth are connected. Delete the others and he either loses his reason or his belief turns false."}
+  ];
+  const NAMES=[['b','Believe?'],['t','True?'],['j','Justified?']];
 
-  CASES.forEach(()=>lights.appendChild(document.createElement('i')));
+  let wi=0, ci=0, ORDER=[], WORD=WARM, cur=null, tries=0, locked=false, picks={}, luckTries=0, gymTries=0;
+  let stampRight=0, luckRight=0, gymRight=0, stampMax=0, luckMax=0, gymMax=0, results=[], log=[];
 
   function gaugeSVG(){
     return '<svg viewBox="0 0 120 72" aria-hidden="true">'+
@@ -433,31 +538,43 @@
       '<g class="needle"><line x1="60" y1="58" x2="60" y2="16" stroke="#2b2117" stroke-width="4" stroke-linecap="round"/></g>'+
       '<circle cx="60" cy="58" r="7" fill="#1d3a7a" stroke="#2b2117" stroke-width="3"/></svg>';
   }
-  const NAMES=[['b','Believe?'],['t','True?'],['j','Justified?']];
   function buildGauges(el, interactive){
     el.innerHTML=NAMES.map(([k,n])=>'<div class="gauge" data-k="'+k+'">'+gaugeSVG()+'<div class="gname">'+n+'</div>'+
       (interactive?'<div class="yn"><button class="y" data-v="1">Yes</button><button class="n" data-v="0">No</button></div><div class="verdict"></div>':'')+'</div>').join('');
   }
-  function setNeedle(g,v){ g.querySelector('.needle').style.transform='rotate('+(v===null?0:(v?62:-62))+'deg)'; }
+  function setNeedle(g,v){ g.querySelector('.needle').style.transform='rotate('+(v===null||v===undefined?0:(v?62:-62))+'deg)'; }
 
   // intro demo: needles swing to yes one after another
   buildGauges($('demoGauges'), false);
   [...$('demoGauges').children].forEach((g,i)=>setTimeout(()=>setNeedle(g,1), 600+i*450));
+  HDYK.hardToggle($('mode'));
 
   function show(id){ ['sIntro','sWarm','sLine','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
 
-  // ---- warm-up ----
-  let ORDER=CASES, WORD=WARM;
-  $('startBtn').onclick=()=>{ ORDER=HDYK.shuffle(CASES); WORD=HDYK.shuffle(WARM); HDYK.resetMisses(1); show('sWarm'); showWarm(); };
+  // ---- warm-up (2 items, not scored) ----
+  $('startBtn').onclick=()=>{
+    ORDER=buildOrder(); results=[]; log=[]; ci=0; wi=0;
+    stampRight=luckRight=gymRight=0;
+    stampMax=ORDER.filter(c=>!c.gym&&!c.arguable).length; luckMax=ORDER.filter(c=>c.luck).length; gymMax=ORDER.filter(c=>c.gym).length;
+    HDYK.resetMisses(1); HDYK.resetChallenges(1);
+    if(HDYK.hard()){ show('sLine'); showCase(); }
+    else { WORD=HDYK.shuffle(WARM); show('sWarm'); showWarm(); }
+  };
+  function buildOrder(){
+    const first=CASES.find(c=>c.first), rest=CASES.filter(c=>!c.first);
+    let mid=HDYK.hard()?rest.concat(EXTRA):rest;
+    return [first].concat(HDYK.shuffle(mid), HDYK.hard()?GYM:[]);
+  }
+  function jars(){ return [...$('wJars').querySelectorAll('.jar')]; }
   function showWarm(){
     const c=$('wClaim'); c.className='claim'; c.textContent=WORD[wi].q;
     $('wFb').classList.add('hidden'); $('wNextWrap').classList.add('hidden');
-    $('wJars').style.pointerEvents='';
+    jars().forEach(j=>j.disabled=false);
   }
   const wLevel={how:0,that:0};
-  $('wJars').querySelectorAll('.jar').forEach(btn=>btn.onclick=()=>{
-    const pick=btn.dataset.pick, w=WORD[wi], ok=pick===w.a; if(ok) wRight++;
-    $('wJars').style.pointerEvents='none';
+  jars().forEach(btn=>btn.onclick=()=>{
+    const pick=btn.dataset.pick, w=WORD[wi], ok=pick===w.a;
+    jars().forEach(j=>j.disabled=true);
     $('wClaim').classList.add(pick==='how'?'dropL':'dropR');
     const n=wLevel[pick]++, ns='http://www.w3.org/2000/svg', dot=document.createElementNS(ns,'circle');
     dot.setAttribute('cx',72+(n%3)*28); dot.setAttribute('cy',146-Math.floor(n/3)*22); dot.setAttribute('r',10);
@@ -466,89 +583,178 @@
     const fb=$('wFb'); fb.className='fb'+(ok?'':' bad');
     fb.innerHTML='<b class="head">'+HDYK.react(ok)+'</b><p>'+w.why+'</p>';
     if(!ok) HDYK.miss(1,{q:'Skill (knowing-how) or statement (knowing-that)? '+w.q, opts:['Knowing-how: a skill','Knowing-that: a statement'], a:w.a==='how'?0:1, why:w.why});
-    $('wNext').textContent = wi===WARM.length-1 ? 'On to the factory' : 'Next';
+    $('wNext').textContent = wi===WORD.length-1 ? 'On to the factory' : 'Next';
     $('wNextWrap').classList.remove('hidden');
   });
-  $('wNext').onclick=()=>{ wi++; if(wi<WARM.length) showWarm(); else { show('sLine'); showCase(); } };
+  $('wNext').onclick=()=>{ wi++; if(wi<WORD.length) showWarm(); else { show('sLine'); showCase(); } };
 
   // ---- factory line ----
   function showCase(){
-    const c=ORDER[ci]; picks={b:null,t:null,j:null}; stamp=null;
-    $('cWho').textContent='Case '+(ci+1)+' of '+CASES.length+' · '+c.who;
-    $('cText').textContent=c.text; $('cBelief').textContent=c.belief;
+    cur=ORDER[ci]; tries=0; locked=false; picks={b:null,t:null,j:null}; luckTries=0; gymTries=0;
+    $('cWho').textContent=(cur.gym?'':'Case ')+(ci+1)+' of '+ORDER.length+' · '+cur.who;
+    $('cText').textContent=cur.text; $('cBelief').textContent=cur.belief||''; $('cBelief').classList.toggle('hidden', !cur.belief);
     const mark=$('cMark'); mark.className='stampmark'; mark.textContent='';
     const card=$('case'); card.classList.remove('in'); void card.offsetWidth; card.classList.add('in');
     const belt=$('belt'); belt.classList.add('run'); setTimeout(()=>belt.classList.remove('run'),700);
+    HDYK.dots($('dots'), ORDER.length, results);
+    $('hint').classList.add('hidden'); $('fb').classList.add('hidden'); $('nextWrap').classList.add('hidden');
+    $('nextBtn').textContent = ci===ORDER.length-1 ? 'End of shift' : 'Next case';
+    if(cur.gym){ $('std').classList.add('hidden'); $('gymBox').classList.remove('hidden'); buildGym(); return; }
+    $('std').classList.remove('hidden'); $('gymBox').classList.add('hidden');
+    startGauges();
+  }
+  function startGauges(){
     buildGauges($('gauges'), true);
     [...$('gauges').children].forEach(g=>{
       g.querySelectorAll('.yn button').forEach(b=>b.onclick=()=>{
-        const v=+b.dataset.v; picks[g.dataset.k]=v;
-        g.querySelectorAll('.yn button').forEach(x=>x.classList.toggle('pick',x===b));
-        setNeedle(g,v); ready();
+        if(locked) return;
+        const k=g.dataset.k, v=+b.dataset.v; picks[k]=v;
+        if(v===0){ let after=false; ['b','t','j'].forEach(x=>{ if(after) picks[x]=null; if(x===k) after=true; }); }
+        refresh();
       });
     });
-    $('stamps').querySelectorAll('.stamp').forEach(s=>{ s.disabled=false; s.classList.remove('pick','miss'); s.onclick=()=>{
-      stamp=s.dataset.s; $('stamps').querySelectorAll('.stamp').forEach(x=>x.classList.toggle('pick',x===s)); ready(); }; });
-    $('send').disabled=true; $('send').parentElement.classList.remove('hidden');
-    $('fb').classList.add('hidden'); $('nextWrap').classList.add('hidden');
-    [...lights.children].forEach((l,i)=>{ if(i===ci) l.className='now'; });
+    $('stamps').querySelectorAll('.stamp').forEach(s=>{ s.classList.remove('pick','miss'); s.onclick=()=>onStamp(s.dataset.s); });
+    refresh();
   }
-  function ready(){ $('send').disabled = picks.b===null||picks.t===null||picks.j===null||stamp===null; }
-
-  $('send').onclick=()=>{
-    const c=ORDER[ci]; let g=0;
-    $('send').parentElement.classList.add('hidden');
-    [...$('gauges').children].forEach(el=>{
-      const k=el.dataset.k, free=(c.any||[]).includes(k), ok=free||picks[k]===c[k]; if(ok) g++;
-      el.querySelectorAll('.yn button').forEach(b=>b.disabled=true);
-      const v=el.querySelector('.verdict'); v.className='verdict '+(ok?'ok':'no');
-      v.textContent= free ? '✓ '+c.anyNote[k] : (ok ? '✓ right' : 'should be '+(c[k]?'Yes':'No'));
+  function complete(){ return picks.b===0 || (picks.b===1 && (picks.t===0 || (picks.t===1 && picks.j!==null))); }
+  function refresh(){
+    let open=true;
+    [...$('gauges').children].forEach(g=>{
+      const k=g.dataset.k, v=picks[k];
+      g.classList.toggle('off', !open && !locked);
+      g.querySelectorAll('.yn button').forEach(b=>{ b.disabled=locked||!open; b.classList.toggle('pick', v!==null && +b.dataset.v===v); });
+      setNeedle(g, open?v:null);
+      if(open && v!==1) open=false;
     });
-    gaugeRight+=g;
-    const sOk=(stamp==='k')===!!c.k; if(sOk) stampRight++;
-    $('stamps').querySelectorAll('.stamp').forEach(s=>{s.disabled=true; if(!sOk && s.dataset.s===stamp) s.classList.add('miss');});
-    const mark=$('cMark'); mark.textContent=c.k?'KNOWLEDGE':'NOT KNOWLEDGE'; mark.className='stampmark on '+(c.k?'k':'n');
-    lights.children[ci].className = sOk&&g===3 ? 'ok' : 'no';
-    const fb=$('fb'); fb.className='fb'+(sOk?'':' bad');
-    if(!sOk) HDYK.miss(1,{q:c.text+' '+c.belief+' Knowledge or not?', opts:['Knowledge','Not knowledge'], a:c.k?0:1, why:c.why});
-    let h='<b class="head">'+HDYK.react(sOk)+' The right stamp is '+(c.k?'KNOWLEDGE':'NOT KNOWLEDGE')+'.</b><p>'+c.why+'</p>';
-    if(g<3) h+='<p class="small">Gauges: you got '+g+' of 3. Check the gauges marked above.</p>';
-    log.push({who:c.who, stamp:stamp==='k'?'Knowledge':'Not knowledge', ok:sOk});
-    if(c.luck){
-      h+='<p><b>Where did the luck sneak in?</b> Pick one.</p><div class="luck" id="luck">'+
-        c.luck.opts.map((o,i)=>'<button data-i="'+i+'">'+o+'</button>').join('')+'</div><div id="luckFb"></div>';
-      fb.innerHTML=h; fb.classList.remove('hidden');
-      $('luck').querySelectorAll('button').forEach(b=>b.onclick=()=>{
-        const i=+b.dataset.i, ok=i===c.luck.r; if(ok) luckRight++;
-        if(!ok) HDYK.miss(1,{q:c.text+' This is a Gettier case. Where did the luck sneak in?', opts:c.luck.opts, a:c.luck.r, why:'The reasons and the truth only meet by luck.'});
-        $('luck').querySelectorAll('button').forEach(x=>{ x.disabled=true; if(+x.dataset.i===c.luck.r) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
-        log[log.length-1].luck=ok;
-        $('luckFb').innerHTML='<p style="margin-top:10px">'+('<b>'+HDYK.react(ok)+'</b> ')+'The reasons and the truth only meet by luck. That gap is the mark of a Gettier case.</p>';
-        $('nextWrap').classList.remove('hidden');
-      });
-    } else {
-      fb.innerHTML=h; fb.classList.remove('hidden'); $('nextWrap').classList.remove('hidden');
+    const ready=complete()&&!locked;
+    $('stamps').classList.toggle('wait', !ready && !locked);
+    $('stamps').querySelectorAll('.stamp').forEach(s=>s.disabled=!ready);
+    $('stampNote').classList.toggle('hidden', ready||locked);
+  }
+
+  function onStamp(st){
+    if(locked||!complete()) return;
+    if(cur.arguable){ resolve(st,true); return; }
+    const sOk=(st==='k')===!!cur.k;
+    if(!sOk && tries===0){
+      tries=1;
+      HDYK.miss(1,{q:cur.text+' '+cur.belief+' Knowledge or not?', opts:['Knowledge','Not knowledge'], a:cur.k?0:1, why:cur.why});
+      picks={b:null,t:null,j:null};
+      const h=$('hint');
+      h.innerHTML='<b class="head">Not quite.</b><p>'+(HDYK.hard()?'Run the gauges again and try once more.':'Hint: '+cur.hint+' Re-set the gauges and try again.')+'</p>';
+      h.classList.remove('hidden');
+      refresh();
+      return;
     }
-    $('nextBtn').textContent = ci===CASES.length-1 ? 'End of shift' : 'Next case';
-  };
-  $('nextBtn').onclick=()=>{ ci++; if(ci<CASES.length) showCase(); else finish(); };
+    resolve(st,sOk);
+  }
+
+  function resolve(st,sOk){
+    const c=cur; locked=true; $('hint').classList.add('hidden');
+    // gauge verdicts
+    let fn=3; for(let i=0;i<3;i++){ if(c[['b','t','j'][i]]===0){ fn=i; break; } }
+    let bad=0;
+    [...$('gauges').children].forEach((el,i)=>{
+      const k=el.dataset.k, v=el.querySelector('.verdict');
+      if(c.arguable){ v.textContent=''; return; }
+      if(i>fn){ v.className='verdict'; v.textContent='not needed'; return; }
+      const ok=picks[k]===c[k]; if(!ok) bad++;
+      v.className='verdict '+(ok?'ok':'no');
+      v.textContent= ok ? '✓ right' : 'should be '+(c[k]?'Yes':'No');
+    });
+    refresh();
+    $('stamps').querySelectorAll('.stamp').forEach(s=>{ s.disabled=true; s.classList.toggle('pick', s.dataset.s===st); s.classList.toggle('miss', !c.arguable && !sOk && s.dataset.s===st); });
+    const fb=$('fb');
+    if(c.arguable){
+      const mark=$('cMark'); mark.textContent=st==='k'?'KNOWLEDGE':'NOT KNOWLEDGE'; mark.className='stampmark on '+(st==='k'?'k':'n');
+      fb.className='fb'; fb.innerHTML='<b class="head">No wrong answer here.</b><p>'+c.why+'</p>';
+      results.push(true); log.push({who:c.who, stamp:st==='k'?'Knowledge':'Not knowledge', ok:null});
+      HDYK.dots($('dots'), ORDER.length, results);
+      fb.classList.remove('hidden'); $('nextWrap').classList.remove('hidden');
+      return;
+    }
+    const first=sOk&&tries===0; if(first) stampRight++;
+    const mark=$('cMark'); mark.textContent=c.k?'KNOWLEDGE':'NOT KNOWLEDGE'; mark.className='stampmark on '+(c.k?'k':'n');
+    results.push(first); HDYK.dots($('dots'), ORDER.length, results);
+    fb.className='fb'+(sOk?'':' bad');
+    let h='<b class="head">'+HDYK.react(sOk, sOk&&tries===1)+' The right stamp is '+(c.k?'KNOWLEDGE':'NOT KNOWLEDGE')+'.</b><p>'+c.why+'</p>';
+    if(bad) h+='<p class="small">Some of your gauge readings were off. Check the ones marked above.</p>';
+    log.push({who:c.who, stamp:st==='k'?'Knowledge':'Not knowledge', ok:first, second:sOk&&tries===1});
+    fb.innerHTML=h; fb.classList.remove('hidden');
+    if(c.luck) askLuck(fb); else done();
+  }
+  function done(){
+    HDYK.challenge($('fb'), 1, cur.who+': '+(cur.arguable?'argued':(cur.k?'Knowledge':'Not knowledge')));
+    $('nextWrap').classList.remove('hidden');
+  }
+
+  // "Where did the luck sneak in?" with per-option feedback, one hint and a second try
+  function askLuck(fb){
+    const c=cur, opts=HDYK.shuffle(c.luck.opts.map((o,i)=>({o:o,i:i})));
+    fb.insertAdjacentHTML('beforeend','<p style="margin-top:10px"><b>Where did the luck sneak in?</b> Pick one.</p><div class="luck" id="luck">'+
+      opts.map(x=>'<button data-i="'+x.i+'">'+x.o.t+'</button>').join('')+'</div><div id="luckFb"></div>');
+    const lf=$('luckFb'), btns=[...$('luck').querySelectorAll('button')];
+    btns.forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i, ok=i===c.luck.r, o=c.luck.opts[i];
+      if(!ok && luckTries===0){
+        luckTries=1;
+        HDYK.miss(1,{q:c.text+' This is a Gettier case. Where did the luck sneak in?', opts:c.luck.opts.map(x=>x.t), a:c.luck.r, why:c.luck.opts[c.luck.r].f});
+        b.disabled=true; b.classList.add('wrong');
+        lf.innerHTML='<p style="margin-top:10px"><b>Not that one.</b> '+(HDYK.hard()?'':o.f+' Hint: line 4 of the guide. Where do the reason and the truth come apart? ')+'Try again.</p>';
+        return;
+      }
+      if(ok&&luckTries===0) luckRight++;
+      btns.forEach(x=>{ x.disabled=true; if(+x.dataset.i===c.luck.r) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      log[log.length-1].luck=ok&&luckTries===0;
+      let t='<p style="margin-top:10px"><b>'+HDYK.react(ok, ok&&luckTries===1)+'</b> '+c.luck.opts[c.luck.r].f;
+      if(!ok) t+=' (Your pick: '+o.f+')';
+      t+=' The reason and the truth only meet by luck. That gap is the mark of a Gettier case.</p>';
+      lf.innerHTML=t;
+      done();
+    });
+  }
+
+  // ---- Gettier Gym (Philosopher mode) ----
+  function buildGym(){
+    const c=cur;
+    $('gymOpts').innerHTML=c.sents.map((s,i)=>'<button data-i="'+i+'">'+s+'</button>').join('');
+    $('gymOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i, ok=i===c.r;
+      if(!ok && gymTries===0){
+        gymTries=1; b.disabled=true; b.classList.add('wrong');
+        HDYK.miss(1,{q:'Gettier Gym: '+c.sents.join(' ')+' Which one sentence would you delete to make it plain knowledge?', opts:c.sents, a:c.r, why:c.why});
+        const h=$('hint'); h.innerHTML='<b class="head">Not that one.</b><p>Think again about which detail is the lucky gap, and try once more.</p>'; h.classList.remove('hidden');
+        return;
+      }
+      $('hint').classList.add('hidden');
+      const first=ok&&gymTries===0; if(first) gymRight++;
+      $('gymOpts').querySelectorAll('button').forEach(x=>{ x.disabled=true; if(+x.dataset.i===c.r) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      results.push(first); HDYK.dots($('dots'), ORDER.length, results);
+      log.push({who:c.who, stamp:'Deleted sentence '+(i+1), ok:first, second:ok&&gymTries===1});
+      const fb=$('fb'); fb.className='fb'+(ok?'':' bad');
+      fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&gymTries===1)+(ok?'':' The sentence to delete was number '+(c.r+1)+'.')+'</b><p>'+c.why+'</p>';
+      fb.classList.remove('hidden');
+      HDYK.challenge(fb, 1, c.who+': delete sentence '+(c.r+1));
+      $('nextWrap').classList.remove('hidden');
+    });
+  }
+
+  $('nextBtn').onclick=()=>{ ci++; if(ci<ORDER.length) showCase(); else finish(); };
 
   function finish(){
     show('sEnd');
-    const luckMax=CASES.filter(c=>c.luck).length;
+    const right=stampRight+luckRight+gymRight, total=stampMax+luckMax+gymMax;
     $('scores').innerHTML=
-      '<div><b>'+stampRight+' / '+CASES.length+'</b><span>stamps</span></div>'+
-      '<div><b>'+gaugeRight+' / '+CASES.length*3+'</b><span>gauges</span></div>'+
+      '<div><b>'+stampRight+' / '+stampMax+'</b><span>stamps</span></div>'+
       '<div><b>'+luckRight+' / '+luckMax+'</b><span>luck spotted</span></div>'+
-      '<div><b>'+wRight+' / '+WARM.length+'</b><span>warm-up</span></div>';
-    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.who+'</td><td>'+r.stamp+'</td><td class="'+(r.ok?'yes':'nope')+'">'+(r.ok?'Right':'Missed')+
+      (gymMax?'<div><b>'+gymRight+' / '+gymMax+'</b><span>Gettier Gym</span></div>':'');
+    $('starNote').textContent='Your stars come from stamps + luck'+(gymMax?' + Gym':'')+': '+right+' of '+total+'. Second tries, the warm-up and the arguable case don’t count.';
+    $('rows').innerHTML=log.map(r=>'<tr><td>'+r.who+'</td><td>'+r.stamp+'</td><td class="'+(r.ok===null?'':(r.ok?'yes':'nope'))+'">'+(r.ok===null?'Argued':(r.ok?'Right':(r.second?'Second try':'Missed')))+
       (r.luck!==undefined?(' · luck '+(r.luck?'spotted':'missed')):'')+'</td></tr>').join('');
     $('code').textContent=CODE;
-    HDYK.end($('shelf'),{lock:1, right:stampRight+luckRight+wRight, total:CASES.length+luckMax+WARM.length});
+    HDYK.end($('shelf'),{lock:1, right:right, total:total});
   }
   $('again').onclick=()=>{
-    wi=0; wRight=0; ci=0; gaugeRight=0; stampRight=0; luckRight=0; log=[];
-    [...lights.children].forEach(l=>l.className='');
     document.querySelectorAll('#wJars .fill').forEach(f=>f.innerHTML=''); wLevel.how=0; wLevel.that=0;
     show('sIntro');
   };

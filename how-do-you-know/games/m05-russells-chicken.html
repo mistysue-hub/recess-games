@@ -101,6 +101,8 @@
   .bin.ok{background:linear-gradient(var(--teal-l) 0 80%, var(--teal) 80% 100%)}
   .bin.no{background:linear-gradient(var(--tang-l) 0 80%, var(--tang) 80% 100%);animation:shake .3s linear 2}
   @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .guide{margin:14px 0 4px;padding:10px 14px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.55);font:500 15px/1.5 Poppins,sans-serif}
+  .guide b{color:var(--plum)}
   .quoted{font-size:14px !important;color:var(--mute);font-style:italic}
 
   /* ---------- Act 3: pond ---------- */
@@ -155,6 +157,7 @@
     .cardtext.in,.cardtext.filed,.slips i,.caption1697,.bin.no,.peck.on,.peck.flap,.walk .legL,.walk .legR,.walk .bob,.swan .bobber,.ripple,#black.flash .hit{animation:none !important}
     #sky,#sun,#farmer,#hen,#door,#black,#grain circle,.cardtext.dropL,.cardtext.dropR{transition:none !important}
   }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -219,6 +222,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -240,7 +250,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -272,12 +286,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -295,9 +327,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -320,13 +354,10 @@
   <section id="sIntro">
     <div class="panel">
       <h2>How sure can a pattern make you?</h2>
-      <p>A chicken, a farmer, a pond full of swans and one strange emerald. Three acts:</p>
-      <ul class="acts">
-        <li><b>Act 1</b><span><strong>A thousand mornings.</strong> Watch the farmer feed the chicken and bet on tomorrow. No score here.</span></li>
-        <li><b>Act 2</b><span><strong>Sure thing or good bet?</strong> Drop each argument in the right bin: guaranteed, or only likely.</span></li>
-        <li><b>Act 3</b><span><strong>Black swan pond.</strong> Find the one observation that breaks each rule. Then a last riddle about emeralds.</span></li>
-      </ul>
-      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <p class="bigq"><b>The question:</b> Can what happened before ever prove what will happen next?</p>
+      <p>A chicken, a farmer, a pond of swans and one strange emerald. Watch the chicken bet on tomorrow, sort arguments into sure things and good bets, then hunt for the one observation that breaks a rule. A guide stays on screen.</p>
+      <p class="small">You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
+      <div id="mode"></div>
       <div class="center"><button class="big" id="startBtn">Start Act 1</button></div>
     </div>
   </section>
@@ -412,6 +443,7 @@
         <div class="opts four" id="betOpts"></div>
       </div>
       <div class="go" id="mornWrap"><button class="big" id="mornBtn">Next morning</button></div>
+      <div class="go hidden" id="mornSkipWrap"><button class="big alt" id="mornSkip">Skip &#9656;</button></div>
 
       <div class="hidden" id="mornEnd">
         <div class="chartwrap">
@@ -419,6 +451,7 @@
           <svg id="chart" viewBox="0 0 340 190" role="img" aria-label="Your bets across the mornings"></svg>
         </div>
         <p id="mornPara"></p>
+        <p><b>Sorry, chicken.</b> Saddest example in the course. It's also why the chicken is famous.</p>
         <p>Bertrand Russell told this story in 1912, in <i>The Problems of Philosophy</i>. His point: expecting tomorrow to match yesterday can mislead. The chicken needed, in Russell's words, “more refined views as to the uniformity of nature.”</p>
         <div class="go"><button class="big" id="toAct2">On to Act 2</button></div>
       </div>
@@ -431,8 +464,10 @@
       <div class="step" id="sortStep"></div>
       <div id="sortDots"></div>
       <h2>Sure thing or good bet?</h2>
-      <p class="small" style="margin-bottom:10px">If the premises are true, is the conclusion guaranteed, or only likely? Tap a bin to drop the card in.</p>
+      <p class="small" style="margin-bottom:10px">Tap a bin to drop the card in.</p>
       <div class="cardtext" id="sortCard"></div>
+      <div class="guide hk-guide"><b>How to decide.</b> Pretend the first sentences are 100% true. Does the last sentence HAVE to be true? &rarr; <b>Sure thing</b>. Could a surprise still happen? &rarr; <b>Good bet</b>.</div>
+      <div class="fb bad hidden" id="sortHint"></div>
       <div class="bins">
         <button class="bin" id="bin0" data-i="0">
           <svg class="ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M15 22 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#2b2117" stroke-width="3.5"/><rect x="9" y="21" width="30" height="22" rx="5" fill="#1d3a7a" stroke="#2b2117" stroke-width="3"/><circle cx="24" cy="30" r="3" fill="#f6ecd6"/><rect x="22.5" y="31" width="3" height="6" rx="1.5" fill="#f6ecd6"/></svg>
@@ -470,6 +505,8 @@
       </svg>
       <div class="counter" id="pondCount" aria-live="polite"></div>
       <div id="pondCap"></div>
+      <div class="guide hk-guide" id="pondGuide"><b>How to decide.</b> A rule breaks when you find ONE case that goes against it. Cases that match the rule, or are about something else, don't break it.</div>
+      <div class="fb bad hidden" id="pondHint"></div>
       <div class="fb hidden" id="pondFb" aria-live="polite"></div>
       <div class="go hidden" id="pondNextWrap"><button class="big" id="pondNext">Next rule</button></div>
     </div>
@@ -483,6 +520,8 @@
       <h2 id="qTitle"></h2>
       <div class="cardtext" id="qText"></div>
       <div class="opts" id="qOpts"></div>
+      <div class="guide hk-guide" id="qGuide"></div>
+      <div class="fb bad hidden" id="qHint"></div>
       <div class="fb hidden" id="qFb" aria-live="polite"></div>
       <div class="go hidden" id="qNextWrap"><button class="big" id="qNext">Next</button></div>
     </div>
@@ -502,7 +541,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars and the code word. Then he'll ask you to name a pattern you rely on in something you care about, and the one observation that would break it.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b></p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -518,32 +557,37 @@
 
   /* ---------- content ---------- */
   const R1=[
-    {t:"Every bus this week has come late. Tomorrow's bus runs the same route. So tomorrow's bus will come late.", a:1, why:"Seen cases to an unseen one: a good bet at best. Buses can surprise you."},
-    {t:"Every mammal breathes air. Whales are mammals. So whales breathe air.", a:0, why:"If both premises are true, the conclusion has to be. That's deduction."},
-    {t:"No reptiles have fur. This lizard is a reptile. So this lizard has no fur.", a:0, why:"Guaranteed by the premises: deductive."},
-    {t:"The sun has risen every day in recorded history. So it will rise tomorrow.", a:1, why:"Hume's own example. Overwhelming evidence, but the conclusion still isn't guaranteed: inductive."},
-    {t:"Nine out of ten dentists we surveyed recommend Brand X. So most dentists recommend it.", a:1, why:"From a sample to the whole group: inductive, and only as good as the sample."},
-    {t:"If it's raining, the street is wet. It's raining. So the street is wet.", a:0, why:"Given those two premises, the conclusion can't fail: deductive."}
+    {t:"Every bus this week has come late. Tomorrow's bus runs the same route. So tomorrow's bus will come late.", a:1, hint:"Take the first sentences as 100% true. Could tomorrow's bus still surprise you?", why:"Seen cases to an unseen one: a good bet at best. Buses can surprise you."},
+    {t:"Every mammal breathes air. Whales are mammals. So whales breathe air.", a:0, hint:"Take the first two sentences as 100% true. Is there any way whales could not breathe air?", why:"If both premises are true, the conclusion has to be. That's deduction."},
+    {t:"No reptiles have fur. This lizard is a reptile. So this lizard has no fur.", a:0, hint:"Pretend the first two sentences are 100% true. Could a furry lizard still turn up?", why:"Guaranteed by the premises: deductive."},
+    {t:"The sun has risen every day in recorded history. So it will rise tomorrow.", a:1, hint:"Pretend the first sentence is 100% true. Does it HAVE to follow for tomorrow? Or could a surprise still happen?", why:"Hume's own example. Overwhelming evidence, but the conclusion still isn't guaranteed: inductive. Even if you add a law of physics to make it deductive, the law itself came from induction."},
+    {t:"Nine out of ten dentists we surveyed recommend Brand X. So most dentists recommend it.", a:1, hint:"Pretend the survey is 100% accurate. Could the dentists you didn't ask still disagree?", why:"From a sample to the whole group: inductive, and only as good as the sample."},
+    {t:"If it's raining, the street is wet. It's raining. So the street is wet.", a:0, hint:"Pretend both of the first sentences are 100% true. Could the street still be dry?", why:"Given those two premises, the conclusion can't fail: deductive."}
   ];
   const BIN=['Sure thing (deductive: guaranteed)','Good bet (inductive: only likely)'];
-  const SWAN={rule:"All swans are white.", opts:["Another white swan","A white goose","A black swan"], a:2, why:"No pile of white swans proves the rule, but one black swan disproves it. That's Popper's point."};
+  const SWAN={rule:"All swans are white.", opts:["Another white swan","A white goose","A black swan"], a:2, hint:"Check each option against the guide. Which one goes AGAINST the rule?", why:"No pile of white swans proves the rule, but one black swan disproves it. That's Popper's point."};
   const ICONS={
     metal:'<svg viewBox="0 0 54 54" aria-hidden="true"><rect x="6" y="14" width="42" height="10" rx="3" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.5"/><path d="M14 46c-4-5 4-7 0-13 7 3 9 9 4 13zM28 46c-4-5 4-7 0-13 7 3 9 9 4 13zM42 46c-4-5 4-7 0-13 7 3 9 9 4 13z" fill="#b5522e" stroke="#2b2117" stroke-width="2" stroke-linejoin="round"/></svg>',
     printer:'<svg viewBox="0 0 54 54" aria-hidden="true"><rect x="15" y="6" width="24" height="14" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><rect x="6" y="18" width="42" height="20" rx="4" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.5"/><rect x="14" y="32" width="26" height="16" fill="#fff" stroke="#2b2117" stroke-width="2.5"/><path d="M18 38h18M18 43h12" stroke="#2b2117" stroke-width="2"/><circle cx="41" cy="25" r="2.4" fill="#2e6b57"/></svg>',
-    plants:'<svg viewBox="0 0 54 54" aria-hidden="true"><path d="M27 46V22" stroke="#2b2117" stroke-width="3" stroke-linecap="round"/><path d="M27 28c-12 0-16-8-16-14 9 0 16 4 16 14zM27 24c0-10 7-15 16-15 0 7-5 15-16 15z" fill="#7bbf6a" stroke="#2b2117" stroke-width="2.4" stroke-linejoin="round"/><path d="M14 46h26l-3 6H17z" fill="#c8814a" stroke="#2b2117" stroke-width="2.2" stroke-linejoin="round"/></svg>',
+    bus:'<svg viewBox="0 0 54 54" aria-hidden="true"><rect x="4" y="12" width="46" height="26" rx="6" fill="#f7d774" stroke="#2b2117" stroke-width="2.5"/><path d="M9 18h36v9H9z" fill="#cfe6f4" stroke="#2b2117" stroke-width="2"/><path d="M20 18v9M31 18v9" stroke="#2b2117" stroke-width="2"/><circle cx="15" cy="40" r="5" fill="#2b2117"/><circle cx="39" cy="40" r="5" fill="#2b2117"/><circle cx="46" cy="31" r="2" fill="#b5522e"/></svg>',
     farmer:'<svg viewBox="0 0 54 54" aria-hidden="true"><path d="M14 12q13-14 26 0" fill="none" stroke="#2b2117" stroke-width="2.4"/><path d="M10 16h34l-4 30H14z" fill="#9aa7b4" stroke="#2b2117" stroke-width="2.5" stroke-linejoin="round"/><path d="M12 16q15-7 30 0" fill="#e9b73c" stroke="#9a7114" stroke-width="1.4"/><path d="M13 28h28" stroke="#2b2117" stroke-width="1.6"/></svg>'
   };
   const R2=[
-    {k:'metal', rule:"Every metal expands when heated.", opts:["A metal that shrinks when heated","An iron rod that gets longer when heated","A metal that shrinks when cooled"], a:0, why:"The rule only talks about heating. Shrinking when cooled fits it; shrinking when heated breaks it."},
-    {k:'printer', rule:"The library printer never jams on Mondays.", opts:["It works fine on a Monday","It jams on a Monday","It jams on a Tuesday"], a:1, why:"Tuesdays are outside the rule, and a good Monday only fits it. One Monday jam breaks it."},
-    {k:'plants', rule:"Plants need sunlight to grow.", opts:["A plant that grows in sunlight","A plant that dies in sunlight","A plant that grows well in total darkness"], a:2, why:"A plant thriving with no sunlight at all shows sunlight isn't needed. A plant dying in sunlight doesn't touch the rule. (In fact, a few odd plants do this: ghost pipe and an orchid that lives underground in Western Australia make no food from light; they feed on fungi, which get their sugars from other plants. So a plant itself can grow without sunlight, and the rule, as stated, is shakier than it looks.)"},
-    {k:'farmer', rule:"The farmer brings food every morning.", opts:["Another morning with food","A morning with no food","An evening with food"], a:1, why:"The chicken's thousand mornings never proved the rule. One morning without food breaks it, as Russell's chicken found out."}
+    {k:'metal', rule:"Every metal expands when heated.", opts:["A metal that shrinks when heated","An iron rod that gets longer when heated","A metal that shrinks when cooled"], a:0, hint:"Sort the options: which one goes against \u201cexpands when heated\u201d, which match it, and which are about something else?", why:"The rule only talks about heating. Shrinking when cooled fits it; shrinking when heated breaks it. (Fun fact: one form of plutonium really does shrink when heated, so this rule has already been broken. That's what the Popper test is for.)"},
+    {k:'printer', rule:"The library printer never jams on Mondays.", opts:["It works fine on a Monday","It jams on a Monday","It jams on a Tuesday"], a:1, hint:"Which options match the rule, and which are about a different day? Only one goes against it.", why:"Tuesdays are outside the rule, and a good Monday only fits it. One Monday jam breaks it."},
+    {k:'bus', rule:"The school bus never comes before 7:00.", opts:["The bus arrives at 7:20","The bus arrives at 6:45","The bus doesn't come on Sunday"], a:1, hint:"Which option is about the time the rule talks about, and goes against it? Cross out the ones that match or are about something else.", why:"The rule only forbids early buses. A 7:20 bus matches it, a Sunday with no bus is about something else, and one 6:45 bus breaks it."},
+    {k:'farmer', rule:"The farmer brings food every morning.", opts:["Another morning with food","A morning with no food","An evening with food"], a:1, hint:"Which option goes against \u201cevery morning\u201d? The others match it or are about a different time of day.", why:"The chicken's thousand mornings never proved the rule. One morning without food breaks it, as Russell's chicken found out."}
   ];
-  const R3={t:"Every emerald anyone has examined so far was green, which also means every one was grue (green if first examined before 2100, blue after). An emerald will first be examined in 2101. Which predictions fit the evidence so far equally well?",
-    opts:["Only “it will be green”","Only “it will be blue”","Both “green” and “blue”"], a:2,
-    why:"That's Goodman's new riddle. The evidence fits “all emeralds are green” and “all emeralds are grue” equally. We all predict green, and nobody has fully explained why we're entitled to."};
+  // Philosopher mode only.
+  const DUHEM={k:'metal', rule:"Your test of \u201cevery metal expands when heated\u201d fails once: one sample shrank. What should you check first?", opts:["Throw out the rule right away","Check the thermometer and the sample, because the test relied on them too","Ignore it: one odd result means nothing"], a:1,
+    why:"Duhem and Quine: a test never hits the rule alone. It also rests on your thermometer, your sample, your setup. Popper would say drop the rule once the result is solid, so this is argued about. (For plutonium, the result was solid.)"};
+  const LAPLACE={t:"Laplace's rule of succession says that after n good mornings in a row, the chance of another is (n+1)/(n+2). The chicken has had 999. What does the formula predict for morning 1,000?", opts:["About 99.9%","Exactly 100%","About 50%"], a:0,
+    why:"1000/1001, about 99.9%: very confident, and still wrong that day. The formula treats mornings like random draws from a bag, which is exactly what Hume says we can't assume. Argued about: some say it's still the best a chicken can do."};
+  const R3={t:"\u201cGrue\u201d is a made-up color word: green if you first look before the year 2100, blue after. Every emerald we've seen is green, and also grue, because we saw them all before 2100. Can the emeralds we've already seen tell \u201call emeralds are green\u201d from \u201call emeralds are grue\u201d?",
+    opts:["Yes, they prove green","No, they fit both equally","Yes, they prove grue"], a:1, hint:"Compare the two rules. Is there any emerald we've seen that fits one rule but not the other?",
+    why:"That's Goodman's new riddle. The evidence fits both rules equally, yet we all predict green, and nobody has fully explained why we're entitled to. Grue is a made-up color designed to annoy philosophers. It's still working 70 years later."};
 
-  let res1=[], res2=[], res3=[], log=[];
+  let res1=[], res2=[], res3=[], res4=[], log=[], skipped=false;
   function show(id){ ['sIntro','sMorn','sSort','sPond','sQuiz','sEnd'].forEach(s=>$(s).classList.toggle('hidden', s!==id)); window.scrollTo(0,0); }
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 
@@ -580,8 +624,8 @@
     resetScene(); setDay(0,'fed in a row: 0');
     $('thought').innerHTML='A brand-new chicken. Tap <b style="font-style:normal">Next morning</b> to start its life.';
     $('betBox').classList.add('hidden'); $('mornEnd').classList.add('hidden'); $('mornWrap').classList.remove('hidden');
-    $('mornBtn').disabled=false; $('mornBtn').textContent='Next morning';
-    renderBets(); show('sMorn');
+    $('mornBtn').disabled=false; $('mornBtn').textContent='Next morning'; skipped=false;
+    updateSkip(); renderBets(); show('sMorn');
   }
   async function feedMorning(){
     const g=gen, day=DAYS[di]; $('mornBtn').disabled=true;
@@ -601,7 +645,19 @@
     const ci=CHECK.indexOf(day);
     if(ci>=0){ askBet(ci, day); }
     else { $('mornBtn').disabled=false; }
+    updateSkip();
   }
+  function updateSkip(){ $('mornSkipWrap').classList.toggle('hidden', !(di>=3) || !$('mornEnd').classList.contains('hidden')); }
+  $('mornSkip').onclick=()=>{
+    gen++; skipped=true;
+    $('betBox').classList.add('hidden'); $('mornWrap').classList.add('hidden');
+    const sc=$('scene'); sc.classList.add('day');
+    $('farmer').style.opacity=0; $('hen').style.opacity=0; $('door').classList.remove('open'); $('peck').classList.remove('on','flap'); $('farmer').classList.remove('walk'); $('grain').classList.remove('on');
+    setDay(1000,'streak over at 999');
+    $('thought').textContent='Nine hundred ninety-nine good mornings. They proved nothing about this one.';
+    drawChart(); $('mornEnd').classList.remove('hidden'); updateSkip();
+    $('mornEnd').scrollIntoView({behavior:reduce?'auto':'smooth', block:'start'});
+  };
   function askBet(ci, day){
     $('mornWrap').classList.add('hidden');
     const bb=$('betBox'); bb.classList.remove('hidden');
@@ -640,40 +696,40 @@
     setDay(1000,'streak over at 999');
     $('thought').textContent='Nine hundred ninety-nine good mornings. They proved nothing about this one.';
     await wait(500); if(g!==gen) return;
-    drawChart(); $('mornEnd').classList.remove('hidden');
+    drawChart(); $('mornEnd').classList.remove('hidden'); updateSkip();
     $('mornEnd').scrollIntoView({behavior:reduce?'auto':'smooth', block:'start'});
   }
   $('mornBtn').onclick=()=>{ if(di<DAYS.length) feedMorning(); else lastMorning(); };
   function drawChart(){
     const xs=[46,112,178,244,310], y=p=>150-(p-40)/60*118;
+    const made=[]; for(let i=0;i<4;i++) if(bets[i]!=null) made.push(i);
     let s='';
     [50,70,90,100].forEach(p=>{ s+='<line x1="30" x2="334" y1="'+y(p)+'" y2="'+y(p)+'" stroke="#d6c193" stroke-dasharray="3 4"/><text x="26" y="'+(y(p)+4)+'" text-anchor="end" font-size="10" fill="#6f5f47">'+p+'%</text>'; });
     s+='<rect x="282" y="18" width="56" height="140" rx="8" fill="#f6e2d6"/>';
-    const pts=bets.map((b,i)=>xs[i]+','+y(b)).join(' ');
-    s+='<polyline points="'+pts+'" fill="none" stroke="#1d3a7a" stroke-width="3" stroke-linejoin="round"/>';
-    bets.forEach((b,i)=>{ s+='<circle cx="'+xs[i]+'" cy="'+y(b)+'" r="6" fill="#1d3a7a" stroke="#fff" stroke-width="2"/><text x="'+xs[i]+'" y="'+(y(b)-11)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#2b2117">'+b+'%</text>'; });
-    const lx=xs[3], ly=y(bets[3]);
+    s+='<polyline points="'+made.map(i=>xs[i]+','+y(bets[i])).join(' ')+'" fill="none" stroke="#1d3a7a" stroke-width="3" stroke-linejoin="round"/>';
+    made.forEach(i=>{ const b=bets[i]; s+='<circle cx="'+xs[i]+'" cy="'+y(b)+'" r="6" fill="#1d3a7a" stroke="#fff" stroke-width="2"/><text x="'+xs[i]+'" y="'+(y(b)-11)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#2b2117">'+b+'%</text>'; });
+    const L=made[made.length-1], lx=xs[L], ly=y(bets[L]);
     s+='<path d="M'+lx+' '+ly+' L'+(xs[4]-10)+' 142" fill="none" stroke="#8f3c1f" stroke-width="2.5" stroke-dasharray="5 4"/>';
     s+='<path d="M'+(xs[4]-9)+' 133 l18 18 M'+(xs[4]+9)+' 133 l-18 18" stroke="#8f3c1f" stroke-width="4" stroke-linecap="round"/>';
     s+='<text x="'+xs[4]+'" y="34" text-anchor="middle" font-size="11" font-weight="700" fill="#8f3c1f">No food.</text><text x="'+xs[4]+'" y="48" text-anchor="middle" font-size="10" fill="#8f3c1f">Carried off.</text>';
     ['Day 1','Day 10','Day 100','Day 999','Day 1,000'].forEach((l,i)=>{ s+='<text x="'+xs[i]+'" y="178" text-anchor="middle" font-size="11" font-weight="600" fill="#2b2117">'+l+'</text>'; });
     $('chart').innerHTML=s;
-    $('chart').setAttribute('aria-label','Your bets: '+bets.map((b,i)=>'day '+CHECK[i]+', '+b+' percent').join('; ')+'. On morning 1,000 there was no food.');
-    const a=bets[0], z=bets[3];
-    let lead = z>a ? 'Your confidence climbed from '+a+'% to '+z+'%.' : z===a ? 'You kept your bet at '+a+'% the whole way: a cautious chicken.' : 'Your bets actually dropped from '+a+'% to '+z+'%: a suspicious chicken!';
+    $('chart').setAttribute('aria-label','Your bets: '+made.map(i=>'day '+CHECK[i]+', '+bets[i]+' percent').join('; ')+'. On morning 1,000 there was no food.');
+    const a=bets[made[0]], z=bets[L];
+    let lead = made.length<2 ? 'You bet '+a+'% that the food would come.' : z>a ? 'Your confidence climbed from '+a+'% to '+z+'%.' : z===a ? 'You kept your bet at '+a+'% the whole way: a cautious chicken.' : 'Your bets actually dropped from '+a+'% to '+z+'%: a suspicious chicken!';
     $('mornPara').innerHTML=lead+' More mornings make the bet feel safer, and each morning really was evidence. But no number of mornings could guarantee morning 1,000. That is <b>Hume’s problem</b>: the past predicts the future only if the future will resemble the past, and our only evidence for <i>that</i> is the past.';
   }
   $('toAct2').onclick=()=>startSort();
 
   /* ---------- ACT 2 ---------- */
-  let sortList=[], sk=0, sortLocked=false;
+  let sortList=[], sk=0, sortLocked=false, sortTries=0;
   function startSort(){
     sortList=HDYK.shuffle(R1); sk=0; res1=[];
     $('slips0').innerHTML=''; $('slips1').innerHTML='';
     show('sSort'); showSort();
   }
   function showSort(){
-    const it=sortList[sk]; sortLocked=false;
+    const it=sortList[sk]; sortLocked=false; sortTries=0; $('sortHint').classList.add('hidden');
     $('sortStep').textContent='Act 2 · Sure thing or good bet? · '+(sk+1)+' of '+sortList.length;
     HDYK.dots($('sortDots'), sortList.length, res1);
     const c=$('sortCard'); c.className='cardtext'; c.textContent=it.t; void c.offsetWidth; c.classList.add('in');
@@ -681,8 +737,16 @@
     $('sortFb').classList.add('hidden'); $('sortNextWrap').classList.add('hidden');
   }
   async function dropIn(i){
-    if(sortLocked) return; sortLocked=true;
-    const g=gen, it=sortList[sk], ok=i===it.a;
+    if(sortLocked) return;
+    const it=sortList[sk], ok=i===it.a;
+    if(!ok && sortTries===0){
+      sortTries=1; $('bin'+i).classList.add('no'); $('bin'+i).disabled=true;
+      HDYK.miss(LOCK,{q:'Sure thing (deductive) or good bet (inductive)? “'+it.t+'”', opts:BIN, a:it.a, why:it.why});
+      const h=$('sortHint'); h.innerHTML= HDYK.hard() ? '<b class="head">Not quite.</b><p>No hint in Philosopher mode. Try the other bin.</p>' : '<b class="head">Not quite. Hint:</b><p>'+it.hint+' Then try the other bin.</p>'; h.classList.remove('hidden');
+      return;
+    }
+    sortLocked=true; $('sortHint').classList.add('hidden');
+    const g=gen, first=ok&&sortTries===0;
     [0,1].forEach(j=>$('bin'+j).disabled=true);
     const c=$('sortCard'); c.classList.remove('in'); void c.offsetWidth; c.classList.add(i===0?'dropL':'dropR');
     await wait(560); if(g!==gen) return;
@@ -690,11 +754,11 @@
     if(ok){ $('bin'+i).classList.add('ok'); }
     else { $('bin'+i).classList.add('no'); await wait(450); if(g!==gen) return; $('bin'+it.a).classList.add('ok'); }
     $('slips'+it.a).insertAdjacentHTML('beforeend','<i></i>');
-    res1.push(ok); HDYK.dots($('sortDots'), sortList.length, res1);
-    if(!ok) HDYK.miss(LOCK,{q:'Sure thing (deductive) or good bet (inductive)? “'+it.t+'”', opts:BIN, a:it.a, why:it.why});
-    log.push({c:it.t, you:i===0?'Sure thing':'Good bet', ans:it.a===0?'Sure thing':'Good bet', ok});
+    res1.push(first); HDYK.dots($('sortDots'), sortList.length, res1);
+    log.push({c:it.t, you:(sortTries?'2nd try: ':'')+(i===0?'Sure thing':'Good bet'), ans:it.a===0?'Sure thing':'Good bet', ok:first});
     const fb=$('sortFb'); fb.className='fb'+(ok?'':' bad');
-    fb.innerHTML='<b class="head">'+HDYK.react(ok)+' It’s a '+(it.a===0?'sure thing':'good bet')+'.</b><p>'+it.why+'</p>';
+    fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&sortTries>0)+' It’s a '+(it.a===0?'sure thing':'good bet')+'.</b><p>'+it.why+'</p>';
+    HDYK.challenge(fb,LOCK,it.t.slice(0,90));
     $('sortNext').textContent= sk===sortList.length-1 ? 'On to Act 3' : 'Next card';
     $('sortNextWrap').classList.remove('hidden');
   }
@@ -703,7 +767,7 @@
 
   /* ---------- ACT 3: pond ---------- */
   const NS='http://www.w3.org/2000/svg';
-  let observed=0, threshold=9, blackIn=false, pondDone=false, pondLock=false;
+  let observed=0, threshold=9, blackIn=false, pondDone=false, pondLock=false, pondTries=0;
   function swanSVG(black){
     const body=black?'#23232b':'#ffffff', line=black?'#0b0b10':'#6d7a8c', beak=black?'#d23a3a':'#e8892b';
     return '<rect class="hit" x="-22" y="-26" width="46" height="38" rx="10"/>'+
@@ -741,7 +805,7 @@
     $('pondCount').innerHTML='White swans observed: <b>'+n+'</b>. '+tail;
   }
   function startPond(){
-    observed=0; threshold=8+Math.floor(Math.random()*3); blackIn=false; pondDone=false; pondLock=false;
+    observed=0; threshold=8+Math.floor(Math.random()*3); blackIn=false; pondDone=false; pondLock=false; pondTries=0; $('pondHint').classList.add('hidden');
     const box=$('swans'); box.innerHTML='';
     const cells=[];
     for(let r=0;r<4;r++) for(let c=0;c<6;c++){ if(c===0&&r===2) continue; cells.push([62+c*48, 98+r*42]); }
@@ -750,7 +814,8 @@
     });
     $('pondCap').innerHTML=''; $('pondFb').classList.add('hidden'); $('pondNextWrap').classList.add('hidden');
     $('pondHelp').textContent='Tap swans to observe them. Each one you check is evidence.';
-    HDYK.dots($('pondDots'),5,res2);
+    HDYK.dots($('pondDots'),HDYK.hard()?6:5,res2);
+    document.querySelector('#sPond .step').textContent='Act 3 · Break It! · 1 of '+(HDYK.hard()?6:5);
     pondCounter(); show('sPond');
   }
   async function bringBlack(){
@@ -760,7 +825,7 @@
     getComputedStyle(b).transform;
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.transform='translate(52px,184px)'; }));
     await wait(reduce?40:3300); if(g!==gen) return;
-    $('pondCap').innerHTML='<div class="caption1697"><b>1697.</b> Dutch sailors exploring the west coast of Australia saw black swans. For centuries, Europeans had used “a black swan” to mean something that doesn’t exist.</div>';
+    $('pondCap').innerHTML='<div class="caption1697"><b>1697.</b> Dutch sailors led by Willem de Vlamingh found black swans on a river in Western Australia. For centuries, Europeans had used “a black swan” to mean something that doesn’t exist.</div>';
     $('pondHelp').textContent='Your turn: tap the one observation that breaks the rule.';
     $('pondCount').innerHTML='White swans observed: <b>'+observed+'</b>. Which swan could prove “all swans are white” wrong? Tap it.';
     pondLock=false;
@@ -774,35 +839,49 @@
       return;
     }
     // the answer tap
-    pondDone=true; ripple(g.dataset.x,g.dataset.y);
+    if(g.classList.contains('off')) return;
     const ok=black;
+    if(!ok && pondTries===0){
+      pondTries=1; g.classList.add('off'); g.setAttribute('tabindex','-1'); ripple(g.dataset.x,g.dataset.y);
+      HDYK.miss(LOCK,{q:'Which observation could prove the rule “'+SWAN.rule+'” wrong?', opts:SWAN.opts, a:SWAN.a, why:SWAN.why});
+      const h=$('pondHint'); h.innerHTML= HDYK.hard() ? '<b class="head">Not quite.</b><p>No hint in Philosopher mode. Try another swan.</p>' : '<b class="head">Not quite. Hint:</b><p>'+SWAN.hint+' That swan fits the rule. Tap a different one.</p>'; h.classList.remove('hidden');
+      return;
+    }
+    pondDone=true; ripple(g.dataset.x,g.dataset.y); $('pondHint').classList.add('hidden');
     document.querySelectorAll('#swans .swan').forEach(s=>{ s.classList.add('off'); s.setAttribute('tabindex','-1'); });
     $('black').classList.add(ok?'pick':'flash');
-    res2.push(ok); HDYK.dots($('pondDots'),5,res2);
-    if(!ok) HDYK.miss(LOCK,{q:'Which observation could prove the rule “'+SWAN.rule+'” wrong?', opts:SWAN.opts, a:SWAN.a, why:SWAN.why});
-    log.push({c:SWAN.rule, you:ok?'A black swan':'Another white swan', ans:'A black swan', ok});
+    res2.push(ok&&pondTries===0); HDYK.dots($('pondDots'),HDYK.hard()?6:5,res2);
+    log.push({c:SWAN.rule, you:(pondTries?'2nd try: ':'')+(ok?'A black swan':'Another white swan'), ans:'A black swan', ok:ok&&pondTries===0});
     const fb=$('pondFb'); fb.className='fb'+(ok?'':' bad');
-    fb.innerHTML='<b class="head">'+HDYK.react(ok)+(ok?' Rule broken.':' That one fits the rule.')+'</b><p>'+(ok?'':'Another white swan is just more of the same. The black swan is the one that breaks it. ')+SWAN.why+' You checked '+observed+' white swans; '+observed+' more, or a million, still wouldn’t prove the rule.</p>';
+    fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&pondTries>0)+(ok?' Rule broken.':' That one fits the rule.')+'</b><p>'+(ok?'':'Another white swan is just more of the same. The black swan is the one that breaks it. ')+SWAN.why+' You checked '+observed+' white swans; '+observed+' more, or a million, still wouldn’t prove the rule.</p>';
+    HDYK.challenge(fb,LOCK,'Black swan pond: '+SWAN.rule);
     $('pondNextWrap').classList.remove('hidden');
   }
   $('pondNext').onclick=()=>startQuiz();
 
-  /* ---------- Break It (rest) + grue ---------- */
-  let items=[], k=0;
+  /* ---------- Break It (rest) + grue (+ Philosopher extras) ---------- */
+  let items=[], k=0, qTries=0;
+  const GUIDE_BREAK='<b>How to decide.</b> A rule breaks when you find ONE case that goes against it. Cases that match the rule, or are about something else, don\'t break it.';
+  const GUIDE_GRUE='<b>How to decide.</b> Put the two rules side by side: &ldquo;all green&rdquo; and &ldquo;all grue&rdquo;. Is there any emerald we\'ve seen that fits one rule but not the other?';
   function startQuiz(){
+    const hard=HDYK.hard();
     const firstThree=HDYK.shuffle(R2.slice(0,3)), order=firstThree.concat([R2[3]]);
-    items=order.map((r,i)=>{ const idx=HDYK.shuffle([0,1,2]); return {round:2, n:i+2, k:r.k, step:'Act 3 · Break It! · '+(i+2)+' of 5', title:'Which observation could prove this rule wrong?', rule:r.rule,
-      opts:idx.map(j=>r.opts[j]), a:idx.indexOf(r.a), why:r.why, orig:r}; });
+    items=order.map((r,i)=>{ const idx=HDYK.shuffle([0,1,2]); return {round:2, k:r.k, step:'Act 3 · Break It! · '+(i+2)+' of '+(hard?6:5), title:'Which observation could prove this rule wrong?', rule:r.rule,
+      opts:idx.map(j=>r.opts[j]), a:idx.indexOf(r.a), hint:r.hint, why:r.why, orig:r}; });
+    if(hard){ const di2=HDYK.shuffle([0,1,2]); items.push({round:2, k:'metal', step:'Act 3 · Break It! · 6 of 6 · argued about', title:'What should you check first?', rule:DUHEM.rule, opts:di2.map(j=>DUHEM.opts[j]), a:di2.indexOf(DUHEM.a), why:DUHEM.why, orig:{opts:DUHEM.opts,a:DUHEM.a}, noRule:true}); }
     const gi=HDYK.shuffle([0,1,2]);
-    items.push({round:3, step:'Last riddle', title:'Green or grue?', text:R3.t, opts:gi.map(j=>R3.opts[j]), a:gi.indexOf(R3.a), why:R3.why, orig:R3});
+    items.push({round:3, step:'Last riddle', title:'Green or grue?', text:R3.t, opts:gi.map(j=>R3.opts[j]), a:gi.indexOf(R3.a), hint:R3.hint, why:R3.why, orig:R3});
+    if(hard){ const li=HDYK.shuffle([0,1,2]); items.push({round:4, step:'Philosopher extra · argued about', title:'Laplace and the chicken', text:LAPLACE.t, opts:li.map(j=>LAPLACE.opts[j]), a:li.indexOf(LAPLACE.a), why:LAPLACE.why, orig:LAPLACE}); }
     k=0; show('sQuiz'); showItem();
   }
   function showItem(){
-    const it=items[k];
+    const it=items[k]; qTries=0; $('qHint').classList.add('hidden');
     $('qStep').textContent=it.step; $('qTitle').textContent=it.title;
-    if(it.round===2) HDYK.dots($('qDots'),5,res2); else HDYK.dots($('qDots'),1,res3);
+    if(it.round===2) HDYK.dots($('qDots'),HDYK.hard()?6:5,res2); else if(it.round===3) HDYK.dots($('qDots'),1,res3); else HDYK.dots($('qDots'),1,res4);
+    $('qGuide').innerHTML= it.round===3 ? GUIDE_GRUE : it.round===2 ? GUIDE_BREAK : '';
+    $('qGuide').classList.toggle('hidden', it.round===4);
     const c=$('qText'); c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
-    if(it.round===2) c.innerHTML='<div class="rulecard">'+ICONS[it.k]+'<div>Rule: “'+esc(it.rule)+'”</div></div>';
+    if(it.round===2) c.innerHTML='<div class="rulecard">'+ICONS[it.k]+'<div>'+(it.noRule?esc(it.rule):'Rule: “'+esc(it.rule)+'”')+'</div></div>';
     else c.textContent=it.text;
     const o=$('qOpts'); o.innerHTML=it.opts.map((x,i)=>'<button data-i="'+i+'">'+esc(x)+'</button>').join('');
     o.querySelectorAll('button').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
@@ -810,16 +889,23 @@
   }
   function answer(i){
     const it=items[k], ok=i===it.a;
-    $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===it.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
-    if(it.round===2){ res2.push(ok); HDYK.dots($('qDots'),5,res2); } else { res3.push(ok); HDYK.dots($('qDots'),1,res3); }
-    if(!ok){
-      if(it.round===2) HDYK.miss(LOCK,{q:'Which observation could prove the rule “'+it.rule+'” wrong?', opts:it.orig.opts, a:it.orig.a, why:it.why});
-      else HDYK.miss(LOCK,{q:R3.t, opts:R3.opts.map(s=>s.replace(/[“”]/g,'"')), a:R3.a, why:R3.why});
+    const qtext= it.round===2 ? (it.noRule ? it.rule : 'Which observation could prove the rule “'+it.rule+'” wrong?') : it.orig.t;
+    if(!ok && qTries===0){
+      qTries=1; const wb=$('qOpts').querySelector('[data-i="'+i+'"]'); wb.disabled=true; wb.classList.add('wrong');
+      HDYK.miss(LOCK,{q:qtext, opts:it.orig.opts.map(x=>x.replace(/[“”]/g,'"')), a:it.orig.a, why:it.why});
+      const h=$('qHint'); h.innerHTML= (HDYK.hard()||!it.hint) ? '<b class="head">Not quite.</b><p>'+(it.hint?'No hint in Philosopher mode. ':'')+'Try once more.</p>' : '<b class="head">Not quite. Hint:</b><p>'+it.hint+' Then try again.</p>';
+      h.classList.remove('hidden'); return;
     }
-    log.push({c:it.round===2?it.rule:'Green or grue?', you:it.opts[i], ans:it.opts[it.a], ok});
-    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok)+'</b><p>'+it.why+'</p>';
+    $('qHint').classList.add('hidden');
+    $('qOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===it.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
+    const first=ok&&qTries===0;
+    if(it.round===2){ res2.push(first); HDYK.dots($('qDots'),HDYK.hard()?6:5,res2); } else if(it.round===3){ res3.push(first); HDYK.dots($('qDots'),1,res3); } else { res4.push(first); HDYK.dots($('qDots'),1,res4); }
+    const label= it.round===2 ? it.rule : it.round===3 ? 'Green or grue?' : it.title;
+    log.push({c:label, you:(qTries?'2nd try: ':'')+it.opts[i], ans:it.opts[it.a], ok:first});
+    const fb=$('qFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&qTries>0)+'</b><p>'+it.why+'</p>';
+    HDYK.challenge(fb,LOCK,label.slice(0,90));
     const last=k===items.length-1;
-    $('qNext').textContent= last ? 'See my results' : (items[k+1].round===3 ? 'One last riddle' : 'Next rule');
+    $('qNext').textContent= last ? 'See my results' : (items[k+1].round===3 ? 'One last riddle' : items[k+1].round===4 ? 'One more' : 'Next rule');
     $('qNextWrap').classList.remove('hidden');
   }
   $('qNext').onclick=()=>{ k++; if(k<items.length) showItem(); else finish(); };
@@ -827,13 +913,15 @@
   /* ---------- end ---------- */
   function finish(){
     show('sEnd');
-    const s1=res1.filter(Boolean).length, s2=res2.filter(Boolean).length, s3=res3.filter(Boolean).length;
-    HDYK.end($('shelf'),{lock:LOCK, right:s1+s2+s3, total:12});
-    $('scores').innerHTML='<div><b>'+s1+' / 6</b><span>sure thing or bet</span></div><div><b>'+s2+' / 5</b><span>break it</span></div><div><b>'+s3+' / 1</b><span>grue riddle</span></div>';
+    const s1=res1.filter(Boolean).length, s2=res2.filter(Boolean).length, s3=res3.filter(Boolean).length, s4=res4.filter(Boolean).length;
+    const total=res1.length+res2.length+res3.length+res4.length;
+    HDYK.end($('shelf'),{lock:LOCK, right:s1+s2+s3+s4, total:total});
+    $('scores').innerHTML='<div><b>'+s1+' / '+res1.length+'</b><span>sure thing or bet</span></div><div><b>'+s2+' / '+res2.length+'</b><span>break it</span></div><div><b>'+(s3+s4)+' / '+(res3.length+res4.length)+'</b><span>riddles</span></div>';
     $('rows').innerHTML=log.map(r=>'<tr><td>'+esc(r.c)+'</td><td>'+esc(r.you)+'</td><td class="'+(r.ok?'yes':'nope')+'">'+esc(r.ans)+'</td></tr>').join('');
     $('code').textContent=CODE;
   }
-  function begin(){ res1=[]; res2=[]; res3=[]; log=[]; HDYK.resetMisses(LOCK); startAct1(); }
+  function begin(){ res1=[]; res2=[]; res3=[]; res4=[]; log=[]; HDYK.resetMisses(LOCK); HDYK.resetChallenges(LOCK); startAct1(); }
+  HDYK.hardToggle($('mode'));
   $('startBtn').onclick=begin;
   $('again').onclick=()=>{ gen++; show('sIntro'); };
 })();

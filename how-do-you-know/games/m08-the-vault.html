@@ -36,14 +36,18 @@
   .fb p{margin:0 0 6px;font-size:16px}
   .label{font:600 13px Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:16px 0 0}
 
+  .hk-guide{margin:12px 0 4px;padding:10px 14px;border:2.5px dashed var(--ink);border-radius:12px;background:rgba(255,255,255,.6);font:500 14.5px/1.45 Poppins,sans-serif}
+  .hk-guide b.gt{display:block;font:700 12px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--plum);margin-bottom:2px}
+  .hk-guide ol{margin:2px 0 0;padding-left:20px} .hk-guide li{margin:2px 0}
+  .top{position:relative;z-index:3}
   /* vault door */
-  .vault{display:block;width:210px;max-width:60%;height:auto;margin:0 auto 12px}
+  .vault{display:block;width:210px;max-width:52%;height:auto;margin:22px auto 16px;position:relative;z-index:1;overflow:hidden}
   .bolt{transition:transform .5s cubic-bezier(.3,1.5,.5,1), fill .3s}
   .bolt.open{fill:#f7d774}
   .bolt.miss{fill:#f0d3c4}
   .dial{transform-origin:105px 105px;transition:transform 1.2s cubic-bezier(.4,1.4,.5,1)}
   .door{transform-origin:20px 105px;transition:transform 1.6s ease-in-out}
-  .vault.swing .door{transform:perspective(400px) rotateY(-70deg)}
+  .vault.swing .door{transform:perspective(900px) rotateY(-62deg)}
   .glow{opacity:0;transition:opacity 1.2s}
   .vault.swing .glow{opacity:1}
 
@@ -78,8 +82,10 @@
   .scores div{border:1.5px solid #b89b67;border-radius:12px;padding:8px;text-align:center;background:var(--bg)}
   .scores b{display:block;font:700 22px Poppins,sans-serif}
   .scores span{font:500 12px Poppins,sans-serif;color:var(--mute)}
-  @media (max-width:560px){ .opts.four{grid-template-columns:1fr 1fr} .crow{grid-template-columns:52px 1fr 76px;font-size:13px} }
+  .opts.four button small{display:block;font:400 12px Poppins,sans-serif;color:inherit;opacity:.75}
+  @media (max-width:560px){ .vault{max-width:44%;margin-top:26px} .opts.four{grid-template-columns:1fr 1fr} .crow{grid-template-columns:52px 1fr 76px;font-size:13px} }
   @media (prefers-reduced-motion:reduce){ .bolt,.dial,.door,.glow,.fill{transition:none} .cardtext.in{animation:none} }
+  .bigq{font-size:1.05em;margin:0 0 10px;padding:8px 12px;border-left:4px solid #c99a2e;background:rgba(247,215,116,.18);border-radius:6px}
 
   /* ===== reading look (added by tools/reskin_games.py) ===== */
   table{table-layout:fixed} th,td{overflow-wrap:anywhere;hyphens:auto} th:first-child,td:first-child{width:42%}
@@ -144,6 +150,13 @@
   details.answers summary::-webkit-details-marker{display:none}
   details.answers summary::before{content:"\25B8  "} details.answers[open] summary::before{content:"\25BE  "}
   details.answers summary:focus-visible{outline:2px solid #1d3a7a;outline-offset:2px}
+  .hk-mode{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font:400 13px/1.4 Poppins,sans-serif;color:#4a3d2b;cursor:pointer}
+  .hk-mode input{width:18px;height:18px;margin-top:1px;accent-color:#1d3a7a}
+  .hk-hard .hk-guide{display:none!important}
+  .hk-chal{display:block;margin:10px 0 0;padding:6px 10px;border:1.5px dashed #8e7bb0;border-radius:8px;background:transparent;font:500 12.5px Poppins,sans-serif;color:#5a4a80;cursor:pointer}
+  .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
+  .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
+  .hk-chals ul{margin:6px 0 6px 18px;padding:0}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -165,7 +178,11 @@
 </svg>
 <script>
 /* How Do You Know? shared game kit (injected by tools/reskin_games.py).
-   HDYK.react(ok)                 -> a varied head line for feedback ("Nailed it." / "Not quite.")
+   HDYK.react(ok, second)         -> a varied head line ("Swish." / "Rim out. Here's why."); second=true -> second-try line
+   HDYK.hard()                    -> true when Philosopher mode is on (body gets class hk-hard; .hk-guide boxes hide)
+   HDYK.hardToggle(el)            -> draws the Philosopher-mode switch (put it on the intro screen)
+   HDYK.challenge(fbEl, lock, label) -> adds a "Challenge this answer" button under feedback; challenged items show on the end screen
+   HDYK.resetChallenges(lock)     -> call when a new playthrough starts
    HDYK.dots(el, total, results)  -> progress dots; results = array of true/false for items done
    HDYK.shuffle(arr)              -> shuffled copy
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
@@ -197,12 +214,30 @@
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
-  const RIGHT=['Right.','Nailed it.','Exactly.','Yes, that’s it.','Sharp.','Spot on.','Correct, and for the right reason.','That’s the one.'];
-  const WRONG=['Not this time.','Close, but no.','Tricky one.','Not quite.','That’s the trap.','Good guess, wrong lock.','Easy to fall for.'];
+  const RIGHT=['Swish.','Nailed it.','Called it.','Clean.','Locked in.','Spot on.','Yes, that’s it.','Sharp.'];
+  const WRONG=['Rim out. Here’s why.','Not this one.','Close. Good idea, wrong box.','Sneaky one. Here’s the trick.','This one fools grown-ups too.','Not quite. Here’s why.'];
+  const SECOND=['Got it on the second try.','There it is. Second try counts for learning, not for stars.','Second try, nailed it.'];
   let lastR=-1, lastW=-1;
   function pick(list,last){ let i; do{ i=Math.floor(Math.random()*list.length); }while(list.length>1 && i===last); return i; }
   const H={};
-  H.react=ok=>{ if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  H.react=(ok,second)=>{ if(ok&&second) return SECOND[Math.floor(Math.random()*SECOND.length)]; if(ok){ lastR=pick(RIGHT,lastR); return RIGHT[lastR]; } lastW=pick(WRONG,lastW); return WRONG[lastW]; };
+  // Philosopher mode: no on-screen guides (.hk-guide), for strong students. Remembered per browser; ?mode=philosopher also turns it on.
+  let hard=false; try{ hard=/[?&]mode=philosopher\b/.test(location.search); }catch(e){}
+  if(!hard) hard=!!get('hdyk-hard',false);
+  function applyHard(){ document.documentElement.classList.toggle('hk-hard',hard); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHard); else applyHard();
+  H.hard=()=>hard;
+  H.hardToggle=el=>{ if(!el) return;
+    el.innerHTML='<label class="hk-mode"><input type="checkbox"'+(hard?' checked':'')+'> <span><b>Philosopher mode</b> · no guide on screen, for when you want it harder</span></label>';
+    el.querySelector('input').onchange=e=>{ hard=e.target.checked; put('hdyk-hard',hard); applyHard(); }; };
+  // Challenge: the learner can flag an answer key they disagree with, then argue it with Rocky.
+  let chal={};
+  H.resetChallenges=lock=>{ chal[lock]=[]; };
+  H.challenge=(fb,lock,label)=>{ if(!fb||!label) return;
+    const b=document.createElement('button'); b.type='button'; b.className='hk-chal'; b.textContent='⚑ Challenge this answer';
+    b.onclick=()=>{ chal[lock]=chal[lock]||[]; if(!chal[lock].includes(label)) chal[lock].push(label);
+      b.disabled=true; b.textContent='⚑ Challenged. Tell Rocky why at the end.'; };
+    fb.appendChild(b); };
   H.shuffle=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
   H.dots=(el,total,results)=>{ if(!el) return; let h=''; for(let i=0;i<total;i++){ const r=results[i]; h+='<i class="hk-dot'+(r===true?' ok':r===false?' no':'')+(i===results.length?' now':'')+'"></i>'; } el.innerHTML=h; el.classList.add('hk-dots'); el.setAttribute('aria-label',results.length+' of '+total+' done'); };
   H.resetMisses=lock=>put('hdyk-miss-'+lock,[]);
@@ -220,9 +255,11 @@
     let starHtml=''; for(let i=1;i<=3;i++) starHtml+='<span class="hk-star'+(i<=stars?' on':'')+'" style="animation-delay:'+(0.25+i*0.18)+'s">★</span>';
     let shelf=''; KEYS.forEach((kk,i)=>{ const n=i+1, has=earned[n]!==undefined, cur=n===lock;
       shelf+='<div class="hk-slot'+(has?' got':'')+(cur?' cur':'')+'" title="'+(has?kk.n:'Lock '+n)+'">'+(has?H.icon(i,34):'<span>'+n+'</span>')+'</div>'; });
-    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'A good key. Play again to polish it to three stars.' : 'The key works, but it’s rough. Play again to polish it.';
+    const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
+    const ch=(chal[lock]||[]);
+    const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
-      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>';
+      '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
   window.HDYK=H;
@@ -260,9 +297,10 @@
   <section id="sIntro">
     <div class="panel">
       <h2>Seven bolts and a dial</h2>
-      <p>The Vault has seven bolts, one for each lock you've cracked. Answer one question from each lock to slide its bolt back. Watch out: if you missed something in an earlier game, the Vault remembers, and that's the question you'll get.</p>
-      <p>Then comes the dial: a <b>calibration round</b>. For ten claims, from easy to hard, say whether each is true or false <em>and</em> how sure you are. At the end you'll see whether your confidence matched your accuracy. That match, not the score, is what the dial measures.</p>
-      <p class="small">You lock in every answer before the game shows you anything.</p>
+      <p class="bigq"><b>The question:</b> Does your confidence match how often you're right?</p>
+      <p>Seven bolts, one question from each lock. If you missed something earlier, the Vault remembers and asks that one. Then the dial: ten claims. Say true or false <em>and</em> how sure you are. Matching your confidence to your accuracy is what counts.</p>
+      <p class="small">You'll miss some. Everyone does, even philosophers. A miss on a bolt gets you a hint and a second try.</p>
+      <div id="mode"></div>
       <div class="center"><button class="big" id="startBtn">Try the first bolt</button></div>
     </div>
   </section>
@@ -271,7 +309,9 @@
     <div class="panel">
       <div class="step" id="bStep"></div>
       <div class="cardtext" id="bText"></div>
+      <div class="hk-guide" id="bGuide"></div>
       <div class="opts" id="bOpts"></div>
+      <div class="fb bad hidden" id="bTry"></div>
       <div class="fb hidden" id="bFb"></div>
       <div class="go hidden" id="bNextWrap"><button class="big" id="bNext">Next bolt</button></div>
     </div>
@@ -280,12 +320,14 @@
   <section id="sCal" class="hidden">
     <div class="panel">
       <div class="step" id="cStep"></div>
-      <div class="meter" id="meter" aria-live="polite"></div>
+      <p class="small" id="cNote"></p>
+      <div class="meter hidden" id="meter" aria-live="polite"></div>
       <div class="cardtext" id="cText"></div>
       <p class="label">True or false?</p>
       <div class="opts row" id="cTF"><button data-v="1">True</button><button data-v="0">False</button></div>
       <p class="label">How sure are you?</p>
-      <div class="opts four" id="cConf"><button data-v="50">50%<br><small>coin flip</small></button><button data-v="70">70%</button><button data-v="90">90%</button><button data-v="99">99%<br><small>nearly certain</small></button></div>
+      <div class="opts four" id="cConf"><button data-v="50">50%<small>coin flip</small></button><button data-v="70">70%<small>leaning</small></button><button data-v="90">90%<small>pretty sure</small></button><button data-v="99">99%<small>lunch money</small></button></div>
+      <div class="hk-guide"><b class="gt">What the numbers mean</b>50% = coin flip. 70% = leaning. 90% = pretty sure. 99% = would bet your lunch money. Not sure? 50% is an honest answer.</div>
       <div class="go"><button class="big" id="cLock" disabled>Lock it in</button></div>
       <div class="fb hidden" id="cFb"></div>
       <div class="go hidden" id="cNextWrap"><button class="big" id="cNext">Next claim</button></div>
@@ -308,7 +350,7 @@
       </details>
       <p>Your code word:</p>
       <div class="center"><span class="code" id="code"></span></div>
-      <p style="margin-top:14px"><b>Now go back to Rocky and type <em>done</em>.</b> Tell him your scores, your stars, your calibration verdict and the code word. Then write your own theory of knowledge in five sentences.</p>
+      <p style="margin-top:14px"><b>Go back to Rocky and type the code word.</b> Then you'll write your own theory of knowledge, with sentence starters.</p>
       <div class="center"><button class="big alt" id="again">Play again</button></div>
     </div>
   </section>
@@ -317,30 +359,52 @@
 <script>
 (function(){
   const CODE='STAR KEY';
-  const BOLTS=[
-    {lock:1, t:"Smith's belief about the ten coins was true and he had good reasons. Why wasn't it knowledge?", o:["It was only a guess","Its truth came from luck, not from his reasons","It was actually false"], a:1, why:"A Gettier case: belief, truth and justification, with a lucky gap between the reasons and the truth."},
-    {lock:2, t:"Which belief survives even Descartes's all-powerful deceiver?", o:["2 + 3 = 5","I have hands","I exist"], a:2, why:"To be fooled at all, you have to exist. The deceiver can't touch that."},
-    {lock:3, t:"“All bachelors are unmarried” is…", o:["a priori and analytic","a posteriori and synthetic","a priori and synthetic"], a:0, why:"Known without checking the world, and true just by what the words mean."},
-    {lock:4, t:"A chain of reasons that eventually leans on the very belief it started with ends in a…", o:["Stop","Circle","Forever"], a:1, why:"One of Agrippa's three endings. Coherentists argue a big enough circle isn't vicious."},
-    {lock:5, t:"What could disprove “all swans are white”?", o:["One black swan","A thousand more white swans","A white goose"], a:0, why:"Popper's point: confirmations never prove a rule, but one counterexample can refute it."},
-    {lock:6, t:"A real expert in her field shows no evidence and says only, “Trust me, I'm the expert.” You should…", o:["Believe her: she's the expert","Ask to see the evidence","Assume she's lying"], a:1, why:"Experts are more likely to be right in their field, and can still be wrong. Evidence decides."},
-    {lock:7, t:"“There is no truth” is…", o:["Self-defeating","A paradox","True for some people"], a:0, why:"If it were true, there would be a truth. So it defeats itself, and it's simply false."}
-  ];
-  // easy to hard; balanced 5 true / 5 false
-  const CAL=[
-    {t:"Edmund Gettier's famous 1963 paper on knowledge is only about three pages long.", v:1, n:"Three pages that broke the recipe, as you read in Lock 1."},
-    {t:"Descartes wrote “I think, therefore I am” in exactly those words in his Meditations.", v:0, n:"The Meditations say “I am, I exist.” The famous slogan is from his Discourse (1637) and Principles (1644)."},
-    {t:"After a fair coin lands heads five times in a row, tails is more likely than heads on the next flip.", v:0, n:"The coin has no memory: it's still 50/50. Expecting tails to be “due” is called the gambler's fallacy."},
-    {t:"Humans use only about 10% of their brains.", v:0, n:"A popular myth. Brain scans show activity across virtually the whole brain, just not all of it at once."},
-    {t:"Studies have found that U.S. National Weather Service forecasters' chances of rain are well calibrated.", v:1, n:"From Lock 8's reading: when they say 70%, it rains on about 70% of those days."},
-    {t:"In a room of just 23 people, there's a better than even chance that two of them share a birthday.", v:1, n:"About 50.7%. There are 253 different pairs of people in a room of 23, so a match is likelier than it feels."},
-    {t:"Earth is closest to the Sun in early January.", v:1, n:"Around January 3. Seasons come from Earth's tilt, not its distance from the Sun."},
-    {t:"Old church windows are thicker at the bottom because glass slowly flows downward like a liquid.", v:0, n:"A myth. Old glass was uneven when it was made, and glaziers often set the thick edge at the bottom. Glass at room temperature doesn't flow in any noticeable way."},
-    {t:"If a test for a rare disease is 99% accurate and you test positive, you are about 99% likely to have the disease.", v:0, n:"When a disease is rare, false alarms from the many healthy people tested can outnumber the true cases, so your chance can be far lower. It depends on how common the disease is."},
-    {t:"There are more ways to shuffle a deck of 52 cards than there are stars in the observable universe.", v:1, n:"52 × 51 × 50 × … × 1 is about 8 × 10⁶⁷. Estimates of the stars in the observable universe are around 10²² to 10²⁴."}
-  ];
+  const H=window.HDYK;
   const $=id=>document.getElementById(id);
-  let bi=0, boltRight=0, ci=0, tf=null, conf=null, calRight=0, cal=[], log=[];
+  H.hardToggle($('mode'));
+  const BOLTS=[
+    {lock:1, t:"Smith's belief about the ten coins was true and he had good reasons. Why wasn't it knowledge?", o:["It was only a guess","Its truth came from luck, not from his reasons","It was actually false"], a:1, hint:"Guide step 4: was there luck between his reasons and the truth?", why:"A Gettier case: belief, truth and justification, with a lucky gap between the reasons and the truth."},
+    {lock:2, t:"Which belief survives even Descartes's all-powerful deceiver?", o:["2 + 3 = 5","I have hands","I exist"], a:2, hint:"Guide question 4: what do you have to do before anyone can fool you?", why:"To be fooled at all, you have to exist. The deceiver can't touch that."},
+    {lock:3, t:"“All bachelors are unmarried” is…", o:["a priori and analytic","a posteriori and synthetic","a priori and synthetic"], a:0, hint:"Do you need to check the world? Is it true from the words alone?", why:"Known without checking the world, and true just by what the words mean."},
+    {lock:4, t:"A chain of reasons that eventually leans on the very belief it started with ends in a…", o:["Stop","Circle","Forever"], a:1, hint:"Guide: what does a chain do when it leans on itself?", why:"One of Agrippa's three endings. Coherentists argue a big enough circle isn't vicious."},
+    {lock:5, t:"What could disprove “all swans are white”?", o:["One black swan","A thousand more white swans","A white goose"], a:0, hint:"Guide: which of these is a counter-case to the rule?", why:"Popper's point: confirmations never prove a rule, but one counterexample can refute it."},
+    {lock:6, t:"A real expert in her field shows no evidence and says only, “Trust me, I'm the expert.” When you ask, she refuses to show any evidence. You should…", o:["Believe her: she's the expert","Ask to see the evidence, and hold off until you see it","Assume she's lying"], a:1, hint:"Guide: she has credentials, but is there any evidence or agreement to go with them?", why:"Experts are more likely to be right in their field, and can still be wrong. When she won't show evidence, hold off. Not believing her isn't the same as assuming she's lying."},
+    {lock:7, t:"“There is no truth” is…", o:["Self-defeating","A paradox","True for some people"], a:0, hint:"Guide step 2: pretend it's true. What does that do to it? Then step 3.", why:"If it were true, there would be a truth. So it defeats itself, and it's simply false."}
+  ];
+  const GUIDES={
+    1:'<b class="gt">The stamp check</b><ol><li>Do they <b>believe</b> it?</li><li>Is it <b>true</b>?</li><li>Is it <b>justified</b> (good reasons)?</li><li>Is there <b>luck</b> between the reasons and the truth? If yes: not knowledge.</li></ol>',
+    2:'<b class="gt">The ladder questions</b><ol><li>Could your eyes be tricked? Senses.</li><li>Could a dream fake it? Dream.</li><li>Is it math or logic? Deceiver.</li><li>Is it that you exist or are thinking? Untouchable.</li></ol>',
+    3:'<b class="gt">Two quick tests</b><ol><li>Eyes closed, no checking needed? That is <b>a priori</b>.</li><li>True from the words alone? That is <b>analytic</b>.</li></ol>',
+    4:'<b class="gt">Follow the chain</b><ol><li>Needs another reason? Keep going.</li><li>Leans on itself? A circle.</li><li>Seen or felt directly? Stop.</li></ol>',
+    5:'<b class="gt">Sure thing or bet?</b><ol><li>Must the conclusion be true? A sure thing.</li><li>Could a surprise happen? A good bet.</li><li>One counter-case breaks a rule.</li></ol>',
+    6:'<b class="gt">The five clue questions</b><ol><li>Can I follow their reasons?</li><li>Do other experts say the same, separately?</li><li>Trained in THIS topic?</li><li>Do they gain if I believe it?</li><li>Been right before?</li></ol>',
+    7:'<b class="gt">The liar check</b><ol><li>Is it about itself? No: unlocks cleanly.</li><li>Yes? Pretend it\'s true. Does that make it false? No: unlocks cleanly.</li><li>Yes? Pretend it\'s false. Does that make it true? Yes: paradox. No: defeats itself.</li></ol>'
+  };
+  function guideFor(q){
+    if(q.lock===7 && /Two guards/.test(q.t)) return '<b class="gt">Guard trick</b>Pretend one guard is the truth-teller. If his sentence then contradicts itself, he must be the liar. Questions: pick one where a liar\'s flip cancels out.';
+    if(q.lock===7 && /theory of truth/i.test(q.t)) return '<b class="gt">Theory of truth</b><ol><li>Matches the facts? Correspondence.</li><li>Fits all our other beliefs? Coherence.</li><li>Works when tested, or where honest inquiry ends up? Pragmatist.</li></ol>';
+    if(q.lock===6 && /bubble/i.test(q.t)) return '<b class="gt">Bubble or chamber?</b><ol><li>Other voices just missing? Bubble.</li><li>Other voices taught to be distrusted? Echo chamber.</li></ol>';
+    return GUIDES[q.lock];
+  }
+  // Round A: from the course. Round B: general knowledge. h = Philosopher-mode extra. Balanced 5 true / 5 false in normal mode.
+  const CAL=[
+    {r:'A', t:"Edmund Gettier's famous 1963 paper on knowledge is only about three pages long.", v:1, n:"Three pages that broke the recipe, as you read in Lock 1."},
+    {r:'A', t:"Studies have found that U.S. National Weather Service forecasters' chances of rain are well calibrated.", v:1, n:"From this lock's reading: when they say 70%, it rains on about 70% of those days."},
+    {r:'A', t:"When Barry Marshall and Robin Warren proposed that bacteria cause stomach ulcers, doctors accepted it right away.", v:0, n:"Many experts dismissed it at first. The evidence piled up over the next decade, and the pair won the Nobel Prize in 2005 (Lock 6)."},
+    {r:'A', t:"The philosopher C. Thi Nguyen says an epistemic bubble and an echo chamber are really the same thing.", v:0, n:"Nguyen separates them: in a bubble other voices are missing, in an echo chamber they are distrusted. That is why the cures differ (Lock 6)."},
+    {r:'B', t:"Humans use only about 10% of their brains.", v:0, n:"A popular myth. Brain scans show activity across virtually the whole brain, just not all of it at once."},
+    {r:'B', t:"After a fair coin lands heads five times in a row, tails is more likely than heads on the next flip.", v:0, n:"The coin has no memory: it's still 50/50. Expecting tails to be “due” is called the gambler's fallacy."},
+    {r:'B', t:"Earth is closest to the Sun in early January.", v:1, n:"Around January 3. Seasons come from Earth's tilt, not its distance from the Sun."},
+    {r:'B', t:"In a room of just 23 people, there's a better than even chance that two of them share a birthday.", v:1, n:"About 50.7%. There are 253 different pairs of people in a room of 23, so a match is likelier than it feels."},
+    {r:'B', h:1, t:"Old church windows are thicker at the bottom because glass slowly flows downward like a liquid.", v:0, n:"A myth. Old glass was uneven when it was made, and glaziers often set the thick edge at the bottom. Glass at room temperature doesn't flow in any noticeable way."},
+    {r:'B', h:1, t:"Napoleon was unusually short for a man of his time.", v:0, n:"He was about 5 feet 6 or 7 inches, average or a little above for a Frenchman of his day. The myth comes partly from French and English inches being different lengths, and partly from British cartoons."},
+    {r:'B', t:"If a test for a rare disease is 99% accurate and you test positive, you are about 99% likely to have the disease.", v:0, n:"Imagine 1,000 people get tested for a rare disease. About 10 are sick, 990 healthy. A 99%-accurate test still wrongly flags about 10 healthy people, so about half the positives are false alarms."},
+    {r:'B', h:1, t:"There are more trees on Earth than stars in the Milky Way.", v:1, n:"A 2015 study in Nature estimated about 3 trillion trees on Earth. The Milky Way has roughly 100 to 400 billion stars."},
+    {r:'B', h:1, t:"In the standard Monty Hall problem (the host knows where the car is and always opens a goat door), switching doors wins 2/3 of the time.", v:1, n:"Your first pick is right 1/3 of the time, and the host's reveal doesn't change that. So the other door wins the other 2/3."},
+    {r:'B', t:"There are more ways to shuffle a deck of 52 cards than there are stars in the observable universe.", v:1, n:"The number of orderings is astronomically huge: more than the stars in the observable universe. A well-shuffled deck has almost certainly never been in that order before."}
+  ];
+  let CALX=CAL;
+  let bi=0, boltRight=0, ci=0, tf=null, conf=null, calRight=0, cal=[], log=[], tries=0;
   function show(id){ ['sIntro','sBolts','sCal','sEnd'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); }
 
   // draw seven bolts around the door
@@ -358,39 +422,59 @@
   let QB=BOLTS;
   function buildBolts(){
     QB=BOLTS.map(b=>{
-      const m=HDYK.misses(b.lock);
+      const m=H.misses(b.lock);
       if(!m.length) return Object.assign({own:false},b);
       const x=m[Math.floor(Math.random()*m.length)];
-      return {lock:b.lock, own:true, t:x.q, o:x.opts, a:x.a, why:x.why};
+      return {lock:b.lock, own:true, t:x.q, o:x.opts, a:x.a, why:x.why, hint:null};
     });
   }
-  $('startBtn').onclick=()=>{ buildBolts(); show('sBolts'); showBolt(); };
+  $('startBtn').onclick=()=>{
+    H.resetChallenges(8);
+    CALX=CAL.filter(x=>!x.h||H.hard());
+    buildBolts(); show('sBolts'); showBolt();
+  };
   function showBolt(){
-    const q=QB[bi];
+    const q=QB[bi]; tries=0;
     $('bStep').textContent='Bolt '+(bi+1)+' of 7 · from Lock '+q.lock+(q.own?' · one you missed before':'');
     const c=$('bText'); c.textContent=q.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+    $('bGuide').innerHTML=guideFor(q);
     $('bOpts').innerHTML=q.o.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('');
-    $('bOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>answerBolt(+b.dataset.i));
-    $('bFb').classList.add('hidden'); $('bNextWrap').classList.add('hidden');
+    $('bOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>answerBolt(+b.dataset.i,b));
+    $('bFb').classList.add('hidden'); $('bTry').classList.add('hidden'); $('bNextWrap').classList.add('hidden');
   }
-  function answerBolt(i){
-    const q=QB[bi], ok=i===q.a; if(ok) boltRight++;
+  function answerBolt(i,btn){
+    const q=QB[bi], ok=i===q.a;
+    if(!ok && tries===0){
+      tries=1; btn.disabled=true; btn.classList.add('wrong');
+      const t=$('bTry');
+      if(H.hard()) t.innerHTML='<b class="head">Not quite.</b><p>One more try.</p>';
+      else t.innerHTML='<b class="head">Not quite. Hint:</b><p>'+(q.hint||'Re-read the guide under the question. Which line matches this one?')+' Try again.</p>';
+      t.classList.remove('hidden'); return;
+    }
+    $('bTry').classList.add('hidden');
+    const first=ok&&tries===0, second=ok&&tries===1; if(first) boltRight++;
     $('bOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; if(+b.dataset.i===q.a) b.classList.add('right'); else if(+b.dataset.i===i) b.classList.add('wrong'); });
     slide(bi, ok); $('dial').style.transform='rotate('+((bi+1)*51)+'deg)';
-    const fb=$('bFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+(ok?(q.own?'Got it this time. The bolt slides back.':'The bolt slides back.'):'The bolt sticks, then gives.')+'</b><p>'+q.why+'</p>';
-    log.push({c:'Lock '+q.lock+': '+(q.t.length>54?q.t.slice(0,52)+'…':q.t), you:q.o[i], ans:q.o[q.a], ok});
+    const fb=$('bFb'); fb.className='fb'+(ok?'':' bad'); fb.innerHTML='<b class="head">'+H.react(ok,second)+' '+(ok?(q.own?'The bolt slides back this time.':'The bolt slides back.'):'The bolt sticks, then gives.')+'</b><p>'+q.why+'</p>';
+    H.challenge(fb,8,('Lock '+q.lock+': '+q.t).slice(0,90));
+    log.push({c:'Lock '+q.lock+': '+(q.t.length>54?q.t.slice(0,52)+'…':q.t), you:(second?'2nd try: ':'')+q.o[i], ans:q.o[q.a], ok:first});
     $('bNext').textContent= bi===QB.length-1 ? 'Turn to the dial' : 'Next bolt';
     $('bNextWrap').classList.remove('hidden');
   }
   $('bNext').onclick=()=>{ bi++; if(bi<QB.length) showBolt(); else { show('sCal'); showCal(); } };
 
   function meter(){
-    const n=cal.length, ac=n?Math.round(cal.reduce((a,x)=>a+x.conf,0)/n):0, rt=n?Math.round(100*cal.filter(x=>x.ok).length/n):0;
-    $('meter').innerHTML=n?'<span>sure</span><div class="bar bc"><i style="width:'+ac+'%"></i></div><b>'+ac+'%</b><span>right</span><div class="bar br"><i style="width:'+rt+'%"></i></div><b>'+rt+'%</b>':'<span style="grid-column:1/-1">Your running calibration meter fills in after the first claim.</span>';
+    const n=cal.length, m=$('meter');
+    if(n<3){ m.classList.add('hidden'); m.innerHTML=''; return; }
+    const ac=Math.round(cal.reduce((a,x)=>a+x.conf,0)/n), rt=Math.round(100*cal.filter(x=>x.ok).length/n);
+    m.classList.remove('hidden');
+    m.innerHTML='<span>sure</span><div class="bar bc"><i style="width:'+ac+'%"></i></div><b>'+ac+'%</b><span>right</span><div class="bar br"><i style="width:'+rt+'%"></i></div><b>'+rt+'%</b>';
   }
   function showCal(){
-    const q=CAL[ci]; tf=null; conf=null; meter();
-    $('cStep').textContent='The dial · claim '+(ci+1)+' of '+CAL.length;
+    const q=CALX[ci]; tf=null; conf=null; meter();
+    const nA=CALX.filter(x=>x.r==='A').length;
+    $('cStep').textContent='The dial · claim '+(ci+1)+' of '+CALX.length+' · Round '+q.r;
+    $('cNote').textContent= q.r==='A' ? 'Round A: from the course. Most people miss a few of these. Missing them isn\'t the point; matching your confidence is.' : 'Round B: general knowledge. Nobody expects you to know these, so "not sure" is a fine thing to say.';
     const c=$('cText'); c.textContent=q.t; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
     ['cTF','cConf'].forEach(g=>$(g).querySelectorAll('button').forEach(b=>{ b.disabled=false; b.className=''; }));
     $('cLock').disabled=true; $('cLock').parentElement.classList.remove('hidden');
@@ -399,7 +483,7 @@
   function wire(g, set){ $(g).querySelectorAll('button').forEach(b=>b.onclick=()=>{ set(+b.dataset.v); $(g).querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b)); $('cLock').disabled = tf===null||conf===null; }); }
   wire('cTF',v=>tf=v); wire('cConf',v=>conf=v);
   $('cLock').onclick=()=>{
-    const q=CAL[ci], ok=tf===q.v; if(ok) calRight++;
+    const q=CALX[ci], ok=tf===q.v; if(ok) calRight++;
     cal.push({conf, ok});
     $('cLock').parentElement.classList.add('hidden');
     $('cTF').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(+b.dataset.v===q.v) b.classList.add('right'); else if(+b.dataset.v===tf) b.classList.add('wrong'); });
@@ -407,16 +491,18 @@
     $('dial').style.transform='rotate('+(360+ (ci+1)*36)+'deg)';
     const fb=$('cFb'); fb.className='fb'+(ok?'':' bad');
     fb.innerHTML='<b class="head">'+(q.v?'True.':'False.')+' You were '+(ok?'right':'wrong')+' at '+conf+'% sure.</b><p>'+q.n+'</p>'; meter();
+    H.challenge(fb,8,q.t.slice(0,90));
     log.push({c:q.t, you:(tf?'True':'False')+' ('+conf+'%)', ans:q.v?'True':'False', ok});
-    $('cNext').textContent= ci===CAL.length-1 ? 'Open the Vault' : 'Next claim';
+    $('cNext').textContent= ci===CALX.length-1 ? 'Open the Vault' : 'Next claim';
     $('cNextWrap').classList.remove('hidden');
   };
-  $('cNext').onclick=()=>{ ci++; if(ci<CAL.length) showCal(); else finish(); };
+  $('cNext').onclick=()=>{ ci++; if(ci<CALX.length) showCal(); else finish(); };
 
   function finish(){
     show('sEnd'); window.scrollTo(0,0);
     setTimeout(()=>$('vault').classList.add('swing'), 300);
-    $('scores').innerHTML='<div><b>'+boltRight+' / 7</b><span>bolts</span></div><div><b>'+calRight+' / '+CAL.length+'</b><span>dial claims right</span></div>';
+    const N=CALX.length;
+    $('scores').innerHTML='<div><b>'+boltRight+' / 7</b><span>bolts</span></div><div><b>'+calRight+' / '+N+'</b><span>dial claims right</span></div>';
     const levels=[50,70,90,99]; let html='';
     levels.forEach(l=>{
       const g=cal.filter(x=>x.conf===l); if(!g.length) return;
@@ -425,21 +511,25 @@
     });
     $('calib').innerHTML=html;
     requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));
-    const avgConf=cal.reduce((s,x)=>s+x.conf,0)/cal.length, acc=100*calRight/CAL.length, gap=Math.round(avgConf-acc);
+    const avgConf=cal.reduce((s,x)=>s+x.conf,0)/N, acc=100*calRight/N, gap=Math.round(avgConf-acc);
+    const share50=cal.filter(x=>x.conf===50).length/N;
     let v, worst=null;
     levels.forEach(l=>{
       const g=cal.filter(x=>x.conf===l); if(g.length<2) return;
       const k=g.filter(x=>x.ok).length, miss=Math.abs(l-100*k/g.length);
       if(miss>=25 && (!worst||miss>worst.miss)) worst={l,k,n:g.length,miss,over:l>100*k/g.length};
     });
-    if(Math.abs(gap)<=10 && !worst) v='<b>Well calibrated.</b> Your average confidence ('+Math.round(avgConf)+'%) was close to how often you were right ('+Math.round(acc)+'%), and no confidence level was far off.';
+    const sharp = calRight>=N-1 && avgConf>=80;
+    if(share50>=0.8) v='<b>Careful, and honest.</b> You said 50% (coin flip) on most claims, and you were right '+Math.round(acc)+'% of the time. Saying "I\'m not sure" is calibrated when you really are not sure. Next time, notice whether you knew more than you let on.';
+    else if(sharp) v='<b>Sharp, and you knew it.</b> You were right '+Math.round(acc)+'% of the time with high confidence. With only '+N+' claims, that looks the same as good calibration. A longer test would probably catch a few misses at 90%.';
+    else if(Math.abs(gap)<=10 && !worst) v='<b>Well calibrated.</b> Your average confidence ('+Math.round(avgConf)+'%) was close to how often you were right ('+Math.round(acc)+'%), and no confidence level was far off.';
     else if(Math.abs(gap)<=10) v='<b>Close on average, with one weak spot.</b> Your average confidence ('+Math.round(avgConf)+'%) was near your accuracy ('+Math.round(acc)+'%), but when you said '+worst.l+'% you were right '+worst.k+' of '+worst.n+' times. '+(worst.over?'That level was overconfident.':'That level was underconfident.');
-    else if(gap>10) v='<b>A bit overconfident.</b> You were '+Math.round(avgConf)+'% sure on average but right '+Math.round(acc)+'% of the time. That is the most common pattern there is, and practice shrinks it.';
+    else if(gap>10) v='<b>A bit overconfident.</b> You were '+Math.round(avgConf)+'% sure on average but right '+Math.round(acc)+'% of the time. That is a very common pattern, especially on hard questions, and practice shrinks it.';
     else v='<b>A bit underconfident.</b> You were right '+Math.round(acc)+'% of the time but only '+Math.round(avgConf)+'% sure on average. You know more than you give yourself credit for.';
-    $('verdict').innerHTML=v+' <span class="small">(Ten claims is a small sample, so treat this as a first reading, not a verdict.)</span>';
+    $('verdict').innerHTML=v+' <span class="small">('+(N===10?'Ten':N)+' claims is a small sample, so treat this as a first reading, not a verdict.)</span>';
     $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
     $('code').textContent=CODE;
-    HDYK.end($('shelf'),{lock:8, right:boltRight+calRight, total:BOLTS.length+CAL.length});
+    H.end($('shelf'),{lock:8, right:boltRight+calRight, total:BOLTS.length+N});
   }
   $('again').onclick=()=>{ bi=0; ci=0; boltRight=0; calRight=0; cal=[]; log=[]; bolts.forEach(b=>{ b.style.transform=''; b.setAttribute('class','bolt'); }); $('dial').style.transform=''; $('vault').classList.remove('swing'); show('sIntro'); };
 })();
