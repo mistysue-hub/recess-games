@@ -112,28 +112,22 @@ function fallback(t,done){const a=document.createElement('textarea');a.value=t;a
 
 let ring=[],path=[],place=null,cScore=0,log=[];
 const RING=[
- {s:"A store's free-sample tray says \"one per customer.\" You could take ten.",
-  o:["Take one, as the sign says","Be tempted, honestly","Take ten"],
-  g:"With no chance of being caught, anyone would take ten.",p:"Taking what isn't yours lets your appetites run you a little more, seen or unseen."},
  {s:"Your friends' private group chat is open on a laptop, and they're talking about you.",
   o:["Walk away without reading","Be tempted, honestly","Read every message"],
-  g:"Anyone would read it if they knew they'd never be found out.",p:"Snooping eats away at the trust that makes friendship good for <i>you</i>."},
+  g:"If you knew you'd never be found out, why wouldn't you read it?",p:"If you did read it, could you still look those friends in the eye the same way?"},
  {s:"You find a wallet with $200 and a student ID inside. Nobody saw you pick it up.",
   o:["Return it all","Be tempted, honestly","Keep the cash"],
-  g:"No one would hand back $200 they could keep without anyone knowing.",p:"Keeping it would make you a little more ruled by greed. If you'd return it anyway, Glaucon's claim about <i>everyone</i> is false."},
+  g:"Hardly anyone hands back $200 they could keep without anyone knowing.",p:"Would you trust yourself the same way afterward? And if you'd return it anyway, isn't Glaucon wrong about everyone?"},
  {s:"You could post a mean comment about someone from an anonymous account that could never be traced back to you.",
   o:["Don't post it","Be tempted, honestly","Post it"],
-  g:"Anonymous accounts prove my point: hide people's names and their true selves come out.",p:"Plenty of people stay kind with no name attached. Each one is evidence that being just can be chosen for its own sake."},
- {s:"You broke a lamp while nobody was home. Your little brother is about to get blamed, and no one will ever know it was you.",
-  o:["Own up anyway","Be tempted to stay quiet","Let him take the blame"],
-  g:"Staying quiet is what anyone would do if they could get away with it.",p:"You'd have to live knowing it, and being at war with yourself is its own punishment."},
+  g:"Hide people's names and their true selves come out. Look at any comment section.",p:"Plenty of people stay kind with no name attached. What does each of them do to Glaucon's claim?"},
  {s:"Glaucon's final test. Life 1: you're always honest, but everyone believes you're a cheater, forever. Life 2: you cheat whenever you like, but everyone thinks you're honest.",
   o:["Life 1: honest, but seen as a cheater","Life 2: a cheater, but seen as honest","I can't decide"],
-  g:"If people secretly prefer Life 2, they care about looking good, not being good.",p:"Life 1. Being just is good for you even when nobody knows, and even when it costs you your reputation."}
+  g:"If people secretly prefer Life 2, they care about looking good, not being good.",p:"Plato picks Life 1: being just is good for you even if nobody ever knows. Could you live Life 2 and still like who you are?"}
 ];
 const VIEWS={
  express:{n:"Expressivist",d:"Moral claims express attitudes or plans, not facts.",obj:"The if-then puzzle: in \"if cheating is wrong...\" nobody is booing, yet the argument works. (Session 5)"},
- error:{n:"Error theorist",d:"Moral claims try to state facts, but there are none, so they're all false.",obj:"Is it really false that being cruel just for fun is wrong? And Sturgeon: sometimes real wrongness seems to be the best explanation. (Session 3)"},
+ error:{n:"Error theorist",d:"Moral claims try to state facts, but there are none, so every claim that something is morally required or forbidden is false.",obj:"Is it really false that being cruel just for fun is wrong? And Sturgeon: sometimes real wrongness seems to be the best explanation. (Session 3)"},
  relativist:{n:"Relativist",d:"Moral truth depends on a culture's or a person's standards.",obj:"The reformer problem: Douglass and Anthony would have been mistaken, and ending slavery only a change, not progress. (Session 4)"},
  natreal:{n:"Naturalist realist",d:"Some moral claims are true for everyone, and moral facts are natural facts science could study.",obj:"Moore's open question: for any natural feature, \"but is that good?\" still seems like a real question. (Session 2)"},
  nonnat:{n:"Non-naturalist realist",d:"Some moral claims are true for everyone, and moral facts are real but not natural.",obj:"Mackie's queerness: facts that command you, and that no sense can detect, would be very strange. (Session 3)"},
@@ -145,15 +139,15 @@ function intro(){
 function rq(i){
  const r=RING[i];
  choose({prog:`Part 1 · Situation ${i+1} of ${RING.length}`,head:`<div class="claim">${esc(r.s)}</div>`,q:"What would you do?",opts:r.o,
-  reveal:j=>views([["Glaucon (arguing the case)",r.g],["Plato",r.p]]),next:i<RING.length-1?'Next situation':'One more question',
+  reveal:j=>views([["Glaucon (arguing the case)",r.g],["Plato's side",r.p]]),next:i<RING.length-1?'Next situation':'One more question',
   cb:j=>{ring.push(`S${i+1}: ${r.o[j]}`);i<RING.length-1?rq(i+1):fs();}});
 }
 let fsAns='';
 function fs(){
- choose({prog:'Part 1 · Does morality bind everyone?',head:`<div class="claim">Someone says: "I understand the rules. I just don't care about anyone but me."</div>`,q:"Is she making a mistake, or does morality just not bind her, the way etiquette doesn't bind someone who doesn't care about manners?",
-  opts:["She's making a mistake","Morality doesn't bind her","Not sure"],
-  reveal:j=>views([["Shafer-Landau (moral rationalist)","Moral reasons apply to you whatever you want, like the rules of logic. Not caring doesn't free her; it's a mistake."],["Philippa Foot","Maybe morality is like etiquette: real rules, but they only give you a reason if you care about what they protect."]]),
-  next:'On to your map',cb:j=>{fsAns=["she's making a mistake","morality doesn't bind her","not sure"][j];m1();}});
+ choose({prog:'Part 1 · Does morality bind everyone?',head:`<div class="claim">Someone says: "I understand the rules. I just don't care about anyone but me."</div>`,q:"Is she making a mistake, or does morality just give her no reason to follow it, the way etiquette gives no reason to someone who doesn't care about manners?",
+  opts:["She's making a mistake","Morality gives her no reason","Not sure"],
+  reveal:j=>views([["Shafer-Landau (moral rationalist)","Moral reasons apply to you whatever you want, like the rules of logic. Not caring doesn't free her; it's a mistake."],["Philippa Foot (1972)","Maybe morality is like etiquette: the rules still apply to her, but they only give a reason to people who care about what they protect. (Foot later changed her mind.)"]]),
+  next:'On to your map',cb:j=>{fsAns=["she's making a mistake","morality gives her no reason","not sure"][j];m1();}});
 }
 function m1(){
  choose({prog:'Part 2 · Your map, question 1',head:`<h2>Where do you stand?</h2>`,q:"When people say \"stealing is wrong,\" are they trying to state a fact?",
