@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Journal – Small Stories, Big Moves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="desk.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="running"><a href="index.html">Small Stories, Big Moves</a><nav><a href="portfolio.html">Portfolio</a></nav></p>
+  <h1>Your Journal</h1>
+  <p class="sub">Everything you've written in this course on this device, week by week: reading notebooks and Story Desk drafts. This is the exercise journal MIT asks for.</p>
+  <div class="bar">
+    <span class="count" id="total"></span>
+    <button class="primary" id="downloadall">Download the whole journal</button>
+  </div>
+  <p class="sticky" id="warn"></p>
+  <ul class="entries" id="list"></ul>
+  <p class="fine">Saved in this browser only. A different device, a cleared browser, or a private window starts empty, so download the journal at the end of each week; you can paste downloaded text back into any Desk later. Part of Small Stories, Big Moves, inspired by MIT OpenCourseWare 21W.755 (not affiliated).</p>
+</main>
+<script src="course.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+function safeGet(k){ try { return localStorage.getItem(k) || ""; } catch(e){ return ""; } }
+function wc(s){ return (s.trim().match(/\S+/g) || []).length; }
+function when(k){ const w = safeGet(k+"-when"); return w ? new Date(w).toLocaleDateString(undefined,{month:"short",day:"numeric"}) : ""; }
+const Q = ["What does the main character want?","Why?","When did you know?","How did the writer tell you?","What stands in the way?","What does the want set in motion?"];
+
+let totalWords = 0, entries = 0, lastWeek = 0;
+const list = $("list");
+SSBM.WEEKS.forEach(w => {
+  const draft = safeGet("ssbm-draft-m" + w.n);
+  let notes = null; try { notes = JSON.parse(safeGet("ssbm-notes-m" + w.n) || "null"); } catch(e){}
+  const hasNotes = notes && Object.values(notes).some(v => v);
+  const li = document.createElement("li");
+  if (!draft && !hasNotes) {
+    li.className = "missing";
+    li.innerHTML = `<span class="n">${w.n}</span><div><span class="t">${w.title}</span><div class="m">${w.story ? w.story + " · " : ""}<a href="${w.notebook ? "notebook.html?m="+w.n : "desk.html?m="+w.n}">open</a></div></div><span class="w">nothing yet</span>`;
+  } else {
+    entries++; lastWeek = w.n;
+    const n = wc(draft); totalWords += n;
+    const parts = [];
+    if (hasNotes) parts.push(`notebook ${Object.values(notes).filter(v=>v).length}/6` + (when("ssbm-notes-m"+w.n) ? " · " + when("ssbm-notes-m"+w.n) : ""));
+    if (draft) parts.push(`${n} words` + (when("ssbm-draft-m"+w.n) ? " · " + when("ssbm-draft-m"+w.n) : ""));
+    li.innerHTML = `<span class="n">${w.n}</span><div><span class="t">${w.title}</span><div class="m">${w.story ? w.story + " · " : ""}${w.notebook ? `<a href="notebook.html?m=${w.n}">notebook</a> · ` : ""}<a href="desk.html?m=${w.n}">desk</a></div>${draft ? `<div class="excerpt">${draft.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])).slice(0,400)}</div>` : ""}</div><span class="w">${parts.join("<br>")}</span>`;
+  }
+  list.appendChild(li);
+});
+$("total").textContent = entries ? `${entries} week${entries===1?"":"s"} with work · ${totalWords.toLocaleString()} words of your own` : "No entries on this device yet.";
+if (!entries) { list.innerHTML = '<li class="empty" style="display:block">Nothing here yet. Your Week 1 notebook and draft will show up as soon as you start them.</li>'; $("downloadall").disabled = true; $("warn").style.display="none"; }
+else $("warn").textContent = "Reminder: this journal lives in this browser. Download it at the end of each week so nothing is lost.";
+
+$("downloadall").onclick = () => {
+  const d = new Date(); const stamp = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  let out = `Small Stories, Big Moves — Journal\nSaved ${stamp}\n${entries} weeks, ${totalWords} words of drafts\n\n`;
+  SSBM.WEEKS.forEach(w => {
+    const draft = safeGet("ssbm-draft-m" + w.n);
+    let notes = null; try { notes = JSON.parse(safeGet("ssbm-notes-m" + w.n) || "null"); } catch(e){}
+    const hasNotes = notes && Object.values(notes).some(v => v);
+    if (!draft && !hasNotes) return;
+    out += `==================================================\nWEEK ${w.n}: ${w.title}${w.story ? "  (" + w.story + ")" : ""}\n==================================================\n\n`;
+    if (hasNotes) { out += "Reading notebook\n"; Object.keys(notes).forEach((k,i) => { if (notes[k]) out += `${i+1}. ${Q[i] || k}\n${notes[k]}\n\n`; }); }
+    if (draft) out += `Draft (${wc(draft)} words)\n${draft.trim()}\n\n`;
+  });
+  const blob = new Blob([out], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `SmallStories-Journal-${stamp}.txt`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Small Stories, Big Moves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="desk.css">
+<style>
+.sheet{max-width:900px}
+h1{font-family:'Libre Caslon Text',Georgia,serif;font-size:40px;font-weight:400;line-height:1.1;margin:0 0 10px}
+.lead{font-family:'Libre Caslon Text',Georgia,serif;font-size:18px;color:var(--graphite);margin:0 0 26px;max-width:40em}
+.plan{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:0 0 30px}
+.plan div{border-top:3px solid var(--pencil);padding-top:10px;font-size:15px}
+.plan b{display:block;font-size:13px;color:var(--pencil);text-transform:none;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:700;padding:8px 8px 10px;border-bottom:2px solid var(--ink)}
+td{padding:10px 8px;border-bottom:1px dashed var(--rule-soft);vertical-align:top}
+td.n{color:var(--pencil);font-weight:700;font-size:18px;width:40px}
+td.t a{color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1px solid var(--pencil)}
+td .s{display:block;color:var(--graphite)}
+td .links a{color:var(--pencil);margin-right:10px}
+tr.block td{background:var(--pencil-soft);font-weight:700;padding:8px;border-bottom:0}
+tr.soon td.t a{border-bottom-color:var(--rule-soft);color:var(--graphite);font-weight:400}
+@media(max-width:700px){.plan{grid-template-columns:1fr}table,thead,tbody,tr,td,th{display:block}thead{display:none}td{border:0;padding:4px 0}td.n{float:left;margin-right:10px}tr{border-bottom:1px dashed var(--rule-soft);padding:12px 0}}
+</style>
+</head>
+<body><main class="sheet">
+<p class="running"><span>A year of short stories</span><nav><a href="journal.html">Journal</a><a href="portfolio.html">Portfolio</a></nav></p>
+<h1>Small Stories, Big Moves</h1>
+<p class="lead">A school year of reading and writing short stories, one craft move a week, ending with three finished stories, two of them rewritten, and a portfolio. Built on MIT's free Writing and Reading Short Stories course.</p>
+<div class="plan">
+  <div><b>Each week</b>Two sittings, about 2–3 hours. Read a story and fill in the six-question notebook; then learn one move and make it on your Story Desk.</div>
+  <div><b>MIT expects</b>Three stories, exercise journal, written critiques, two substantial revisions, a final portfolio. Every week below shows which MIT assignment it serves.</div>
+  <div><b>You produce</b>Short pieces that build to Story 1 (week 13), Story 2 (week 23), Story 3 (week 30), and a portfolio you download and keep.</div>
+</div>
+<table id="weeks">
+<thead><tr><th></th><th>Week</th><th>MIT expects</th><th>What you produce</th></tr></thead>
+<tbody></tbody>
+</table>
+<p class="fine">Inspired by MIT OpenCourseWare 21W.755 Writing and Reading Short Stories (Shariann Lewitt, Spring 2012), CC BY-NC-SA. Not affiliated with or endorsed by MIT or the instructor. All stories are in the public domain; craft cards and sample stories are the course's own. Suggested ages and pacing are the course's own, not MIT's.</p>
+</main>
+<script src="course.js"></script>
+<script>
+const BUILT = new Set([1,2,3]);
+const tb = document.querySelector("#weeks tbody"); let lastBlock = "";
+SSBM.WEEKS.forEach(w => {
+  if (w.block !== lastBlock) { lastBlock = w.block; const tr = document.createElement("tr"); tr.className="block"; tr.innerHTML = `<td colspan="4">${SSBM.BLOCKS[w.block]}</td>`; tb.appendChild(tr); }
+  const tr = document.createElement("tr"); if (!BUILT.has(w.n)) tr.className = "soon";
+  const reading = `reading/M${String(w.n).padStart(2,"0")}.html`;
+  const links = BUILT.has(w.n) ? `<span class="links"><a href="${reading}">Reading</a>${w.notebook ? `<a href="notebook.html?m=${w.n}">Notebook</a>` : ""}<a href="desk.html?m=${w.n}">Story Desk</a></span>` : `<span class="links" style="color:var(--graphite)">coming</span>`;
+  tr.innerHTML = `<td class="n">${w.n}</td><td class="t"><a href="${BUILT.has(w.n)?reading:"#"}">${w.title}</a><span class="s">${w.story || ""}</span>${links}</td><td>${w.mit}</td><td>${w.you}<span class="s">${w.mins}</span></td>`;
+  tb.appendChild(tr);
+});
+</script>
+</body></html>

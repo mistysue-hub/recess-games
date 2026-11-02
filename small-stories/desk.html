@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Story Desk – Small Stories, Big Moves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="desk.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="running"><a href="index.html">Small Stories, Big Moves</a><nav><a href="journal.html">Journal</a><a href="portfolio.html">Portfolio</a></nav></p>
+  <h1 id="title">Story Desk</h1>
+  <p class="sub" id="sub">Write here, not in the chat. Your draft saves itself on this device as you type.</p>
+  <div class="task" id="task"></div>
+  <textarea id="draft" placeholder="Start typing." spellcheck="true" aria-label="Your draft"></textarea>
+  <div class="bar">
+    <span class="count" id="count">0 words</span>
+    <button id="clear">Start over</button>
+  </div>
+  <ul class="check" id="check"></ul>
+  <div class="bar">
+    <button class="primary" id="copy">Copy my draft for Rocky</button>
+    <button id="download">Download my story</button>
+    <span id="copied" class="count" aria-live="polite"></span>
+  </div>
+  <section class="done" id="done">
+    <h2>Draft ready</h2>
+    <p id="doneline"></p>
+    <ul id="donelist"></ul>
+    <p>Paste it into your chat with Rocky. Tap "Download my story" to keep your own copy as a text file; your <a href="journal.html">Journal</a> lists everything saved on this device.</p>
+  </section>
+  <p class="fine">Your writing stays on this device only, and "Download my story" saves a text file you keep. Nothing is sent anywhere until you paste it to Rocky. Part of Small Stories, Big Moves, a course inspired by MIT OpenCourseWare 21W.755 (not affiliated).</p>
+</main>
+<script src="course.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const m = parseInt(params.get("m") || "1", 10);
+const wk = SSBM.week(m) || SSBM.week(1);
+const mod = { title: "Week " + wk.n + ": " + wk.title, words: wk.words || [100, null], task: wk.task || ["This week's writing task will appear here."], checks: wk.checks || [] };
+const key = "ssbm-draft-m" + m;
+const $ = id => document.getElementById(id);
+
+document.title = "Story Desk – " + mod.title;
+$("task").innerHTML = "<p><strong>" + mod.title + "</strong></p>" + mod.task.map(t => "<p>" + t + "</p>").join("");
+
+const check = $("check");
+const auto = document.createElement("li");
+auto.innerHTML = `<input type="checkbox" id="c_words" disabled><label for="c_words">At least ${mod.words[0]} words <span class="auto">(counted for you)</span></label>`;
+check.appendChild(auto);
+mod.checks.forEach(c => {
+  const li = document.createElement("li");
+  li.innerHTML = `<input type="checkbox" id="c_${c.id}"><label for="c_${c.id}">${c.text}</label>`;
+  check.appendChild(li);
+});
+
+const draft = $("draft");
+function safeGet(k){ try { return localStorage.getItem(k) || ""; } catch(e){ return ""; } }
+function safeSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+draft.value = safeGet(key);
+try { JSON.parse(safeGet(key+"-ticks") || "[]").forEach(id => { const el = $("c_"+id); if (el) el.checked = true; }); } catch(e){}
+
+function words(){ return (draft.value.trim().match(/\S+/g) || []).length; }
+function update(){
+  const n = words();
+  $("count").textContent = n + (n === 1 ? " word" : " words") + " (aim for " + mod.words[0] + (mod.words[1] ? "–" + mod.words[1] : "+") + ")";
+  $("count").classList.toggle("ok", n >= mod.words[0]);
+  $("c_words").checked = n >= mod.words[0];
+  safeSet(key, draft.value);
+  safeSet(key+"-ticks", JSON.stringify(mod.checks.filter(c => $("c_"+c.id).checked).map(c => c.id)));
+  safeSet(key+"-when", new Date().toISOString());
+}
+draft.addEventListener("input", update);
+check.addEventListener("change", update);
+update();
+
+$("clear").onclick = () => { if (confirm("Erase this draft and start over?")) { draft.value = ""; mod.checks.forEach(c => $("c_"+c.id).checked = false); update(); } };
+
+function stamp(){ const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+
+$("download").onclick = () => {
+  const n = words();
+  if (!draft.value.trim()) { $("copied").textContent = "Nothing to download yet."; return; }
+  const ticked = mod.checks.filter(c => $("c_"+c.id).checked).map(c => "- " + c.text).join("\n");
+  const text = `Small Stories, Big Moves\n${mod.title}\nSaved ${stamp()}, ${n} words\n\n${draft.value.trim()}\n\n---\nChecklist I ticked:\n${ticked || "(none)"}\n`;
+  const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `SmallStories-Week${String(m).padStart(2,"0")}-${stamp()}.txt`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  $("copied").textContent = "Saved " + a.download;
+};
+
+$("copy").onclick = async () => {
+  const n = words();
+  const ticked = mod.checks.filter(c => $("c_"+c.id).checked).map(c => c.text);
+  const text = `Story Desk, ${mod.title} (${n} words)\n\n${draft.value.trim()}\n\nChecklist I ticked: ${ticked.length ? ticked.join(" / ") : "none yet"}`;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch(e) {
+    draft.select(); try { ok = document.execCommand("copy"); } catch(e2){}
+  }
+  $("copied").textContent = ok ? "Copied. Now paste it to Rocky." : "Couldn't copy. Select the text and copy it yourself.";
+  $("doneline").textContent = `${n} words.`;
+  const dl = $("donelist"); dl.innerHTML = "";
+  [{text:`At least ${mod.words[0]} words`, ok: n >= mod.words[0]}].concat(mod.checks.map(c => ({text:c.text, ok:$("c_"+c.id).checked})))
+    .forEach(i => { const li = document.createElement("li"); li.textContent = (i.ok ? "✓ " : "– ") + i.text; dl.appendChild(li); });
+  $("done").style.display = "block";
+  $("done").scrollIntoView({behavior:"smooth"});
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reading Notebook – Small Stories, Big Moves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="desk.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="running"><a href="index.html">Small Stories, Big Moves</a><nav><a href="journal.html">Journal</a><a href="portfolio.html">Portfolio</a></nav></p>
+  <h1>Reading Notebook</h1>
+  <p class="sub" id="sub"></p>
+  <div class="task">
+    <p><strong>Six questions for any story.</strong> Writers ask these of everything they read, for the rest of their lives. One or two sentences each is plenty. Answer from the story, not from a summary of it.</p>
+  </div>
+  <form id="qs"></form>
+  <div class="bar">
+    <span class="count" id="count"></span>
+    <button id="clear">Start over</button>
+  </div>
+  <div class="bar">
+    <button class="primary" id="copy">Copy my notebook for Rocky</button>
+    <button id="download">Download my notes</button>
+    <span id="copied" class="count" aria-live="polite"></span>
+  </div>
+  <p class="fine">Your notes stay on this device only. Nothing is sent anywhere until you paste it to Rocky. Part of Small Stories, Big Moves, a course inspired by MIT OpenCourseWare 21W.755 (not affiliated).</p>
+</main>
+<script src="course.js"></script>
+<script>
+const Q = [
+  {id:"want", q:"What does the main character want?", hint:"Say it as a positive: what they want to have or do, not what they want to stop."},
+  {id:"why", q:"Why? What's behind the want?", hint:"The motive. What in their life makes this matter now."},
+  {id:"when", q:"When did you know?", hint:"The first sentence or moment where the want was clear to you."},
+  {id:"how", q:"How did the writer tell you?", hint:"What they said, what they did, what others said about them, or the writer saying so outright."},
+  {id:"wall", q:"What stands in the way?", hint:"The obstacle. A person, a thing, a rule, themselves."},
+  {id:"then", q:"What does the want set in motion?", hint:"What the character does about it, and what that costs or changes."}
+];
+const params = new URLSearchParams(location.search);
+const m = parseInt(params.get("m") || "1", 10);
+const wk = SSBM.week(m) || SSBM.week(1);
+const key = "ssbm-notes-m" + m;
+const $ = id => document.getElementById(id);
+document.title = "Reading Notebook – Week " + wk.n;
+$("sub").textContent = "Week " + wk.n + " · " + (wk.story || wk.title);
+
+function safeGet(k){ try { return localStorage.getItem(k) || ""; } catch(e){ return ""; } }
+function safeSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+let saved = {}; try { saved = JSON.parse(safeGet(key) || "{}"); } catch(e){}
+
+const form = $("qs");
+Q.forEach((q, i) => {
+  const lab = document.createElement("label"); lab.className = "q"; lab.htmlFor = "a_" + q.id;
+  lab.innerHTML = `${i+1}. ${q.q}<small>${q.hint}</small>`;
+  const ta = document.createElement("textarea"); ta.id = "a_" + q.id; ta.className = "short"; ta.spellcheck = true; ta.value = saved[q.id] || "";
+  form.appendChild(lab); form.appendChild(ta);
+});
+function answers(){ const o = {}; Q.forEach(q => o[q.id] = $("a_"+q.id).value.trim()); return o; }
+function update(){
+  const a = answers(); const done = Q.filter(q => a[q.id]).length;
+  $("count").textContent = done + " of 6 answered";
+  $("count").classList.toggle("ok", done === 6);
+  safeSet(key, JSON.stringify(a)); safeSet(key+"-when", new Date().toISOString());
+}
+form.addEventListener("input", update); update();
+$("clear").onclick = () => { if (confirm("Erase these notes and start over?")) { Q.forEach(q => $("a_"+q.id).value = ""); update(); } };
+
+function stamp(){ const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function asText(){ const a = answers(); return Q.map((q,i) => `${i+1}. ${q.q}\n${a[q.id] || "(blank)"}`).join("\n\n"); }
+
+$("download").onclick = () => {
+  const text = `Small Stories, Big Moves\nReading Notebook, Week ${wk.n}: ${wk.story || wk.title}\nSaved ${stamp()}\n\n${asText()}\n`;
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `SmallStories-Week${String(m).padStart(2,"0")}-Notebook-${stamp()}.txt`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  $("copied").textContent = "Saved " + a.download;
+};
+$("copy").onclick = async () => {
+  const text = `Reading Notebook, Week ${wk.n}: ${wk.story || wk.title}\n\n${asText()}`;
+  let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch(e) {}
+  $("copied").textContent = ok ? "Copied. Now paste it to Rocky." : "Couldn't copy. Select the text and copy it yourself.";
+};
+</script>
+</body>
+</html>

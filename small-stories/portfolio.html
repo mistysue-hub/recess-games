@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio – Small Stories, Big Moves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="desk.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="running"><a href="index.html">Small Stories, Big Moves</a><nav><a href="journal.html">Journal</a></nav></p>
+  <h1>Your Portfolio</h1>
+  <p class="sub">Three stories, two revisions, four critiques, your writer's letter. This page assembles them in Weeks 32 and 33.</p>
+  <ul class="entries" id="list"></ul>
+  <div class="bar"><button class="primary" id="downloadall">Download the portfolio</button><button id="print">Print</button></div>
+  <p class="fine">Built from what is saved on this device. If a piece is missing here, open its Desk and paste it back in from your downloaded file. Part of Small Stories, Big Moves, inspired by MIT OpenCourseWare 21W.755 (not affiliated).</p>
+</main>
+<script src="course.js"></script>
+<script>
+const PIECES = [
+  {label:"Story 1, first draft", m:13},{label:"Story 1, revised", m:16},
+  {label:"Story 2, first draft", m:23},{label:"Story 2, revised", m:26},
+  {label:"Story 3", m:30},
+  {label:"Critiques, Workshop 1", m:14},{label:"Critiques, Workshop 2", m:24},
+  {label:"Writer's letter", m:31},{label:"Reflection", m:33}
+];
+const $ = id => document.getElementById(id);
+function safeGet(k){ try { return localStorage.getItem(k) || ""; } catch(e){ return ""; } }
+function wc(s){ return (s.trim().match(/\S+/g) || []).length; }
+const list = $("list"); let any = false;
+PIECES.forEach(p => {
+  const t = safeGet("ssbm-draft-m" + p.m); const li = document.createElement("li");
+  if (t) { any = true; li.innerHTML = `<span class="n">${p.m}</span><div><span class="t">${p.label}</span><div class="m"><a href="desk.html?m=${p.m}">desk</a></div></div><span class="w">${wc(t)} words</span>`; }
+  else { li.className="missing"; li.innerHTML = `<span class="n">${p.m}</span><div><span class="t">${p.label}</span><div class="m">Week ${p.m} · <a href="desk.html?m=${p.m}">open</a></div></div><span class="w">not yet</span>`; }
+  list.appendChild(li);
+});
+$("downloadall").disabled = !any;
+$("downloadall").onclick = () => {
+  const d = new Date(); const stamp = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  let out = `Small Stories, Big Moves — Portfolio\nSaved ${stamp}\n\n`;
+  PIECES.forEach(p => { const t = safeGet("ssbm-draft-m" + p.m); if (t) out += `==================================================\n${p.label.toUpperCase()}  (${wc(t)} words)\n==================================================\n\n${t.trim()}\n\n`; });
+  const blob = new Blob([out], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `SmallStories-Portfolio-${stamp}.txt`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+$("print").onclick = () => window.print();
+</script>
+</body>
+</html>
