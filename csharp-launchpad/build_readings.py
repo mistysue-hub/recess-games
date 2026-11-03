@@ -22,7 +22,7 @@ MISSIONS = [
    ("brief", "A program is a list of instructions. SHARP reads them top to bottom. Each instruction is called a statement, and every statement ends with a semicolon. Think of the semicolon as the period at the end of a sentence; forget it and SHARP refuses to move."),
    ("code", ["Console.WriteLine(\"Hello, Computer\");"]),
    ("rule", "Console", "the text screen.", "WriteLine", "write this, then start a new line.", "\"...\"", "the words to print. The quotes mark where the text starts and ends. They do not print."),
-   ("tip", "The line <code>using System;</code> at the top is SHARP's toolbox; it's what makes <code>Console</code> work. Every program in this course starts with it. If the editor already shows it, leave it there."),
+   ("tip", "The line <code>using System;</code> at the top is SHARP's toolbox; it's what makes <code>Console</code> work. Every program in this course starts with it. The editor opens with some code already in it: delete <b>all</b> of it first, then type yours."),
    ("tip", "SHARP cares about capital letters. <code>Console</code> works. <code>console</code> gets you a red error and a very unhelpful stare."),
    ("brief", "A comment is a note for humans. SHARP skips it completely. A comment starts with two slashes."),
    ("code", ["// SHARP ignores this line. Write notes to yourself here."]),
@@ -32,7 +32,7 @@ MISSIONS = [
              "// The computer ignores this comment.",
              "Console.WriteLine(\"Bye!\");"], "STARTER"),
    ("alert", "SHARP is stuck. One tiny thing is missing. Type this in, run it, read the red error, fix it.",
-     ["Console.WriteLine(\"Lunch is at noon.\")", "Console.WriteLine(\"Bring a sandwich.\");"]),
+     ["using System;", "", "Console.WriteLine(\"Lunch is at noon.\")", "Console.WriteLine(\"Bring a sandwich.\");"]),
    ("launch", "Make a sign for your door",
      ["At least <b>5</b> Console.WriteLine lines.",
       "At least <b>1</b> comment.",
@@ -57,14 +57,14 @@ MISSIONS = [
    ("brief", "To print a box inside a sentence, put a dollar sign before the opening quote and wrap the label in curly braces. SHARP swaps the label for the value."),
    ("code", ["Console.WriteLine($\"{hero} has {lives} lives.\");"]),
    ("tip", "Forget the <code>$</code> and SHARP prints the curly braces and the label as plain text. Do it once on purpose. You'll do it by accident later anyway."),
-   ("predict", "What does the <b>last</b> line print: <code>I am {age}</code>, <code>I am age</code>, or <code>I am 12</code>? Decide. Then run."),
+   ("predict", "Look at the <b>third</b> line. <code>hasKey</code> holds <code>true</code>. What exactly will SHARP print? Write your guess down, letter for letter. Then run. (SHARP has a tiny surprise here.)"),
    ("code", ["using System;", "", "string hero = \"Kai\";", "int lives = 3;", "double height = 1.52;", "bool hasKey = true;",
              "Console.WriteLine($\"{hero} is {height} meters tall.\");",
              "Console.WriteLine($\"Lives left: {lives}\");",
              "Console.WriteLine($\"Has the key? {hasKey}\");",
              "int age = 12;", "Console.WriteLine($\"I am {age}\");"], "STARTER"),
    ("alert", "One box has the wrong type for what's inside it. SHARP will tell you, loudly. Fix it.",
-     ["int favoriteFood = \"pizza\";", "int slices = 8;", "Console.WriteLine($\"{slices} slices of {favoriteFood}\");"]),
+     ["using System;", "", "int favoriteFood = \"pizza\";", "int slices = 8;", "Console.WriteLine($\"{slices} slices of {favoriteFood}\");"]),
    ("launch", "Mad Libs",
      ["Make at least <b>4</b> boxes using at least <b>3</b> different types.",
       "Print a short story, at least <b>3</b> lines, each using a box inside <code>$\"...\"</code> text.",
@@ -88,7 +88,7 @@ MISSIONS = [
              "Console.WriteLine(3 + 4 * 2);", "string pet = \"ferret\";", "Console.WriteLine(pet.Length);",
              "Console.WriteLine(pet.ToUpper());"], "STARTER"),
    ("alert", "No red error this time. It runs. The answer is still wrong. This is the sneakiest kind of bug. Find out why and fix it.",
-     ["int score1 = 90;", "int score2 = 85;", "int score3 = 88;",
+     ["using System;", "", "int score1 = 90;", "int score2 = 85;", "int score3 = 88;",
       "int average = (score1 + score2 + score3) / 3;", "Console.WriteLine($\"Average: {average}\");"]),
    ("launch", "Allowance calculator (wrong, then right)",
      ["<b>Part 1, the trap:</b> make an <code>int</code> for weekly allowance (pick an odd number, like 7) and an <code>int</code> for how many people split it (like 2). Divide and print <code>Each person gets $___</code>. Run it. Look at the answer.",
@@ -117,7 +117,7 @@ h1{font:800 40px/1.1 'Nunito',sans-serif;margin:6px 0 8px;letter-spacing:-.01em}
 .body{padding:8px 28px 28px}p{margin:14px 0}code{font:15px var(--mono);background:#0008;padding:2px 6px;border-radius:5px;color:var(--cyan)}
 .ed{margin:18px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#070b18}
 .ed .t{display:flex;justify-content:space-between;font:12px var(--mono);letter-spacing:.14em;color:var(--dim);padding:7px 12px;background:#0b1226;border-bottom:1px solid var(--line)}
-.ed .t b{color:var(--lime)}
+.ed .t b{color:var(--lime)}.ed .tr{display:flex;align-items:center;gap:10px}.cp{font:700 12px var(--mono);letter-spacing:.08em;background:transparent;color:var(--cyan);border:1px solid var(--cyan);border-radius:6px;padding:4px 10px;cursor:pointer;min-height:30px}.cp:hover{background:#6fe3ff1a}.cp.ok{color:var(--bg);background:var(--lime);border-color:var(--lime)}
 .ed pre{margin:0;padding:12px 0;font:15px/1.65 var(--mono);overflow-x:auto}.ed .l{display:flex}.ed .n{width:44px;text-align:right;padding-right:14px;color:#3d4c7a;user-select:none;flex:none}
 .s{color:#ffd37a}.c{color:#5d6b94;font-style:italic}.kw{color:#7fa8ff}.m{color:var(--cyan)}.num{color:var(--pink)}
 .run{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--line);font:13px var(--mono);color:var(--dim);background:#0b1226}
@@ -157,10 +157,16 @@ def hl(line):
         out.append(code(line[i:j])); i = j
     return "".join(out)
 
+COPY_JS = '<script>\ndocument.addEventListener("click", function (e) {\n  var b = e.target.closest(".cp"); if (!b) return;\n  var t = b.getAttribute("data-code");\n  function done(ok) { b.textContent = ok ? "✓ Copied" : "Select + copy"; b.classList.toggle("ok", ok); setTimeout(function(){ b.textContent = "⧉ Copy"; b.classList.remove("ok"); }, 1800); }\n  function fallback() {\n    try { var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";\n      document.body.appendChild(ta); ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); done(ok); }\n    catch (err) { done(false); }\n  }\n  try { if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(t).then(function(){ done(true); }, fallback); } else { fallback(); } }\n  catch (err) { fallback(); }\n});\n</script>'
+
 def editor(lines, label="C#", show_run=True):
     rows = "".join(f'<div class="l"><span class="n">{i+1}</span><span>{hl(l)}</span></div>' for i, l in enumerate(lines))
     run = '<div class="run"><b>▶ RUN</b> output shows here. Guess first.</div>' if show_run else ""
-    return f'<div class="ed"><div class="t"><span>Program.cs</span><b>{label}</b></div><pre>{rows}</pre>{run}</div>'
+    copy = ""
+    if label != "C#":
+        raw = html.escape("\n".join(lines), quote=True)
+        copy = f'<button class="cp" type="button" data-code="{raw}">⧉ Copy</button>'
+    return f'<div class="ed"><div class="t"><span>Program.cs</span><span class="tr"><b>{label}</b>{copy}</span></div><pre>{rows}</pre>{run}</div>'
 
 def render_html(m):
     out = []
@@ -186,7 +192,7 @@ def render_html(m):
 <div class="hero"><div class="k">MISSION {m['num']} OF 09</div><h1>{html.escape(m['title'])}</h1><p class="tag">{html.escape(m['tagline'])}</p></div>
 <div class="body">{body}
 <div class="badge"><div class="pill">BADGE: {m['badge']}</div><p>Earn it by finishing the Launch and the debrief with Rocky.</p></div>
-</div></div><p class="foot">Written for C# Launchpad. No material copied from any book or site. Fonts by Google Fonts.</p></div></body></html>"""
+</div></div><p class="foot">Written for C# Launchpad. No material copied from any book or site. Fonts by Google Fonts.</p></div>{COPY_JS}</body></html>"""
 
 def strip_tags(s):
     s = re.sub(r"<code>(.*?)</code>", r"`\1`", s); s = re.sub(r"<b>(.*?)</b>", r"**\1**", s)
