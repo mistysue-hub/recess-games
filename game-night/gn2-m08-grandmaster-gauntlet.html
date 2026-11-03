@@ -127,7 +127,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>THE GRANDMASTER'S GAUNTLET</h1>
-<p class="note">Boss round! The Grandmaster has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Grandmaster wins that round. REMATCH then replays only the puzzles you haven't hit, with 3 fresh lives, and his HP stays where you left it.</p>
+<p class="note">Boss round! The Grandmaster has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life (except round 8, the race, which costs none). Lose all 3 lives and the Grandmaster wins that round. REMATCH then replays only the puzzles you haven't hit, with 3 fresh lives, and his HP stays where you left it.</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/8</b></div>
   <div class="box">GRANDMASTER HP<b id="hp">8</b></div>
@@ -172,12 +172,14 @@ function mkR1(T){var f=T%3,ks=[],k;for(k=f;k<=T;k+=3)ks.push(k);
  return {t:"ROUND 1: WORK BACKWARD",taunt:"\"Every endgame starts at the end.\"",vt:T===10?0:T,
   scene:"<div class=\"story\">Race to "+T+": take turns adding <b>1 or 2</b>. Whoever says "+T+" wins. You go first.</div>",
   q:"What number should you say first?",ch:["1","2","It doesn't matter"],a:f-1,
+  ma:"say "+f,mr:"the key numbers are "+ks.join(", ")+"; land on one and you can always finish on "+T,
   short:"Say "+f+". The key numbers are "+ks.join(", ")+".",
   why:"Whoever says "+(T-3)+" wins: your rival adds 1 or 2 ("+(T-2)+" or "+(T-1)+"), then you say "+T+". Back up by 3 each time: "+ks.slice(0,-1).reverse().join(", ")+"."}}
 function mkR8(T){var ks=[],k;for(k=1;k<=T;k+=4)ks.push(k);
  return {t:"ROUND 8: ENDGAME",taunt:"\"Race to "+T+". You may go first. You'll need it.\"",race:true,T:T,keys:ks,vt:T===13?0:T,
   scene:"<div class=\"story\">Final round: Race to "+T+". Take turns adding <b>1, 2 or 3</b>. Whoever says "+T+" wins the round and lands the hit. The Grandmaster plays perfectly, so don't slip!</div>",
   q:"Your move.",ch:["+1","+2","+3"],a:-1,
+  ma:"say 1 first, then make every pair of moves add up to 4",mr:"the key numbers are "+ks.join(", ")+"; land on one and the Grandmaster can never stop you reaching "+T,
   short:"Key numbers: "+ks.join(", ")+".",
   why:"Whoever says "+(T-4)+" wins: your rival reaches "+(T-3)+"-"+(T-1)+", then you say "+T+". Back up by 4: "+ks.slice(0,-1).reverse().join(", ")+". Say 1 first, then always make 4 with the Grandmaster's move."}}
 var VAR1=[10,11,14],VAR8=[13,17,9,21];
@@ -186,31 +188,37 @@ var R=[
  {t:"ROUND 2: PIRATE GOLD",taunt:"\"Gold goes to those who think backward.\"",
   scene:"<div class=\"story\">3 pirates: you (captain), Bo and Annie. Split 100 coins; a tied vote passes. If you're kicked off, Bo would keep all 100 and Annie would get 0. Pirates vote yes only for <b>more</b> than they'd get otherwise.</div>",
   q:"Which plan passes and keeps the most for you?",ch:["You 100, Bo 0, Annie 0","You 99, Bo 0, Annie 1","You 99, Bo 1, Annie 0","You 34, Bo 33, Annie 33"],a:1,
+  ma:"You 99, Bo 0, Annie 1",mr:"Annie would get 0 without you, so 1 coin buys her vote and yours makes 2 of 3",
   short:"Give Annie 1: it beats the 0 she'd get from Bo.",
   why:"You need 2 of 3 votes. Bo would get 100 without you, so he's expensive. Annie would get 0, so 1 coin buys her vote."},
  {t:"ROUND 3: THE GROWING POT",taunt:"\"Patience... or greed?\"",
   scene:"<div class=\"story\">Take the big pile or pass; every pass doubles both piles. Your <b>perfectly logical</b> partner makes the last move.</div>",
   q:"Backward induction says the first player should...",ch:["TAKE right away","PASS every time","PASS once, then take"],a:0,
+  ma:"TAKE right away",mr:"the partner takes on the last move, so taking is better one move earlier, all the way back to turn 1",
   short:"Take right away: logic unravels from the last move.",
   why:"On the last move the partner takes. So the move before, taking is better, and so on all the way back to turn 1. (Real people often pass, and earn more!)"},
  {t:"ROUND 4: EMPTY THREAT?",taunt:"\"I'll crush you. Probably.\"",
   scene:"<table class=\"grid\"><tr><th>If you open and Big Slice...</th><th>You</th><th>Big Slice</th></tr><tr><td>SHARES</td><td>3</td><td>6</td></tr><tr><td>FIGHTS</td><td>−1</td><td>2</td></tr></table><div class=\"story\">Staying out gives you 0. Big Slice swears it will fight.</div>",
   q:"Should you open?",ch:["Yes: the threat is empty","No: the threat is real","Only if Big Slice promises to share"],a:0,
+  ma:"Open",mr:"sharing (6) beats fighting (2) for Big Slice once you are in, so the threat is empty",
   short:"Open: once you're in, sharing (6) beats fighting (2) for Big Slice.",
   why:"A threat is only credible if carrying it out helps the one making it. Here it doesn't, so you get 3 instead of 0."},
  {t:"ROUND 5: THE ULTIMATUM",taunt:"\"Make me an offer I can't refuse.\"",
   scene:"<div class=\"story\">Split 10 coins with a robot that accepts <b>any offer above 0</b>. If it rejects, nobody gets anything.</div>",
   q:"How many coins should you offer to keep the most?",ch:["0","1","5"],a:1,
+  ma:"offer 1",mr:"the robot accepts anything above 0, so you keep 9",
   short:"Offer 1: the robot accepts, you keep 9.",
   why:"0 gets rejected (the robot needs more than 0). 1 is accepted. Real people are different: they often reject offers that feel unfair."},
  {t:"ROUND 6: AUCTION NIGHT",taunt:"\"Going once... going twice...\"",
   scene:"<div class=\"story\">A <b>second-price</b> auction: highest bid wins and pays the second-highest bid. A hoverboard is worth <b>70</b> to you.</div>",
   q:"What should you bid?",ch:["50","70","90"],a:1,
+  ma:"bid 70",mr:"you pay the second-highest bid, so bidding your true value never costs you",
   short:"Bid exactly 70, your true value.",
   why:"Your bid only decides whether you win. Bid 50 and you might lose a bargain; bid 90 and you might pay nearly 90 for something worth 70."},
  {t:"ROUND 7: SUNK COST",taunt:"\"You've come this far. Why stop now?\"",
   scene:"<div class=\"story\">Both-pay auction for a 100-point prize. You've already bid 80. Your rival just bid 90 and never quits.</div>",
   q:"What should decide your next move?",ch:["The 80 you already bid","Only what happens from now on","Winning, no matter what"],a:1,
+  ma:"only what happens from now on",mr:"the 80 is gone whether you quit or not (sunk cost)",
   short:"Only the future counts. The 80 is a sunk cost.",
   why:"Quit and you pay 80. Keep raising against someone who never quits and you'll pay even more. Past bids are gone either way."},
  mkR8(13)
@@ -279,12 +287,14 @@ function finish(lost){
   el("endt").textContent=lost?"THE GRANDMASTER WINS":(hp===0?"CHECKMATE! YOU WIN!":"GAUNTLET OVER");
   var rows="";for(var n=0;n<8;n++)rows+="<tr><td>"+R[n].t.replace(/^ROUND \d+: /,"")+"</td><td>"+res[n]+"</td></tr>";
   var foil=(!lost&&hits===8&&attempt===1)?"&foil=1":"";
-  var won=(!lost&&hp===0),close=(!lost&&hp>0);
+  var won=(!lost&&hp===0),close=(!lost&&hp>0);window.gnWon=won;
+  var missed="",unr=[];for(var m=0;m<8;m++){var q=puz(m);if(/^(miss|fixed)/.test(res[m]))missed+="<li><b>"+q.t.replace(/^ROUND \d+: /,"")+"</b> (miss: "+q.ma+", because "+q.mr+")</li>";else if(res[m]==="not reached")unr.push(q.t.replace(/^ROUND \d+: /,""))}
+  var review=(won||(!missed&&!unr.length))?"":"<div class=\"story\"><b>What you missed</b><ul style=\"text-align:left;padding-left:20px\">"+missed+"</ul>"+(unr.length?"<p>Not reached yet: "+unr.join(", ")+".</p>":"")+"</div>";
   el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you haven't hit (missed or not reached), with 3 fresh lives.</p>":"")+
    (close?"<p><b>So close!</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you missed, with 3 fresh lives. Checkmate him to unlock the Endgame card.</p>":"")+
-   "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
+   review+"<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
    (!won?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>ENDGAME</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn2-deck.html?card=8"+foil+"\">See your deck</a></div>")+
-   "<div class=\"tape\"><b>WANT MORE?</b> See where these ideas come from, and what's next in Game Night. <a href=\"gn2-read.html?m=9\">Go deeper</a></div>";
+   (!won?"":"<div class=\"tape\"><b>WANT MORE?</b> See where these ideas come from, and what's next in Game Night. <a href=\"gn2-read.html?m=9\">Go deeper</a></div>");
   show("rematch",!won);
   el("out").value="GN2-M08 | attempt "+attempt+" | "+(lost?"GRANDMASTER WINS":(won?"CHECKMATE":"GAUNTLET OVER, Grandmaster survived"))+" | round results: "+log.join(", ")+" | lives left "+lives+" | Grandmaster HP left "+hp+" | rank "+rank+(attempt>1?" | replayed puzzles: "+replayed.map(function(i){return "R"+(i+1)}).join(", "):"");
   show("final",true);
@@ -307,7 +317,8 @@ start();
   }
   var f=document.getElementById("final");
   if(f&&window.MutationObserver){var fired=false;new MutationObserver(function(){
-    if(!fired&&f.style.display==="block"){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
+    if(f.style.display!=="block"){fired=false;return}
+    if(!fired&&window.gnWon){fired=true;shower()}}).observe(f,{attributes:true,attributeFilter:["style"]});}
   function shower(){
     try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
     var cols=["#f2c14e","#f5ecd7","#8e7dff","#3a6fd8","#c9952a","#ffffff"],b=document.createElement("div");b.className="shower";

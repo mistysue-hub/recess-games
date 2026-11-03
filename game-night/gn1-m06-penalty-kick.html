@@ -122,6 +122,9 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
   <div class="box">GOALS<b id="gs">0</b></div>
 </div>
 
+<p class="note" style="margin:6px 0 0">YOUR LAST 5 KICKS (oldest first)</p>
+<p id="strip" style="font:400 18px 'Press Start 2P','Courier New',monospace;letter-spacing:6px;margin:6px 0;min-height:26px;color:#ffe14d"></p>
+
 <div id="pick">
   <p class="goalie" id="who"></p>
   <button onclick="play('L')">KICK LEFT</button>
@@ -153,9 +156,16 @@ function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
 function word(s){return s==="L"?"LEFT":"RIGHT"}
+var lastRead="";
 function goalieDive(){
-  if(r<half){return rnd(100)<80?"L":"R"}
+  if(r<half){lastRead="Lefty ignores your pattern and just dives LEFT about 80% of the time.";return rnd(100)<80?"L":"R"}
   return scoutDive();
+}
+function strip(){
+  var h=mine.slice(-5),t=[],i;
+  for(i=0;i<5-h.length;i++)t.push("-");
+  for(i=0;i<h.length;i++)t.push(h[i]);
+  el("strip").textContent=t.join(" ");
 }
 /* Scout reads your recent pattern. Three readers try to predict each kick from the ones before it:
    LEAN (majority of the last 3), REPEAT (same as last kick), FLIP (opposite of last kick).
@@ -165,7 +175,7 @@ function pLean(h){var w=h.slice(-3),l=0,i;for(i=0;i<w.length;i++)if(w[i]==="L")l
 function pRepeat(h){return h[h.length-1]}
 function pFlip(h){return h[h.length-1]==="L"?"R":"L"}
 function scoutDive(){
-  var readers=[pLean,pRepeat,pFlip],sc=[],best=-1,i,k,s;
+  var readers=[pLean,pRepeat,pFlip],names=["lean","repeat","flip"],sc=[],best=-1,i,k,s;
   for(i=0;i<readers.length;i++){
     s=0;
     for(k=Math.max(3,mine.length-4);k<mine.length;k++){if(readers[i](mine.slice(0,k))===mine[k])s++}
@@ -173,9 +183,19 @@ function scoutDive(){
   }
   var picks=[];
   for(i=0;i<readers.length;i++){if(sc[i]===best){var g=readers[i](mine);if(picks.indexOf(g)<0)picks.push(g)}}
-  return picks.length===1?picks[0]:(rnd(2)?"L":"R");
+  var dive=picks.length===1?picks[0]:(rnd(2)?"L":"R"),seen=[];
+  for(i=0;i<readers.length;i++){
+    if(sc[i]===best&&readers[i](mine)===dive){
+      seen.push(names[i]==="lean"?"favour "+word(dive==="L"?"L":"R")+" (your last 3 kicks lean that way)":(names[i]==="repeat"?"repeat your last kick":"flip-flop"));
+    }
+  }
+  if(best<=0)lastRead="Scout found no pattern working on you lately, so it just guessed.";
+  else if(picks.length>1)lastRead="Scout saw mixed signals ("+picks.length+" readers disagreed), so it flipped a coin.";
+  else lastRead="Scout noticed you "+seen.join(" and ")+", so it dove "+word(dive)+".";
+  return dive;
 }
 function setup(){
+  strip();
   el("rn").textContent=(r+1)+"/"+total;
   el("who").textContent=(r<half)
     ?"Goalie: Lefty. Scouting report: dives LEFT most of the time."
@@ -197,7 +217,8 @@ function resolve(me){
   if(scored)gs++;
   el("gs").textContent=gs;
   el("headline").innerHTML="You kicked "+word(me)+". Goalie dove "+word(d)+". "+(scored?"<span class=\"goal\">GOAL!</span>":"<span class=\"save\">SAVED.</span>");
-  el("detail").textContent="That kick had "+an(p)+" "+p+"% chance of going in.";
+  el("detail").textContent="That kick had "+an(p)+" "+p+"% chance of going in. "+lastRead;
+  strip();
   el("next").textContent=(r===total-1)?"SEE FINAL SCORE":"NEXT KICK";
   show("pick",false);show("round",true);
 }
