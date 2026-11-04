@@ -54,7 +54,8 @@ body{
   color:var(--ink); font-family:var(--serif); font-size:18px; line-height:1.62;
 }
 a{color:var(--ball); text-underline-offset:2px}
-:focus-visible{outline:3px solid var(--hl-b); outline-offset:2px; border-radius:4px}
+:focus-visible{outline:3px solid var(--hl-b); outline-offset:2px}
+.btn:focus-visible{border-radius:999px}
 button{font:inherit; color:inherit}
 .wrap{max-width:760px; margin:0 auto; padding:0 16px 64px}
 
@@ -385,7 +386,7 @@ details.opt .inner p{font-size:1rem}
 </head>
 <body>
 <div class="dock" id="dock" aria-label="Evidence collected">
-  <b id="dockCount" role="status"><span class="evw">Evidence </span>0/6</b>
+  <b id="dockCount" role="status"><span class="evw">Evidence </span>0/2</b>
   <ol id="dockList"></ol>
   <div class="evpanel" id="evPanel" hidden></div>
 </div>
@@ -427,14 +428,14 @@ details.opt .inner p{font-size:1rem}
 <!-- ================= BEAT 1 ================= -->
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-y)">The two big questions</span></h2>
-  <p>Ethics is the part of philosophy about how to live. Most of its questions fall under two headings.</p>
+  <p>Ethics is the part of philosophy about how to live. Most of its questions fall under two headings. Every card in the warm-up was one of them: "me" was question one, "someone else" was question two.</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Question one: well-being</span>
     <p><b>What makes a life go well for the person living it?</b> Not "is this right?" but "is this actually <i>good for</i> me?" Pleasure, health, friendship and getting what you want are all candidates.</p>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Question two: morality</span>
-    <p><b>What do we owe each other?</b> Fairness, honesty, keeping promises, not harming people. A handy test: a reason about someone <i>else's</i> good (their well-being, their feelings) is a moral reason for you, because it's what you owe them.</p>
+    <p><b>What do we owe each other?</b> Fairness, honesty, keeping promises, respecting what belongs to others, not harming people. A handy test: a reason about someone <i>else's</i> good (their well-being, their feelings) is a moral reason for you, because it's what you owe them.</p>
   </div>
   <p>The button has both. "$1,000 would be great for me" answers question one. "A stranger loses $1,000 they did nothing to lose" answers question two.</p>
   <p>Some facts are neither. "The button is red" is true, but it counts for nothing either way.</p>
@@ -487,6 +488,15 @@ details.opt .inner p{font-size:1rem}
     <div class="full">Usually: they point the same way.</div>
     <div class="full">Sometimes: they split, like in the button.</div>
     <div class="full">Sidgwick's verdict: he couldn't prove either one always wins. He called the standoff the <i>dualism of practical reason</i>: two rival guides for deciding what to do.</div>
+  </div>
+  <div class="poll" id="sidPoll">
+    <p><b>Which way do you lean?</b> No right answer. When the two principles split, which one do you usually follow?</p>
+    <div class="row" role="group" aria-label="Your answer">
+      <button class="btn ghost" type="button" data-r="me">What's best for me</button>
+      <button class="btn ghost" type="button" data-r="all">What's best for everyone</button>
+      <button class="btn ghost" type="button" data-r="dep">It depends</button>
+    </div>
+    <div class="fb" id="sidFb" aria-live="polite"></div>
   </div>
   <p class="note">So when the button feels hard, that's not you being confused. You've run into a problem Sidgwick never managed to settle.</p>
 </section>
@@ -580,6 +590,7 @@ var $ = function(id){ return document.getElementById(id); };
 function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function flat(t){ return String(t).replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s{2,}/g," ").trim(); }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 
@@ -682,7 +693,7 @@ function syncLockins(){
 }
 buildLockin($("lockin"));
 $("lockBtn").addEventListener("click",function(){
-  COVER.reason=$("myReason").value.trim();
+  COVER.reason=flat($("myReason").value);
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
   if(!COVER.reason){ $("lockMsg").style.color=""; $("lockMsg").textContent="Call saved. Add your one-sentence reason now, or in the final file."; renderFinale(); saveState(); return; }
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in. You'll need it at the end.";
@@ -695,7 +706,7 @@ var WCARDS=[
  {s:"seat",   q:"The bus is packed and your feet hurt. One seat is free, and a stranger with heavy bags just got on.", m:"Take the seat", o:"Offer it to them"},
  {s:"charger",q:"Your phone is at 6%. A classmate's phone just died and they need to call home.", m:"Keep my charger", o:"Lend it to them"},
  {s:"study night", q:"A friend asks for help studying tonight. You were looking forward to a free evening.", m:"Keep my evening", o:"Help them study"},
- {s:"credit", q:"Your teammate's idea saved the group project. The teacher assumes it was yours.", m:"Say nothing", o:"Set the record straight"},
+ {s:"credit", q:"Your teammate's idea saved the group project. The teacher assumes it was yours and picks you for the class award.", m:"Say nothing and keep the award", o:"Set the record straight and lose the award"},
  {s:"ticket", q:"You have one free ticket to see your favorite band. A friend who had a terrible week would love it too.", m:"Go myself", o:"Give it to my friend"},
  {s:"hoodie", q:"You have $10. You could buy a hoodie you want, or send it to strangers who just lost their homes in a flood.", m:"Buy the hoodie", o:"Send it to them"}
 ];
@@ -755,7 +766,7 @@ function linesFor(g){
   if(saved && !touched[g]) return saved.concat();
   return LIVE[g]();
 }
-function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(COVER.reason?". My reason: "+COVER.reason:"")]; }
+function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(flat(COVER.reason)?". My reason: "+flat(COVER.reason):"")]; }
 function report(key){ return "C1-M01 case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
   box.value=txt; box.hidden=false;
@@ -798,9 +809,17 @@ window.__m01.report=report;
 /* ---------- ring poll (no right answer) ---------- */
 var RING={yes:"Then you're rarer than Glaucon's challenge assumes: the view he lays out, arguing the harsh side on purpose, is that with the ring, nobody would stay just. Socrates spends most of the rest of the book on your side.",
  mostly:"Honest answer. The view Glaucon lays out, arguing the harsh side on purpose, is harsher: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that people would still have reason to.",
- no:"That's exactly the view Glaucon lays out, arguing the harsh side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that view is wrong."};
+ no:"You'd side with Glaucon's reading of human nature: with the ring, nobody would stay just. Socrates spends most of the book arguing he's mistaken, which is the part worth reading."};
 $("ringPoll").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){ $("ringPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("ringFb"),"","Noted.",RING[b.getAttribute("data-r")]+" Read on for the story."); });
+});
+
+/* ---------- Sidgwick lean poll (ungraded, not recorded) ---------- */
+var SID={me:"Honest. That is the first of Sidgwick's two principles. Plenty of people lean that way, and he admitted he couldn't prove it always wins.",
+ all:"That is the second principle, with you counting as one among everyone. Sidgwick couldn't prove it always wins either.",
+ dep:"That is the standoff in a nutshell. Sidgwick felt the same pull and never found a rule for choosing."};
+$("sidPoll").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click",function(){ $("sidPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("sidFb"),"","Noted.",SID[b.getAttribute("data-r")]); });
 });
 
 /* ================= LEAD 1: SORT ================= */
@@ -850,7 +869,7 @@ SORT.forEach(function(it,i){
     var b=el("button",{class:"pick",type:"button","data-v":v}); b.textContent=LBL[v];
     b.addEventListener("click",function(){
       var r=REC.sort[i];
-      if(r.final) return;
+      if(r.final || r.misses.indexOf(v)>=0) return;   /* a repeat tap on a tag already missed is ignored */
       row.querySelectorAll(".pick").forEach(function(x){x.classList.remove("chosen");});
       b.classList.add("chosen");
       if(it.a.indexOf(v)>=0){
@@ -874,6 +893,12 @@ function restoreSort(sv){
     var r=sv[i]; if(!r || typeof r!=="object") return;
     var ms=(r.misses||[]).filter(function(m){return LBL[m];});
     REC.sort[i].misses=ms;
+    if(ms.length && !(r.final && it.a.indexOf(r.final)>=0)){
+      var fbx=sortRows[i].fb;
+      if(ms.length===1) setFb(fbx,"bad","Not quite.",it.hint+" Try another tag.");
+      else setFb(fbx,"bad","Not that one either.",it.fb[ms[ms.length-1]]);
+      ms.forEach(function(m){ var bb=sortRows[i].row.querySelector('[data-v="'+m+'"]'); if(bb) bb.classList.remove("chosen"); });
+    }
     if(r.final && it.a.indexOf(r.final)>=0) sortLock(i, r.final, true);
   });
 }
@@ -896,10 +921,10 @@ var hlI=0;
 var CYC={"":"p","p":"c","c":""}, NAMES={"":"unmarked","p":"premise","c":"conclusion"};
 function hlRender(){
   var P=$("hlPass"); P.innerHTML=""; $("hlFb").className="fb"; $("hlFb").innerHTML="";
-  $("hlNav").textContent="Passage "+(hlI+1)+" of "+HL.length; $("hlNext").hidden=true; $("hlCheck").hidden=false;
+  $("hlNav").textContent="Passage "+(hlI+1)+" of "+HL.length; $("hlNext").hidden=true; $("hlCheck").hidden=false; $("hlCheck").disabled=true;
   HL[hlI].forEach(function(s){
     var b=el("button",{class:"seg",type:"button","data-m":"","aria-label":s.t+" (unmarked)"}); b.textContent=s.t;
-    b.addEventListener("click",function(){ var m=CYC[b.getAttribute("data-m")]; b.setAttribute("data-m",m); b.setAttribute("aria-label",s.t+" ("+NAMES[m]+")"); b.classList.remove("wrong"); });
+    b.addEventListener("click",function(){ var m=CYC[b.getAttribute("data-m")]; b.setAttribute("data-m",m); b.setAttribute("aria-label",s.t+" ("+NAMES[m]+")"); b.classList.remove("wrong"); $("hlCheck").disabled=!$("hlPass").querySelector(".seg:not([data-m=\"\"])"); });
     P.appendChild(b); P.appendChild(document.createTextNode(" "));
   });
 }
@@ -940,7 +965,7 @@ function openFinale(){
   var L=$("finLock");
   L.innerHTML='<div class="row" role="group" aria-label="Your button call"><button class="vbtn" type="button" data-v="press" aria-pressed="false">I\'d press it</button><button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn\'t press it</button></div><label for="finReason">My reason, in one sentence</label><input type="text" id="finReason" maxlength="220" autocomplete="off">';
   buildLockin(L);
-  $("finReason").addEventListener("input",function(){ COVER.reason=$("finReason").value.trim(); renderFinArg(); saveState(); });
+  $("finReason").addEventListener("input",function(){ COVER.reason=flat($("finReason").value); renderFinArg(); saveState(); });
   syncLockins(); renderFinale();
 }
 function renderFinArg(){

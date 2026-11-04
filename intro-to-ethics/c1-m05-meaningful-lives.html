@@ -471,6 +471,11 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 .clearline .stamp{margin:4px 6px 4px 4px; animation:thunkSoft .42s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes thunkSoft{0%{transform:scale(1.5) rotate(-14deg); opacity:0}100%{transform:scale(1) rotate(-6deg); opacity:1}}
 @media (prefers-reduced-motion: reduce){ .clearline .stamp{animation:none} }
+
+.carry{color:var(--ball); margin:-2px 0 6px}
+/* R2: notebook card text sits above the rules: every vertical margin is a multiple of 28px */
+.rcard p{margin:0; line-height:28px}
+.rcard p.small{font-size:.92rem; line-height:28px}
 </style>
 </head>
 <body>
@@ -528,7 +533,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="wu-pair" id="wuPair" role="group" aria-label="Pick one life"></div>
   </div>
   <div class="wu-end" id="wuEnd" hidden>
-    <div class="wu-meter" aria-hidden="true"><span class="wu-end-l">Nicer-feeling</span><span class="wu-track"><i id="wuMark"></i></span><span class="wu-end-r">The real thing</span></div>
+    <div class="wu-meter" aria-hidden="true"><span class="wu-end-l">Feels best</span><span class="wu-track"><i id="wuMark"></i></span><span class="wu-end-r">Worth more</span></div>
     <div class="fb good" id="wuFb" tabindex="-1" aria-live="polite"></div>
   </div>
 </section>
@@ -1010,7 +1015,7 @@ function syncLockin(){
 }
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
-  var r=$("myReason").value.trim();
+  var r=$("myReason").value.replace(/\s+/g," ").trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no first."; return; }
   if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Give a real reason, in a sentence or two."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
@@ -1023,7 +1028,7 @@ var DUELS=[
  {k:"sim",   f:"Feels amazing, but it's a simulation", r:"Feels ordinary, but it's real", nm:"the simulation"},
  {k:"mock",  f:"Believe everyone loves you (they secretly mock you)", r:"Know a few people truly like you", nm:"believing everyone loves you"},
  {k:"fake",  f:"Be praised for a faked discovery nobody catches", r:"Make a real discovery nobody notices", nm:"the faked discovery"},
- {k:"skill", f:"Ten relaxing years doing only what you enjoy", r:"Ten hard years mastering a skill you never wanted", nm:"ten relaxing years"},
+ {k:"skill", f:"Ten relaxing years doing only what you enjoy", r:"Ten hard years mastering a skill you never wanted, even if you don't enjoy it", nm:"ten relaxing years"},
  {k:"truth", f:"Never learn a painful truth about your family", r:"Learn the truth, even though it hurts", nm:"not learning the family truth"}
 ];
 WARM={flip:DUELS.map(function(){ return Math.random()<0.5; }), picks:DUELS.map(function(){ return null; })};
@@ -1036,19 +1041,21 @@ function warmRender(animate){
   $("wuPlay").hidden=done; $("wuEnd").hidden=!done; if(done) $("wuPair").innerHTML="";
   if(done){
     var r=warmReal();
-    var lead = r>=4 ? "You kept choosing the real thing even when it felt worse." : r<=1 ? "You kept choosing what feels best." : "You split between what feels best and what's real.";
-    $("wuFb").innerHTML='<strong class="v">You picked the real option '+r+' of '+N+' times.</strong> '+lead+' That tug is today\'s whole case, and Lead 1 hands it to three judges.';
+    var lead = r>=4 ? "You mostly picked what you judged worth more, even when it felt worse." : r<=1 ? "You mostly picked what feels best." : "You split between what feels best and what seems worth more.";
+    $("wuFb").innerHTML='<strong class="v">You picked the worth-more option '+r+' of '+N+' times.</strong> '+lead+' That tug is today\'s whole case, and Lead 1 hands it to three judges.';
     var mk=$("wuMark"), pos=(8+84*r/N)+"%";
     if(animate && !reduceMotion){ mk.style.left="50%"; void mk.offsetWidth; setTimeout(function(){ mk.style.left=pos; },30); } else mk.style.left=pos;
     return;
   }
   $("wuNav").textContent="Pick "+(n+1)+" of "+N+": which would you choose for your own life?";
   var P=$("wuPair"); P.innerHTML="";
+  WARM.t = animate ? Date.now() : 0;
   var sides = WARM.flip[n] ? ["r","f"] : ["f","r"];
   sides.forEach(function(sd,pos){
     var b=el("button",{class:"wu-card c"+pos,type:"button","data-side":sd,"data-k":DUELS[n].k}); b.textContent=DUELS[n][sd];
     b.addEventListener("click",function(){
       if(WARM.picks[n]) return;   /* locked on the first tap */
+      if(Date.now()-WARM.t<400) return;   /* double-tap guard: ignore taps right after a card advances */
       WARM.picks[n]=sd; P.querySelectorAll(".wu-card").forEach(function(x){ x.disabled=true; });
       b.classList.add("picked");
       saveState();
@@ -1074,7 +1081,8 @@ function linesFor(g){
   if(saved && wasCleared) return saved.concat();   /* a finished lead's saved record is permanent: a replay never overwrites it */
   return LIVE[g]();   /* unfinished leads always report what is on screen (partial saved lines are dropped on restore) */
 }
-function coverLines(){ return ["Gut call (locked before reading; can something be good for you even if you never want or enjoy it?): "+(COVER.locked ? (COVER.v==="yes"?"yes":"no")+". My reason: "+COVER.reason : "not locked in")]; }
+function oneLine(t){ return String(t||"").replace(/\s+/g," ").trim(); }
+function coverLines(){ return ["Gut call (locked before reading; can something be good for you even if you never want or enjoy it?): "+(COVER.locked ? (COVER.v==="yes"?"yes":"no")+". My reason: "+oneLine(COVER.reason) : "not locked in")]; }
 var PL={grass:{yes:"yes, he's happy",no:"no, something's missing"}, stamp:{on:"on",off:"off"}, piano:{yes:"yes",bit:"only a bit",no:"no"}, fish:{fits:"fits",misfits:"misfits",unsure:"not sure"}, inj:{yes:"meaningful",no:"not meaningful",unsure:"not sure"}};
 function pv(k){ return POLLS[k] ? PL[k][POLLS[k]] : "not answered"; }
 function pollLines(){ return ["Ungraded taps: grass counter's life going well = "+pv("grass")+"; stamp collecting on the list = "+pv("stamp")+"; piano made Mira's life better = "+pv("piano")+"; goldfish love fits = "+pv("fish")]; }
@@ -1289,7 +1297,7 @@ var LQ=[
 ];
 var lqDone=0;
 $("lDefBtn").addEventListener("click",function(){
-  var item=$("lDefItem").value, def=$("lDef").value.trim().replace(/^because\b[\s,:;-]*/i,"").trim();   /* the label already says "because" */
+  var item=$("lDefItem").value, def=$("lDef").value.replace(/\s+/g," ").trim().replace(/^because\b[\s,:;-]*/i,"").trim();   /* the label already says "because" */
   if(!L.prin){ $("lDefMsg").style.color="var(--bad)"; $("lDefMsg").textContent="Pick what holds your list together."; return; }
   if(!item){ $("lDefMsg").style.color="var(--bad)"; $("lDefMsg").textContent="Pick an item to defend."; $("lDefItem").focus(); return; }
   if(def.length<8){ $("lDefMsg").style.color="var(--bad)"; $("lDefMsg").textContent="Finish the sentence with a real reason."; $("lDef").focus(); return; }
@@ -1343,7 +1351,7 @@ var SORT=[
  {k:"leo", t:"Learning to code is good for Leo only because it's real skill and he's grown to love it.", short:"Leo's coding", a:"b", why:"Real skill (objective half) plus love (subjective half). Hybrid."},
  {k:"careful", t:"Whatever you'd choose after careful thought is what's good for you.", short:"careful choice", a:"s", sneaky:true, hint:"Look at what does the deciding here. Is it something outside the person, or the person's own choice, even a careful one?", why:"Sneaky one. \"Careful thought\" sounds objective, but it's still your own choice deciding what counts. That's the informed-desire theory from Case 4: subjective."},
  {k:"family", t:"Knowing the truth about my family's past is good for me, even though I don't want to know, wouldn't want to even after careful thought, and it hurts.", short:"family truth", a:"o", why:"Good for you against your feelings, your wants, and even your informed wants. Only an objective theory says that."},
- {k:"wish", t:"My life went better the moment my secret wish came true, even though I never found out.", short:"secret wish", a:"s", sneaky:true, hint:"The wish is about the outside world. But ask what makes it count: the thing itself, or the fact that you wished for it?", why:"Sneaky one. It's about something out in the world, but what makes it count is that <i>you wished for it</i>. That's desire theory, a subjective theory."},
+ {k:"wish", t:"My life went better the moment my secret wish came true, even though I never found out.", short:"secret wish", a:"s", sneaky:true, hint:"Ask what makes it count: the thing itself, or the fact that you wished for it?", why:"Sneaky one. It's about something out in the world, but what makes it count is that <i>you wished for it</i>. That's desire theory, a subjective theory."},
  {k:"friend", t:"A friendship only adds to your life if it's real and you care about it.", short:"real and cared-about friendship", a:"b", why:"Real (objective half) and cared about (subjective half). Hybrid."},
  {k:"grass", t:"The grass counter's life is going great, simply because he does exactly what he loves.", short:"grass counter is fine", a:"s", why:"Judged entirely by what he loves and wants. Subjective."},
  {k:"piano", t:"Ten years of forced piano made Mira's life better, even though she hated it and never wanted it.", short:"forced piano", a:"o", sneaky:true, hint:"Set your gut feeling about piano aside and read only the claim. Does it make what is good for Mira depend on what she felt or wanted?", why:"Sneaky one, because most people's gut says no. But the claim itself is purely objective: good for her regardless of her wants and feelings. A hybrid theorist would disagree with it."}
@@ -1470,7 +1478,7 @@ function setGut(k, v){
 function syncInjGut(){ if(POLLS.inj && !yLock.injected) setGut("injected", POLLS.inj); }
 SIS.forEach(function(v){
   yMiss[v.k]=0;
-  var box=el("div",{class:"var","data-k":v.k}); box.innerHTML='<h3>'+v.n+'<em>'+v.tag+'</em></h3><p>'+v.d+'</p><p class="step-lbl">1. Your gut: is his life meaningful? (not graded)'+(v.k==="injected"?' Carried over from your answer above, if you gave one.':'')+'</p>';
+  var box=el("div",{class:"var","data-k":v.k}); box.innerHTML='<h3>'+v.n+'<em>'+v.tag+'</em></h3><p>'+v.d+'</p><p class="step-lbl">1. Your gut: is his life meaningful? (not graded)'+'</p>'+(v.k==="injected"?'<p class="small carry">Carried over from your answer above, if you gave one.</p>':'');
   var row=el("div",{class:"row",role:"group","aria-label":v.n+": your gut"}); gutRows[v.k]=row;
   var pred=el("div",{class:"sisy-pred"}); pred.hidden=true;
   var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
@@ -1581,12 +1589,12 @@ function finRender(){
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  var reason=$("finReason").value.replace(/\s+/g," ").trim(), moved=$("finMoved").value;
   if(!pickV.view){ setFb($("finFb"),"bad","First things first.","Pick the well-being view closest to yours."); return; }
   if(!pickV.mean){ setFb($("finFb"),"bad","One more call.","Pick a side on meaning."); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","Last one.","Pick what moved you most."); $("finMoved").focus(); return; }
-  FIN.view=pickV.view; FIN.mean=pickV.mean; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
+  FIN.view=pickV.view; FIN.mean=pickV.mean; FIN.reason=reason; FIN.moved=String(moved).replace(/\s+/g," ").trim(); FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
   toast("Case closed. Verdict filed.", "var(--stamp)"); focusFb($("finFb"));
@@ -1594,7 +1602,7 @@ $("finBtn").addEventListener("click",function(){
 });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
-  return ["Final verdict on well-being (locked): "+txt(VIEWS,FIN.view), "On meaning: "+txt(MEAN,FIN.mean), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+  return ["Final verdict on well-being (locked): "+txt(VIEWS,FIN.view), "On meaning: "+txt(MEAN,FIN.mean), "My reason: "+oneLine(FIN.reason), "What moved me most: "+oneLine(FIN.moved)];
 }
 
 var LIVE={g1:judgeLines,g2:listLines,g3:sortLines,g4:wolfLines,g5:sisLines};

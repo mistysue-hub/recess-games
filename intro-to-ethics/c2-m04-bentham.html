@@ -372,7 +372,7 @@ select.reasonbox{min-height:44px}
 /* ---------- C2-M04: circle of concern ---------- */
 .rings{display:block; width:100%; max-width:360px; height:auto; margin:6px auto 4px}
 .rings text{font-family:var(--type); font-size:10px; fill:var(--ink)}
-.rings .rlbl{font-size:9px; fill:var(--ink-soft)}
+.rings .rlbl{font-size:12px; fill:var(--ink-soft)}
 .tok{background:var(--card); border-radius:10px; padding:10px 12px; margin:10px 0; border:2px solid transparent}
 .tok.locked{border-color:var(--ok)}
 .tok .nm{font-family:var(--type); font-weight:700; font-size:.95rem; margin-bottom:6px; display:flex; gap:8px; align-items:center}
@@ -482,6 +482,9 @@ html,body{overflow-x:clip}
 .lockcard .lockgo{margin-left:auto}
 /* sticky objection tray on phones must never hide the card you are about to tap */
 .mcard{scroll-margin-bottom:230px; scroll-margin-top:90px}
+
+.rcard p{margin:0}
+.rcard .small{font-size:.85rem}
 </style>
 </head>
 <body>
@@ -618,12 +621,6 @@ html,body{overflow-x:clip}
     <span class="lbl">Exhibit B: the test</span>
     <p>"The question is not, Can they reason? nor, Can they talk? but, Can they suffer?"</p>
   </div>
-  <p>A being that can feel pleasure and pain is called <b>sentient</b>. For a utilitarian, sentience is the ticket into the moral sum. That has consequences:</p>
-  <ul>
-    <li><b>Distance doesn't matter.</b> Pain on the other side of the world hurts exactly as much as pain next door.</li>
-    <li><b>Time doesn't matter.</b> Someone who will be born in 2150 will feel just as much as you do. When they're born doesn't change that.</li>
-    <li><b>Things that can't feel don't count in themselves.</b> A river or a statue isn't in the sum. But what happens to it can still matter, because of its effects on beings who <i>can</i> feel: a poisoned river hurts the people and fish who depend on it.</li>
-  </ul>
   <div class="poll" id="fishPoll">
     <p><b>Your guess (not graded): can a fish feel pain?</b></p>
     <div class="row" role="group" aria-label="Can a fish feel pain?">
@@ -633,6 +630,12 @@ html,body{overflow-x:clip}
     </div>
     <div class="fb" id="fishFb" aria-live="polite"></div>
   </div>
+  <p>A being that can feel pleasure and pain is called <b>sentient</b>. For a utilitarian, sentience is the ticket into the moral sum. That has consequences:</p>
+  <ul>
+    <li><b>Distance doesn't matter.</b> Pain on the other side of the world hurts exactly as much as pain next door.</li>
+    <li><b>Time doesn't matter.</b> Someone who will be born in 2150 will feel just as much as you do. When they're born doesn't change that.</li>
+    <li><b>Things that can't feel don't count in themselves.</b> A river or a statue isn't in the sum. But what happens to it can still matter, because of its effects on beings who <i>can</i> feel: a poisoned river hurts the people and fish who depend on it.</li>
+  </ul>
   <p class="note">Can a fish feel pain? An insect? A future AI? Those are questions for science. Bentham's test doesn't answer them. It tells you which question to ask.</p>
 </section>
 
@@ -936,7 +939,7 @@ html,body{overflow-x:clip}
 <!-- ================= 16 COPY FOR ROCKY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. When you're done, copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (Each lead also has a small "Rocky asked about this lead?" drawer, for when Rocky asks about just one.)</p>
+  <p>Rocky can't see this page. When you're done, copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. It also shows how many questions you got right on the first try, so Rocky sees how you played. (Each lead also has a small "Rocky asked about this lead?" drawer, for when Rocky asks about just one.)</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
@@ -1124,7 +1127,7 @@ function syncLockin(){
 }
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
-  var r=$("myReason").value.trim();
+  var r=$("myReason").value.replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
@@ -1179,7 +1182,7 @@ var POLLFX={
  clash:function(v){ setFb($("clashFb"),"","Noted.", v==="total" ? "That's the utilitarian answer. See the note below for why." : "Lots of people feel that way, and it's a real rival view. Utilitarians disagree; see the note below."); $("clashNote").hidden=false; },
  essay:function(v){ $("essayMore").hidden=false; },
  ev:function(v){ setFb($("evFb"),"","Noted.", "The shot's expected value is 50% × 100 = +50, so the sure +60 is worth more. "+(v==="sure"?"You picked the sure thing, and by expected value you're right.":"You took the gamble; by expected value the sure thing wins, though luck could still go your way.")); },
- fish:function(v){ setFb($("fishFb"),"","Noted.", "Scientists still argue about this one, though the evidence that fish feel something like pain has been growing. For Bentham, the answer is what decides whether fish count."); },
+ fish:function(v){ setFb($("fishFb"),"","Noted.", "Scientists still argue about this one: some say fish show real pain behavior, others say their brains lack what conscious pain needs. For Bentham, the answer is what decides whether fish count."); },
  camp:function(v){ setFb($("campFb"),"","Noted.", v==="act" ? "That's the act utilitarian's instinct. Lead 3 will test whether you stick to it." : "That's the rule utilitarian's instinct. Lead 3 will test whether you stick to it."); },
  dem:function(v){ setFb($("demFb"),"","Noted.", v==="yes" ? "You're with most critics. Reply 4, below, is the utilitarian's answer." : "Some utilitarians agree: maybe morality really is that demanding. Peter Singer argues this in Challenge 3."); },
  surg:function(v){ setFb($("surgFb"),"","Noted.", v==="yes" ? "That's what the simple sum says. Most people recoil; see why below." : v==="no" ? "That's what nearly everyone says. The question is whether utilitarianism can agree." : "Hold that thought: it's exactly where Reply 1, a few screens down, runs into trouble."); $("surgMore").hidden=false; }
@@ -1603,7 +1606,7 @@ var ALL={k:"ALL", n:"All four (bite the bullet)", s:"answers every objection at 
 var ROUNDS=[
  [ {id:"m1", t:"A mayor could calm a town-wide panic by framing a newcomer she knows is innocent, using him as a tool so everyone else feels safe. He'd be fined and sent away.", a:"R", hint:"Look at what's done to the newcomer himself: is he being shortchanged in a share-out, or used?", why:"An innocent person is deliberately used as a means. That's the surgeon's structure."},
    {id:"m2", t:"Plan Y gives half the country a huge boost and leaves the other half with nothing, and it wins because its total beats a plan that shares things fairly.", a:"J", hint:"Nobody is being used here. Look at how the happiness is shared out.", why:"Nobody is used as a tool; the complaint is purely about the split."},
-   {id:"m3", t:"A policy keeps a small group permanently unhappy because it makes a much larger group a little happier.", a:"J", hint:"A minority loses out in the share-out so the sum gets bigger. Which objection is about the split?", why:"The minority isn't used as a means; they just get a bad share of a bigger total."},
+   {id:"m3", t:"A policy leaves a small group permanently unhappy, because the total for everyone goes up. Nobody is being used as a tool; the question is about the split.", a:"J", hint:"A minority loses out in the share-out so the sum gets bigger. Which objection is about the split?", why:"The minority isn't used as a means; they just get a bad share of a bigger total."},
    {id:"m4", t:"You can't buy your sister a birthday present, because the same money would do more good as a donation.", a:"D", hint:"The theory is asking a lot of you personally here.", why:"Maximizing leaves no room for your own people and projects."},
    {id:"m6", t:"\"When I get a filling, my pain buys my healthy teeth. But your pain can't buy my fun. We're not the same person.\"", a:"S", hint:"Trade-offs inside one life versus trade-offs between lives...", why:"The dentist trade works inside one life; the theory makes it between lives."} ],
  [ {id:"p1", t:"If people knew doctors might do that, everyone would avoid check-ups and far more would die. So even by the numbers, the surgeon should stop.", a:"R", hint:"This reply says that even counting only results, the surgeon shouldn't do it. Which objection was about a healthy person being used?", why:"Reply 1: counting all the consequences, to rescue the surgeon case."},
@@ -1623,7 +1626,7 @@ function renderRound(){
     rec[c.id]={misses:0, done:false};
     var b=el("button",{class:"mcard",type:"button","aria-pressed":"false","data-id":c.id,"data-rid":"mc:"+c.id}); b.textContent=c.t;
     b.addEventListener("click",function(){
-      if(rec[c.id].done) return;
+      if(rec[c.id].done || tapHeld()) return;
       sel=c; cards.querySelectorAll(".mcard").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
       labs.querySelectorAll(".mlabel").forEach(function(x){x.disabled=false;});
       $("matchFb").className="fb"; $("matchFb").innerHTML="";
@@ -1634,13 +1637,13 @@ function renderRound(){
     var b=el("button",{class:"mlabel",type:"button","data-k":o.k,"data-rid":"ml:"+o.k}); b.style.setProperty("--mc",o.c); b.disabled=true;
     b.innerHTML=o.n+'<small>'+o.s+'</small>';
     b.addEventListener("click",function(){
-      if(!sel) return;
+      if(!sel || tapHeld()) return;
       var c=sel, R=rec[c.id], cardBtn=cards.querySelector('[data-id="'+c.id+'"]');
       if(o.k===c.a){
         R.done=true; cardBtn.classList.add("matched"); cardBtn.setAttribute("aria-pressed","false"); cardBtn.style.setProperty("--mc",o.c); cardBtn.setAttribute("data-tag","✓ "+o.n); cardBtn.setAttribute("aria-label",c.t+" Matched: "+o.n+". "+c.why);
         var w=el("span",{class:"mwhy"}); w.textContent=c.why; cardBtn.appendChild(w);
         setFb($("matchFb"),"good",vword("g4","ok"), "That's "+o.n+". "+c.why);
-        sel=null; labs.querySelectorAll(".mlabel").forEach(function(x){x.disabled=true;});
+        sel=null; tapFreeze(); labs.querySelectorAll(".mlabel").forEach(function(x){x.disabled=true;});
         roundLeft--;
         if(!roundLeft){
           if(round===0){ $("matchFb").innerHTML+=" <b>Round 1 done.</b> Now the replies."; var nx=el("button",{class:"btn",type:"button",id:"matchNext","data-rid":"matchNext"}); nx.textContent="Start round 2"; nx.addEventListener("click",function(){ round=1; nx.remove(); renderRound(); foc($("mCards").querySelector(".mcard")); clearTray($("mCards").querySelector(".mcard")); touch("g4"); }); $("matchFb").appendChild(document.createElement("br")); $("matchFb").appendChild(nx); nx.focus(); }
@@ -1715,7 +1718,7 @@ function finRender(){
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  var reason=$("finReason").value.replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim(), moved=String($("finMoved").value).replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim();
   if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
@@ -1772,8 +1775,12 @@ function warmLines(){
   if(!done.length) return ["Warm-up: not played"];
   return ["Warm-up: cookie crowd, my lines (ungraded, locked): "+done.map(warmTxt).join("; ")];
 }
+var TAPFREEZE=0;
+function tapHeld(){ return !restoring && Date.now()<TAPFREEZE; }
+function tapFreeze(){ if(!restoring) TAPFREEZE=Date.now()+400; }
 function warmLock(i, quiet){
   var w=WEL[i];
+  if(!quiet) tapFreeze();
   WARM[i]=+w.slide.value; WMOVED[i]=true;
   w.slide.disabled=true; w.btn.disabled=true; w.btn.textContent="Locked"; w.card.classList.add("locked");
   w.slide.classList.remove("unset");
@@ -1787,8 +1794,9 @@ function warmReveal(){
   var nv=WARM.filter(function(v){return v===6;}).length, R=$("warmReveal"), line;
   if(nv===0) line="You said yes every time once the crowd got big enough. Lots of tiny joys really can add up.";
   else if(nv===3) line="No crowd was ever big enough for you, not even for a bus ride. Hold on to that.";
-  else if(WARM[2]===6 && nv===1) line="You'd trade cookies for a chore but not for a lie told about someone. For some things, you feel, no crowd is big enough.";
-  else line="Your line moved as the cost got heavier. Where it stops moving is where the arguments start.";
+  else if(WARM[2]===6 && nv===1) line="You'd trade cookies for a chore but not for someone being unfairly blamed. For some things, you feel, no crowd is big enough.";
+  else if(WARM[0]<=WARM[1] && WARM[1]<=WARM[2]) line="Your line moved as the cost got heavier. Where it stops moving is where the arguments start.";
+  else line="Your lines don't climb with the cost. Where they stop moving is where the arguments start.";
   R.hidden=false;
   R.innerHTML='<b>Your lines are locked.</b> '+esc(line)+' One famous rule says the adding-up always wins in the end. The next two screens meet that rule, and then Lead 1 puts it to work.';
 }
@@ -1806,7 +1814,7 @@ function warmReveal(){
     WEL[i]={card:card,svg:svg,read:read,slide:slide,btn:btn};
     function moved(){ if(WARM[i]!=null) return; WMOVED[i]=true; slide.classList.remove("unset"); btn.disabled=false; warmDraw(i,+slide.value); }
     slide.addEventListener("input",moved); slide.addEventListener("change",moved); slide.addEventListener("pointerup",moved); slide.addEventListener("keydown",function(e){ if(e.key.indexOf("Arrow")===0||e.key==="Home"||e.key==="End"||e.key==="PageUp"||e.key==="PageDown") setTimeout(moved,0); });
-    btn.addEventListener("click",function(){ if(WARM[i]!=null || !WMOVED[i]) return; warmLock(i,false); });
+    btn.addEventListener("click",function(){ if(WARM[i]!=null || !WMOVED[i] || tapHeld()) return; warmLock(i,false); });
     warmDraw(i,0);
     host.appendChild(card);
   });

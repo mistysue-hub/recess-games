@@ -413,10 +413,10 @@ html,body{overflow-x:clip}
 /* ---------- review pass 1 additions ---------- */
 @media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
 /* on-screen clearing feedback (reusable) */
-.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+.toast{position:fixed; left:50%; top:var(--toast-top,64px); transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
   background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
   box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+@keyframes toastIn{0%{transform:translate(-50%,-30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -592,6 +592,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <li>Something has a <b>price</b> if something else could be put in its place as an <b>equivalent</b> (a replacement that makes up for it exactly). Your phone has a price: lose it, and another phone (or enough money) makes up for it.</li>
     <li>Something has a <b>dignity</b> if it is above all price: <b>nothing counts as its equivalent</b>.</li>
   </ul>
+  <div class="poll" id="pPrice">
+    <p><b>Quick tap:</b> someone offers you $1,000,000 to never speak to your best friend again. Do you take it?</p>
+    <div class="row" role="group" aria-label="Take the million dollars?">
+      <button class="btn ghost" type="button" data-r="take">I'd take it</button>
+      <button class="btn ghost" type="button" data-r="refuse">No way</button>
+    </div>
+    <p class="small" id="pPriceMore" hidden>If you said no way, you already feel the difference: no pile of money is an equivalent for your friend. That is what Kant means by dignity. If you said yes, you're not alone, but notice you'd want to be paid. That is how a price works.</p>
+  </div>
   <p>Kant splits price into two kinds:</p>
   <div class="dims" aria-label="Kant's kinds of worth">
     <div style="--dc:var(--hl-o)"><b>Market price:</b> worth tied to what people generally need or want. Kant's examples: <b>skill</b> and <b>hard work</b> at a job.</div>
@@ -706,8 +714,17 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="lbl">Exhibit E: Kant's reply</span>
     <span class="argline">1. Being truthful in statements you <b>can't avoid making</b> is a duty you owe to everyone, however great the cost to you or anyone else.</span>
     <span class="argline">2. A lie wrongs <b>humanity in general</b>, not just the person lied to, because it weakens trust in what people declare, which every agreement depends on.</span>
-    <span class="argline">3. Suppose you lie ("he's not here"), but your friend has already slipped out, and the person at the door meets him outside. Then <i>you</i> could fairly be blamed. If you had told the truth, maybe the neighbors would stop the attacker. Kant's point: if you lie, you must answer for what follows. If you tell the truth, he says, no one can justly blame you for what follows.</span>
+    <span class="argline">3. Suppose you lie ("he's not here"), but your friend has already slipped out, and the person at the door meets him outside. Then <i>you</i> could fairly be blamed. If you had told the truth, maybe the neighbors would stop the attacker. Kant's point: if you lie, you must answer for what follows. If you tell the truth, he says, public justice can't hold you responsible for what follows.</span>
     <span class="argline concl">So: no right to lie, even here.</span>
+  </div>
+  <div class="poll" id="pBlame">
+    <p><b>Quick tap:</b> you lie, but your friend had already slipped out and the attacker finds him outside. Who is to blame?</p>
+    <div class="row" role="group" aria-label="Who is to blame?">
+      <button class="btn ghost" type="button" data-r="me">Me, I lied</button>
+      <button class="btn ghost" type="button" data-r="him">The attacker</button>
+      <button class="btn ghost" type="button" data-r="nobody">Nobody</button>
+    </div>
+    <p class="small" id="pBlameMore" hidden>Kant's answer is that the liar must answer for it, which is why he says the lie is never safe. Most readers think the attacker carries the blame. Hold that thought for the next paragraphs.</p>
   </div>
   <p>Notice the framing. Kant sets the case up as one where you can't avoid answering yes or no, and he never says you must help the attacker. His duty covers <i>statements</i>, so by his own definition, silence or a truthful dodge isn't a lie, though the 1797 essay never considers that way out. He had also been softer earlier: in his early ethics lectures (as his students recorded them), he allowed untruthful statements in certain extreme cases. By the 1790s his view had hardened.</p>
   <p><b>Most commentators reject Kant's answer here; many Kantians think he went too far, though some defend a narrower reading of what he meant.</b></p>
@@ -861,6 +878,8 @@ var $ = function(id){ return document.getElementById(id); };
 function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function oneLine(t){ return String(t==null?"":t).replace(/[\r\n\u2028\u2029\u0085]+/g," ").replace(/\s+/g," ").trim(); }
+var advAt=0; function justAdvanced(){ return Date.now()-advAt<400; } function markAdv(){ advAt=Date.now(); }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 function focusFb(node){ if(!node) return; if(!node.hasAttribute("tabindex")) node.setAttribute("tabindex","-1"); try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
@@ -871,7 +890,7 @@ var VERD={
  g1:{ok:{mean:["Fair deal.","Means, not merely.","Kant would sign that.","Exactly."], mere:["Spotted the trick.","Merely a means.","Respect broken.","Kant says no."]}, no:["Not quite.","Run the test again.","Close, but no."]},
  g2:{ok:{mkt:["Market price.","Price tag confirmed.","Exactly.","Nailed it."], fan:["Fancy price.","Price tag confirmed.","Exactly.","Nailed it."], dig:["Dignity.","Off the scale.","No equivalent.","Nailed it."]}, no:["Not that bin.","Close, but no.","Check Kant's list."]},
  g3:{ok:{who:["Spotted.","Sharp eye.","That's the one."], how:["Case solved.","Exactly.","Nailed it."]}, no:["Look again.","Not quite.","Close, but no."]},
- g4:{ok:{"true":["Real.","Correct.","You know your Kant."], "false":["Myth.","Busted myth.","Correct."]}, no:["Nope.","Not this time.","Half-remembered, but no."]},
+ g4:{ok:{"true":["Real.","Yes, real.","You know your Kant."], "false":["Myth.","Busted myth.","Correct, a myth."]}, no:["Nope.","Not this time.","Half-remembered, but no."]},
  g5:{ok:{kant:["Kant nods.","Right call.","Spot on."], util:["Bentham's calculator agrees.","Right call.","Spot on."]}, no:["Not quite.","Close, but no.","Other way round."]}
 };
 var lastV={};
@@ -896,7 +915,7 @@ var REC={ bins:{}, match:{first:0, done:0, misses:[], explained:[]}, det:{}, rf:
 var COVER={v:null, reason:"", locked:false};
 var FIN={view:null, reason:"", moved:"", done:false};
 var WARM={order:[],done:false};
-var POLLS={ride:null, funny:null, chat:null, self:null, door:null};
+var POLLS={ride:null, funny:null, chat:null, self:null, door:null, blame:null, price:null};
 
 /* ---------- evidence dock ---------- */
 var GAMES=[
@@ -932,7 +951,8 @@ function showCard(g){
 }
 var toastTimer=null;
 function toast(msg, color){
-  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  var T=$("toast"); try{ var dk=document.querySelector(".dock"); if(dk) T.style.setProperty("--toast-top",Math.round(dk.getBoundingClientRect().bottom+8)+"px"); }catch(e){}
+  T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
 }
@@ -994,7 +1014,7 @@ function syncLockin(){
 }
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
-  var r=$("myReason").value.trim();
+  var r=oneLine($("myReason").value);
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick lie or don't lie first."; return; }
   if(!goodReason(r)){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Give a real reason, in a few words."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
@@ -1010,14 +1030,14 @@ function linesFor(g){
   return LIVE[g]();
 }
 function coverLines(){ return ["Gut call on the surprise-party text (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
-var PL={ride:{yes:"yes, as a means",no:"no"}, funny:{yes:"kind of",no:"no way"}, chat:{dms:"post anyone's DMs",ask:"ask before sharing photos",admin:"admins can delete anything"}, self:{yes:"yes",no:"no, my choice"}, door:{ul:"universal law (lie can be OK)",hum:"humanity (no lie)",neither:"neither, it's complicated"}};
+var PL={ride:{yes:"yes, as a means",no:"no"}, funny:{yes:"kind of",no:"no way"}, chat:{dms:"post anyone's DMs",ask:"ask before sharing photos",admin:"admins can delete anything"}, self:{yes:"yes",no:"no, my choice"}, blame:{me:"me",him:"the attacker",nobody:"nobody"}, price:{take:"I would take it",refuse:"no way"}, door:{ul:"universal law (lie can be OK)",hum:"humanity (no lie)",neither:"neither, it's complicated"}};
 function warmLine(){
   if(!WARM.done) return ["Warm-up: not finished"];
   return ["Warm-up: ungraded ranking of five ways to get a friend to my recital, feel-best first: "+WARM.order.map(function(id,i){ return (i+1)+" "+WUN[id]; }).join(", ")];
 }
 function pollLines(){
   function v(k){ return POLLS[k] ? PL[k][POLLS[k]] : "not answered"; }
-  return ["Ungraded taps: asking a friend for a ride is using her = "+v("ride")+"; funniest friend replaceable = "+v("funny")+"; group-chat rule I'd propose = "+v("chat")+"; can you wrong yourself = "+v("self")+"; formula that gets the door right = "+v("door")];
+  return ["Ungraded taps: asking a friend for a ride is using her = "+v("ride")+"; funniest friend replaceable = "+v("funny")+"; group-chat rule I'd propose = "+v("chat")+"; can you wrong yourself = "+v("self")+"; formula that gets the door right = "+v("door")+"; who I'd blame if I lied and the friend had slipped out = "+v("blame")+"; offered $1,000,000 to drop my best friend = "+v("price")];
 }
 function report(key){ return MOD+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1049,7 +1069,7 @@ function wirePoll(id, key, moreId){
     });
   });
 }
-wirePoll("pRide","ride","pRideMore"); wirePoll("pFunny","funny","pFunnyMore"); wirePoll("pChat","chat","pChatMore"); wirePoll("pSelf","self","pSelfMore"); wirePoll("pDoor","door","pDoorMore");
+wirePoll("pRide","ride","pRideMore"); wirePoll("pFunny","funny","pFunnyMore"); wirePoll("pChat","chat","pChatMore"); wirePoll("pSelf","self","pSelfMore"); wirePoll("pDoor","door","pDoorMore"); wirePoll("pBlame","blame","pBlameMore"); wirePoll("pPrice","price","pPriceMore");
 function showPoll(key, id, moreId){ var v=POLLS[key]; if(!v) return; $(id).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; }); $(moreId).hidden=false; }
 
 /* ================= WARM-UP: where's your line? (ungraded) ================= */
@@ -1249,7 +1269,7 @@ function dRender(){
   shuffle(S.cast).concat(["Nobody"]).forEach(function(nm){
     var b=el("button",{class:"chip",type:"button","aria-pressed":"false"}); b.textContent=nm;
     b.addEventListener("click",function(){
-      var R=REC.det[si]; if(R.whoOk) return;
+      var R=REC.det[si]; if(R.whoOk || justAdvanced()) return;
       g1.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
       if(nm===S.who){ R.whoOk=true; b.classList.add("right"); g1.querySelectorAll(".chip").forEach(function(x){x.disabled=true;}); setFb($("detFb"),"good",vword("g3","ok","who"), nm==="Nobody" ? "Nobody here is being used merely. Now say what makes it OK." : nm+". Now name the giveaway."); showHow(); }
       else { R.whoMiss++;
@@ -1293,7 +1313,7 @@ function howHint(right){
   if(right==="ser") return "Nobody tricks or forces Nia. Look at how she treats herself.";
   return "Try another.";
 }
-$("detNext").addEventListener("click",function(){ dPos++; dRender(); $("detCard").querySelector(".chip").focus(); });
+$("detNext").addEventListener("click",function(){ markAdv(); dPos++; dRender(); $("detCard").querySelector(".chip").focus(); });
 dRender();
 function detLines(){
   var ks=Object.keys(REC.det).filter(function(k){return REC.det[k].howOk;});
@@ -1329,11 +1349,11 @@ function rRender(){
   shuffle([[true,"Real"],[false,"Myth"]]).forEach(function(o){
     var b=el("button",{class:"btn ghost",type:"button","data-a":String(o[0])}); b.textContent=o[1];
     b.addEventListener("click",function(){
-      if(rAns) return; rAns=true;
+      if(rAns || justAdvanced()) return; rAns=true;
       B.querySelectorAll(".btn").forEach(function(x){x.disabled=true;});
       var R=REC.rf[ci], ok=o[0]===c.a;
       if(R.first===null) R.first=ok;
-      if(ok){ R.solved=true; rStreak++; if(rStreak>rBest) rBest=rStreak; b.classList.add("right"); setFb($("rfFb"),"good",vword("g4","ok",c.a),c.why);
+      if(ok){ R.solved=true; rStreak++; if(rStreak>rBest) rBest=rStreak; b.classList.add("right"); setFb($("rfFb"),"good",vword("g4","ok",c.a),c.why.replace(/^(Real|Myth)\.\s*/,""));
         $("rfStreak").textContent="Streak "+rStreak; $("rfStreak").className="streak"+(reduceMotion?"":" pulse")+(rStreak>=3?" hot":""); }
       else { rStreak=0; b.classList.add("wrongpick"); B.querySelectorAll(".btn").forEach(function(x){ if(x!==b) x.classList.add("right"); }); setFb($("rfFb"),"bad",vword("g4","no"),c.why+" It'll come back for a second look."); $("rfStreak").textContent=""; rQueue.push(ci); }
       if(rPos<rQueue.length-1){ $("rfNext").hidden=false; $("rfNext").textContent= rPos+1>=rFirstRound ? "Second look" : "Next claim"; $("rfNext").focus(); }
@@ -1343,7 +1363,7 @@ function rRender(){
     B.appendChild(b);
   });
 }
-$("rfNext").addEventListener("click",function(){ rPos++; rRender(); $("rfBtns").querySelector(".btn").focus(); });
+$("rfNext").addEventListener("click",function(){ markAdv(); rPos++; rRender(); $("rfBtns").querySelector(".btn").focus(); });
 rRender();
 function rfLines(){
   var ans=RF.filter(function(_,i){return REC.rf[i].first!==null;});
@@ -1357,7 +1377,7 @@ function rfLines(){
 var POLL=[
  {k:"party", n:"The surprise party", d:"Your friend texts: \"Is something happening tonight?\" Lying (\"Nope\") keeps the surprise she'll love. Nobody is ever hurt by it.", q:"Is it OK to lie?",
   kant:"no", util:"yes",
-  kWhy:"Kant: no. Lying breaks a perfect duty, whatever the good results. (A truthful dodge isn't a lie by Kant's definition, so it doesn't break this duty.)",
+  kWhy:"Kant: no. Lying breaks a perfect duty, whatever the good results. (Kant never discusses dodging. But by his own definition of a lie, a truthful dodge wouldn't count, so it wouldn't break this duty. That part is our inference, not his words.)",
   uWhy:"Utilitarian: yes. The lie produces more happiness and harms nobody."},
  {k:"loan", n:"Lying-promise rematch (from Case 5): the rich cousin", d:"You borrow $50 from your very rich cousin, promising to pay it back, knowing you won't. He'll never notice or miss it, and it buys concert tickets you'll love. Now add the utilitarian.", q:"Is it OK?",
   kant:"no", util:"yes",
@@ -1391,7 +1411,7 @@ function qRender(){
   MINE.forEach(function(o){
     var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false","data-m":o[0]}); b.textContent=o[1];
     b.addEventListener("click",function(){
-      var R=REC.poll[qI]; var first=R.mine===null; R.mine=o[0];
+      if(justAdvanced()) return; var R=REC.poll[qI]; var first=R.mine===null; R.mine=o[0];
       g0.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost";});
       if(first) predict("kant");
       qTally(); touch("g5");
@@ -1443,7 +1463,7 @@ function qDone(){
   $("pollFb").className="fb good"; $("pollFb").innerHTML='<strong class="v">All six done.</strong> '+t;
   focusFb($("pollFb")); clear("g5");
 }
-$("pollNext").addEventListener("click",function(){ qI++; qRender(); $("pollCard").querySelector(".btn").focus(); });
+$("pollNext").addEventListener("click",function(){ markAdv(); qI++; qRender(); $("pollCard").querySelector(".btn").focus(); });
 qRender();
 function pollLinesG5(){
   var ks=Object.keys(REC.poll).filter(function(k){return REC.poll[k].mine;});
@@ -1475,14 +1495,14 @@ function freezeFinale(){
 }
 function finRender(){
   var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
-  $("finCompare").innerHTML='<div><span class="hd">YOUR GUT CALL</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">KANT\'S VERDICT</span><br>Don\'t lie, even for a surprise. A truthful dodge ("You\'ll have to wait and see") isn\'t a lie on his definition.</div>';
+  $("finCompare").innerHTML='<div><span class="hd">YOUR GUT CALL</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">KANT\'S VERDICT</span><br>Don\'t lie, even for a surprise. <i>(He never discusses dodging. By his own definition of a lie, a truthful dodge like "You\'ll have to wait and see" wouldn\'t count, but that is our inference, not his words.)</i></div>';
   var shift = !COVER.locked ? "" : COVER.v==="nolie" ? "Your gut call matched Kant's verdict on the party text." : (FIN.view==="strict" ? "Your gut said lie, but your verdict sides with strict Kant. Did the file change your mind about the party, or would you make an exception?" : "Your gut said lie, and Kant says no. Your verdict explains why you part ways with him; tell Rocky exactly where.");
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  var reason=oneLine($("finReason").value), moved=oneLine($("finMoved").value);
   if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
   if(!goodReason(reason)){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a few words or a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
@@ -1507,9 +1527,9 @@ if(location.hash==="#qa"){ window.__mod={cleared:cleared, unlockStep:function(){
 if(SAVED){
   restoring=true;
   try{
-    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=oneLine(SAVED.cover.reason); COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ if(SAVED.polls[k]) POLLS[k]=SAVED.polls[k]; }); }
-    showPoll("ride","pRide","pRideMore"); showPoll("funny","pFunny","pFunnyMore"); showPoll("chat","pChat","pChatMore"); showPoll("self","pSelf","pSelfMore"); showPoll("door","pDoor","pDoorMore");
+    showPoll("ride","pRide","pRideMore"); showPoll("funny","pFunny","pFunnyMore"); showPoll("chat","pChat","pChatMore"); showPoll("self","pSelf","pSelfMore"); showPoll("door","pDoor","pDoorMore"); showPoll("blame","pBlame","pBlameMore"); showPoll("price","pPrice","pPriceMore");
     if(SAVED.warm && SAVED.warm.done && Array.isArray(SAVED.warm.order) && SAVED.warm.order.length===5 && SAVED.warm.order.every(function(id){return WUN[id];}) ){ WARM.order=SAVED.warm.order.slice(); WARM.done=true; wuPaint(); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
@@ -1518,7 +1538,7 @@ if(SAVED){
       var b=$(id).querySelector(".lab-body"), n=el("p",{class:"pause"}); n.textContent="You left this lead half-finished, so it starts fresh. Your case-file copy shows it as not started until you play it."; b.insertBefore(n,b.firstChild);
     });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
-      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true;
+      FIN.view=SAVED.fin.view; FIN.reason=oneLine(SAVED.fin.reason); FIN.moved=oneLine(SAVED.fin.moved); FIN.done=true;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
       $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();

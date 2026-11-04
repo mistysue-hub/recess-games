@@ -451,6 +451,21 @@ html,body{overflow-x:clip}
 .rk.ranked .rknum{background:#fff; border:3px solid var(--hl-ink)}
 .rk:disabled{cursor:default; opacity:1}
 .rk:focus-visible{outline:3px solid var(--stamp); outline-offset:2px}
+
+/* ---------- round 2 fixes ---------- */
+/* verdict card: every block is a multiple of the 28px rule pitch, so text sits just above a blue line */
+.rcard p{margin:0 0 28px; line-height:28px}
+.rcard p:last-child{margin-bottom:0}
+.rcard{padding-bottom:20px}
+.rcard p.small{font-size:.9rem}
+/* World Z runs off the edge */
+.pops .pbox.runs{position:relative; border-right:0; border-radius:6px 0 0 6px; margin-right:-14px; width:calc(100% + 14px)!important}
+.pops .pbox.runs::after{content:"\2192"; position:absolute; right:2px; top:-9px; font-family:var(--type); font-weight:700; font-size:1.1rem; line-height:1}
+/* poll with four buttons wraps neatly */
+#worryPoll .row .btn{flex:1 1 150px}
+.toast{pointer-events:none}
+@media (max-width:520px){ .toast{bottom:6px; font-size:.85rem; padding:7px 12px; border-width:2px; border-radius:10px; max-width:94vw} }
+.rcard p b, .rcard p i{line-height:1}
 </style>
 </head>
 <body>
@@ -469,6 +484,19 @@ html,body{overflow-x:clip}
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">People Who Don't Exist Yet</h1>
   <p class="dek">The people you'll affect most may not be born for centuries. They can't vote, complain or thank you. What could you owe them?</p>
+  <div class="plug-hook">
+    <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="8" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M15 10v5l3 2" stroke="#2A2016" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></div>
+    <p><b>The 300-Year Button.</b> Press it, and everyone alive today gets a noticeably better life. The catch: people living 300 years from now get harder lives (still worth living). Nobody alive now will ever meet them. Lock in your gut call; you'll face it again at the end.</p>
+  </div>
+  <div class="lockin" id="lockin">
+    <div class="row" role="group" aria-label="Your gut call">
+      <button class="vbtn" type="button" data-v="press" aria-pressed="false">I'd press it</button>
+      <button class="vbtn" type="button" data-v="no" aria-pressed="false">I wouldn't</button>
+    </div>
+    <label for="myReason">My reason, in one sentence</label>
+    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
+  </div>
   <svg class="cover-art" style="color:var(--ink)" viewBox="0 0 360 150" role="img" aria-label="Drawing of a dotted road running from a small figure toward fainter and fainter figures in the distance">
     <path d="M10 128 C 120 120, 220 70, 350 34" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/>
     <circle cx="40" cy="84" r="13" fill="#FFE15A" stroke="currentColor" stroke-width="3"/>
@@ -483,19 +511,6 @@ html,body{overflow-x:clip}
     <text x="22" y="146" font-family="Courier New, monospace" font-size="12" font-weight="700" fill="currentColor">you, 2026</text>
     <text x="250" y="96" font-family="Courier New, monospace" font-size="12" font-weight="700" fill="currentColor">2326?</text>
   </svg>
-  <div class="plug-hook">
-    <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="8" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M15 10v5l3 2" stroke="#2A2016" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></div>
-    <p><b>The 300-Year Button.</b> Press it, and everyone alive today gets a noticeably better life. The catch: people living 300 years from now get harder lives (still worth living). Nobody alive now will ever meet them. Lock in your gut call; you'll face it again at the end.</p>
-  </div>
-  <div class="lockin" id="lockin">
-    <div class="row" role="group" aria-label="Your gut call">
-      <button class="vbtn" type="button" data-v="press" aria-pressed="false">I'd press it</button>
-      <button class="vbtn" type="button" data-v="no" aria-pressed="false">I wouldn't</button>
-    </div>
-    <label for="myReason">My reason, in one sentence</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
-    <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
-  </div>
   <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
 </section>
 
@@ -531,7 +546,7 @@ html,body{overflow-x:clip}
   <h2 id="g1h">The generation timeline</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "From far away to far ahead" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">How far does a choice reach? Each card gives you a span of time in years. Do the division (years &divide; 25 = generations), then drop the card on the right band of the timeline. Seven cards.</p>
+  <p class="how">How far does a choice reach? Each card gives you a span of time in years. Do the division (years &divide; 25 = generations), then tap the band of the timeline it belongs to. Seven cards.</p>
   <p class="m-nav" id="tlNav"></p>
   <div class="clue" id="tlClue" aria-live="polite"></div>
   <div class="bandbtns" id="tlBtns" role="group" aria-label="Which band?"></div>
@@ -556,6 +571,16 @@ html,body{overflow-x:clip}
     <li><b>Uncertainty.</b> We don't know who they'll be, how many, or what they'll want.</li>
     <li><b>Power runs one way.</b> We can shape their whole world; they can't touch ours. Some philosophers think that's exactly why our responsibility is so big.</li>
   </ul>
+  <div class="poll" id="worryPoll">
+    <p><b>Quick gut check:</b> which of these four worries bothers you most? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Which worry bothers you most?">
+      <button class="btn ghost" type="button" data-r="exist">They don't exist yet</button>
+      <button class="btn ghost" type="button" data-r="recip">They can't pay us back</button>
+      <button class="btn ghost" type="button" data-r="unc">We don't know who they'll be</button>
+      <button class="btn ghost" type="button" data-r="power">Power runs one way</button>
+    </div>
+    <div class="fb" id="worryFb" aria-live="polite"></div>
+  </div>
   <p class="note">Today's question is about morality (what we owe each other), not well-being. You'll still use Challenge 1, Case 1's tool: keep "good for someone" and "the right thing to do" apart. It turns out to matter enormously here.</p>
 </section>
 
@@ -563,9 +588,6 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-o)">Discounting: how the future shrinks</span></h2>
   <p class="wow">Count the future just 5% less each year, and one death next year outweighs more than a billion deaths 500 years from now.</p>
-  <p>Governments and companies often have to compare costs and benefits that land at different times. A standard tool is the <b>discount rate</b>: a percentage by which you count something less for every year it lies in the future. At 3%, something next year counts about 3% less than the same thing today (its weight is 1 &divide; 1.03, about 97%); the year after, about 3% less again; and so on.</p>
-  <p>Because the shrinking <b>compounds</b> (each year's cut is taken from what's left after the last one), it snowballs:</p>
-  <div class="eq">weight today = 1 &divide; (1 + rate)<sup>years</sup></div>
   <div class="poll" id="painPoll">
     <p><b>Quick gut check:</b> does a pain 500 years from now matter less than the same pain next year? (Not graded.)</p>
     <div class="row" role="group" aria-label="Does a far-future pain matter less?">
@@ -574,6 +596,13 @@ html,body{overflow-x:clip}
     </div>
     <div class="fb" id="painFb" aria-live="polite"></div>
   </div>
+  <p>Governments and companies often have to compare costs and benefits that land at different times. A standard tool is the <b>discount rate</b>: a percentage by which you count something less for every year it lies in the future. At 3%, something next year counts about 3% less than the same thing today (its weight is 1 &divide; 1.03, about 97%); the year after, about 3% less again; and so on.</p>
+  <p>Because the shrinking <b>compounds</b> (each year's cut is taken from what's left after the last one), it snowballs:</p>
+  <div class="eq">weight today = 1 &divide; (1 + rate)<sup>years</sup></div>
+  <details class="reply" style="--rc:var(--hl-o)">
+    <summary>Why does it snowball? (tap to open)</summary>
+    <div class="inner"><p>At 3% over 100 years the weight is 1 &divide; 1.03<sup>100</sup>, about 5%: a harm a century away counts for roughly one-twentieth of the same harm today. At 5% over 500 years it is about one in 40 billion.</p></div>
+  </details>
   <p>People give several different <i>reasons</i> for discounting, and philosophers think it's vital to keep them apart:</p>
   <ul>
     <li><b>Uncertainty.</b> A future harm might never happen, or we might find a fix. Fair enough, but that's a reason to weigh by <i>probability</i>, not by date.</li>
@@ -637,7 +666,7 @@ html,body{overflow-x:clip}
   </div>
   <p>That's the <b>non-identity problem</b>: some choices seem wrong, yet make no particular person worse off, because the choice itself decides <i>who</i> exists. Almost every big long-term choice changes who gets born.</p>
   <details class="sealed">
-    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: another way to think about harm</summary>
+    <summary><span class="seal" aria-hidden="true">?</span>Optional: another way to think about harm</summary>
     <div class="inner"><p>Some philosophers reject the "worse off than otherwise" test. They think you can harm someone by causing them a bad condition, like pain or a serious hardship, even if they wouldn't otherwise have existed. On that kind of view, Jo might count as harmed after all, and the puzzle looks different. Many discussions of the problem start from the comparative test, so that's the one this file grades.</p></div>
   </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
@@ -696,14 +725,22 @@ html,body{overflow-x:clip}
     <li><b>The total view:</b> the better world is the one with the greatest <i>total</i> well-being (everyone's added together).</li>
     <li><b>The average view:</b> the better world is the one with the highest <i>average</i> well-being per person.</li>
   </ul>
+  <div class="poll" id="taPoll">
+    <p><b>Which rule sounds more sensible to you?</b> (Not graded.)</p>
+    <div class="row" role="group" aria-label="Total view or average view?">
+      <button class="btn ghost" type="button" data-r="total">The total view</button>
+      <button class="btn ghost" type="button" data-r="avg">The average view</button>
+    </div>
+    <div class="fb" id="taFb" aria-live="polite"></div>
+  </div>
   <p>Picture each world as a box: its width is how many people live there, its height is how good each life is. The total is the area.</p>
   <div class="pops" aria-label="Two boxes: a narrow tall box for world A and a very wide, very flat box for world Z">
     <figure><div class="pbox" style="height:110px; width:70px; background:var(--hl-g)"></div><figcaption><b>World A:</b> 10 billion people, wonderful lives</figcaption></figure>
-    <figure style="flex:3 1 200px"><div class="pbox" style="height:12px; width:100%; background:var(--hl-o)"></div><figcaption><b>World Z:</b> vastly more people, each life barely worth living</figcaption></figure>
+    <figure style="flex:3 1 200px"><div class="pbox runs" style="height:12px; width:100%; background:var(--hl-o)"></div><figcaption><b>World Z:</b> vastly more people, each life barely worth living. The bar keeps going, far past the edge of this page.</figcaption></figure>
   </div>
-  <p>Make Z wide enough and its area beats A's. So the total view says Z is better. Parfit named this the <b>Repugnant Conclusion</b> ("repugnant" means hard to accept, even disgusting).</p>
+  <p>Make Z wide enough and its area beats A's. So the total view says Z is better. Parfit named this the <b>Repugnant Conclusion</b> ("repugnant" means very hard to accept).</p>
   <details class="sealed">
-    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: Parfit's exact words</summary>
+    <summary><span class="seal" aria-hidden="true">?</span>Optional: Parfit's exact words</summary>
     <div class="inner"><p>"For any possible population of at least ten billion people, all with a very high quality of life, there must be some much larger imaginable population whose existence, if other things are equal, would be better even though its members have lives that are barely worth living." (Parfit, <i>Reasons and Persons</i>, 1984)</p></div>
   </details>
   <div class="poll" id="avgPoll">
@@ -760,7 +797,7 @@ html,body{overflow-x:clip}
   </details>
   <details class="reply" style="--rc:var(--hl-p)">
     <summary><b>"Tiny chances times huge numbers."</b></summary>
-    <div class="inner"><p>Multiply a one-in-a-trillion chance by trillions of future lives and you can justify almost anything. Critics call this "fanaticism".</p><p class="other">The other side says: the risks longtermists focus on, like pandemics or nuclear war, aren't one-in-a-trillion. They're in the range of risks people normally take precautions against.</p></div>
+    <div class="inner"><p>Multiply a one-in-a-trillion chance by trillions of future lives and you can justify almost anything. Critics call this "fanaticism" (letting a tiny chance of a huge payoff override everything else).</p><p class="other">The other side says: the risks longtermists focus on, like pandemics or nuclear war, aren't one-in-a-trillion. They're in the range of risks people normally take precautions against.</p></div>
   </details>
   <p class="note">Notice the trap the non-identity problem sets. If a long-term harm is wrong, it's usually <i>not</i> because it makes particular future people worse off than they'd otherwise be. So whoever says it's wrong needs another explanation: an impersonal view, or a softer person-affecting view that compares whoever would exist.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="5">Got it: open Lead 5</button><span class="gmsg" aria-live="polite"></span></div>
@@ -873,13 +910,14 @@ var KEY="ethics-c3m04-v2", canSave=false, SAVED=null;
 try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ canSave=false; SAVED=null; }
 if(!SAVED || typeof SAVED!=="object") SAVED=null;
 var touched={}, replayCleared={};
+function flat(x){ return String(x==null?"":x).replace(/[\r\n\u2028\u2029\u0085]+/g," ").replace(/\s+/g," ").trim(); }   /* one line only: a free-text box must not be able to forge a record line */
 var LEADN={g1:"Lead 1 Generation timeline",g2:"Lead 2 Vanishing Future",g3:"Lead 3 Who is harmed?",g4:"Lead 4 Predict the verdict",g5:"Lead 5 Name that tool"};
 var restoring=false;
 function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, warm:(WARM.locked?{order:WARM.order}:null), fin:FIN, polls:POLLS, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, warm:(WARM.locked?{order:WARM.order}:null), fin:FIN, draft:(FIN.done?null:{view:pendingView, reason:String($("finReason").value||"").slice(0,400), moved:$("finMoved").value}), polls:POLLS, lines:lines}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -888,7 +926,7 @@ function touch(g){ touched[g]=true; saveState(); }
 var REC={ tl:{done:0, first:0, misses:[]}, disc:{rates:{}, q:{}}, who:{}, poll:{}, tool:{done:0, first:0, misses:[], streak:0, best:0} };
 var COVER={v:null, reason:"", locked:false};
 var FIN={view:null, reason:"", moved:"", done:false};
-var POLLS={pain:null, jo:null, narv:null, avg:null};
+var POLLS={pain:null, jo:null, narv:null, avg:null, worry:null, ta:null};
 var WARM={order:[], locked:false};
 
 /* ---------- evidence dock + display-only progress bar ---------- */
@@ -991,15 +1029,15 @@ $("lockBtn").addEventListener("click",function(){
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
   if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
   if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Say a little more: at least a few words."; $("myReason").focus(); return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
+  COVER.reason=flat(r); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
 });
 
 /* ---------- warm-up: line up the strangers (ungraded; locks when all four are ranked) ---------- */
-var RK=[["nb","A neighbour on your street, today","neighbour today","var(--hl-y)"],["far","A stranger on the far side of the world, today","stranger far away today","var(--hl-o)"],["f50","A child who will be born 50 years from now","child born in 50 years","var(--hl-p)"],["f300","A child who will be born 300 years from now","child born in 300 years","var(--hl-b)"]];
+var RK=[["nb","A neighbor on your street, today","neighbor today","var(--hl-y)"],["far","A stranger on the far side of the world, today","stranger far away today","var(--hl-o)"],["f50","A child who will be born 50 years from now","child born in 50 years","var(--hl-p)"],["f300","A child who will be born 300 years from now","child born in 300 years","var(--hl-b)"]];
 function rkName(k){ return RK.filter(function(x){return x[0]===k;})[0][2]; }
-var rkOrder=[];
+var rkOrder=[], rkLast=0;   /* ignore taps for 400 ms after a card advances (double-tap guard) */
 function rkDraw(){
   var L=$("rankList"); L.innerHTML="";
   shuffleOnce().forEach(function(it){
@@ -1009,7 +1047,7 @@ function rkDraw(){
     b.innerHTML='<span class="rknum" aria-hidden="true">'+(pos>=0?pos+1:"")+'</span><span class="rktxt"></span>';
     b.querySelector(".rktxt").textContent=it[1]+(pos>=0?" (ranked "+(pos+1)+")":"");
     if(pos>=0 || WARM.locked) b.disabled=true;
-    b.addEventListener("click",function(){ if(WARM.locked || rkOrder.indexOf(it[0])>=0) return; rkOrder.push(it[0]); if(rkOrder.length===RK.length) rkLock(); else rkDraw(); $("rankRedo").hidden=WARM.locked; var nx=$("rankList").querySelector(".rk:not(:disabled)"); if(nx&&!WARM.locked) focusFb(nx); });
+    b.addEventListener("click",function(){ if(WARM.locked || rkOrder.indexOf(it[0])>=0) return; var now=Date.now(); if(now-rkLast<400) return; rkLast=now; rkOrder.push(it[0]); if(rkOrder.length===RK.length) rkLock(); else rkDraw(); $("rankRedo").hidden=WARM.locked; var nx=$("rankList").querySelector(".rk:not(:disabled)"); if(nx&&!WARM.locked) focusFb(nx); });
     L.appendChild(b);
   });
 }
@@ -1032,11 +1070,11 @@ function linesFor(g){
   return LIVE[g]();
 }
 function warmLines(){ return [WARM.locked ? "Warm-up: ungraded ranking of who I'd help first: "+WARM.order.map(rkName).join(" > ") : "Warm-up: not played"]; }
-function coverLines(){ return ["Gut call on the 300-Year Button (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
-var PT={pain:{less:"matters less",same:"pain is pain"}, jo:{yes:"yes",no:"no",unsure:"not sure"}, narv:{yes:"agree",no:"disagree"}, avg:{one:"the one person",A:"World A"}};
+function coverLines(){ return ["Gut call on the 300-Year Button (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
+var PT={pain:{less:"matters less",same:"pain is pain"}, jo:{yes:"yes",no:"no",unsure:"not sure"}, narv:{yes:"agree",no:"disagree"}, avg:{one:"the one person",A:"World A"}, worry:{exist:"they don't exist yet",recip:"they can't pay us back",unc:"we don't know who they'll be",power:"power runs one way"}, ta:{total:"the total view",avg:"the average view"}};
 function tapLines(){
   function v(k){ return POLLS[k] ? PT[k][POLLS[k]] : "not answered"; }
-  return ["Ungraded taps: far-future pain = "+v("pain")+"; was Jo harmed = "+v("jo")+"; Narveson's slogan = "+v("narv")+"; one slightly happier person vs World A = "+v("avg")];
+  return ["Ungraded taps: far-future pain = "+v("pain")+"; was Jo harmed = "+v("jo")+"; Narveson's slogan = "+v("narv")+"; one slightly happier person vs World A = "+v("avg")+"; biggest worry about future people = "+v("worry")+"; sounds more sensible, total or average = "+v("ta")];
 }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1063,6 +1101,8 @@ var POLLREPLY={
  pain:{less:"Then you're leaning toward a pure time discount. Hold that thought: the reasons below will test it.", same:"That's Sidgwick's side. The next paragraphs show why economists discount anyway, and which of their reasons survive your answer."},
  jo:{yes:"Interesting. Now run the formal test in the next paragraph and see if it agrees with you.", no:"Now see why the formal test agrees with you, and why that's a problem.", unsure:"Fair. The next paragraph runs the test step by step."},
  narv:{yes:"Then you're with the person-affecting side: no duty to create extra happy people. The other side says: a world with one more very happy life in it, and nothing worse, seems better.", no:"Then you think adding happy lives can make a world better. The other side says: that may mean we have some reason to create more people, which many find odd. Your side can reply that it is only a reason, not a duty."},
+ worry:{exist:"That's the 'who is holding the claim?' worry. Many philosophers answer that a claim can wait for a person who will exist, like a promise to a baby not yet born.",recip:"Fair: we're used to morality as give and take. The other side says we don't help a baby for what it will pay back, so repayment can't be the whole story.",unc:"A real problem for planning. The other side says uncertainty is a reason to weigh by odds, not to ignore people.",power:"Many philosophers feel the same: the more power we have over someone, the more we owe them."},
+ ta:{total:"You're with the total view: add everyone's well-being up. Hold on to that; the next box shows where it leads.",avg:"You're with the average view: what counts is how well people live on average. The next picks will test that too."},
  avg:{one:"That's exactly what the average view says: one life a bit above A's average beats A. You're consistent with it; most people find this result absurd.", A:"Many people pick World A. The average view, though, would pick the one person: their life is slightly better than A's average, and only the average counts."}
 };
 function wirePoll(id, key, fbId){
@@ -1074,9 +1114,9 @@ function wirePoll(id, key, fbId){
     });
   });
 }
-wirePoll("painPoll","pain","painFb"); wirePoll("joPoll","jo","joFb"); wirePoll("narvPoll","narv","narvFb"); wirePoll("avgPoll","avg","avgFb");
+wirePoll("painPoll","pain","painFb"); wirePoll("joPoll","jo","joFb"); wirePoll("narvPoll","narv","narvFb"); wirePoll("avgPoll","avg","avgFb"); wirePoll("worryPoll","worry","worryFb"); wirePoll("taPoll","ta","taFb");
 function syncPolls(){
-  var ids={pain:"painPoll",jo:"joPoll",narv:"narvPoll",avg:"avgPoll"}, fbs={pain:"painFb",jo:"joFb",narv:"narvFb",avg:"avgFb"};
+  var ids={pain:"painPoll",jo:"joPoll",narv:"narvPoll",avg:"avgPoll",worry:"worryPoll",ta:"taPoll"}, fbs={pain:"painFb",jo:"joFb",narv:"narvFb",avg:"avgFb",worry:"worryFb",ta:"taFb"};
   Object.keys(ids).forEach(function(k){ if(!POLLS[k]) return;
     $(ids[k]).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===POLLS[k]; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; });
     setFb($(fbs[k]),"","Noted.",POLLREPLY[k][POLLS[k]]); });
@@ -1227,7 +1267,7 @@ var WHO=shuffle([
   why:"If they'd waited, Jo wouldn't exist; Kit would. Jo isn't worse off than Jo would otherwise have been. The classic non-identity case."},
  {n:"The forgotten vitamin", t:"In this made-up case, a cheap vitamin taken during pregnancy would prevent a baby's lifelong allergy. A doctor forgets to mention it to a pregnant patient, who would gladly have taken it. The baby is born with the allergy.", a:"yes",
   why:"The baby is already on the way, so the same child is born either way. If the doctor had mentioned it, <i>that very child</i> would have been better off. (Compare Jo: the timing of conception changes who exists; a vitamin during pregnancy doesn't.)"},
- {n:"The 500-year leak", t:"A country picks a cheap energy plan that changes how millions of people live and work. Its waste starts leaking in 500 years, making life harder (but still worth living) for the people there then.", a:"no",
+ {n:"The 500-year leak", t:"A country picks a cheap energy plan that changes how millions of people live and work, and so changes who is born. Its waste starts leaking in 500 years, making life harder (but still worth living) for the people there then.", a:"no",
   why:"A plan that changes millions of lives changes who meets whom and when children are conceived. In 500 years, the people living there wouldn't have existed under a different plan. No one is worse off than they'd otherwise be."},
  {n:"The poisoned lake", t:"A factory dumps chemicals that will poison a lake in 10 years. Kids who are already alive now will get sick swimming in it.", a:"yes",
   why:"These kids already exist, so they'd exist either way. Without the dumping, they'd be healthier. Future harm, but to particular people: it passes the test."},
@@ -1299,7 +1339,7 @@ function whoLines(){
 var POLL=[
  {n:"Use it up or save it?", d:"A simpler version of Parfit's depletion case. Nobody alive now, or in the next few generations, is affected either way. After that, different people are born depending on the choice. If the society saves the resource, those later lives are better, with more well-being in total. If it uses the resource up, those later lives are harder, but still worth living.",
   o:[["x","Saving it is better"],["y","Using it up is better"],["n","Neither is better"]], pa:"n", tot:"x",
-  paWhy:"Nobody alive in the next few generations is affected, and nobody later is worse off than they would otherwise be (they wouldn't exist otherwise). So neither outcome is worse for anyone. This is the strict view's weak spot.",
+  paWhy:"Nobody alive in the next few generations is affected, and nobody later is worse off than they would otherwise be (they wouldn't exist otherwise). So neither outcome is worse for anyone. This is the strict view's weakest point.",
   totWhy:"More well-being in total under \"save it\", so it's better. Who exactly has the well-being doesn't matter."},
  {n:"Harder for one, two new lives?", d:"A couple can make their existing child's life a little harder in order to afford two more children, who would both have very happy lives. Or they can stop at one child. The parents would be equally happy either way.",
   o:[["x","Having the two extra children is better"],["y","Stopping at one child is better"],["n","Neither is better"]], pa:"y", tot:"x",
@@ -1311,8 +1351,8 @@ var POLL=[
   totWhy:"More total well-being, so cleaning is better. Here the two views agree: future harms to people who will exist either way aren't puzzling."},
  {n:"World A or World Z?", d:"World A: 10 billion people with wonderful lives. World Z: vastly more people, each with a life barely worth living, but more total well-being. Completely different people live in each.",
   o:[["x","World A is better"],["y","World Z is better"],["n","Neither is better"]], pa:"n", tot:"y",
-  paWhy:"No one in A would exist in Z, or the other way around, so neither world is worse for anyone. That dodges Parfit's problem, but only by refusing to rank the worlds at all, which many find just as odd.",
-  totWhy:"The total view goes where its math goes: Z has more total well-being, so Z is better. That's the Repugnant Conclusion."}
+  paWhy:"No one in A would exist in Z, or the other way around, so neither world is worse for anyone. That avoids Parfit's problem, but only by refusing to rank the worlds at all, which many find just as odd.",
+  totWhy:"The total view follows its math: Z has more total well-being, so Z is better. That's the Repugnant Conclusion."}
 ];
 var THEO={pa:"strict person-affecting view", tot:"total view"};
 var qI=0;
@@ -1356,7 +1396,7 @@ function pollRender(){
     $("pollFb").innerHTML+='<br><br><b>You said:</b> '+esc(optText(P,R.mine))+'. '+(R.mine===P.pa&&R.mine===P.tot?"Both theories agree with you.":R.mine===P.pa?"You sided with the strict person-affecting view.":R.mine===P.tot?"You sided with the total view.":"Neither theory agrees with you here.");
     pollTally();
     if(qI<POLL.length-1){ $("pollNext").hidden=false; $("pollNext").focus({preventScroll:true}); }
-    else { focusFb($("pollFb")); $("pollFb").innerHTML+="<br><br><b>All four done.</b> If you sided with different theories on different dilemmas, you're in good company: that tension is exactly why population ethics is still unsolved."; clear("g4"); }
+    else { focusFb($("pollFb")); $("pollFb").innerHTML+="<br><br><b>All four done.</b> If you sided with different theories on different dilemmas, you're not alone: that tension is exactly why population ethics is still unsolved."; clear("g4"); }
   }
 }
 var pollPA=0, pollTOT=0, pollN=0, pollRefuse=false;
@@ -1437,9 +1477,11 @@ var VIEWS=shuffle([
 var pendingView=null;
 VIEWS.forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; saveState(); $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
   $("finOpts").appendChild(b);
 });
+$("finReason").addEventListener("input",function(){ saveState(); });
+$("finMoved").addEventListener("change",function(){ saveState(); });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
 function freezeFinale(){
   $("finOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
@@ -1461,7 +1503,7 @@ $("finBtn").addEventListener("click",function(){
   if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
-  FIN.view=pendingView; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
+  FIN.view=pendingView; FIN.reason=flat(reason); FIN.moved=flat(moved); FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState(); focusFb($("finFb"));
   toast("Case closed: verdict filed", "var(--stamp)");
@@ -1469,7 +1511,7 @@ $("finBtn").addEventListener("click",function(){
 });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
-  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+flat(FIN.reason), "What moved me most: "+flat(FIN.moved)];
 }
 
 var LIVE={g1:tlLines,g2:discLines,g3:whoLines,g4:vpLines,g5:toolLines};
@@ -1483,7 +1525,7 @@ window.__c3m04={cleared:cleared, unlockStep:function(){return unlockedStep;}, re
 if(SAVED){
   restoring=true;
   try{
-    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=flat(SAVED.cover.reason); COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     GAME_IDS.forEach(function(g){   /* a lead left half-done restarts from zero on reload, so its saved partial line must not claim progress */
       var ln=SAVED.lines && SAVED.lines[g];
       if((SAVED.cleared||[]).indexOf(g)<0 && ln && ln[0] && !/not started|not finished/.test(ln[0])) SAVED.lines[g]=[LEADN[g]+": not finished (restarted after a reload)"];
@@ -1493,10 +1535,15 @@ if(SAVED){
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
-      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true; pendingView=FIN.view;
+      FIN.view=SAVED.fin.view; FIN.reason=flat(SAVED.fin.reason); FIN.moved=flat(SAVED.fin.moved); FIN.done=true; pendingView=FIN.view;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
       $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
+    }
+    else if(SAVED.draft && typeof SAVED.draft==="object"){   /* unfinished verdict: bring back the picked view and typed reason */
+      var dv=SAVED.draft.view; if(VIEWS.some(function(x){return x[0]===dv;})){ pendingView=dv; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===dv));}); }
+      $("finReason").value=String(SAVED.draft.reason||"").slice(0,400);
+      if(SAVED.draft.moved && [].some.call($("finMoved").options,function(o){return o.value===SAVED.draft.moved;})) $("finMoved").value=SAVED.draft.moved;
     }
     refreshGot();
   }catch(e){}

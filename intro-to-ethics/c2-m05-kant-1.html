@@ -336,7 +336,8 @@ ol.steps{padding-left:1.3em; margin:0 0 1em}
 ol.steps li{margin:0 0 .5em; font-size:1rem}
 /* lead 1 */
 .binkey{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 6px}
-.binkey span{font-family:var(--type); font-size:.78rem; font-weight:700; padding:2px 10px; border-radius:999px; background:var(--pc); color:var(--hl-ink)}
+.binkey span{font-family:var(--type); font-size:.78rem; font-weight:700; padding:2px 10px; border-radius:4px; background:var(--pc); color:var(--hl-ink); cursor:default}
+.binkey .bkl{background:none; color:inherit; padding:2px 2px 2px 0; font-weight:400}
 #motList .pick{font-size:.82rem; padding:6px 10px}
 /* lead 2 */
 .rf-card .cmd{font-size:1.15rem; margin:0}
@@ -546,7 +547,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Duty, inclination and four kinds of action" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
   <p class="how">Seven suspects, seven actions. Read each motive carefully and file it in one of Kant's four groups. Four of these are modern versions of Kant's own examples (you'll meet the originals right after).</p>
-  <div class="binkey" aria-hidden="true"><span style="--pc:var(--hl-p)">Against duty</span><span style="--pc:var(--hl-o)">Self-interest</span><span style="--pc:var(--hl-b)">Inclination</span><span style="--pc:var(--hl-g)">From duty</span></div>
+  <div class="binkey" aria-hidden="true"><span class="bkl">The four groups (labels, not buttons):</span><span style="--pc:var(--hl-p)">Against duty</span><span style="--pc:var(--hl-o)">Self-interest</span><span style="--pc:var(--hl-b)">Inclination</span><span style="--pc:var(--hl-g)">From duty</span></div>
   <div id="motList"></div>
   <p class="score" id="motScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -611,6 +612,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit E: the categorical imperative</span>
     <p>"Do Y." Full stop. No goal it depends on, no escape clause. It applies to you whatever you want. Kant thinks moral commands are like this: "don't make lying promises" doesn't evaporate if you say "but I don't care about being trusted".</p>
+  </div>
+  <div class="poll" id="optPoll">
+    <p><b>Your take (not graded):</b> a friend says, "Don't lie to people? I don't care about being trusted, so that rule doesn't apply to me." Is your friend off the hook?</p>
+    <div class="row" role="group" aria-label="Is the friend off the hook?">
+      <button class="btn ghost" type="button" data-r="off">Yes, no goal means no rule</button>
+      <button class="btn ghost" type="button" data-r="on">No, it still applies</button>
+    </div>
+    <div class="fb" id="optFb" aria-live="polite"></div>
   </div>
   <p>That's why morality <i>has</i> to be categorical for Kant. If morality were only hypothetical, anyone could get out of it by not wanting the goal. "Don't steal, if you want people to like you." "Cool, I don't care what people think." Done, off the hook? Kant says no way.</p>
   <p><b>Two detective tips.</b></p>
@@ -682,11 +691,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b5">
   <h2 id="b5"><span style="--mark:var(--hl-g)">The test: could your rule be a law of nature?</span></h2>
   <p class="wow">Kant claims one test can sort every maxim into "allowed" and "forbidden".</p>
-  <p>Kant's categorical imperative comes in a few versions. The first is called the <b>Formula of Universal Law</b>. In plain words: <b>only act on a maxim that you could, at the same time, will to be a universal law</b>, a rule that everyone follows. ("Will" here means choose, or sign up for.) Kant also gives a vivid version, here in Thomas Kingsmill Abbott's classic 19th-century translation:</p>
+  <p>Kant's categorical imperative comes in a few versions. The first is called the <b>Formula of Universal Law</b>. In plain words: <b>only act on a maxim that you could, at the same time, will to be a universal law</b>, a rule that everyone follows. ("Will" here means choose, or sign up for. So the question is: could you choose for everyone to follow your rule?) Kant also gives a vivid version. This one is in Thomas Kingsmill Abbott's classic 19th-century translation:</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit F: the formula</span>
     <p>"Act as if the maxim of thy action were to become by thy will a universal law of nature."</p>
     <p class="small">("Thy" is old English for "your".)</p>
+  </div>
+  <div class="poll" id="breakPoll">
+    <p><b>Predict (not graded):</b> when everyone makes lying promises, what breaks first?</p>
+    <div class="row" role="group" aria-label="What breaks first?">
+      <button class="btn ghost" type="button" data-r="promise">The promise itself stops working</button>
+      <button class="btn ghost" type="button" data-r="annoyed">People just get annoyed</button>
+    </div>
+    <div class="fb" id="breakFb" aria-live="polite"></div>
   </div>
   <p>A <b>law of nature</b> is something everyone does automatically, the way objects fall. So the test is a thought experiment in four steps:</p>
   <ol class="steps">
@@ -696,13 +713,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <li><b>Test B, contradiction in will.</b> If the world <i>can</i> exist, could you consistently <i>will</i> (choose) to live in it, given what every rational person must want?</li>
   </ol>
   <p>Fail either test and acting on that maxim is wrong. Pass both and it's allowed. (Allowed, not necessarily required: most maxims, like "I'll have toast for breakfast", pass and are simply fine.)</p>
-  <div class="poll" id="breakPoll">
-    <p><b>Predict (not graded):</b> when everyone makes lying promises, what breaks first?</p>
-    <div class="row" role="group" aria-label="What breaks first?">
-      <button class="btn ghost" type="button" data-r="promise">The promise itself stops working</button>
-      <button class="btn ghost" type="button" data-r="annoyed">People just get annoyed</button>
+  <div class="poll" id="cheatPoll">
+    <p><b>Your hunch (not graded):</b> "I'll copy answers on a test whenever I can get away with it." Could that rule pass both tests?</p>
+    <div class="row" role="group" aria-label="Could the cheating rule pass both tests?">
+      <button class="btn ghost" type="button" data-r="pass">Yes, it could pass</button>
+      <button class="btn ghost" type="button" data-r="fail">No, something breaks</button>
     </div>
-    <div class="fb" id="breakFb" aria-live="polite"></div>
+    <div class="fb" id="cheatFb" aria-live="polite"></div>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit G: Kant's lying promise, step by step</span>
@@ -730,6 +747,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="lbl">Exhibit H: the person who never helps</span>
     <p>Maxim: "I'll never help anyone in need, so that I keep all my time and money for myself." Universalize it: nobody ever helps anybody. Could that world exist? Sure; humans would survive, grimly. It passes Test A.</p>
     <p>But could you <i>will</i> it? Kant says no. You can't rule out needing help yourself; almost everyone does at some point. Willing this world means willing that you'd be refused help when you need it most. Your will would be at war with itself. Fails Test B.</p>
+  </div>
+  <div class="poll" id="worldPoll">
+    <p><b>Be honest (not graded):</b> would you choose to live in a world where nobody ever helps anybody?</p>
+    <div class="row" role="group" aria-label="Would you choose the no-help world?">
+      <button class="btn ghost" type="button" data-r="yes">Yes, I'd manage on my own</button>
+      <button class="btn ghost" type="button" data-r="no">No, I might need help someday</button>
+    </div>
+    <div class="fb" id="worldFb" aria-live="polite"></div>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit I: the person who lets their talents rust</span>
@@ -778,7 +803,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-o)">
-    <summary><b>2. The dentist problem</b></summary>
+    <summary><b>2. "What if everyone became a dentist?"</b></summary>
     <div class="inner">
       <p>"I'll become a dentist. But what if everyone did? Nobody would grow food! So it's wrong." Obviously not. Two mistakes: it's consequence thinking (misreading 1), and the maxim is written badly. What you're really acting on is closer to "I'll choose a career I like from the ones open to me". Universalize that and nothing contradicts itself.</p>
       <p class="other">The other side says: if you can always rewrite a maxim until it passes, can't a clever cheater do the same? Kantians answer that a maxim has to state your real reasons.</p>
@@ -866,7 +891,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by; Lecture 10, "Kant I", covers the same ground from MIT's side. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>Kant, <i>Groundwork</i>, in Jonathan Bennett's plain-English version</b>. Bennett rewrote classic philosophy texts so they're easier to read, and posts them free. Read Section 1 (the good will, the shopkeeper) and the first part of Section 2 (imperatives, the universal law test). <a class="linkbtn" href="https://www.earlymoderntexts.com/authors/kant" target="_blank" rel="noopener">earlymoderntexts.com</a></li>
-    <li><b>Open Yale Courses, PHIL 181, <i>Philosophy and the Science of Human Nature</i></b> (Lectures 13 and 14 discuss Kant's <i>Groundwork</i>) and <b>MIT OpenCourseWare 24.01, Classics of Western Philosophy</b> (sessions 18 and 19 on the <i>Groundwork</i>).
+    <li><b>Open Yale Courses, PHIL 181, <i>Philosophy and the Science of Human Nature</i></b> (Lecture 13 introduces Kant's <i>Groundwork</i>; Lecture 14 continues it before moving on to the trolley problem) and <b>MIT OpenCourseWare 24.01, Classics of Western Philosophy</b> (sessions 18 and 19 on the <i>Groundwork</i>).
       <div class="linkrow"><a class="linkbtn" href="https://oyc.yale.edu/philosophy/phil-181/lecture-13" target="_blank" rel="noopener">Open Yale PHIL 181, Lecture 13</a><a class="linkbtn" href="https://ocw.mit.edu/courses/24-01-classics-of-western-philosophy-spring-2016/" target="_blank" rel="noopener">MIT OCW 24.01</a></div></li>
     <li><b>Christine Korsgaard, "The Right to Lie: Kant on Dealing with Evil" (1986)</b>. A famous Kantian argument about the lying-to-protect-a-friend case. Harder reading, free on Harvard's archive. <a class="linkbtn" href="https://dash.harvard.edu/server/api/core/bitstreams/7312037c-70d5-6bd4-e053-0100007fdf3b/content" target="_blank" rel="noopener">dash.harvard.edu</a></li>
     <li><b>Next file:</b> Kant, part two: treating people as ends, never merely as tools.</li>
@@ -883,16 +908,20 @@ var $ = function(id){ return document.getElementById(id); };
 function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function oneLine(t){ return String(t==null?"":t).replace(/[\s\u0085\u2028\u2029]+/g," ").trim(); }
+var GUARD_MS = (typeof window.__GUARD_MS==="number") ? window.__GUARD_MS : 400, tapUntil=0;
+function armGuard(){ tapUntil=Date.now()+GUARD_MS; }
+function guarded(){ return Date.now()<tapUntil; }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Case filed.","Motive found.","Kant nods.","Spot on."], no:["Not quite.","Close, look again.","The motive says otherwise."]},
- g2:{ok:["Spotted it.","No escape clause there.","Clean sort.","Sharp eyes."], no:["Not quite.","Close, look again.","Look for a goal."]},
- g3:{ok:["Slot filled.","That's the real rule.","Spot on.","Exactly."], no:["Not that one.","Close, look again.","Not quite."]},
- g4:{ok:["The machine agrees.","Right call.","Clean verdict.","Spot on."], no:["Not quite.","Close, look again.","The machine disagrees."]},
- g5:{ok:["That's Kant.","Spoken like a Königsberg professor.","Kant nods.","Exactly."], no:["Not quite.","Close, look again.","Kant would shake his head."]}
+ g1:{ok:["Case filed.","Motive found.","Kant nods.","Spot on."], hint:["Look again.","Have another look.","Not yet."], no:["Not quite.","The motive says otherwise."]},
+ g2:{ok:["Spotted it.","No escape clause there.","Clean sort.","Sharp eyes."], hint:["Look again.","Have another look.","Not yet."], no:["Not quite.","Not that one."]},
+ g3:{ok:["Slot filled.","That's the real rule.","Spot on.","Exactly."], no:["Not that one.","Not quite."]},
+ g4:{ok:["The machine agrees.","Right call.","Clean verdict.","Spot on."], no:["Not quite.","The machine disagrees."]},
+ g5:{ok:["That's Kant.","Spoken like a Königsberg professor.","Kant nods.","Exactly."], no:["Not quite.","Kant would shake his head."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -904,13 +933,13 @@ function focusNextOr(btn, fb){ if(btn && !btn.hidden) btn.focus(); else focusFb(
 var KEY="ethics-c2-m05-v2", canSave=false, SAVED=null;
 try{ localStorage.setItem(KEY+"-t","1"); localStorage.removeItem(KEY+"-t"); canSave=true; SAVED=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ canSave=false; SAVED=null; }
 if(!SAVED || typeof SAVED!=="object") SAVED=null;
-var touched={}, replayCleared={};
+var touched={}, replayCleared={}, FIRST={};
 var restoring=false;
 function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, wu:WU.a, replies:repliesOpen, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, fin:FIN, polls:POLLS, wu:WU.a, replies:repliesOpen, lines:lines, first:FIRST}));
   }catch(e){}
 }
 function touch(g){ touched[g]=true; saveState(); }
@@ -918,7 +947,7 @@ function touch(g){ touched[g]=true; saveState(); }
 var COVER={v:null, reason:"", locked:false};
 var FIN={view:null, reason:"", moved:"", done:false};
 var WU={a:[]};
-var POLLS={flip:null, jewel:null, mo:null, brk:null, help:null};
+var POLLS={flip:null, jewel:null, mo:null, brk:null, help:null, opt:null, cheat:null, world:null};
 
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
@@ -1025,7 +1054,7 @@ function syncLockin(){
 }
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
-  var r=$("myReason").value.trim();
+  var r=oneLine($("myReason").value);
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no first."; return; }
   if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
@@ -1034,14 +1063,23 @@ $("lockBtn").addEventListener("click",function(){
 });
 
 /* ---------- copy for Rocky (shared machinery) ---------- */
+function savedLines(g){ var a = SAVED && SAVED.lines && SAVED.lines[g]; return Array.isArray(a) ? a.map(oneLine).filter(Boolean) : null; }
 function linesFor(g){
-  var saved = SAVED && SAVED.lines && SAVED.lines[g];
+  var saved = savedLines(g);
   var wasCleared = SAVED && (SAVED.cleared||[]).indexOf(g)>=0;
-  if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
-  if(saved && !touched[g] && wasCleared) return saved.concat();   /* a half-finished lead is not restored on screen, so its saved partial line is dropped */
-  return LIVE[g]();
+  if(saved && wasCleared){
+    var first = (SAVED.first && Array.isArray(SAVED.first[g])) ? SAVED.first[g].map(oneLine).filter(Boolean) : saved;   /* the record from the first finished run */
+    FIRST[g]=first.concat();
+    if(!replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
+    var live = LIVE[g](), out = live.concat();
+    if(first.join("|") !== live.join("|")) first.forEach(function(l){ out.push("(first finished run, kept) "+l); });
+    return out;
+  }
+  var lv = LIVE[g]();
+  if(cleared[g]) FIRST[g]=lv.concat();   /* first time this lead is finished: remember that record */
+  return lv;
 }
-function coverLines(){ return ["Gut call (is there a rule you should never break?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
+function coverLines(){ return ["Gut call (is there a rule you should never break?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". My reason: "+oneLine(COVER.reason) : "not locked in")]; }
 var WUQ=[
  ["cheer up someone you barely know for an afternoon"],
  ["save a classmate a whole day of embarrassment"],
@@ -1057,7 +1095,7 @@ function wuLines(){
 }
 function pollLines(){
   var M={yes:"yes, he's honest",no:"not really, it's just business"}, H={yes:"yes, grimly",no:"no, it would collapse"}, F={results:"what happens because of it",reason:"the reason behind it"}, J={ana:"Nia, who tried",ben:"Ben, who got the result"};
-  return ["Ungraded taps: what makes an action right = "+(POLLS.flip?F[POLLS.flip]:"not answered")+"; more credit = "+(POLLS.jewel?J[POLLS.jewel]:"not answered")+"; is the shopkeeper a good person = "+(POLLS.mo?M[POLLS.mo]:"not answered")+"; what breaks first = "+(POLLS.brk?{promise:"the promise itself",annoyed:"people get annoyed"}[POLLS.brk]:"not answered")+"; could a no-help world exist = "+(POLLS.help?H[POLLS.help]:"not answered")+"; misreading cards opened = "+Object.keys(repliesOpen).length+" of "+replyEls.length];
+  return ["Ungraded taps: what makes an action right = "+(POLLS.flip?F[POLLS.flip]:"not answered")+"; more credit = "+(POLLS.jewel?J[POLLS.jewel]:"not answered")+"; is the shopkeeper a good person = "+(POLLS.mo?M[POLLS.mo]:"not answered")+"; what breaks first = "+(POLLS.brk?{promise:"the promise itself",annoyed:"people get annoyed"}[POLLS.brk]:"not answered")+"; could a no-help world exist = "+(POLLS.help?H[POLLS.help]:"not answered")+"; would I choose a no-help world = "+(POLLS.world?{yes:"yes, I'd manage on my own",no:"no, I might need help someday"}[POLLS.world]:"not answered")+"; friend who doesn't care about being trusted = "+(POLLS.opt?{off:"off the hook, no goal means no rule",on:"still bound by the rule"}[POLLS.opt]:"not answered")+"; copying answers rule = "+(POLLS.cheat?{pass:"could pass both tests",fail:"something breaks"}[POLLS.cheat]:"not answered")+"; misreading cards opened = "+Object.keys(repliesOpen).length+" of "+replyEls.length];
 }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1090,7 +1128,13 @@ var POLLTXT={
  brk:{promise:"Kant agrees. Watch Exhibit G: the lying promise defeats itself.",
       annoyed:"That's a bad result. Kant's point is sharper: see Exhibit G."},
  help:{yes:"Kant agrees: such a world could exist, so it passes Test A. Read on to see why it still fails.",
-       no:"Kant thinks it could exist, grim as it is, so it passes Test A. Read on: it still fails, on a different test."}
+       no:"Kant thinks it could exist, grim as it is, so it passes Test A. Read on: it still fails, on a different test."},
+ opt:{off:"That's the hypothetical view: a rule that only grips you while you want the goal. Kant says moral rules aren't like that (Exhibit E). The next paragraph shows why he needs them to be categorical.",
+      on:"That matches Exhibit E: for Kant a moral command still applies when you don't care about the goal. The next paragraph shows why he needs it to."},
+ cheat:{pass:"Hold that hunch. Exhibit G runs the same test on a similar case, a lying promise, one step at a time. See whether your answer survives.",
+        fail:"Hold that hunch. Exhibit G runs the same test on a similar case, a lying promise, one step at a time. See what exactly breaks."},
+ world:{yes:"Fair: you might manage. Kant's worry is narrower. You can't rule out being the one in need, and there you'd be refused. Test B asks whether you can consistently choose that.",
+        no:"That is Kant's point: you could be the one who needs help, so choosing this world means choosing to be refused. Exhibit I runs the same test on talents."}
 };
 function wirePoll(id, key, fbId){
   $(id).querySelectorAll("button[data-r]").forEach(function(b){
@@ -1106,6 +1150,9 @@ wirePoll("jewelPoll","jewel","jewelFb");
 wirePoll("moPoll","mo","moFb");
 wirePoll("breakPoll","brk","breakFb");
 wirePoll("helpPoll","help","helpFb");
+wirePoll("optPoll","opt","optFb");
+wirePoll("cheatPoll","cheat","cheatFb");
+wirePoll("worldPoll","world","worldFb");
 
 /* ================= WARM-UP: break point (ungraded, locks on each tap) ================= */
 var wuBtn={};
@@ -1115,8 +1162,8 @@ var wuBtn={};
   [["k","Keep my word"],["b","Break my word"]].forEach(function(o){
     var b=el("button",{class:"btn wubtn",type:"button","data-v":o[0]}); b.textContent=o[1]; wuBtn[o[0]]=b; $("wuBtns").appendChild(b);
     b.addEventListener("click",function(){
-      if(WU.a.length>=WUQ.length) return;
-      WU.a.push(o[0]); wuRender(true); saveState();
+      if(WU.a.length>=WUQ.length || guarded()) return;
+      WU.a.push(o[0]); armGuard(); wuRender(true); saveState();
     });
   });
 })();
@@ -1179,7 +1226,7 @@ shuffle(MOT.map(function(_,i){return i;})).forEach(function(i){
       } else {
         if(r.misses.indexOf(v)<0) r.misses.push(v);
         b.disabled=true;
-        if(r.misses.length===1) setFb(fb,"bad",vword("g1","no"), v==="against" ? "Is the action itself wrong? Look at what they actually do." : it.h);
+        if(r.misses.length===1) setFb(fb,"bad",vword("g1","hint"), v==="against" ? "Is the action itself wrong? Think about what they actually do." : it.h);
         else setFb(fb,"bad",vword("g1","no"),it.why);
       }
       touch("g1");
@@ -1205,7 +1252,7 @@ var IFS=shuffle([
  {t:"To win at chess, control the center of the board.", a:"H", why:"A rule of skill: it depends on wanting to win at chess. No if-word, same structure."},
  {t:"Help people in need, at least sometimes.", a:"C", why:"Kant thinks this is a moral command that applies whatever you want. (It's flexible about when, but not about whether.)", hint:"Is there a goal this command depends on? Or does it hold whatever you want?"},
  {t:"Be honest with your customers, if you want repeat business.", a:"H", why:"The shopkeeper's rule! It depends on wanting repeat business. That's exactly why it can't give his honesty moral worth."},
- {t:"Don't lie to people.", a:"C", why:"No escape clause. \"But I don't care about being trusted\" doesn't get you out of it. Categorical.", hint:"Would this still hold if you wanted nothing in particular? Look for a goal it depends on."}
+ {t:"Don't cheat on a test, even if you know you'd never be caught.", a:"C", why:"No escape clause. \"But I won't get caught\" doesn't get you out of it. Categorical.", hint:"Would this still hold if you wanted nothing in particular? Look for a goal it depends on."}
 ]);
 var iI=0, iStreak=0, iBest=0, iFirst=0, iMiss=0, iMissed=[], iAns=false;
 function iRender(){
@@ -1218,7 +1265,7 @@ function iRender(){
 }
 $("ifBtns").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){
-    if(iAns) return; var c=IFS[iI], v=b.getAttribute("data-v");
+    if(iAns || guarded()) return; var c=IFS[iI], v=b.getAttribute("data-v");
     if(v===c.a){
       iAns=true; b.classList.add("right"); $("ifBtns").querySelectorAll("button").forEach(function(x){x.disabled=true;});
       if(!iMiss){ iFirst++; iStreak++; if(iStreak>iBest) iBest=iStreak; }
@@ -1231,12 +1278,12 @@ $("ifBtns").querySelectorAll("button").forEach(function(b){
       iMiss++; iStreak=0; $("ifStreak").textContent="Streak 0"; $("ifStreak").classList.remove("hot");
       b.classList.add("wrongpick"); b.disabled=true;
       if(iMissed.indexOf(c.t)<0) iMissed.push(c.t);
-      setFb($("ifFb"),"bad",vword("g2","no"), c.a==="H" ? "Is there a goal this depends on, even a hidden one? If you didn't want that goal, would the command still apply?" : c.hint||"Look at the if. Is it a situation, or a goal you want? A situation isn't a goal.");
+      setFb($("ifFb"),"bad",vword("g2","hint"), c.a==="H" ? "Is there a goal this depends on, even a hidden one? If you didn't want that goal, would the command still apply?" : c.hint||"Is the if a situation, or a goal you want? A situation isn't a goal.");
     }
     touch("g2");
   });
 });
-$("ifNext").addEventListener("click",function(){ iI++; iRender(); $("ifBtns").querySelector("button").focus(); });
+$("ifNext").addEventListener("click",function(){ armGuard(); iI++; iRender(); $("ifBtns").querySelector("button").focus(); });
 iRender();
 function ifLines(){
   var done = iI + (iAns?1:0);
@@ -1283,9 +1330,10 @@ function mbTray(){
   shuffle(M.slots[mbS]).forEach(function(o){
     var b=el("button",{class:"tile",type:"button","aria-pressed":"false"}); b.textContent=o[0];
     b.addEventListener("click",function(){
+      if(guarded()) return;
       if(o[1]){
         var s=$("mbSlots").children[mbS]; s.textContent= mbS===0 ? "W"+o[0].slice(1) : SLOTN[mbS].replace("...","")+" "+o[0]; s.classList.add("filled");
-        setFb($("mbFb"),"good",vword("g3","ok"),o[2]); mbS++;
+        setFb($("mbFb"),"good",vword("g3","ok"),o[2]); mbS++; armGuard();
         if(mbS<3){ mbTray(); $("mbTray").querySelector(".tile").focus(); }
         else {
           $("mbTray").innerHTML="";
@@ -1305,7 +1353,7 @@ function mbTray(){
     T.appendChild(b);
   });
 }
-$("mbNext").addEventListener("click",function(){ mbI++; mbRender(); $("mbTray").querySelector(".tile").focus(); });
+$("mbNext").addEventListener("click",function(){ armGuard(); mbI++; mbRender(); $("mbTray").querySelector(".tile").focus(); });
 mbRender();
 function mbLines(){
   var built=mbRec.filter(function(r){return r&&r.built;});
@@ -1349,14 +1397,15 @@ function uvRender(){
   var C=$("uvCard"); C.innerHTML='<h3>'+esc(U.who)+'</h3><p class="maxim">'+esc(U.m)+'</p>';
   var go=el("button",{class:"btn",type:"button"}); go.textContent="Universalize"; C.appendChild(go);
   go.addEventListener("click",function(){
-    go.remove();
+    if(guarded()) return;
+    go.remove(); armGuard();
     var w=el("div",{class:"world"}); w.innerHTML='<span class="wl">The universal world</span>'+esc(U.world); C.appendChild(w);
     var lbl=el("p",{class:"step-lbl"}); lbl.textContent="Verdict?"; C.appendChild(lbl);
     var g=el("div",{role:"group","aria-label":"Verdict"});
     shuffle(["A","B","P"]).forEach(function(v){
       var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v}); b.textContent=UVL[v];
       b.addEventListener("click",function(){
-        var R=uRec[uI]; if(R.done) return;
+        var R=uRec[uI]; if(R.done || guarded()) return;
         g.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
         if(v===U.a){ R.done=true; g.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("uvFb"),"good",vword("g4","ok"),U.ok); uvTally();
           if(uI<UV.length-1) $("uvNext").hidden=false; else { $("uvFb").innerHTML+="<br><br><b>Machine switched off.</b> Two maxims failed A (perfect duties), two failed B (imperfect duties), two passed."; clear("g4"); }
@@ -1374,7 +1423,7 @@ function uvTally(){
   var T=$("uvTally"); T.innerHTML="";
   UV.forEach(function(U,i){ var R=uRec[i]; if(!R||!R.done) return; var s=el("span",{class:U.a==="P"?"":"on"}); s.textContent=U.who.split(" ").pop()+": "+(U.a==="A"?"fails A":U.a==="B"?"fails B":"passes"); T.appendChild(s); });
 }
-$("uvNext").addEventListener("click",function(){ uI++; uvRender(); $("uvCard").querySelector(".btn").focus(); });
+$("uvNext").addEventListener("click",function(){ armGuard(); uI++; uvRender(); $("uvCard").querySelector(".btn").focus(); });
 uvRender();
 function uvLines(){
   var ks=Object.keys(uRec).filter(function(k){return uRec[k].done;});
@@ -1389,7 +1438,7 @@ var MINE=[["ok","It's fine"],["wrong","It's wrong"],["unsure","Not sure"]];
 var PK=shuffle([
  {k:"bus", n:"The back of the bus", ask:"is Ana's seat choice okay?", d:"Ana usually grabs a seat near the back of the bus if one's free. Her friend says: \"What if everyone sat at the back? The front would be empty, so it's wrong!\"",
   o:[["a","Her friend is right: it fails Kant's test"],["b","Her friend misreads the test: it's fine"],["c","Wrong only on days the bus is packed"]], a:"b", kantOk:true,
-  ok:"Two mistakes, the same two as the dentist: it's consequence thinking, and the maxim is written badly. Ana's real maxim is more like \"sit wherever I like among the free seats\", which universalizes without any contradiction.",
+  ok:"Two mistakes, the same two as the dentist example in misreading 2: it's consequence thinking, and the maxim is written badly. Ana's real maxim is more like \"sit wherever I like among the free seats\", which universalizes without any contradiction.",
   no:{a:"Is \"the front would be empty\" a contradiction in the maxim, or just an odd result? Kant's test isn't about results.",c:"That's counting consequences. Ask what Ana's real maxim is, and whether it defeats itself."}},
  {k:"lie", n:"The lie that worked out", ask:"was Kai's lie okay?", d:"Kai's lying promise works out fine: his sister never needed the money and never finds out. Nobody is hurt.",
   o:[["a","Still wrong: the maxim fails Test A anyway"],["b","Fine, since nothing bad happened in the end"],["c","Wrong only if his sister ever finds out"]], a:"a", kantOk:false,
@@ -1421,7 +1470,8 @@ function pkRender(){
   mine.forEach(function(o){
     var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false"}); b.textContent=o[1];
     b.addEventListener("click",function(){
-      var R=pRec[pI]; if(R.done) return; var first=R.mine===null; R.mine=o[0];
+      var R=pRec[pI]; if(R.done || guarded()) return; var first=R.mine===null; R.mine=o[0];
+      if(first) armGuard();
       g1.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost";});
       if(first) showKant();
       pkTally(); touch("g5");
@@ -1435,7 +1485,7 @@ function pkRender(){
     shuffle(P.o).forEach(function(o){
       var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
       b.addEventListener("click",function(){
-        var R=pRec[pI]; if(R.done) return;
+        var R=pRec[pI]; if(R.done || guarded()) return;
         g2.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
         if(P.hard){ R.done=true; R.guess=o[0]; g2.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); g1.querySelectorAll("button").forEach(function(x){x.disabled=true;}); setFb($("pkFb"),"","The answer.", P.reveal); pkDone(); }
         else if(o[0]===P.a){ R.done=true; g2.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); g1.querySelectorAll("button").forEach(function(x){x.disabled=true;}); setFb($("pkFb"),"good",vword("g5","ok"),P.ok); pkTally(); pkDone(); }
@@ -1460,11 +1510,11 @@ function pkTally(){
   });
   if(pCount){ var s=el("span",{class:"on"}); s.textContent="Agreed with Kant "+pAgree+"/"+pCount; T.appendChild(s); }
 }
-$("pkNext").addEventListener("click",function(){ pI++; pkRender(); $("pkCard").querySelector("button").focus(); });
+$("pkNext").addEventListener("click",function(){ armGuard(); pI++; pkRender(); $("pkCard").querySelector("button").focus(); });
 pkRender();
 function pkLines(){
   var ks=Object.keys(pRec).filter(function(k){return pRec[k].done && !PK[k].hard;});
-  if(!ks.length) return ["Lead 5 What would Kant say: not started"];
+  if(!ks.length) return ["Lead 5 Kant predictions: not started"];
   var MN={ok:"fine",wrong:"wrong",unsure:"not sure",lie:"I'd lie",truth:"I'd tell the truth",refuse:"I'd refuse to answer"};
   var first=ks.filter(function(k){return !pRec[k].misses;}).length;
   var mine=PK.map(function(P,i){ var R=pRec[i]; return R&&R.mine&&R.done&&!P.hard ? P.n+" = "+MN[R.mine] : null; }).filter(Boolean);
@@ -1501,7 +1551,7 @@ function finRender(){
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  var reason=oneLine($("finReason").value), moved=oneLine($("finMoved").value);
   if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
@@ -1513,7 +1563,7 @@ $("finBtn").addEventListener("click",function(){
 });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
-  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+oneLine(FIN.reason), "What moved me most: "+oneLine(FIN.moved)];
 }
 
 var LIVE={g1:motLines,g2:ifLines,g3:mbLines,g4:uvLines,g5:pkLines};
@@ -1527,14 +1577,14 @@ window.__c2m05={cleared:cleared, unlockStep:function(){return unlockedStep;}, re
 if(SAVED){
   restoring=true;
   try{
-    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
-    if(SAVED.polls){ ["flip","jewel","mo","brk","help"].forEach(function(k){ if(SAVED.polls[k]) POLLS[k]=SAVED.polls[k]; }); }
+    if(SAVED.cover && SAVED.cover.locked && VL[SAVED.cover.v]){ COVER.v=SAVED.cover.v; COVER.reason=oneLine(SAVED.cover.reason); COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.polls){ ["flip","jewel","mo","brk","help","opt","cheat","world"].forEach(function(k){ if(SAVED.polls[k]) POLLS[k]=SAVED.polls[k]; }); }
     if(SAVED.wu && Array.isArray(SAVED.wu)){ WU.a=SAVED.wu.filter(function(x){return x==="k"||x==="b";}).slice(0,WUQ.length); wuRender(false); }
     if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
-      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true; pendingView=FIN.view;
+      FIN.view=SAVED.fin.view; FIN.reason=oneLine(SAVED.fin.reason); FIN.moved=oneLine(SAVED.fin.moved); FIN.done=true; pendingView=FIN.view;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
       $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();

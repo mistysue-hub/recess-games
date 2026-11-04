@@ -403,10 +403,10 @@ select.reasonbox{min-height:44px}
 /* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
 html,body{overflow-x:clip}
 /* ---- reusable fixes from M03 ---- */
-.toast{pointer-events:none; position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+.toast{pointer-events:none; position:fixed; left:50%; top:64px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
   background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
   box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+@keyframes toastIn{0%{transform:translate(-50%,-30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -443,6 +443,11 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 .deepnote{margin-top:14px}
 @media (max-width:380px){ .wucard .wu{font-size:.95rem} }
 @media (prefers-reduced-motion: reduce){ .wucard .wu{transition:none} }
+
+/* round 2: verdict card keeps text on the 28px ruled grid (margins 0, line-height 28px) */
+.rcard p, .rcard .small{margin:0; line-height:28px; padding:0}
+.rcard b, .rcard i{line-height:1}
+.rcard h3{margin:0; padding:0; line-height:28px}
 
 </style>
 </head>
@@ -558,6 +563,15 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="lbl">Exhibit B: the footnote</span>
     <p>"The question is not, Can they <i>reason</i>? nor, Can they <i>talk</i>? but, Can they <i>suffer</i>?"</p>
   </div>
+  <div class="poll" id="bentPoll">
+    <p><b>By Bentham's test, whose pain would count for less: the grown horse's, or the day-old baby's?</b> (Not graded; your first tap is final.)</p>
+    <div class="row" role="group" aria-label="Horse or baby?">
+      <button class="btn ghost" type="button" data-r="horse">The horse's</button>
+      <button class="btn ghost" type="button" data-r="baby">The baby's</button>
+      <button class="btn ghost" type="button" data-r="neither">Neither</button>
+    </div>
+    <div class="fb" id="bentFb" aria-live="polite"></div>
+  </div>
   <p>The ability Bentham is pointing at has a name: <b>sentience</b>. A being is sentient if it can have experiences that feel like something to it, good or bad: pain, fear, comfort, pleasure. Sentience is not the same as intelligence, language or being able to reason. A being could be sentient and not very clever at all.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit C: the two candidates</span>
@@ -585,15 +599,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="markers">
     <div style="--mc:var(--hl-b)"><b>Damage detectors.</b> Nerve cells that respond to injury. Needed, but not enough: your hand jerks off a hot pan <i>before</i> you feel it. A reflex isn't a feeling.</div>
     <div style="--mc:var(--hl-p)"><b>More than a reflex.</b> Guarding a wound, learning to avoid a place where it got hurt.</div>
-    <div style="--mc:var(--hl-o)"><b>Trade-offs.</b> Paying a cost to avoid harm. Hermit crabs given a mild shock in their shell sometimes leave it, but they're less likely to leave a really good one, and it takes a stronger shock to make them. That looks like weighing, not just flinching.</div>
+    <div style="--mc:var(--hl-o)"><b>Trade-offs.</b> Paying a cost to avoid harm. That's the hermit crab's pattern: it needs a stronger shock to leave a really good shell. That looks like weighing, not just flinching.</div>
     <div style="--mc:var(--hl-g)"><b>Drugs that change it.</b> Painkillers or anti-anxiety drugs changing the behavior, the way they would in us.</div>
   </div>
-  <p>More markers make a stronger case. None of them is proof. In recent years, groups of scientists have summed up where the evidence points:</p>
+  <p>More markers make a stronger case. None of them is proof. Groups of scientists have summed up where the evidence points. The latest summary:</p>
+  <ul class="decl">
+    <li><span class="yr">2024</span><b>The New York Declaration on Animal Consciousness.</b> Announced in April 2024 with about 40 researchers signing; many more have signed since. It says there's strong scientific support for consciousness in mammals and birds. It also says there's at least a <b>realistic possibility</b> of it in all other vertebrates (animals with backbones, such as fish, reptiles and amphibians) and in many invertebrates (animals without backbones), including at least octopuses and squid, crabs and lobsters, and insects. Studies behind it include bumblebees that roll little balls with no obvious reward, as if playing, and crayfish whose anxiety-like behavior changes with anti-anxiety drugs.</li>
+  </ul>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Optional: two earlier statements (2012 and 2021)</summary><div class="inner">
   <ul class="decl">
     <li><span class="yr">2012</span><b>The Cambridge Declaration on Consciousness.</b> At a conference in Cambridge, England, scientists declared that humans aren't unique in having the brain machinery for consciousness. They named all mammals and birds, and many other creatures, including octopuses.</li>
-    <li><span class="yr">2021</span><b>A review for the UK government</b>, led by philosopher Jonathan Birch at the London School of Economics, looked at more than 300 studies. It concluded that octopuses and their relatives, and crabs, lobsters and their relatives, should be regarded as sentient. The UK then added them to a new law, the Animal Welfare (Sentience) Act 2022. The law formally recognizes them as sentient. It also sets up a committee to check how government policies affect sentient animals. (It didn't extend every older animal-welfare protection to them.)</li>
-    <li><span class="yr">2024</span><b>The New York Declaration on Animal Consciousness.</b> Announced in April 2024 with 39 researchers signing. It says there's strong scientific support for consciousness in mammals and birds, and at least a <b>realistic possibility</b> of it in all other vertebrates (animals with backbones, such as fish, reptiles and amphibians) and many invertebrates (animals without backbones), including at least octopuses and squid, crabs and lobsters, and insects. Its examples include bumblebees that roll little balls with no obvious reward, as if playing, and crayfish whose anxiety-like behavior changes with anti-anxiety drugs.</li>
+    <li><span class="yr">2021</span><b>A review for the UK government</b>, led by philosopher Jonathan Birch at the London School of Economics, looked at more than 300 studies. It concluded that octopuses and their relatives, and crabs, lobsters and their relatives, should be regarded as sentient. The UK then added them to a new law, the Animal Welfare (Sentience) Act 2022. It also sets up a committee to check how government policies affect sentient animals. (It didn't extend every older animal-welfare protection to them.)</li>
   </ul>
+  </div></details>
   <p class="note">"Realistic possibility" doesn't mean "proven". A declaration isn't a vote that makes something true; it's experts summarizing the evidence.</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit C2: spot the "ought"</span>
@@ -611,7 +629,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g2">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g2">Play it anyway</button></div>
-  <p class="how">Eight specimens, in a random order. Put each on the rung the <b>2024 New York Declaration</b> gives its group. (The 2012 and 2021 statements show up in the feedback. For the oak and the robot, use what you know about nervous systems.) This is a ladder of <i>evidence</i>, not of how much anyone matters.</p>
+  <p class="how">Eight specimens, in a random order. Put each on the rung the <b>2024 New York Declaration</b> gives its group. (The 2012 and 2021 statements, in the optional box on the evidence screen, show up in the feedback. For the oak and the robot, use what you know about nervous systems.) This is a ladder of <i>evidence</i>, not of how much anyone matters.</p>
   <div class="rungs" id="rungs">
     <div class="rung" style="--rc:var(--hl-g)"><span class="rl">Top rung: strong scientific support (2024: mammals, birds)</span><div class="chips" id="rung-top"></div></div>
     <div class="rung" style="--rc:var(--hl-y)"><span class="rl">Middle rung: a realistic possibility (2024: other vertebrates, many invertebrates)</span><div class="chips" id="rung-mid"></div></div>
@@ -632,7 +650,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b4"><span style="--mark:var(--hl-p)">Speciesism: a word with a punch</span></h2>
   <p class="wow">The word "speciesism" was invented in 1970, on a pamphlet a psychologist printed himself.</p>
   <p>The British psychologist Richard Ryder coined <b>speciesism</b> in 1970. The Australian philosopher Peter Singer, the same Singer behind the drowning-child pond in this challenge's needy-strangers case (Case 2), made it famous in his 1975 book <i>Animal Liberation</i>, crediting Ryder for the word.</p>
-  <p><b>Speciesism</b> means favoring the interests of your own species <i>just because</i> they're your species. Singer's provocative comparison: racism and sexism pick out a feature that doesn't matter morally (skin color, sex) and use it to decide whose interests count. Speciesism, he argues, does the same with species.</p>
+  <p><b>Speciesism</b> means favoring the interests of your own species <i>just because</i> they're your species. Singer's provocative comparison: racism and sexism pick out a feature that doesn't matter morally (skin color, sex) and use it to decide whose interests count. Speciesism, he argues, does the same with species. Remember the warm-up, where the pain was identical but you may still have picked a side? Singer's charge is aimed at doing that when species is the only reason.</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit D: equal consideration of interests</span>
     <p>Singer's core principle: <b>equal interests deserve equal weight, no matter whose interests they are.</b> If a pig and a child would suffer equally, the two sufferings count equally.</p>
@@ -711,7 +729,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g4">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g4">Play it anyway</button></div>
-  <p class="how">Tap a card in the tray, then tap the bin it belongs in. You're sorting by what each <b>test</b> says, not by what you think. For the sentience test, count animals on the top <i>and</i> middle rungs of the evidence ladder as passing (that's the <b>precautionary reading</b>: when it's a realistic possibility an animal can feel, play it safe and count it, as the New York Declaration's third statement urges). Then one question to finish.</p>
+  <p class="how">Tap a card in the tray, then tap the bin it belongs in. You're sorting by what each <b>test</b> says, not by what you think. For the sentience test, count animals on the top <i>and</i> middle rungs of the evidence ladder as passing. That's the <b>precautionary reading</b>: when it's a realistic possibility an animal can feel, play it safe and count it. (The New York Declaration's third statement urges the same.) Then one question to finish.</p>
   <div class="stray" id="sTray" role="group" aria-label="Cards to sort"></div>
   <div class="bins3" id="sBins"></div>
   <div class="fb" id="sortFb" aria-live="polite"></div>
@@ -754,7 +772,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="lbl">Exhibit G: the argument</span>
     <span class="argline">1. Every human being has full moral status.</span>
     <span class="argline">2. Some human beings have less of ability T than some animals do.</span>
-    <span class="argline">3. So ability T can't be what grounds moral status.</span>
+    <span class="argline">3. So ability T can't be what moral status rests on.</span>
     <span class="argline concl">So whatever does ground it (feeling? being a subject-of-a-life?) many animals may share.</span>
   </div>
   <p>It's traditionally called the "argument from marginal cases". Some philosophers now prefer the name <b>argument from species overlap</b>, because "marginal" can sound as if those humans are on the edge of mattering. That's the opposite of what the argument assumes: premise 1 says they matter <i>fully</i>. Bentham's newborn-versus-dog comparison was an early version.</p>
@@ -762,7 +780,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p>Three common replies. Tap each one open (worth a look before Lead 5, but Lead 5 does not require it).</p>
   <details class="reply" style="--rc:var(--hl-o)">
     <summary><b>Reply 1: kind, not ability</b></summary>
-    <div class="inner"><p>What counts is the kind of being you are: what's normal for your species.</p><p class="other">The other side says: why should how much I matter depend on other individuals' abilities, not my own?</p><p><b>Rejoinder:</b> defenders say moral status belongs to kinds of beings, not to test scores, and that's exactly why no human ever falls below it.</p></div>
+    <div class="inner"><p>What counts is the kind of being you are: what's normal for your species.</p><p class="other">The other side says: why should how much I matter depend on other individuals' abilities, not my own?</p><p><b>Rejoinder</b> (the defenders' comeback)<b>:</b> defenders say moral status belongs to kinds of beings, not to test scores, and that's exactly why no human ever falls below it.</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-p)">
     <summary><b>Reply 2: relationships</b></summary>
@@ -800,7 +818,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b8"><span style="--mark:var(--hl-y)">What the arguments settle, and what they don't</span></h2>
   <p><b>Common ground.</b> Every view in this file condemns hurting animals for fun. Even classic Kant does, though for a reason most people find too thin.</p>
   <p><b>Still open.</b> Which beings count directly, how much weight their interests get, and what that means for particular practices. This is a live debate among serious philosophers, not a solved problem.</p>
-  <p><b>The gap.</b> Remember the three kinds of claim. Even if you accept a moral claim like "equal suffering counts equally", turning it into a personal instruction needs more steps: your health, your family, your culture and faith, what you can afford, what's available, which practices really cause harm, and what difference one choice makes. Thoughtful people who agree on the moral claim still end up living very differently.</p>
+  <p><b>The gap.</b> Remember the three kinds of claim. Even if you accept a moral claim like "equal suffering counts equally", turning it into a personal instruction needs more steps. Think of your health, your family, your culture and faith, what you can afford and what's available. Then ask which practices really cause harm, and what difference one choice makes. Thoughtful people who agree on the moral claim still end up living very differently.</p>
   <p class="note">In this course your reasoning gets feedback. Your lifestyle never does, and nobody is owed an explanation of your dinner.</p>
 </section>
 
@@ -880,6 +898,7 @@ function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k 
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 var streak=0, nudgeNext=false;
 function setFb(node, kind, verdict, body){ if(kind==="good") streak=0; if(nudgeNext && kind==="bad"){ body+=" <i>That's "+streak+" misses in a row. Take a minute to reread the box above, then try again.</i>"; } nudgeNext=false; node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function flat(t){ return String(t==null?"":t).replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s{2,}/g," ").trim(); }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 function focusFb(node){ if(!node) return; if(!node.hasAttribute("tabindex")) node.setAttribute("tabindex","-1"); try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
@@ -889,12 +908,14 @@ var VERD={
  g1:{ok:["Yep.","Spot on.","Clean sort.","Exactly."], no:["Not that one.","Close, but no.","Look again."]},
  g2:{ok:["Right rung.","The evidence agrees.","Yep.","Spot on."], no:["Not that rung.","Close, but no.","Check the 2024 list."]},
  g3:{ok:["Solid.","Yep.","Exactly.","Nicely built."], no:["Not quite.","Close, but no.","Tempting, but..."]},
- g4:{ok:["Both tests check out.","Yep.","Kant would nod.","Spot on."], no:["Not that bin.","Close, but no.","Run the two tests again."]},
+ g4:{ok:["Both tests check out.","Yep.","Spot on."], no:["Not that bin.","Close, but no.","Run the two tests again."]},
  g5:{ok:["Called it.","Good read of the views.","Yep.","Exactly."], no:["Not quite.","Tempting, but...","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ if(kind==="no"){ streak++; nudgeNext = streak%3===0; } else { streak=0; nudgeNext=false; }
   var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
+
+function okw(g,missed){ var w=vword(g,"ok"); return missed?"Got it.":w; }
 
 /* ---------- optional saving (page works without it) ---------- */
 var KEY="goodlife-c3m05-v2", canSave=false, SAVED=null;
@@ -915,7 +936,7 @@ var REC={ claims:{}, lad:{done:0, first:0, misses:[]}, arg:{conclMiss:0, conclDo
 var COVER={v:null, reason:"", locked:false};
 var WARM={picks:[null,null,null,null,null]};
 var FIN={view:null, reason:"", moved:"", done:false};
-var POLLS={crab:null, rights:null};
+var POLLS={crab:null, rights:null, bent:null};
 var pendingView=null;
 
 /* ---------- evidence dock + display-only progress bar ---------- */
@@ -961,7 +982,8 @@ function showCard(g){
 /* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
 var toastTimer=null;
 function toast(msg, color){
-  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); var dk=document.querySelector(".dock"); if(dk){ T.style.top=Math.max(8,Math.round(dk.getBoundingClientRect().bottom+8))+"px"; }
+  T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
 }
@@ -1003,7 +1025,9 @@ function clear(id, quiet, isSkip){
   if(Object.keys(cleared).length===NG) openLab("fin");
   refreshGot(); updateProg(); saveState();
 }
-function blocked(id){ return skipped[id] && !playAnyway[id]; }
+/* double-tap guard: ignore taps for ~400 ms after a card advances */
+var guardUntil=0; function advGuard(){ guardUntil=Date.now()+400; }
+function blocked(id){ return (skipped[id] && !playAnyway[id]) || Date.now()<guardUntil; }
 
 /* ---------- locks: each lead opens only after its reading AND the previous lead ---------- */
 var UNLOCKS={1:"g1",2:"g2",3:"g3",4:"g4",5:"g5"};
@@ -1068,7 +1092,7 @@ $("lockBtn").addEventListener("click",function(){
   var r=$("myReason").value.trim();
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the four first."; return; }
   if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a real reason, in a sentence."; $("myReason").focus(); return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
+  COVER.reason=flat(r); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
 });
@@ -1081,10 +1105,10 @@ function linesFor(g){
   if(saved && !touched[g]) return saved.concat();
   return LIVE[g]();
 }
-function coverLines(){ return ["Gut call (dog, octopus, person, same pain; locked before reading): "+(COVER.locked ? GL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
+function coverLines(){ return ["Gut call (dog, octopus, person, same pain; locked before reading): "+(COVER.locked ? GL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
 function pollLines(){
-  var P={reflex:"reflex",weigh:"weighing",cant:"can't tell yet",never:"never",some:"sometimes",unsure:"not sure"};
-  return ["Ungraded taps: hermit crab and the good shell = "+(POLLS.crab?P[POLLS.crab]:"not answered")+"; can a big benefit override a right = "+(POLLS.rights?P[POLLS.rights]:"not answered")+"; reply cards opened = "+Object.keys(repliesOpen).length+" of "+replyEls.length];
+  var P={reflex:"reflex",weigh:"weighing",cant:"can't tell yet",never:"never",some:"sometimes",unsure:"not sure",horse:"horse's pain counts less",baby:"baby's pain counts less",neither:"neither counts less"};
+  return ["Ungraded taps: hermit crab and the good shell = "+(POLLS.crab?P[POLLS.crab]:"not answered")+"; horse or baby under Bentham's test = "+(POLLS.bent?P[POLLS.bent]:"not answered")+"; can a big benefit override a right = "+(POLLS.rights?P[POLLS.rights]:"not answered")+"; reply cards opened = "+Object.keys(repliesOpen).length+" of "+replyEls.length];
 }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1118,12 +1142,13 @@ function skipSuffix(id){ return skipped[id] ? " (skipped before finishing)" : ""
 
 /* ---------- warm-up: same pain, whose first? (ungraded, locks per pair) ---------- */
 var WU=[["A toddler","A puppy"],["A puppy","A pigeon"],["A chimp","A crab"],["A koala","A spider"],["A person you will never meet","A dog you love"]];
+var wuReadyAt=0;
 var WU_PICK={a:"first",b:"second",same:"tie"};
 function wuCount(){ return WARM.picks.filter(function(x){return x;}).length; }
 function wuText(i){ var p=WARM.picks[i]; return WU[i][0].replace(/^A /,"").toLowerCase()+" vs "+WU[i][1].replace(/^A /,"").toLowerCase()+" = "+(p==="a"?WU[i][0].replace(/^A /,"").toLowerCase():p==="b"?WU[i][1].replace(/^A /,"").toLowerCase():"tie"); }
 function wuReveal(){
   var ties=WARM.picks.filter(function(x){return x==="same";}).length;
-  var msg = ties===5 ? "You called every pair a tie: pain is pain, to you. The file will test that." : "The pain was identical in every pair"+(ties?", yet you picked a side in "+(5-ties)+" of 5":", yet you picked a side every time")+". So something other than the pain tipped you: size, cuteness, brains or how close they feel. Is that a good reason? That is the case. Lead 1 is below.";
+  var msg = ties===5 ? "You called every pair a tie: pain is pain, to you. The file will test that." : "The pain was identical in every pair"+(ties?", yet you picked a side in "+(5-ties)+" of 5":", yet you picked a side every time")+". So something other than the pain tipped you: size, cuteness, brains or how close they feel. Is that a good reason? Hold that thought. We test it in Lead 3.";
   setFb($("wuFb"),"good","Done.",msg);
 }
 function wuRender(focus){
@@ -1135,12 +1160,13 @@ function wuRender(focus){
   var i=WARM.picks.indexOf(null);
   C.className="wucard"; C.innerHTML=""; $("wuFb").className="fb"; $("wuFb").innerHTML="";
   $("wuNav").textContent="Pair "+(i+1)+" of 5. Same pain in both.";
+  if(focus) wuReadyAt=Date.now()+400;
   var order=shuffle(["a","b"]);
   order.concat(["same"]).forEach(function(k){
     var b=el("button",{class:"wu"+(k==="same"?" same":""),type:"button","data-s":k});
     b.textContent = k==="same" ? "Same: no difference" : WU[i][k==="a"?0:1];
     b.addEventListener("click",function(){
-      if(WARM.picks[i]) return;
+      if(WARM.picks[i] || Date.now()<wuReadyAt) return;
       WARM.picks[i]=k; C.querySelectorAll(".wu").forEach(function(x){ x.disabled=true; }); b.classList.add("pick-on"); b.setAttribute("aria-pressed","true");
       saveState();
       setTimeout(function(){ wuRender(true); }, wuCount()>=5 ? 450 : 500);
@@ -1169,9 +1195,12 @@ function wirePoll(id, key, onPick){
   });
 }
 var CRAB_FB={weigh:["That fits.","Many researchers read it that way: a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."],reflex:["Fair guess.","Some scientists would agree it could be a reflex. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."],cant:["Fair.","Scientists argue about this too. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."]};
+function wirePollReply(v){ var f=BENT_FB[v]||BENT_FB.neither; setFb($("bentFb"),"",f[0],f[1]); }
 function crabReply(v){ var f=CRAB_FB[v]||CRAB_FB.cant; setFb($("crabFb"),"",f[0],f[1]); }
+var BENT_FB={horse:["Not quite.","Bentham's point runs the other way. The horse out-reasons the baby, yet nobody thinks a baby's pain counts for less. So reasoning can't be the test. The test is whether each can suffer."],baby:["Not quite.","Bentham's point runs the other way. The horse out-reasons the baby, yet nobody thinks a baby's pain counts for less. So reasoning can't be the test. The test is whether each can suffer."],neither:["That's his point.","The horse out-reasons the baby, yet nobody thinks a baby's pain counts for less. So reasoning can't be the test. The test is whether each can suffer."]};
 var RIGHTS_FB={never:"That's Regan's side: rights aren't for trading.",some:"That's closer to Singer: everything goes on the scale.",unsure:"Most people feel both pulls. Lead 5 tests where each view lands."};
 wirePoll("crabPoll","crab",crabReply);
+wirePoll("bentPoll","bent",function(v){ var f=BENT_FB[v]||BENT_FB.neither; setFb($("bentFb"),"",f[0],f[1]); });
 wirePoll("rightsPoll","rights",function(v){ setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); });
 
 /* ================= LEAD 1: CLAIM SORTER ================= */
@@ -1238,9 +1267,9 @@ function claimLines(){
 var RUNGS=[["top","Top rung: strong scientific support (2024: mammals, birds)"],["mid","Middle rung: a realistic possibility (2024: other vertebrates, many invertebrates)"],["bot","Bottom rung: no real evidence of feelings"]];
 var SPECS=[
  {n:"Dog", d:"A mammal.", a:"top", why:"Mammals get \"strong support\" in 2024, and the 2012 Cambridge Declaration named all mammals."},
- {n:"Bumblebee", d:"An insect.", a:"mid", why:"Insects are on the 2024 list of realistic possibilities. One of its examples: bumblebees rolling little balls with no obvious reward, as if playing."},
+ {n:"Bumblebee", d:"An insect.", a:"mid", why:"Insects are on the 2024 list of realistic possibilities. One of the studies behind it: bumblebees rolling little balls with no obvious reward, as if playing."},
  {n:"Oak tree", d:"Reacts to damage and even releases chemical signals.", a:"bot", why:"Responding isn't the same as feeling. Trees have no nervous system, and none of the scientific statements claims they have experiences."},
- {n:"Octopus", d:"A cephalopod, cousin of squid and cuttlefish.", a:"mid", why:"In 2024, cephalopods are a realistic possibility, so the middle rung. But octopuses sit near the top of it: the 2012 Cambridge Declaration named them, the 2021 UK review concluded they should be regarded as sentient, and UK law has formally recognized them as sentient since 2022."},
+ {n:"Octopus", d:"A cephalopod, cousin of squid and cuttlefish.", a:"mid", why:"In 2024, cephalopods are a realistic possibility, so the middle rung. But octopuses sit near the top of it: the 2012 Cambridge Declaration named them, the 2021 UK review concluded they should be regarded as sentient, and they are covered by the UK's Animal Welfare (Sentience) Act 2022."},
  {n:"Crow", d:"A bird.", a:"top", why:"Birds get \"strong support\" in 2024, and the 2012 Cambridge Declaration named all birds."},
  {n:"Robot vacuum", d:"Its sensors make it \"avoid\" stairs and bump away from walls.", a:"bot", why:"Avoidance alone isn't evidence of feeling. That's exactly why scientists look for more than reflex-style reactions: simple wiring can produce it."},
  {n:"Crab", d:"A decapod crustacean, like lobsters and crayfish.", a:"mid", why:"In 2024, decapods are a realistic possibility. The 2021 UK review went further: it concluded decapods should be regarded as sentient. Remember the hermit crabs weighing a shock against a good shell, and the crayfish whose anxiety-like behavior responds to drugs."},
@@ -1273,7 +1302,7 @@ function lRender(){
     B.appendChild(b);
   });
 }
-$("ladNext").addEventListener("click",function(){ lPos++; lRender(); $("rungBtns").querySelector(".pick").focus(); });
+$("ladNext").addEventListener("click",function(){ advGuard(); lPos++; lRender(); $("rungBtns").querySelector(".pick").focus(); });
 lRender();
 function ladLines(){
   var s=skipLine("g2","Lead 2 Evidence ladder"); if(s) return [s];
@@ -1308,7 +1337,7 @@ shuffle(CONCL).forEach(function(c){
     if(c[0]==="a"){
       REC.arg.conclDone=true; $("conclOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
       $("slotC").textContent=c[1]; $("slotC").classList.add("filled");
-      setFb($("conclFb"),"good",vword("g3","ok"),"That's the claim the argument really makes. Now build the road to it.");
+      setFb($("conclFb"),"good",okw("g3",REC.arg.conclMiss),"That's the claim the argument really makes. Now build the road to it.");
       $("premStep").hidden=false; $("premTray").querySelector(".tile").focus();
     } else { REC.arg.conclMiss++; setFb($("conclFb"),"bad",vword("g3","no"),CONCL_NO[c[0]]); }
     touch("g3");
@@ -1341,7 +1370,7 @@ $("premCheck").addEventListener("click",function(){
   if(!bad.length){
     REC.arg.premDone=true; $("premTray").querySelectorAll(".tile").forEach(function(x){x.disabled=true;});
     $("premCheck").disabled=true;
-    setFb($("premFb"),"good",vword("g3","ok"),"Suffering matters (moral), animals can suffer (science), equal interests get equal weight (moral). Together they reach the conclusion, and the argument collapses without any one of them.");
+    setFb($("premFb"),"good",okw("g3",REC.arg.premTries>1),"Suffering matters (moral), animals can suffer (science), equal interests get equal weight (moral). Together they reach the conclusion, and the argument collapses without any one of them.");
     $("sciStep").hidden=false; $("sciOpts").querySelector(".choice").focus();
   } else {
     setFb($("premFb"),"bad",vword("g3","no"),bad.map(function(p){return "<b>\""+esc(p.t)+"\"</b> "+p.why;}).join("<br>")+"<br>Untap the red one(s) and try again.");
@@ -1355,7 +1384,7 @@ shuffle(SCI).forEach(function(o){
     if(REC.arg.sciDone || blocked("g3")) return;
     $("sciOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
     if(o[0]==="p2"){ REC.arg.sciDone=true; $("sciOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
-      setFb($("sciFb"),"good",vword("g3","ok"),"Premise 2 is settled by evidence. The other two are moral claims, settled by argument. So a critic can attack the science or the morals, and those are very different fights.");
+      setFb($("sciFb"),"good",okw("g3",REC.arg.sciMiss),"Premise 2 is settled by evidence. The other two are moral claims, settled by argument. So a critic can attack the science or the morals, and those are very different fights.");
       $("pushStep").hidden=false; $("pushOpts").querySelector(".choice").focus(); }
     else { REC.arg.sciMiss++; setFb($("sciFb"),"bad",vword("g3","no"),"Could an experiment settle it? If not, it's a moral claim."); }
     touch("g3");
@@ -1428,7 +1457,7 @@ BINS3.forEach(function(bn){
     var it=SORT[sSel], tile=$("sTray").querySelector('[data-i="'+sSel+'"]');
     if(bn[0]===it.a){
       var chip=el("span",{class:"chip"}); chip.textContent=it.n; c.appendChild(chip);
-      tile.remove(); sDone++; REC.sort.placed++; if(!sMiss[sSel]) REC.sort.first++;
+      tile.remove(); advGuard(); sDone++; REC.sort.placed++; if(!sMiss[sSel]) REC.sort.first++;
       setFb($("sortFb"),"good", sMiss[sSel]?"Got it.":(it.tricky?"Nicely done.":vword("g4","ok")), it.why);
       sSel=null; z.setAttribute("aria-label",bn[1]+": "+c.textContent);
       if(sDone===SORT.length){ $("sTray").hidden=true; sortQuestion(); } else { var nx=$("sTray").querySelector(".tile"); if(nx) nx.focus(); }
@@ -1452,7 +1481,7 @@ function sortQuestion(){
     b.addEventListener("click",function(){
       if(REC.sort.qDone || blocked("g4")) return;
       $("sqOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
-      if(o[0]===SQ.a){ REC.sort.qDone=true; $("sqOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("sqFb"),"good",vword("g4","ok"),SQ.ok); focusFb($("sqFb")); clear("g4"); }
+      if(o[0]===SQ.a){ REC.sort.qDone=true; $("sqOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("sqFb"),"good",okw("g4",REC.sort.qMiss),SQ.ok); focusFb($("sqFb")); clear("g4"); }
       else { REC.sort.qMiss++; setFb($("sqFb"),"bad",vword("g4","no"),SQ.no[o[0]]); }
       touch("g4");
     });
@@ -1504,7 +1533,7 @@ function pRender(){
     b.addEventListener("click",function(){
       var R=REC.poll[pI]; if(R.pred || blocked("g5")) return;
       g1.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
-      if(o[0]===M.a){ R.pred=true; g1.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("pollFb"),"good",vword("g5","ok"),M.ok); showMine(); }
+      if(o[0]===M.a){ R.pred=true; g1.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("pollFb"),"good",okw("g5",R.misses),M.ok); showMine(); }
       else { R.misses++; setFb($("pollFb"),"bad",vword("g5","no"),M.no[o[0]]); }
       touch("g5");
     });
@@ -1536,7 +1565,7 @@ function pTally(){
   var T=$("pollTally"); T.innerHTML="";
   POLL.forEach(function(M,i){ var R=REC.poll[i]; if(!R||!R.mine) return; var s=el("span",{class:"on"}); s.textContent=M.n.replace("The ","")+": "+R.mine; T.appendChild(s); });
 }
-$("pollNext").addEventListener("click",function(){ pI++; pRender(); $("pollCard").querySelector(".choice").focus(); });
+$("pollNext").addEventListener("click",function(){ advGuard(); pI++; pRender(); $("pollCard").querySelector(".choice").focus(); });
 pRender();
 function pollLeadLines(){
   var s=skipLine("g5","Lead 5 Predict the verdict"); if(s) return [s];
@@ -1575,7 +1604,7 @@ function finRender(){
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  var reason=flat($("finReason").value), moved=flat($("finMoved").value);
   if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
@@ -1587,7 +1616,7 @@ $("finBtn").addEventListener("click",function(){
 });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
-  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+flat(FIN.reason), "What moved me most: "+flat(FIN.moved)];
 }
 function evidenceLine(){
   var n=nCleared(), s=nSkipped();
@@ -1604,16 +1633,16 @@ window.__c3m05={cleared:cleared, skipped:skipped, unlockStep:function(){return u
 if(SAVED){
   restoring=true;
   try{
-    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=flat(SAVED.cover.reason); COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(SAVED.warm && SAVED.warm.length===5){ WARM.picks=SAVED.warm.map(function(x){ return (x==="a"||x==="b"||x==="same")?x:null; }); wuRender(false); }
-    if(SAVED.polls){ ["crab","rights"].forEach(function(k){ var v=SAVED.polls[k]; if(!v) return; POLLS[k]=v; var P=$(k==="crab"?"crabPoll":"rightsPoll"); P.querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className=on?"btn":"btn ghost"; x.disabled=true; }); if(k==="crab") crabReply(v); else setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); }); }
+    if(SAVED.polls){ ["crab","rights","bent"].forEach(function(k){ var v=SAVED.polls[k]; if(!v) return; POLLS[k]=v; var P=$({crab:"crabPoll",rights:"rightsPoll",bent:"bentPoll"}[k]); P.querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===v; x.setAttribute("aria-pressed",String(on)); x.className=on?"btn":"btn ghost"; x.disabled=true; }); if(k==="crab") crabReply(v); else if(k==="bent") wirePollReply(v); else setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); }); }
     if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     var sk=SAVED.skipped||[];
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ var isS=sk.indexOf(id)>=0; clear(id,true,isS);
       if(!isS){ var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like. A replay only changes your record if you finish it."; b.insertBefore(n,b.firstChild); } } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
-      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true; pendingView=FIN.view;
+      FIN.view=SAVED.fin.view; FIN.reason=flat(SAVED.fin.reason); FIN.moved=flat(SAVED.fin.moved); FIN.done=true; pendingView=FIN.view;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
       $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();

@@ -219,7 +219,7 @@ html,body{overflow-x:clip}
 .tile[aria-pressed="true"]{background:var(--hl-b); color:var(--hl-ink)}
 
 /* grid of possibilities */
-.combo{display:grid; grid-template-columns:auto 1fr 1fr; gap:6px; font-size:.92rem; margin:12px 0}
+.combo{display:grid; grid-template-columns:auto minmax(0,1fr) minmax(0,1fr); gap:6px; font-size:.92rem; margin:12px 0}
 .combo div{background:var(--card); padding:8px 10px; border-radius:6px}
 .combo .h{background:transparent; font-family:var(--type); font-weight:700; padding:4px 6px}
 .combo .x{background:var(--stamp); color:#fff; font-family:var(--type); font-weight:700}
@@ -332,6 +332,11 @@ details.poll > p:first-of-type{margin-top:0}
 .hintline{color:var(--ink-soft); margin:10px 0 0}
 .preview{font-family:var(--type); font-size:.95rem; background:var(--paper-2); border-left:4px solid var(--hl-o); padding:8px 12px; border-radius:0 6px 6px 0}
 details.optbox{margin:16px 0 4px}
+.sheet ol li a, .deeper li a{display:inline-block; padding:12px 2px; min-height:44px; box-sizing:border-box}
+.minipoll{background:var(--card); border:2px dashed var(--hl-o); border-radius:12px; padding:14px 16px; margin:18px 0}
+.minipoll .mp-q{font-family:var(--type); font-weight:700; margin:0 0 4px}
+.minipoll .mp-tag{font-family:var(--type); font-size:.85rem; color:var(--ink-soft); margin:0 0 6px}
+.minipoll .mp-say{margin-top:10px}
 details.optbox summary{min-height:44px}
 .warm{border-top:10px solid var(--hl-b); padding-top:34px}
 .warm .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--hl-b); color:var(--hl-ink); font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
@@ -396,7 +401,7 @@ details.optbox summary{min-height:44px}
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
   <div class="gtab warmtab">Warm-up &middot; 40 seconds</div>
   <h2 id="wuh"><span style="--mark:var(--hl-b)">The Jury</span></h2>
-  <p class="how">Five short arguments. Just go with your gut: does it convince you? There are no right answers here, and your pick locks as soon as you tap.</p>
+  <p class="how">Five short arguments. Just go with your gut: does it convince you? Nothing is scored here, and your pick locks as soon as you tap.</p>
   <div class="jury" id="juryBox">
     <div class="ballot" id="ballot" aria-hidden="true"></div>
     <div class="exhibit jcard" id="jCard" style="--hl-c:var(--hl-y)" aria-live="polite">
@@ -488,7 +493,7 @@ details.optbox summary{min-height:44px}
 <!-- ================= BEAT 5: COUNTEREXAMPLES ================= -->
 <section class="sheet" aria-labelledby="b5">
   <h2 id="b5"><span style="--mark:var(--hl-g)">How to break an argument</span></h2>
-  <p>So how do you <i>prove</i> an argument is invalid? You don't need to show the conclusion is false in real life. You only need to describe <b>one possible situation</b> where every premise is true and the conclusion is false. That situation is called a <b>counterexample</b>. It can be as weird as you like, as long as it's possible.</p>
+  <p>So how do you <i>prove</i> an argument is invalid? You don't need to show the conclusion is false in real life. You only need to describe <b>one possible situation</b> where every premise is true and the conclusion is false. That situation is called a <b>counterexample</b>. It can be as weird as you like, as long as it's possible. (Remember the warm-up's "Every dog I have ever met was friendly"? One grumpy dog is a counterexample.)</p>
   <p>Logicians also have a cheat code. For most arguments you'll meet, validity depends on the argument's <i>shape</i>, not its topic. So keep the shape, swap in new words, and see if you get true premises with a false conclusion:</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit D: same skeleton, new skin</span>
@@ -539,6 +544,14 @@ details.optbox summary{min-height:44px}
   <p>Suppose someone hands you a <b>valid</b> argument, and you hate the conclusion. You are not allowed to just say "nah." Because the argument is valid, the only way its conclusion can be false is if <b>at least one premise is false</b>. So you owe them an answer to one question: <i>which premise?</i></p>
   <p>That's the move that turns a fight into progress. Skip the "you're wrong" versus "no, you're wrong" shouting match. Say this instead: "I accept premise 1 and premise 2, but I think premise 3 fails, and here's a case that shows it." Now you're disagreeing about something specific, and one of you might learn something.</p>
   <p class="note">There's a saying among philosophers: one person's proof is another person's refutation. If I accept the premises, I'm stuck with the conclusion. If you reject the conclusion, the same valid argument shows you that a premise is false. Logic tells you something has to give. It doesn't tell you what.</p>
+  <div class="minipoll" data-mp="reject">
+    <p class="mp-tag">Quick tap, not scored</p>
+    <p class="mp-q">Try it. This argument is valid: "1. Anyone who breaks a promise is a bad person. 2. Lee broke a promise once. So Lee is a bad person." You refuse to accept the conclusion. Which premise do you reject?</p>
+    <button class="choice" type="button" aria-pressed="false" data-say="Most people go here. One broken promise doesn't seem to make someone a bad person. Notice that you just did the move above: you accepted the logic and aimed at a premise.">Premise 1: one broken promise doesn't make you bad</button>
+    <button class="choice" type="button" aria-pressed="false" data-say="Possible, if Lee didn't really promise anything or had a good reason. It is a fair target, but the argument as written says Lee did it, so you would be disputing the facts, not the rule.">Premise 2: Lee didn't really break a promise</button>
+    <button class="choice" type="button" aria-pressed="false" data-say="Fair enough, but the rule above still holds: you can't just say &quot;nah&quot;. Because the argument is valid, one of the two premises has to go if the conclusion goes.">Either one, I would need to think</button>
+    <div class="fb mp-say" aria-live="polite"></div>
+  </div>
 </section>
 
 <!-- ================= BEAT 7: MISSING PIECES ================= -->
@@ -548,6 +561,14 @@ details.optbox summary{min-height:44px}
   <p>Real arguments skip steps. "Lying hurts people, so lying is wrong" leaves something out. As written, it's invalid: the premise alone doesn't rule out a situation where lying hurts people and still isn't wrong.</p>
   <p>To make it valid, add the <b>missing premise</b> that bridges the gap: "Anything that hurts people is wrong." Now the conclusion follows. And look what happened: the premise you had to add is exactly where a critic would aim. Dentists hurt people. Is a filling wrong? Digging out the hidden premise shows you where the real disagreement lives.</p>
   <p>One cheat to watch for. You can make <i>any</i> argument valid by adding the conclusion itself as a premise. "Lying is wrong. So lying is wrong." Technically valid, since the premise can't be true while the conclusion is false. But it proves nothing, because it assumes exactly what it was supposed to show. Philosophers call this <b>begging the question</b>. (That's what the phrase means in logic. In everyday talk, many people also use it to mean "raises the question.")</p>
+  <div class="minipoll" data-mp="bridge">
+    <p class="mp-tag">Quick tap, not scored</p>
+    <p class="mp-q">Which bridge would you rather defend for "Lying hurts people, so lying is wrong"?</p>
+    <button class="choice" type="button" aria-pressed="false" data-say="Bold and clear, which makes it easy to attack: the dentist example is already waiting. A critic knows exactly where to aim.">"Anything that hurts people is wrong."</button>
+    <button class="choice" type="button" aria-pressed="false" data-say="Harder to knock down, because it has room for the dentist. But it says less, and &quot;a good reason&quot; now needs its own defense.">"Hurting people is wrong unless there's a good reason."</button>
+    <button class="choice" type="button" aria-pressed="false" data-say="That's the cheat from a moment ago. It is valid, but it just repeats the conclusion, so it begs the question.">"Lying is wrong."</button>
+    <div class="fb mp-say" aria-live="polite"></div>
+  </div>
 </section>
 
 <!-- ================= BEAT 8: IS / OUGHT ================= -->
@@ -555,7 +576,7 @@ details.optbox summary{min-height:44px}
   <h2 id="b8"><span style="--mark:var(--hl-p)">The gap that's hard to jump</span></h2>
   <p>Spot the pattern. "Most people tip at restaurants. So you ought to tip." The premise is about how things <i>are</i>. The conclusion is about how things <i>ought</i> to be. Even if the premise is true, the argument is invalid as it stands: everyone could tip and you still might not be obliged to. To close it, you'd need a premise with an <i>ought</i> in it, like "you ought to do what most people do" (and good luck defending that one).</p>
   <p>The Scottish philosopher David Hume pointed at this in <i>A Treatise of Human Nature</i> (1739 to 1740). He complained that writers would describe how things are and then, without warning, start talking about what ought to be. Philosophers now call this the <b>is/ought gap</b>. Many think no pile of facts about what <i>is</i> can validly get you to a real <i>ought</i> unless some premise already has an ought in it.</p>
-  <p class="note">Logicians, starting with Arthur Prior around 1960, have found tricky technical exceptions, but none that settles a real moral question. Whether the gap is real at all is still argued about.</p>
+  <p class="note">Logicians, starting with Arthur Prior around 1960, have found tricky technical exceptions, but critics call them trivial for real moral questions. Whether the gap is real at all is still argued about.</p>
   <p>Practical upshot: in any valid argument for a moral conclusion, hunt for the premise with the "ought" or "wrong" in it. That's usually the one doing the real work, and the one worth arguing about.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -603,7 +624,10 @@ details.optbox summary{min-height:44px}
   <ol>
     <li><a href="https://youtu.be/d4Q1HJIX9Dg" target="_blank" rel="noopener">MIT clip: Valid Arguments</a></li>
   </ol>
-  <p>Rocky will also send you to <a href="https://www.philosophyexperiments.com/validorinvalid" target="_blank" rel="noopener">Valid or Invalid?</a> on Philosophy Experiments. Use the counterexample trick on every one.</p>
+  <p>Rocky will also send you to this practice page. Use the counterexample trick on every one.</p>
+  <ol start="2">
+    <li><a href="https://www.philosophyexperiments.com/validorinvalid" target="_blank" rel="noopener">Valid or Invalid? (Philosophy Experiments)</a></li>
+  </ol>
 </section>
 
 <!-- ================= CASE FILE FOR ROCKY ================= -->
@@ -632,6 +656,7 @@ var $ = function(id){ return document.getElementById(id); };
 function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function oneLine(t){ return String(t==null?"":t).replace(/[\r\n\u2028\u2029\u0085\v\f]+/g," ").replace(/\s+/g," ").trim(); }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 
@@ -754,7 +779,7 @@ function syncLockins(){
 }
 buildLockin($("lockin"));
 $("lockBtn").addEventListener("click",function(){
-  COVER.reason=$("myReason").value.trim();
+  COVER.reason=oneLine($("myReason").value);
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
   if(!COVER.reason){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in. You'll need it at the end.";
@@ -773,7 +798,7 @@ function finalRecord(g){
   return LIVE[g]();
 }
 function linesFor(g){ if(cleared[g] && FINAL[g]) return FINAL[g].concat(); if(!touched[g] && SAVED && SAVED.lines && SAVED.lines[g]) return SAVED.lines[g].concat(); return LIVE[g](); }
-function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(COVER.reason?". My reason: "+COVER.reason:"")]; }
+function coverLines(){ return ["Button call: "+(COVER.v?VL[COVER.v]:"not locked in")+(COVER.reason?". My reason: "+oneLine(COVER.reason):"")]; }
 function report(key){ return "C1-M02 case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
   box.value=txt; box.hidden=false;
@@ -800,7 +825,7 @@ function bLines(){ return ["Lead 3 Missing piece: "+REC.b.done+" of 3 repaired, 
 var LIVE={g4:rfLines,g3:mLines,g6:bLines};
 function finLines(){
   if(!FIN.pick && FIN_WRONG) return ["Verdict, hidden premise my button argument relies on: not done yet (I tried \""+FIN_WRONG.t+"\", which "+(FIN_WRONG.k==="is"?"only says what people do":"just repeats my conclusion")+")"];
-  return ["Verdict, hidden premise my button argument relies on: "+(FIN.pick||"not done yet")];
+  return ["Verdict, hidden premise my button argument relies on: "+(oneLine(FIN.pick)||"not done yet")];
 }
 var BUILDERS={ g3:function(){return linesFor("g3");}, g4:function(){return linesFor("g4");},
   all:function(){ return [].concat(coverLines(), wuLines(), linesFor("g4"), linesFor("g3"), linesFor("g6"), finLines(), ["Evidence: "+Object.keys(cleared).length+" of 3"]); } };
@@ -816,7 +841,7 @@ var JURY=[
  {k:"aliens", p:["Nobody has ever proved that aliens don't exist."], c:"So, aliens exist."}
 ];
 var JSAY=["Noted.","The jury writes that down.","Hm. Interesting.","Locked.","Filed."];
-var wuBusy=false;
+var wuBusy=false, wuReadyAt=0, rfReadyAt=0;   /* ~400 ms after a card advances, extra taps are ignored */
 function wuLines(){
   if(!WU.length) return [];
   var y=[], n=[]; WU.forEach(function(w,i){ (w?y:n).push(JURY[i].k); });
@@ -846,19 +871,19 @@ function wuShow(){
 }
 $("jBtns").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){
-    if(wuBusy || WU.length>=JURY.length) return;
+    if(wuBusy || Date.now()<wuReadyAt || WU.length>=JURY.length) return;
     wuBusy=true;
     var w=+b.getAttribute("data-w"); WU.push(w); saveState();      /* locked the moment it is tapped */
     $("jSay").textContent=JSAY[(WU.length-1)%JSAY.length];
     $("jBtns").querySelectorAll("button").forEach(function(x){ x.disabled=true; });
     wuBallot();
-    function next(){ wuShow(); wuBusy=false; if(WU.length<JURY.length){ var f=$("jBtns").querySelector("button"); if(f) f.focus({preventScroll:true}); } else { var r=$("jReveal"); r.setAttribute("tabindex","-1"); r.focus({preventScroll:true}); } }
+    function next(){ wuShow(); wuReadyAt=Date.now()+400; wuBusy=false; if(WU.length<JURY.length){ var f=$("jBtns").querySelector("button"); if(f) f.focus({preventScroll:true}); } else { var r=$("jReveal"); r.setAttribute("tabindex","-1"); r.focus({preventScroll:true}); } }
     if(reduceMotion){ next(); }
     else { $("jCard").className="exhibit jcard "+(w?"out-y":"out-n"); setTimeout(next,280); }
   });
 });
 window.__m01.wu=function(){ return WU.slice(); };
-window.__m01.wuBusy=function(){ return wuBusy; };
+window.__m01.wuBusy=function(){ return wuBusy || Date.now()<wuReadyAt; };
 wuShow();
 
 /* ---------- bring back the button argument (paste) ---------- */
@@ -866,7 +891,7 @@ function parseButton(txt){
   var m=/Button call:\s*(I'd press it|I wouldn't press it|I would press it|I'd not press it)\.?\s*(?:My reason:\s*([^\n\r]*))?/i.exec(txt||"");
   if(!m) return null;
   var v=/wouldn't|not press/i.test(m[1])?"nopress":"press";
-  return {v:v, reason:(m[2]||"").trim()};
+  return {v:v, reason:oneLine(m[2])};
 }
 $("pasteBtn").addEventListener("click",function(){
   var r=parseButton($("pasteBox").value);
@@ -949,7 +974,7 @@ function rfShow(){
 }
 $("rfBtns").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){
-    if(rfAnswered) return; rfAnswered=true; var it=rfRound[rfI], a=b.getAttribute("data-a");
+    if(rfAnswered || Date.now()<rfReadyAt) return; rfAnswered=true; var it=rfRound[rfI], a=b.getAttribute("data-a");
     $("rfBtns").querySelectorAll("button").forEach(function(x){ x.disabled=true; if(x.getAttribute("data-a")===it.a) x.classList.add("right"); });
     if(a===it.a){ rfScore++; rfStreak++; if(it.a==="valid") rfValidHit++; setFb($("rfFb"),"good","Yes: "+ALBL[it.a]+".",it.why); }
     else { b.classList.add("wrongpick"); rfStreak=0; var extra = (a==="sound"&&it.a==="valid")?"You got the connection right; now check each premise against the real world. ":(a==="valid"&&it.a==="sound")?"Right that it's valid. Are the premises actually false, though? ":(it.a==="invalid")?"Before checking truth, ask: could the premises be true and the conclusion false? ":"Try to imagine the premises true and the conclusion false. If you can't, it's valid. ";
@@ -960,11 +985,12 @@ $("rfBtns").querySelectorAll("button").forEach(function(b){
   });
 });
 $("rfNext").addEventListener("click",function(){
+  rfReadyAt=Date.now()+400;
   if(rfI===8){ rfNew(); $("rfBtns").querySelector("button").focus(); return; }
   if(rfI<7){ rfI++; rfShow(); $("rfBtns").querySelector("button").focus(); return; }
   var wasCleared=!!cleared.g4, pass=rfScore>=6 && rfValidHit>=1, noValid=rfScore>=6 && rfValidHit<1;
   REC.rf.rounds++; REC.rf.best=Math.max(REC.rf.best||0, rfScore); if(pass) REC.rf.passed=true;
-  $("rfArg").innerHTML='<b style="font-family:var(--type)">Round over: '+rfScore+' of 8.</b>'+(rfScore===8?'<span class="stamp perfect">PERFECT</span>':'')+' '+(pass?"You're spotting the traps. Deal a new round for different arguments if you want more.":noValid?"Good score, but this lead is about telling \"valid, not sound\" from the rest, and none of those landed this round. Deal a new round and get at least one.":"You need 6 to clear this one. A new round deals you a different hand.")+'<br><span class="score">Best so far: '+REC.rf.best+'/8</span>'+(wasCleared?'<br><span class="score">Your case file keeps the record from when you cleared this lead.</span>':'');
+  $("rfArg").innerHTML='<b style="font-family:var(--type)">Round over: '+rfScore+' of 8.</b>'+(rfScore===8?'<span class="stamp perfect">PERFECT</span>':'')+' '+(pass?"You're spotting the traps. Deal a new round for different arguments if you want more.":noValid?"Good score, but this lead is about telling \"valid, not sound\" from the rest, and none of those landed this round. Deal a new round and get at least one.":"Not cleared yet, and that is normal: this one trips most people at first. You need 6, with at least one \"valid, not sound\" right. Tip: first ask whether true premises would force the conclusion, and only then check if the lines are true. A new round deals a different hand.")+'<br><span class="score">Best so far: '+REC.rf.best+'/8</span>'+(wasCleared?'<br><span class="score">Your case file keeps the record from when you cleared this lead.</span>':'');
   $("rfFb").className="fb"; $("rfFb").innerHTML=""; $("rfCount").textContent="Round complete"; $("rfStreak").textContent="Final score "+rfScore; $("rfStreak").classList.remove("hot");
   $("rfBtns").querySelectorAll("button").forEach(function(b){b.classList.remove("right","wrongpick");});
   $("rfNext").textContent="Deal a new round";
@@ -991,9 +1017,9 @@ var ARGS=[
   vwrong:"The machine found a world that breaks it. Being a reptile doesn't make you a dragon. Can Pip be a reptile without being a dragon?"},
  {p:[["Every dragon is a reptile.",S.all(D,R)],["No reptile flies.",S.no(R,F)]], c:["So, no dragon flies.",S.no(D,F)], valid:true, start:W([]),
   q:"Before the machine checks: a counterexample would need a dragon that flies. Why can't any world have one while both premises are true?",
-  opts:[{t:"A flying dragon would be a flying reptile, and premise 2 says no reptile flies.",ok:true},
-        {t:"The machine's little world is never allowed to contain a dragon at all, so none could ever fly.",fb:"It is: toggle one on. Dragons are fine. The question is whether one can fly."},
-        {t:"Premise 1 already says that dragons are not able to fly, so none of them could ever fly.",fb:"Premise 1 only says dragons are reptiles. Neither premise alone blocks a flying dragon; it's the combination."}],
+  opts:[{t:"Premise 1 makes a flying dragon a flying reptile, and premise 2 says no reptile flies.",ok:true},
+        {t:"Premise 1 and premise 2 together keep dragons out of the machine's world, so none could ever fly.",fb:"Not so: toggle one on and you will see dragons are allowed. The question is whether one can fly."},
+        {t:"Premise 1 says dragons are not able to fly, and premise 2 backs it up for reptiles, so none could.",fb:"Premise 1 only says dragons are reptiles. Neither premise alone blocks a flying dragon; it's the combination."}],
   win:"Every dragon is a reptile, no reptile flies, so no dragon can fly. Valid.",
   ifalse:"Look at the lights: in this world the premises aren't all true, or the conclusion isn't false. A counterexample needs both. Try to build one, and notice what keeps stopping you."},
  {p:[["Some reptile flies.",S.some(R,F)],["Every dragon is a reptile.",S.all(D,R)]], c:["So, some dragon flies.",S.some(D,F)], valid:false, start:W(["drf","d"]),
@@ -1003,8 +1029,8 @@ var ARGS=[
  {p:[["Some dragon doesn't fly.",S.someNot(D,F)],["Every dragon is a reptile.",S.all(D,R)]], c:["So, some reptile doesn't fly.",S.someNot(R,F)], valid:true, start:W([]),
   q:"Before the machine checks: a counterexample would need every reptile to fly while both premises are true. Why can't that happen?",
   opts:[{t:"Premise 1 gives a non-flying dragon and premise 2 makes it a reptile, so some reptile doesn't fly.",ok:true},
-        {t:"Dragons always fly in the machine's world, so every dragon, and so every reptile, would be a flyer too.",fb:"Premise 1 says the opposite: at least one dragon doesn't fly. Use that."},
-        {t:"There might be no reptiles at all in a world where both of these premises are true, so none fly.",fb:"With premise 1 true there's at least one dragon, and premise 2 makes it a reptile. So reptiles exist. Keep going from there."}],
+        {t:"Premise 2 makes every dragon a reptile, and premise 1 says dragons always fly, so every reptile would too.",fb:"Premise 1 says the opposite: at least one dragon doesn't fly. Use that."},
+        {t:"Premise 1 and premise 2 could both be true in a world with no reptiles at all, so none could fly.",fb:"With premise 1 true there's at least one dragon, and premise 2 makes it a reptile. So reptiles exist. Keep going from there."}],
   win:"The grounded dragon from premise 1 is a reptile by premise 2, so some reptile doesn't fly. Valid.",
   ifalse:"Not a counterexample yet. Check the lights: a counterexample needs every premise lit and the conclusion dark. Notice what happens to the conclusion the moment premises 1 and 2 are both true."}
 ];
@@ -1109,16 +1135,16 @@ var BUILD=[
  {p:"Pressing the button takes $1,000 from a stranger who did nothing to deserve losing it.", c:"So, pressing the button is wrong.",
   tiles:[
    {t:"Taking money from someone who did nothing to deserve losing it is wrong.",r:"ok",fb:"Locked in. Now the argument works: if both premises are true, pressing has to be wrong. Notice the premise you added is the one with 'wrong' in it, just like the is/ought section predicted."},
-   {t:"If someone loses money, they are usually upset.",r:"no",fb:"An if-then, but it's about what usually happens, not what's wrong. Add it and pressing could still be fine as far as the premises go. Gap still open."},
-   {t:"Most people wouldn't press the button.",r:"no",fb:"This tells you what people would do, not what's wrong. That's the is/ought gap: most people could be making a mistake. Gap still open."},
-   {t:"People ought to be upset when they lose money.",r:"no",fb:"There's an <i>ought</i> in it, but it's about being upset, not about pressing. It doesn't reach the conclusion. Gap still open."},
+   {t:"If someone loses money they were saving up, they are usually very upset about it.",r:"no",fb:"An if-then, but it's about what usually happens, not what's wrong. Add it and pressing could still be fine as far as the premises go. Gap still open."},
+   {t:"Most people, if you asked them in a survey, wouldn't press the button.",r:"no",fb:"This tells you what people would do, not what's wrong. That's the is/ought gap: most people could be making a mistake. Gap still open."},
+   {t:"People ought to be upset when they lose money that they had been saving for months.",r:"no",fb:"There's an <i>ought</i> in it, but it's about being upset, not about pressing. It doesn't reach the conclusion. Gap still open."},
    {t:"Pressing the button is wrong.",r:"circ",fb:"That's the conclusion itself. It makes the argument valid, but only by begging the question: it assumes what it was supposed to prove. Find a premise that does real work."}]},
  {p:"Learning an instrument would make Sam's life go better.", c:"So, Sam has a reason to learn an instrument.",
   tiles:[
-   {t:"If you learn an instrument, you usually practice a lot.",r:"no",fb:"An if-then, but it links instruments to practice, not to having a reason. Gap still open."},
+   {t:"If you learn an instrument, you usually end up practicing a lot every single week.",r:"no",fb:"An if-then, but it links instruments to practice, not to having a reason. Gap still open."},
    {t:"If something would make your life go better, you have a reason to do it.",r:"ok",fb:"That's the bridge. Premise: it'd make Sam's life better. Bridge: anything like that gives you a reason. Conclusion follows. This is a well-being argument, and the bridge is a claim about well-being reasons in general."},
-   {t:"Lots of people Sam's age play instruments.",r:"no",fb:"What other people do doesn't tell us what Sam has reason to do. Gap still open."},
-   {t:"People ought to enjoy listening to music.",r:"no",fb:"There's an <i>ought</i> in it, but it's about listening, not about Sam's reasons. It doesn't link a better life to a reason. Gap still open."},
+   {t:"Lots of people around Sam's age play an instrument in a band or an orchestra.",r:"no",fb:"What other people do doesn't tell us what Sam has reason to do. Gap still open."},
+   {t:"People ought to enjoy listening to music whenever they get the chance to hear it.",r:"no",fb:"There's an <i>ought</i> in it, but it's about listening, not about Sam's reasons. It doesn't link a better life to a reason. Gap still open."},
    {t:"Sam has a reason to learn an instrument.",r:"circ",fb:"That's the conclusion again, so it begs the question. Find the premise that links 'better life' to 'a reason'."}]},
  {p:"Dev promised to help Ana move on Saturday.", c:"So, Dev ought to help Ana move on Saturday.",
   tiles:[
@@ -1167,7 +1193,7 @@ var FINOPTS={
  press:[
   {t:"If something is good for me and nobody I know gets hurt, I should do it.",k:"bridge",atk:"The stranger does get hurt; you just don't know them. Why should knowing someone matter? That's where a critic will aim."},
   {t:"What's best for me is what I should do.",k:"bridge",atk:"That's pure self-interest. A critic will ask: would you accept it if a stranger pressed a button that cost <i>you</i> $1,000?"},
-  {t:"If nobody ever finds out, I should do whatever is best for me.",k:"bridge",atk:"A critic will ask whether the stranger's loss is any smaller just because no one finds out. (Plato's Ring of Gyges story asks exactly this.)"},
+  {t:"If nobody ever finds out, I should do whatever is best for me.",k:"bridge",atk:"A critic will ask whether the stranger's loss is any smaller just because no one finds out. (Plato's Ring of Gyges story asks a close cousin: would you still act fairly if you could never be caught?)"},
   {t:"Lots of people would press it.",k:"is",fb:"That's about what people <i>do</i>. Your conclusion is about what you <i>should</i> do. On its own it can't bridge the gap (remember the is/ought section). Pick a premise that says what you should do."},
   {t:"I should press the button.",k:"circ",fb:"That's your conclusion, used as a premise: begging the question. Pick the general principle behind your reason."}
  ]
@@ -1178,7 +1204,7 @@ function openFinale(){
   var L=$("finLock");
   L.innerHTML='<div class="row" role="group" aria-label="Your button call"><button class="vbtn" type="button" data-v="press" aria-pressed="false">I\'d press it</button><button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn\'t press it</button></div><label for="finReason">My reason, in one sentence</label><input type="text" id="finReason" maxlength="220" autocomplete="off">';
   buildLockin(L);
-  $("finReason").addEventListener("input",function(){ COVER.reason=$("finReason").value.trim(); renderFinArg(); saveState(); });
+  $("finReason").addEventListener("input",function(){ COVER.reason=oneLine($("finReason").value); renderFinArg(); saveState(); });
   syncLockins(); renderFinale();
   if(!$("fin").classList.contains("is-cleared")) $("fin").classList.add("is-unlocked");
 }
@@ -1204,7 +1230,7 @@ function renderFinale(){
   });
 }
 $("finOwnBtn").addEventListener("click",function(){
-  var t=$("finOwn").value.trim();
+  var t=oneLine($("finOwn").value);
   if(!t){ setFb($("finFb"),"bad","Type your premise first.","Write one sentence, as a general rule, that links your reason to your conclusion. Then press <b>Use my premise</b>."); $("finOwn").focus(); return; }
   if(ownWarned!==t && !/\b(should|shouldn't|shouldnt|ought|oughtn't|wrong|right|allowed|permitted|must|mustn't|okay|ok|fine|acceptable|deserve)\b/i.test(t)){
     ownWarned=t;
@@ -1227,7 +1253,7 @@ function rank(){ var b=cardBest()||0; return b>=8?"Counterexample Machine":b>=7?
 function cardData(){ return {verdict:COVER.v?VL[COVER.v]:"Not locked in", premise:FIN.pick||"", rf:(cardBest()!=null?cardBest()+"/8":"not played this visit"), rank:rank()}; }
 function buildCard(){
   var d=cardData();
-  $("rcard").innerHTML='<div class="stamp">CLOSED</div><h3>Case #2: closed</h3><div><b>My call:</b> '+esc(d.verdict)+'</div><div><b>The premise I\'d have to defend:</b> '+esc(d.premise)+'</div><div><b>Rapid fire best:</b> '+esc(d.rf)+'</div><div><b>Rank:</b> '+esc(d.rank)+'</div><div><b>Evidence:</b> 3 of 3</div>';
+  $("rcard").innerHTML='<div class="stamp">CLOSED</div><h3>Case #2: closed</h3><div><b>My call:</b> '+esc(d.verdict)+'</div><div><b>The premise I\'d have to defend:</b> '+esc(d.premise)+'</div><div><b>Rapid fire at clearing:</b> '+esc(d.rf)+'</div><div><b>Rank:</b> '+esc(d.rank)+'</div><div><b>Evidence:</b> 3 of 3</div>';
 }
 function wrapText(ctx, text, x, y, maxW, lh){ var words=text.split(" "), line=""; for(var i=0;i<words.length;i++){ var test=line?line+" "+words[i]:words[i]; if(ctx.measureText(test).width>maxW && line){ ctx.fillText(line,x,y); y+=lh; line=words[i]; } else line=test; } if(line){ ctx.fillText(line,x,y); y+=lh; } return y; }
 $("saveCard").addEventListener("click",function(){
@@ -1257,7 +1283,7 @@ function restoreFinale(){ renderFinArg(); $("fin").classList.add("is-cleared"); 
 /* ---------- restore saved progress, if any ---------- */
 try{
   var src = (SAVED && SAVED.cover && SAVED.cover.v) ? SAVED.cover : SHARED;
-  if(src && src.v){ COVER.v=src.v; COVER.reason=src.reason||""; syncLockins(); if(COVER.reason) $("lockMsg").textContent="Locked in (loaded from this browser). You'll need it at the end."; $("bbStatus").textContent=(SAVED&&SAVED.cover&&SAVED.cover.v)?"Loaded from this browser.":"Loaded from Case 1 in this browser."; }
+  if(src && src.v){ COVER.v=src.v; COVER.reason=oneLine(src.reason); syncLockins(); if(COVER.reason) $("lockMsg").textContent="Locked in (loaded from this browser). You'll need it at the end."; $("bbStatus").textContent=(SAVED&&SAVED.cover&&SAVED.cover.v)?"Loaded from this browser.":"Loaded from Case 1 in this browser."; }
 }catch(e){}
 if(SAVED){
   restoring=true;
@@ -1266,7 +1292,7 @@ if(SAVED){
     if(SAVED.rf && SAVED.rf.rounds){ REC.rf.rounds=SAVED.rf.rounds; REC.rf.best=SAVED.rf.best; REC.rf.passed = SAVED.rf.passed===true || (SAVED.cleared||[]).indexOf("g4")>=0; }
     if(Array.isArray(SAVED.wu)) WU=SAVED.wu.slice(0,JURY.length).map(function(x){return x?1:0;});
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence stays."; b.insertBefore(n,b.firstChild); } });
-    if(SAVED.finale){ FIN.pick=SAVED.finale; if(finOpen){ restoreFinale(); } }
+    if(SAVED.finale){ FIN.pick=oneLine(SAVED.finale); if(finOpen){ restoreFinale(); } }
     /* a half-finished lead: put the screen back where the saved copy line says it is */
     var sm=SAVED.m, doneG3=(SAVED.cleared||[]).indexOf("g3")>=0, doneG6=(SAVED.cleared||[]).indexOf("g6")>=0;
     if(!doneG3 && sm && sm.solved>0 && sm.solved<ARGS.length && Array.isArray(sm.notes) && sm.notes.length===sm.solved && sm.notes.every(function(x){return typeof x==="string";})){
@@ -1282,6 +1308,16 @@ if(SAVED){
   restoring=false; wuShow(); saveState();
 }
 renderFinale();
+/* ---------- ungraded one-tap polls inside the long reading stretches ---------- */
+[].forEach.call(document.querySelectorAll(".minipoll"),function(box){
+  var out=box.querySelector(".mp-say");
+  [].forEach.call(box.querySelectorAll(".choice"),function(b){
+    b.addEventListener("click",function(){
+      [].forEach.call(box.querySelectorAll(".choice"),function(x){ x.setAttribute("aria-pressed",String(x===b)); });
+      out.className="fb mp-say"; out.textContent=b.getAttribute("data-say");
+    });
+  });
+});
 })();
 </script>
 </body>

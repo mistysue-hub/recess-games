@@ -507,6 +507,10 @@ html,body{overflow-x:clip}
 }
 .warm .wu-card{border-style:dashed; background:var(--card)}
 .warm .wu-opt.chosen{transform:rotate(-1.5deg)}
+/* round 2: warm-up outcome text, starter reasons */
+.wu-opt b{display:block; margin-bottom:3px}
+.chips-r{margin:2px 0 8px}
+.chips-r .btn{font-size:.92rem; min-height:44px}
 </style>
 </head>
 <body>
@@ -550,7 +554,12 @@ html,body{overflow-x:clip}
       <button class="vbtn" type="button" data-v="yes" aria-pressed="false">Yes, a bit better</button>
       <button class="vbtn" type="button" data-v="no" aria-pressed="false">No difference</button>
     </div>
-    <label for="myReason">My reason, in a few words</label>
+    <label for="myReason">My reason, in a few words (tap a starter or type your own)</label>
+    <div class="row chips-r" role="group" aria-label="Starter reasons">
+      <button class="btn ghost" type="button" data-fill="What I wanted really happened, even if I never knew.">The win is real</button>
+      <button class="btn ghost" type="button" data-fill="I felt nothing, so nothing changed for me.">No feeling, no change</button>
+      <button class="btn ghost" type="button" data-fill="Not sure, both sides pull me.">Not sure</button>
+    </div>
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
@@ -561,7 +570,7 @@ html,body{overflow-x:clip}
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
   <div class="wtab">Warm-up · 30 seconds</div>
   <h2 id="wuh"><span style="--mark:var(--hl-p)">Wish stamp</span></h2>
-  <p class="how" id="wuHow">Five wishes. Stamp each one with the part you want more. No right answers. Each stamp locks when you tap it.</p>
+  <p class="how" id="wuHow">Five wishes. For each, two futures are on offer: in one the wish really comes true but you never feel it, in the other you feel it came true but it did not. <b>The thing itself</b> = what really happens. <b>The good feeling</b> = how it feels to you. Stamp the one you want more. No right answers. Each stamp locks when you tap it.</p>
   <p class="m-nav" id="wuNav" aria-live="polite"></p>
   <div class="wu-stack" id="wuStack" role="img" aria-label="Your stamps so far"></div>
   <div class="wu-card" id="wuCard">
@@ -761,6 +770,14 @@ html,body{overflow-x:clip}
     <span class="lbl">Problem 3: adaptive desires ("sour grapes")</span>
     <p>In Aesop's fable, a fox can't reach some grapes and decides they were probably sour anyway. People do this too. If you're told for years that someone like you will never get to go to college, you might stop wanting it, just to stop the ache. Philosophers call these <b>adaptive preferences</b>: wants that shrink to fit what seems possible. Satisfy the shrunken wants and the World-ledger looks great, even though something has clearly gone wrong.</p>
   </div>
+  <div class="poll" id="sourPoll">
+    <p><b>Quick vote:</b> a student stopped wanting college after years of being told it was not for them, and now has a life with no college in it. Is that life going well on the simple desire theory? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Does the simple theory say it is going well?">
+      <button class="btn ghost" type="button" data-r="yes">Yes, they got what they want</button>
+      <button class="btn ghost" type="button" data-r="no">No, something's off</button>
+    </div>
+    <div class="fb" id="sourFb" aria-live="polite" tabindex="-1"></div>
+  </div>
   <details class="sealed">
     <summary><span class="seal" aria-hidden="true">?</span>Bonus: who worried about sour grapes (short on time? skip this one)</summary>
     <div class="inner"><p>The philosopher Jon Elster wrote a whole book on this, <i>Sour Grapes</i> (1983). The economist-philosopher Amartya Sen and the philosopher Martha Nussbaum raised it as a problem for measuring how well people's lives go: if people learn not to want what they can't have, asking "are you getting what you want?" can hide real deprivation. (Some defenders of desire theories think the objection can be answered.)</p></div>
@@ -816,6 +833,14 @@ html,body{overflow-x:clip}
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Strange case 2: after you're gone</span>
     <p>You spend years building a community garden and want it to keep growing long after you die. Some time after your death, it's paved over for parking. You're not around to know. The unrestricted theory says your life went worse, after it was over. Some philosophers accept this; they think it helps explain why breaking a promise to someone who has died seems to wrong <i>them</i>. Others find it spooky.</p>
+  </div>
+  <div class="poll" id="gardenPoll">
+    <p><b>Quick vote:</b> can the garden's fate make your life go worse after you are gone? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Can the garden's fate matter after death?">
+      <button class="btn ghost" type="button" data-r="yes">Yes, it can</button>
+      <button class="btn ghost" type="button" data-r="no">No, it's over for me</button>
+    </div>
+    <div class="fb" id="gardenFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Strange case 3: about the past</span>
@@ -888,9 +913,24 @@ html,body{overflow-x:clip}
     <div style="--tc:var(--hl-b)"><b>2. GET</b>it goes well</div>
     <div style="--tc:var(--hl-g)"><b>3. GLOW</b>you feel great</div>
   </div>
+  <div class="poll" id="tlPoll">
+    <p><b>Quick pick:</b> when the cynic says "you only helped to feel good," which step is he pointing at? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Which step does the cynic point at?">
+      <button class="btn ghost" type="button" data-r="want">1. WANT</button>
+      <button class="btn ghost" type="button" data-r="get">2. GET</button>
+      <button class="btn ghost" type="button" data-r="glow">3. GLOW</button>
+    </div>
+    <div class="fb" id="tlFb" aria-live="polite" tabindex="-1"></div>
+  </div>
   <p>The cynic points at step 3 and says it explains step 1. Butler says step 3 only happens <i>because of</i> step 1. Your good feeling after helping isn't proof you were selfish all along. It's evidence that you really wanted your friend to be OK.</p>
   <p>Not everyone thinks Butler wins. An egoist can reply that we want the food, or the friend's success, <i>only because</i> we expect it to bring us pleasure. Rocky may push you on this.</p>
-  <p><b>Two warnings.</b> First, Butler doesn't prove people are nice. Spite and revenge are also aimed outside ourselves, and Butler pointed out that people sometimes wreck their own interests to get even. His point is that our desires reach out into the world, for better or worse. Second, he never denied that we <i>sometimes</i> act for our own pleasure. He denied that we <i>always</i> do.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Two warnings: what Butler does not prove</summary>
+    <div class="inner">
+    <p><b>First,</b> Butler doesn't prove people are nice. Spite and revenge are also aimed outside ourselves, and Butler pointed out that people sometimes wreck their own interests to get even. His point is that our desires reach out into the world, for better or worse. </p>
+      <p><b>Second,</b> he never denied that we <i>sometimes</i> act for our own pleasure. He denied that we <i>always</i> do.</p>
+    </div>
+  </details>
   <p class="note">The payoff for this case: final desires can be aimed at other people and at the world. So the desire theory really is a different theory from hedonism, not hedonism in disguise.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="6">Got it: open Lead 6</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -902,7 +942,7 @@ html,body{overflow-x:clip}
   <h2 id="g6h">Rewind the tape</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Is everyone secretly selfish?" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Two scenes, each chopped into frames, but the cynic has slipped a fake frame into each. Tap a frame to pick it up, then either put it in the next slot on the timeline or toss it as the cynic's edit. Then face the cynic: three quick challenges. ("Rewind the tape" means replaying the scene in the right order.) <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">Two scenes, each chopped into frames, but the cynic has slipped a fake frame into each. Tap a frame to pick it up, then either put it in the next slot on the timeline or toss it as the cynic's edit. The fake frame is the cynic's claim: that the first frame was really a want for the glow. Then face the cynic: three quick challenges. ("Rewind the tape" means replaying the scene in the right order.) <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
   <div id="tapeList"></div>
   <div id="cynQs" hidden></div>
   <p class="score" id="cynScore" aria-live="polite"></p>
@@ -986,6 +1026,14 @@ function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 function mkFb(){ return el("div",{class:"fb","aria-live":"polite",tabindex:"-1"}); }
 function focusFb(node){ try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
+function flat(s){ return String(s==null?"":s).replace(/[\r\n\u2028\u2029\u0085\v\f]+/g," ").replace(/ {2,}/g," ").trim(); }
+var tapGuardUntil=0;
+function armGuard(){ tapGuardUntil=Date.now()+420; }
+document.addEventListener("click",function(e){
+  var t=e.target&&e.target.closest?e.target.closest(".pick,.choice,.wu-opt"):null;
+  if(t&&Date.now()<tapGuardUntil&&e.isTrusted){ e.stopImmediatePropagation(); e.preventDefault(); }
+},true);
+["skNext","twNext","ledNext","callNext"].forEach(function(id){ var n=document.getElementById(id); if(n) n.addEventListener("click",armGuard,true); });
 function showNext(btn){ btn.hidden=false; try{ btn.focus({preventScroll:true}); }catch(e){ btn.focus(); } }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 var MID="C1-M04";
@@ -1016,10 +1064,10 @@ function saveState(){
 }
 function touch(g){ touched[g]=true; saveState(); }
 
-var COVER={v:null, reason:"", locked:false};
+var COVER={v:null, reason:"", locked:false, draft:""};
 var WU={ans:[]};
 var FIN={view:null, reason:"", moved:"", done:false};
-var POLLS={keeper:null, chain:null, grass:null, cyn:null};
+var POLLS={keeper:null, chain:null, grass:null, cyn:null, sour:null, garden:null, tl:null};
 
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
@@ -1121,11 +1169,15 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
+$("lockin").querySelectorAll("[data-fill]").forEach(function(b){
+  b.addEventListener("click",function(){ if(COVER.locked) return; $("myReason").value=b.getAttribute("data-fill"); COVER.draft=$("myReason").value; saveState(); });
+});
+$("myReason").addEventListener("input",function(){ if(COVER.locked) return; COVER.draft=$("myReason").value; saveState(); });
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
-  var r=$("myReason").value.trim();
+  var r=flat($("myReason").value);
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no difference first."; return; }
-  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your reason in a few words (at least 8 characters)."; $("myReason").focus(); return; }
+  if(r.length<3){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a few words, or tap a starter reason above."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
@@ -1138,16 +1190,16 @@ function linesFor(g){
   if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
   return LIVE[g]();   /* an unfinished lead restarts after a reload, so its saved partial line is never reused: screen and copy always agree */
 }
-function coverLines(){ return ["Gut call on the secret championship win (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+COVER.reason : "not locked in")]; }
+function coverLines(){ return ["Gut call on the secret championship win (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
 var WUN={cat:"cat",friends:"friends",stand:"lemonade stand",guitar:"guitar",story:"story"};
 function warmLine(){
   var n=WU.ans.length; if(!n) return ["Warm-up: not played (ungraded)"];
   var R=0, fk=[]; WU.ans.forEach(function(a,i){ if(a==="r") R++; else fk.push(WUN[WUC[i].k]); });
   return ["Warm-up: "+n+" of "+WUC.length+" wishes stamped (ungraded); wanted the thing itself "+R+"x, the good feeling "+fk.length+"x"+(fk.length?" (good feeling on: "+fk.join(", ")+")":"")];
 }
-var PL={feel:"Feel-o-meter",world:"World-ledger",person:"at someone I care about",enjoy:"at something I enjoy",other:"somewhere else",yes:"yes",no:"no"};
+var PL={want:"1 WANT",get:"2 GET",glow:"3 GLOW",feel:"Feel-o-meter",world:"World-ledger",person:"at someone I care about",enjoy:"at something I enjoy",other:"somewhere else",yes:"yes",no:"no"};
 function pollLines(){
-  return ["Ungraded taps: scorekeeper I'd trust = "+(POLLS.keeper?PL[POLLS.keeper]:"not answered")+"; my own why-chain stops "+(POLLS.chain?PL[POLLS.chain]:"(not answered)")+"; grass counter's life going well = "+(POLLS.grass?PL[POLLS.grass]:"not answered")+"; cynic convincing at first = "+(POLLS.cyn?(POLLS.cyn==="yes"?"kind of, yes":"not really"):"not answered")+"; patches opened "+Object.keys(repliesOpen).length+" of "+replyEls.length];
+  return ["Ungraded taps: scorekeeper I'd trust = "+(POLLS.keeper?PL[POLLS.keeper]:"not answered")+"; my own why-chain stops "+(POLLS.chain?PL[POLLS.chain]:"(not answered)")+"; grass counter's life going well = "+(POLLS.grass?PL[POLLS.grass]:"not answered")+"; cynic convincing at first = "+(POLLS.cyn?(POLLS.cyn==="yes"?"kind of, yes":"not really"):"not answered")+"; stopped-wanting student's life going well = "+(POLLS.sour?PL[POLLS.sour]:"not answered")+"; garden fate matters after death = "+(POLLS.garden?PL[POLLS.garden]:"not answered")+"; cynic points at = "+(POLLS.tl?PL[POLLS.tl]:"not answered")+"; patches opened "+Object.keys(repliesOpen).length+" of "+replyEls.length];
 }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1174,6 +1226,9 @@ var POLLREPLY={
  keeper:{feel:"Hold that thought. Lead 1 makes you run both scorekeepers, and the finale asks again.", world:"Hold that thought. Lead 1 makes you run both scorekeepers, and the finale asks again."},
  chain:{person:"Lots of chains end at a person. Either way, it stops; that's the point of a final desire.", enjoy:"Plenty of chains end at an experience you love. Either way, it stops; that's the point of a final desire.", other:"Wherever it lands, it stops somewhere. That landing spot is a final desire."},
  grass:{yes:"That's the \"you're the authority\" instinct, the desire theory's big selling point.", no:"That instinct, that some things are good for you whatever you want, is where Case 5 starts."},
+ sour:{yes:"That is what the simple theory has to say: the want was satisfied. Many people feel uneasy about it, and that unease is why the fix below exists.", no:"That unease is the objection. The shrunken want was shaped by the lack of a chance, so many people say the theory should not count it."},
+ garden:{yes:"That is the unrestricted theory's answer, and some philosophers accept it. The patches below try to avoid it.", no:"Many people share that instinct. The patches below try to rescue it."},
+ tl:{want:"Close, but the cynic does not point at the want. He says the want is just a disguise for step 3. The next paragraph shows his move.", get:"Not quite: the cynic is not worried about whether it went well. He is pointing at how you felt afterward. The next paragraph shows his move.", glow:"Yes: the glow. He says it is the real reason you helped. The next paragraph shows what Butler does with that."},
  cyn:{yes:"It sounds airtight at first. Now watch Butler try to take it apart.", no:"Hold that doubt. Now watch Butler try to pin down what's wrong with it."}
 };
 function wirePoll(id, key){
@@ -1185,18 +1240,23 @@ function wirePoll(id, key){
     });
   });
 }
-wirePoll("keeperPoll","keeper"); wirePoll("chainPoll","chain"); wirePoll("grassPoll","grass"); wirePoll("cynPoll","cyn");
+wirePoll("keeperPoll","keeper"); wirePoll("chainPoll","chain"); wirePoll("grassPoll","grass"); wirePoll("cynPoll","cyn"); wirePoll("sourPoll","sour"); wirePoll("gardenPoll","garden"); wirePoll("tlPoll","tl");
 
 /* ================= WARM-UP: WISH STAMP (ungraded; each stamp locks) ================= */
 var WUC=[
- {k:"cat", w:"You want your cat to be happy."},
- {k:"friends", w:"You want your friends to like you."},
- {k:"stand", w:"You want your lemonade stand to raise money for the shelter."},
- {k:"guitar", w:"You want to get good at guitar."},
- {k:"story", w:"You want the story you wrote to be good."}
+ {k:"cat", w:"You want your cat to be happy.", r:"The cat really is happy, and you never find out.", f:"You feel sure the cat is happy, but it isn't.", rr:"Stamped: the real cat. You'd trade the warm feeling for the truth.", fr:"Stamped: the feeling. Peace of mind won, even with a cat that isn't happy."},
+ {k:"friends", w:"You want your friends to like you.", r:"Your friends really do like you, but you never feel it.", f:"You feel liked by everyone, but your friends actually don't like you.", rr:"Stamped: real friends, even unfelt. That is a strong pick.", fr:"Stamped: the feeling of being liked, even if it is false."},
+ {k:"stand", w:"You want your lemonade stand to raise money for the shelter.", r:"The stand really raises the money, but you never hear about it.", f:"You are told it raised a fortune and you cheer, but it raised nothing.", rr:"Stamped: the shelter really gets the money.", fr:"Stamped: the cheering moment, even though the shelter gets nothing."},
+ {k:"guitar", w:"You want to get good at guitar.", r:"You really do get good, but it never feels that way to you.", f:"You feel like a great guitarist, but you are actually not good.", rr:"Stamped: being good, felt or not.", fr:"Stamped: feeling like a great player."},
+ {k:"story", w:"You want the story you wrote to be good.", r:"Your story really is good, but you always feel it is bad.", f:"You feel proud that it is good, but it isn't.", rr:"Stamped: a really good story.", fr:"Stamped: the pride, even for a story that is not good."}
 ];
 var WUSTAMP={r:"The thing itself", f:"The good feeling"};
 var wuBusy=false;
+function wuClose(R,n){
+  if(R===n) return "You wanted the thing itself 5 of 5 times, and the good feeling 0. Every time, you picked what really happens over how it feels. That is the desire theory's instinct, and Lead 1 will put it to work.";
+  if(R===0) return "You wanted the thing itself 0 of 5 times, and the good feeling 5. That is the hedonist's instinct: how it feels is what counts. Keep it handy, because the two scorekeepers below are about to test it against reality. Feeling versus reality is the whole case.";
+  return "You wanted the thing itself "+R+" of "+n+" times, and the good feeling "+(n-R)+". Feeling versus reality is the whole case, and the two scorekeepers below are about to fight over it.";
+}
 function wuRender(focusFirst){
   var n=WU.ans.length, done=n>=WUC.length, S=$("wuStack"); S.innerHTML="";
   WUC.forEach(function(c,i){ var a=WU.ans[i]; var b=el("span",{class:"blk "+(a||"empty")}); b.textContent=a==="r"?"itself":(a==="f"?"feeling":""); if(!a) b.setAttribute("aria-hidden","true"); S.appendChild(b); });
@@ -1205,22 +1265,23 @@ function wuRender(focusFirst){
   if(done){
     $("wuCard").hidden=true;
     var R=WU.ans.filter(function(a){return a==="r";}).length;
-    setFb($("wuFb"),"","All stamped.","You wanted the thing itself "+R+" of "+WUC.length+" times, and the good feeling "+(WUC.length-R)+". Feeling versus reality is the whole case, and the two scorekeepers below are about to fight over it.");
+    setFb($("wuFb"),"","All stamped.",wuClose(R,WUC.length));
     return;
   }
-  $("wuCard").hidden=false;
+  $("wuCard").hidden=false; if(focusFirst) armGuard();
   var C=WUC[n], O=$("wuOpts"); O.innerHTML="";
-  $("wuQ").textContent="Wish ticket: \u201C"+C.w+"\u201D Which part do you want more?";
-  shuffle([["r",WUSTAMP.r],["f",WUSTAMP.f]]).forEach(function(o,i){
-    var b=el("button",{class:"wu-opt "+(i?"b":"a"),type:"button"}); b.textContent="Stamp it: "+o[1];
+  $("wuQ").textContent="Wish ticket: “"+C.w+"” Which future do you want more?";
+  shuffle([["r",WUSTAMP.r,C.r],["f",WUSTAMP.f,C.f]]).forEach(function(o,i){
+    var b=el("button",{class:"wu-opt "+(i?"b":"a"),type:"button"});
+    var h=el("b"); h.textContent="Stamp it: "+o[1]; b.appendChild(h); b.appendChild(el("br")); b.appendChild(document.createTextNode(o[2]));
     b.addEventListener("click",function(){
       if(wuBusy || WU.ans.length!==n) return; wuBusy=true;
       WU.ans.push(o[0]);
       O.querySelectorAll(".wu-opt").forEach(function(x){ x.disabled=true; });
-      b.classList.add("chosen"); b.textContent="Stamped: "+o[1];
-      setFb($("wuFb"),"","Stamped.","No right answer. Next wish."); focusFb($("wuFb"));
+      b.classList.add("chosen"); h.textContent="Stamped: "+o[1];
+      setFb($("wuFb"),"","Stamped.",o[0]==="r"?C.rr:C.fr+" No right answer."); focusFb($("wuFb"));
       saveState();
-      setTimeout(function(){ wuBusy=false; wuRender(true); }, reduceMotion?150:450);
+      setTimeout(function(){ wuBusy=false; wuRender(true); }, reduceMotion?400:700);
     });
     O.appendChild(b);
   });
@@ -1436,7 +1497,7 @@ var EVENTS=[
 ];
 var eI=0, totS=0, totI=0, infOn=false, REC4={}, ledDone=false;
 function sgn(n){ return (n>0?"+":"")+n; }
-function ledSet(){ $("totS").querySelector("strong").textContent=sgn(totS); $("totI").querySelector("strong").textContent=sgn(totI)+(ledDone?" (+?)":""); $("totI").classList.toggle("off",!infOn); }
+function ledSet(){ $("totS").querySelector("strong").textContent=sgn(totS); $("totI").querySelector("strong").textContent=sgn(totI)+(ledDone?" (camp unscored)":""); $("totI").classList.toggle("off",!infOn); }
 function ledRow(E){
   var tb=$("ledTable").querySelector("tbody"); $("ledTable").hidden=false;
   tb.querySelectorAll("tr").forEach(function(r){ r.classList.remove("new"); });
@@ -1501,7 +1562,7 @@ function ledQ2(E){
 function ledFinish(E){
   totI += (E.i===null?0:E.i); ledRow(E);
   if(eI<EVENTS.length-1){ showNext($("ledNext")); }
-  else { ledDone=true; $("ledFb").innerHTML+="<br><br><b>Week closed.</b> Simple ledger: +"+totS+". Informed ledger: +"+totI+", plus a question mark for the camp. Same week, two different scores, and on both ledgers the robot evening counts as a <i>loss</i>, even though she spent it thrilled."; focusFb($("ledFb")); clear("g4"); }
+  else { ledDone=true; $("ledFb").innerHTML+="<br><br><b>Week closed.</b> Simple ledger: +"+totS+". Informed ledger: +"+totI+", with the camp left unscored. Same week, two different scores, and on both ledgers the robot evening counts as a <i>loss</i>, even though she spent it thrilled."; focusFb($("ledFb")); clear("g4"); }
   ledSet();
 }
 $("ledNext").addEventListener("click",function(){ eI++; ledRender(); $("ledBtns").querySelector(".pick").focus(); });
@@ -1580,7 +1641,7 @@ function cReveal(){
   var out=[], keys=[];
   var agreed=CALLS.filter(function(C5,i){ return REC5[i] && REC5[i].mine===C5.a; }).length, unsure=CALLS.length-agreed-splits.length;
   if(!splits.length && agreed===CALLS.length){ callPattern="Bullet-biter (agreed with the theory on all "+CALLS.length+")"; out.push("<b>Bullet-biter.</b> That means someone who accepts the odd results instead of dodging them. You agreed with the unrestricted theory every time. That's a real position: maybe a stranger's recovery really does make your life a little better. Rocky will test how far you'll go."); }
-  else if(!splits.length){ callPattern="Hasn't decided (agreed with the theory on "+agreed+", not sure on "+unsure+")"; out.push("<b>Hasn't decided yet.</b> You were not sure on "+unsure+" of the "+CALLS.length+" cases and never disagreed with the theory on the others. That's honest: these cases are hard. Rocky will help you work out what you would say."); }
+  else if(!splits.length){ callPattern="Hasn't decided (agreed with the theory on "+agreed+", not sure on "+unsure+")"; out.push("<b>Hasn't decided yet.</b> "+(unsure===CALLS.length?"You were not sure on all "+CALLS.length+" cases, and you never disagreed with the theory.":"You were not sure on "+unsure+" of the "+CALLS.length+" cases and never disagreed with the theory on the others.")+" That's honest: these cases are hard. Rocky will help you work out what you would say."); }
   else {
     if(P.indexOf("own")>=0){ keys.push("own-life"); out.push("<b>Keep it about your own life.</b> You split from the theory on a desire about a stranger or about the past. That points to the patch that counts only desires about your own life."); }
     if(P.indexOf("now")>=0){ keys.push("current-desires"); out.push("<b>Only what you want now.</b> You split on a wish that outlived you or one you'd outgrown. That points to the patch that counts a desire only while you still have it."); }
@@ -1603,7 +1664,7 @@ function callLines(){
 /* ================= LEAD 6: REWIND THE TAPE ================= */
 var TAPES=[
  {k:"cat", n:"Scene 1: the neighbor's cat", f:["Wanting Mrs. Okafor's lost cat to be found","Spotting the cat under the porch","Feeling fantastic"], fake:"Wanting to feel fantastic about it", fakeNo:"That's the cynic's order. Can you want the glow of finding the cat before you care about the cat at all? Butler says the glow depends on that earlier want."},
- {k:"chess", n:"Scene 2: the chess final", f:["Wanting your rival to lose the final","Your rival blunders and loses","A satisfied (slightly mean) grin"], fake:"Wanting to feel superior to them", fakeNo:"That's the cynic's order. Can you want the glow of beating your rival before you want your rival to lose? The glow depends on that earlier want."}
+ {k:"chess", n:"Scene 2: the chess final", f:["Wanting your rival to lose the final","Your rival blunders and loses","A satisfied (slightly mean) grin"], fake:"Wanting to feel superior to them", fakeNo:"That's the cynic's edit. You might enjoy feeling superior, but that feeling comes after your rival blunders, so it can't be what started the want. Butler says the glow depends on that earlier want of beating your rival."}
 ];
 var REC6={tapes:{}, q:{}}, tapesDone=0;
 TAPES.forEach(function(T,ti){
@@ -1723,7 +1784,7 @@ function finRender(){
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.trim(), moved=$("finMoved").value;
+  var reason=flat($("finReason").value), moved=flat($("finMoved").value);
   if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); focusFb($("finFb")); return; }
   if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
   if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
@@ -1734,7 +1795,7 @@ $("finBtn").addEventListener("click",function(){
 });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
-  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
+  return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+flat(FIN.reason), "What moved me most: "+flat(FIN.moved)];
 }
 
 var LIVE={g1:skLines,g2:twLines,g3:binLines,g4:ledLines,g5:callLines,g6:tapeLines};
@@ -1748,14 +1809,15 @@ window.__m04={cleared:cleared, unlockStep:function(){return unlockedStep;}, repo
 if(SAVED){
   restoring=true;
   try{
-    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
+    if(SAVED.cover && !SAVED.cover.locked && typeof SAVED.cover.draft==="string" && SAVED.cover.draft){ COVER.draft=flat(SAVED.cover.draft).slice(0,220); $("myReason").value=COVER.draft; }
+    if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=flat(SAVED.cover.reason); COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(Array.isArray(SAVED.wu)){ var ok=[]; for(var wi=0; wi<SAVED.wu.length && wi<WUC.length; wi++){ if(SAVED.wu[wi]==="r"||SAVED.wu[wi]==="f") ok.push(SAVED.wu[wi]); else break; } WU.ans=ok; wuRender(false); }
     if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ if(SAVED.polls[k] && POLLREPLY[k][SAVED.polls[k]]){ POLLS[k]=SAVED.polls[k]; var b=$(k+"Poll").querySelector('button[data-r="'+POLLS[k]+'"]'); if(b){ b.setAttribute("aria-pressed","true"); b.className="btn"; } } }); }
     if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);
     (SAVED.cleared||[]).forEach(function(id){ if($(id) && GAME_IDS.indexOf(id)>=0){ clear(id,true); var b=$(id).querySelector(".lab-body"); var n=el("p",{class:"pause"}); n.textContent="You cleared this lead earlier (saved). Play again if you like; your evidence and your saved record stay unless you finish a replay."; b.insertBefore(n,b.firstChild); } });
     if(SAVED.fin && SAVED.fin.done && Object.keys(cleared).length===NG){
-      FIN.view=SAVED.fin.view; FIN.reason=SAVED.fin.reason||""; FIN.moved=SAVED.fin.moved||""; FIN.done=true;
+      FIN.view=SAVED.fin.view; FIN.reason=flat(SAVED.fin.reason); FIN.moved=flat(SAVED.fin.moved); FIN.done=true;
       $("finReason").value=FIN.reason; $("finMoved").value=FIN.moved;
       $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===FIN.view));});
       freezeFinale(); $("fin").classList.add("is-cleared"); finRender();
