@@ -234,7 +234,7 @@ var K={"1":["Repeated games: today's move can be paid back tomorrow.","Tit for T
 "2":["Trust game: sent coins triple, the receiver chooses what to return.","Trusting grows the pile: sending 10 every round earned 55 in Part A, sending nothing earned 40.","Reputation is your partner's memory: returning half earned 54 in Part B, keeping it all in round 5 earned 18.","The last round tempts people to break trust.","Start small and build trust step by step."],
 "3":["Hawks fight; doves back down. Neither wins everywhere.","All hawks: doves spread. All doves: hawks spread. The mix in between is stable (an ESS).","The mix settles where both score the same.","Hawk vs hawk: (food − fight cost) ÷ 2, here (10 − 20) ÷ 2 = −5.","Share of hawks = food ÷ fight cost, when a fight costs more than the food.","A stable strategy can't be taken over by a few newcomers."],
 "4":["Cheap talk: free to say, so it tells you little.","Costly signal: too expensive for the wrong people to fake.","Camp is worth it only if it costs less than 6 (10 - cost beats 4). Fast: 10 - 2 = 8 > 4. Slow: 10 - 8 = 2 < 4.","If camp is cheap for slow runners, everyone gets the badge (pooling) and it tells you nothing.","Diplomas, guarantees and peacock tails can work as signals."],
-"5":["Hidden information: your rival can't see your card.","Mixed strategy: pick your move with set odds so a smart rival can't predict you.","12 hands vs a smart rival: never bluff 0, always push 0, the mix +4.","Best mix here: always push HIGH, bluff on about 1 LOW card in 3 (6 of 8 pushes, 3 in 4, are HIGH)."],
+"5":["Hidden information: your rival can't see your card.","Mixed strategy: pick your move with set odds so a smart rival can't predict you.","12 hands vs a smart rival: never bluff 0, always push 0, the mix +4. In the real 14-hand game Wes isn't perfect, so your totals may differ: never bluff +1, always push +2, a good mix up to +8.","Best mix here: always push HIGH, bluff on about 1 LOW card in 3 (6 of 8 pushes, 3 in 4, are HIGH)."],
 "6":["Tragedy of the commons: each person's extra take hurts everyone a little.","Safe catch: leave enough for the lake to grow back. The lake can lose 30 a season; everyone taking 9 empties it in 3 seasons.","Promises alone fail; watchers plus fair penalties work.","Elinor Ostrom showed communities can manage commons well."],
 "7":["Group preferences can go in a circle (Condorcet paradox).","Then whoever sets the order of votes can pick the winner: the trip left out of the first vote enters last and wins.","Strategic voting: back your 2nd choice to stop your last.","A Condorcet winner beats every other option head to head; in a circle, there is none.","Every voting system has trade-offs (Arrow); none removes strategic voting completely."],
 "8":["Tit for Tat · Trust Builder · Stable Strategy · Costly Signal","Bluff Master · Commons Keeper · Agenda Setter"]};
@@ -310,6 +310,34 @@ draw();
     document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},2600);
   }
 }catch(e){}})();
+</script>
+<script>
+/* BACK: review earlier screens without re-scoring */
+(function(){
+  var nx=el("next");if(!nx)return;
+  var st=document.createElement("style");
+  st.textContent='#back{display:none;font:600 14px "Rubik",sans-serif;letter-spacing:1px;background:transparent;color:inherit;border:2px dashed currentColor;border-radius:12px;min-height:44px;padding:8px 16px;margin:0 10px 0 0;cursor:pointer;opacity:.85}';
+  document.head.appendChild(st);
+  var bk=document.createElement("button");bk.id="back";bk.type="button";bk.textContent="◀ BACK";bk.setAttribute("onclick","prevScreen()");
+  nx.parentNode.insertBefore(bk,nx);
+  var _draw=draw,_pick=pick,_rev=rev,_skip=typeof skipNZ==="function"?skipNZ:null;
+  draw=function(){
+    _draw();var s=LS.S[i];bk.style.display=i>0?"inline-block":"none";
+    if(s.q&&!s._done&&s._wrong)tried=true;
+    if(!s._done)return;
+    if(s.q){Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.disabled=true;if(x.getAttribute("onclick")==="pick("+s.a+",this)")x.classList.add("on")});
+      var sk=document.querySelector(".skip");if(sk)sk.style.display="none";
+      el("fb").innerHTML='<span class="good"><b>'+(s._sk?"Skipped (optional).":"Already answered.")+'</b></span> '+s.w;}
+    else if(s.r){s.r.forEach(function(r,k){var d=el("rv"+k);d.innerHTML="<b>"+r[0]+":</b> "+r[1];d.style.display="block"});
+      Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.disabled=true});}
+    nx.style.display="inline-block";
+  };
+  pick=function(k,b){var s=LS.S[i];_pick(k,b);if(s.q&&nx.style.display!=="none")s._done=true;else if(s.q&&tried)s._wrong=true};
+  rev=function(k,b){var s=LS.S[i];_rev(k,b);if(s.r&&nx.style.display!=="none")s._done=true};
+  if(_skip)skipNZ=function(){var s=LS.S[i];_skip();if(s&&s._sk)s._done=true};
+  prevScreen=function(){var t=Date.now();if(t-lastNav<300)return;lastNav=t;if(i>0){i--;draw()}};
+  document.addEventListener("keydown",function(e){if(e.key==="ArrowLeft"&&el("round").style.display!=="none")prevScreen()});
+})();
 </script>
 </body>
 </html>
