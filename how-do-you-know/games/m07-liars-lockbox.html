@@ -335,7 +335,7 @@
     <div class="panel">
       <h2>Every sentence is a key</h2>
       <p class="bigq"><b>The question:</b> Can a sentence break the idea of truth itself?</p>
-      <p>Feed 8 sentences to the lockbox. Each one <b>unlocks cleanly</b>, <b>defeats itself</b>, or jams it as a <b>paradox</b>. A short guide stays on screen. Example: "This sentence has five words" talks about itself but is simply true, so it unlocks cleanly.</p>
+      <p>Feed 8 sentences to the lockbox. Each one <b>unlocks cleanly</b>, <b>defeats itself</b>, or jams it as a <b>paradox</b>. A short guide stays on screen. Example: "This sentence is in English" talks about itself but is simply true, so it unlocks cleanly.</p>
       <p>Then two optional bonus rounds (two guards, and a theory desk). They don't count toward stars.</p>
       <p class="small">You'll miss some. Everyone does, even philosophers. A miss gets you a hint and a second try.</p>
       <div id="mode"></div>
@@ -395,8 +395,8 @@
         <div class="caption" id="lCap" aria-live="polite"></div>
       </div>
       <div class="hk-guide"><b class="gt">How to decide</b><ol>
-        <li><b>Is it about itself?</b> No: unlocks cleanly.</li>
-        <li><b>Yes?</b> Pretend it's true. Does that make it false? No: unlocks cleanly (&ldquo;This sentence has five words&rdquo;).</li>
+        <li><b>Does it point back at itself?</b> (It talks about itself, it covers itself like &ldquo;there is no truth,&rdquo; or it loops through another sentence.) No: unlocks cleanly.</li>
+        <li><b>Yes?</b> Pretend it's true. Does that make it false? No: unlocks cleanly (&ldquo;This sentence is in English&rdquo;).</li>
         <li><b>Yes?</b> Pretend it's false. Does that make it true? Yes: paradox. No: defeats itself.</li></ol></div>
       <div class="opts" id="lOpts"></div>
       <div class="fb bad hidden" id="lTry" aria-live="polite"></div>
@@ -545,8 +545,8 @@
   const CAP=['Click. It opens: this one can simply be true.','Snap! The key breaks inside its own lock.','Open… shut… open… It never settles.'];
   const R1=[
     {t:"This sentence has five words.", a:0, hint:'Guide step 2: pretend it\'s true. Does that make it false?', why:"Count them: This, sentence, has, five, words. Five. It talks about itself and it's simply true. Talking about yourself isn't the problem; looping back on your own truth is."},
-    {t:"All squares have four sides.", a:0, hint:'Guide step 1: is this sentence about itself, or about squares?', why:"An “all” sentence can be perfectly fine. This one is about squares, not about itself, and every square really does have four sides."},
-    {t:"Nobody has ever counted all the way to infinity.", a:0, hint:'Guide step 1: is the sentence talking about itself, or about people and numbers?', why:"No trap here: it isn't about itself at all, and it's true, since there's no last number to reach. “Nobody” doesn't make a sentence self-defeating."},
+    {t:"All squares have four sides.", a:0, hint:'Guide step 1: does this sentence point back at itself, or is it just about squares?', why:"An “all” sentence can be perfectly fine. This one is about squares, not about itself, and every square really does have four sides."},
+    {t:"Nobody has ever counted all the way to infinity.", a:0, hint:'Guide step 1: does it point back at itself, or is it just about people and numbers?', why:"No trap here: it isn't about itself at all, and it's true, since there's no last number to reach. “Nobody” doesn't make a sentence self-defeating."},
     {t:"There is no truth.", a:1, hint:'Guide step 2, then 3: if this were true, it would itself be a truth. What does that do to it? And if it were false, does anything break?', why:"If it were true, there would be at least one truth (this sentence), so it would be false. It knocks itself down, so it's simply false."},
     {t:"I know for certain that nobody can ever know anything.", a:1, hint:'It includes the speaker. Pretend it\'s true: could the speaker know it? Then check step 3.', why:"If nobody can know anything, then the speaker can't know that either. The claim knocks out its own support."},
     {t:"Whatever anyone believes is true.", a:1, hint:'Do some people believe this very sentence is false? Use that in guide steps 2 and 3.', why:"Plato's trap for Protagoras. Plenty of people believe this very sentence is false. If whatever anyone believes is true, then their belief is true too, and the sentence is false. So if it's true, it's false."},
@@ -555,8 +555,8 @@
     {two:["The sentence on the back is true.","The sentence on the front is false."], t:"Front of a card: “The sentence on the back is true.” Back: “The sentence on the front is false.”", a:2, hint:'Follow it around once: if the front is true, what does that make the back? And then the front?', why:"Follow it around. If the front is true, the back is true, so the front is false. If the front is false, the back is false, so the front is true. A two-step liar: a paradox."}
   ];
   const RH=[
-    {t:"This sentence is true.", a:0, why:"Argued about. Pretend it's true: fine, nothing breaks. Pretend it's false: also fine. It never contradicts itself, so it is not a paradox. But nothing settles whether it is true or false either. The truth-teller can be called true or false with equal right, which is a different problem from the liar's."},
-    {t:"Every sentence any Cretan ever says is false. (Said by a Cretan.)", a:1, why:"If it were true, then it, said by a Cretan, would be false. So it can't be true. If it's false, all that follows is that some Cretan sentence is true, which is fine. It defeats itself, and unlike the liar it settles down as simply false."}
+    {t:"This sentence is true.", a:0, free:true, why:"Argued about. Pretend it's true: fine, nothing breaks. Pretend it's false: also fine. It never contradicts itself, so it is not a paradox. But nothing settles whether it is true or false either. The truth-teller can be called true or false with equal right, which is a different problem from the liar's."},
+    {t:"Every sentence any Cretan ever says is false. (Said by a Cretan.)", a:1, free:true, why:"If it were true, then it, said by a Cretan, would be false. So it can't be true. If it's false, all that follows is that some Cretan sentence is true, which is fine. It defeats itself, and unlike the liar it settles down as simply false."}
   ];
 
   /* ---------- Round 3 data ---------- */
@@ -607,7 +607,7 @@
     $('lFb').classList.add('hidden'); $('lTry').classList.add('hidden'); $('lNextWrap').classList.add('hidden');
   }
   function lockAnswer(i,btn){
-    const it=L1[k1], ok=i===it.a;
+    const it=L1[k1], ok=it.free ? true : i===it.a;
     if(!ok && t1===0){
       t1=1; btn.disabled=true; btn.classList.add('wrong');
       H.miss(LOCK,{q:'Feed this sentence to the Liar’s Lockbox: "'+it.t+'" Does it unlock cleanly (it can simply be true), defeat itself (it can\'t be true, but can be false), or is it a paradox (it can\'t settle on true or false)?', opts:KN.slice(), a:it.a, why:it.why});
@@ -615,14 +615,14 @@
     }
     $('lTry').classList.add('hidden');
     const first=ok&&t1===0, second=ok&&t1===1;
-    if(first) s[0]++;
+    if(first && !it.free) s[0]++;
     res.lock.push(first);
     $('key').setAttribute('class','key in');
     $('box').setAttribute('class','lockbox '+['open','snap','flick'][it.a]);
     $('lCap').textContent=CAP[it.a];
     $('lOpts').querySelectorAll('button').forEach(b=>{ b.disabled=true; const j=+b.dataset.i; if(j===it.a) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); if(j===i) b.classList.add('picked'); });
     H.dots($('lDots'),L1.length,res.lock);
-    const f=$('lFb'); fb(f,ok,KN[it.a]+'.','<p>'+it.why+(H.hard()&&it.hardWhy?it.hardWhy:'')+'</p>',second);
+    const f=$('lFb'); fb(f,ok,(it.free?'Bonus, no score. Most say: ':'')+KN[it.a]+'.','<p>'+it.why+(H.hard()&&it.hardWhy?it.hardWhy:'')+'</p>',second);
     H.challenge(f,LOCK,short(it.t));
     log.push({c:short(it.t), you:(second?'2nd try: ':'')+KN[i], ans:KN[it.a], ok:first});
     $('lNext').textContent= k1===L1.length-1 ? 'On to the bonus' : 'Next key';
@@ -654,7 +654,7 @@
   /* ================= Bonus: two guards ================= */
   let P, pk, G3;
   const G_TOTAL=6;
-  const GUIDE12='<b class="gt">Trick</b>Pretend one guard is the truth-teller. If his sentence then contradicts itself, he must be the liar.';
+  const GUIDE12='<b class="gt">Trick</b>Pretend one guard is the truth-teller. If his sentence then contradicts itself, he must be the liar. Now pretend he\'s the liar instead. If that contradicts itself, he must be the truth-teller.';
   function sceneReset(){
     ['doorL','doorR'].forEach(d=>$(d).setAttribute('class','door'));
     ['arrL','arrR'].forEach(a=>$(a).setAttribute('class','arrow'));
@@ -766,7 +766,7 @@
     const p=P[pk]; G3={q:null, asked:null};
     $('gSays').innerHTML='<div class="say"><span class="who">The rule this time</span><span class="claim">You may ask ONE guard ONE question. Then you choose a door.</span></div>';
     $('gAsk').textContent='Which question do you ask?';
-    guide('<b class="gt">Trick</b>You won\'t know which guard you asked. Pick a question where the answer is useful whether he lies or not.');
+    guide('<b class="gt">Trick</b>You won\'t know which guard you asked. Pick a question where the answer is useful whether he lies or not. Hint: try asking about what the <i>other</i> guard would say.');
     const order=H.shuffle([0,1,2]);
     const o=$('gOpts'); o.className='opts one';
     o.innerHTML=order.map(i=>'<button data-i="'+i+'">'+QS[i].t+'</button>').join('');
@@ -860,7 +860,7 @@
   function finish(){
     show('sEnd');
     document.querySelector('details.answers').open=false;
-    const n1=L1.length;
+    const n1=L1.filter(x=>!x.free).length;
     const gShow= typeof bonus.g==='number' ? bonus.g+' / '+G_TOTAL : 'Skipped';
     const dShow= typeof bonus.d==='number' ? bonus.d+' / '+R3.length : 'Skipped';
     $('scores').innerHTML='<div><b>'+s[0]+' / '+n1+'</b><span>lockbox</span></div><div><b>'+gShow+'</b><span>bonus: two guards</span></div><div><b>'+dShow+'</b><span>bonus: theory desk</span></div>';

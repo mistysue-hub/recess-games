@@ -308,7 +308,7 @@
       <p>Ask these in order and stop at the first yes:</p>
       <ol class="steps hk-guide">
         <li><b>Could your eyes be tricked here?</b> (far away, tiny, blurry, or a trick of light like a bent-looking oar) &rarr; Senses</li>
-        <li><b>Could a dream fake it?</b> (places, people, your body) &rarr; Dream</li>
+        <li><b>Could a dream fake it?</b> (places, people, your body; not math) &rarr; Dream</li>
         <li><b>Is it math or logic?</b> &rarr; Deceiver</li>
         <li><b>Is it that you exist or are thinking?</b> &rarr; Untouchable</li>
       </ol>
@@ -349,7 +349,7 @@
       </div>
       <ol class="steps mini hk-guide" id="guide">
         <li><b>Could your eyes be tricked here?</b> (far away, tiny, blurry, or a trick of light like a bent-looking oar) &rarr; Senses</li>
-        <li><b>Could a dream fake it?</b> (places, people, your body) &rarr; Dream</li>
+        <li><b>Could a dream fake it?</b> (places, people, your body; not math) &rarr; Dream</li>
         <li><b>Is it math or logic?</b> &rarr; Deceiver</li>
         <li><b>You exist / you're thinking?</b> &rarr; Untouchable</li>
       </ol>
@@ -426,9 +426,9 @@
   ];
   // Philosopher mode only: genuinely arguable items.
   const HARD=[
-    {c:"I remember what I had for breakfast.", x:"A clear memory, from this morning.", r:2, hard:true,
+    {c:"I remember what I had for breakfast.", x:"A clear memory, from this morning.", r:2, hard:true, free:true,
      why:"Most answer Dream: dreams are full of false memories, so a memory can be faked. But this one is argued about. Some say a memory could even survive a dream, and others (Russell's five-minute world) say only a deceiver could fake the whole past."},
-    {c:"The past is real.", x:"Not your memories of it. The past itself.", r:3, hard:true,
+    {c:"The past is real.", x:"Not your memories of it. The past itself.", r:3, hard:true, free:true,
      why:"A dream can fake your memories, but it can't undo a past that happened. Only a deceiver who made the world five minutes ago (Russell's idea) could break this. Arguable: you could say a dream knocks it out too."},
     {c:"I am awake right now.", x:"", r:2, hard:true,
      why:"This is the dream argument itself: Descartes says there are no sure marks to tell waking from dreaming, so the Dream doubt reaches even this. Arguable: some say you can't really be reasoning as clearly as you are now while dreaming."},
@@ -482,7 +482,7 @@
     $('lock').disabled=false;
   });
   $('lock').onclick=()=>{
-    const b=ORDER[bi], ok=pick===b.r;
+    const b=ORDER[bi], ok=b.free ? true : pick===b.r;
     if(!ok && tries===0){
       tries=1; HDYK.miss(2,{q:'Which is the weakest of Descartes\'s doubts that knocks out this belief, or is it untouchable? “'+b.c+'”'+(b.x?' ('+b.x+')':''), opts:['Senses','Dream','Deceiver','Untouchable'], a:b.r-1, why:b.why});
       const r=rungEl(pick); r.classList.remove('pick'); r.classList.add('wrong'); r.disabled=true; pick=null; $('lock').disabled=true;
@@ -492,7 +492,7 @@
       return;
     }
     $('hint').classList.add('hidden');
-    const first=ok&&tries===0; if(first) right++;
+    const first=ok&&tries===0; if(first && !b.free) right++;
     $('lock').parentElement.classList.add('hidden');
     $('ladder').querySelectorAll('.rung').forEach(x=>{
       x.disabled=true;
@@ -507,7 +507,7 @@
     if(!ok && pick<b.r) extra='<p class="small">'+RUNG[pick]+' isn\'t strong enough to touch this one.</p>';
     if(b.note) extra+='<p class="small">'+b.note+'</p>';
     const fb=$('fb'); fb.className='fb'+(ok?'':' bad');
-    fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&tries>0)+' '+(b.r===4?'It\'s untouchable.':'It\'s knocked out at '+RUNG[b.r]+'.')+'</b><p>'+b.why+'</p>'+extra;
+    fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&tries>0)+' '+(b.free?'Bonus, no score. Most say: ':'')+(b.r===4?'It\'s untouchable.':'It\'s knocked out at '+RUNG[b.r]+'.')+'</b><p>'+b.why+'</p>'+extra;
     HDYK.challenge(fb,2,b.c.slice(0,90));
     log.push({c:b.c, you:(tries?'2nd try: ':'')+(pick?RUNG[pick]:'-'), ans:RUNG[b.r], ok:first});
     $('nextBtn').textContent= bi===ORDER.length-1 ? 'To the bonus round' : 'Next belief';
@@ -545,10 +545,11 @@
 
   function finish(){
     show('sEnd');
-    $('scores').innerHTML='<div><b>'+right+' / '+ORDER.length+'</b><span>ladder (counts for stars)</span></div><div><b>bonus</b><span>'+(dSkipped?'skipped':'Reply Desk, not scored')+'</span></div>';
+    const nScored=ORDER.filter(x=>!x.free).length;
+    $('scores').innerHTML='<div><b>'+right+' / '+nScored+'</b><span>ladder (counts for stars)</span></div><div><b>bonus</b><span>'+(dSkipped?'skipped':'Reply Desk, not scored')+'</span></div>';
     $('rows').innerHTML=log.map(r=>'<tr><td>'+r.c+'</td><td>'+r.you+'</td><td class="'+(r.ok?'yes':'nope')+'">'+r.ans+'</td></tr>').join('');
     $('code').textContent=CODE;
-    HDYK.end($('shelf'),{lock:2, right:right, total:ORDER.length});
+    HDYK.end($('shelf'),{lock:2, right:right, total:ORDER.filter(x=>!x.free).length});
   }
   $('again').onclick=()=>{ [...lights.children].forEach(l=>l.className=''); show('sIntro'); };
   addEventListener('resize',()=>{ if(!$('sLadder').classList.contains('hidden') && $('lock').parentElement.classList.contains('hidden')) moveImp(ORDER[Math.min(bi,ORDER.length-1)].r); });

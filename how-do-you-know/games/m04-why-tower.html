@@ -405,7 +405,7 @@
        {t:"I watched her set the tomato on the counter myself.",k:'stop'}],
       [{t:"Her eyesight was checked by an optometrist, whose license was checked by a board, and so on.",h:"Her eyesight was checked by an optometrist, whose license comes from a board, which has its own overseers.",k:'next'},
        {t:"I know she's usually right because she told me she's usually right.",k:'loop',to:2},
-       {t:"Every time she's told me what's in the kitchen, I've looked and she was right.",k:'stop'}]
+       {t:"I just watched her read a label across the room, and I checked it myself: she got it right.",k:'stop'}]
     ]},
     {belief:"This old bridge will hold my weight.", levels:[
       [{t:"It held a delivery truck yesterday.",k:'next'},
@@ -493,7 +493,7 @@
     pickEnd=b.dataset.v; $('qEnd').querySelectorAll('button').forEach(x=>x.classList.toggle('pick',x===b)); $('tLock').disabled=false;
   });
   $('tLock').onclick=()=>{
-    const t=ORDERT[ti], ok=pickEnd===ending, hard=HDYK.hard();
+    const t=ORDERT[ti], ok=t.arguable ? true : pickEnd===ending, hard=HDYK.hard();
     const chain=[...$('tower').querySelectorAll('.blk')].map(x=>x.textContent.replace(/^(Belief|Why\? →)/,'').trim()).filter(Boolean).join(' Why? ');
     if(!ok && tries===0){
       tries=1; HDYK.miss(4,{q:'How does this chain of reasons end? '+chain, opts:['Forever','Circle','Stop'], a:['forever','circle','stop'].indexOf(ending), why:WHY[ending]});
@@ -502,13 +502,13 @@
       h.classList.remove('hidden'); return;
     }
     $('tHint').classList.add('hidden');
-    const first=ok&&tries===0; if(first) towerRight++; towerTotal++;
+    const first=ok&&tries===0; if(!t.arguable){ if(first) towerRight++; towerTotal++; }
     $('tLock').parentElement.classList.add('hidden');
     drawEnding();
-    $('qEnd').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(b.dataset.v===ending) b.classList.add('right'); else if(b.dataset.v===pickEnd) b.classList.add('wrong'); });
+    $('qEnd').querySelectorAll('button').forEach(b=>{ b.disabled=true; b.classList.remove('pick'); if(b.dataset.v===ending) b.classList.add('right'); else if(b.dataset.v===pickEnd && !t.arguable) b.classList.add('wrong'); });
     const fb=$('tFb'); fb.className='fb'+(ok?'':' bad');
     let extra= (t.arguable&&ending==='stop') ? '<p class="small">Argued about: is a bare memory a basic belief, or does it quietly lean on trusting your memory? Foundationalists disagree with each other here.</p>' : '';
-    fb.innerHTML='<b class="head">'+HDYK.react(ok, ok&&tries>0)+' It ends: '+END[ending]+'.</b><p>'+WHY[ending]+'</p>'+extra;
+    fb.innerHTML='<b class="head">'+(t.arguable?'Bonus, no score. Most say: ':HDYK.react(ok, ok&&tries>0)+' ')+'It ends: '+END[ending]+'.</b><p>'+WHY[ending]+'</p>'+extra;
     HDYK.challenge(fb,4,('Tower: '+t.belief).slice(0,90));
     log.push({c:'Tower: '+t.belief, you:(tries?'2nd try: ':'')+(pickEnd?END[pickEnd]:'-'), ans:END[ending], ok:first});
     $('tNext').textContent= ti===ORDERT.length-1 ? (HDYK.hard() ? 'On to the extras' : 'To the bonus round') : 'Next tower';
