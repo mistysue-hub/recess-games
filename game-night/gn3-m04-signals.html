@@ -239,5 +239,55 @@ setup();
   }
 }catch(e){}})();
 </script>
+<script>
+/* LOOK BACK: read-only snapshots of earlier screens */
+(function(){
+  var snaps=[],last="",timers=[];
+  var st=document.createElement("style");
+  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
+  '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
+  '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
+  '#lbOv .lbBar button:disabled{opacity:.35}'+
+  '#lbBody{pointer-events:none;user-select:text;padding:6px 0 40px;opacity:.97}'+
+  '#lbBody *{animation:none !important}#lbBody button,#lbBody .opt{pointer-events:none}'+
+  '#lbBody canvas{background:#111}';
+  document.head.appendChild(st);
+  var btn=document.createElement("button");btn.id="lbBtn";btn.type="button";btn.textContent="◀ LOOK BACK";document.body.appendChild(btn);
+  var ov=document.createElement("div");ov.id="lbOv";
+  ov.innerHTML='<div class="lbBar"><button type="button" id="lbPrev">◀ Earlier</button><span id="lbCt"></span><button type="button" id="lbNext">Later ▶</button><button type="button" id="lbX">CLOSE</button></div><div id="lbBody"></div>';
+  document.body.appendChild(ov);
+  var k=0;
+  function grab(){
+    var orig=document.body,cl=orig.cloneNode(true);
+    var oa=orig.querySelectorAll("*"),ca=cl.querySelectorAll("*"),rm=[],j;
+    for(j=0;j<oa.length;j++){var o=oa[j];if(o.id==="lbBtn"||o.id==="lbOv"||o.tagName==="SCRIPT"||o.tagName==="STYLE"||o.tagName==="NOSCRIPT"){rm.push(ca[j]);continue}
+      var cs=getComputedStyle(o);if(cs.display==="none"||cs.visibility==="hidden")rm.push(ca[j]);
+      if(o.tagName==="CANVAS"){try{var im=document.createElement("img");im.src=o.toDataURL();im.style.cssText="max-width:100%";ca[j].parentNode&&ca[j].parentNode.replaceChild(im,ca[j])}catch(e){}}
+      if(o.tagName==="TEXTAREA"||o.tagName==="INPUT"){try{ca[j].textContent=o.value}catch(e){}}}
+    rm.forEach(function(n){if(n&&n.parentNode)n.parentNode.removeChild(n)});
+    Array.prototype.forEach.call(cl.querySelectorAll("*"),function(n){n.removeAttribute("onclick");n.removeAttribute("onchange");n.removeAttribute("oninput");n.removeAttribute("onmousedown");n.removeAttribute("ontouchstart");n.removeAttribute("href");if(n.id)n.removeAttribute("id")});
+    var txt=(cl.innerText||cl.textContent||"").replace(/\s+/g," ").trim();
+    return {txt:txt,html:cl.innerHTML};
+  }
+  function snap(){
+    try{var g=grab();if(!g.txt||g.txt===last)return;last=g.txt;snaps.push(g);if(snaps.length>60)snaps.shift();btn.style.display=snaps.length>=2?"block":"none"}catch(e){}
+  }
+  function later(){timers.forEach(clearTimeout);timers=[setTimeout(snap,500),setTimeout(snap,1800)]}
+  document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest("#lbOv,#lbBtn"))return;later()},true);
+  document.addEventListener("keydown",function(e){if(e.key!=="Escape"&&e.key!=="ArrowLeft"&&e.key!=="ArrowRight")later()},true);
+  setTimeout(snap,700);
+  function view(n){k=Math.max(0,Math.min(snaps.length-1,n));var b=document.getElementById("lbBody");b.innerHTML="<div class=\"lbWrap\">"+snaps[k].html+"</div>";
+    document.getElementById("lbCt").textContent="Screen "+(k+1)+" of "+snaps.length+(k===snaps.length-1?" (now)":"");
+    document.getElementById("lbPrev").disabled=k===0;document.getElementById("lbNext").disabled=k===snaps.length-1;ov.scrollTop=0}
+  function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
+  function close(){ov.style.display="none";document.documentElement.style.overflow=""}
+  btn.addEventListener("click",open);
+  document.getElementById("lbX").addEventListener("click",close);
+  document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
+  document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});
+  document.addEventListener("keydown",function(e){if(ov.style.display!=="block")return;if(e.key==="Escape")close();if(e.key==="ArrowLeft")view(k-1);if(e.key==="ArrowRight")view(k+1)});
+})();
+</script>
 </body>
 </html>
