@@ -65,6 +65,7 @@
       <option value="2p">Two players (same screen)</option>
       <option value="cw">Play White vs computer</option>
       <option value="cb">Play Black vs computer</option>
+      <option value="online">Online with a friend (two devices)</option>
     </select>
     <button id="newBtn">New game</button>
     <button id="undoBtn">Undo</button>
@@ -73,6 +74,12 @@
     <button id="resignBtn">Resign</button>
   </div>
 
+  <div id="onlinePanel" style="display:none;text-align:center;margin-bottom:8px">
+    <button id="hostBtn">Host a game</button>
+    <input id="codeIn" placeholder="Friend's code" maxlength="5" size="8" style="font-size:.95rem;padding:6px;text-transform:uppercase">
+    <button id="joinBtn">Join</button>
+    <div id="net" style="margin-top:6px;font-size:.92rem;color:#2f6f4f;font-weight:600"></div>
+  </div>
   <div id="status"></div>
   <div id="boardWrap"><div id="board"></div></div>
   <div id="moves"></div>
@@ -81,6 +88,7 @@
 
 <div id="promo"><div class="box"><div style="margin-bottom:6px;font-weight:600">Promote pawn to:</div><div id="promoBtns"></div></div></div>
 
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 // ==ENGINE START==
 const FILES = 'abcdefgh';
@@ -228,12 +236,14 @@ function posKey(s) {
 const GLYPH = { K:'♚', Q:'♛', R:'♜', B:'♝', N:'♞', P:'♟' };
 const glyph = t => GLYPH[t] + '︎';
 
+let online = null;
 let state, history, moveLog, lastMove, over, flipped, selected, targets, pendingCap, reps, ai, aiTimer;
 
 const $ = id => document.getElementById(id);
 
-function newGame() {
+function newGame(remote) {
   clearTimeout(aiTimer);
+  if (!remote && onlineActive()) online.conn.send({ t: 'new' });
   state = startState();
   history = [];
   moveLog = [];
@@ -244,6 +254,7 @@ function newGame() {
   const mode = $('mode').value;
   ai = mode === 'cw' ? 'b' : mode === 'cb' ? 'w' : null;
   flipped = mode === 'cb';
+  if (mode === 'online') { ai = null; flipped = !!online && online.color === 'b'; }
   render();
   maybeAI();
 }
@@ -295,6 +306,7 @@ function render() {
     let msg = colorName(state.turn) + ' to move';
     if (inCheck(state.board, state.turn)) msg += ' (check!)';
     if (ai) msg += state.turn === ai ? ' – computer is thinking…' : ' – your turn';
+    if ($('mode').value === 'online') msg = !onlineActive() ? 'Not connected yet – host a game or join with a code.' : msg + (state.turn === online.color ? ' – your turn' : ' – waiting for your friend…');
     setStatus(msg);
   }
   $('moves').textContent = moveLog.length ? moveLog.map((m, k) => (k % 2 === 0 ? (k / 2 + 1) + '. ' : '') + m).join('  ') : 'No moves yet.';
@@ -303,6 +315,7 @@ function render() {
 
 function onSquare(i) {
   if (over || (ai && state.turn === ai)) return;
+  if ($('mode').value === 'online' && (!onlineActive() || state.turn !== online.color)) return;
   const p = state.board[i];
   // clicking a target of the selected piece
   const cand = targets.filter(m => m.to === i);
@@ -342,7 +355,8 @@ function describe(m, s) {
   return (p[1] === 'P' ? '' : p[1]) + sqName(m.from) + (m.cap ? 'x' : '-') + sqName(m.to) + (m.promo ? '=' + m.promo : '');
 }
 
-function play(m) {
+function play(m, remote) {
+  if (!remote && onlineActive()) online.conn.send({ t: 'move', from: m.from, to: m.to, promo: m.promo || null });
   history.push({ state, moveLog: moveLog.slice(), lastMove, reps: Object.assign({}, reps) });
   const mover = state.turn;
   const label = describe(m, state);
@@ -426,11 +440,67 @@ function maybeAI() {
 }
 
 // ---------- Buttons ----------
-$('newBtn').onclick = newGame;
-$('mode').onchange = newGame;
+$('newBtn').onclick = () => newGame();
+$('mode').onchange = () => {
+  const on = $('mode').value === 'online';
+  $('onlinePanel').style.display = on ? 'block' : 'none';
+  if (on) setNet('Pick Host (you get a code) or Join (type your friend’s code).'); else teardown();
+  newGame(true);
+};
+
+// ---------- Online play (PeerJS, peer-to-peer) ----------
+function onlineActive() { return !!(online && online.conn && online.conn.open); }
+function setNet(t) { $('net').textContent = t; }
+function teardown() { if (online) { try { online.peer.destroy(); } catch (e) {} } online = null; setNet(''); }
+function wire(conn) {
+  online.conn = conn;
+  const onOpen = () => {
+    setNet('Connected! You are ' + colorName(online.color) + '.');
+    newGame(true);
+  };
+  if (conn.open) onOpen(); else conn.on('open', onOpen);
+  conn.on('data', onNetData);
+  conn.on('close', () => { setNet('Your friend disconnected.'); render(); });
+}
+function hostGame() {
+  if (typeof Peer === 'undefined') { setNet('Online play could not load. Check your internet connection.'); return; }
+  teardown();
+  const code = Math.random().toString(36).replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase().padEnd(5, 'X');
+  const peer = new Peer('ncchess-' + code);
+  online = { peer, conn: null, color: 'w' };
+  setNet('Starting…');
+  peer.on('open', () => { setNet('Your code: ' + code + ' – send it to your friend and wait. You play White.'); newGame(true); });
+  peer.on('connection', c => { if (online && online.conn) { c.close(); return; } wire(c); });
+  peer.on('error', e => { if (e.type === 'unavailable-id') hostGame(); else setNet('Connection problem: ' + e.type); });
+}
+function joinGame() {
+  if (typeof Peer === 'undefined') { setNet('Online play could not load. Check your internet connection.'); return; }
+  const code = $('codeIn').value.trim().toUpperCase();
+  if (!code) { setNet('Type your friend’s code first.'); return; }
+  teardown();
+  const peer = new Peer();
+  online = { peer, conn: null, color: 'b' };
+  setNet('Connecting…');
+  peer.on('open', () => wire(peer.connect('ncchess-' + code, { reliable: true })));
+  peer.on('error', e => setNet(e.type === 'peer-unavailable' ? 'No game found with that code.' : 'Connection problem: ' + e.type));
+}
+function onNetData(d) {
+  if (!d) return;
+  if (d.t === 'move') {
+    if (over || state.turn === online.color) return;
+    const m = legalMoves(state).find(x => x.from === d.from && x.to === d.to && (x.promo || null) === (d.promo || null));
+    if (m) play(m, true);
+  } else if (d.t === 'new') newGame(true);
+  else if (d.t === 'resign') { over = { kind: 'resign', msg: 'Your friend resigned. You win!' }; render(); }
+  else if (d.t === 'drawoffer') {
+    if (confirm('Your friend offers a draw. Accept?')) { online.conn.send({ t: 'drawaccept' }); over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
+  } else if (d.t === 'drawaccept') { over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
+}
+$('hostBtn').onclick = hostGame;
+$('joinBtn').onclick = joinGame;
 $('flipBtn').onclick = () => { flipped = !flipped; render(); };
 $('undoBtn').onclick = () => {
-  if (!history.length) return;
+  if (!history.length || $('mode').value === 'online') return;
   clearTimeout(aiTimer);
   let h = history.pop();
   // against the computer, undo back to the human's turn
@@ -443,12 +513,14 @@ $('undoBtn').onclick = () => {
 $('resignBtn').onclick = () => {
   if (over) return;
   clearTimeout(aiTimer);
-  const who = ai ? other(ai) : state.turn;
+  if (onlineActive()) online.conn.send({ t: 'resign' });
+  const who = ai ? other(ai) : onlineActive() ? online.color : state.turn;
   over = { kind: 'resign', msg: colorName(who) + ' resigned. ' + colorName(other(who)) + ' wins!' };
   render();
 };
 $('drawBtn').onclick = () => {
   if (over) return;
+  if (onlineActive()) { online.conn.send({ t: 'drawoffer' }); setNet('Draw offered – waiting for your friend.'); return; }
   if (confirm('Both players agree to a draw?')) {
     clearTimeout(aiTimer);
     over = { kind: 'draw', msg: 'Draw by agreement.' };
