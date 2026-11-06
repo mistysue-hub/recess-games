@@ -8,7 +8,7 @@
   :root { --light:#f0d9b5; --dark:#b58863; --accent:#2f6f4f; --danger:#c0392b; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f6f3ee; color:#222; }
-  main { max-width: 640px; margin: 0 auto; padding: 14px; }
+  main { max-width: 900px; margin: 0 auto; padding: 14px; }
   h1 { font-size: 1.5rem; margin: 6px 0 2px; text-align:center; }
   .sub { text-align:center; margin:0 0 10px; color:#555; font-size:.95rem; }
   .rules { background:#fff; border:1px solid #ddd; border-radius:10px; padding:8px 12px; margin-bottom:10px; font-size:.92rem; }
@@ -20,6 +20,13 @@
   #status { text-align:center; font-weight:700; font-size:1.1rem; min-height:2.6em; padding:6px 8px; border-radius:8px; background:#fff; border:1px solid #ddd; margin-bottom:8px; }
   #status.over { background:#fff3cd; border-color:#e0c36a; }
   #status.warn { background:#fdecea; border-color:#e6a39b; color:var(--danger); }
+  #play { display:flex; gap:14px; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
+  #sideRules { flex:0 1 230px; background:#fff; border:2px solid var(--accent); border-radius:12px; padding:10px 12px; font-size:.9rem; }
+  #sideRules h2 { margin:0 0 6px; font-size:1.05rem; color:var(--accent); }
+  #sideRules .rule { margin-bottom:8px; line-height:1.3; }
+  #sideRules .rule b { display:block; color:var(--accent); }
+  #sideRules .small { font-size:.8rem; color:#666; margin:6px 0 0; }
+  @media (max-width:900px) { #sideRules { flex:1 1 100%; } }
   #boardWrap { display:flex; justify-content:center; }
   #board { display:grid; grid-template-columns: repeat(8, minmax(0,1fr)); grid-template-rows: repeat(8, minmax(0,1fr)); width:min(92vw, 560px); height:min(92vw, 560px); border:3px solid #5a4631; border-radius:4px; user-select:none; }
   .sq { min-width:0; min-height:0; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size: min(8.2vw, 46px); line-height:1; }
@@ -67,7 +74,7 @@
     <ul>
       <li>All the normal chess moves and rules apply (castling, en passant, promotion, check).</li>
       <li><b>The first player to capture any piece loses immediately</b> (en passant counts too).</li>
-      <li><b>Bishops and rooks can't go back</b> to any square they left during their own side's last 3 turns. Those squares show a faint &#10005; when you select the piece.</li>
+      <li>See <b>Special rules</b> beside the board for the pawn, bishop and rook rules.</li>
       <li>You can still win the normal way: checkmate your opponent.</li>
       <li>You also win if your opponent has <b>only capturing moves left</b>, because they'd be forced to capture.</li>
       <li>Stalemate, a 50-move stretch with no pawn move, or the same position three times is a draw.</li>
@@ -112,7 +119,16 @@
     <div id="net"></div>
   </div>
   <div id="status"></div>
-  <div id="boardWrap"><div id="board"></div></div>
+  <div id="play">
+    <aside id="sideRules">
+      <h2>Special rules</h2>
+      <div class="rule"><b>Pawns</b>Once pawns start moving, a pawn can't move onto a row if that would put more than half of your pawns on that row (4 of 8). Your starting row doesn't count.</div>
+      <div class="rule"><b>Bishops</b>A bishop can't move to any square it left during your last 3 turns.</div>
+      <div class="rule"><b>Rooks</b>A rook can't move to any square it left during your last 3 turns.</div>
+      <p class="small">Moves that break these rules just aren't offered. For bishops and rooks, the squares they can't return to show a faint &#10005; when selected.</p>
+    </aside>
+    <div id="boardWrap"><div id="board"></div></div>
+  </div>
   <div id="moves"></div>
   
 </main>
@@ -183,6 +199,11 @@ function inCheck(b, color) { return attacked(b, kingSq(b, color), other(color));
 
 function genPseudo(s, color) {
   const b = s.board, out = [];
+  // Rule: a pawn may not move onto a row if that would put more than half of its side's pawns on that row.
+  const rowCount = new Array(8).fill(0);
+  let pawnTotal = 0;
+  for (let k = 0; k < 64; k++) if (b[k] === color + 'P') { rowCount[k >> 3]++; pawnTotal++; }
+  const rowOk = to => (rowCount[to >> 3] + 1) * 2 <= pawnTotal;
   const add = (from, to, extra) => out.push(Object.assign({ from, to, cap: !!b[to], ep: false, castle: null, promo: null }, extra));
   for (let i = 0; i < 64; i++) {
     const p = b[i];
@@ -192,20 +213,20 @@ function genPseudo(s, color) {
       const dir = color === 'w' ? -1 : 1, startRow = color === 'w' ? 6 : 1, lastRow = color === 'w' ? 0 : 7;
       const pushMove = (to, extra) => {
         if ((to >> 3) === lastRow) for (const pr of ['Q','R','B','N']) add(i, to, Object.assign({ promo: pr }, extra));
-        else add(i, to, extra);
+        else if (rowOk(to)) add(i, to, extra);
       };
       const f1 = i + dir * 8;
       if (f1 >= 0 && f1 < 64 && !b[f1]) {
         pushMove(f1);
         const f2 = i + dir * 16;
-        if (r === startRow && !b[f2]) add(i, f2);
+        if (r === startRow && !b[f2] && rowOk(f2)) add(i, f2);
       }
       for (const dc of [-1, 1]) {
         const cc = c + dc, rr = r + dir;
         if (cc < 0 || cc > 7 || rr < 0 || rr > 7) continue;
         const to = rr * 8 + cc;
         if (b[to] && b[to][0] !== color) pushMove(to);
-        else if (to === s.ep) add(i, to, { cap: true, ep: true });
+        else if (to === s.ep && rowOk(to)) add(i, to, { cap: true, ep: true });
       }
     } else if (t === 'N' || t === 'K') {
       for (const [dr, dc] of (t === 'N' ? KN : KG)) {
