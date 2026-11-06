@@ -24,7 +24,10 @@
   #sideRules { flex:0 0 220px; background:#fff; border:2px solid var(--accent); border-radius:12px; padding:10px 12px; font-size:.9rem; }
   #sideRules h2 { margin:0 0 6px; font-size:1.05rem; color:var(--accent); }
   #sideRules .rule { margin-bottom:8px; line-height:1.3; }
-  #sideRules .rule b { display:block; color:var(--accent); }
+  #sideRules .rule label { display:flex; gap:7px; align-items:center; font-weight:700; color:var(--accent); cursor:pointer; font-size:1rem; }
+  #sideRules .rule input { width:18px; height:18px; accent-color:var(--accent); cursor:pointer; }
+  #sideRules .rule.off label { color:#888; }
+  #sideRules .rule.off .txt { opacity:.45; text-decoration:line-through; }
   #sideRules .small { font-size:.8rem; color:#666; margin:6px 0 0; }
   @media (max-width:620px) { #sideRules { flex:1 1 100%; } }
   #boardWrap { display:flex; justify-content:center; flex:1 1 360px; min-width:0; }
@@ -122,10 +125,10 @@
   <div id="play">
     <aside id="sideRules">
       <h2>Special rules</h2>
-      <div class="rule"><b>Pawns</b>Once pawns start moving, a pawn can't move onto a row if that would put more than half of your pawns on that row (4 of 8). Your starting row doesn't count.</div>
-      <div class="rule"><b>Bishops</b>A bishop can't move to any square it left during your last 3 turns.</div>
-      <div class="rule"><b>Rooks</b>A rook can't move to any square it left during your last 3 turns.</div>
-      <p class="small">Moves that break these rules just aren't offered. For bishops and rooks, the squares they can't return to show a faint &#10005; when selected.</p>
+      <div class="rule"><label><input type="checkbox" id="rulePawn" checked> Pawns</label><div class="txt">Once pawns start moving, a pawn can't move onto a row if that would put more than half of your pawns on that row (4 of 8). Your starting row doesn't count.</div></div>
+      <div class="rule"><label><input type="checkbox" id="ruleBishop" checked> Bishops</label><div class="txt">A bishop can't move to any square it left during your last 3 turns.</div></div>
+      <div class="rule"><label><input type="checkbox" id="ruleRook" checked> Rooks</label><div class="txt">A rook can't move to any square it left during your last 3 turns.</div></div>
+      <p class="small">Tick or untick a rule to turn it on or off. Changing a rule starts a new game. Moves that break a rule just aren't offered; for bishops and rooks, the squares they can't return to show a faint &#10005; when selected.</p>
     </aside>
     <div id="boardWrap"><div id="board"></div></div>
   </div>
@@ -142,6 +145,8 @@ const FILES = 'abcdefgh';
 const sqName = i => FILES[i & 7] + (8 - (i >> 3));
 const other = c => (c === 'w' ? 'b' : 'w');
 
+const RULES = { pawn: true, bishop: true, rook: true };
+
 function startState() {
   const b = new Array(64).fill(null);
   const back = ['R','N','B','Q','K','B','N','R'];
@@ -156,6 +161,7 @@ function startState() {
 function bannedSquares(s, i) {
   const p = s.board[i], e = s.trail && s.trail[i];
   if (!p || !e) return [];
+  if ((p[1] === 'B' && !RULES.bishop) || (p[1] === 'R' && !RULES.rook)) return [];
   const lim = s.n[p[0]] - 2;
   return e.filter(x => x.t >= lim).map(x => x.sq);
 }
@@ -203,7 +209,7 @@ function genPseudo(s, color) {
   const rowCount = new Array(8).fill(0);
   let pawnTotal = 0;
   for (let k = 0; k < 64; k++) if (b[k] === color + 'P') { rowCount[k >> 3]++; pawnTotal++; }
-  const rowOk = to => (rowCount[to >> 3] + 1) * 2 <= pawnTotal;
+  const rowOk = to => !RULES.pawn || (rowCount[to >> 3] + 1) * 2 <= pawnTotal;
   const add = (from, to, extra) => out.push(Object.assign({ from, to, cap: !!b[to], ep: false, castle: null, promo: null }, extra));
   for (let i = 0; i < 64; i++) {
     const p = b[i];
@@ -532,6 +538,7 @@ function wire(conn) {
     $('codeBox').style.display = 'none';
     setNet('Connected! You are ' + colorName(online.color) + '.');
     newGame(true);
+    if (online.color === 'w') conn.send({ t: 'rules', rules: Object.assign({}, RULES) });
   };
   if (conn.open) onOpen(); else conn.on('open', onOpen);
   conn.on('data', onNetData);
@@ -571,7 +578,8 @@ function onNetData(d) {
     if (over || state.turn === online.color) return;
     const m = legalMoves(state).find(x => x.from === d.from && x.to === d.to && (x.promo || null) === (d.promo || null));
     if (m) play(m, true);
-  } else if (d.t === 'new') newGame(true);
+  } else if (d.t === 'rules') { Object.assign(RULES, d.rules); syncRuleUI(); newGame(true); }
+  else if (d.t === 'new') newGame(true);
   else if (d.t === 'resign') { over = { kind: 'resign', msg: 'Your friend resigned. You win!' }; render(); }
   else if (d.t === 'drawoffer') {
     if (confirm('Your friend offers a draw. Accept?')) { online.conn.send({ t: 'drawaccept' }); over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
@@ -587,6 +595,23 @@ $('copyBtn').onclick = async () => {
   try { await navigator.clipboard.writeText(text); setNet('Invite link copied! Paste it into a text or message to your friend.'); }
   catch (e) { setNet('Copy this link and send it: ' + url); }
 };
+const RULE_IDS = { pawn: 'rulePawn', bishop: 'ruleBishop', rook: 'ruleRook' };
+function syncRuleUI() {
+  for (const k in RULE_IDS) {
+    const box = $(RULE_IDS[k]);
+    box.checked = RULES[k];
+    box.closest('.rule').classList.toggle('off', !RULES[k]);
+  }
+}
+for (const k in RULE_IDS) {
+  $(RULE_IDS[k]).onchange = () => {
+    if (moveLog.length && !over && !confirm('Changing a rule starts a new game. Continue?')) { syncRuleUI(); return; }
+    RULES[k] = $(RULE_IDS[k]).checked;
+    syncRuleUI();
+    if (onlineActive()) online.conn.send({ t: 'rules', rules: Object.assign({}, RULES) });
+    newGame(true);
+  };
+}
 $('hostBtn').onclick = hostGame;
 $('joinBtn').onclick = joinGame;
 $('flipBtn').onclick = () => { flipped = !flipped; render(); };
