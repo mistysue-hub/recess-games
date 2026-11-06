@@ -27,6 +27,7 @@
   .sq.last { box-shadow: inset 0 0 0 100px rgba(255,235,59,.40); }
   .sq.sel { box-shadow: inset 0 0 0 100px rgba(76,175,80,.55); }
   .sq.chk { box-shadow: inset 0 0 0 100px rgba(231,76,60,.55); }
+  .sq.ban::after { content:"\2715"; position:absolute; font-size:.5em; color:rgba(120,40,40,.55); }
   .sq .dot { position:absolute; width:28%; height:28%; border-radius:50%; background:rgba(47,111,79,.55); }
   .sq .skull { position:absolute; inset:5%; border:3px solid var(--danger); border-radius:50%; background:rgba(192,57,43,.18); }
   .sq .skull::after { content:"\2620\FE0E"; position:absolute; right:-2px; top:-8px; font-size:.38em; color:var(--danger); }
@@ -66,6 +67,7 @@
     <ul>
       <li>All the normal chess moves and rules apply (castling, en passant, promotion, check).</li>
       <li><b>The first player to capture any piece loses immediately</b> (en passant counts too).</li>
+      <li><b>Bishops and rooks can't go back</b> to any square they left during their own side's last 3 turns. Those squares show a faint &#10005; when you select the piece.</li>
       <li>You can still win the normal way: checkmate your opponent.</li>
       <li>You also win if your opponent has <b>only capturing moves left</b>, because they'd be forced to capture.</li>
       <li>Stalemate, a 50-move stretch with no pawn move, or the same position three times is a draw.</li>
@@ -131,7 +133,15 @@ function startState() {
     b[c] = 'b' + back[c]; b[8 + c] = 'bP';
     b[48 + c] = 'wP'; b[56 + c] = 'w' + back[c];
   }
-  return { board: b, turn: 'w', rights: { wK: true, wQ: true, bK: true, bQ: true }, ep: -1, half: 0 };
+  return { board: b, turn: 'w', rights: { wK: true, wQ: true, bK: true, bQ: true }, ep: -1, half: 0, trail: {}, n: { w: 0, b: 0 } };
+}
+
+// Rule: a bishop or rook may not move to a square it left during its owner's last 3 turns.
+function bannedSquares(s, i) {
+  const p = s.board[i], e = s.trail && s.trail[i];
+  if (!p || !e) return [];
+  const lim = s.n[p[0]] - 2;
+  return e.filter(x => x.t >= lim).map(x => x.sq);
 }
 
 const KN = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
@@ -205,13 +215,14 @@ function genPseudo(s, color) {
         if (!b[to] || b[to][0] !== color) add(i, to);
       }
     } else {
+      const ban = bannedSquares(s, i);
       const dirs = t === 'B' ? DIAG : t === 'R' ? ORTH : DIAG.concat(ORTH);
       for (const [dr, dc] of dirs) {
         let rr = r + dr, cc = c + dc;
         while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) {
           const to = rr * 8 + cc;
-          if (b[to]) { if (b[to][0] !== color) add(i, to); break; }
-          add(i, to);
+          if (b[to]) { if (b[to][0] !== color && !ban.includes(to)) add(i, to); break; }
+          if (!ban.includes(to)) add(i, to);
           rr += dr; cc += dc;
         }
       }
@@ -243,8 +254,18 @@ function apply(s, m) {
     if (sq === 7) rights.bK = false; if (sq === 0) rights.bQ = false;
   }
   const isPawn = piece[1] === 'P';
+  const trail = Object.assign({}, s.trail);
+  const n = { w: s.n.w, b: s.n.b };
+  const T = ++n[color];
+  const old = trail[m.from];
+  delete trail[m.from]; delete trail[m.to];
+  if (m.castle === 'K') delete trail[m.to + 1];
+  if (m.castle === 'Q') delete trail[m.to - 2];
+  if (piece[1] === 'R' || piece[1] === 'B') {
+    trail[m.to] = (old || []).filter(x => x.t >= T - 2).concat({ sq: m.from, t: T });
+  }
   return {
-    board: b, turn: other(color), rights,
+    board: b, turn: other(color), rights, trail, n,
     ep: isPawn && Math.abs(m.to - m.from) === 16 ? (m.from + m.to) / 2 : -1,
     half: isPawn || m.cap ? 0 : s.half + 1
   };
@@ -257,7 +278,9 @@ function legalMoves(s, color) {
 }
 
 function posKey(s) {
-  return s.board.map(p => p || '--').join('') + s.turn + JSON.stringify(s.rights) + s.ep;
+  let ban = '';
+  for (let i = 0; i < 64; i++) { const x = bannedSquares(s, i); if (x.length) ban += i + ':' + x.join(',') + ';'; }
+  return s.board.map(p => p || '--').join('') + s.turn + JSON.stringify(s.rights) + s.ep + ban;
 }
 // ==ENGINE END==
 
@@ -309,6 +332,7 @@ function render() {
       if (lastMove && (i === lastMove.from || i === lastMove.to)) el.classList.add('last');
       if (i === selected) el.classList.add('sel');
       if (i === chkSq) el.classList.add('chk');
+      if (selected >= 0 && bannedSquares(state, selected).includes(i) && !state.board[i]) el.classList.add('ban');
       const t = targets.find(m => m.to === i);
       if (t) {
         const mark = document.createElement('div');
