@@ -40,6 +40,19 @@
   #promo { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:10; }
   #promo .box { background:#fff; border-radius:12px; padding:16px; text-align:center; }
   #promo button { font-size:40px; margin:4px; padding:4px 12px; border-radius:10px; border:1px solid #aaa; background:#fafafa; cursor:pointer; }
+  #onlinePanel { margin-bottom:10px; }
+  .cards { display:flex; gap:10px; flex-wrap:wrap; }
+  .card { flex:1 1 240px; background:#fff; border:2px solid var(--accent); border-radius:12px; padding:10px 12px; text-align:center; }
+  .card h3 { margin:0 0 2px; font-size:1.05rem; color:var(--accent); }
+  .card p { margin:2px 0 8px; font-size:.9rem; color:#444; }
+  .card p.small { font-size:.82rem; color:#666; margin-top:6px; }
+  button.big { font-size:1.05rem; font-weight:700; padding:10px 16px; border-radius:10px; border:0; background:var(--accent); color:#fff; cursor:pointer; }
+  button.big:hover { background:#245a40; }
+  #codeIn { font-size:1.4rem; font-weight:700; letter-spacing:.2em; text-align:center; width:7.5em; padding:6px; margin-bottom:8px; text-transform:uppercase; border:2px solid #bbb; border-radius:8px; display:block; margin-left:auto; margin-right:auto; }
+  #codeBox { margin-top:10px; }
+  .lbl { font-size:.8rem; color:#666; text-transform:uppercase; letter-spacing:.06em; }
+  #codeBig { font-size:2.4rem; font-weight:800; letter-spacing:.25em; font-family:ui-monospace,Menlo,Consolas,monospace; background:#f1f7f3; border:2px dashed var(--accent); border-radius:10px; padding:6px 0 6px .25em; margin:4px 0 10px; user-select:all; }
+  #net { margin-top:8px; text-align:center; font-size:.95rem; color:#2f6f4f; font-weight:700; min-height:1.3em; }
   footer { text-align:center; font-size:.8rem; color:#777; margin:12px 0; }
 </style>
 </head>
@@ -74,11 +87,27 @@
     <button id="resignBtn">Resign</button>
   </div>
 
-  <div id="onlinePanel" style="display:none;text-align:center;margin-bottom:8px">
-    <button id="hostBtn">Host a game</button>
-    <input id="codeIn" placeholder="Friend's code" maxlength="5" size="8" style="font-size:.95rem;padding:6px;text-transform:uppercase">
-    <button id="joinBtn">Join</button>
-    <div id="net" style="margin-top:6px;font-size:.92rem;color:#2f6f4f;font-weight:600"></div>
+  <div id="onlinePanel" style="display:none">
+    <div class="cards">
+      <div class="card">
+        <h3>Start a game</h3>
+        <p>You play White. Your friend plays Black.</p>
+        <button id="hostBtn" class="big">1. Host a game</button>
+        <div id="codeBox" style="display:none">
+          <div class="lbl">Your game code</div>
+          <div id="codeBig"></div>
+          <button id="copyBtn" class="big">2. Send invite link</button>
+          <p class="small">Send the link, or just tell your friend the code. Keep this page open until they join.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Join a friend</h3>
+        <p>Type the 5-letter code your friend gave you.</p>
+        <input id="codeIn" placeholder="CODE" maxlength="5" autocapitalize="characters" autocomplete="off">
+        <button id="joinBtn" class="big">Join game</button>
+      </div>
+    </div>
+    <div id="net"></div>
   </div>
   <div id="status"></div>
   <div id="boardWrap"><div id="board"></div></div>
@@ -444,17 +473,18 @@ $('newBtn').onclick = () => newGame();
 $('mode').onchange = () => {
   const on = $('mode').value === 'online';
   $('onlinePanel').style.display = on ? 'block' : 'none';
-  if (on) setNet('Pick Host (you get a code) or Join (type your friend’s code).'); else teardown();
+  if (on) setNet('Click “Host a game” to get a code, or type a friend’s code to join.'); else teardown();
   newGame(true);
 };
 
 // ---------- Online play (PeerJS, peer-to-peer) ----------
 function onlineActive() { return !!(online && online.conn && online.conn.open); }
 function setNet(t) { $('net').textContent = t; }
-function teardown() { if (online) { try { online.peer.destroy(); } catch (e) {} } online = null; setNet(''); }
+function teardown() { if (online) { try { online.peer.destroy(); } catch (e) {} } online = null; setNet(''); $('codeBox').style.display = 'none'; }
 function wire(conn) {
   online.conn = conn;
   const onOpen = () => {
+    $('codeBox').style.display = 'none';
     setNet('Connected! You are ' + colorName(online.color) + '.');
     newGame(true);
   };
@@ -469,7 +499,13 @@ function hostGame() {
   const peer = new Peer('ncchess-' + code);
   online = { peer, conn: null, color: 'w' };
   setNet('Starting…');
-  peer.on('open', () => { setNet('Your code: ' + code + ' – send it to your friend and wait. You play White.'); newGame(true); });
+  peer.on('open', () => {
+    online.code = code;
+    $('codeBig').textContent = code;
+    $('codeBox').style.display = 'block';
+    setNet('Waiting for your friend to join…');
+    newGame(true);
+  });
   peer.on('connection', c => { if (online && online.conn) { c.close(); return; } wire(c); });
   peer.on('error', e => { if (e.type === 'unavailable-id') hostGame(); else setNet('Connection problem: ' + e.type); });
 }
@@ -496,6 +532,16 @@ function onNetData(d) {
     if (confirm('Your friend offers a draw. Accept?')) { online.conn.send({ t: 'drawaccept' }); over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
   } else if (d.t === 'drawaccept') { over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
 }
+$('copyBtn').onclick = async () => {
+  if (!online || !online.code) return;
+  const url = location.origin + location.pathname + '?join=' + online.code;
+  const text = 'Play Don’t Capture! Chess with me. Open this link to join: ' + url + ' (code ' + online.code + ')';
+  try {
+    if (navigator.share) { await navigator.share({ title: 'Don’t Capture! Chess', text, url }); setNet('Invite shared. Waiting for your friend…'); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(text); setNet('Invite link copied! Paste it into a text or message to your friend.'); }
+  catch (e) { setNet('Copy this link and send it: ' + url); }
+};
 $('hostBtn').onclick = hostGame;
 $('joinBtn').onclick = joinGame;
 $('flipBtn').onclick = () => { flipped = !flipped; render(); };
@@ -529,6 +575,13 @@ $('drawBtn').onclick = () => {
 };
 
 newGame();
+const joinCode = new URLSearchParams(location.search).get('join');
+if (joinCode) {
+  $('mode').value = 'online';
+  $('mode').onchange();
+  $('codeIn').value = joinCode.toUpperCase().slice(0, 5);
+  joinGame();
+}
 </script>
 </body>
 </html>
