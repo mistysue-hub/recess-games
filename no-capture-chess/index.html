@@ -92,6 +92,11 @@
       <option value="cb">Play Black vs computer</option>
       <option value="online">Online with a friend (two devices)</option>
     </select>
+    <select id="level" title="Computer level" style="display:none">
+      <option value="easy">Computer: Easy</option>
+      <option value="medium" selected>Computer: Medium</option>
+      <option value="hard">Computer: Hard</option>
+    </select>
     <button id="newBtn">New game</button>
     <button id="undoBtn">Undo</button>
     <button id="flipBtn">Flip board</button>
@@ -475,7 +480,7 @@ function play(m, remote) {
 // ---------- Simple computer opponent ----------
 function quietOf(s, color) { return legalMoves(s, color).filter(m => !m.cap); }
 
-function chooseAI(color) {
+function chooseMedium(color) {
   const opp = other(color);
   const moves = quietOf(state, color);
   let best = null, bestScore = -1e9;
@@ -505,6 +510,57 @@ function chooseAI(color) {
   return best;
 }
 
+function chooseEasy(color) {
+  const q = quietOf(state, color);
+  return q.length ? q[Math.floor(Math.random() * q.length)] : null;
+}
+
+// Hard: iterative-deepening alpha-beta search over non-capturing moves.
+let deadline = 0, timedOut = false;
+function negamax(s, depth, alpha, beta, ply) {
+  if (performance.now() > deadline) { timedOut = true; return 0; }
+  const color = s.turn;
+  const moves = legalMoves(s);
+  if (!moves.length) return inCheck(s.board, color) ? -100000 + ply : 0;
+  const quiet = moves.filter(m => !m.cap);
+  if (!quiet.length) return -90000 + ply;
+  if (depth === 0) return quiet.length - legalMoves(s, other(color)).filter(m => !m.cap).length;
+  let best = -Infinity;
+  for (const m of quiet) {
+    const v = -negamax(apply(s, m), depth - 1, -beta, -alpha, ply + 1);
+    if (timedOut) return 0;
+    if (v > best) best = v;
+    if (best > alpha) alpha = best;
+    if (alpha >= beta) break;
+  }
+  return best;
+}
+function chooseHard(color, ms) {
+  const root = quietOf(state, color);
+  if (!root.length) return null;
+  for (let i = root.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [root[i], root[j]] = [root[j], root[i]]; }
+  let best = root[0];
+  deadline = performance.now() + (ms || 1200);
+  for (let depth = 1; depth <= 8; depth++) {
+    timedOut = false;
+    let alpha = -Infinity, bestHere = null;
+    for (const m of root) {
+      const v = -negamax(apply(state, m), depth - 1, -Infinity, -alpha, 1);
+      if (timedOut) break;
+      if (v > alpha) { alpha = v; bestHere = m; }
+    }
+    if (timedOut || !bestHere) break;
+    best = bestHere;
+    if (alpha > 80000) break; // forced win found
+    root.splice(root.indexOf(bestHere), 1); root.unshift(bestHere);
+  }
+  return best;
+}
+function chooseAI(color) {
+  const lv = $('level').value;
+  return lv === 'easy' ? chooseEasy(color) : lv === 'hard' ? chooseHard(color) : chooseMedium(color);
+}
+
 function maybeAI() {
   if (!ai || over || state.turn !== ai) return;
   render();
@@ -523,6 +579,7 @@ function maybeAI() {
 $('newBtn').onclick = () => newGame();
 $('mode').onchange = () => {
   const on = $('mode').value === 'online';
+  $('level').style.display = ($('mode').value === 'cw' || $('mode').value === 'cb') ? '' : 'none';
   $('onlinePanel').style.display = on ? 'block' : 'none';
   if (on) setNet('Click “Host a game” to get a code, or type a friend’s code to join.'); else teardown();
   newGame(true);
