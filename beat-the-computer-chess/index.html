@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beat the Computer: Don't Capture! Chess</title>
+<style>
+  :root { --light:#f3edfb; --dark:#8b5cc4; --accent:#6b3fa0; --danger:#c0392b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#ffffff; color:#2a1d40; }
+  main { max-width: 900px; margin: 0 auto; padding: 14px; }
+  h1 { font-size: 1.5rem; margin: 6px 0 2px; text-align:center; }
+  .sub { text-align:center; margin:0 0 10px; color:#555; font-size:.95rem; }
+  .rules { background:#fff; border:1px solid #d9cbef; border-radius:10px; padding:8px 12px; margin-bottom:10px; font-size:.92rem; }
+  .rules summary { cursor:pointer; font-weight:600; }
+  .rules ul { margin:6px 0 2px 18px; padding:0; }
+  .bar { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:8px; }
+  .bar select, .bar button { font-size:.95rem; padding:6px 10px; border-radius:8px; border:1px solid #bbb; background:#fff; cursor:pointer; }
+  .bar button:hover { background:#f1e9fc; }
+  #status { color:#2a1d40; text-align:center; font-weight:700; font-size:1.1rem; min-height:2.6em; padding:6px 8px; border-radius:8px; background:#fff; border:1px solid #ddd; margin-bottom:8px; }
+  #status.over { background:#f1e9fc; border-color:#b89ce0; }
+  #status.warn { background:#fdecea; border-color:#e6a39b; color:var(--danger); }
+  #play { display:flex; gap:14px; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
+  #sideRules { flex:0 0 220px; background:#fff; border:2px solid var(--accent); border-radius:12px; padding:10px 12px; font-size:.9rem; }
+  #sideRules h2 { margin:0 0 6px; font-size:1.05rem; color:var(--accent); }
+  #sideRules .rule { margin-bottom:8px; line-height:1.3; }
+  #sideRules .rule label { display:flex; gap:7px; align-items:center; font-weight:700; color:var(--accent); cursor:pointer; font-size:1rem; }
+  #sideRules .rule input { width:18px; height:18px; accent-color:var(--accent); cursor:pointer; }
+  #sideRules .rule.off label { color:#888; }
+  #sideRules .rule.off .txt { opacity:.45; text-decoration:line-through; }
+  #sideRules .small { font-size:.8rem; color:#666; margin:6px 0 0; }
+  @media (max-width:620px) { #sideRules { flex:1 1 100%; } }
+  #boardWrap { display:flex; justify-content:center; flex:1 1 360px; min-width:0; }
+  #board { display:grid; grid-template-columns: repeat(8, minmax(0,1fr)); grid-template-rows: repeat(8, minmax(0,1fr)); width:100%; max-width:560px; aspect-ratio:1/1; container-type:inline-size; border:3px solid #4b2a7a; border-radius:4px; user-select:none; }
+  .sq { min-width:0; min-height:0; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size: min(8.2vw, 46px); font-size: 8.4cqw; line-height:1; }
+  .sq.l { background:var(--light); } .sq.d { background:var(--dark); }
+  .sq.last { box-shadow: inset 0 0 0 100px rgba(200,170,240,.55); }
+  .sq.sel { box-shadow: inset 0 0 0 100px rgba(160,110,225,.55); }
+  .sq.chk { box-shadow: inset 0 0 0 100px rgba(231,76,60,.55); }
+  .sq.ban::after { content:"\2715"; position:absolute; font-size:.5em; color:rgba(120,40,40,.55); }
+  .sq .dot { position:absolute; width:28%; height:28%; border-radius:50%; background:rgba(107,63,160,.6); }
+  .sq .skull { position:absolute; inset:5%; border:3px solid var(--danger); border-radius:50%; background:rgba(192,57,43,.18); }
+  .sq .skull::after { content:"\2620\FE0E"; position:absolute; right:-2px; top:-8px; font-size:.38em; color:var(--danger); }
+  .sq.pend .skull { background:rgba(192,57,43,.55); }
+  .piece { position:relative; z-index:2; }
+  .piece.w { color:#fff; text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 3px #000, 0 1px 1px #000; }
+  .piece.b { color:#111; text-shadow: 0 0 1px #fff; }
+  .coord { position:absolute; font-size:.22em; opacity:.6; font-family:sans-serif; z-index:1; }
+  .coord.f { right:3px; bottom:1px; } .coord.r { left:3px; top:1px; }
+  #moves { margin-top:10px; background:#fff; border:1px solid #ddd; border-radius:10px; padding:8px 12px; font-size:.9rem; max-height:110px; overflow:auto; color:#444; }
+  #promo { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:10; }
+  #promo .box { background:#fff; border-radius:12px; padding:16px; text-align:center; }
+  #promo button { font-size:40px; margin:4px; padding:4px 12px; border-radius:10px; border:1px solid #aaa; background:#fafafa; cursor:pointer; }
+  #onlinePanel { margin-bottom:10px; }
+  .cards { display:flex; gap:10px; flex-wrap:wrap; }
+  .card { flex:1 1 240px; background:#fff; border:2px solid var(--accent); border-radius:12px; padding:10px 12px; text-align:center; }
+  .card h3 { margin:0 0 2px; font-size:1.05rem; color:var(--accent); }
+  .card p { margin:2px 0 8px; font-size:.9rem; color:#444; }
+  .card p.small { font-size:.82rem; color:#666; margin-top:6px; }
+  button.big { font-size:1.05rem; font-weight:700; padding:10px 16px; border-radius:10px; border:0; background:var(--accent); color:#fff; cursor:pointer; }
+  button.big:hover { background:#552f8a; }
+  #codeIn { font-size:1.4rem; font-weight:700; letter-spacing:.2em; text-align:center; width:7.5em; padding:6px; margin-bottom:8px; text-transform:uppercase; border:2px solid #bbb; border-radius:8px; display:block; margin-left:auto; margin-right:auto; }
+  #codeBox { margin-top:10px; }
+  .lbl { font-size:.8rem; color:#666; text-transform:uppercase; letter-spacing:.06em; }
+  #codeBig { font-size:2.4rem; font-weight:800; letter-spacing:.25em; font-family:ui-monospace,Menlo,Consolas,monospace; background:#f5f0fc; border:2px dashed var(--accent); border-radius:10px; padding:6px 0 6px .25em; margin:4px 0 10px; user-select:all; }
+  #net { margin-top:8px; text-align:center; font-size:.95rem; color:#6b3fa0; font-weight:700; min-height:1.3em; }
+  #undoBtn,#drawBtn,#resignBtn,#flipBtn,#onlinePanel { display:none !important; }
+  #rulePawn,#ruleBishop,#ruleRook { pointer-events:none; }
+  #sideRules .rule input { pointer-events:none; }
+  #resultBox { background:#fff; border:2px solid var(--accent); border-radius:12px; padding:10px 12px; text-align:center; margin-bottom:10px; }
+  #resultBox .lbl { font-size:.8rem; color:#666; text-transform:uppercase; letter-spacing:.06em; }
+  #resultText { font-size:1.1rem; font-weight:700; margin:4px 0 8px; }
+  #resultBox p.small { font-size:.82rem; color:#666; margin:6px 0 0; }
+  footer { text-align:center; font-size:.8rem; color:#777; margin:12px 0; }
+  .rhead { display:flex; justify-content:space-between; align-items:center; background:#6b3fa0; color:#fff; margin:-14px -14px 12px; padding:12px 16px; }
+  .rbrand { font-weight:800; font-size:1.1rem; letter-spacing:.04em; }
+  .rtag { font-size:.8rem; background:#fff; color:#6b3fa0; border-radius:999px; padding:3px 10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+  h1 { color:#4b2a7a; }
+  .sub { color:#5b4a78; }
+  .card, #sideRules, #resultBox { border-color:#6b3fa0; }
+  #sideRules .rule label, .card h3, #sideRules h2 { color:#6b3fa0; }
+  #moves { border-color:#d9cbef; color:#4b3a66; }
+  .bar select, .bar button { border-color:#b89ce0; color:#2a1d40; }
+</style>
+</head>
+<body>
+<main>
+  <header class="rhead"><span class="rbrand">Recess</span><span class="rtag">Challenge</span></header>
+  <h1>Beat the Computer</h1>
+  <p class="sub">Challenge: win one game against the computer on Medium or Hard, with all three special rules on.</p>
+
+  <details class="rules">
+    <summary>How to play</summary>
+    <ul>
+      <li>All the normal chess moves and rules apply (castling, en passant, promotion, check).</li>
+      <li><b>The first player to capture any piece loses immediately</b> (en passant counts too).</li>
+      <li>See <b>Special rules</b> beside the board for the pawn, bishop and rook rules.</li>
+      <li>You can still win the normal way: checkmate your opponent.</li>
+      <li>You also win if your opponent has <b>only capturing moves left</b>, because they'd be forced to capture.</li>
+      <li>Stalemate, a 50-move stretch with no pawn move, or the same position three times is a draw.</li>
+      <li>Squares marked with a red ring and &#9760; are captures. Clicking one asks you to click again to confirm.</li>
+    </ul>
+  </details>
+
+  <div class="bar">
+    <select id="mode" style="display:none"><option value="cw" selected>You play White vs the computer</option></select>
+    <select id="level" title="Computer level">
+      <option value="medium" selected>Computer: Medium</option>
+      <option value="hard">Computer: Hard</option>
+    </select>
+    <button id="newBtn">New game</button>
+    <button id="undoBtn">Undo</button>
+    <button id="flipBtn">Flip board</button>
+    <button id="drawBtn">Agree to draw</button>
+    <button id="resignBtn">Resign</button>
+  </div>
+
+  <div id="onlinePanel" style="display:none">
+    <div class="cards">
+      <div class="card">
+        <h3>Start a game</h3>
+        <p>You play White. Your friend plays Black.</p>
+        <button id="hostBtn" class="big">1. Host a game</button>
+        <div id="codeBox" style="display:none">
+          <div class="lbl">Your game code</div>
+          <div id="codeBig"></div>
+          <button id="copyBtn" class="big">2. Send invite link</button>
+          <p class="small">Send the link, or just tell your friend the code. Keep this page open until they join.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Join a friend</h3>
+        <p>Type the 5-letter code your friend gave you.</p>
+        <input id="codeIn" placeholder="CODE" maxlength="5" autocapitalize="characters" autocomplete="off">
+        <button id="joinBtn" class="big">Join game</button>
+      </div>
+    </div>
+    <div id="net"></div>
+  </div>
+  <div id="status"></div>
+  <div id="resultBox" style="display:none"></div>
+  <div id="play">
+    <aside id="sideRules">
+      <h2>Special rules</h2>
+      <div class="rule"><label><input type="checkbox" id="rulePawn" checked> Pawns</label><div class="txt">Once pawns start moving, a pawn can't move onto a row if that would put more than half of your pawns on that row (4 of 8). Your starting row doesn't count.</div></div>
+      <div class="rule"><label><input type="checkbox" id="ruleBishop" checked> Bishops</label><div class="txt">A bishop can't move to any square it left during your last 3 turns.</div></div>
+      <div class="rule"><label><input type="checkbox" id="ruleRook" checked> Rooks</label><div class="txt">A rook can't move to any square it left during your last 3 turns.</div></div>
+      <p class="small">Tick or untick a rule to turn it on or off. Changing a rule starts a new game. Moves that break a rule just aren't offered; for bishops and rooks, the squares they can't return to show a faint &#10005; when selected.</p>
+    </aside>
+    <div id="boardWrap"><div id="board"></div></div>
+  </div>
+  <div id="moves"></div>
+  
+</main>
+
+<div id="promo"><div class="box"><div style="margin-bottom:6px;font-weight:600">Promote pawn to:</div><div id="promoBtns"></div></div></div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+// ==ENGINE START==
+const FILES = 'abcdefgh';
+const sqName = i => FILES[i & 7] + (8 - (i >> 3));
+const other = c => (c === 'w' ? 'b' : 'w');
+
+const RULES = { pawn: true, bishop: true, rook: true };
+
+function startState() {
+  const b = new Array(64).fill(null);
+  const back = ['R','N','B','Q','K','B','N','R'];
+  for (let c = 0; c < 8; c++) {
+    b[c] = 'b' + back[c]; b[8 + c] = 'bP';
+    b[48 + c] = 'wP'; b[56 + c] = 'w' + back[c];
+  }
+  return { board: b, turn: 'w', rights: { wK: true, wQ: true, bK: true, bQ: true }, ep: -1, half: 0, trail: {}, n: { w: 0, b: 0 } };
+}
+
+// Rule: a bishop or rook may not move to a square it left during its owner's last 3 turns.
+function bannedSquares(s, i) {
+  const p = s.board[i], e = s.trail && s.trail[i];
+  if (!p || !e) return [];
+  if ((p[1] === 'B' && !RULES.bishop) || (p[1] === 'R' && !RULES.rook)) return [];
+  const lim = s.n[p[0]] - 2;
+  return e.filter(x => x.t >= lim).map(x => x.sq);
+}
+
+const KN = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+const KG = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+const DIAG = [[-1,-1],[-1,1],[1,-1],[1,1]];
+const ORTH = [[-1,0],[1,0],[0,-1],[0,1]];
+
+function attacked(b, sq, by) {
+  const r = sq >> 3, c = sq & 7;
+  const pr = by === 'w' ? r + 1 : r - 1;
+  if (pr >= 0 && pr < 8) for (const dc of [-1, 1]) {
+    const cc = c + dc;
+    if (cc >= 0 && cc < 8 && b[pr * 8 + cc] === by + 'P') return true;
+  }
+  for (const [dr, dc] of KN) {
+    const rr = r + dr, cc = c + dc;
+    if (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr * 8 + cc] === by + 'N') return true;
+  }
+  for (const [dr, dc] of KG) {
+    const rr = r + dr, cc = c + dc;
+    if (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr * 8 + cc] === by + 'K') return true;
+  }
+  const ray = (dirs, a, q) => {
+    for (const [dr, dc] of dirs) {
+      let rr = r + dr, cc = c + dc;
+      while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) {
+        const p = b[rr * 8 + cc];
+        if (p) { if (p === by + a || p === by + q) return true; break; }
+        rr += dr; cc += dc;
+      }
+    }
+    return false;
+  };
+  return ray(DIAG, 'B', 'Q') || ray(ORTH, 'R', 'Q');
+}
+
+function kingSq(b, color) { return b.indexOf(color + 'K'); }
+function inCheck(b, color) { return attacked(b, kingSq(b, color), other(color)); }
+
+function genPseudo(s, color) {
+  const b = s.board, out = [];
+  // Rule: a pawn may not move onto a row if that would put more than half of its side's pawns on that row.
+  const rowCount = new Array(8).fill(0);
+  let pawnTotal = 0;
+  for (let k = 0; k < 64; k++) if (b[k] === color + 'P') { rowCount[k >> 3]++; pawnTotal++; }
+  const rowOk = to => !RULES.pawn || (rowCount[to >> 3] + 1) * 2 <= pawnTotal;
+  const add = (from, to, extra) => out.push(Object.assign({ from, to, cap: !!b[to], ep: false, castle: null, promo: null }, extra));
+  for (let i = 0; i < 64; i++) {
+    const p = b[i];
+    if (!p || p[0] !== color) continue;
+    const t = p[1], r = i >> 3, c = i & 7;
+    if (t === 'P') {
+      const dir = color === 'w' ? -1 : 1, startRow = color === 'w' ? 6 : 1, lastRow = color === 'w' ? 0 : 7;
+      const pushMove = (to, extra) => {
+        if ((to >> 3) === lastRow) for (const pr of ['Q','R','B','N']) add(i, to, Object.assign({ promo: pr }, extra));
+        else if (rowOk(to)) add(i, to, extra);
+      };
+      const f1 = i + dir * 8;
+      if (f1 >= 0 && f1 < 64 && !b[f1]) {
+        pushMove(f1);
+        const f2 = i + dir * 16;
+        if (r === startRow && !b[f2] && rowOk(f2)) add(i, f2);
+      }
+      for (const dc of [-1, 1]) {
+        const cc = c + dc, rr = r + dir;
+        if (cc < 0 || cc > 7 || rr < 0 || rr > 7) continue;
+        const to = rr * 8 + cc;
+        if (b[to] && b[to][0] !== color) pushMove(to);
+        else if (to === s.ep && rowOk(to)) add(i, to, { cap: true, ep: true });
+      }
+    } else if (t === 'N' || t === 'K') {
+      for (const [dr, dc] of (t === 'N' ? KN : KG)) {
+        const rr = r + dr, cc = c + dc;
+        if (rr < 0 || rr > 7 || cc < 0 || cc > 7) continue;
+        const to = rr * 8 + cc;
+        if (!b[to] || b[to][0] !== color) add(i, to);
+      }
+    } else {
+      const ban = bannedSquares(s, i);
+      const dirs = t === 'B' ? DIAG : t === 'R' ? ORTH : DIAG.concat(ORTH);
+      for (const [dr, dc] of dirs) {
+        let rr = r + dr, cc = c + dc;
+        while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) {
+          const to = rr * 8 + cc;
+          if (b[to]) { if (b[to][0] !== color && !ban.includes(to)) add(i, to); break; }
+          if (!ban.includes(to)) add(i, to);
+          rr += dr; cc += dc;
+        }
+      }
+    }
+  }
+  // castling
+  const opp = other(color);
+  const home = color === 'w' ? 60 : 4;
+  if (b[home] === color + 'K' && !attacked(b, home, opp)) {
+    if (s.rights[color + 'K'] && b[home + 3] === color + 'R' && !b[home + 1] && !b[home + 2] &&
+        !attacked(b, home + 1, opp) && !attacked(b, home + 2, opp)) add(home, home + 2, { castle: 'K' });
+    if (s.rights[color + 'Q'] && b[home - 4] === color + 'R' && !b[home - 1] && !b[home - 2] && !b[home - 3] &&
+        !attacked(b, home - 1, opp) && !attacked(b, home - 2, opp)) add(home, home - 2, { castle: 'Q' });
+  }
+  return out;
+}
+
+function apply(s, m) {
+  const b = s.board.slice(), color = s.turn, piece = b[m.from];
+  b[m.from] = null;
+  if (m.ep) b[m.to + (color === 'w' ? 8 : -8)] = null;
+  b[m.to] = m.promo ? color + m.promo : piece;
+  if (m.castle === 'K') { b[m.to - 1] = b[m.to + 1]; b[m.to + 1] = null; }
+  if (m.castle === 'Q') { b[m.to + 1] = b[m.to - 2]; b[m.to - 2] = null; }
+  const rights = Object.assign({}, s.rights);
+  if (piece[1] === 'K') { rights[color + 'K'] = false; rights[color + 'Q'] = false; }
+  for (const sq of [m.from, m.to]) {
+    if (sq === 63) rights.wK = false; if (sq === 56) rights.wQ = false;
+    if (sq === 7) rights.bK = false; if (sq === 0) rights.bQ = false;
+  }
+  const isPawn = piece[1] === 'P';
+  const trail = Object.assign({}, s.trail);
+  const n = { w: s.n.w, b: s.n.b };
+  const T = ++n[color];
+  const old = trail[m.from];
+  delete trail[m.from]; delete trail[m.to];
+  if (m.castle === 'K') delete trail[m.to + 1];
+  if (m.castle === 'Q') delete trail[m.to - 2];
+  if (piece[1] === 'R' || piece[1] === 'B') {
+    trail[m.to] = (old || []).filter(x => x.t >= T - 2).concat({ sq: m.from, t: T });
+  }
+  return {
+    board: b, turn: other(color), rights, trail, n,
+    ep: isPawn && Math.abs(m.to - m.from) === 16 ? (m.from + m.to) / 2 : -1,
+    half: isPawn || m.cap ? 0 : s.half + 1
+  };
+}
+
+function legalMoves(s, color) {
+  color = color || s.turn;
+  const st = color === s.turn ? s : Object.assign({}, s, { turn: color });
+  return genPseudo(st, color).filter(m => !inCheck(apply(st, m).board, color));
+}
+
+function posKey(s) {
+  let ban = '';
+  for (let i = 0; i < 64; i++) { const x = bannedSquares(s, i); if (x.length) ban += i + ':' + x.join(',') + ';'; }
+  return s.board.map(p => p || '--').join('') + s.turn + JSON.stringify(s.rights) + s.ep + ban;
+}
+// ==ENGINE END==
+
+// ---------- Game / UI ----------
+const GLYPH = { K:'♚', Q:'♛', R:'♜', B:'♝', N:'♞', P:'♟' };
+const glyph = t => GLYPH[t] + '︎';
+
+let online = null;
+let state, history, moveLog, lastMove, over, flipped, selected, targets, pendingCap, reps, ai, aiTimer;
+
+const $ = id => document.getElementById(id);
+
+function newGame(remote) {
+  clearTimeout(aiTimer);
+  if (!remote && onlineActive()) online.conn.send({ t: 'new' });
+  state = startState();
+  history = [];
+  moveLog = [];
+  lastMove = null;
+  over = null;
+  selected = -1; targets = []; pendingCap = null;
+  reps = {}; reps[posKey(state)] = 1;
+  const mode = $('mode').value;
+  ai = mode === 'cw' ? 'b' : mode === 'cb' ? 'w' : null;
+  flipped = mode === 'cb';
+  if (mode === 'online') { ai = null; flipped = !!online && online.color === 'b'; }
+  render();
+  maybeAI();
+}
+
+function colorName(c) { return c === 'w' ? 'White' : 'Black'; }
+
+function setStatus(text, cls) {
+  const el = $('status');
+  el.textContent = text;
+  el.className = cls || '';
+}
+
+function render() {
+  const boardEl = $('board');
+  boardEl.innerHTML = '';
+  const chkSq = !over || over.kind === 'mate' ? (inCheck(state.board, state.turn) ? kingSq(state.board, state.turn) : -1) : -1;
+  for (let vr = 0; vr < 8; vr++) {
+    for (let vc = 0; vc < 8; vc++) {
+      const r = flipped ? 7 - vr : vr, c = flipped ? 7 - vc : vc;
+      const i = r * 8 + c;
+      const el = document.createElement('div');
+      el.className = 'sq ' + ((r + c) % 2 === 0 ? 'l' : 'd');
+      if (lastMove && (i === lastMove.from || i === lastMove.to)) el.classList.add('last');
+      if (i === selected) el.classList.add('sel');
+      if (i === chkSq) el.classList.add('chk');
+      if (selected >= 0 && bannedSquares(state, selected).includes(i) && !state.board[i]) el.classList.add('ban');
+      const t = targets.find(m => m.to === i);
+      if (t) {
+        const mark = document.createElement('div');
+        if (t.cap) { mark.className = 'skull'; if (pendingCap === i) el.classList.add('pend'); }
+        else mark.className = 'dot';
+        el.appendChild(mark);
+      }
+      const p = state.board[i];
+      if (p) {
+        const pe = document.createElement('span');
+        pe.className = 'piece ' + p[0];
+        pe.textContent = glyph(p[1]);
+        el.appendChild(pe);
+      }
+      if (vc === 0) { const co = document.createElement('span'); co.className = 'coord r'; co.textContent = 8 - r; el.appendChild(co); }
+      if (vr === 7) { const co = document.createElement('span'); co.className = 'coord f'; co.textContent = FILES[c]; el.appendChild(co); }
+      el.addEventListener('click', () => onSquare(i));
+      boardEl.appendChild(el);
+    }
+  }
+  if (over) setStatus(over.msg, 'over');
+  else if (pendingCap !== null) setStatus('Capturing loses the game! Click the red square again to confirm, or pick another move.', 'warn');
+  else {
+    let msg = colorName(state.turn) + ' to move';
+    if (inCheck(state.board, state.turn)) msg += ' (check!)';
+    if (ai) msg += state.turn === ai ? ' – computer is thinking…' : ' – your turn';
+    if ($('mode').value === 'online') msg = !onlineActive() ? 'Not connected yet – host a game or join with a code.' : msg + (state.turn === online.color ? ' – your turn' : ' – waiting for your friend…');
+    setStatus(msg);
+  }
+  $('moves').textContent = moveLog.length ? moveLog.map((m, k) => (k % 2 === 0 ? (k / 2 + 1) + '. ' : '') + m).join('  ') : 'No moves yet.';
+  $('moves').scrollTop = 1e6;
+  showResult();
+}
+
+function onSquare(i) {
+  if (over || (ai && state.turn === ai)) return;
+  if ($('mode').value === 'online' && (!onlineActive() || state.turn !== online.color)) return;
+  const p = state.board[i];
+  // clicking a target of the selected piece
+  const cand = targets.filter(m => m.to === i);
+  if (selected >= 0 && cand.length) {
+    if (cand[0].cap && pendingCap !== i) { pendingCap = i; render(); return; }
+    if (cand[0].promo) { askPromo(cand); return; }
+    play(cand[0]);
+    return;
+  }
+  pendingCap = null;
+  if (p && p[0] === state.turn) {
+    selected = i;
+    targets = legalMoves(state).filter(m => m.from === i);
+  } else { selected = -1; targets = []; }
+  render();
+}
+
+function askPromo(cands) {
+  const box = $('promoBtns');
+  box.innerHTML = '';
+  for (const m of cands) {
+    const b = document.createElement('button');
+    b.textContent = glyph(m.promo);
+    b.className = 'piece ' + state.turn;
+    b.style.color = state.turn === 'w' ? '#fff' : '#111';
+    b.style.textShadow = state.turn === 'w' ? '0 0 2px #000,0 0 3px #000' : 'none';
+    b.style.background = '#8b5cc4';
+    b.onclick = () => { $('promo').style.display = 'none'; play(m); };
+    box.appendChild(b);
+  }
+  $('promo').style.display = 'flex';
+}
+
+function describe(m, s) {
+  const p = s.board[m.from];
+  if (m.castle) return m.castle === 'K' ? 'O-O' : 'O-O-O';
+  return (p[1] === 'P' ? '' : p[1]) + sqName(m.from) + (m.cap ? 'x' : '-') + sqName(m.to) + (m.promo ? '=' + m.promo : '');
+}
+
+function play(m, remote) {
+  if (!remote && onlineActive()) online.conn.send({ t: 'move', from: m.from, to: m.to, promo: m.promo || null });
+  history.push({ state, moveLog: moveLog.slice(), lastMove, reps: Object.assign({}, reps) });
+  const mover = state.turn;
+  const label = describe(m, state);
+  selected = -1; targets = []; pendingCap = null;
+  if (m.cap) {
+    moveLog.push(label + ' (capture!)');
+    lastMove = { from: m.from, to: m.to };
+    state = apply(state, m);
+    over = { kind: 'capture', winner: other(mover), msg: colorName(mover) + ' captured a piece, so ' + colorName(other(mover)) + ' wins!' };
+    render();
+    return;
+  }
+  state = apply(state, m);
+  lastMove = { from: m.from, to: m.to };
+  const opp = state.turn;
+  const oppMoves = legalMoves(state);
+  const check = inCheck(state.board, opp);
+  moveLog.push(label + (check ? (oppMoves.length ? '+' : '#') : ''));
+  const key = posKey(state);
+  reps[key] = (reps[key] || 0) + 1;
+  if (oppMoves.length === 0) {
+    over = check
+      ? { kind: 'mate', winner: mover, msg: 'Checkmate! ' + colorName(mover) + ' wins!' }
+      : { kind: 'draw', msg: 'Stalemate – it’s a draw.' };
+  } else if (oppMoves.every(x => x.cap)) {
+    over = { kind: 'forced', winner: mover, msg: colorName(mover) + ' wins! ' + colorName(opp) + ' has only capturing moves left and is forced to lose.' };
+  } else if (reps[key] >= 3) {
+    over = { kind: 'draw', msg: 'Draw by threefold repetition.' };
+  } else if (state.half >= 100) {
+    over = { kind: 'draw', msg: 'Draw: 50 moves without a pawn move.' };
+  }
+  render();
+  maybeAI();
+}
+
+// ---------- Simple computer opponent ----------
+function quietOf(s, color) { return legalMoves(s, color).filter(m => !m.cap); }
+
+function chooseMedium(color) {
+  const opp = other(color);
+  const moves = quietOf(state, color);
+  let best = null, bestScore = -1e9;
+  for (const m of moves) {
+    const s1 = apply(state, m);
+    const oppAll = legalMoves(s1);
+    let score;
+    if (oppAll.length === 0) score = inCheck(s1.board, opp) ? 10000 : -50;
+    else if (oppAll.every(x => x.cap)) score = 9000;
+    else {
+      const oppQuiet = oppAll.filter(x => !x.cap);
+      // look one reply ahead: avoid positions where the opponent can leave us with only captures
+      let worst = 1e9;
+      for (const om of oppQuiet) {
+        const s2 = apply(s1, om);
+        const mine = legalMoves(s2);
+        const myQuiet = mine.filter(x => !x.cap).length;
+        const myScore = mine.length === 0 ? (inCheck(s2.board, color) ? -10000 : -50)
+                      : myQuiet === 0 ? -9000 : myQuiet;
+        if (myScore < worst) worst = myScore;
+      }
+      score = Math.min(worst, 40) * 2 - oppQuiet.length * 0.5 + (inCheck(s1.board, opp) ? 1 : 0);
+    }
+    score += Math.random() * 1.5;
+    if (score > bestScore) { bestScore = score; best = m; }
+  }
+  return best;
+}
+
+function chooseEasy(color) {
+  const q = quietOf(state, color);
+  return q.length ? q[Math.floor(Math.random() * q.length)] : null;
+}
+
+// Hard: iterative-deepening alpha-beta search over non-capturing moves.
+let deadline = 0, timedOut = false;
+function negamax(s, depth, alpha, beta, ply) {
+  if (performance.now() > deadline) { timedOut = true; return 0; }
+  const color = s.turn;
+  const moves = legalMoves(s);
+  if (!moves.length) return inCheck(s.board, color) ? -100000 + ply : 0;
+  const quiet = moves.filter(m => !m.cap);
+  if (!quiet.length) return -90000 + ply;
+  if (depth === 0) return quiet.length - legalMoves(s, other(color)).filter(m => !m.cap).length;
+  let best = -Infinity;
+  for (const m of quiet) {
+    const v = -negamax(apply(s, m), depth - 1, -beta, -alpha, ply + 1);
+    if (timedOut) return 0;
+    if (v > best) best = v;
+    if (best > alpha) alpha = best;
+    if (alpha >= beta) break;
+  }
+  return best;
+}
+function chooseHard(color, ms) {
+  const root = quietOf(state, color);
+  if (!root.length) return null;
+  for (let i = root.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [root[i], root[j]] = [root[j], root[i]]; }
+  let best = root[0];
+  deadline = performance.now() + (ms || 1200);
+  for (let depth = 1; depth <= 8; depth++) {
+    timedOut = false;
+    let alpha = -Infinity, bestHere = null;
+    for (const m of root) {
+      const v = -negamax(apply(state, m), depth - 1, -Infinity, -alpha, 1);
+      if (timedOut) break;
+      if (v > alpha) { alpha = v; bestHere = m; }
+    }
+    if (timedOut || !bestHere) break;
+    best = bestHere;
+    if (alpha > 80000) break; // forced win found
+    root.splice(root.indexOf(bestHere), 1); root.unshift(bestHere);
+  }
+  return best;
+}
+function chooseAI(color) {
+  const lv = $('level').value;
+  return lv === 'easy' ? chooseEasy(color) : lv === 'hard' ? chooseHard(color) : chooseMedium(color);
+}
+
+function maybeAI() {
+  if (!ai || over || state.turn !== ai) return;
+  render();
+  aiTimer = setTimeout(() => {
+    const m = chooseAI(ai);
+    if (!m) { // should not happen: game would already be over
+      const any = legalMoves(state)[0];
+      if (any) play(any);
+      return;
+    }
+    play(m);
+  }, 450);
+}
+
+// ---------- Buttons ----------
+$('newBtn').onclick = () => newGame();
+$('mode').onchange = () => {
+  const on = $('mode').value === 'online';
+  $('level').style.display = ($('mode').value === 'cw' || $('mode').value === 'cb') ? '' : 'none';
+  $('onlinePanel').style.display = on ? 'block' : 'none';
+  if (on) setNet('Click “Host a game” to get a code, or type a friend’s code to join.'); else teardown();
+  newGame(true);
+};
+
+// ---------- Online play (PeerJS, peer-to-peer) ----------
+function onlineActive() { return !!(online && online.conn && online.conn.open); }
+function setNet(t) { $('net').textContent = t; }
+function teardown() { if (online) { try { online.peer.destroy(); } catch (e) {} } online = null; setNet(''); $('codeBox').style.display = 'none'; }
+function wire(conn) {
+  online.conn = conn;
+  const onOpen = () => {
+    $('codeBox').style.display = 'none';
+    setNet('Connected! You are ' + colorName(online.color) + '.');
+    newGame(true);
+    if (online.color === 'w') conn.send({ t: 'rules', rules: Object.assign({}, RULES) });
+  };
+  if (conn.open) onOpen(); else conn.on('open', onOpen);
+  conn.on('data', onNetData);
+  conn.on('close', () => { setNet('Your friend disconnected.'); render(); });
+}
+function hostGame() {
+  if (typeof Peer === 'undefined') { setNet('Online play could not load. Check your internet connection.'); return; }
+  teardown();
+  const code = Math.random().toString(36).replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase().padEnd(5, 'X');
+  const peer = new Peer('ncchess-' + code);
+  online = { peer, conn: null, color: 'w' };
+  setNet('Starting…');
+  peer.on('open', () => {
+    online.code = code;
+    $('codeBig').textContent = code;
+    $('codeBox').style.display = 'block';
+    setNet('Waiting for your friend to join…');
+    newGame(true);
+  });
+  peer.on('connection', c => { if (online && online.conn) { c.close(); return; } wire(c); });
+  peer.on('error', e => { if (e.type === 'unavailable-id') hostGame(); else setNet('Connection problem: ' + e.type); });
+}
+function joinGame() {
+  if (typeof Peer === 'undefined') { setNet('Online play could not load. Check your internet connection.'); return; }
+  const code = $('codeIn').value.trim().toUpperCase();
+  if (!code) { setNet('Type your friend’s code first.'); return; }
+  teardown();
+  const peer = new Peer();
+  online = { peer, conn: null, color: 'b' };
+  setNet('Connecting…');
+  peer.on('open', () => wire(peer.connect('ncchess-' + code, { reliable: true })));
+  peer.on('error', e => setNet(e.type === 'peer-unavailable' ? 'No game found with that code.' : 'Connection problem: ' + e.type));
+}
+function onNetData(d) {
+  if (!d) return;
+  if (d.t === 'move') {
+    if (over || state.turn === online.color) return;
+    const m = legalMoves(state).find(x => x.from === d.from && x.to === d.to && (x.promo || null) === (d.promo || null));
+    if (m) play(m, true);
+  } else if (d.t === 'rules') { Object.assign(RULES, d.rules); syncRuleUI(); newGame(true); }
+  else if (d.t === 'new') newGame(true);
+  else if (d.t === 'resign') { over = { kind: 'resign', msg: 'Your friend resigned. You win!' }; render(); }
+  else if (d.t === 'drawoffer') {
+    if (confirm('Your friend offers a draw. Accept?')) { online.conn.send({ t: 'drawaccept' }); over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
+  } else if (d.t === 'drawaccept') { over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
+}
+$('copyBtn').onclick = async () => {
+  if (!online || !online.code) return;
+  const url = location.origin + location.pathname + '?join=' + online.code;
+  const text = 'Play Don’t Capture! Chess with me. Open this link to join: ' + url + ' (code ' + online.code + ')';
+  try {
+    if (navigator.share) { await navigator.share({ title: 'Don’t Capture! Chess', text, url }); setNet('Invite shared. Waiting for your friend…'); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(text); setNet('Invite link copied! Paste it into a text or message to your friend.'); }
+  catch (e) { setNet('Copy this link and send it: ' + url); }
+};
+const RULE_IDS = { pawn: 'rulePawn', bishop: 'ruleBishop', rook: 'ruleRook' };
+function syncRuleUI() {
+  for (const k in RULE_IDS) {
+    const box = $(RULE_IDS[k]);
+    box.checked = RULES[k];
+    box.closest('.rule').classList.toggle('off', !RULES[k]);
+  }
+}
+for (const k in RULE_IDS) {
+  $(RULE_IDS[k]).onchange = () => {
+    if (moveLog.length && !over && !confirm('Changing a rule starts a new game. Continue?')) { syncRuleUI(); return; }
+    RULES[k] = $(RULE_IDS[k]).checked;
+    syncRuleUI();
+    if (onlineActive()) online.conn.send({ t: 'rules', rules: Object.assign({}, RULES) });
+    newGame(true);
+  };
+}
+$('hostBtn').onclick = hostGame;
+$('joinBtn').onclick = joinGame;
+$('flipBtn').onclick = () => { flipped = !flipped; render(); };
+$('undoBtn').onclick = () => {
+  if (!history.length || $('mode').value === 'online') return;
+  clearTimeout(aiTimer);
+  let h = history.pop();
+  // against the computer, undo back to the human's turn
+  if (ai && history.length && h.state.turn === ai) h = history.pop();
+  state = h.state; moveLog = h.moveLog; lastMove = h.lastMove; reps = h.reps;
+  over = null; selected = -1; targets = []; pendingCap = null;
+  render();
+  maybeAI();
+};
+$('resignBtn').onclick = () => {
+  if (over) return;
+  clearTimeout(aiTimer);
+  if (onlineActive()) online.conn.send({ t: 'resign' });
+  const who = ai ? other(ai) : onlineActive() ? online.color : state.turn;
+  over = { kind: 'resign', msg: colorName(who) + ' resigned. ' + colorName(other(who)) + ' wins!' };
+  render();
+};
+$('drawBtn').onclick = () => {
+  if (over) return;
+  if (onlineActive()) { online.conn.send({ t: 'drawoffer' }); setNet('Draw offered – waiting for your friend.'); return; }
+  if (confirm('Both players agree to a draw?')) {
+    clearTimeout(aiTimer);
+    over = { kind: 'draw', msg: 'Draw by agreement.' };
+    render();
+  }
+};
+
+newGame();
+const joinCode = new URLSearchParams(location.search).get('join');
+if (false) {
+  $('mode').value = 'online';
+  $('mode').onchange();
+  $('codeIn').value = joinCode.toUpperCase().slice(0, 5);
+  joinGame();
+}
+
+function showResult() {
+  const box = $('resultBox');
+  if (!over) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const won = over.winner && ai && over.winner !== ai;
+  const drew = over.kind === 'draw';
+  const lvl = $('level').value;
+  const typeName = { capture: 'computer-forced-by-capture', mate: 'checkmate', forced: 'computer-only-captures', draw: 'draw', resign: 'resign' }[over.kind] || over.kind;
+  const result = won ? 'WON' : drew ? 'DRAW' : 'LOST';
+  const line = 'CHESS CHALLENGE | level: ' + lvl + ' | result: ' + result + ' | type: ' + typeName + ' | moves: ' + moveLog.length +
+    ' | rules: pawn ' + (RULES.pawn ? 'on' : 'off') + ', bishop ' + (RULES.bishop ? 'on' : 'off') + ', rook ' + (RULES.rook ? 'on' : 'off');
+  box.style.display = 'block';
+  box.innerHTML = '<div class="lbl">Your result</div><div id="resultText"></div>' +
+    '<button class="big" id="copyResult">Copy my result for Rocky</button>' +
+    '<p class="small">Paste it into the chat with Rocky. Rocky can’t see the game, so the pasted line is how Rocky knows.</p>';
+  $('resultText').textContent = won ? 'You beat the computer!' : drew ? 'A draw. Try again!' : 'Not this time. Try another game.';
+  $('copyResult').onclick = async () => {
+    try { await navigator.clipboard.writeText(line); $('copyResult').textContent = 'Copied!'; }
+    catch (e) { $('resultText').textContent = line; }
+  };
+}
+</script>
+</body>
+</html>
