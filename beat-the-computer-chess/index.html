@@ -81,6 +81,7 @@
   .bar select, .bar button { border-color:#b89ce0; color:#2a1d40; }
   footer.fr { margin:14px 0 6px; padding:10px 12px; background:#f1e9fc; border-radius:10px; color:#2a1d40; font-size:.92rem; text-align:center; }
   footer.fr a { color:#6b3fa0; font-weight:700; }
+  #resultLine { width:100%; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85rem; padding:8px; border:2px solid #b89ce0; border-radius:8px; margin:6px 0 10px; color:#2a1d40; background:#faf7ff; resize:none; }
 </style>
 </head>
 <body>
@@ -737,12 +738,22 @@ function showResult() {
     ' | rules: pawn ' + (RULES.pawn ? 'on' : 'off') + ', bishop ' + (RULES.bishop ? 'on' : 'off') + ', rook ' + (RULES.rook ? 'on' : 'off');
   box.style.display = 'block';
   box.innerHTML = '<div class="lbl">Your result</div><div id="resultText"></div>' +
+    '<textarea id="resultLine" readonly rows="2"></textarea>' +
     '<button class="big" id="copyResult">Copy my result for Rocky</button>' +
-    '<p class="small">Paste it into the chat with Rocky. Rocky can’t see the game, so the pasted line is how Rocky knows.</p>';
+    '<p class="small" id="copyMsg">Tap the button, then paste the line into the chat with Rocky.</p>';
   $('resultText').textContent = won ? 'You beat the computer!' : drew ? 'A draw. Try again!' : 'Not this time. Try another game.';
+  const ta = $('resultLine');
+  ta.value = line;
+  const msg = (t) => { $('copyMsg').textContent = t; };
+  const copyText = async () => {
+    try { await navigator.clipboard.writeText(line); return true; } catch (e) {}
+    ta.focus(); ta.select(); ta.setSelectionRange(0, line.length);
+    try { return document.execCommand('copy'); } catch (e) { return false; }
+  };
   $('copyResult').onclick = async () => {
-    try { await navigator.clipboard.writeText(line); $('copyResult').textContent = 'Copied!'; }
-    catch (e) { $('resultText').textContent = line; }
+    const ok = await copyText();
+    if (ok) { $('copyResult').textContent = 'Copied!'; msg('Now paste it into the chat with Rocky.'); }
+    else { ta.focus(); ta.select(); msg('Press and hold the box above, choose Copy, then paste it into the chat with Rocky.'); }
   };
 }
 </script>
