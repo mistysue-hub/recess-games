@@ -97,11 +97,7 @@ $("copy").onclick = async () => {
   const n = words();
   const ticked = mod.checks.filter(c => $("c_"+c.id).checked).map(c => c.text);
   const text = `Story Desk, ${mod.title} (${n} words)\n\n${draft.value.trim()}\n\nChecklist I ticked: ${ticked.length ? ticked.join(" / ") : "none yet"}`;
-  let ok = false;
-  try { await navigator.clipboard.writeText(text); ok = true; } catch(e) {
-    draft.select(); try { ok = document.execCommand("copy"); } catch(e2){}
-  }
-  $("copied").textContent = ok ? "Copied. Now paste it to Rocky." : "Couldn't copy. Select the text and copy it yourself.";
+  await SSBM.copyText(text, $("copied"));
   $("doneline").textContent = `${n} words.`;
   const dl = $("donelist"); dl.innerHTML = "";
   [{text:`At least ${mod.words[0]} words`, ok: n >= mod.words[0]}].concat(mod.checks.map(c => ({text:c.text, ok:$("c_"+c.id).checked})))

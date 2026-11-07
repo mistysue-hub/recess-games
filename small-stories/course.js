@@ -63,3 +63,32 @@ window.SSBM = (function () {
   const byN = {}; W.forEach(w => byN[w.n] = w);
   return { BLOCKS, WEEKS: W, week: n => byN[n], base: "https://mistysue-hub.github.io/recess-games/small-stories/" };
 })();
+
+// Copy helper: tries the clipboard, then a hidden-textarea copy, and always shows a selected text box as a last resort
+// (some embedded panels block clipboard access).
+window.SSBM.copyText = async function (text, statusEl) {
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+  if (!ok) {
+    try {
+      const t = document.createElement("textarea");
+      t.value = text; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+      document.body.appendChild(t); t.focus(); t.select(); t.setSelectionRange(0, text.length);
+      ok = document.execCommand("copy"); t.remove();
+    } catch (e) {}
+  }
+  let box = document.getElementById("ssbm-copybox");
+  if (!box) {
+    box = document.createElement("div"); box.id = "ssbm-copybox";
+    box.style.cssText = "margin:14px 0;padding:12px;background:#f6e9a6;border:1px solid #c9b45a;border-radius:4px";
+    box.innerHTML = '<p style="margin:0 0 8px;font-family:Courier Prime,monospace" id="ssbm-copymsg"></p><textarea readonly id="ssbm-copyta" style="width:100%;height:160px;font:14px Courier Prime,monospace;box-sizing:border-box"></textarea>';
+    (statusEl && statusEl.parentNode ? statusEl.parentNode : document.body).appendChild(box);
+  }
+  const ta = document.getElementById("ssbm-copyta"); ta.value = text;
+  document.getElementById("ssbm-copymsg").textContent = ok
+    ? "Copied. If pasting into Rocky shows nothing, copy from this box instead:"
+    : "Your browser blocked copying. Click in the box, press Ctrl+A then Ctrl+C (Cmd+A, Cmd+C on a Mac), then paste to Rocky:";
+  box.style.display = "block"; ta.focus(); ta.select();
+  if (statusEl) statusEl.textContent = ok ? "Copied. Now paste it to Rocky." : "Copy it from the box below.";
+  return ok;
+};
