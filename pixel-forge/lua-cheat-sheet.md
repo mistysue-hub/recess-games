@@ -37,7 +37,7 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 | Nothing stored here | `nil` (a variable you never set, a missing field) |
 | Use a if it exists, otherwise b | `a or b` as in `(tile.angle or tile.rot)` |
 | Upper or lower case | `string.upper(s)`, `string.lower(s)` |
-| A class and its setup (Builds 08-09) | `Wisp = Class(Entity)` then `function Wisp:init(x, y) ... end` |
+| A class and its setup (Builds 08-09) | `Wisp = Class()` then `function Wisp:init(x, y) ... end`; `Wisp.move = Entity.move` borrows a function from another class |
 
 **One equals sign sets. Two compare.** `x = 5` stores 5. `x == 5` asks "is x 5?"
 
@@ -45,7 +45,9 @@ Keep this open in a tab. Everything here is used somewhere in the course.
 
 | Want to | Write |
 |---|---|
+| Different random numbers each launch (once, in load) | `math.randomseed(os.time())` |
 | Random whole number from a to b | `math.random(a, b)` |
+| Remainder, wraps a number around | `(rot + 1) % 4` → 0 when rot is 3 |
 | Random position in a list | `list[math.random(#list)]` |
 | The smaller of two numbers | `math.min(a, b)` |
 | The larger of two numbers | `math.max(a, b)` |
@@ -144,24 +146,24 @@ The window is 800 wide and 600 tall unless you change it. `0, 0` is the top-left
 |---|---|
 | state | which mood the game is in right now: `"title"`, `"playing"`, `"gameover"` |
 | table | a box of named facts (`ship.x`) or a list (`rocks[3]`), or both |
-| global / local | a global name works everywhere in the file; a `local` one only inside its block |
+| global / local | a global name works everywhere in the game, every file; a `local` one only inside its block |
 | argument | a value you hand to a function: in `overlaps(ship, rock)`, both are arguments |
 | nil | nothing stored there yet |
-| frame | one pass through update and draw; about 60 a second |
+| frame | one pass through update and draw, one redraw; usually about 60 a second |
 | class | a recipe for making many things that share the same functions (Build 08) |
 
 ## Reading an error
 
-LÖVE shows a blue screen. The first line names the file and line number, like `main.lua:27:`. Go to that line.
+LÖVE shows a blue screen. The first line under the word Error names the file and line number, like `main.lua:27:`. Go to that line.
 
 | Error says | Usually means |
 |---|---|
-| `attempt to index a nil value` | You used `thing.x` but `thing` doesn't exist yet (typo, or made in the wrong place) |
+| `attempt to index global 'thing' (a nil value)` | You used `thing.x` but `thing` doesn't exist yet (typo, or made in the wrong place) |
 | `attempt to compare number with nil` | A field is missing, like a rock with no `speed` |
 | `attempt to perform arithmetic on a nil value` | Same idea: a number you're adding doesn't exist |
 | `'end' expected` | A block (`if`, `for`, `function`) isn't closed |
 | `'then' expected` | An `if` line is missing `then`, or has `=` instead of `==` |
-| `attempt to call a nil value` | You called a function that doesn't exist (check the spelling and capitals) |
+| `attempt to call global 'thing' (a nil value)` | You called a function that doesn't exist (check the spelling and capitals) |
 
 ## AABB overlap (copy once, use forever)
 

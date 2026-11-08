@@ -19,7 +19,7 @@
 <aside class="rail" aria-label="Steps in this build">
   <div class="rail-inner">
     <div class="progress"><div class="bar"><i></i></div><span class="pct">0 of 6 steps</span></div>
-    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>A room is a spreadsheet</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Your first class</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Which tiles are solid</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Sliding along walls</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Drawing the keep</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>The camera</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
+    <ol class="steps"><li><a href="#step-1"><input type="checkbox" data-step="1" aria-label="Mark step 1 done"><span class="num">1</span><span>A room is a spreadsheet</span></a></li><li><a href="#step-2"><input type="checkbox" data-step="2" aria-label="Mark step 2 done"><span class="num">2</span><span>Your first class</span></a></li><li><a href="#step-3"><input type="checkbox" data-step="3" aria-label="Mark step 3 done"><span class="num">3</span><span>Which tiles are solid</span></a></li><li><a href="#step-4"><input type="checkbox" data-step="4" aria-label="Mark step 4 done"><span class="num">4</span><span>Sliding along walls</span></a></li><li><a href="#step-5"><input type="checkbox" data-step="5" aria-label="Mark step 5 done"><span class="num">5</span><span>Real art</span></a></li><li><a href="#step-6"><input type="checkbox" data-step="6" aria-label="Mark step 6 done"><span class="num">6</span><span>The camera</span></a></li><li><a href="#ship"><span class="num pink">★</span><span>Ship-It</span></a></li><li><a href="#bug"><span class="num amber">!</span><span>Bug Hunt</span></a></li></ol>
     <a class="kit" href="../build08-lantern-keep.zip" download>Starter kit (.zip)</a>
     <a class="cheat" href="cheat-sheet.html">Lua cheat sheet</a>
   </div>
@@ -103,7 +103,26 @@ end</code></pre></div>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function boxHitsWall(x, y, w, h)
   return solidAt(x, y) or solidAt(x + w - 1, y)
       or solidAt(x, y + h - 1) or solidAt(x + w - 1, y + h - 1)
-end</code></pre></div></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Sliding along walls</h2><p>The naive version moves the hero, then undoes it if they're in a wall. That makes them stick to walls like gum. The fix is to move <strong>one axis at a time</strong>:</p>
+end</code></pre></div>
+<p>Two more things go in now, so Step 4 has something to bump into. First, Build 02's box test, under <code>boxHitsWall</code>; Lantern Keep needs it for the key and the wisps:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function overlaps(a, b)
+  return a.x &lt; b.x + b.w and b.x &lt; a.x + a.w
+     and a.y &lt; b.y + b.h and b.y &lt; a.y + a.h
+end</code></pre></div>
+<p>Second, draw the keep, with no art at all yet:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function drawMap()
+  for row = 1, #map do
+    for col = 1, #map[row] do
+      local t = map[row][col]
+      local x, y = (col - 1) * TILE, (row - 1) * TILE
+      if t == 1 then love.graphics.setColor(0.32, 0.30, 0.36)
+      elseif t == 2 then love.graphics.setColor(0.55, 0.35, 0.2)
+      else love.graphics.setColor(0.16, 0.15, 0.19) end
+      love.graphics.rectangle("fill", x, y, TILE, TILE)
+    end
+  end
+end</code></pre></div>
+<p>Call <code>drawMap()</code> in <code>love.draw</code>, before <code>player:draw()</code>. Run it. Grey walls, dark floor, a brown door, and a hero who walks straight through all of it. Step 4 fixes that.</p></section><section class="step" id="step-4"><h2><span class="stepnum">Step 4</span>Sliding along walls</h2><p>The naive version moves the hero, then undoes it if they're in a wall. That makes them stick to walls like gum. The fix is to move <strong>one axis at a time</strong>:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function Entity:move(dx, dy)
   local nx = self.x + dx
   if not boxHitsWall(nx, self.y, self.w, self.h) then
@@ -125,20 +144,7 @@ function distance(a, b)
   local bx, by = b:center()
   return math.sqrt((ax - bx) ^ 2 + (ay - by) ^ 2)
 end</code></pre></div>
-<p><code>^ 2</code> is squared. That's the distance formula from math class, and it's the last time you'll have to type it.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Drawing the keep</h2><p>First, with no art at all:</p>
-<div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">function drawMap()
-  for row = 1, #map do
-    for col = 1, #map[row] do
-      local t = map[row][col]
-      local x, y = (col - 1) * TILE, (row - 1) * TILE
-      if t == 1 then love.graphics.setColor(0.32, 0.30, 0.36)
-      elseif t == 2 then love.graphics.setColor(0.55, 0.35, 0.2)
-      else love.graphics.setColor(0.16, 0.15, 0.19) end
-      love.graphics.rectangle("fill", x, y, TILE, TILE)
-    end
-  end
-end</code></pre></div>
-<p>Now the real art. Download Kenney's <strong>Tiny Dungeon</strong> pack from kenney.nl/assets/tiny-dungeon. Inside it are two copies of the tilemap: use the one whose name ends in <code>packed</code> (the other has one-pixel gaps between tiles, and your quads would drift). Copy it into your <code>assets</code> folder, renamed to <code>tiles</code> (keep the png ending). Its tiles are 16 pixels, so <code>SCALE = 2</code> doubles them; add <code>SCALE = 2</code> under <code>TILE</code>. A <strong>quad</strong> is a rectangle cut out of a bigger image, which is how one PNG holds a hundred tiles. In <code>love.load</code>:</p>
+<p><code>^ 2</code> is squared. That's the distance formula from math class, and it's the last time you'll have to type it.</p></section><section class="step" id="step-5"><h2><span class="stepnum">Step 5</span>Real art</h2><p>Download Kenney's <strong>Tiny Dungeon</strong> pack from kenney.nl/assets/tiny-dungeon. Use the tilemap whose name ends in <code>packed</code>, same as Build 05. Copy it into your <code>assets</code> folder, renamed to <code>tiles</code> (keep the png ending). Its tiles are 16 pixels, so <code>SCALE = 2</code> doubles them; add <code>SCALE = 2</code> under <code>TILE</code>. Quads are the sprite-sheet slices from Build 05. In <code>love.load</code>, first line, add <code>love.graphics.setDefaultFilter("nearest", "nearest")</code> so doubled pixels stay crisp instead of blurring. Then:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  local ok, img = pcall(love.graphics.newImage, "assets/tiles.png")
   if ok then
     tileset = img
@@ -148,7 +154,7 @@ end</code></pre></div>
       [2] = love.graphics.newQuad(32, 0, 16, 16, tileset:getDimensions()),
     }
   end</code></pre></div>
-<p><code>pcall</code> means "try this, and if it fails, tell me instead of crashing." No image, <code>tileset</code> stays <code>nil</code>, the colored squares carry on. In <code>drawMap</code>, when <code>tileset</code> exists, draw <code>love.graphics.draw(tileset, quads[t], x, y, 0, SCALE, SCALE)</code> instead of the rectangle. The quads above pick the first three tiles of the top row; open the PNG and change <code>0, 16, 32</code> to pick ones you like. Jamie picked a skull for the floor. We talked about it.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>The camera</h2><p>The room is 960 by 704 pixels; the window is 800 by 600. A camera in 2D is just a shift of everything you draw. At the end of <code>love.update</code>:</p>
+<p><code>pcall</code> means "try this, and if it fails, tell me instead of crashing." No image, <code>tileset</code> stays <code>nil</code>, the colored squares carry on. In <code>drawMap</code>, when <code>tileset</code> exists, call <code>love.graphics.setColor(1, 1, 1)</code> once before the loops (a leftover grey would tint every tile), then draw <code>love.graphics.draw(tileset, quads[t], x, y, 0, SCALE, SCALE)</code> instead of the rectangle. The quads above pick the first three tiles of the top row; open the PNG and change <code>0, 16, 32</code> to pick ones you like. Jamie picked a skull for the floor. We talked about it.</p></section><section class="step" id="step-6"><h2><span class="stepnum">Step 6</span>The camera</h2><p>The room is 960 by 704 pixels; the window is 800 by 600. A camera in 2D is just a shift of everything you draw. At the end of <code>love.update</code>:</p>
 <div class="code"><button class="copy" type="button" aria-label="Copy code">copy</button><pre><code class="lua">  camX = player.x + player.w / 2 - love.graphics.getWidth() / 2
   camY = player.y + player.h / 2 - love.graphics.getHeight() / 2
   camX = math.max(0, math.min(mapW - love.graphics.getWidth(), camX))
@@ -159,8 +165,8 @@ end</code></pre></div>
   drawMap()
   player:draw()
   love.graphics.pop()</code></pre></div>
-<p>Anything between <code>push</code> and <code>pop</code> moves with the camera; anything after <code>pop</code> stays stuck to the screen. <code>math.floor</code> keeps pixel art from shimmering.</p></section>
-  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>A second room.</strong> Make <code>maps/room2.csv</code>. When the hero stands on a door tile (<code>2</code>), load the new room and place them just inside its door. (Hint: <code>tileAt</code> on the hero's center tells you what they're standing on; <code>loadMap</code> already does the loading; you'll need <code>mapW</code> and <code>mapH</code> to update too.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A pushable crate.</strong> A crate entity sits on a floor tile. When the hero walks into it, it moves one whole tile in that direction, but only if the tile beyond it is free. (Hint: make the crate an <code>Entity</code>; check <code>overlaps</code> before accepting the hero's move; <code>solidAt</code> tells you if the far tile is a wall. When the hero's move would land on the crate, try moving the crate the same way first; if the crate can move, move both; if it can't, neither moves.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>Wildcard.</strong> Pitch the lead dev a feature of your own, same size as one above. If they say yes, it replaces any one task.</span></label></li></ol></section>
+<p>Same <code>push</code>/<code>translate</code>/<code>pop</code> as Build 04; anything after <code>pop</code> stays stuck to the screen. <code>math.floor</code> keeps pixel art from shimmering.</p></section>
+  <section class="ship-it" id="ship"><h2><span class="stepnum pink">To ship</span>Ship-It tasks</h2><p class="rule">Required. No code is given anywhere for these; that is the point.</p><ol class="ship"><li><label><input type="checkbox" data-ship="0"><span><strong>A second room.</strong> Make <code>maps/room2.csv</code>. When the hero stands on a door tile (<code>2</code>), load the new room and place them just inside its door. (Hint: <code>tileAt</code> on the hero's center tells you what they're standing on; <code>loadMap</code> already does the loading; you'll need <code>mapW</code> and <code>mapH</code> to update too.)</span></label></li><li><label><input type="checkbox" data-ship="1"><span><strong>A pushable crate.</strong> A crate entity sits on a floor tile. When the hero walks into it, it moves one whole tile in that direction, but only if the tile beyond it is free. (Hint: make the crate an <code>Entity</code>; check <code>overlaps</code> before accepting the hero's move; <code>solidAt</code> tells you if the far tile is a wall. When the hero's move would land on the crate, try moving the crate the same way first; if the crate can move, move both; if it can't, neither moves.)</span></label></li><li><label><input type="checkbox" data-ship="2"><span><strong>Wildcard.</strong> Got a better idea than anything above? Pitch it to the lead dev in one sentence, like <em>"A pressure plate that opens a wall."</em> If it's a sitting's worth of work, it replaces any one task.</span></label></li></ol></section>
   <section class="stretch"><h2><span class="stepnum dim">Nice to have</span>Stretch</h2><ul><li>A torch tile (<code>4</code>) that draws with a flicker: vary its color a little every frame.</li><li>Footstep sounds that play only while the hero is actually moving.</li></ul></section>
   <section class="bug" id="bug">
 <div class="ticket">
