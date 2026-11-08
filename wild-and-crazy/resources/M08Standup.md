@@ -8,7 +8,7 @@ It looked like an ending. It was the start of four more careers: actor, writer, 
 
 ## The friend
 
-Steve met Martin Short making Three Amigos in 1985. On stage they roast each other constantly, and the audience howls, because every insult is obviously a love letter. There's a kind of comedy that only works between people who trust each other. It might be the best kind. (Set Card 3 said the laugh shouldn't land on someone who can't answer back. A friend who roasts you right back can.)
+Steve met Martin Short making Three Amigos in 1985. On stage they roast each other constantly, and the audience howls, because every insult is obviously a love letter. There's a kind of comedy that only works between people who trust each other. It might be the best kind. (Set Card 3 said jokes aimed at a character you built last longer than jokes aimed at someone who can't answer back. A friend who roasts you right back is a third case: you're both in on it.)
 
 ## What this was about
 
@@ -18,7 +18,7 @@ You've written a no-punchline joke, an opener, a fool, a tension bit, a juxtapos
 
 ## Tonight's clip: the enduring friendship
 
-Steve and Martin Short on how they met, how they work, and who has the louder inner critic.
+Steve and Martin Short on how they met and how they tease each other.
 
 ## Your turn
 
@@ -26,6 +26,6 @@ Assemble your set: opener, build, callback. Perform it, out loud to someone at h
 
 That's the course. The stage is yours.
 
-## Backstage
+## Backstage (optional)
 
 Other comedians have stepped away at a peak too, each for their own reasons; Bo Burnham stopped touring after Make Happy (2016) and later made Inside alone in one room.

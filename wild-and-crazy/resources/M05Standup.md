@@ -12,7 +12,7 @@ The thing that makes you weird is the thing that makes you funny. Steve studied 
 
 ## How to build one
 
-Take something you take seriously. Pair it with something small, dumb or ordinary. Treat the pairing with total seriousness. A eulogy for a phone charger. A hostage negotiation over a juice box. The more dignity you give the dumb half, the funnier it gets.
+Take something you take seriously. Pair it with something small, dumb or ordinary. Treat the pairing with total seriousness. A eulogy for a phone charger. A press conference about a lost sock. The more dignity you give the dumb half, the funnier it gets.
 
 ## Tonight's clip: the banjo, no arrow
 
@@ -22,6 +22,6 @@ Steve and a bluegrass band crammed behind an office desk at NPR. Watch for the m
 
 Write three high/low pairings, one line each. Pick your favorite and stretch it to four lines, both halves dead serious.
 
-## Backstage
+## Backstage (optional)
 
 The play is Picasso at the Lapin Agile, first staged in Chicago in 1993. Where this went: most absurdist short-form comedy is juxtaposition with the explanation removed.

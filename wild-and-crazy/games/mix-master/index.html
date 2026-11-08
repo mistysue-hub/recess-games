@@ -44,7 +44,8 @@
 <main>
   <section class="card intro" id="intro"><span class="pin"></span>
     <p><strong>How it works.</strong> Steve Martin played beautiful banjo with a fake arrow through his head. Something high and something low, side by side, and he treated the whole thing with total seriousness. That collision is called <strong>juxtaposition</strong>.</p>
-    <p>Each round gives you something serious and dignified. Tap the partner that makes the <strong>funniest mix</strong>. After each tap, the card shows the course's pick and why. You can disagree. Taste counts; the course just shows its reasoning. The last screen counts how often you and the course matched.</p>
+    <p>Each round gives you something serious and dignified. Tap the partner that makes the <strong>funniest mix</strong>. After each tap, the card shows the course's pick and why. You can disagree. Most rounds have more than one good answer, and any strong mix counts as a match; only the dull pairing misses. Taste counts. The last screen counts how often you and the course matched.</p>
+    <p><strong>Hard mode:</strong> before you tap, say your own funnier partner out loud. Then see if the game has it.</p>
     <button class="btn" id="start">Start mixing</button>
   </section>
 
@@ -71,56 +72,55 @@
 </main>
 <script>
 (function(){
-  // k = course pick (big gap, small specific subject), w = weak match (same tone, no gap), b = near miss (just as long and specific as k, but the low side is already a bit dignified or behaving properly, so the gap is small)
+  // k = course pick, b = also a strong mix (counts as a match), w = dull pairing (no gap). Options are kept the same length so size gives nothing away.
   var ROUNDS=[
     {h:"A hostage negotiator picks up the phone, takes one slow breath, and speaks in a calm, steady voice...",
-     k:"...to a four-year-old hiding behind the couch with the last apple juice box, straw already in.",
-     w:"...to a man holding three bank employees inside a locked vault downtown.",
-     b:"...to a scared orange cat stuck forty feet up the neighbor's oak tree, refusing all treats since noon.",
+     k:"...to a four-year-old behind the couch with the last juice box, straw already in.",
+     b:"...to a toddler who has locked himself in the bathroom with the dog's squeaky toy.",
+     w:"...to a masked man holding three bank employees in a vault downtown, clock ticking.",
      y:"Life-or-death calm, spent on a preschooler and a juice box. \"Straw already in\" tells you the situation is critical."},
     {h:"A TV meteorologist turns to the camera with a grave face and issues an urgent warning...",
-     k:"...of a 90 percent chance that your little brother eats the last waffle before 7 a.m.",
-     w:"...of a powerful storm front moving across three counties tonight.",
-     b:"...of a 90 percent chance that the school bus runs about ten minutes late on Tuesday.",
+     k:"...of a 90 percent chance that your little brother eats the last waffle by 7 a.m.",
+     b:"...of a severe sibling front moving in: someone is borrowing your charger again.",
+     w:"...of a powerful storm front moving across three counties, with winds near sixty miles an hour.",
      y:"The forecast voice is built for life-or-death. Point it at a waffle and the seriousness becomes the joke."},
     {h:"A hushed museum audio guide says, \"Now step closer to the glass and observe...\"",
-     k:"...a single, slightly chewed yellow pencil, recovered from the back row of a seventh-grade math class.",
-     w:"...a 400-year-old marble statue of a Roman emperor.",
-     b:"...a single, slightly faded class photo, recovered from the first school ever built in this town.",
+     k:"...a slightly chewed yellow pencil, recovered from the back row of a seventh-grade math class.",
+     b:"...a lunch tray from 2009, still holding one square of pizza, preserved by the climate-control.",
+     w:"...a 400-year-old marble statue of a Roman emperor, carved from a single block in Carrara.",
      y:"Reverence for the most ordinary object in the building. The tiny detail (chewed) sells it."},
     {h:"The lights dim. A speaker steps onto the red circle at a famous ideas conference and begins...",
-     k:"...a moving eighteen-minute talk on who should get the last chicken nugget when four people are still hungry.",
-     w:"...a moving talk on how clean drinking water changed life in one small village.",
-     b:"...a moving eighteen-minute talk on how one middle school cut its cafeteria food waste in half in a year.",
+     k:"...a moving eighteen-minute talk on who gets the last chicken nugget when four people are hungry.",
+     b:"...a moving eighteen-minute talk on why you must always return the shopping cart to its spot.",
+     w:"...a moving eighteen-minute talk on how clean drinking water changed life in one small village.",
      y:"World-changing stage voice, slides and all, for one nugget. The more the speaker means it, the better it gets."},
     {h:"The judge bangs the gavel. The courtroom holds its breath as the verdict is read...",
      k:"...on the question of who put the empty milk carton back in the fridge.",
-     w:"...in a major fraud case involving a large company.",
-     b:"...on the question of who owes the neighbors for the broken backyard fence.",
+     b:"...on whether a hot dog counts as a sandwich, after four days of testimony.",
+     w:"...in a major fraud case involving a large company and forty million dollars.",
      y:"Full legal weight on a household crime everyone has committed. The bigger the ceremony, the smaller the crime should be."},
     {h:"A deep, wise nature documentary narrator whispers, \"Here, in its natural habitat, we find...\"",
      k:"...a single gray sock under the couch, which has not moved in three weeks.",
-     w:"...a pride of lions stalking across the savanna at dawn.",
-     b:"...a single gray sock in the laundry basket, folded, exactly where it belongs.",
+     b:"...a granola bar in a backpack pocket, undisturbed since the first week of school.",
+     w:"...a pride of lions stalking across the savanna at dawn, hungry and silent.",
      y:"The narrator treats the sock like rare wildlife. \"Has not moved in three weeks\" is a true nature fact about a laundry problem."},
     {h:"A graduation speaker grips the podium and begins an inspiring commencement address...",
      k:"...to a goldfish who has just completed one full lap of his bowl.",
-     w:"...to a class of seniors heading off to college and careers.",
-     b:"...to a kindergarten class that has just finished one full year of reading.",
+     b:"...to a houseplant that has finally grown one new leaf this spring.",
+     w:"...to a class of seniors heading off to college and careers, caps in the air.",
      y:"\"Go forth and change the world,\" said to a fish in a bowl. The bigger the speech, the smaller the bowl looks."},
     {h:"The symphony program notes describe, in elegant detail, the stirring final movement of...",
      k:"...a microwave beeping three times because the popcorn is done.",
-     w:"...a famous composer's last symphony, performed by a full orchestra.",
-     b:"...a church bell ringing three times because the wedding is done.",
+     b:"...the dishwasher's long final sigh as it finishes the pots and pans.",
+     w:"...a famous composer's last symphony, performed by a full orchestra of ninety players.",
      y:"High-art language for a kitchen sound everyone knows by heart. Specific (three beeps) beats vague every time."}
   ];
   var MISS={
-    w:"The one you tapped is too close in tone. Serious plus serious leaves no gap, so nothing collides.",
-    b:"The one you tapped is close. It's just as specific, but the low side is already a little dignified, or it's behaving exactly as it should, so the seriousness doesn't have far to fall. The wider the gap between high and low, the harder they collide."
+    w:"The one you tapped is too close in tone. Serious plus serious leaves no gap, so nothing collides."
   };
   var CLOSE=[
-    [6,"You already hear the gap. Now go build one of your own."],
-    [3,"You and the course matched some of the time. Where you split is where your own taste lives."],
+    [12,"You already hear the gap. Now go build one of your own."],
+    [6,"You and the course matched some of the time. Where you split is where your own taste lives."],
     [0,"You and the course mostly saw it differently. Good. Notice what you liked instead; that's the start of your own style."]
   ];
   var i=0,agree=0,order=[],slots=[];
@@ -139,9 +139,9 @@
     var r=ROUNDS[order[i]],type=slots[n],kIdx=slots.indexOf('k');
     for(var m=0;m<3;m++)$('c'+m).disabled=true;
     $('c'+n).classList.add('pick');$('c'+kIdx).classList.add('steve');
-    var same=(type==='k'); if(same) agree++;
-    var html='<p><strong>'+(same?'Same pick as the course.':'The course picked a different one.')+'</strong> The course\'s pick is the green one: <em>'+esc(r.k)+'</em></p>';
-    if(!same) html+='<p>'+MISS[type]+'</p>';
+    if(type==='k') agree+=2; else if(type==='b') agree+=1;
+    var html='<p><strong>'+(type==='k'?'Same pick as the course. +2':type==='b'?'Also a strong mix. +1':'The course picked a different one.')+'</strong> The course\'s pick is the green one: <em>'+esc(r.k)+'</em></p>';
+    if(type==='w') html+='<p>'+MISS[type]+'</p>';
     html+='<p>Why: '+esc(r.y)+'</p>';
     var v=$('verdict');v.innerHTML=html;v.style.display='block';
     $('next').textContent=(i===ROUNDS.length-1)?'See results':'Next round';
@@ -154,7 +154,7 @@
     if(i<ROUNDS.length){show();window.scrollTo(0,0)}
     else{
       $('play').style.display='none';
-      $('line').textContent='Agreed with the course: '+agree+' of '+ROUNDS.length;
+      $('line').textContent='Agreed with the course: '+agree+' of '+(ROUNDS.length*2);
       for(var c=0;c<CLOSE.length;c++){if(agree>=CLOSE[c][0]){$('closing').textContent=CLOSE[c][1];break}}
       $('done').style.display='block';window.scrollTo(0,0);
     }

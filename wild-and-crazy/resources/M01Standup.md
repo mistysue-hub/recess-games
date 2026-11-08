@@ -4,9 +4,9 @@
 
 ## The man who wouldn't finish the joke
 
-A man walks on stage, tunes a banjo for four minutes, and leaves. People paid for this. Here's why.
+A man walks on stage with a banjo, says something odd, and leaves. People paid for this. Here's why.
 
-In the 1970s a comedian in a white suit walked on stage, tuned his banjo for far too long, announced a trick that never arrived, and said absurd things with a perfectly straight face, then moved on as if nothing had happened. Rooms didn't know what to do. Then they laughed, harder than they expected, and couldn't say why.
+In the 1970s a comedian in a white suit walked on stage with a banjo, announced tricks that never arrived, and said absurd things with a perfectly straight face, then moved on as if nothing had happened. Rooms didn't know what to do. Then they laughed, harder than they expected, and couldn't say why.
 
 That was the plan.
 
@@ -16,7 +16,7 @@ Every joke runs on one machine: a setup builds pressure, a punchline pops it, th
 
 ## Tonight's clip: King Tut
 
-In 1978 he brought a silly song to Saturday Night Live. There is no joke to "get." There is a man committing completely to something ridiculous and refusing to blink. Watch where you laugh.
+In 1978 he brought a silly song to Saturday Night Live. The song has jokes, but the real engine is a man committing completely to something ridiculous and refusing to blink. Watch where you laugh.
 
 ## Your turn
 
@@ -24,6 +24,6 @@ Write one joke twice: the normal way, with a punchline, then Steve's way, with t
 
 Two words you'll hear all week: a *bit* is one funny chunk about one thing. A *set* is your bits in a row, the way a comedian does them on stage.
 
-## Backstage
+## Backstage (optional)
 
 Steve did stand-up for about eighteen years and quit in 1981 at the top. The no-punchline idea played to near-empty rooms for years before it filled arenas. Cousins of this idea: Andy Kaufman, working in the same years (he once read a whole novel aloud on stage until the room cracked), and later Norm Macdonald's moth joke, which runs five minutes to reach one flat pun.

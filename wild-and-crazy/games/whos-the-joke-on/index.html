@@ -44,7 +44,8 @@
   <section class="card intro" id="intro"><span class="pin"></span>
     <p><strong>How it works.</strong> Steve Martin's stage guy was a confident fool in a white suit. The laugh always landed on the character he was playing, never on a real person who couldn't answer back.</p>
     <p>Ten short jokes, one at a time. For each one, tap who the joke lands on: <strong>the character</strong> (a made-up or played-up persona. The performer is in on it; the character never finds out. That gap is the joke.), <strong>a real person</strong> (someone who isn't there to answer back), or <strong>it depends</strong> (a real person, but they're in on it, or it's about you and your own people).</p>
-    <p>After each pick, the card shows the course's call. You can disagree; the last screen counts how often you and the course saw it the same way.</p>
+    <p>After each pick, the card shows the course's call. A few jokes can be read two ways, and the card says so. You can disagree; the last screen counts how often you and the course saw it the same way.</p>
+    <p><strong>Hard mode:</strong> before you tap, say out loud who would feel it if they heard the joke.</p>
     <button class="btn" id="start">Start the set</button>
   </section>
 
@@ -77,10 +78,10 @@
     {t:"“As your weatherman, I promised sunshine. It's snowing. So I was right about somewhere. Probably.”",a:"c",w:"He's wrong and spinning it. A made-up persona takes the hit, so everyone can laugh freely."},
     {t:"“The kid who sits behind me got a new haircut. It looks like he lost a fight with a lawnmower, and the lawnmower brought friends.”",a:"r",w:"Punches at someone who isn't in the room. The laugh is quick, and the room gets a little colder."},
     {t:"“Our neighbor parks so badly, his car takes up three spaces and a little bit of tomorrow.”",a:"r",w:"The target is a real guy down the street who never gets a say. The line gets a quick laugh, but it has nowhere to grow."},
-    {t:"“Our neighbor loves his lawn so much, he mows it, waters it, and then reads it a bedtime story.”",a:"r",w:"Nice image, but it's pointed at a real neighbor who isn't in on it. Turn it into “I love my lawn so much...” and the same joke lands on a character."},
+    {t:"“Our neighbor loves his lawn so much, he mows it, waters it, and then reads it a bedtime story.”",a:"r",ok:["r","d"],w:"Nice image, but it's pointed at a real neighbor who isn't in on it. Turn it into “I love my lawn so much...” and the same joke lands on a character."},
     {t:"“Nobody in my family can cook. At our house, the smoke alarm is how we know dinner's ready. And I'm the worst one. I burned cereal.”",a:"d",w:"It pokes at real family members, but the speaker puts himself at the bottom of the pile. The course leans toward fine because you're in the joke too, but it's arguable if your family wouldn't laugh."},
     {t:"“My best friend texts back so slowly, by the time he answers I've forgotten what I asked. He says I text like a lost grandma, so we're even.”",a:"d",w:"A real friend is the target, but he's in on it and swinging back. The course leans toward fine because a roast that goes both ways is a game, but it's arguable once the roast stops being mutual."},
-    {t:"“Our town is so small, the ‘Welcome’ sign and the ‘Thanks for visiting’ sign are on the same post.”",a:"d",w:"It's about real people, but they're your people, and you're one of them. The course leans toward fine because you're laughing from the inside, but it's arguable if an outsider told it."}
+    {t:"“Our town is so small, the ‘Welcome’ sign and the ‘Thanks for visiting’ sign are on the same post.”",a:"d",ok:["d","c"],w:"It's about real people, but they're your people, and you're one of them. The course leans toward fine because you're laughing from the inside, but it's arguable if an outsider told it."}
   ];
   var i=0,agree=0,order=[];
   var $=function(id){return document.getElementById(id)};
@@ -98,10 +99,10 @@
     var tag=document.createElement('span');tag.className='tag';tag.textContent='course pick';
     $(j.a).insertBefore(tag,$(j.a).querySelector('small'));
     $('c').disabled=true;$('r').disabled=true;$('d').disabled=true;
-    var same=(id===j.a); if(same) agree++;
+    var same=(id===j.a)||(j.ok&&j.ok.indexOf(id)>-1); if(same) agree++;
     var ans=j.a==='c'?'is on <strong>the character</strong>':j.a==='r'?'is on <strong>a real person</strong>':'is <strong>it depends</strong>';
     var v=$('verdict');
-    v.innerHTML=(same?'<strong>Same call as the course.</strong> ':'<strong>The course saw it another way.</strong> ')+'The course says this one '+ans+' (marked course pick). '+j.w;
+    v.innerHTML=(id===j.a?'<strong>Same call as the course.</strong> ':same?'<strong>That works too, and it counts as a match.</strong> ':'<strong>The course saw it another way.</strong> ')+'The course says this one '+ans+' (marked course pick). '+j.w;
     v.style.display='block';
     $('next').textContent=(i===JOKES.length-1)?'See results':'Next joke';
     $('next').style.display='inline-block';

@@ -6,7 +6,7 @@ In 1992, in the final weeks of Johnny Carson's Tonight Show, Carson talked Steve
 
 ## The man in the white suit
 
-That's the character Steve played for years: a man certain he is brilliant, slick and in control, and wrong about all three. Arrow through the head, bunny ears, "Excuse me!" like he's been deeply wronged. He called himself a wild and crazy guy and then did nothing wild or crazy.
+That's the character Steve played for years: a man certain he is brilliant, slick and in control, and wrong about all three. Arrow through the head, bunny ears, "Excuse me!" like he's been deeply wronged. He called himself a wild and crazy guy, but in the character's mind, nothing was wild at all — it was all perfectly reasonable.
 
 An unsure fool is just sad. A confident fool is funny, because the gap between how he sees himself and how we see him is the joke. The performer is in on it; the character never finds out. That gap is the joke. The second the character winks (shows he knows he's being silly), it's over.
 
@@ -16,8 +16,8 @@ All the foolishness was pointed at the man in the suit, who was happy to take it
 
 ## Your turn
 
-Write about six lines for a character who is one hundred percent confident and one hundred percent wrong. A chef who can't cook. A tour guide who's lost. They never, ever realize.
+Write about six lines for a character who is one hundred percent confident and one hundred percent wrong. A coach who has never won. A pilot who's afraid of heights. They never, ever realize.
 
-## Backstage
+## Backstage (optional)
 
 You can see something similar in Nathan Fielder (Nathan for You, The Rehearsal): a confident fool who never winks, and the question of who the laugh lands on is the argument people have about his shows.
