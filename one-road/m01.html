@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Road · Day 1 · The Boy in the Felt Tent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#11173a; --night2:#1b2352; --ink:#0b0f26;
+    --gold:#c9a24a; --gold2:#e8cf8a; --bone:#efe6d2; --dim:#b9b2a0;
+    --seal:#a3262a; --seal2:#c8423f; --jade:#3f8f7a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 70% -10%, #2a346e 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #23295a 0%, transparent 55%),
+      var(--night);
+    color:var(--bone); font-family:Spectral, Georgia, serif; font-size:18px; line-height:1.6;
+    min-height:100vh;
+  }
+  /* starfield */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 33% 8%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 22%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 81% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 30%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 7% 40%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 45% 35%, #fff 50%, transparent 51%);}
+  .wrap{max-width:720px;margin:0 auto;padding:18px 16px 60px;position:relative}
+
+  /* caravan strip */
+  .strip{display:flex;align-items:center;gap:0;margin:4px 0 22px;padding:10px 12px;
+    border:1px solid rgba(201,162,74,.35);border-radius:999px;background:rgba(11,15,38,.55)}
+  .stop{flex:0 0 auto;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:transparent;position:relative}
+  .stop.lit{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .leg{flex:1 1 auto;height:2px;background:repeating-linear-gradient(90deg,rgba(201,162,74,.5) 0 6px,transparent 6px 11px)}
+  .strip-label{font-family:Cinzel,serif;font-size:12px;letter-spacing:.12em;color:var(--gold2);text-align:center;margin:-14px 0 18px}
+
+  h1{font-family:Cinzel,serif;font-weight:800;color:var(--gold2);font-size:clamp(28px,6vw,40px);line-height:1.15;margin:0 0 4px;letter-spacing:.02em}
+  .kicker{font-family:Cinzel,serif;color:var(--gold);letter-spacing:.2em;font-size:13px;text-transform:uppercase}
+  .sub{color:var(--dim);font-style:italic;margin:0 0 22px}
+
+  /* paiza tablet card */
+  .paiza{position:relative;margin:18px 0;padding:22px 22px 20px;border-radius:22px 22px 18px 18px;
+    background:linear-gradient(160deg,#2a2a2a00,#00000000),
+      linear-gradient(180deg,#2b2f5e 0%,#1a1f47 100%);
+    border:2px solid var(--gold);box-shadow:0 0 0 5px rgba(201,162,74,.12), 0 10px 30px rgba(0,0,0,.45)}
+  .paiza::before{content:"";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;border:3px solid var(--gold);background:var(--night)}
+  .paiza::after{content:"";position:absolute;inset:7px;border-radius:16px 16px 12px 12px;border:1px dashed rgba(201,162,74,.35);pointer-events:none}
+  .paiza h2{font-family:Cinzel,serif;color:var(--gold2);font-size:20px;margin:0 0 8px;letter-spacing:.04em}
+  .paiza p{margin:0 0 12px}
+  .note{background:rgba(201,162,74,.08);border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:16px}
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+
+  .hidden{display:none}
+  .btn{font-family:Cinzel,serif;font-weight:600;letter-spacing:.08em;font-size:16px;
+    background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--ink);border:0;border-radius:999px;
+    padding:12px 22px;cursor:pointer;box-shadow:0 4px 0 #7d6326;min-height:48px}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7d6326}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--gold2);border:2px solid var(--gold);box-shadow:none}
+  .center{text-align:center}
+
+  /* timeline game */
+  .slots{display:grid;gap:8px;margin:14px 0}
+  .slot{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border-radius:12px;
+    border:2px dashed rgba(201,162,74,.45);background:rgba(11,15,38,.4);cursor:pointer}
+  .slot .n{font-family:Cinzel,serif;color:var(--gold);width:26px;flex:0 0 26px;text-align:center}
+  .slot.filled{border-style:solid;background:rgba(201,162,74,.12)}
+  .slot.ok{border-color:var(--jade);background:rgba(63,143,122,.18)}
+  .slot.bad{border-color:var(--seal2);background:rgba(163,38,42,.18)}
+  .slot .why{display:block;font-size:14px;color:var(--dim);font-style:italic}
+  .cards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+  .card{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;
+    font-size:16px;cursor:pointer;min-height:48px;text-align:left;box-shadow:0 3px 0 #9d927a}
+  .card.used{display:none}
+
+  /* seal */
+  .seal-zone{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0 4px}
+  .seal{width:120px;height:120px;border:0;border-radius:18px;cursor:pointer;position:relative;
+    background:radial-gradient(circle at 35% 30%,var(--seal2),var(--seal) 60%,#6e1418);
+    box-shadow:0 8px 0 #5a1013, 0 14px 30px rgba(0,0,0,.5);color:#f6d9c8;font-family:Cinzel,serif;font-weight:800;font-size:15px;letter-spacing:.14em}
+  .seal::before{content:"";position:absolute;inset:12px;border:3px solid rgba(246,217,200,.75);border-radius:8px}
+  .seal::after{content:"";position:absolute;inset:26px;border:2px solid rgba(246,217,200,.5);border-radius:4px;
+    background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(246,217,200,.35) 10px 13px)}
+  .seal span{position:relative;z-index:2;background:var(--seal);padding:2px 6px;border-radius:4px}
+  .seal[disabled]{filter:grayscale(.7) brightness(.7);cursor:not-allowed}
+  .seal.stamp{animation:stamp .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes stamp{0%{transform:translateY(-30px) scale(1.25) rotate(-6deg)}60%{transform:translateY(4px) scale(.94) rotate(2deg)}100%{transform:none}}
+  .imprint{display:inline-block;border:3px solid var(--seal2);color:var(--seal2);font-family:Cinzel,serif;font-weight:800;
+    padding:6px 12px;border-radius:6px;transform:rotate(-4deg);letter-spacing:.12em;margin:6px 0 12px;opacity:.9}
+
+  /* ledger */
+  .ledger{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.ledger{grid-template-columns:1fr}}
+  .tab{border-radius:16px;padding:14px;border:2px solid}
+  .tab.d{border-color:var(--seal2);background:rgba(163,38,42,.12)}
+  .tab.c{border-color:var(--jade);background:rgba(63,143,122,.12)}
+  .tab b{font-family:Cinzel,serif;letter-spacing:.1em;font-size:13px;display:block;margin-bottom:4px}
+  .tab.d b{color:#f3a09b}.tab.c b{color:#8fd3be}
+
+  textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid var(--gold);background:var(--ink);color:var(--bone);font-family:Spectral,serif;font-size:15px;padding:10px}
+  .copied{color:var(--jade);font-weight:600;margin-left:8px}
+  footer{margin-top:30px;font-size:13px;color:var(--dim);border-top:1px solid rgba(201,162,74,.25);padding-top:12px}
+  .part-label{font-family:Cinzel,serif;color:var(--gold);font-size:12px;letter-spacing:.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="strip" aria-label="Caravan progress: day 1 of 8">
+    <span class="stop lit"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span>
+    <span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span>
+    <span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span>
+    <span class="stop"></span><span class="leg"></span><span class="stop"></span>
+  </div>
+  <div class="strip-label">DAY 1 OF 8 · THE ONON RIVER</div>
+
+  <div class="kicker">One Road · Day 1</div>
+  <h1>The Boy in the Felt Tent</h1>
+  <p class="sub">c. 1162 to 1206 · How an abandoned boy became Chinggis Khan</p>
+
+  <div class="paiza">
+    <h2>Before you ride</h2>
+    <div class="note">Almost everything we know about Temüjin's childhood comes from one book, the <i>Secret History of the Mongols</i>. Mongols wrote it for the royal family after he died. It's the family's own story of its founder. As you read, ask: <b>what might they want you to believe?</b></div>
+  </div>
+
+  <section id="parts">
+    <div class="paiza part" data-i="0">
+      <div class="part-label">PART 1</div>
+      <h2>A family left behind</h2>
+      <p>Temüjin was born around 1162 on the Onon River, in a world of felt tents, horses and herds that moved with the grass. When he was about nine, his father, Yesügei, took him to find a bride. Temüjin was promised to a girl named Börte and stayed with her family.</p>
+      <p>On the ride home, Yesügei shared a meal with some Tatars, old enemies, and fell ill. He died soon after. The Secret History says he was poisoned.</p>
+      <p>His clan didn't stay loyal to a widow with small children. They packed up the herds and left. Temüjin's mother, Hö'elün, kept her children alive on roots, wild fruit and fish.</p>
+    </div>
+
+    <div class="paiza part hidden" data-i="1">
+      <div class="part-label">PART 2</div>
+      <h2>A killing in the family</h2>
+      <p>Hunger made the brothers fight. When their half-brothers Bekter and Belgütei snatched a fish from Temüjin and Qasar, Hö'elün scolded them all. Their own clan had deserted them, she said, and enemies were everywhere:</p>
+      <blockquote class="sh">We have no friend but our shadow,<br>We have no whip but our horse's tail.<cite>Secret History §76</cite></blockquote>
+      <p>Temüjin and Qasar ignored her. They crept up on Bekter and shot him with arrows. When they came home, their mother's first words were:</p>
+      <blockquote class="sh">You who have destroyed life!<cite>Secret History §78</cite></blockquote>
+    </div>
+
+    <div class="paiza part hidden" data-i="2">
+      <div class="part-label">PART 3</div>
+      <h2>The wooden collar</h2>
+      <p>The clan that had abandoned them, the Tayichi'ud, came back and captured Temüjin. They locked his neck in a heavy wooden collar called a cangue. During a feast he knocked his guard down and ran, collar and all, and hid in the river.</p>
+      <p>A man named Sorqan Shira saw him and didn't give him away. His family took off the collar, burned it, and hid Temüjin in a cart piled with wool while searchers poked through the camp. They were sheltering their own masters' enemy.</p>
+    </div>
+
+    <div class="paiza part hidden" data-i="3">
+      <div class="part-label">PART 4</div>
+      <h2>Followers you choose</h2>
+      <p>When thieves stole the family's horses, a young stranger named Bo'orchu rode out with Temüjin to get them back and asked for nothing. He became Temüjin's first true follower.</p>
+      <p>Temüjin married Börte. When the Merkit tribe raided and carried her off, he rescued her with two allies: his sworn brother Jamuqa and Toghrul, a powerful khan who had been his father's sworn friend. Followers like these weren't kin. They chose him, and he rewarded loyalty, not birth.</p>
+    </div>
+
+    <div class="paiza part hidden" data-i="4">
+      <div class="part-label">PART 5</div>
+      <h2>One banner</h2>
+      <p>Years earlier, his own followers had sworn loyalty and given him the name Chinggis (§123). Over time he beat or absorbed every rival, including Jamuqa and Toghrul. Then in 1206 all the peoples of the felt tents gathered at the source of the Onon River.</p>
+      <blockquote class="sh">They hoisted the white standard with nine tails<cite>Secret History §202</cite></blockquote>
+      <p>and made <b>Chinggis Khan</b> ruler of them all.</p>
+    </div>
+
+    <div class="center"><button class="btn" id="next">Ride on</button></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="paiza">
+      <h2>The Steppe Timeline</h2>
+      <p>Tap the six moments in the order they happened. Tap a filled slot to take it back. When all six are placed, press the seal.</p>
+      <div class="slots" id="slots"></div>
+      <div class="cards" id="cards"></div>
+      <div class="seal-zone">
+        <button class="seal" id="seal" disabled aria-label="Press the seal to reveal the answer"><span>SEAL</span></button>
+        <div id="sealHint" style="font-size:14px;color:var(--dim)">Place all six first</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="after" class="hidden">
+    <div class="paiza center">
+      <div class="imprint" id="imprint">SEALED</div>
+      <h2 id="score"></h2>
+      <p id="scoreLine" style="color:var(--dim)"></p>
+    </div>
+
+    <div class="paiza">
+      <h2>Look back at your vote</h2>
+      <p>You voted on: <i>"A people with no cities can't build an empire."</i></p>
+      <p><b>The real answer: they could.</b> By 1206 a herding people with no cities had united the steppe. Within two generations, Chinggis Khan's sons and grandsons ruled the largest land empire the world had yet seen. Their power ran on horses, loyalty and organization, not walls.</p>
+    </div>
+
+    <div class="paiza">
+      <h2>Your ledger, day 1</h2>
+      <div class="ledger">
+        <div class="tab d"><b>DESTRUCTION</b>He began by killing his own half-brother over a stolen fish.</div>
+        <div class="tab c"><b>CONNECTION</b>He built a following from strangers who chose to join him.</div>
+      </div>
+      <p style="margin-top:12px">Rocky will ask which line weighs more for you. Both are saved for the final day.</p>
+    </div>
+
+    <div class="paiza">
+      <h2>Copy for Rocky</h2>
+      <textarea id="out" readonly></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="copy">Copy my answers for Rocky</button><span class="copied hidden" id="copied">Copied. Paste it into the chat.</span></p>
+    </div>
+  </section>
+
+  <footer>
+    Retold in our own words from the <i>Secret History of the Mongols</i>; nothing was copied. Short quotes (with § numbers) are from Igor de Rachewiltz's translation, shorter version edited by John C. Street (2015, Western Washington University CEDAR, CC BY-NC-ND 4.0). Part of <i>One Road</i>, a Recess course.
+  </footer>
+</div>
+
+<script>
+(function(){
+  // ---- reading: tap to continue ----
+  var parts = Array.prototype.slice.call(document.querySelectorAll('.part'));
+  var shown = 1, next = document.getElementById('next');
+  next.addEventListener('click', function(){
+    if (shown < parts.length){
+      parts[shown].classList.remove('hidden');
+      parts[shown].scrollIntoView({behavior:'smooth', block:'start'});
+      shown++;
+      if (shown === parts.length) next.textContent = 'To the timeline';
+    } else {
+      next.parentNode.classList.add('hidden');
+      var g = document.getElementById('game');
+      g.classList.remove('hidden');
+      g.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+
+  // ---- timeline game ----
+  var EVENTS = [
+    {t:"Yesügei is poisoned on the ride home", why:"Part 1: the clan leaves the family soon after."},
+    {t:"Temüjin and Qasar kill Bekter", why:"Part 2: a stolen fish, and a mother's warning ignored."},
+    {t:"He escapes the wooden collar", why:"Part 3: Sorqan Shira's family hides him in the wool cart."},
+    {t:"Bo'orchu helps win back the stolen horses", why:"Part 4: his first follower who isn't family."},
+    {t:"Börte is rescued with Jamuqa and Toghrul", why:"Part 4: allies by oath and old debt."},
+    {t:"The white standard: all the steppe peoples make him khan", why:"Part 5: the assembly of 1206."}
+  ];
+  var order = [3,0,5,2,4,1]; // shuffled display order, fixed so every learner sees the same
+  var placed = [];
+  var slotsEl = document.getElementById('slots'), cardsEl = document.getElementById('cards');
+  var seal = document.getElementById('seal'), hint = document.getElementById('sealHint');
+  var sealed = false;
+
+  function render(){
+    slotsEl.innerHTML = '';
+    for (var i=0;i<EVENTS.length;i++){
+      var s = document.createElement('div');
+      s.className = 'slot' + (placed[i]!==undefined ? ' filled' : '');
+      s.innerHTML = '<span class="n">'+(i+1)+'</span><span class="txt">'+(placed[i]!==undefined ? EVENTS[placed[i]].t : '<span style="color:var(--dim)">tap a moment below</span>')+'</span>';
+      (function(i){ s.addEventListener('click', function(){ if(sealed) return; if(placed[i]!==undefined){ placed.splice(i,1); render(); } }); })(i);
+      slotsEl.appendChild(s);
+    }
+    cardsEl.innerHTML = '';
+    order.forEach(function(ix){
+      var b = document.createElement('button');
+      b.className = 'card' + (placed.indexOf(ix)>-1 ? ' used' : '');
+      b.textContent = EVENTS[ix].t;
+      b.addEventListener('click', function(){ if(sealed || placed.indexOf(ix)>-1) return; placed.push(ix); render(); });
+      cardsEl.appendChild(b);
+    });
+    var full = placed.length === EVENTS.length;
+    seal.disabled = !full || sealed;
+    hint.textContent = sealed ? '' : (full ? 'Press the seal to lock your order' : 'Place all six first');
+  }
+  render();
+
+  seal.addEventListener('click', function(){
+    if (seal.disabled) return;
+    sealed = true;
+    seal.classList.add('stamp');
+    setTimeout(reveal, 450);
+  });
+
+  function reveal(){
+    var right = 0;
+    var rows = slotsEl.querySelectorAll('.slot');
+    for (var i=0;i<EVENTS.length;i++){
+      var ok = placed[i] === i;
+      if (ok) right++;
+      rows[i].className = 'slot filled ' + (ok ? 'ok' : 'bad');
+      rows[i].querySelector('.txt').innerHTML =
+        (ok ? '' : '<s style="opacity:.6">'+EVENTS[placed[i]].t+'</s><br>') +
+        '<b>'+EVENTS[i].t+'</b><span class="why">'+EVENTS[i].why+'</span>';
+    }
+    cardsEl.innerHTML = '';
+    hint.textContent = '';
+    document.getElementById('score').textContent = right + ' of 6 in the right place';
+    document.getElementById('scoreLine').textContent = right === 6 ? 'A clean ride. Every moment in order.' :
+      'The correct order is now on the timeline above, with where each moment is in the reading.';
+    var txt = 'One Road M01 timeline results\n' +
+      'Correct: ' + right + ' of 6\n' +
+      'My order: ' + placed.map(function(p){ return (p+1); }).join(', ') + ' (1 = Yesugei poisoned ... 6 = khan of all, 1206)\n' +
+      'Ledger day 1 shown: destruction = killed his half-brother over a stolen fish; connection = followers who chose him.';
+    document.getElementById('out').value = txt;
+    try {
+      localStorage.setItem('oneroad.M01', JSON.stringify({score:right, ledger:{d:'He began by killing his own half-brother over a stolen fish.', c:'He built a following from strangers who chose to join him.'}}));
+    } catch(e) {}
+    var a = document.getElementById('after');
+    a.classList.remove('hidden');
+    setTimeout(function(){ a.scrollIntoView({behavior:'smooth', block:'start'}); }, 600);
+  }
+
+  document.getElementById('copy').addEventListener('click', function(){
+    var t = document.getElementById('out');
+    function done(){ document.getElementById('copied').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
+    } else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
+  });
+
+  // deep link for testers: ?show=all opens every part
+  if (/[?&]show=all/.test(location.search)){
+    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; next.textContent = 'To the timeline';
+  }
+})();
+</script>
+</body>
+</html>
