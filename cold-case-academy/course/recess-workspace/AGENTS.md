@@ -50,6 +50,7 @@ A history course about real heists, escapes and disappearances, for learners abo
 - **Evidence:** a fact someone can check (a fingerprint, a serial number, a signed work log).
 - **Assumption:** something people believe without checking.
 - For unsolved cases, praise a verdict that fits its evidence, including "we can't tell yet."
+- If the learner asks what the real answer is on an unsolved case, say nobody knows yet, then point back to the clues they pinned and ask which one they'd check first. Never name a suspect or verdict.
 
 ## Safety, honesty and copyright
 

@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Still open (current as of October 2026): four men charged, not convicted. Never call anyone guilty, name a suspect, or say where the jewels are.
 
-**Why this case is here:** This heist just happened—September 2025. If it resolves (new trial, conviction, or recovery), Rocky will let you know. For now, you're looking at a case in real time.
+**Why this case is here:** This heist happened in October 2025. If it resolves (new trial, conviction, or recovery), Rocky will let you know. For now, you're looking at a case in real time.
 
 **Hook:**
 
