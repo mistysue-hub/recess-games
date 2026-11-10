@@ -111,6 +111,32 @@
   .copied{color:var(--jade);font-weight:600;margin-left:8px}
   footer{margin-top:30px;font-size:13px;color:var(--dim);border-top:1px solid rgba(201,162,74,.25);padding-top:12px}
   .part-label{font-family:Cinzel,serif;color:var(--gold);font-size:12px;letter-spacing:.2em}
+
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+  .claim{font-size:15px;color:var(--dim);border:1px dashed rgba(201,162,74,.45);border-radius:8px;padding:8px 12px;margin:8px 0 12px}
+  .hookcard{border:2px solid var(--seal2);border-radius:14px;padding:12px 14px;background:rgba(163,38,42,.10)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .choice{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;font-size:16px;min-height:48px;text-align:left;cursor:pointer;box-shadow:0 3px 0 #9d927a}
+  .choice.sel{outline:3px solid var(--gold);}
+  .choice.ok{background:#cfe9df}
+  .choice.bad{background:#f2c7c4}
+  .choice[disabled]{cursor:default}
+  .plain{display:block;font-size:15px;color:var(--dim);margin:-6px 0 12px 4px}
+  .plain b{font-family:Cinzel,serif;font-size:10px;letter-spacing:.14em;color:var(--gold)}
+  details.names{margin:10px 0 0;border:1px solid rgba(201,162,74,.4);border-radius:12px;padding:8px 12px;background:rgba(11,15,38,.35)}
+  details.names summary{cursor:pointer;font-family:Cinzel,serif;font-size:12px;letter-spacing:.14em;color:var(--gold2)}
+  details.names ul{margin:8px 0 2px;padding-left:18px;font-size:15px}
+  details.names li{margin:2px 0}
+  details.names i{color:var(--dim)}
+  details.deeper{margin:12px 0 0;border:1px dashed rgba(201,162,74,.55);border-radius:12px;padding:8px 12px}
+  details.deeper summary{cursor:pointer;font-family:Cinzel,serif;font-size:12px;letter-spacing:.14em;color:var(--jade2,#8fd3be)}
+  .tag-i,.tag-s{font-family:Cinzel,serif;font-size:10px;letter-spacing:.14em;border-radius:4px;padding:1px 6px;margin-left:6px}
+  .tag-i{background:rgba(163,38,42,.35);color:#f6d9c8}
+  .tag-s{background:rgba(201,162,74,.25);color:var(--gold2)}
+  .pill{display:inline-block;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;padding:3px 8px;border-radius:999px;border:1px solid var(--gold);color:var(--gold2);margin-bottom:6px}
+
+  .item{border:1px solid rgba(201,162,74,.4);border-radius:14px;padding:12px;background:rgba(11,15,38,.35)}
 </style>
 </head>
 <body>
@@ -131,6 +157,11 @@
   <div class="paiza">
     <h2>Before you ride</h2>
     <div class="note">Almost everything we know about Temüjin's childhood comes from one book, the <i>Secret History of the Mongols</i>. Mongols wrote it for the royal family after he died. It's the family's own story of its founder. As you read, ask: <b>what might they want you to believe?</b></div>
+    <details class="names"><summary>WHO'S WHO &middot; rough sounds</summary><ul>
+      <li><b>Temüjin</b> <i>(TEM-oo-jin)</i>: the boy. Later Chinggis Khan <i>(CHING-iss)</i>.</li>
+      <li><b>Hö'elün</b> <i>(HUR-eh-loon)</i>: his mother. <b>Börte</b> <i>(BUR-teh)</i>: his wife.</li>
+      <li><b>Bo'orchu</b> <i>(BOH-or-choo)</i>: first true follower. <b>Jamuqa</b> <i>(JAH-moo-kah)</i>: his sworn brother, later a rival.</li>
+    </ul><p style="font-size:14px;color:var(--dim);margin:4px 0 0">Other names are only here once. You don't need to memorize them.</p></details>
   </div>
 
   <section id="parts">
@@ -178,13 +209,12 @@
 
   <section id="game" class="hidden">
     <div class="paiza">
-      <h2>The Steppe Timeline</h2>
-      <p>Tap the six moments in the order they happened. Tap a filled slot to take it back. When all six are placed, press the seal.</p>
-      <div class="slots" id="slots"></div>
-      <div class="cards" id="cards"></div>
+      <h2>Cause and Effect</h2>
+      <p>Five turning points. For each one, pick the best explanation of why it happened or why it matters. A wrong pick gets a hint. A second wrong pick shows the answer. When all five are done, press the seal.</p>
+      <div id="items" class="stack"></div>
       <div class="seal-zone">
-        <button class="seal" id="seal" disabled aria-label="Press the seal to reveal the answer"><span>SEAL</span></button>
-        <div id="sealHint" style="font-size:14px;color:var(--dim)">Place all six first</div>
+        <button class="seal" id="seal" disabled aria-label="Press the seal to reveal your results"><span>SEAL</span></button>
+        <div id="sealHint" style="font-size:14px;color:var(--dim)">Finish all five first</div>
       </div>
     </div>
   </section>
@@ -199,13 +229,13 @@
     <div class="paiza">
       <h2>Look back at your vote</h2>
       <p>You voted on: <i>"A people with no cities can't build an empire."</i></p>
-      <p><b>The real answer: they could.</b> By 1206 a herding people with no cities had united the steppe. Within two generations, Chinggis Khan's sons and grandsons ruled the largest land empire the world had yet seen. Their power ran on horses, loyalty and organization, not walls.</p>
+      <p><b>The record says they could.</b> By 1206 a herding people with no cities had united the steppe, and you just saw how: followers who chose him, and loyalty rewarded over birth. Within two generations, his sons and grandsons ruled the largest land empire the world had yet seen. Their power ran on horses, loyalty and organization, not walls.</p>
     </div>
 
     <div class="paiza">
       <h2>Your ledger, day 1</h2>
       <div class="ledger">
-        <div class="tab d"><b>DESTRUCTION</b>He began by killing his own half-brother over a stolen fish.</div>
+        <div class="tab d"><b>DESTRUCTION</b>To rule the whole steppe, he beat or absorbed every rival, including his sworn brother Jamuqa.</div>
         <div class="tab c"><b>CONNECTION</b>He built a following from strangers who chose to join him.</div>
       </div>
       <p style="margin-top:12px">Rocky will ask which line weighs more for you. Both are saved for the final day.</p>
@@ -225,6 +255,7 @@
 
 <script>
 (function(){
+  var T0 = Date.now();
   // ---- reading: tap to continue ----
   var parts = Array.prototype.slice.call(document.querySelectorAll('.part'));
   var shown = 1, next = document.getElementById('next');
@@ -233,7 +264,7 @@
       parts[shown].classList.remove('hidden');
       parts[shown].scrollIntoView({behavior:'smooth', block:'start'});
       shown++;
-      if (shown === parts.length) next.textContent = 'To the timeline';
+      if (shown === parts.length) next.textContent = 'To the game';
     } else {
       next.parentNode.classList.add('hidden');
       var g = document.getElementById('game');
@@ -242,75 +273,56 @@
     }
   });
 
-  // ---- timeline game ----
-  var EVENTS = [
-    {t:"Yesügei is poisoned on the ride home", why:"Part 1: the clan leaves the family soon after."},
-    {t:"Temüjin and Qasar kill Bekter", why:"Part 2: a stolen fish, and a mother's warning ignored."},
-    {t:"He escapes the wooden collar", why:"Part 3: Sorqan Shira's family hides him in the wool cart."},
-    {t:"Bo'orchu helps win back the stolen horses", why:"Part 4: his first follower who isn't family."},
-    {t:"Börte is rescued with Jamuqa and Toghrul", why:"Part 4: allies by oath and old debt."},
-    {t:"The white standard: all the steppe peoples make him khan", why:"Part 5: the assembly of 1206."}
-  ];
-  var order = [3,0,5,2,4,1]; // shuffled display order, fixed so every learner sees the same
-  var placed = [];
-  var slotsEl = document.getElementById('slots'), cardsEl = document.getElementById('cards');
-  var seal = document.getElementById('seal'), hint = document.getElementById('sealHint');
-  var sealed = false;
-
-  function render(){
-    slotsEl.innerHTML = '';
-    for (var i=0;i<EVENTS.length;i++){
-      var s = document.createElement('div');
-      s.className = 'slot' + (placed[i]!==undefined ? ' filled' : '');
-      s.innerHTML = '<span class="n">'+(i+1)+'</span><span class="txt">'+(placed[i]!==undefined ? EVENTS[placed[i]].t : '<span style="color:var(--dim)">tap a moment below</span>')+'</span>';
-      (function(i){ s.addEventListener('click', function(){ if(sealed) return; if(placed[i]!==undefined){ placed.splice(i,1); render(); } }); })(i);
-      slotsEl.appendChild(s);
-    }
-    cardsEl.innerHTML = '';
-    order.forEach(function(ix){
-      var b = document.createElement('button');
-      b.className = 'card' + (placed.indexOf(ix)>-1 ? ' used' : '');
-      b.textContent = EVENTS[ix].t;
-      b.addEventListener('click', function(){ if(sealed || placed.indexOf(ix)>-1) return; placed.push(ix); render(); });
-      cardsEl.appendChild(b);
-    });
-    var full = placed.length === EVENTS.length;
-    seal.disabled = !full || sealed;
-    hint.textContent = sealed ? '' : (full ? 'Press the seal to lock your order' : 'Place all six first');
+  // ---- cause and effect game ----
+  var ITEMS = [{"q": "After Yesügei died, the clan rode off with the herds and left his family. Why?", "o": ["Temüjin had already been banished for a crime.", "They didn't want to follow a widow with small children, so they took the herds.", "The Tatars forced the whole clan to move."], "a": 1, "hint": "Look at the end of Part 1: what did the clan think of a widow with small children?", "why": "Part 1: the clan wouldn't stay loyal to a widow with small children."}, {"q": "Hö'elün cried “You who have destroyed life!” at her sons after the killing. The Secret History kept that scene in. What does that tell us?", "o": ["It proves the book is completely accurate, since it admits his crime.", "It hides his faults, since a mother wouldn't say such a thing.", "The book isn't pure flattery. But the royal family had it written, so we still ask what it leaves out."], "a": 2, "hint": "Reread the note before Part 1: who was this book written for?", "why": "Admitting a crime makes the book more believable, not proven. It was still written for his family."}, {"q": "Strangers like Bo'orchu chose to follow Temüjin. Why would they?", "o": ["He rewarded loyalty, not birth, so a stranger could rise with him.", "They had been captured and forced to serve.", "They were all cousins who owed him obedience."], "a": 0, "hint": "Part 4: followers like these weren't kin. What did he reward?", "why": "Part 4: they weren't kin. They chose him, and he rewarded loyalty, not birth."}, {"q": "Sorqan Shira's family hid Temüjin from searchers while he wore the wooden collar. What does that show?", "o": ["The Tayichi'ud camp was friendly to him.", "Hiding him was easy and risk-free.", "Even in his enemies' camp, some people risked themselves to help him."], "a": 2, "hint": "Part 3: whose enemy were they sheltering?", "why": "Part 3: they were sheltering their own masters' enemy. Temüjin could win help from outside his family."}, {"q": "Why is the 1206 gathering at the Onon a turning point?", "o": ["It was the day his followers first called him Chinggis.", "After he beat or absorbed every rival, all the steppe peoples raised one banner and named him khan.", "It was when he escaped the wooden collar."], "a": 1, "hint": "Part 5: his followers named him Chinggis years earlier. What changed in 1206?", "why": "Part 5: the rivals were gone, and the peoples of the felt tents gathered under one white standard."}];
+  var st = ITEMS.map(function(){ return {miss:0, ok:false}; });
+  var itemsEl = document.getElementById('items');
+  var seal = document.getElementById('seal'), hint = document.getElementById('sealHint'), sealed = false;
+  function done(i){ return st[i].ok || st[i].miss>=2; }
+  function refresh(){
+    var all = ITEMS.every(function(_,i){ return done(i); });
+    seal.disabled = !all || sealed;
+    hint.textContent = sealed ? '' : (all ? 'Press the seal to lock your answers' : 'Finish all five first');
   }
-  render();
+  ITEMS.forEach(function(it, i){
+    var d = document.createElement('div'); d.className = 'item';
+    d.innerHTML = '<div class="pill">TURNING POINT '+(i+1)+'</div><div class="cl" style="font-size:17px;margin:4px 0 10px">'+it.q+'</div><div class="opts stack"></div><div class="hint" style="font-size:14px;color:#f3b9b4;margin-top:6px"></div>';
+    var opts = d.querySelector('.opts'), h = d.querySelector('.hint');
+    it.o.forEach(function(txt, j){
+      var b = document.createElement('button'); b.className = 'choice'; b.textContent = txt;
+      b.addEventListener('click', function(){
+        if (done(i)) return;
+        if (j === it.a){ st[i].ok = true; b.classList.add('ok'); h.innerHTML = '<span style="color:var(--bone)">'+it.why+'</span>'; lock(); }
+        else {
+          st[i].miss++; b.classList.add('bad'); b.disabled = true;
+          if (st[i].miss >= 2){ opts.children[it.a].classList.add('ok'); h.innerHTML = '<span style="color:var(--bone)"><b>The answer:</b> '+it.o[it.a]+' '+it.why+'</span>'; lock(); }
+          else h.textContent = 'Not quite. ' + it.hint;
+        }
+      });
+      opts.appendChild(b);
+    });
+    function lock(){ Array.prototype.forEach.call(opts.children, function(x){ x.disabled = true; }); refresh(); }
+    itemsEl.appendChild(d);
+  });
+  refresh();
 
   seal.addEventListener('click', function(){
     if (seal.disabled) return;
-    sealed = true;
-    seal.classList.add('stamp');
-    setTimeout(reveal, 450);
+    sealed = true; seal.classList.add('stamp'); setTimeout(reveal, 450);
   });
 
+  var LED_D = 'To rule the whole steppe, he beat or absorbed every rival, including his sworn brother Jamuqa.';
+  var LED_C = 'He built a following from strangers who chose to join him.';
   function reveal(){
-    var right = 0;
-    var rows = slotsEl.querySelectorAll('.slot');
-    for (var i=0;i<EVENTS.length;i++){
-      var ok = placed[i] === i;
-      if (ok) right++;
-      rows[i].className = 'slot filled ' + (ok ? 'ok' : 'bad');
-      rows[i].querySelector('.txt').innerHTML =
-        (ok ? '' : '<s style="opacity:.6">'+EVENTS[placed[i]].t+'</s><br>') +
-        '<b>'+EVENTS[i].t+'</b><span class="why">'+EVENTS[i].why+'</span>';
-    }
-    cardsEl.innerHTML = '';
-    hint.textContent = '';
-    document.getElementById('score').textContent = right + ' of 6 in the right place';
-    document.getElementById('scoreLine').textContent = right === 6 ? 'A clean ride. Every moment in order.' :
-      'The correct order is now on the timeline above, with where each moment is in the reading.';
-    var txt = 'One Road M01 timeline results\n' +
-      'Correct: ' + right + ' of 6\n' +
-      'My order: ' + placed.map(function(p){ return (p+1); }).join(', ') + ' (1 = Yesugei poisoned ... 6 = khan of all, 1206)\n' +
-      'Ledger day 1 shown: destruction = killed his half-brother over a stolen fish; connection = followers who chose him.';
-    document.getElementById('out').value = txt;
-    try {
-      localStorage.setItem('oneroad.M01', JSON.stringify({score:right, ledger:{d:'He began by killing his own half-brother over a stolen fish.', c:'He built a following from strangers who chose to join him.'}}));
-    } catch(e) {}
+    var first = st.filter(function(x){ return x.ok && x.miss===0; }).length;
+    document.getElementById('score').textContent = first + ' of 5 right on the first try';
+    document.getElementById('scoreLine').textContent = first === 5 ? 'A clean ride. Every explanation held.' : 'Every answer is now on the page with where to find it in the reading.';
+    var lines = ITEMS.map(function(it,i){ return (i+1)+'. '+(st[i].ok ? (st[i].miss ? 'right after '+st[i].miss+' miss' : 'right first try') : 'answer shown after 2 misses'); });
+    var shown = ITEMS.map(function(it,i){ return (!st[i].ok) ? (i+1)+'. course answer: '+it.o[it.a] : ''; }).filter(Boolean);
+    document.getElementById('out').value = 'One Road M01 Cause and Effect results\nFirst-try correct: ' + first + ' of 5\n' + lines.join('\n') +
+      (shown.length ? '\n' + shown.join('\n') : '') +
+      '\nLedger day 1 shown: destruction = ' + LED_D + ' connection = ' + LED_C;
+    try { localStorage.setItem('oneroad.M01', JSON.stringify({score:first, ledger:{d:LED_D, c:LED_C}})); } catch(e) {}
     var a = document.getElementById('after');
     a.classList.remove('hidden');
     setTimeout(function(){ a.scrollIntoView({behavior:'smooth', block:'start'}); }, 600);
@@ -318,6 +330,7 @@
 
   document.getElementById('copy').addEventListener('click', function(){
     var t = document.getElementById('out');
+    if (t.value.indexOf('Minutes on this page') < 0) t.value += '\nMinutes on this page: ' + Math.max(1, Math.round((Date.now()-T0)/60000));
     function done(){ document.getElementById('copied').classList.remove('hidden'); }
     if (navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
@@ -326,7 +339,7 @@
 
   // deep link for testers: ?show=all opens every part
   if (/[?&]show=all/.test(location.search)){
-    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; next.textContent = 'To the timeline';
+    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; next.textContent = 'To the game';
   }
 })();
 </script>
