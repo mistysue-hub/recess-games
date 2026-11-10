@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Road · Day 2 · The Yasa and the Yam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#11173a; --night2:#1b2352; --ink:#0b0f26;
+    --gold:#c9a24a; --gold2:#e8cf8a; --bone:#efe6d2; --dim:#b9b2a0;
+    --seal:#a3262a; --seal2:#c8423f; --jade:#3f8f7a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 70% -10%, #2a346e 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #23295a 0%, transparent 55%),
+      var(--night);
+    color:var(--bone); font-family:Spectral, Georgia, serif; font-size:18px; line-height:1.6;
+    min-height:100vh;
+  }
+  /* starfield */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 33% 8%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 22%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 81% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 30%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 7% 40%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 45% 35%, #fff 50%, transparent 51%);}
+  .wrap{max-width:720px;margin:0 auto;padding:18px 16px 60px;position:relative}
+
+  /* caravan strip */
+  .strip{display:flex;align-items:center;gap:0;margin:4px 0 22px;padding:10px 12px;
+    border:1px solid rgba(201,162,74,.35);border-radius:999px;background:rgba(11,15,38,.55)}
+  .stop{flex:0 0 auto;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:transparent;position:relative}
+  .stop.lit{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .leg{flex:1 1 auto;height:2px;background:repeating-linear-gradient(90deg,rgba(201,162,74,.5) 0 6px,transparent 6px 11px)}
+  .strip-label{font-family:Cinzel,serif;font-size:12px;letter-spacing:.12em;color:var(--gold2);text-align:center;margin:-14px 0 18px}
+
+  h1{font-family:Cinzel,serif;font-weight:800;color:var(--gold2);font-size:clamp(28px,6vw,40px);line-height:1.15;margin:0 0 4px;letter-spacing:.02em}
+  .kicker{font-family:Cinzel,serif;color:var(--gold);letter-spacing:.2em;font-size:13px;text-transform:uppercase}
+  .sub{color:var(--dim);font-style:italic;margin:0 0 22px}
+
+  /* paiza tablet card */
+  .paiza{position:relative;margin:18px 0;padding:22px 22px 20px;border-radius:22px 22px 18px 18px;
+    background:linear-gradient(160deg,#2a2a2a00,#00000000),
+      linear-gradient(180deg,#2b2f5e 0%,#1a1f47 100%);
+    border:2px solid var(--gold);box-shadow:0 0 0 5px rgba(201,162,74,.12), 0 10px 30px rgba(0,0,0,.45)}
+  .paiza::before{content:"";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;border:3px solid var(--gold);background:var(--night)}
+  .paiza::after{content:"";position:absolute;inset:7px;border-radius:16px 16px 12px 12px;border:1px dashed rgba(201,162,74,.35);pointer-events:none}
+  .paiza h2{font-family:Cinzel,serif;color:var(--gold2);font-size:20px;margin:0 0 8px;letter-spacing:.04em}
+  .paiza p{margin:0 0 12px}
+  .note{background:rgba(201,162,74,.08);border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:16px}
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+
+  .hidden{display:none}
+  .btn{font-family:Cinzel,serif;font-weight:600;letter-spacing:.08em;font-size:16px;
+    background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--ink);border:0;border-radius:999px;
+    padding:12px 22px;cursor:pointer;box-shadow:0 4px 0 #7d6326;min-height:48px}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7d6326}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--gold2);border:2px solid var(--gold);box-shadow:none}
+  .center{text-align:center}
+
+  /* timeline game */
+  .slots{display:grid;gap:8px;margin:14px 0}
+  .slot{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border-radius:12px;
+    border:2px dashed rgba(201,162,74,.45);background:rgba(11,15,38,.4);cursor:pointer}
+  .slot .n{font-family:Cinzel,serif;color:var(--gold);width:26px;flex:0 0 26px;text-align:center}
+  .slot.filled{border-style:solid;background:rgba(201,162,74,.12)}
+  .slot.ok{border-color:var(--jade);background:rgba(63,143,122,.18)}
+  .slot.bad{border-color:var(--seal2);background:rgba(163,38,42,.18)}
+  .slot .why{display:block;font-size:14px;color:var(--dim);font-style:italic}
+  .cards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+  .card{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;
+    font-size:16px;cursor:pointer;min-height:48px;text-align:left;box-shadow:0 3px 0 #9d927a}
+  .card.used{display:none}
+
+  /* seal */
+  .seal-zone{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0 4px}
+  .seal{width:120px;height:120px;border:0;border-radius:18px;cursor:pointer;position:relative;
+    background:radial-gradient(circle at 35% 30%,var(--seal2),var(--seal) 60%,#6e1418);
+    box-shadow:0 8px 0 #5a1013, 0 14px 30px rgba(0,0,0,.5);color:#f6d9c8;font-family:Cinzel,serif;font-weight:800;font-size:15px;letter-spacing:.14em}
+  .seal::before{content:"";position:absolute;inset:12px;border:3px solid rgba(246,217,200,.75);border-radius:8px}
+  .seal::after{content:"";position:absolute;inset:26px;border:2px solid rgba(246,217,200,.5);border-radius:4px;
+    background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(246,217,200,.35) 10px 13px)}
+  .seal span{position:relative;z-index:2;background:var(--seal);padding:2px 6px;border-radius:4px}
+  .seal[disabled]{filter:grayscale(.7) brightness(.7);cursor:not-allowed}
+  .seal.stamp{animation:stamp .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes stamp{0%{transform:translateY(-30px) scale(1.25) rotate(-6deg)}60%{transform:translateY(4px) scale(.94) rotate(2deg)}100%{transform:none}}
+  .imprint{display:inline-block;border:3px solid var(--seal2);color:var(--seal2);font-family:Cinzel,serif;font-weight:800;
+    padding:6px 12px;border-radius:6px;transform:rotate(-4deg);letter-spacing:.12em;margin:6px 0 12px;opacity:.9}
+
+  /* ledger */
+  .ledger{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.ledger{grid-template-columns:1fr}}
+  .tab{border-radius:16px;padding:14px;border:2px solid}
+  .tab.d{border-color:var(--seal2);background:rgba(163,38,42,.12)}
+  .tab.c{border-color:var(--jade);background:rgba(63,143,122,.12)}
+  .tab b{font-family:Cinzel,serif;letter-spacing:.1em;font-size:13px;display:block;margin-bottom:4px}
+  .tab.d b{color:#f3a09b}.tab.c b{color:#8fd3be}
+
+  textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid var(--gold);background:var(--ink);color:var(--bone);font-family:Spectral,serif;font-size:15px;padding:10px}
+  .copied{color:var(--jade);font-weight:600;margin-left:8px}
+  footer{margin-top:30px;font-size:13px;color:var(--dim);border-top:1px solid rgba(201,162,74,.25);padding-top:12px}
+  .part-label{font-family:Cinzel,serif;color:var(--gold);font-size:12px;letter-spacing:.2em}
+
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+  .claim{font-size:15px;color:var(--dim);border:1px dashed rgba(201,162,74,.45);border-radius:8px;padding:8px 12px;margin:8px 0 12px}
+  .hookcard{border:2px solid var(--seal2);border-radius:14px;padding:12px 14px;background:rgba(163,38,42,.10)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .choice{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;font-size:16px;min-height:48px;text-align:left;cursor:pointer;box-shadow:0 3px 0 #9d927a}
+  .choice.sel{outline:3px solid var(--gold);}
+  .choice.ok{background:#cfe9df}
+  .choice.bad{background:#f2c7c4}
+  .choice[disabled]{cursor:default}
+  .pill{display:inline-block;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;padding:3px 8px;border-radius:999px;border:1px solid var(--gold);color:var(--gold2);margin-bottom:6px}
+
+  #map .edge{stroke:rgba(201,162,74,.55);stroke-width:3;stroke-dasharray:7 6;fill:none}
+  #map .edge.river{stroke:#5aa0d8;stroke-dasharray:none;stroke-width:4}
+  #map .edge.walked{stroke:var(--gold2);stroke-dasharray:none;stroke-width:5}
+  #map .node circle.dot{stroke-width:3}
+  #map .node.yam circle.dot{fill:var(--gold);stroke:var(--gold2)}
+  #map .node.camp circle.dot{fill:#5c6075;stroke:#9aa0b5}
+  #map .node.start circle.dot{fill:var(--seal);stroke:#f6d9c8}
+  #map .node.goal circle.dot{fill:var(--jade);stroke:#8fd3be}
+  #map .node text{fill:var(--bone);font-family:Cinzel,serif;font-weight:600;font-size:20px;text-anchor:middle}
+  #map .node.can circle.halo{fill:rgba(232,207,138,.18);stroke:var(--gold2);stroke-width:2;animation:pulse 1.2s infinite}
+  #map .node circle.halo{fill:transparent;stroke:none}
+  #map .rider{fill:#fff;stroke:var(--seal);stroke-width:4}
+  @keyframes pulse{0%{opacity:.4}50%{opacity:1}100%{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="strip" aria-label="Caravan progress: day 2 of 8"><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span></div>
+  <div class="strip-label">DAY 2 OF 8 · THE YAM ROAD</div>
+
+  <div class="kicker">One Road · Day 2</div>
+  <h1>The Yasa and the Yam</h1>
+  <p class="sub">1206 to 1242 · How an empire this big held together</p>
+
+  <div class="paiza">
+    <h2>Before you ride</h2>
+    <div class="note">Today you play first and read second. The game is a real system the Mongols used. After you play, the reading explains what you just did, and why it mattered for an empire that stretched from Korea to Hungary.</div>
+  </div>
+
+  <section id="game">
+    <div class="paiza">
+      <span class="pill">PLAY FIRST</span>
+      <h2>Yam Relay</h2>
+      <p>You carry the khan's message. Tap a glowing neighbour to ride there.</p>
+      <ul style="margin:0 0 10px;padding-left:20px;font-size:16px">
+        <li>A <b>fresh</b> horse rides one leg in <b>1 day</b>. A <b>tired</b> horse takes <b>2 days</b>.</li>
+        <li><span style="color:var(--gold2)">Gold</span> stations are yam stations: you swap in a fresh horse there. Grey camps have none.</li>
+        <li>A <span style="color:#7cc0f0">blue</span> leg is a river crossing: <b>+1 day</b>.</li>
+      </ul>
+      <h2 id="lvName" style="font-size:17px;margin-top:6px"></h2>
+      <p id="lvBrief" style="color:var(--dim);font-style:italic;margin-bottom:6px"></p>
+      <div id="hud" style="display:flex;gap:14px;flex-wrap:wrap;font-family:Cinzel,serif;font-size:14px;color:var(--gold2)">
+        <span>Day <b id="dayN">0</b></span><span>Horse: <b id="horse">fresh</b></span><span>Deliver by day <b id="dead"></b></span>
+      </div>
+      <svg id="map" viewBox="0 0 600 300" style="width:100%;height:auto;margin:10px 0;background:rgba(11,15,38,.45);border-radius:14px;border:1px solid rgba(201,162,74,.3)"></svg>
+      <div id="lvMsg" class="claim hidden"></div>
+      <p class="center" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn ghost" id="restart">Restart level</button>
+        <button class="btn hidden" id="nextLv">Next level</button>
+      </p>
+    </div>
+    <div class="center hidden" id="toRead"><button class="btn" id="goRead">Now read what you just played</button></div>
+  </section>
+
+  <section id="reading" class="hidden">
+    <div class="paiza part" data-i="0">
+      <div class="part-label">PART 1</div>
+      <h2>An army counted in tens</h2>
+      <p>Before 1206 the steppe was a tangle of rival clans. Chinggis Khan reorganized his people into units of ten, a hundred, a thousand and ten thousand (a <i>tümen</i>). Old clans were often split up and mixed together, and each unit answered to a commander picked for loyalty, much like the followers who had once chosen Temüjin.</p>
+      <p>He ruled through orders and laws later called the <i>Yasa</i>. No full copy of the Yasa has ever been found. Historians piece it together from later writers, and they still argue about what it really said.</p>
+    </div>
+    <div class="paiza part hidden" data-i="1">
+      <div class="part-label">PART 2</div>
+      <h2>The yam: the game you just played</h2>
+      <p>An empire this size runs on news. Under Chinggis's son Ögedei (ruled 1229 to 1241), the Mongols built out a chain of relay stations called the <i>yam</i>, taking over older post stations in northern China along the way. Stations usually stood about 20 to 40 miles apart, stocked with spare horses, food and shelter.</p>
+      <p>A rider on the khan's business carried a <b>paiza</b>, a metal tablet showing the khan's authority. Showing it meant fresh horses and food at every station. That's why the yam route beat the short route in your game: a rider never had to wait for a tired horse. Merchants rode the system free at first, until Möngke Khan made them pay for it.</p>
+    </div>
+    <div class="paiza part hidden" data-i="2">
+      <div class="part-label">PART 3</div>
+      <h2>The storm in the west</h2>
+      <p>In 1218 a governor of the Khwarazm Empire (in today's Iran, Uzbekistan and Turkmenistan) killed a Mongol trade caravan. From 1219 to 1221 Mongol armies destroyed that empire. Cities that resisted, such as Merv and Nishapur, were stormed and their people killed or carried off.</p>
+      <p>The historian Ibn al-Athir, writing in Mosul, put off describing it for years:</p>
+      <blockquote class="sh">O would that my mother had not born me<cite>Ibn al-Athir, trans. E. G. Browne (1902)</cite></blockquote>
+      <p>He passed on stories of terror he had been told: a single rider killing people in a village while none dared resist, and a group of eighteen captured men ordered to tie each other up. One of them urged the others to fight:</p>
+      <blockquote class="sh">"He is but one man; wherefore, then, should we not kill him and flee?" They replied, "We are afraid."<cite>Ibn al-Athir, trans. E. G. Browne (1902)</cite></blockquote>
+      <div class="claim"><b>How do we know?</b> Ibn al-Athir says these stories were related to him. He wasn't there. Chroniclers also claimed death tolls such as 700,000 at Merv, and modern historians think numbers like this are hugely inflated, since the cities couldn't hold that many people. The destruction was real. The exact numbers are guesses.</div>
+    </div>
+    <div class="paiza part hidden" data-i="3">
+      <div class="part-label">PART 4</div>
+      <h2>To the edge of Europe</h2>
+      <p>The Jin dynasty of northern China fell in 1234. Mongol armies took the cities of the Rus from 1237 to 1240. In April 1241 they crushed a Polish army at Legnica and a Hungarian army at Mohi, two days apart. At the same time, other Mongol armies were fighting the Song dynasty in southern China, all of them steered from Mongolia by riders on the yam.</p>
+      <p>Then, in 1242, the armies in Hungary turned around and went home. Why? No Mongol source says. The traditional answer: Ögedei had died in December 1241, and the princes went back to choose a new khan. In 2016 a tree-ring study argued that a cold, wet spring turned Hungary's plains to marsh, ruining pasture for the horses. A 2017 reply argued the evidence didn't support that. Historians are still arguing.</p>
+    </div>
+    <div class="center"><button class="btn" id="next">Ride on</button></div>
+  </section>
+
+  <section id="after" class="hidden">
+    
+    <div class="paiza">
+      <h2>Look back at your vote</h2>
+      <p>You picked what matters most for ruling a giant empire: soldiers, money or fast news.</p>
+      <p><b>No single right answer, but here's the record.</b> In 1241 Mongol armies were fighting in Hungary and in southern China at the same time, thousands of miles apart, and both answered to a khan in Mongolia. Soldiers and money mattered. The yam is what let one ruler steer them all.</p>
+    </div>
+    <div class="paiza">
+      <h2>Your ledger, day 2</h2>
+      <div class="ledger">
+        <div class="tab d"><b>DESTRUCTION</b>Chroniclers claimed hundreds of thousands killed in Khwarazm's cities. The numbers are inflated, but the destruction was real.</div>
+        <div class="tab c"><b>CONNECTION</b>The yam linked the empire, letting news and envoys cross it in days instead of months.</div>
+      </div>
+      <p style="margin-top:12px">Rocky will ask which line weighs more for you. Both are saved for the final day.</p>
+    </div>
+    <div class="paiza">
+      <h2>Copy for Rocky</h2>
+      <textarea id="out" readonly></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="copy">Copy my answers for Rocky</button><span class="copied hidden" id="copied">Copied. Paste it into the chat.</span></p>
+    </div>
+  </section>
+
+  <footer>Readings written in our own words for this course. Ibn al-Athir quotes from E. G. Browne, <i>A Literary History of Persia</i>, vol. II (1902), public domain, via the Internet Medieval Sourcebook (Fordham). The 1242 debate: Büntgen and Di Cosmo, <i>Scientific Reports</i> (2016), and the 2017 reply in the same journal. Part of <i>One Road</i>, a Recess course.</footer>
+</div>
+<script>
+(function(){
+
+  var NEXT_LAST_LABEL = 'Finish the reading';
+  var LEVELS = [{"name": "Level 1: The northern road", "brief": "Carry Ögedei's order from Karakorum to the army camp.", "nodes": {"S": [50, 150, "start", "Karakorum"], "A": [210, 70, "yam", "Yam"], "B": [390, 70, "yam", "Yam"], "C": [210, 230, "camp", "Camp"], "D": [390, 230, "camp", "Camp"], "T": [550, 150, "goal", "Army camp"]}, "edges": [["S", "A"], ["A", "B"], ["B", "T"], ["S", "C"], ["C", "D"], ["D", "T"]], "best": 3}, {"name": "Level 2: River country", "brief": "Two rivers cross the way. Count every day.", "nodes": {"S": [40, 150, "start", "Karakorum"], "A": [160, 60, "camp", "Camp"], "B": [160, 240, "yam", "Yam"], "C": [300, 60, "yam", "Yam"], "D": [300, 150, "camp", "Camp"], "E": [300, 240, "yam", "Yam"], "F": [440, 60, "camp", "Camp"], "G": [440, 240, "yam", "Yam"], "T": [560, 150, "goal", "Frontier"]}, "edges": [["S", "A"], ["S", "B"], ["S", "D", 1], ["A", "C"], ["B", "E"], ["B", "D"], ["C", "F"], ["C", "D"], ["D", "T", 1], ["E", "G"], ["F", "T"], ["G", "T"]], "best": 4}, {"name": "Level 3: Across the empire", "brief": "The khan needs news from the far west. The short way crosses wild country.", "nodes": {"S": [40, 150, "start", "Karakorum"], "A": [140, 50, "yam", "Yam"], "B": [140, 150, "camp", "Camp"], "C": [140, 250, "camp", "Camp"], "D": [260, 50, "yam", "Yam"], "E": [260, 150, "camp", "Camp"], "F": [260, 250, "yam", "Yam"], "G": [380, 50, "yam", "Yam"], "H": [380, 150, "camp", "Camp"], "I": [380, 250, "yam", "Yam"], "J": [480, 90, "yam", "Yam"], "K": [480, 230, "yam", "Yam"], "T": [570, 150, "goal", "Far west"]}, "edges": [["S", "A"], ["S", "B"], ["S", "C"], ["A", "D"], ["A", "E"], ["B", "E"], ["C", "F"], ["D", "G"], ["E", "H"], ["F", "I"], ["F", "H", 1], ["G", "J"], ["H", "T"], ["I", "K"], ["J", "T"], ["K", "T"], ["E", "F"], ["G", "H", 1]], "best": 5}];
+  var li = 0, cur, day, fresh, path, results = [];
+  var svg = document.getElementById('map'), NS = 'http://www.w3.org/2000/svg';
+  function edgeInfo(a,b){ var L=LEVELS[li]; for (var i=0;i<L.edges.length;i++){ var e=L.edges[i]; if((e[0]===a&&e[1]===b)||(e[0]===b&&e[1]===a)) return {river:e[2]?1:0}; } return null; }
+  function el(t,attrs){ var x=document.createElementNS(NS,t); for(var k in attrs) x.setAttribute(k,attrs[k]); return x; }
+  function startLevel(){
+    var L=LEVELS[li]; cur=Object.keys(L.nodes).filter(function(k){return L.nodes[k][2]==='start';})[0];
+    day=0; fresh=true; path=[cur];
+    document.getElementById('lvName').textContent=L.name;
+    document.getElementById('lvBrief').textContent=L.brief;
+    document.getElementById('dead').textContent=L.best;
+    document.getElementById('lvMsg').classList.add('hidden');
+    document.getElementById('nextLv').classList.add('hidden');
+    draw();
+  }
+  function draw(){
+    var L=LEVELS[li]; svg.innerHTML='';
+    L.edges.forEach(function(e){
+      var a=L.nodes[e[0]], b=L.nodes[e[1]], walked=false;
+      for(var i=1;i<path.length;i++){ if((path[i-1]===e[0]&&path[i]===e[1])||(path[i-1]===e[1]&&path[i]===e[0])) walked=true; }
+      if (e[2]){
+        var mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, dx=b[0]-a[0], dy=b[1]-a[1], n=Math.sqrt(dx*dx+dy*dy), ox=-dy/n*14, oy=dx/n*14;
+        svg.appendChild(el('path',{d:'M'+a[0]+','+a[1]+' Q'+(mx+ox)+','+(my+oy)+' '+mx+','+my+' T'+b[0]+','+b[1],'class':'edge river'+(walked?' walked':'')}));
+      } else svg.appendChild(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],'class':'edge'+(walked?' walked':'')}));
+    });
+    var done = cur===goalOf(L);
+    Object.keys(L.nodes).forEach(function(k){
+      var n=L.nodes[k], can=!done && !!edgeInfo(cur,k);
+      var g=el('g',{'class':'node '+n[2]+(can?' can':''),'data-k':k});
+      g.appendChild(el('circle',{cx:n[0],cy:n[1],r:30,'class':'halo'}));
+      g.appendChild(el('circle',{cx:n[0],cy:n[1],r:15,'class':'dot'}));
+      if(n[2]==='start'||n[2]==='goal'){ var t=el('text',{x:Math.min(Math.max(n[0],60),540),y:n[1]+(n[1]>=150?44:-26)}); t.textContent=n[3]; g.appendChild(t); }
+      if(can){ g.style.cursor='pointer'; g.addEventListener('click',function(){ ride(k); }); }
+      svg.appendChild(g);
+    });
+    var c=L.nodes[cur]; svg.appendChild(el('circle',{cx:c[0],cy:c[1],r:8,'class':'rider'}));
+    document.getElementById('dayN').textContent=day;
+    document.getElementById('horse').textContent=fresh?'fresh':'tired';
+  }
+  function goalOf(L){ return Object.keys(L.nodes).filter(function(k){return L.nodes[k][2]==='goal';})[0]; }
+  function ride(k){
+    var L=LEVELS[li], info=edgeInfo(cur,k); if(!info) return;
+    day += (fresh?1:2) + info.river;
+    cur=k; path.push(k);
+    fresh = (L.nodes[k][2]==='yam' || L.nodes[k][2]==='goal');
+    draw();
+    if (k===goalOf(L)) arrive();
+  }
+  function arrive(){
+    var L=LEVELS[li], ok=day<=L.best, msg=document.getElementById('lvMsg');
+    var r=results[li]||{tries:0,best:null}; r.tries++; if(r.best===null||day<r.best) r.best=day; r.par=L.best; results[li]=r;
+    msg.innerHTML = ok ? '<b>Delivered on day '+day+'.</b> That is the fastest possible ride.'
+                       : '<b>Delivered on day '+day+', '+(day-L.best)+' day'+(day-L.best>1?'s':'')+' late.</b> A faster route exists. Look for the chain of gold stations, even if it has more legs. Restart, or move on.';
+    msg.classList.remove('hidden');
+    if (li < LEVELS.length-1){ var nb=document.getElementById('nextLv'); nb.textContent='Next level'; nb.classList.remove('hidden'); }
+    else { document.getElementById('toRead').classList.remove('hidden'); }
+  }
+  document.getElementById('restart').addEventListener('click', startLevel);
+  document.getElementById('nextLv').addEventListener('click', function(){ li++; startLevel(); });
+  document.getElementById('goRead').addEventListener('click', function(){
+    document.getElementById('toRead').classList.add('hidden'); show('reading');
+  });
+  startLevel();
+
+  function onReadingDone(){
+    nextBtn.parentNode.classList.add('hidden');
+    var lines = results.map(function(r,i){ return 'Level '+(i+1)+': best ride '+r.best+' days (fastest possible '+r.par+'), tries '+r.tries; });
+    document.getElementById('out').value = 'One Road M02 Yam Relay results\n' + lines.join('\n') +
+      '\nLedger day 2 shown: destruction = chroniclers claimed huge death tolls in Khwarazm (inflated, but real destruction); connection = the yam linked the empire.';
+    saveLedger('oneroad.M02', {results:results, ledger:{d:"Chroniclers claimed hundreds of thousands killed in Khwarazm's cities. The numbers are inflated, but the destruction was real.", c:"The yam linked the empire, letting news and envoys cross it in days instead of months."}});
+    show('after');
+  }
+
+  // tap-to-continue reading
+  var parts = Array.prototype.slice.call(document.querySelectorAll('.part'));
+  var shown = 1, nextBtn = document.getElementById('next');
+  function revealNextPart(){
+    if (shown < parts.length){
+      parts[shown].classList.remove('hidden');
+      parts[shown].scrollIntoView({behavior:'smooth', block:'start'});
+      shown++;
+      if (shown === parts.length) nextBtn.textContent = NEXT_LAST_LABEL;
+    } else { onReadingDone(); }
+  }
+  nextBtn.addEventListener('click', revealNextPart);
+  if (/[?&]show=all/.test(location.search)){
+    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; nextBtn.textContent = NEXT_LAST_LABEL;
+  }
+
+
+  document.getElementById('copy').addEventListener('click', function(){
+    var t = document.getElementById('out');
+    function done(){ document.getElementById('copied').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
+    } else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
+  });
+  function show(id){ var el=document.getElementById(id); el.classList.remove('hidden'); setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 250); }
+  function saveLedger(key, obj){ try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {} }
+
+
+})();
+</script>
+</body>
+</html>

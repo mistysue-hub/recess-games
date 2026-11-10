@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Road · Day 4 · Four Khanates, One Road</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#11173a; --night2:#1b2352; --ink:#0b0f26;
+    --gold:#c9a24a; --gold2:#e8cf8a; --bone:#efe6d2; --dim:#b9b2a0;
+    --seal:#a3262a; --seal2:#c8423f; --jade:#3f8f7a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 70% -10%, #2a346e 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #23295a 0%, transparent 55%),
+      var(--night);
+    color:var(--bone); font-family:Spectral, Georgia, serif; font-size:18px; line-height:1.6;
+    min-height:100vh;
+  }
+  /* starfield */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 33% 8%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 22%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 81% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 30%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 7% 40%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 45% 35%, #fff 50%, transparent 51%);}
+  .wrap{max-width:720px;margin:0 auto;padding:18px 16px 60px;position:relative}
+
+  /* caravan strip */
+  .strip{display:flex;align-items:center;gap:0;margin:4px 0 22px;padding:10px 12px;
+    border:1px solid rgba(201,162,74,.35);border-radius:999px;background:rgba(11,15,38,.55)}
+  .stop{flex:0 0 auto;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:transparent;position:relative}
+  .stop.lit{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .leg{flex:1 1 auto;height:2px;background:repeating-linear-gradient(90deg,rgba(201,162,74,.5) 0 6px,transparent 6px 11px)}
+  .strip-label{font-family:Cinzel,serif;font-size:12px;letter-spacing:.12em;color:var(--gold2);text-align:center;margin:-14px 0 18px}
+
+  h1{font-family:Cinzel,serif;font-weight:800;color:var(--gold2);font-size:clamp(28px,6vw,40px);line-height:1.15;margin:0 0 4px;letter-spacing:.02em}
+  .kicker{font-family:Cinzel,serif;color:var(--gold);letter-spacing:.2em;font-size:13px;text-transform:uppercase}
+  .sub{color:var(--dim);font-style:italic;margin:0 0 22px}
+
+  /* paiza tablet card */
+  .paiza{position:relative;margin:18px 0;padding:22px 22px 20px;border-radius:22px 22px 18px 18px;
+    background:linear-gradient(160deg,#2a2a2a00,#00000000),
+      linear-gradient(180deg,#2b2f5e 0%,#1a1f47 100%);
+    border:2px solid var(--gold);box-shadow:0 0 0 5px rgba(201,162,74,.12), 0 10px 30px rgba(0,0,0,.45)}
+  .paiza::before{content:"";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;border:3px solid var(--gold);background:var(--night)}
+  .paiza::after{content:"";position:absolute;inset:7px;border-radius:16px 16px 12px 12px;border:1px dashed rgba(201,162,74,.35);pointer-events:none}
+  .paiza h2{font-family:Cinzel,serif;color:var(--gold2);font-size:20px;margin:0 0 8px;letter-spacing:.04em}
+  .paiza p{margin:0 0 12px}
+  .note{background:rgba(201,162,74,.08);border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:16px}
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+
+  .hidden{display:none}
+  .btn{font-family:Cinzel,serif;font-weight:600;letter-spacing:.08em;font-size:16px;
+    background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--ink);border:0;border-radius:999px;
+    padding:12px 22px;cursor:pointer;box-shadow:0 4px 0 #7d6326;min-height:48px}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7d6326}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--gold2);border:2px solid var(--gold);box-shadow:none}
+  .center{text-align:center}
+
+  /* timeline game */
+  .slots{display:grid;gap:8px;margin:14px 0}
+  .slot{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border-radius:12px;
+    border:2px dashed rgba(201,162,74,.45);background:rgba(11,15,38,.4);cursor:pointer}
+  .slot .n{font-family:Cinzel,serif;color:var(--gold);width:26px;flex:0 0 26px;text-align:center}
+  .slot.filled{border-style:solid;background:rgba(201,162,74,.12)}
+  .slot.ok{border-color:var(--jade);background:rgba(63,143,122,.18)}
+  .slot.bad{border-color:var(--seal2);background:rgba(163,38,42,.18)}
+  .slot .why{display:block;font-size:14px;color:var(--dim);font-style:italic}
+  .cards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+  .card{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;
+    font-size:16px;cursor:pointer;min-height:48px;text-align:left;box-shadow:0 3px 0 #9d927a}
+  .card.used{display:none}
+
+  /* seal */
+  .seal-zone{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0 4px}
+  .seal{width:120px;height:120px;border:0;border-radius:18px;cursor:pointer;position:relative;
+    background:radial-gradient(circle at 35% 30%,var(--seal2),var(--seal) 60%,#6e1418);
+    box-shadow:0 8px 0 #5a1013, 0 14px 30px rgba(0,0,0,.5);color:#f6d9c8;font-family:Cinzel,serif;font-weight:800;font-size:15px;letter-spacing:.14em}
+  .seal::before{content:"";position:absolute;inset:12px;border:3px solid rgba(246,217,200,.75);border-radius:8px}
+  .seal::after{content:"";position:absolute;inset:26px;border:2px solid rgba(246,217,200,.5);border-radius:4px;
+    background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(246,217,200,.35) 10px 13px)}
+  .seal span{position:relative;z-index:2;background:var(--seal);padding:2px 6px;border-radius:4px}
+  .seal[disabled]{filter:grayscale(.7) brightness(.7);cursor:not-allowed}
+  .seal.stamp{animation:stamp .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes stamp{0%{transform:translateY(-30px) scale(1.25) rotate(-6deg)}60%{transform:translateY(4px) scale(.94) rotate(2deg)}100%{transform:none}}
+  .imprint{display:inline-block;border:3px solid var(--seal2);color:var(--seal2);font-family:Cinzel,serif;font-weight:800;
+    padding:6px 12px;border-radius:6px;transform:rotate(-4deg);letter-spacing:.12em;margin:6px 0 12px;opacity:.9}
+
+  /* ledger */
+  .ledger{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.ledger{grid-template-columns:1fr}}
+  .tab{border-radius:16px;padding:14px;border:2px solid}
+  .tab.d{border-color:var(--seal2);background:rgba(163,38,42,.12)}
+  .tab.c{border-color:var(--jade);background:rgba(63,143,122,.12)}
+  .tab b{font-family:Cinzel,serif;letter-spacing:.1em;font-size:13px;display:block;margin-bottom:4px}
+  .tab.d b{color:#f3a09b}.tab.c b{color:#8fd3be}
+
+  textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid var(--gold);background:var(--ink);color:var(--bone);font-family:Spectral,serif;font-size:15px;padding:10px}
+  .copied{color:var(--jade);font-weight:600;margin-left:8px}
+  footer{margin-top:30px;font-size:13px;color:var(--dim);border-top:1px solid rgba(201,162,74,.25);padding-top:12px}
+  .part-label{font-family:Cinzel,serif;color:var(--gold);font-size:12px;letter-spacing:.2em}
+
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+  .claim{font-size:15px;color:var(--dim);border:1px dashed rgba(201,162,74,.45);border-radius:8px;padding:8px 12px;margin:8px 0 12px}
+  .hookcard{border:2px solid var(--seal2);border-radius:14px;padding:12px 14px;background:rgba(163,38,42,.10)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .choice{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;font-size:16px;min-height:48px;text-align:left;cursor:pointer;box-shadow:0 3px 0 #9d927a}
+  .choice.sel{outline:3px solid var(--gold);}
+  .choice.ok{background:#cfe9df}
+  .choice.bad{background:#f2c7c4}
+  .choice[disabled]{cursor:default}
+  .pill{display:inline-block;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;padding:3px 8px;border-radius:999px;border:1px solid var(--gold);color:var(--gold2);margin-bottom:6px}
+
+  .khcard{border:2px solid;border-radius:14px;padding:12px 14px;margin:10px 0;background:rgba(11,15,38,.35);font-size:16px}
+  #kmap .kh{fill:rgba(239,230,210,.08);stroke:var(--gold);stroke-width:2;cursor:pointer;transition:fill .5s}
+  #kmap .kh.sel{fill:rgba(232,207,138,.25);stroke-width:4}
+  #kmap text{fill:var(--bone);font-family:Cinzel,serif;font-weight:800;font-size:22px;text-anchor:middle;pointer-events:none;letter-spacing:.06em}
+  .row{margin:10px 0}
+  .row .lbl{font-family:Cinzel,serif;font-size:12px;letter-spacing:.14em;color:var(--gold);margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .hint{font-size:14px;color:#f3b9b4;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="strip" aria-label="Caravan progress: day 4 of 8"><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span><span class="leg"></span><span class="stop"></span></div>
+  <div class="strip-label">DAY 4 OF 8 · FOUR KHANATES</div>
+
+  <div class="kicker">One Road · Day 4</div>
+  <h1>Four Khanates, One Road</h1>
+  <p class="sub">1258 to 1279 · The empire splits, and the road holds</p>
+
+  <div class="paiza">
+    <h2>Before you ride</h2>
+    <div class="note">Between 1258 and 1279 the Mongols took Baghdad, lost their first big battle in the west, went to war with each other, and split into four khanates. Today you meet all four, and decide whether a broken empire can still keep a road open.</div>
+  </div>
+
+  <section id="reading">
+    <div class="paiza part" data-i="0">
+      <div class="part-label">PART 1</div>
+      <h2>Baghdad, 1258</h2>
+      <p>In February 1258 the army of Hulagu, brother of the great khan Möngke, took Baghdad. The last Abbasid caliph, al-Musta'sim, was put to death, and with him ended a caliphate that had ruled from Baghdad for nearly five hundred years. The city was looted and much of it burned.</p>
+      <div class="claim"><b>How many died?</b> Later chroniclers gave figures from about 200,000 to 800,000. No one counted. Historians treat these numbers as rough guesses, and some as wild overstatements. What isn't in doubt is that one of the great cities of the Islamic world was devastated.</div>
+    </div>
+    <div class="paiza part hidden" data-i="1">
+      <div class="part-label">PART 2</div>
+      <h2>Brother against brother</h2>
+      <p>In 1259 Möngke died on campaign in China. Two of his brothers, Kublai and Ariq Böke, each had himself named great khan, and they fought for four years (1260 to 1264) until Kublai won.</p>
+      <p>The split cost the Mongols in the west. Hulagu pulled most of his army back from Syria, and in September 1260, at Ain Jalut, the Mamluk army of Egypt beat the force he had left behind. The Mongol advance toward Egypt stopped there.</p>
+      <p>Then Mongols turned on Mongols. In 1262 Berke of the Golden Horde, a Muslim since 1252, went to war with Hulagu. They fought over land in the Caucasus, and both sides massacred the other's merchants. The single Mongol Empire was over. Four khanates took its place.</p>
+    </div>
+    <div class="paiza part hidden" data-i="2">
+      <div class="part-label">PART 3</div>
+      <h2>Four khanates, four personalities</h2>
+      <div class="khcard" style="border-color:#d9a441"><b style="color:#d9a441;font-family:Cinzel,serif">GOLDEN HORDE</b><br>Founded in 1243 by Batu, a grandson of Chinggis, on the steppes of the Volga River. Capital: <b>Sarai</b>. Russian princes paid it tribute. Khan Berke became a Muslim in 1252, and Islam became the khanate's faith under Özbeg (1313). Lands today: <b>Russia, Ukraine, Kazakhstan</b>.</div>
+      <div class="khcard" style="border-color:#3f8f7a"><b style="color:#3f8f7a;font-family:Cinzel,serif">ILKHANATE</b><br>Founded by Hulagu, Möngke's brother, after his campaigns in Persia and Iraq. Capital: Maragha at first, then <b>Tabriz</b>. Its khans turned Muslim with Ghazan in 1295. Lands today: <b>Iran, Iraq, Azerbaijan</b>.</div>
+      <div class="khcard" style="border-color:#8e6cc9"><b style="color:#8e6cc9;font-family:Cinzel,serif">CHAGATAI KHANATE</b><br>Ruled by the line of <b>Chagatai</b>, Chinggis's second son, in the heart of Central Asia. Capital: <b>Almaliq</b>. From here, Kaidu (a grandson of Ögedei) fought Kublai for about thirty years. Its khan Tarmashirin became a Muslim around 1331. Lands today: <b>Uzbekistan, Kyrgyzstan, western China</b>.</div>
+      <div class="khcard" style="border-color:#c8423f"><b style="color:#c8423f;font-family:Cinzel,serif">YUAN DYNASTY</b><br>Founded by <b>Kublai</b>, who built a new capital, <b>Khanbaliq</b> (on the site of today's Beijing), from 1267, took the Chinese dynasty name Yuan in 1271, and conquered the last of the Song in 1279. Kublai favored Tibetan Buddhist teachers such as Phags-pa. Lands today: <b>China and Mongolia</b>.</div>
+    </div>
+    <div class="paiza part hidden" data-i="3">
+      <div class="part-label">PART 4</div>
+      <h2>Did the road survive?</h2>
+      <p>The khanates often fought each other: Berke against Hulagu, and Kaidu against Kublai until Kaidu's death in 1301. Merchants were robbed and killed when rulers quarrelled.</p>
+      <p>Yet the road didn't close. In 1271 two Venetian merchants, Niccolò and Maffeo Polo, set out east again with Niccolò's teenage son, Marco. According to Marco's own book, they crossed the lands of rival khanates and reached Kublai's court. Whether to believe him is a real argument, and you'll judge it on Day 5.</p>
+    </div>
+    <div class="center"><button class="btn" id="next">Ride on</button></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="paiza">
+      <h2>Four Khanates</h2>
+      <p>Tap a khanate on the map, then pick its founder, capital and lands today. A wrong pick gets a hint. A second wrong pick shows the answer. Finish a khanate and it fills with its color.</p>
+      <svg id="kmap" viewBox="0 0 600 320" style="width:100%%;height:auto;background:rgba(11,15,38,.45);border-radius:14px;border:1px solid rgba(201,162,74,.3)">
+        <path class="kh" data-k="gh" d="M30,60 L120,30 L250,40 L300,70 L290,130 L210,150 L120,140 L40,120 Z"/>
+        <path class="kh" data-k="il" d="M60,170 L130,150 L220,160 L260,190 L250,260 L170,290 L90,270 L50,220 Z"/>
+        <path class="kh" data-k="ch" d="M240,150 L300,135 L380,120 L410,160 L390,230 L320,240 L270,220 Z"/>
+        <path class="kh" data-k="yu" d="M380,60 L470,40 L570,70 L580,160 L560,250 L480,290 L420,260 L400,180 L390,120 Z"/>
+        <text x="165" y="98">GOLDEN HORDE</text><text x="155" y="225">ILKHANATE</text>
+        <text x="325" y="190">CHAGATAI</text><text x="485" y="165">YUAN</text>
+      </svg>
+      <div id="panel" class="claim" style="margin-top:12px">Tap a khanate on the map to start.</div>
+      <div class="center" style="margin-top:12px"><button class="btn hidden" id="finish">See my results</button></div>
+    </div>
+  </section>
+
+  <section id="after" class="hidden">
+    <div class="paiza center"><span class="pill">FOUR BANNERS RAISED</span><h2 id="score"></h2><p id="scoreLine" style="color:var(--dim)"></p></div>
+    <div class="paiza">
+      <h2>Look back at your vote</h2>
+      <p>You voted on: <i>"When an empire splits apart, trade along its roads must collapse."</i></p>
+      <p><b>The real answer: not quite.</b> The khanates fought each other, and rulers did kill each other's merchants in wartime. But travel and trade kept going: by Marco Polo's own account, his family crossed from the Mediterranean to Kublai's court in the 1270s. The empire split. The road bent, but it didn't break.</p>
+    </div>
+    <div class="paiza">
+      <h2>Your ledger, day 4</h2>
+      <div class="ledger">
+        <div class="tab d"><b>DESTRUCTION</b>In 1258 Hulagu's army sacked Baghdad and ended the Abbasid caliphate.</div>
+        <div class="tab c"><b>CONNECTION</b>Even with the khanates at war, the Polo family, by their own account, crossed Asia to Kublai's court.</div>
+      </div>
+      <p style="margin-top:12px">Rocky will ask which line weighs more for you. Both are saved for the final day.</p>
+    </div>
+    <div class="paiza">
+      <h2>Copy for Rocky</h2>
+      <textarea id="out" readonly></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="copy">Copy my answers for Rocky</button><span class="copied hidden" id="copied">Copied. Paste it into the chat.</span></p>
+    </div>
+  </section>
+
+  <footer>Readings written in our own words for this course. The map is a simplified sketch of the four khanates around 1300, not exact borders. Part of <i>One Road</i>, a Recess course.</footer>
+</div>
+<script>
+(function(){
+
+  var NEXT_LAST_LABEL = 'To the map';
+  var KH = [{"id": "gh", "name": "Golden Horde", "color": "#d9a441", "founder": "Batu", "capital": "Sarai", "today": "Russia, Ukraine, Kazakhstan", "card": "Founded in 1243 by Batu, a grandson of Chinggis, on the steppes of the Volga River. Capital: <b>Sarai</b>. Russian princes paid it tribute. Khan Berke became a Muslim in 1252, and Islam became the khanate's faith under Özbeg (1313). Lands today: <b>Russia, Ukraine, Kazakhstan</b>."}, {"id": "il", "name": "Ilkhanate", "color": "#3f8f7a", "founder": "Hulagu", "capital": "Tabriz", "today": "Iran, Iraq, Azerbaijan", "card": "Founded by Hulagu, Möngke's brother, after his campaigns in Persia and Iraq. Capital: Maragha at first, then <b>Tabriz</b>. Its khans turned Muslim with Ghazan in 1295. Lands today: <b>Iran, Iraq, Azerbaijan</b>."}, {"id": "ch", "name": "Chagatai Khanate", "color": "#8e6cc9", "founder": "Chagatai", "capital": "Almaliq", "today": "Uzbekistan, Kyrgyzstan, western China", "card": "Ruled by the line of <b>Chagatai</b>, Chinggis's second son, in the heart of Central Asia. Capital: <b>Almaliq</b>. From here, Kaidu (a grandson of Ögedei) fought Kublai for about thirty years. Its khan Tarmashirin became a Muslim around 1331. Lands today: <b>Uzbekistan, Kyrgyzstan, western China</b>."}, {"id": "yu", "name": "Yuan dynasty", "color": "#c8423f", "founder": "Kublai", "capital": "Khanbaliq", "today": "China and Mongolia", "card": "Founded by <b>Kublai</b>, who built a new capital, <b>Khanbaliq</b> (on the site of today's Beijing), from 1267, took the Chinese dynasty name Yuan in 1271, and conquered the last of the Song in 1279. Kublai favored Tibetan Buddhist teachers such as Phags-pa. Lands today: <b>China and Mongolia</b>."}], ROWS = [["founder", "Founder"], ["capital", "Capital"], ["today", "Lands today"]];
+  var state = {}; KH.forEach(function(k){ state[k.id] = {}; });
+  var ORDER = {founder:[2,0,3,1], capital:[1,3,0,2], today:[3,1,2,0]};
+  function onReadingDone(){ nextBtn.parentNode.classList.add('hidden'); show('game'); }
+  function kh(id){ return KH.filter(function(k){return k.id===id;})[0]; }
+  function rowDone(r){ return r && (r.ok || r.miss>=2); }
+  function khDone(id){ return ROWS.every(function(r){ return rowDone(state[id][r[0]]); }); }
+  var panel = document.getElementById('panel');
+  Array.prototype.forEach.call(document.querySelectorAll('#kmap .kh'), function(p){
+    p.addEventListener('click', function(){ open(p.getAttribute('data-k')); });
+  });
+  function open(id){
+    Array.prototype.forEach.call(document.querySelectorAll('#kmap .kh'), function(p){ p.classList.toggle('sel', p.getAttribute('data-k')===id); });
+    var k = kh(id);
+    panel.innerHTML = '<b style="font-family:Cinzel,serif;color:'+k.color+'">'+k.name.toUpperCase()+'</b>';
+    ROWS.forEach(function(r){
+      var key=r[0], st=state[id][key]||(state[id][key]={miss:0,ok:false});
+      var row=document.createElement('div'); row.className='row';
+      row.innerHTML='<div class="lbl">'+r[1].toUpperCase()+'</div><div class="chips"></div><div class="hint"></div>';
+      var chips=row.querySelector('.chips'), hint=row.querySelector('.hint');
+      ORDER[key].forEach(function(j){
+        var val=KH[j][key], b=document.createElement('button'); b.className='choice'; b.textContent=val;
+        if (rowDone(st)){ b.disabled=true; if(val===k[key]) b.classList.add('ok'); }
+        b.addEventListener('click', function(){
+          if (rowDone(st)) return;
+          if (val===k[key]){ st.ok=true; b.classList.add('ok'); lock(); }
+          else {
+            st.miss++; b.classList.add('bad'); b.disabled=true;
+            if (st.miss>=2){ hint.textContent='The answer is '+k[key]+'. It is on the '+k.name+' card in Part 3.'; Array.prototype.forEach.call(chips.children,function(x){ if(x.textContent===k[key]) x.classList.add('ok'); }); lock(); }
+            else hint.textContent='Not this one. Look back at the '+k.name+' card in Part 3.';
+          }
+        });
+        chips.appendChild(b);
+      });
+      function lock(){ Array.prototype.forEach.call(chips.children,function(x){ x.disabled=true; }); check(id); }
+      panel.appendChild(row);
+    });
+  }
+  function check(id){
+    if (khDone(id)){ var p=document.querySelector('#kmap .kh[data-k="'+id+'"]'); p.style.fill=kh(id).color; p.style.fillOpacity=.75; }
+    if (KH.every(function(k){ return khDone(k.id); })) document.getElementById('finish').classList.remove('hidden');
+  }
+  document.getElementById('finish').addEventListener('click', function(){
+    var first=0, lines=[];
+    KH.forEach(function(k){ ROWS.forEach(function(r){ var s=state[k.id][r[0]]; if(s.ok && s.miss===0) first++; lines.push(k.name+' '+r[1].toLowerCase()+': '+(s.ok?(s.miss?'right after '+s.miss+' miss':'right first try'):'shown after 2 misses')); }); });
+    document.getElementById('score').textContent = first+' of 12 right on the first try';
+    document.getElementById('scoreLine').textContent = 'All four khanates are on the map. Your caravan crosses them next.';
+    document.getElementById('out').value = 'One Road M04 Four Khanates results\nFirst-try correct: '+first+' of 12\n'+lines.join('\n')+
+      '\nLedger day 4 shown: destruction = Baghdad sacked in 1258; connection = the Polos crossed rival khanates to Kublai.';
+    saveLedger('oneroad.M04', {first:first, ledger:{d:"In 1258 Hulagu's army sacked Baghdad and ended the Abbasid caliphate.", c:"Even with the khanates at war, the Polo family, by their own account, crossed Asia to Kublai's court."}});
+    document.getElementById('finish').classList.add('hidden');
+    show('after');
+  });
+
+  // tap-to-continue reading
+  var parts = Array.prototype.slice.call(document.querySelectorAll('.part'));
+  var shown = 1, nextBtn = document.getElementById('next');
+  function revealNextPart(){
+    if (shown < parts.length){
+      parts[shown].classList.remove('hidden');
+      parts[shown].scrollIntoView({behavior:'smooth', block:'start'});
+      shown++;
+      if (shown === parts.length) nextBtn.textContent = NEXT_LAST_LABEL;
+    } else { onReadingDone(); }
+  }
+  nextBtn.addEventListener('click', revealNextPart);
+  if (/[?&]show=all/.test(location.search)){
+    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; nextBtn.textContent = NEXT_LAST_LABEL;
+  }
+
+
+  document.getElementById('copy').addEventListener('click', function(){
+    var t = document.getElementById('out');
+    function done(){ document.getElementById('copied').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
+    } else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
+  });
+  function show(id){ var el=document.getElementById(id); el.classList.remove('hidden'); setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 250); }
+  function saveLedger(key, obj){ try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {} }
+
+
+})();
+</script>
+</body>
+</html>
