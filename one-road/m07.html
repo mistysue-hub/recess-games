@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Road · Day 7 · Competing Witnesses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#11173a; --night2:#1b2352; --ink:#0b0f26;
+    --gold:#c9a24a; --gold2:#e8cf8a; --bone:#efe6d2; --dim:#b9b2a0;
+    --seal:#a3262a; --seal2:#c8423f; --jade:#3f8f7a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 70% -10%, #2a346e 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #23295a 0%, transparent 55%),
+      var(--night);
+    color:var(--bone); font-family:Spectral, Georgia, serif; font-size:18px; line-height:1.6;
+    min-height:100vh;
+  }
+  /* starfield */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 33% 8%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 22%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 81% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 30%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 7% 40%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 45% 35%, #fff 50%, transparent 51%);}
+  .wrap{max-width:720px;margin:0 auto;padding:18px 16px 60px;position:relative}
+
+  /* caravan strip */
+  .strip{display:flex;align-items:center;gap:0;margin:4px 0 22px;padding:10px 12px;
+    border:1px solid rgba(201,162,74,.35);border-radius:999px;background:rgba(11,15,38,.55)}
+  .stop{flex:0 0 auto;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:transparent;position:relative}
+  .stop.lit{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .leg{flex:1 1 auto;height:2px;background:repeating-linear-gradient(90deg,rgba(201,162,74,.5) 0 6px,transparent 6px 11px)}
+  .strip-label{font-family:Cinzel,serif;font-size:12px;letter-spacing:.12em;color:var(--gold2);text-align:center;margin:-14px 0 18px}
+
+  h1{font-family:Cinzel,serif;font-weight:800;color:var(--gold2);font-size:clamp(28px,6vw,40px);line-height:1.15;margin:0 0 4px;letter-spacing:.02em}
+  .kicker{font-family:Cinzel,serif;color:var(--gold);letter-spacing:.2em;font-size:13px;text-transform:uppercase}
+  .sub{color:var(--dim);font-style:italic;margin:0 0 22px}
+
+  /* paiza tablet card */
+  .paiza{position:relative;margin:18px 0;padding:22px 22px 20px;border-radius:22px 22px 18px 18px;
+    background:linear-gradient(160deg,#2a2a2a00,#00000000),
+      linear-gradient(180deg,#2b2f5e 0%,#1a1f47 100%);
+    border:2px solid var(--gold);box-shadow:0 0 0 5px rgba(201,162,74,.12), 0 10px 30px rgba(0,0,0,.45)}
+  .paiza::before{content:"";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;border:3px solid var(--gold);background:var(--night)}
+  .paiza::after{content:"";position:absolute;inset:7px;border-radius:16px 16px 12px 12px;border:1px dashed rgba(201,162,74,.35);pointer-events:none}
+  .paiza h2{font-family:Cinzel,serif;color:var(--gold2);font-size:20px;margin:0 0 8px;letter-spacing:.04em}
+  .paiza p{margin:0 0 12px}
+  .note{background:rgba(201,162,74,.08);border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:16px}
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+
+  .hidden{display:none}
+  .btn{font-family:Cinzel,serif;font-weight:600;letter-spacing:.08em;font-size:16px;
+    background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--ink);border:0;border-radius:999px;
+    padding:12px 22px;cursor:pointer;box-shadow:0 4px 0 #7d6326;min-height:48px}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7d6326}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--gold2);border:2px solid var(--gold);box-shadow:none}
+  .center{text-align:center}
+
+  /* timeline game */
+  .slots{display:grid;gap:8px;margin:14px 0}
+  .slot{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border-radius:12px;
+    border:2px dashed rgba(201,162,74,.45);background:rgba(11,15,38,.4);cursor:pointer}
+  .slot .n{font-family:Cinzel,serif;color:var(--gold);width:26px;flex:0 0 26px;text-align:center}
+  .slot.filled{border-style:solid;background:rgba(201,162,74,.12)}
+  .slot.ok{border-color:var(--jade);background:rgba(63,143,122,.18)}
+  .slot.bad{border-color:var(--seal2);background:rgba(163,38,42,.18)}
+  .slot .why{display:block;font-size:14px;color:var(--dim);font-style:italic}
+  .cards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+  .card{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;
+    font-size:16px;cursor:pointer;min-height:48px;text-align:left;box-shadow:0 3px 0 #9d927a}
+  .card.used{display:none}
+
+  /* seal */
+  .seal-zone{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0 4px}
+  .seal{width:120px;height:120px;border:0;border-radius:18px;cursor:pointer;position:relative;
+    background:radial-gradient(circle at 35% 30%,var(--seal2),var(--seal) 60%,#6e1418);
+    box-shadow:0 8px 0 #5a1013, 0 14px 30px rgba(0,0,0,.5);color:#f6d9c8;font-family:Cinzel,serif;font-weight:800;font-size:15px;letter-spacing:.14em}
+  .seal::before{content:"";position:absolute;inset:12px;border:3px solid rgba(246,217,200,.75);border-radius:8px}
+  .seal::after{content:"";position:absolute;inset:26px;border:2px solid rgba(246,217,200,.5);border-radius:4px;
+    background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(246,217,200,.35) 10px 13px)}
+  .seal span{position:relative;z-index:2;background:var(--seal);padding:2px 6px;border-radius:4px}
+  .seal[disabled]{filter:grayscale(.7) brightness(.7);cursor:not-allowed}
+  .seal.stamp{animation:stamp .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes stamp{0%{transform:translateY(-30px) scale(1.25) rotate(-6deg)}60%{transform:translateY(4px) scale(.94) rotate(2deg)}100%{transform:none}}
+  .imprint{display:inline-block;border:3px solid var(--seal2);color:var(--seal2);font-family:Cinzel,serif;font-weight:800;
+    padding:6px 12px;border-radius:6px;transform:rotate(-4deg);letter-spacing:.12em;margin:6px 0 12px;opacity:.9}
+
+  /* ledger */
+  .ledger{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.ledger{grid-template-columns:1fr}}
+  .tab{border-radius:16px;padding:14px;border:2px solid}
+  .tab.d{border-color:var(--seal2);background:rgba(163,38,42,.12)}
+  .tab.c{border-color:var(--jade);background:rgba(63,143,122,.12)}
+  .tab b{font-family:Cinzel,serif;letter-spacing:.1em;font-size:13px;display:block;margin-bottom:4px}
+  .tab.d b{color:#f3a09b}.tab.c b{color:#8fd3be}
+
+  textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid var(--gold);background:var(--ink);color:var(--bone);font-family:Spectral,serif;font-size:15px;padding:10px}
+  .copied{color:var(--jade);font-weight:600;margin-left:8px}
+  footer{margin-top:30px;font-size:13px;color:var(--dim);border-top:1px solid rgba(201,162,74,.25);padding-top:12px}
+  .part-label{font-family:Cinzel,serif;color:var(--gold);font-size:12px;letter-spacing:.2em}
+
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+  .claim{font-size:15px;color:var(--dim);border:1px dashed rgba(201,162,74,.45);border-radius:8px;padding:8px 12px;margin:8px 0 12px}
+  .hookcard{border:2px solid var(--seal2);border-radius:14px;padding:12px 14px;background:rgba(163,38,42,.10)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .choice{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;font-size:16px;min-height:48px;text-align:left;cursor:pointer;box-shadow:0 3px 0 #9d927a}
+  .choice.sel{outline:3px solid var(--gold);}
+  .choice.ok{background:#cfe9df}
+  .choice.bad{background:#f2c7c4}
+  .choice[disabled]{cursor:default}
+  .pill{display:inline-block;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;padding:3px 8px;border-radius:999px;border:1px solid var(--gold);color:var(--gold2);margin-bottom:6px}
+
+  .item{border:1px solid rgba(201,162,74,.4);border-radius:14px;padding:12px;background:rgba(11,15,38,.35)}
+  .item .cl{font-size:17px;margin:4px 0 10px}
+  .item .lbl{font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;color:var(--gold);margin:8px 0 6px}
+  .item .opts{display:grid;gap:8px}
+  .verdict{margin-top:10px;padding:10px 12px;border-radius:10px;display:none;color:var(--bone);border:2px solid var(--seal2);background:rgba(163,38,42,.10);position:relative}
+  .verdict.on{display:block;animation:file .45s ease-out}
+  .verdict::before{content:"VERDICT";position:absolute;top:-10px;right:10px;background:var(--seal);color:#f6d9c8;font-family:Cinzel,serif;font-size:10px;letter-spacing:.16em;padding:2px 8px;border-radius:4px}
+  @keyframes file{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="strip" aria-label="Caravan progress: day 7 of 8"><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg"></span><span class="stop"></span></div>
+  <div class="strip-label">DAY 7 OF 8 · COMPETING WITNESSES</div>
+
+  <div class="kicker">One Road · Day 7</div>
+  <h1>Competing Witnesses</h1>
+  <p class="sub">Rubruck, Polo, Ibn Battuta and de Mussis · Who do we believe, and why?</p>
+
+  <div class="paiza">
+    <h2>Before you ride</h2>
+    <div class="note">A famous story says the Mongols started the Black Death in Europe by throwing infected bodies over a city wall. Today you meet the man who told that story, find out where he really was, and then put all four of the week's witnesses on trial.</div>
+  </div>
+
+  <section id="reading">
+    <div class="paiza part" data-i="0">
+      <div class="part-label">PART 1</div>
+      <h2>A fourth witness: Caffa, 1346</h2>
+      <p>Caffa (today's Feodosia, in Crimea) was a Genoese trading port on the Black Sea, inside the lands of the Golden Horde. In 1346 the Golden Horde's khan, Jani Beg, had it under siege when plague broke out in his army.</p>
+      <p>An Italian notary, Gabriele de' Mussis, wrote a famous account a year or two later. He said the dying besiegers flung their dead over the walls with siege engines, the stench and disease spread inside, and Genoese ships fleeing Caffa carried the plague to Italy. It's often called the first act of germ warfare.</p>
+    </div>
+    <div class="paiza part hidden" data-i="1">
+      <div class="part-label">PART 2</div>
+      <h2>But was he there?</h2>
+      <p>For a long time, readers assumed de Mussis wrote as an eyewitness. Then historians checked the notary records of his home town, Piacenza. He was signing documents there from 1344 to 1356. He never went to Caffa. He was passing on a story.</p>
+      <p>Other evidence from the Black Sea region doesn't fit his story either. Some scholars doubt a siege engine could have thrown bodies that way. Even scholars who think the corpse-throwing might have happened doubt it was how the plague reached Europe. Rats, fleas and grain ships are the likelier path. De Mussis may have been right that plague came from the Black Sea and wrong about how.</p>
+    </div>
+    <div class="paiza part hidden" data-i="2">
+      <div class="part-label">PART 3</div>
+      <h2>Four tests for any witness</h2>
+      <p>You've now met four witnesses: William of Rubruck, Marco Polo, Ibn Battuta and de Mussis. Every one of them tells some things we can check and some we can't. Historians run each claim through tests like these:</p>
+      <div class="claim"><b>1. Was the witness there?</b> De Mussis wasn't.<br><b>2. Does an independent witness agree?</b> Polo and Ibn Battuta, fifty years apart, both noticed paper money.<br><b>3. Is there physical evidence?</b> The craftsmen's quarter Rubruck described has been dug up.<br><b>4. Is a number suspiciously big, or secondhand?</b> Polo got his twelve thousand bridges of Kinsay from a written statement, not his own count.</div>
+      <p>One more rule: an expert is more likely to be right in their own field, but experts can still be wrong. "Trust me" from anyone, even a famous professor, is not evidence. Ask what the claim rests on.</p>
+    </div>
+    <div class="center"><button class="btn" id="next">Ride on</button></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="paiza">
+      <h2>Contradiction Hunt</h2>
+      <p>Six claims. For each, pick a verdict <b>and</b> a reason. Only after you've picked both does the course show its answer.</p>
+      <div id="items" class="stack"></div>
+      <div class="center" style="margin-top:14px"><button class="btn hidden" id="finish">See my results</button></div>
+    </div>
+  </section>
+
+  <section id="after" class="hidden">
+    <div class="paiza center"><span class="pill">CASE FILE CLOSED</span><h2 id="score"></h2><p id="scoreLine" style="color:var(--dim)"></p></div>
+    <div class="paiza">
+      <h2>Look back at your vote</h2>
+      <p>You voted on: <i>"When two witnesses disagree, the one writing closer to the time is usually right."</i></p>
+      <p><b>The real answer: not always.</b> De Mussis wrote within a year or two of Caffa, close in time but nowhere near the place. Being close in time helps. Being there, being independent, and having physical evidence matter just as much. Time is one test, not the whole test.</p>
+    </div>
+    <div class="paiza">
+      <h2>Your ledger, day 7</h2>
+      <div class="ledger">
+        <div class="tab d"><b>DESTRUCTION</b>Plague tore through the Golden Horde's army at Caffa in 1346, whatever the truth about corpse-throwing.</div>
+        <div class="tab c"><b>CONNECTION</b>Witnesses from Flanders, Venice and Morocco left records of the same world that we can compare today.</div>
+      </div>
+      <p style="margin-top:12px">Rocky will ask which line weighs more for you. Both are saved for the final day.</p>
+    </div>
+    <div class="paiza">
+      <h2>Copy for Rocky</h2>
+      <textarea id="out" readonly></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="copy">Copy my answers for Rocky</button><span class="copied hidden" id="copied">Copied. Paste it into the chat.</span></p>
+    </div>
+  </section>
+
+  <footer>Readings written in our own words for this course. On de Mussis and Caffa: M. Wheelis, "Biological Warfare at the 1346 Siege of Caffa," <i>Emerging Infectious Diseases</i> 8 (2002); H. Barker, "Laying the Corpses to Rest," <i>Speculum</i> 96 (2021); M. Field, "Catapulting corpses?", <i>Bulletin of the Atomic Scientists</i> (2023). Part of <i>One Road</i>, a Recess course.</footer>
+</div>
+<script>
+(function(){
+
+  var NEXT_LAST_LABEL = 'To the hunt';
+  var ITEMS = [{"claim": "Imagine a famous professor on TV says: \"Trust me, Polo's twelve thousand stone bridges were real. I've studied this for forty years.\"", "v": "cant", "w": "trust", "why": "Forty years of study makes the professor worth hearing, but \"trust me\" isn't evidence. Ask what the claim rests on. Here it rests on a written statement Polo was given (Part 3)."}, {"claim": "Marco Polo (1290s) and Ibn Battuta (1340s) both report that China bought and sold with paper money.", "v": "agree", "w": "ind", "why": "Two witnesses from different worlds, fifty years apart, who never met. Independent agreement is strong evidence (Day 5, Day 6)."}, {"claim": "De Mussis: the Mongol army threw plague corpses into Caffa, and that's how the plague reached Italy.", "v": "cant", "w": "away", "why": "He was in Piacenza the whole time, and other Black Sea evidence doesn't fit. A story passed along isn't an eyewitness account (Part 2)."}, {"claim": "Marco Polo: Kinsay (Hangzhou) has twelve thousand bridges of stone.", "v": "cant", "w": "num", "why": "A huge round number, taken from a written statement rather than his own count. It may be inflated (Part 3)."}, {"claim": "William of Rubruck: Karakorum had a quarter of Chinese craftsmen.", "v": "agree", "w": "phys", "why": "Archaeologists dug up a craftsmen's quarter with workshops and Chinese coins (Day 3)."}, {"claim": "Chroniclers on Baghdad, 1258: one gives about 200,000 dead, another 800,000.", "v": "contra", "w": "num", "why": "The figures don't agree, and no one counted. Both are guesses, and some may be inflated (Day 4)."}], VERD = {"agree": "Witnesses agree: strong", "contra": "Witnesses contradict each other", "cant": "Can't tell: needs more evidence"}, WHYS = {"ind": "Independent witnesses saw the same thing", "phys": "Physical evidence backs it up", "away": "The witness wasn't there", "num": "The number looks inflated or secondhand", "trust": "An expert's word isn't evidence on its own"}, picks = [];
+  function onReadingDone(){ nextBtn.parentNode.classList.add('hidden'); show('game'); }
+  var wrap = document.getElementById('items');
+  ITEMS.forEach(function(it, i){
+    var st = picks[i] = {v:null, w:null, done:false};
+    var d=document.createElement('div'); d.className='item';
+    d.innerHTML='<div class="pill">CLAIM '+(i+1)+'</div><div class="cl">'+it.claim+'</div><div class="lbl">VERDICT</div><div class="opts ov"></div><div class="lbl">REASON</div><div class="opts ow"></div><div class="verdict"></div>';
+    function group(sel, dict, key){
+      var g=d.querySelector(sel);
+      Object.keys(dict).forEach(function(k){
+        var b=document.createElement('button'); b.className='choice'; b.textContent=dict[k]; b.setAttribute('data-k',k);
+        b.addEventListener('click', function(){
+          if (st.done) return;
+          st[key]=k; Array.prototype.forEach.call(g.children,function(x){ x.classList.toggle('sel', x===b); });
+          if (st.v && st.w) reveal();
+        });
+        g.appendChild(b);
+      });
+    }
+    group('.ov', VERD, 'v'); group('.ow', WHYS, 'w');
+    function reveal(){
+      st.done=true;
+      [['.ov','v'],['.ow','w']].forEach(function(p){
+        Array.prototype.forEach.call(d.querySelector(p[0]).children,function(x){
+          x.disabled=true; x.classList.remove('sel');
+          if (x.getAttribute('data-k')===it[p[1]]) x.classList.add('ok');
+          else if (x.getAttribute('data-k')===st[p[1]]) x.classList.add('bad');
+        });
+      });
+      var v=d.querySelector('.verdict');
+      v.innerHTML='<b>'+VERD[it.v]+'. Reason: '+WHYS[it.w].toLowerCase()+'.</b> '+it.why; v.classList.add('on');
+      if (picks.every(function(p){return p.done;})) document.getElementById('finish').classList.remove('hidden');
+    }
+    wrap.appendChild(d);
+  });
+  document.getElementById('finish').addEventListener('click', function(){
+    var vr=0, wr=0;
+    ITEMS.forEach(function(it,i){ if(picks[i].v===it.v) vr++; if(picks[i].w===it.w) wr++; });
+    document.getElementById('score').textContent='Verdicts '+vr+' of 6 · Reasons '+wr+' of 6';
+    document.getElementById('scoreLine').textContent='The reasons matter more than the verdicts. A right verdict for a wrong reason is luck.';
+    var lines=ITEMS.map(function(it,i){ return (i+1)+'. verdict '+(picks[i].v===it.v?'matched':'"'+VERD[picks[i].v]+'" (course: "'+VERD[it.v]+'")')+'; reason '+(picks[i].w===it.w?'matched':'"'+WHYS[picks[i].w]+'" (course: "'+WHYS[it.w]+'")'); });
+    document.getElementById('out').value='One Road M07 Contradiction Hunt results\nVerdicts '+vr+' of 6, reasons '+wr+' of 6\n'+lines.join('\n')+
+      '\nLedger day 7 shown: destruction = plague devastated the army at Caffa (1346); connection = witnesses from three worlds left records we can compare.';
+    saveLedger('oneroad.M07', {vr:vr, wr:wr, ledger:{d:"Plague tore through the Golden Horde's army at Caffa in 1346, whatever the truth about corpse-throwing.", c:"Witnesses from Flanders, Venice and Morocco left records of the same world that we can compare today."}});
+    document.getElementById('finish').classList.add('hidden');
+    show('after');
+  });
+
+  // tap-to-continue reading
+  var parts = Array.prototype.slice.call(document.querySelectorAll('.part'));
+  var shown = 1, nextBtn = document.getElementById('next');
+  function revealNextPart(){
+    if (shown < parts.length){
+      parts[shown].classList.remove('hidden');
+      parts[shown].scrollIntoView({behavior:'smooth', block:'start'});
+      shown++;
+      if (shown === parts.length) nextBtn.textContent = NEXT_LAST_LABEL;
+    } else { onReadingDone(); }
+  }
+  nextBtn.addEventListener('click', revealNextPart);
+  if (/[?&]show=all/.test(location.search)){
+    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; nextBtn.textContent = NEXT_LAST_LABEL;
+  }
+
+
+  document.getElementById('copy').addEventListener('click', function(){
+    var t = document.getElementById('out');
+    function done(){ document.getElementById('copied').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
+    } else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
+  });
+  function show(id){ var el=document.getElementById(id); el.classList.remove('hidden'); setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 250); }
+  function saveLedger(key, obj){ try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {} }
+
+
+})();
+</script>
+</body>
+</html>

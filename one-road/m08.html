@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Road · Day 8 · The Road Carries Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#11173a; --night2:#1b2352; --ink:#0b0f26;
+    --gold:#c9a24a; --gold2:#e8cf8a; --bone:#efe6d2; --dim:#b9b2a0;
+    --seal:#a3262a; --seal2:#c8423f; --jade:#3f8f7a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 70% -10%, #2a346e 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #23295a 0%, transparent 55%),
+      var(--night);
+    color:var(--bone); font-family:Spectral, Georgia, serif; font-size:18px; line-height:1.6;
+    min-height:100vh;
+  }
+  /* starfield */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 33% 8%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 22%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 81% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 30%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 7% 40%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 45% 35%, #fff 50%, transparent 51%);}
+  .wrap{max-width:720px;margin:0 auto;padding:18px 16px 60px;position:relative}
+
+  /* caravan strip */
+  .strip{display:flex;align-items:center;gap:0;margin:4px 0 22px;padding:10px 12px;
+    border:1px solid rgba(201,162,74,.35);border-radius:999px;background:rgba(11,15,38,.55)}
+  .stop{flex:0 0 auto;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:transparent;position:relative}
+  .stop.lit{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .leg{flex:1 1 auto;height:2px;background:repeating-linear-gradient(90deg,rgba(201,162,74,.5) 0 6px,transparent 6px 11px)}
+  .strip-label{font-family:Cinzel,serif;font-size:12px;letter-spacing:.12em;color:var(--gold2);text-align:center;margin:-14px 0 18px}
+
+  h1{font-family:Cinzel,serif;font-weight:800;color:var(--gold2);font-size:clamp(28px,6vw,40px);line-height:1.15;margin:0 0 4px;letter-spacing:.02em}
+  .kicker{font-family:Cinzel,serif;color:var(--gold);letter-spacing:.2em;font-size:13px;text-transform:uppercase}
+  .sub{color:var(--dim);font-style:italic;margin:0 0 22px}
+
+  /* paiza tablet card */
+  .paiza{position:relative;margin:18px 0;padding:22px 22px 20px;border-radius:22px 22px 18px 18px;
+    background:linear-gradient(160deg,#2a2a2a00,#00000000),
+      linear-gradient(180deg,#2b2f5e 0%,#1a1f47 100%);
+    border:2px solid var(--gold);box-shadow:0 0 0 5px rgba(201,162,74,.12), 0 10px 30px rgba(0,0,0,.45)}
+  .paiza::before{content:"";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;border:3px solid var(--gold);background:var(--night)}
+  .paiza::after{content:"";position:absolute;inset:7px;border-radius:16px 16px 12px 12px;border:1px dashed rgba(201,162,74,.35);pointer-events:none}
+  .paiza h2{font-family:Cinzel,serif;color:var(--gold2);font-size:20px;margin:0 0 8px;letter-spacing:.04em}
+  .paiza p{margin:0 0 12px}
+  .note{background:rgba(201,162,74,.08);border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:16px}
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+
+  .hidden{display:none}
+  .btn{font-family:Cinzel,serif;font-weight:600;letter-spacing:.08em;font-size:16px;
+    background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--ink);border:0;border-radius:999px;
+    padding:12px 22px;cursor:pointer;box-shadow:0 4px 0 #7d6326;min-height:48px}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7d6326}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--gold2);border:2px solid var(--gold);box-shadow:none}
+  .center{text-align:center}
+
+  /* timeline game */
+  .slots{display:grid;gap:8px;margin:14px 0}
+  .slot{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border-radius:12px;
+    border:2px dashed rgba(201,162,74,.45);background:rgba(11,15,38,.4);cursor:pointer}
+  .slot .n{font-family:Cinzel,serif;color:var(--gold);width:26px;flex:0 0 26px;text-align:center}
+  .slot.filled{border-style:solid;background:rgba(201,162,74,.12)}
+  .slot.ok{border-color:var(--jade);background:rgba(63,143,122,.18)}
+  .slot.bad{border-color:var(--seal2);background:rgba(163,38,42,.18)}
+  .slot .why{display:block;font-size:14px;color:var(--dim);font-style:italic}
+  .cards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+  .card{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;
+    font-size:16px;cursor:pointer;min-height:48px;text-align:left;box-shadow:0 3px 0 #9d927a}
+  .card.used{display:none}
+
+  /* seal */
+  .seal-zone{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0 4px}
+  .seal{width:120px;height:120px;border:0;border-radius:18px;cursor:pointer;position:relative;
+    background:radial-gradient(circle at 35% 30%,var(--seal2),var(--seal) 60%,#6e1418);
+    box-shadow:0 8px 0 #5a1013, 0 14px 30px rgba(0,0,0,.5);color:#f6d9c8;font-family:Cinzel,serif;font-weight:800;font-size:15px;letter-spacing:.14em}
+  .seal::before{content:"";position:absolute;inset:12px;border:3px solid rgba(246,217,200,.75);border-radius:8px}
+  .seal::after{content:"";position:absolute;inset:26px;border:2px solid rgba(246,217,200,.5);border-radius:4px;
+    background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(246,217,200,.35) 10px 13px)}
+  .seal span{position:relative;z-index:2;background:var(--seal);padding:2px 6px;border-radius:4px}
+  .seal[disabled]{filter:grayscale(.7) brightness(.7);cursor:not-allowed}
+  .seal.stamp{animation:stamp .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes stamp{0%{transform:translateY(-30px) scale(1.25) rotate(-6deg)}60%{transform:translateY(4px) scale(.94) rotate(2deg)}100%{transform:none}}
+  .imprint{display:inline-block;border:3px solid var(--seal2);color:var(--seal2);font-family:Cinzel,serif;font-weight:800;
+    padding:6px 12px;border-radius:6px;transform:rotate(-4deg);letter-spacing:.12em;margin:6px 0 12px;opacity:.9}
+
+  /* ledger */
+  .ledger{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.ledger{grid-template-columns:1fr}}
+  .tab{border-radius:16px;padding:14px;border:2px solid}
+  .tab.d{border-color:var(--seal2);background:rgba(163,38,42,.12)}
+  .tab.c{border-color:var(--jade);background:rgba(63,143,122,.12)}
+  .tab b{font-family:Cinzel,serif;letter-spacing:.1em;font-size:13px;display:block;margin-bottom:4px}
+  .tab.d b{color:#f3a09b}.tab.c b{color:#8fd3be}
+
+  textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid var(--gold);background:var(--ink);color:var(--bone);font-family:Spectral,serif;font-size:15px;padding:10px}
+  .copied{color:var(--jade);font-weight:600;margin-left:8px}
+  footer{margin-top:30px;font-size:13px;color:var(--dim);border-top:1px solid rgba(201,162,74,.25);padding-top:12px}
+  .part-label{font-family:Cinzel,serif;color:var(--gold);font-size:12px;letter-spacing:.2em}
+
+  blockquote.sh{margin:6px 0 14px;padding:12px 16px;border-left:4px solid var(--seal2);background:rgba(163,38,42,.12);border-radius:6px;font-style:italic;font-size:19px;color:var(--gold2)}
+  blockquote.sh cite{display:block;font-style:normal;font-family:Cinzel,serif;font-size:11px;letter-spacing:.15em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+  .claim{font-size:15px;color:var(--dim);border:1px dashed rgba(201,162,74,.45);border-radius:8px;padding:8px 12px;margin:8px 0 12px}
+  .hookcard{border:2px solid var(--seal2);border-radius:14px;padding:12px 14px;background:rgba(163,38,42,.10)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .choice{background:var(--bone);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font-family:Spectral,serif;font-size:16px;min-height:48px;text-align:left;cursor:pointer;box-shadow:0 3px 0 #9d927a}
+  .choice.sel{outline:3px solid var(--gold);}
+  .choice.ok{background:#cfe9df}
+  .choice.bad{background:#f2c7c4}
+  .choice[disabled]{cursor:default}
+  .pill{display:inline-block;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;padding:3px 8px;border-radius:999px;border:1px solid var(--gold);color:var(--gold2);margin-bottom:6px}
+
+  .khcard{border:2px solid var(--gold);border-radius:14px;padding:10px 14px;margin:10px 0;background:rgba(11,15,38,.35);font-size:16px}
+  .khcard b{font-family:Cinzel,serif;color:var(--gold2)}
+  .colhead{font-family:Cinzel,serif;font-size:12px;letter-spacing:.14em;margin-bottom:8px}
+  .colhead.d{color:#f3a09b}.colhead.c{color:#8fd3be}
+  .lg{text-align:left;font-size:14px;border-radius:10px;padding:8px 10px;cursor:pointer;border:2px solid transparent;background:rgba(239,230,210,.08);color:var(--bone);font-family:Spectral,serif}
+  .lg .dy{font-family:Cinzel,serif;font-size:10px;letter-spacing:.14em;color:var(--gold)}
+  .lg.d.sel{border-color:var(--seal2);background:rgba(163,38,42,.25)}
+  .lg.c.sel{border-color:var(--jade);background:rgba(63,143,122,.25)}
+  .frames{padding-left:22px;font-size:16px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="strip" aria-label="Caravan progress: day 8 of 8"><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span><span class="leg" style="background:var(--gold)"></span><span class="stop lit"></span></div>
+  <div class="strip-label">DAY 8 OF 8 · KHANBALIQ AND BEYOND</div>
+
+  <div class="kicker">One Road · Day 8</div>
+  <h1>The Road Carries Everything</h1>
+  <p class="sub">1338 to 1368 · Plague, collapse, and your verdict</p>
+
+  <div class="paiza">
+    <h2>Before you ride</h2>
+    <div class="note">The last day. First, how the road ended. Then you weigh everything in your ledger, take a side, and argue it against Rocky, who will take the other side. Finally, you write your verdict.</div>
+  </div>
+
+  <section id="reading">
+    <div class="paiza part" data-i="0">
+      <div class="part-label">PART 1</div>
+      <h2>From Lake Issyk Kul to the Mediterranean</h2>
+      <p>In 1338 and 1339 a Christian trading community near Lake Issyk Kul, in today's Kyrgyzstan, buried so many people that their gravestones record the cause: "pestilence." In 2022 scientists recovered plague DNA from those graves. Their strain sits right at the root of the Black Death's family tree. It's strong evidence, though not every scientist agrees it settles the question, that the pandemic began in Central Asia, on the Mongol trade road.</p>
+      <p>By 1346 plague was in the Golden Horde's lands around the Black Sea. In 1347 ships from the Black Sea carried it into the Mediterranean. Over the next few years it killed perhaps half the people in parts of Europe and the Middle East. (The full story is its own course, <i>The Plague Year</i>.)</p>
+    </div>
+    <div class="paiza part hidden" data-i="1">
+      <div class="part-label">PART 2</div>
+      <h2>The road closes</h2>
+      <p>The khanates were already cracking. In 1335 the Ilkhan Abu Sa'id died without an heir, and the Ilkhanate broke apart. In China, famine, floods and rebellions shook the Yuan. In 1368 the armies of Zhu Yuanzhang, a rebel leader who founded the Ming dynasty, took Khanbaliq, and the last Yuan emperor fled north to the steppe. The Golden Horde lasted longer, but the one road across Asia was no longer one road.</p>
+    </div>
+    <div class="paiza part hidden" data-i="2">
+      <div class="part-label">PART 3</div>
+      <h2>What the road carried</h2>
+      <div class="khcard"><b>Envoys.</b> In 1287 Rabban Sauma, a Christian monk born near Khanbaliq, traveled to Europe as the Ilkhan's ambassador. He met the kings of France and England and Pope Nicholas IV.</div>
+      <div class="khcard"><b>Science.</b> In 1259 Hulagu funded an observatory at Maragha, in Persia, led by the astronomer Nasir al-Din al-Tusi. A Chinese astronomer worked there alongside Persian and Arab scholars.</div>
+      <div class="khcard"><b>Ideas that failed.</b> In 1294 the Ilkhan copied Chinese paper money in Tabriz. Markets stopped and riots broke out, and the notes were soon withdrawn.</div>
+      <div class="khcard"><b>Ideas that lasted.</b> Marco Polo's book reached readers across Europe. Christopher Columbus owned a copy and wrote notes in its margins.</div>
+      <div class="khcard"><b>Debated.</b> Historians still argue about how much gunpowder knowledge reached Europe through Mongol contact, and how much arrived by other routes.</div>
+    </div>
+    <div class="center"><button class="btn" id="next">Ride on</button></div>
+  </section>
+
+  <section id="weigh" class="hidden">
+    <div class="paiza">
+      <span class="pill">YOUR WHOLE LEDGER</span>
+      <h2>Weigh the evidence</h2>
+      <p>Here is every ledger line from all eight days. Tap the <b>three</b> that weigh most in each column.</p>
+      <div class="ledger">
+        <div><div class="colhead d">DESTRUCTION <span id="nd">0</span>/3</div><div id="colD" class="stack"></div></div>
+        <div><div class="colhead c">CONNECTION <span id="nc">0</span>/3</div><div id="colC" class="stack"></div></div>
+      </div>
+      <div class="center" style="margin-top:14px"><button class="btn" id="toSide" disabled>Take a side</button></div>
+    </div>
+  </section>
+
+  <section id="side" class="hidden">
+    <div class="paiza">
+      <h2>Destroyers or connectors?</h2>
+      <p>Pick the side you'll defend. Rocky will argue the other side, so pick the one you can back up.</p>
+      <div class="stack" id="sides"></div>
+    </div>
+  </section>
+
+  <section id="debate" class="hidden">
+    <div class="paiza">
+      <span class="pill">TO THE CHAT</span>
+      <h2>Debate Rocky</h2>
+      <p>Go to the chat and tell Rocky your side. Rocky will argue the opposite side, using evidence from this course. Make at least three arguments of your own, using your ledger picks. When you're done, come back here.</p>
+      <div class="claim" id="mypicks"></div>
+      <div class="center"><button class="btn" id="toVerdict">I've debated. Write my verdict</button></div>
+    </div>
+  </section>
+
+  <section id="verdict" class="hidden">
+    <div class="paiza">
+      <h2>Your verdict, five sentences</h2>
+      <p>Use these starters if they help. You don't have to.</p>
+      <ol class="frames">
+        <li>The Mongols were mainly ______ because ______.</li>
+        <li>The strongest evidence for my side is ______ (Day __).</li>
+        <li>The best point on the other side is ______.</li>
+        <li>That point doesn't change my mind because ______.</li>
+        <li>One witness I'd trust least on this is ______, because ______.</li>
+      </ol>
+      <textarea id="vtext" placeholder="Write your five sentences here." style="min-height:180px"></textarea>
+      <p id="vcount" style="color:var(--dim);font-size:14px">0 sentences</p>
+      <div class="center"><button class="btn" id="seal" disabled>Seal my verdict</button></div>
+    </div>
+  </section>
+
+  <section id="after" class="hidden">
+    <div class="paiza center"><span class="pill">THE ROAD'S END</span><h2>Verdict sealed</h2><p style="color:var(--dim)">You've crossed eight days, four witnesses and a whole continent.</p></div>
+    <div class="paiza">
+      <h2>Copy for Rocky</h2>
+      <textarea id="out" readonly></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="copy">Copy my answers for Rocky</button><span class="copied hidden" id="copied">Copied. Paste it into the chat.</span></p>
+    </div>
+  </section>
+
+  <footer>Readings written in our own words for this course. Plague origins: M. Spyrou et al., <i>Nature</i> (2022). Further reading: Morris Rossabi, <i>The Mongols: A Very Short Introduction</i> (2012); Jack Weatherford, <i>Genghis Khan and the Making of the Modern World</i> (2004), a lively but much-debated case for the "connectors" side; primary sources on the Internet Medieval Sourcebook (Fordham) and Silk Road Seattle (University of Washington). Part of <i>One Road</i>, a Recess course.</footer>
+</div>
+<script>
+(function(){
+
+  var NEXT_LAST_LABEL = 'Open my ledger';
+  var LEDGER = [{"day": 1, "d": "He began by killing his own half-brother over a stolen fish.", "c": "He built a following from strangers who chose to join him."}, {"day": 2, "d": "Chroniclers claimed hundreds of thousands killed in Khwarazm's cities. The numbers are inflated, but the destruction was real.", "c": "The yam linked the empire, letting news and envoys cross it in days instead of months."}, {"day": 3, "d": "Güyük's letter told the Pope and Europe's kings to submit to the khan or be treated as enemies.", "c": "Karakorum held Chinese craftsmen, Muslim merchants, temples, mosques and a church in one city."}, {"day": 4, "d": "In 1258 Hulagu's army sacked Baghdad and ended the Abbasid caliphate.", "c": "Even with the khanates at war, the Polo family, by their own account, crossed Asia to Kublai's court."}, {"day": 5, "d": "Kublai's armies ended a war of more than forty years on the Song dynasty in 1279, conquering all of China.", "c": "Paper money, post roads and merchant partnerships let a stranger trade across Asia."}, {"day": 6, "d": "The roads that carried Ibn Battuta also carried the Black Death. It killed his own mother in 1348 or 1349.", "c": "A Moroccan judge could travel to China and find fellow Muslims, hosts and paper money along the way."}, {"day": 7, "d": "Plague tore through the Golden Horde's army at Caffa in 1346, whatever the truth about corpse-throwing.", "c": "Witnesses from Flanders, Venice and Morocco left records of the same world that we can compare today."}, {"day": 8, "d": "The Black Death rode the trade roads west. In parts of Europe and the Middle East it killed around half the people.", "c": "Envoys, astronomers and ideas moved between China, Persia and Europe as never before."}], pick = {d:[], c:[]}, side = null;
+  function onReadingDone(){ nextBtn.parentNode.classList.add('hidden'); show('weigh'); }
+  ['d','c'].forEach(function(col){
+    var el=document.getElementById(col==='d'?'colD':'colC');
+    LEDGER.forEach(function(L){
+      var b=document.createElement('button'); b.className='lg '+col; b.innerHTML='<span class="dy">DAY '+L.day+'</span><br>'+L[col];
+      b.addEventListener('click', function(){
+        var arr=pick[col], i=arr.indexOf(L.day);
+        if (i>-1){ arr.splice(i,1); b.classList.remove('sel'); }
+        else if (arr.length<3){ arr.push(L.day); b.classList.add('sel'); }
+        document.getElementById('n'+col).textContent=arr.length;
+        document.getElementById('toSide').disabled = !(pick.d.length===3 && pick.c.length===3);
+      });
+      el.appendChild(b);
+    });
+  });
+  document.getElementById('toSide').addEventListener('click', function(){ this.disabled=true; show('side'); });
+  var sidesEl=document.getElementById('sides');
+  ['Mainly destroyers','Mainly connectors'].forEach(function(s){
+    var b=document.createElement('button'); b.className='choice'; b.textContent=s;
+    b.addEventListener('click', function(){
+      side=s; Array.prototype.forEach.call(sidesEl.children,function(x){x.classList.toggle('sel',x===b);});
+      var text=function(col){ return pick[col].map(function(d){ return 'Day '+d+': '+LEDGER[d-1][col]; }).join('<br>'); };
+      document.getElementById('mypicks').innerHTML='<b>Your side:</b> '+s+'<br><br><b>Your heaviest destruction lines</b><br>'+text('d')+'<br><br><b>Your heaviest connection lines</b><br>'+text('c');
+      show('debate');
+    });
+    sidesEl.appendChild(b);
+  });
+  document.getElementById('toVerdict').addEventListener('click', function(){ show('verdict'); });
+  var vt=document.getElementById('vtext');
+  vt.addEventListener('input', function(){
+    var n=(vt.value.match(/[^.!?]+[.!?]+/g)||[]).filter(function(s){return s.trim().split(/\s+/).length>=3;}).length;
+    document.getElementById('vcount').textContent=n+' sentence'+(n===1?'':'s')+(n<5?' (aim for 5)':'');
+    document.getElementById('seal').disabled = n<5;
+  });
+  document.getElementById('seal').addEventListener('click', function(){
+    var line=function(col){ return pick[col].map(function(d){ return 'Day '+d; }).join(', '); };
+    document.getElementById('out').value='One Road M08 capstone\nSide: '+side+'\nHeaviest destruction lines: '+line('d')+'\nHeaviest connection lines: '+line('c')+'\nVerdict: '+vt.value.trim();
+    saveLedger('oneroad.M08', {side:side, pick:pick, verdict:vt.value.trim()});
+    this.disabled=true; show('after');
+  });
+
+  // tap-to-continue reading
+  var parts = Array.prototype.slice.call(document.querySelectorAll('.part'));
+  var shown = 1, nextBtn = document.getElementById('next');
+  function revealNextPart(){
+    if (shown < parts.length){
+      parts[shown].classList.remove('hidden');
+      parts[shown].scrollIntoView({behavior:'smooth', block:'start'});
+      shown++;
+      if (shown === parts.length) nextBtn.textContent = NEXT_LAST_LABEL;
+    } else { onReadingDone(); }
+  }
+  nextBtn.addEventListener('click', revealNextPart);
+  if (/[?&]show=all/.test(location.search)){
+    parts.forEach(function(p){ p.classList.remove('hidden'); }); shown = parts.length; nextBtn.textContent = NEXT_LAST_LABEL;
+  }
+
+
+  document.getElementById('copy').addEventListener('click', function(){
+    var t = document.getElementById('out');
+    function done(){ document.getElementById('copied').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
+    } else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
+  });
+  function show(id){ var el=document.getElementById(id); el.classList.remove('hidden'); setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 250); }
+  function saveLedger(key, obj){ try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {} }
+
+
+})();
+</script>
+</body>
+</html>
