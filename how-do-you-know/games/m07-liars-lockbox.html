@@ -209,6 +209,12 @@
   .hk-chal:disabled{opacity:.85;cursor:default;border-style:solid}
   .hk-chals{margin:10px 0;padding:10px 12px;border-radius:10px;background:#efedff;border:1.5px solid #8e7bb0;font:400 13.5px/1.45 Poppins,sans-serif;color:#2b2117}
   .hk-chals ul{margin:6px 0 6px 18px;padding:0}
+  .hk-back{position:relative;margin:0 0 12px;padding:12px 64px 12px 14px;border-radius:12px;background:#0d1b3d;color:#f6ecd6;border:1.5px solid #c99a2e;font:400 14px/1.45 Poppins,sans-serif}
+  .hk-back b{color:#fff}
+  .hk-back-code{display:inline-block;padding:1px 8px;border-radius:6px;background:#f7d774;color:#0d1b3d;font-weight:700;letter-spacing:.06em}
+  .hk-back-st{color:#f7d774;letter-spacing:1px;margin-left:4px}
+  .hk-back-sub{font-size:12.5px;color:#d9dff0;margin-top:3px}
+  .hk-back-x{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:6px;border:1px solid #c99a2e;background:transparent;color:#f6ecd6;font:500 12px Poppins,sans-serif;cursor:pointer}
   @keyframes hkpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes hkstar{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}
   @media (max-width:420px){.hk-shelf{gap:4px;padding:8px}.hk-name{font-size:19px}.hk-prize{width:60px;height:60px}}
@@ -240,7 +246,8 @@
    HDYK.miss(lock, {q, opts, a, why})  -> remember a missed multiple-choice item for the Vault
    HDYK.resetMisses(lock)         -> call when a new playthrough starts
    HDYK.misses(lock)              -> array of remembered misses for that lock
-   HDYK.end(el, {lock, right, total})  -> stars + key shelf on the end screen; marks the lock earned
+   HDYK.end(el, {lock, right, total})  -> stars + key shelf on the end screen; marks the lock earned; saves the code word
+   Welcome back: if this game was finished before in this browser, a banner on the first screen shows the saved code word.
    Browser storage is optional: everything works (with a simpler shelf) if it is blocked. */
 (function(){
   const KEYS=[
@@ -263,6 +270,7 @@
     mirror:(c,d)=>`<ellipse cx="20" cy="16" rx="10" ry="12" fill="${c}" stroke="${d}" stroke-width="2.2"/><path d="M15 11c2-3 5-4 7-3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 28v8M15 36h10" stroke="${d}" stroke-width="3" stroke-linecap="round"/>`,
     star:(c,d)=>`<path d="M14 4l2.6 5.4 5.9.8-4.3 4.1 1 5.8L14 17.4 8.8 20.1l1-5.8L5.5 10.2l5.9-.8z" fill="${c}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/><path d="M19 21h16v4M30 21v4" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="11" r="2" fill="#0d1b3d"/>`
   };
+  let DONE_KEY='hdyk-done'; try{ DONE_KEY='hdyk-done:'+location.pathname.split('/').pop(); }catch(e){}
   function store(){ try{ const s=window.localStorage; s.setItem('hdyk-t','1'); s.removeItem('hdyk-t'); return s; }catch(e){ return null; } }
   function get(k,def){ const s=store(); if(!s) return def; try{ const v=JSON.parse(s.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
   function put(k,v){ const s=store(); if(!s) return; try{ s.setItem(k,JSON.stringify(v)); }catch(e){} }
@@ -310,10 +318,23 @@
     const msg= stars===3 ? 'Polished to a shine.' : stars===2 ? 'Key earned. Stars are a bonus; replay for three only if you want to.' : 'Key earned! Stars are a bonus. Replay only if you want a shinier one.';
     const ch=(chal[lock]||[]);
     const chHtml= ch.length ? '<div class="hk-chals"><b>You challenged '+ch.length+(ch.length>1?' answers':' answer')+':</b><ul>'+ch.map(x=>'<li>'+String(x).replace(/</g,'&lt;')+'</li>').join('')+'</ul>Tell Rocky why you disagree. Arguing with an answer key, with reasons, is real philosophy.</div>' : '';
+    setTimeout(()=>{ const c=document.getElementById('code'); const code=c?c.textContent.trim():''; if(code) put(DONE_KEY,{code:code,stars:stars,name:k.n,at:Date.now()}); },0);
     el.innerHTML='<div class="hk-earn"><div class="hk-prize">'+H.icon(lock-1,64)+'</div><div><div class="hk-name">You earned the '+k.n+'</div><div class="hk-stars" aria-label="'+stars+' of 3 stars">'+starHtml+'</div><div class="hk-msg">'+msg+'</div></div></div>'+
       '<div class="hk-shelf-lab">Your keyring</div><div class="hk-shelf">'+shelf+'</div>'+chHtml;
     return stars;
   };
+  // Welcome back: games reset when reopened, so show the saved code word from a finished playthrough.
+  function showBack(){
+    const d=get(DONE_KEY,null); if(!d||!d.code) return;
+    const first=document.querySelector('section'); if(!first||!first.parentNode) return;
+    let when=''; try{ when=new Date(d.at).toLocaleDateString(undefined,{month:'short',day:'numeric'}); }catch(e){}
+    const st='★'.repeat(d.stars||0)+'☆'.repeat(3-(d.stars||0));
+    const b=document.createElement('div'); b.className='hk-back'; b.setAttribute('role','status');
+    b.innerHTML='<div><b>Welcome back.</b> You already finished this game'+(when?' ('+when+')':'')+'. Your code word: <span class="hk-back-code">'+String(d.code).replace(/</g,'&lt;')+'</span> <span class="hk-back-st" aria-label="'+(d.stars||0)+' of 3 stars">'+st+'</span></div><div class="hk-back-sub">Type it to Rocky to keep going, or play again below.</div><button type="button" class="hk-back-x" aria-label="Hide this note">Hide</button>';
+    b.querySelector('button').onclick=()=>b.remove();
+    first.parentNode.insertBefore(b,first);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',showBack); else setTimeout(showBack,0);
   window.HDYK=H;
 })();
 </script>
