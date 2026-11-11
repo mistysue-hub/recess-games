@@ -146,9 +146,33 @@ Your rival holds a hidden <b>middle</b> card: your <b>HIGH beats your rival's ca
   <p class="note" id="status"></p>
 </div>
 <script>
-function copyIt(){var t=el("out"),s=el("status");t.select();t.setSelectionRange(0,999);var ok=false;
-function fallback(){try{ok=document.execCommand("copy")}catch(e){}s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky."}
-try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);return}}catch(e){}fallback()}
+// Returns a Promise<boolean>: true only if the text really reached the clipboard.
+function rkCopy(text, box){
+  return new Promise(function(done){
+    function legacy(){
+      var el = box, tmp = null, wasHidden;
+      if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
+      el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
+      var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+      if (tmp) tmp.remove(); else el.hidden = wasHidden;
+      done(ok);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
+        return;
+      }
+    } catch (e) {}
+    legacy();
+  });
+}
+function copyIt(){
+  var t=el("out"),s=el("status");
+  rkCopy(t.value,t).then(function(ok){
+    if(ok){s.textContent="Copied! Now paste it to Rocky.";}
+    else{s.textContent="Copy didn't work here. Select the text in the box, copy it, then paste it to Rocky in your chat.";t.focus();t.select();t.setSelectionRange(0,999);}
+  });
+}
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 
@@ -296,9 +320,11 @@ setup();
   var ov=document.createElement("div");ov.id="mrOv";document.body.appendChild(ov);
   function items(){var s=ls(),a=[],i,k;if(!s)return a;try{for(i=0;i<s.length;i++){k=s.key(i);if(k&&k.indexOf("gnres::"+part+"-")===0){var o=JSON.parse(s.getItem(k));a.push({k:k,v:o.v,t:o.t})}}}catch(e){}
     a.sort(function(x,y){var m=function(z){var r=z.v.match(/-M0?(\d)/);return r?+r[1]:9};return m(x)-m(y)||x.t-y.t});return a}
-  function copy(txt,btn){function ok(){var o=btn.textContent;btn.textContent="Copied!";setTimeout(function(){btn.textContent=o},1500)}
-    function fb(){var t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){btn.textContent="Select the box and copy"}document.body.removeChild(t)}
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb)}else fb()}
+  function copy(txt,btn,box){var o=btn.getAttribute("data-o");if(o===null){o=btn.textContent;btn.setAttribute("data-o",o)}
+    rkCopy(txt,box).then(function(ok){
+      if(ok){btn.textContent="Copied!"}
+      else{btn.textContent="Copy didn't work here. Select the box and copy it.";try{box.focus();box.select()}catch(e){}}
+      setTimeout(function(){btn.textContent=o},ok?1500:6000)})}
   function render(){var it=items(),h='<button type="button" id="mrX">\u25C0 BACK TO GO DEEPER</button><h2>My results for Rocky</h2>';
     if(!it.length)h+='<p>No saved results on this device yet. Go back to your game page, finish it, and tap COPY MY RESULTS FOR ROCKY.</p>';
     else h+='<p class="mrNote">Haven\u2019t pasted these to Rocky yet? Copy a box and paste it into your chat with Rocky.</p>';
@@ -306,7 +332,7 @@ setup();
     h+='<p><a class="mrA" href="'+part+'-m08-'+({gn1:"strategy-gauntlet",gn2:"grandmaster-gauntlet",gn3:"hive-mind-gauntlet"})[part]+'.html" target="_blank" rel="noopener">OPEN THE BOSS GAME PAGE</a></p>';
     ov.innerHTML=h;ov.scrollTop=0;
     document.getElementById("mrX").onclick=function(){ov.style.display="none";document.documentElement.style.overflow=""};
-    Array.prototype.forEach.call(ov.querySelectorAll("button[data-j]"),function(bt){bt.onclick=function(){copy(it[+bt.getAttribute("data-j")].v,bt)}})}
+    Array.prototype.forEach.call(ov.querySelectorAll("button[data-j]"),function(bt){bt.onclick=function(){var jj=+bt.getAttribute("data-j");copy(it[jj].v,bt,document.getElementById("mrT"+jj))}})}
   b.addEventListener("click",function(){render();ov.style.display="block";document.documentElement.style.overflow="hidden"});
 })();
 </script>

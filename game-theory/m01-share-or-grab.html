@@ -203,21 +203,32 @@ function finish(){
   el("out").value="GT-M01 | my moves: "+mine.join(", ")+" | partner moves: "+theirs.join(", ")+" | my total: "+ms+" | team total: "+ts+" | my grabs: "+grabs+" | partner grabs: "+pGrabs;
   show("final",true);
 }
+// Returns a Promise<boolean>: true only if the text really reached the clipboard.
+function rkCopy(text, box){
+  return new Promise(function(done){
+    function legacy(){
+      var el = box, tmp = null, wasHidden;
+      if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
+      el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
+      var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+      if (tmp) tmp.remove(); else el.hidden = wasHidden;
+      done(ok);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
+        return;
+      }
+    } catch (e) {}
+    legacy();
+  });
+}
 function copyIt(){
   var t=el("out"),s=el("status");
-  t.select();t.setSelectionRange(0,999);
-  var ok=false;
-  function fallback(){
-    try{ok=document.execCommand("copy")}catch(e){}
-    s.textContent=ok?"Copied! Now paste it to Rocky.":"Tap the box, select all, copy, then paste it to Rocky.";
-  }
-  try{
-    if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(t.value).then(function(){s.textContent="Copied! Now paste it to Rocky."},fallback);
-      return;
-    }
-  }catch(e){}
-  fallback();
+  rkCopy(t.value,t).then(function(ok){
+    if(ok){s.textContent="Copied! Now paste it to Rocky.";}
+    else{s.textContent="Copy didn't work here. Select the text in the box, copy it, then paste it to Rocky in your chat.";t.focus();t.select();t.setSelectionRange(0,999);}
+  });
 }
 setup();
 </script>
