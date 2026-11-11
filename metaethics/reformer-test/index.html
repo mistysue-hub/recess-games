@@ -138,10 +138,16 @@ const ROUNDS=[
   why:"It's a fact claim about what people believe. It doesn't say who, if anyone, is right. That bigger claim is moral relativism.",views:null}
 ];
 const FOLK=[
- {who:"A classmate you know well",line:"thinks breaking a promise just to go to a party is fine."},
- {who:"Someone from a very different culture far away",line:"thinks breaking a promise just to go to a party is fine."},
- {who:"A visitor from another planet, with a totally different way of life",line:"thinks breaking a promise just to go to a party is fine."}
+ {who:"A classmate you know well",line:"thinks breaking a promise just to go to a party is fine.",
+  nudge:"Keep this answer in mind. The next person grew up far away, with different customs."},
+ {who:"Someone from a very different culture far away",line:"thinks breaking a promise just to go to a party is fine.",
+  nudge:"Did the distance change your answer, or not? Either way, notice why."},
+ {who:"A visitor from another planet, with a totally different way of life",line:"thinks breaking a promise just to go to a party is fine.",
+  nudge:"Last one. Next you'll see your three answers side by side, and what researchers found."}
 ];
+const FREAD=["That's the relativist reading: each of you can be right by your own standards.",
+ "That's the realist reading: there's one truth here, so someone has it wrong.",
+ "Fair. Many people feel pulled both ways on this."];
 const FOPTS=["We could both be right","One of us must be mistaken","Not sure"];
 function intro(){
  el(`<h2>Test relativism on real cases</h2><p>Part 1: four cases and a check question. For each, predict what <b>relativism</b> says, then see how a realist and a relativist read it.</p><p>Part 2: a quick test researchers have run on real people. No right answers there.</p><div class="btns one"><button class="primary" onclick="round(0)">Start</button></div>`);
@@ -158,6 +164,7 @@ function folkIntro(){
 function folkQ(i){
  const f=FOLK[i];
  choose({prog:`Part 2 · ${i+1} of ${FOLK.length}`,head:`<div class="claim"><b>${esc(f.who)}</b> ${esc(f.line)}</div>`,q:"Could you both be right?",opts:FOPTS,
+  reveal:j=>`${FREAD[j]} ${esc(f.nudge)}`,next:i<FOLK.length-1?'Next person':'See what researchers found',
   cb:j=>{folk.push(FOPTS[j]);i<FOLK.length-1?folkQ(i+1):folkReveal();}});
 }
 function folkReveal(){
