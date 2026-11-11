@@ -178,7 +178,7 @@ input:focus,textarea:focus{outline:3px solid #b9d0ee;background:#fff}
 <h3>💬 Your new answer to The Question</h3>
 <div class="fn"><div class="fnt">✏️ Your Field Notes: The Question</div><div class="example"><p>Next time someone asks what you're doing after graduation, you can say:</p>
 <p><em>"I'm comparing programs on how well I'd actually learn there, not just how famous they are."</em></p>
-<p>That answer is so wise, someone may ask to borrow it.</p></div><label class="q">Your answer, in your own words:<textarea name="theQuestion" rows="1" placeholder="(type your answer here)"></textarea></label></div></section><section class="stop savebox"><span class="pin"><b>✓</b></span><h2>💾 Save your Field Notes</h2><p class="whoami" id="whoami" hidden>👋 Saving as <b></b> (remembered on this device). <button type="button" id="notme">Not you?</button></p><div class="who"><div><label for="studentName">🧑 Your name</label><input type="text" id="studentName" name="studentName" required placeholder="first and last name"></div><div><label for="studentEmail">✉️ Email for your copy <span class="hint">(ask a parent first)</span></label><input type="email" id="studentEmail" name="studentEmail" placeholder="you@example.com"></div></div><div class="stamp">✍️ These are <strong>your</strong> words. Nobody grades spelling here.<br>👀 When you save, your Field Notes go to your parents and your Recess guides so they can help you plan, and a PDF copy comes to your email.</div><button class="save" type="button" id="saveAndCopy">💾 Save &amp; Copy for Rocky</button><div class="status" id="status" role="status"></div><div class="rockybox" id="rockybox" hidden><div class="fnt">🤖 Your notes for Rocky</div><p class="rb">Your notes have been copied. Paste them into your Rocky chat right away — if anything else gets copied first, your paste won't match what's below. Check it, and if it doesn't match, tap Copy again.</p><textarea id="rockytext" readonly rows="6" hidden aria-label="Your notes for Rocky"></textarea><button class="printbtn" type="button" id="recopy" style="display:block;margin-top:8px">📋 Copy again</button></div><button class="printbtn" type="button" onclick="window.print()">🖨️ Print or save as PDF</button><button class="printbtn" type="button" id="fresh2">🧹 Done! Clear this page for the next person</button></section><footer>🏁 End of this stretch of trail. Save your Field Notes, copy them for Rocky, then paste them into your Rocky chat!</footer></form><script>
+<p>That answer is so wise, someone may ask to borrow it.</p></div><label class="q">Your answer, in your own words:<textarea name="theQuestion" rows="1" placeholder="(type your answer here)"></textarea></label></div></section><section class="stop savebox"><span class="pin"><b>✓</b></span><h2>💾 Save your Field Notes</h2><p class="whoami" id="whoami" hidden>👋 Saving as <b></b> (remembered on this device). <button type="button" id="notme">Not you?</button></p><div class="who"><div><label for="studentName">🧑 Your name</label><input type="text" id="studentName" name="studentName" required placeholder="first and last name"></div><div><label for="studentEmail">✉️ Email for your copy <span class="hint">(ask a parent first)</span></label><input type="email" id="studentEmail" name="studentEmail" placeholder="you@example.com"></div></div><div class="stamp">✍️ These are <strong>your</strong> words. Nobody grades spelling here.<br>👀 When you save, your Field Notes go to your parents and your Recess guides so they can help you plan, and a PDF copy comes to your email.</div><button class="save" type="button" id="saveAndCopy">💾 Save &amp; Copy for Rocky</button><div class="status" id="status" role="status"></div><div class="rockybox" id="rockybox" hidden><div class="fnt">🤖 Your notes for Rocky</div><p id="rbmsg" class="rb">Paste your notes into your Rocky chat right away — if anything else gets copied first, your paste won't match what's below. Check it, and if it doesn't match, tap Copy again.</p><textarea id="rockytext" readonly rows="6" hidden aria-label="Your notes for Rocky"></textarea><button class="printbtn" type="button" id="recopy" style="display:block;margin-top:8px">📋 Copy again</button></div><button class="printbtn" type="button" onclick="window.print()">🖨️ Print or save as PDF</button><button class="printbtn" type="button" id="fresh2">🧹 Done! Clear this page for the next person</button></section><footer>🏁 End of this stretch of trail. Save your Field Notes, copy them for Rocky, then paste them into your Rocky chat!</footer></form><script>
 /* Paste the Google Apps Script web app URL here (ends in /exec). */
 var SAVE_URL = "https://script.google.com/macros/s/AKfycbxoX4m3tOko9b-drJp3VP6j2dnKzN66nHuEERJzhI5D3FWf3Zhe-hItQvAZf-yfDmJb/exec";
 var MODULE = "M16";
@@ -290,20 +290,19 @@ var MODULE = "M16";
   if (saveAndCopyBtn) {
     saveAndCopyBtn.addEventListener("click", function(ev){
       ev.preventDefault();
+      if (window.rkCopyNotes) { window.rkCopyNotes(); } // copy FIRST, right inside the click; the save below reports separately
       var d = data(); d.module = MODULE; d.savedAt = new Date().toISOString();
-      if (!d.studentName) { st.className = "status err"; st.textContent = "Please add your name first."; n.focus(); return; }
+      if (!d.studentName) { st.className = "status err"; st.textContent = "Please add your name first. Saving needs your name."; n.focus(); return; }
       if (SAVE_URL.indexOf("http") !== 0) { st.className = "status err"; st.textContent = "Not connected yet (preview mode). Your answers are kept on this device."; return; }
       var b = saveAndCopyBtn; b.disabled = true; st.className = "status"; st.textContent = "Saving...";
       fetch(SAVE_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(d) })
         .then(function(){
           st.className = "status ok";
-          st.textContent = "✅ Saved and copied! Paste into your Rocky chat now.";
+          st.textContent = "✅ Saved.";
           f.classList.add("saved");
           remember(d.studentName, d.studentEmail);
           me = { name: d.studentName.trim(), email: (d.studentEmail || "").trim() };
           del(dkey(d.studentName));
-          var rockyBox = document.getElementById("rockybox");
-          if (rockyBox) rockyBox.hidden = false;
         })
         .catch(function(){ st.className = "status err"; st.textContent = "Hmm, that didn't send. Check your internet and try again. Your answers are still here."; })
         .then(function(){ b.disabled = false; });
@@ -322,20 +321,42 @@ var MODULE = "M16";
     return t+"Rocky, please keep these for my plan.";
   }
 
+  function rkCopy(text, box){
+    return new Promise(function(done){
+      function legacy(){
+        var el = box, tmp = null, wasHidden;
+        if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
+        el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
+        var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+        if (tmp) tmp.remove(); else el.hidden = wasHidden;
+        done(ok);
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
+          return;
+        }
+      } catch (e) {}
+      legacy();
+    });
+  }
+  var rbmsg=document.getElementById("rbmsg"), rbox=document.getElementById("rockybox");
+  function rbSay(m){ if(rbmsg) rbmsg.textContent=m; }
   function copyRockyNotes(){
     var t=buildRockyNotes();
     ta.value=t; ta.hidden=false;
-    function ok(){ st.className="status ok"; st.textContent="✅ Saved and copied! Now paste it into your Rocky chat (Ctrl+V, or long-press → Paste) and send."; }
-    function manual(){ ta.focus(); ta.select(); st.className="status"; st.textContent="Select all the text below, copy it, then paste it into your Rocky chat."; }
-    if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(ok,function(){ try{ document.execCommand("copy")?ok():manual(); }catch(x){ manual(); } }); ta.select(); }
-    else { ta.select(); try{ document.execCommand("copy")?ok():manual(); }catch(x){ manual(); } }
+    if(rbox) rbox.hidden=false;
+    rbSay("Copying...");
+    return rkCopy(t,ta).then(function(ok){
+      if(ok){ rbSay("✅ Copied! Now paste it into your Rocky chat right away (Ctrl+V, or long-press → Paste) and send. If anything else gets copied first, your paste won't match what's below. Check it, and if it doesn't match, tap Copy again."); }
+      else { ta.focus(); ta.select(); rbSay("Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky."); }
+      return ok;
+    });
   }
-
-  var btn=document.getElementById("saveAndCopy");
-  if(btn) btn.addEventListener("click",function(){ setTimeout(copyRockyNotes,100); });
+  window.rkCopyNotes=copyRockyNotes;
   var recopyBtn=document.getElementById("recopy");
-  if(recopyBtn) recopyBtn.addEventListener("click",copyRockyNotes);
+  if(recopyBtn) recopyBtn.addEventListener("click",function(ev){ ev.preventDefault(); copyRockyNotes(); });
 
-  ["fresh","fresh2"].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener("click",function(){ ta.value=""; ta.hidden=true; st.textContent=""; }); });
+  ["fresh","fresh2"].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener("click",function(){ ta.value=""; ta.hidden=true; st.textContent=""; if(rbox) rbox.hidden=true; rbSay(""); }); });
 })();
 </script></body></html>
