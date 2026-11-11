@@ -658,6 +658,26 @@ function onNetData(d) {
     if (confirm('Your friend offers a draw. Accept?')) { online.conn.send({ t: 'drawaccept' }); over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
   } else if (d.t === 'drawaccept') { over = { kind: 'draw', msg: 'Draw by agreement.' }; render(); }
 }
+// Returns a Promise<boolean>: true only if the text really reached the clipboard.
+function rkCopy(text, box){
+  return new Promise(function(done){
+    function legacy(){
+      var el = box, tmp = null, wasHidden;
+      if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
+      el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
+      var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+      if (tmp) tmp.remove(); else el.hidden = wasHidden;
+      done(ok);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
+        return;
+      }
+    } catch (e) {}
+    legacy();
+  });
+}
 $('copyBtn').onclick = async () => {
   if (!online || !online.code) return;
   const url = location.origin + location.pathname + '?join=' + online.code;
@@ -665,8 +685,9 @@ $('copyBtn').onclick = async () => {
   try {
     if (navigator.share) { await navigator.share({ title: 'Don’t Capture! Chess', text, url }); setNet('Invite shared. Waiting for your friend…'); return; }
   } catch (e) { if (e && e.name === 'AbortError') return; }
-  try { await navigator.clipboard.writeText(text); setNet('Invite link copied! Paste it into a text or message to your friend.'); }
-  catch (e) { setNet('Copy this link and send it: ' + url); }
+  const ok = await rkCopy(text);
+  if (ok) setNet('Invite link copied! Paste it into a text or message to your friend.');
+  else setNet('Copy didn\'t work here. Select this link, copy it, and send it to your friend: ' + url);
 };
 const RULE_IDS = { pawn: 'rulePawn', bishop: 'ruleBishop', rook: 'ruleRook' };
 function syncRuleUI() {
@@ -748,12 +769,12 @@ function showResult() {
   const copyText = async () => {
     try { await navigator.clipboard.writeText(line); return true; } catch (e) {}
     ta.focus(); ta.select(); ta.setSelectionRange(0, line.length);
-    try { return document.execCommand('copy'); } catch (e) { return false; }
+    try { return document.execCommand('copy') === true; } catch (e) { return false; }
   };
   $('copyResult').onclick = async () => {
     const ok = await copyText();
     if (ok) { $('copyResult').textContent = 'Copied!'; msg('Now paste it into the chat with Rocky.'); }
-    else { ta.focus(); ta.select(); msg('Press and hold the box above, choose Copy, then paste it into the chat with Rocky.'); }
+    else { $('copyResult').textContent = 'Copy my result for Rocky'; ta.focus(); ta.select(); msg("Copy didn't work here. Select the text in the box above, copy it, then paste it into your chat with Rocky."); }
   };
 }
 </script>

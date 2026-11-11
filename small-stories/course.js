@@ -74,7 +74,7 @@ window.SSBM.copyText = async function (text, statusEl) {
       const t = document.createElement("textarea");
       t.value = text; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;top:0;left:0;opacity:0";
       document.body.appendChild(t); t.focus(); t.select(); t.setSelectionRange(0, text.length);
-      ok = document.execCommand("copy"); t.remove();
+      ok = document.execCommand("copy") === true; t.remove();
     } catch (e) {}
   }
   let box = document.getElementById("ssbm-copybox");
@@ -87,8 +87,8 @@ window.SSBM.copyText = async function (text, statusEl) {
   const ta = document.getElementById("ssbm-copyta"); ta.value = text;
   document.getElementById("ssbm-copymsg").textContent = ok
     ? "Copied. If pasting into Rocky shows nothing, copy from this box instead:"
-    : "Your browser blocked copying. Click in the box, press Ctrl+A then Ctrl+C (Cmd+A, Cmd+C on a Mac), then paste to Rocky:";
+    : "Copy didn't work here. Select the text in the box, copy it (Ctrl+C, or Cmd+C on a Mac), then paste it into your chat with Rocky:";
   box.style.display = "block"; ta.focus(); ta.select();
-  if (statusEl) statusEl.textContent = ok ? "Copied. Now paste it to Rocky." : "Copy it from the box below.";
+  if (statusEl) statusEl.textContent = ok ? "Copied. Now paste it to Rocky." : "Copy didn't work here. Copy the text from the box below.";
   return ok;
 };

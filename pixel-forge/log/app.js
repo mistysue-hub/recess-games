@@ -45,8 +45,18 @@
   document.querySelectorAll(".copy").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var code = btn.parentNode.querySelector("code").textContent;
-      var done = function () { btn.textContent = "copied"; btn.classList.add("ok"); setTimeout(function () { btn.textContent = "copy"; btn.classList.remove("ok"); }, 1400); };
-      if (navigator.clipboard) navigator.clipboard.writeText(code).then(done, done); else done();
+      var flash = function (label, cls) { btn.textContent = label; if (cls) btn.classList.add(cls); setTimeout(function () { btn.textContent = "copy"; btn.classList.remove("ok"); btn.classList.remove("fail"); }, 1800); };
+      var legacy = function () {
+        var ok = false, t = document.createElement("textarea");
+        t.value = code; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+        document.body.appendChild(t); t.focus(); t.select();
+        try { ok = document.execCommand("copy") === true; } catch (e) { ok = false; }
+        t.remove();
+        if (ok) flash("copied", "ok"); else flash("copy failed: select the code and copy it", "fail");
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(function () { flash("copied", "ok"); }, legacy);
+      } else legacy();
     });
   });
 

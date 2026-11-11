@@ -435,14 +435,28 @@ setup.reportText = function () {
 };
 setup.copyReport = function () {
   var text = setup.reportText();
-  var fallback = function () { try {
-    var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "absolute"; ta.style.left = "-9999px";
-    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-  } catch (e) {} };
+  var msg = function (ok) {
+    State.variables.copied = ok;
+    var m = document.getElementById("copymsg"); if (!m) { return; }
+    m.innerHTML = "";
+    var p = document.createElement("p"); p.className = "note"; p.setAttribute("role", "status");
+    if (ok) { p.textContent = "Copied. You can paste it into your chat with Rocky."; m.appendChild(p); return; }
+    p.textContent = "Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky.";
+    var box = document.createElement("textarea"); box.readOnly = true; box.rows = 10; box.style.width = "100%"; box.setAttribute("aria-label", "Your report for Rocky"); box.value = text;
+    m.appendChild(p); m.appendChild(box); box.focus(); box.select();
+  };
+  var legacy = function () {
+    var ok = false;
+    try {
+      var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "absolute"; ta.style.left = "-9999px";
+      document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy") === true; document.body.removeChild(ta);
+    } catch (e) { ok = false; }
+    msg(ok);
+  };
   try {
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).catch(fallback); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) { navigator.clipboard.writeText(text).then(function () { msg(true); }, legacy); return; }
   } catch (e) {}
-  fallback();
+  legacy();
 };
 /* twine-user-script #3: "JuiceScript" */
 /* Cold Case Academy polish layer, shared by every game.
@@ -997,7 +1011,7 @@ setup.caseArtPassages = ["Facts","Theory","For","Against","Confidence"];</script
 &lt;p&gt;&lt;&lt;print _th.text&gt;&gt;. How sure I am: &lt;b&gt;&lt;&lt;print setup.confLabel[$conf]&gt;&gt;&lt;/b&gt;.&lt;/p&gt;
 &lt;p class=&quot;report-sign&quot;&gt;Signed, Trainee Detective&lt;/p&gt;
 &lt;/div&gt;
-&lt;div class=&quot;actions secondary&quot;&gt;&lt;&lt;link &quot;Copy my report&quot;&gt;&gt;&lt;&lt;run setup.copyReport()&gt;&gt;&lt;&lt;set $copied to true&gt;&gt;&lt;&lt;replace &quot;#copymsg&quot;&gt;&gt;&lt;p class=&quot;note&quot; role=&quot;status&quot;&gt;Copied. You can paste it into your chat with Rocky.&lt;/p&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt;[[Change something|Facts]]&lt;/div&gt;
+&lt;div class=&quot;actions secondary&quot;&gt;&lt;&lt;link &quot;Copy my report&quot;&gt;&gt;&lt;&lt;run setup.copyReport()&gt;&gt;&lt;&lt;/link&gt;&gt;[[Change something|Facts]]&lt;/div&gt;
 &lt;div id=&quot;copymsg&quot;&gt;&lt;/div&gt;
 &lt;div class=&quot;actions&quot;&gt;[[Hand in my report|Verdict]]&lt;/div&gt;</tw-passagedata><tw-passagedata pid="23" name="Verdict" tags="nobar" position="350,350" size="100,100">&lt;&lt;set _d to setup.deck()&gt;&gt;
 &lt;&lt;set _factOk to $facts.filter(function(id){ return setup.card(id).type === &quot;fact&quot;; }).length&gt;&gt;

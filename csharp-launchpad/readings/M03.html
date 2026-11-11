@@ -65,10 +65,10 @@ Console.WriteLine($&quot;Average: {average}&quot;);">⧉ Copy</button></span></d
 document.addEventListener("click", function (e) {
   var b = e.target.closest(".cp"); if (!b) return;
   var t = b.getAttribute("data-code");
-  function done(ok) { b.textContent = ok ? "✓ Copied" : "Select + copy"; b.classList.toggle("ok", ok); setTimeout(function(){ b.textContent = "⧉ Copy"; b.classList.remove("ok"); }, 1800); }
+  function done(ok) { b.textContent = ok ? "✓ Copied" : "Copy failed: select the code and copy it"; b.classList.toggle("ok", ok); setTimeout(function(){ b.textContent = "⧉ Copy"; b.classList.remove("ok"); }, 1800); }
   function fallback() {
     try { var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); done(ok); }
+      document.body.appendChild(ta); ta.select(); var ok = document.execCommand("copy") === true; document.body.removeChild(ta); done(ok); }
     catch (err) { done(false); }
   }
   try { if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(t).then(function(){ done(true); }, fallback); } else { fallback(); } }

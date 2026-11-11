@@ -247,7 +247,7 @@ The Final Report
 <p><<print _th.text>>. How sure I am: <b><<print setup.confLabel[$conf]>></b>.</p>
 <p class="report-sign">Signed, Trainee Detective</p>
 </div>
-<div class="actions secondary"><<link "Copy my report">><<run setup.copyReport()>><<set $copied to true>><<replace "#copymsg">><p class="note" role="status">Copied. You can paste it into your chat with Rocky.</p><</replace>><</link>>[[Change something|Facts]]</div>
+<div class="actions secondary"><<link "Copy my report">><<run setup.copyReport()>><</link>>[[Change something|Facts]]</div>
 <div id="copymsg"></div>
 <div class="actions">[[Hand in my report|Verdict]]</div>
 
@@ -307,14 +307,28 @@ setup.reportText = function () {
 };
 setup.copyReport = function () {
   var text = setup.reportText();
-  var fallback = function () { try {
-    var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "absolute"; ta.style.left = "-9999px";
-    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-  } catch (e) {} };
+  var msg = function (ok) {
+    State.variables.copied = ok;
+    var m = document.getElementById("copymsg"); if (!m) { return; }
+    m.innerHTML = "";
+    var p = document.createElement("p"); p.className = "note"; p.setAttribute("role", "status");
+    if (ok) { p.textContent = "Copied. You can paste it into your chat with Rocky."; m.appendChild(p); return; }
+    p.textContent = "Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky.";
+    var box = document.createElement("textarea"); box.readOnly = true; box.rows = 10; box.style.width = "100%"; box.setAttribute("aria-label", "Your report for Rocky"); box.value = text;
+    m.appendChild(p); m.appendChild(box); box.focus(); box.select();
+  };
+  var legacy = function () {
+    var ok = false;
+    try {
+      var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "absolute"; ta.style.left = "-9999px";
+      document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy") === true; document.body.removeChild(ta);
+    } catch (e) { ok = false; }
+    msg(ok);
+  };
   try {
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).catch(fallback); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) { navigator.clipboard.writeText(text).then(function () { msg(true); }, legacy); return; }
   } catch (e) {}
-  fallback();
+  legacy();
 };
 
 

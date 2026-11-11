@@ -1164,8 +1164,8 @@ function pollLines(){
 function report(key){ return "C2-M01 case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
   box.value=txt; box.hidden=false;
-  function done(ok){ stat.textContent= ok ? "Copied!" : "Select the text below and copy it."; }
-  function fallback(){ box.focus(); box.select(); var ok=false; try{ ok=document.execCommand("copy"); }catch(e){} done(ok); }
+  function done(ok){ stat.textContent= ok ? "Copied!" : "Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky."; }
+  function fallback(){ box.focus(); box.select(); var ok=false; try{ ok=document.execCommand("copy")===true; }catch(e){} done(ok); }
   try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(function(){done(true); box.focus(); box.select();}, fallback); return; } }catch(e){}
   fallback();
 }

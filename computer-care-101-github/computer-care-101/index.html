@@ -154,8 +154,8 @@ const STORY={"start": "Start", "startup": ["Init"], "header": ["Shift Bar"], "pa
     const miss=[...new Set(S[b.dataset.key]||[])];const tot=+b.dataset.total;
     const msg=b.dataset.msg.replace('{first}',String(Math.max(0,tot-miss.length))).replace('{missed}',miss.length?miss.join(', '):(b.dataset.none||'nobody'));
     const wrap=b.parentNode,box=wrap.querySelector('.rocky-box'),ok=wrap.querySelector('.rocky-ok');box.hidden=false;box.textContent=msg;
-    const done=y=>{ok.textContent=y?'✅ Copied! Now paste it into your chat with Rocky.':'Copy the words above, then paste them into your chat with Rocky.';};
-    const fallback=()=>{try{const r=document.createRange();r.selectNodeContents(box);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);done(document.execCommand('copy'));}catch(_){done(false);}};
+    const done=y=>{ok.textContent=y?'✅ Copied! Now paste it into your chat with Rocky.':"Copy didn't work here. Select the words above, copy them, then paste them into your chat with Rocky.";};
+    const fallback=()=>{try{const r=document.createRange();r.selectNodeContents(box);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);done(document.execCommand('copy')===true);}catch(_){done(false);}};
     try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(()=>done(true),fallback);else fallback();}catch(_){fallback();}
   });
   out.addEventListener('keydown',e=>{const a=e.target.closest('tw-link');if(a&&(e.key==='Enter'||e.key===' ')){e.preventDefault();show(a.dataset.to,true);}});

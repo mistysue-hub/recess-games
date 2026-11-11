@@ -103,12 +103,39 @@ function showResults(text){
  document.getElementById('cp').onclick=()=>copyText(text);
  document.getElementById('again').onclick=()=>location.reload();
 }
+// Returns a Promise<boolean>: true only if the text really reached the clipboard.
+function rkCopy(text, box){
+  return new Promise(function(done){
+    function legacy(){
+      var el = box, tmp = null, wasHidden;
+      if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
+      el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
+      var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+      if (tmp) tmp.remove(); else el.hidden = wasHidden;
+      done(ok);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
+        return;
+      }
+    } catch (e) {}
+    legacy();
+  });
+}
+function rkManual(btn,text){
+ var m=document.getElementById('cpmanual');
+ if(!m){m=document.createElement('div');m.id='cpmanual';m.innerHTML='<p class="sub" style="margin-top:12px"></p><textarea readonly style="width:100%;height:140px;box-sizing:border-box"></textarea>';btn.parentNode.insertAdjacentElement('afterend',m);}
+ m.querySelector('p').textContent="Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky.";
+ var ta=m.querySelector('textarea');ta.value=text;ta.focus();ta.select();
+}
 function copyText(t){
  const b=document.getElementById('cp');
- let ok=false;const fin=()=>{ok=true;b.textContent='Copied! Now paste it to Rocky';};
- if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
+ rkCopy(t).then(function(ok){
+  if(ok){b.textContent='Copied! Now paste it to Rocky';}
+  else{b.textContent='Copy didn\'t work';rkManual(b,t);}
+ });
 }
-function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
 
 let score=0,log=[],folk=[];
 const ROUNDS=[
