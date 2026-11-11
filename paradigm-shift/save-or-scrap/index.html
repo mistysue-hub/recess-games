@@ -163,10 +163,25 @@
       '<p>Go back to Rocky and type <b>done</b>.</p><button class="btn" id="again">Play again</button>');
     document.getElementById('copy').onclick = function(){
       var c = document.getElementById('copied');
-      function ok(){ c.classList.remove('hidden'); }
-      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
-        try{ document.execCommand('copy'); ok(); }catch(e){ c.textContent='Copy didn\'t work here. Read the box to Rocky instead.'; ok(); } t.remove(); }
-      try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+      function rkCopy(text){
+        return new Promise(function(done){
+          function legacy(){
+            var tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0';
+            document.body.appendChild(tmp); tmp.value = text; tmp.focus(); tmp.select();
+            var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+            tmp.remove(); done(ok);
+          }
+          try { if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) { navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy); return; } } catch (e) {}
+          legacy();
+        });
+      }
+      rkCopy(text).then(function(ok){
+        var m = document.getElementById('manualcopy');
+        if (ok) { if (m) m.remove(); c.textContent = 'Copied! Paste it into your chat with Rocky.'; c.classList.remove('hidden'); return; }
+        c.textContent = 'Copy didn\'t work here. Select the text in the box, copy it, then paste it into your chat with Rocky.'; c.classList.remove('hidden');
+        if (!m) { m = document.createElement('textarea'); m.id = 'manualcopy'; m.readOnly = true; m.rows = 8; m.style.cssText = 'width:100%;box-sizing:border-box;margin:8px 0'; c.parentNode.insertBefore(m, c.nextSibling); }
+        m.value = text; m.focus(); m.select();
+      });
     };
     document.getElementById('again').onclick = function(){ picks = []; intro(); };
   }

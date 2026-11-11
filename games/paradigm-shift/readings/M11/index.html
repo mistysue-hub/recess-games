@@ -157,11 +157,24 @@
     });
     box.querySelector('#cp').addEventListener('click', function(){
       var text = 'Anomaly Log, module 11: ' + ta.value.trim();
-      function ok(){ st.textContent = 'Copied. Paste it to Rocky.'; }
-      function fallback(){ var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
-        try { document.execCommand('copy'); ok(); } catch(e) { st.textContent = 'Select your note and copy it.'; } t.remove(); }
+      function rkCopy(text){
+      return new Promise(function(done){
+        function legacy(){
+          var tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0';
+          document.body.appendChild(tmp); tmp.value = text; tmp.focus(); tmp.select();
+          var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+          tmp.remove(); done(ok);
+        }
+        try { if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) { navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy); return; } } catch (e) {}
+        legacy();
+      });
+      }
       if (!ta.value.trim()) { st.textContent = 'Write a note first, or tell Rocky "nothing this time."'; return; }
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback); else fallback();
+      rkCopy(text).then(function(ok){
+        if (ok) { st.textContent = 'Copied. Paste it to Rocky.'; return; }
+        st.textContent = 'Copy didn\'t work here. Select the text in the box, copy it, then paste it into your chat with Rocky.';
+        ta.focus(); ta.select();
+      });
     });
   })();
   // "Reveal:" answers stay hidden until the learner taps
