@@ -118,6 +118,8 @@ PAGE = r'''<!doctype html>
   .logbox textarea:focus-visible,.logbox button:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
   .logbox button{font:inherit;font-size:16px;padding:9px 14px;border-radius:6px;border:0;background:var(--red);color:#fff;cursor:pointer}
   .logbox .status{display:inline-block;margin-left:10px;font-size:15px;color:var(--pencil)}
+  .logbox .restored{margin:8px 0 0;padding:8px 12px;background:#fff4d1;border-left:3px solid #d39a1d;font-size:15px;color:var(--ink)}
+  .logbox .linklike{background:none;border:0;padding:0 0 0 4px;color:var(--pencil);text-decoration:underline;cursor:pointer;font:inherit}
   .logbox details{margin-top:12px} .logbox summary{cursor:pointer;font-size:16px;color:var(--pencil)}
   .logbox ol{margin:8px 0 0;padding-left:22px;font-size:16px} .logbox li{margin:6px 0}
   .logbox li b{font-family:"Special Elite",ui-monospace,monospace;font-weight:400;color:var(--red)}
@@ -174,14 +176,17 @@ PAGE = r'''<!doctype html>
     var box = document.createElement('section'); box.className = 'logbox';
     box.innerHTML = '<h3>Add to your log</h3>' +
       '<p>Jot what seemed too tidy, one-sided or left out in this module. ' + (store ? 'It stays on this device.' : 'This page can\'t save here, so copy it before you leave.') + '</p>' +
-      '<label for="lg" class="sr">Anomaly Log entry for module __N__</label><textarea id="lg" placeholder="Anomaly: ..."></textarea>' +
+      '<label for="lg" class="sr">Anomaly Log entry for module __N__</label><textarea id="lg" placeholder="Anomaly: ..." autocomplete="off"></textarea>' +
+      '<div id="restored" class="restored" hidden>Picked up from your last visit on this device. <button type="button" id="clr" class="linklike">Clear</button></div>' +
       '<button type="button" id="cp">Copy for Rocky</button><span class="status" id="st" role="status"></span>' +
       '<details id="past"><summary>Your log so far</summary><ol id="pl"></ol></details>';
     var anchor = document.querySelector('#body .anomaly') || document.querySelector('#body .stamp');
     anchor.parentNode.insertBefore(box, anchor.nextSibling);
     var ta = box.querySelector('#lg'), st = box.querySelector('#st');
-    if (store) { ta.value = store.getItem(KEY + N) || ''; }
-    ta.addEventListener('input', function(){ if (store) { try { store.setItem(KEY + N, ta.value); st.textContent = 'Saved'; } catch(e) {} } });
+    var rst = box.querySelector('#restored'), clr = box.querySelector('#clr');
+    if (store) { var saved = store.getItem(KEY + N) || ''; ta.value = saved; if (saved) rst.hidden = false; }
+    if (clr) clr.addEventListener('click', function(){ ta.value = ''; if (store) store.removeItem(KEY + N); rst.hidden = true; st.textContent = ''; list(); ta.focus(); });
+    ta.addEventListener('input', function(){ if (rst) rst.hidden = true; if (store) { try { store.setItem(KEY + N, ta.value); st.textContent = 'Saved'; } catch(e) {} } });
     function list(){
       var pl = box.querySelector('#pl'), n = 0; pl.innerHTML = '';
       for (var i = 1; i <= 12; i++) { var k = (i < 10 ? '0' : '') + i, v = store ? store.getItem(KEY + k) : '';
