@@ -40,7 +40,7 @@ Side View: Helen Longino, in *Science as Social Knowledge* (1990), relocates obj
 
 Look back over this module. Add anything that seemed too tidy, one-sided, left out, or out of place.
 
-Anomaly: The module frames 1965 as Kuhn versus Popper. The 1970 volume also contains papers by Lakatos, Feyerabend, Watkins, Toulmin and others, several of whom disagreed with both.
+Anomaly: The reading names Lakatos, Feyerabend, Watkins and Toulmin in one line of a complication paragraph, then drops them. "Kuhn vs. Popper" is still the title, but the 1970 volume had at least five voices, and several disagreed with both.
 
 ---
 *This reading was written for this course. No text was copied from Kuhn's book or any other source.*

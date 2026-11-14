@@ -36,7 +36,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, activity about 10).
 https://mistysue-hub.github.io/recess-games/paradigm-shift/map-the-thinkers/?level=core (or ?level=extended)
 Backup: https://raw.githack.com/mistysue-hub/recess-games/main/paradigm-shift/map-the-thinkers/index.html?level=core
 
-**Finish:** congratulate them on finishing the course, then say: "You're done — tap the button at the bottom to wrap up."
+**Finish:** congratulate them on finishing the course, then say: "You're done — tap Submit when you're ready."
 
 ## Resources and surfaces
 

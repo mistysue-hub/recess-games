@@ -26,7 +26,7 @@ Estimated time: 25 minutes (reading 6, talk 9, activity 10; Extended debate +10)
 
 **Hook (word for word):**
 
-> Quick vote before you read. Your experiment fails. Do you fix the experiment or ditch your idea? Fix or ditch? How sure are you, 0 to 100?
+> Quick vote first. Your experiment fails. Do you fix the experiment or ditch your idea? Fix or ditch? How sure are you, 0 to 100?
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M10/?level=core (or ?level=extended)
 
@@ -36,7 +36,7 @@ Estimated time: 25 minutes (reading 6, talk 9, activity 10; Extended debate +10)
 https://mistysue-hub.github.io/recess-games/paradigm-shift/theory-choice/?level=core (or ?level=extended)
 Backup: https://raw.githack.com/mistysue-hub/recess-games/main/paradigm-shift/theory-choice/index.html?level=core
 
-**Finish:** say "You're done for today — tap the button at the bottom to wrap up." Don't offer the next module.
+**Finish:** say "You're done for today — tap Submit when you're ready." Don't offer the next module.
 
 ## Resources and surfaces
 

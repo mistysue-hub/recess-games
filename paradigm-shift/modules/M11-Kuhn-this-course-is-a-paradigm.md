@@ -36,7 +36,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, activity about 10).
 https://mistysue-hub.github.io/recess-games/paradigm-shift/audit-the-course/?level=core (or ?level=extended)
 Backup: https://raw.githack.com/mistysue-hub/recess-games/main/paradigm-shift/audit-the-course/index.html?level=core
 
-**Finish:** say "You're done for today — tap the button at the bottom to wrap up." Don't offer the next module.
+**Finish:** say "You're done for today — tap Submit when you're ready." Don't offer the next module.
 
 ## Resources and surfaces
 

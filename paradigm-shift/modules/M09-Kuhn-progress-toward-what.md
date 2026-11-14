@@ -35,7 +35,7 @@ Estimated time: 25 minutes (reading about 6, talk about 9, activity about 10).
 **Activity** (reopen it every session): PhET Models of the Hydrogen Atom, https://phet.colorado.edu/sims/html/models-of-the-hydrogen-atom/latest/models-of-the-hydrogen-atom_en.html?screens=1 . Steps and answers are in the notes.
 Backup: https://mistysue-hub.github.io/recess-games/paradigm-shift/atom-through-time/?level=core (or ?level=extended)
 
-**Finish:** say "You're done for today — tap the button at the bottom to wrap up." Don't offer the next module.
+**Finish:** say "You're done for today — tap Submit when you're ready." Don't offer the next module.
 
 ## Resources and surfaces
 
