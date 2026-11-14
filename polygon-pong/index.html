@@ -32,12 +32,16 @@
   .row button{cursor:pointer}
   .row button.h{border-color:var(--accent);color:var(--accent)}
   .tag{border-color:#5fe08a;color:#5fe08a}
+  .tag.off{border-color:var(--line);color:var(--dim)}
   .big{display:block;width:100%;margin-top:18px;background:var(--accent);color:#1a1400;border:0;border-radius:12px;padding:13px;font:800 18px system-ui;cursor:pointer}
   .ghost{background:#0d1330;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 14px;font:600 14px system-ui;cursor:pointer}
   #invBox{display:none;margin-top:8px}
   #invBox.show{display:block}
   .linkrow{display:flex;gap:6px;align-items:center;margin-top:6px}
-  .linkrow span{width:62px;font-size:13px;font-weight:700;color:var(--dim)}
+  .lbl{font-size:13px;font-weight:700;color:var(--dim);margin-top:10px}
+  .nmIn{flex:1;min-width:0;background:#0d1330;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:700 14px system-ui;-webkit-user-select:text;user-select:text}
+  .pn{font-weight:700;color:var(--dim);font-size:13px;width:22px}
+  #joinName{display:block;margin:10px auto 0;max-width:240px;text-align:center}
   #linkPop .card{width:min(460px,100%)}
   .lnk{flex:1;min-width:0;background:#0d1330;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:13px ui-monospace,monospace;-webkit-user-select:text;user-select:text}
   #invStatus{color:var(--dim);font-size:13px;margin-top:6px;min-height:18px;line-height:1.4}
@@ -70,12 +74,14 @@
     <h2>Friends on other devices</h2>
     <button id="btnInvite" class="ghost" type="button">Create invite link</button>
     <div id="invBox">
-      <div class="linkrow"><span>Play</span><input id="invLink" class="lnk" readonly aria-label="Link to join and play"><button id="btnCopy" class="ghost" type="button">Copy</button></div>
-      <div class="linkrow"><span>Watch</span><input id="watchLink" class="lnk" readonly aria-label="Link to watch only"><button id="btnCopyWatch" class="ghost" type="button">Copy</button></div>
+      <div class="lbl">Link to play (takes a side)</div>
+      <div class="linkrow"><input id="invLink" class="lnk" readonly aria-label="Link to join and play"><button id="btnCopy" class="ghost" type="button">Copy</button></div>
+      <div class="lbl">Link to watch only</div>
+      <div class="linkrow"><input id="watchLink" class="lnk" readonly aria-label="Link to watch only"><button id="btnCopyWatch" class="ghost" type="button">Copy</button></div>
     </div>
     <div id="invStatus"></div>
     <button id="btnStart" class="big" type="button">Start game</button>
-    <div class="tip">Keyboard: each player gets two keys, shown next to their side. Touch screen: drag along your own side.</div>
+    <div class="tip">Move with A / D or the arrow keys, or drag on a touch screen. Every other player joins from their own device with the Play link, and takes over one of the computer sides.</div>
   </div>
 </div>
 
@@ -101,6 +107,7 @@
     <h1>Polygon <span>Pong</span></h1>
     <h2 id="joinTitle" style="font-size:18px;color:var(--ink);text-transform:none;letter-spacing:0"></h2>
     <p class="sub" id="joinMsg"></p>
+    <input id="joinName" class="nmIn" type="text" maxlength="12" placeholder="Type your name" aria-label="Your name" style="display:none">
   </div>
 </div>
 
@@ -111,14 +118,15 @@ var cv=$('c'), ctx=cv.getContext('2d');
 
 var COLORS=['#ff5d5d','#4da3ff','#ffd24d','#5fe08a','#c58bff','#ff9a3d','#4de3e3','#ff7ac8'];
 var NAMES=['Red','Blue','Yellow','Green','Purple','Orange','Teal','Pink'];
-var KEYS=[['KeyA','KeyD','A','D'],['ArrowLeft','ArrowRight','←','→'],['KeyJ','KeyL','J','L'],['KeyF','KeyH','F','H'],
-          ['KeyZ','KeyC','Z','C'],['KeyB','KeyM','B','M'],['Digit1','Digit3','1','3'],['Digit8','Digit0','8','0']];
 var SHAPES={2:'Classic duel',3:'Triangle',4:'Square',5:'Pentagon',6:'Hexagon',7:'Heptagon',8:'Octagon'};
 var BOT={easy:{sp:1.0,err:1.55},medium:{sp:1.45,err:1.3},hard:{sp:2.0,err:1.17}};
 var SPEEDS={slow:0.7,normal:1,fast:1.35,turbo:1.7};
 var R_BALL=0.03, BASE=0.85, MAXS=2.6, PSPEED=1.7;
 
-var cfg={n:4,kind:['human','bot','bot','bot','bot','bot','bot','bot'],lives:3,bot:'medium',speed:'normal'};
+var cfg={n:4,kind:['human','bot','bot','bot','bot','bot','bot','bot'],lives:3,bot:'medium',speed:'normal',names:['','','','','','','','']};
+function cleanName(n){return String(n==null?'':n).replace(/[^\p{L}\p{N} _.!'-]/gu,'').replace(/\s+/g,' ').trim().slice(0,12);}
+function nameOf(i){return cfg.names[i]||NAMES[i];}
+var rowNameEl={};
 var players=[], sides=[], ball={x:0,y:0,vx:0,vy:0,ghost:false,gt:0,gowner:null};
 var state='menu', timer=0, paused=false, winner=-1, muted=false, gameNo=0;
 var W=0,H=0,scale=1,cy=0,rot=0,dpr=1;
@@ -131,6 +139,8 @@ function mkSide(phi,a,half,owner){
   var pw=owner?Math.max(0.1,Math.min(0.24,half*0.26)):0;
   return {mx:a*c,my:a*s,nx:-c,ny:-s,tx:-s,ty:c,half:half,owner:owner,pw:pw,range:Math.max(0,half-pw),kdir:1};
 }
+/* the one player on this device: the joiner's seat, or the host's own seat (P1) */
+function myId(){return net.role==='client'?net.myId:(cfg.kind[0]==='human'?0:-1);}
 function alivePlayers(){return players.filter(function(p){return p.alive;});}
 function buildArena(){
   var al=alivePlayers(), n=al.length, i;
@@ -143,8 +153,9 @@ function buildArena(){
   }
   for(i=0;i<players.length;i++) players[i].f=0;
   rot=0;
-  if(net.role==='client'){
-    for(i=0;i<sides.length;i++) if(sides[i].owner&&sides[i].owner.id===net.myId){
+  var me=myId();
+  if(me>=0){
+    for(i=0;i<sides.length;i++) if(sides[i].owner&&sides[i].owner.id===me){
       rot=Math.PI/2-Math.atan2(-sides[i].ny,-sides[i].nx);
     }
   }
@@ -203,8 +214,9 @@ function movePaddles(dt){
     var s=sides[i],p=s.owner; if(!p) continue;
     var kind=cfg.kind[p.id], c=p.f*s.range;
     if(kind==='human'){
-      var K=KEYS[p.id],mv=0;
-      if(keys[K[0]])mv+=s.kdir; if(keys[K[1]])mv-=s.kdir;
+      var mv=0;
+      if(keys.KeyA||keys.ArrowLeft||keys.ArrowUp)mv+=s.kdir;
+      if(keys.KeyD||keys.ArrowRight||keys.ArrowDown)mv-=s.kdir;
       c+=mv*PSPEED*Math.max(1,SPEEDS[cfg.speed])*dt;
     }else if(kind==='bot'){
       var mul=SPEEDS[cfg.speed], target=0, sp=bot.sp*mul*0.6;
@@ -263,24 +275,17 @@ function score(p){
     p.alive=false;
     var al=alivePlayers();
     if(al.length<=1){winner=al.length?al[0].id:-1;state='over';sfx('win');showOver();return;}
-    say(NAMES[p.id]+' is out!  '+SHAPES[al.length]+' time');
+    say(nameOf(p.id)+' is out!  '+SHAPES[al.length]+' time');
     buildArena();
   }
   serve();
 }
 
 /* ---------- input ---------- */
-function localSideFor(wx,wy){
-  var best=null,bd=1e9;
-  for(var i=0;i<sides.length;i++){
-    var s=sides[i]; if(!s.owner) continue;
-    if(net.role==='client'){if(s.owner.id===net.myId) return s; continue;}
-    if(cfg.kind[s.owner.id]!=='human') continue;
-    var d=Math.abs((wx-s.mx)*s.nx+(wy-s.my)*s.ny), al=Math.abs((wx-s.mx)*s.tx+(wy-s.my)*s.ty);
-    if(al>s.half+0.25||d>0.5) continue;
-    if(d<bd){bd=d;best=s;}
-  }
-  return best;
+function localSideFor(){
+  var me=myId();
+  for(var i=0;i<sides.length;i++) if(sides[i].owner&&sides[i].owner.id===me) return sides[i];
+  return null;
 }
 function pointerSet(s,wx,wy){
   if(!s||!s.owner||s.range<=0) return;
@@ -386,15 +391,20 @@ function buildMenu(){
     b.onclick=function(){cfg.n=Math.max(n,minCount());buildMenu();}; cb.appendChild(b);
   })(n);
   $('shape').textContent=SHAPES[cfg.n];
-  var rows=$('rows'); rows.innerHTML='';
+  var rows=$('rows'); rows.innerHTML=''; rowNameEl={};
   for(var i=0;i<cfg.n;i++)(function(i){
     var r=el('div','row'), sw=el('span','sw'); sw.style.background=COLORS[i];
-    r.appendChild(sw); r.appendChild(el('span','nm','P'+(i+1)+'  '+NAMES[i]));
+    r.appendChild(sw); r.appendChild(el('span','pn','P'+(i+1)));
     var k=cfg.kind[i];
-    r.appendChild(el('span','keys',k==='human'?KEYS[i][2]+'  '+KEYS[i][3]:''));
+    if(k==='remote'){rowNameEl[i]=el('span','nm',nameOf(i));r.appendChild(rowNameEl[i]);}
+    else{var inp=el('input','nmIn');inp.type='text';inp.maxLength=12;inp.placeholder=k==='bot'?NAMES[i]:'Your name';inp.value=cfg.names[i];
+      inp.setAttribute('aria-label','Name for player '+(i+1));
+      inp.oninput=function(){cfg.names[i]=cleanName(inp.value);};r.appendChild(inp);}
+    
     if(k==='remote') r.appendChild(el('span','tag','Online ✓'));
-    else{var b=el('button',k==='human'?'h':'',k==='human'?'Human':'Computer');b.type='button';
-      b.onclick=function(){cfg.kind[i]=cfg.kind[i]==='human'?'bot':'human';buildMenu();};r.appendChild(b);}
+    else if(i===0){var b=el('button',k==='human'?'h':'',k==='human'?'You':'Computer');b.type='button';
+      b.onclick=function(){cfg.kind[0]=cfg.kind[0]==='human'?'bot':'human';buildMenu();};r.appendChild(b);}
+    else r.appendChild(el('span','tag off','Computer'));
     rows.appendChild(r);
   })(i);
   seg($('optLives'),[[3,'3'],[5,'5'],[7,'7']],function(){return cfg.lives;},function(v){cfg.lives=v;});
@@ -404,7 +414,7 @@ function buildMenu(){
     $('invStatus').textContent=c?c+(c===1?' friend has':' friends have')+' joined. Start when everyone is in.':'Friends who open the Play link take a side automatically. The Watch link only lets people watch.';}
 }
 function showOver(){
-  $('overTitle').textContent=winner>=0?NAMES[winner]+' wins!':'Game over';
+  $('overTitle').textContent=winner>=0?nameOf(winner)+' wins!':'Game over';
   $('overTitle').style.color=winner>=0?COLORS[winner]:'';
   var cl=net.role==='client';
   $('overWait').textContent=cl?'Waiting for the host to start the next game.':'';
@@ -473,17 +483,15 @@ function draw(){
     sd=sides[i]; if(!sd.owner) continue;
     var p=sd.owner, pt=toScreen(sd.mx-sd.nx*0.17,sd.my-sd.ny*0.17), kind=cfg.kind[p.id], l2;
     ctx.fillStyle=COLORS[p.id]; ctx.font='700 '+fs+'px system-ui,sans-serif';
-    ctx.fillText('P'+(p.id+1)+' '+new Array(Math.max(0,p.lives)+1).join('●'),pt[0],pt[1]-fs*0.6);
-    if(net.role==='client') l2=p.id===net.myId?'YOU':'';
-    else if(kind==='human') l2=sd.vert?'▲'+KEYS[p.id][2]+'  '+KEYS[p.id][3]+'▼':'◀'+KEYS[p.id][2]+'  '+KEYS[p.id][3]+'▶';
-    else l2=kind==='remote'?'online':'computer';
+    ctx.fillText(nameOf(p.id)+' '+new Array(Math.max(0,p.lives)+1).join('●'),pt[0],pt[1]-fs*0.6);
+    l2=p.id===myId()?'YOU':(kind==='bot'?'computer':'');
     ctx.font='600 '+(fs*0.8)+'px system-ui,sans-serif'; ctx.globalAlpha=0.85; ctx.fillText(l2,pt[0],pt[1]+fs*0.6); ctx.globalAlpha=1;
   }
   if(paused){ctx.fillStyle='rgba(6,9,24,.6)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#fff';ctx.font='800 34px system-ui,sans-serif';ctx.fillText('Paused',W/2,H/2);}
 }
 
 /* ---------- online play: one host runs the game, friends join by link ---------- */
-var net={role:'local',peer:null,code:'',conns:[],conn:null,myId:-1,q:0,sendT:0,sig:'',g:-1,ev:0,bn:0,lastSnap:0,helloT:0,gotSeat:false,watch:false};
+var net={role:'local',peer:null,code:'',conns:[],conn:null,myId:-1,q:0,sendT:0,sig:'',g:-1,ev:0,bn:0,lastSnap:0,helloT:0,gotSeat:false,watch:false,name:'',nameT:null};
 var PEER_SRC='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';
 function loadPeer(){
   return new Promise(function(res,rej){
@@ -506,7 +514,7 @@ function hostRoom(){
     peer.on('open',function(){
       opened=true; net.role='host'; net.code=code;
       $('invLink').value=roomLink(false); $('watchLink').value=roomLink(true); $('btnWatch').style.display='';
-      $('invBox').classList.add('show'); $('btnInvite').style.display='none'; buildMenu();
+      $('invBox').classList.add('show'); $('btnInvite').textContent='Invite links ready \u2193'; $('btnInvite').disabled=true; buildMenu();
     });
     peer.on('error',function(){if(!opened){net.peer=null;invMsg(NO_NET);}});
     peer.on('connection',function(conn){
@@ -529,10 +537,13 @@ function hostData(conn,d){
   if(d.t==='hello'){
     if(conn.seat===-2){
       conn.seat=d.w?-1:assignSeat();
-      if(conn.seat>=0){cfg.kind[conn.seat]='remote';say(NAMES[conn.seat]+' joined');}
+      if(conn.seat>=0){cfg.kind[conn.seat]='remote';cfg.names[conn.seat]=cleanName(d.n);say(nameOf(conn.seat)+' joined');}
       if(state==='menu') buildMenu();
     }
     safeSend(conn,{t:'seat',id:conn.seat});
+  }else if(d.t==='name'&&conn.seat>=0&&cfg.kind[conn.seat]==='remote'){
+    cfg.names[conn.seat]=cleanName(d.n);
+    if(rowNameEl[conn.seat]) rowNameEl[conn.seat].textContent=nameOf(conn.seat);
   }else if(d.t==='in'&&conn.seat>=0&&cfg.kind[conn.seat]==='remote'){
     var p=players[conn.seat], f=Number(d.f);
     if(p&&isFinite(f)) p.f=clamp(f,-1,1);
@@ -541,14 +552,14 @@ function hostData(conn,d){
 function dropConn(conn){
   var i=net.conns.indexOf(conn); if(i<0) return;
   net.conns.splice(i,1);
-  if(conn.seat>=0&&cfg.kind[conn.seat]==='remote'){cfg.kind[conn.seat]='bot';say(NAMES[conn.seat]+' left');if(state==='menu')buildMenu();}
+  if(conn.seat>=0&&cfg.kind[conn.seat]==='remote'){cfg.kind[conn.seat]='bot';say(nameOf(conn.seat)+' left');cfg.names[conn.seat]='';if(state==='menu')buildMenu();}
   try{conn.close();}catch(_){}
 }
 function safeSend(conn,m){try{if(conn.open)conn.send(m);}catch(_){}}
 function snapshot(){
   var P=[];
   for(var i=0;i<players.length;i++) P.push([players[i].lives,players[i].alive?1:0,Math.round(players[i].f*1000)/1000]);
-  return {t:'s',q:++net.q,g:gameNo,st:state,p:paused?1:0,n:cfg.n,sp:cfg.speed,k:cfg.kind.slice(0,8),P:P,
+  return {t:'s',q:++net.q,g:gameNo,st:state,p:paused?1:0,n:cfg.n,sp:cfg.speed,nm:cfg.names.slice(0,8),k:cfg.kind.slice(0,8),P:P,
           b:[ball.x,ball.y,ball.vx,ball.vy,ball.ghost?1:0],tm:timer,w:winner,e:[evSeq,evType],bn:[bnSeq,bnText]};
 }
 function hostTick(dt){
@@ -564,13 +575,23 @@ function joinMsg(t,m){$('joinTitle').textContent=t;$('joinMsg').textContent=m||'
 function joinRoom(code,watch){
   net.role='client'; net.code=code; net.watch=!!watch; $('btnWatch').style.display='';
   $('btnMenu').style.display='none'; $('btnPause').style.display='none';
+  if(!net.watch){
+    var jn=$('joinName'); jn.style.display='';
+    try{net.name=cleanName(localStorage.getItem('polypong-name'));}catch(_){}
+    jn.value=net.name;
+    jn.oninput=function(){
+      net.name=cleanName(jn.value);
+      try{localStorage.setItem('polypong-name',net.name);}catch(_){}
+      clearTimeout(net.nameT); net.nameT=setTimeout(function(){if(net.conn&&net.gotSeat)safeSend(net.conn,{t:'name',n:net.name});},400);
+    };
+  }
   showOnly('join'); joinMsg('Connecting…','Finding your friend’s game.');
   loadPeer().then(function(){
     var peer; try{peer=new window.Peer();}catch(_){joinMsg('Can’t connect here',NO_NET);return;}
     net.peer=peer;
     peer.on('open',function(){
       var conn=peer.connect('polypong-'+code,{serialization:'json'}); net.conn=conn;
-      conn.on('open',function(){safeSend(conn,{t:'hello',w:net.watch?1:0});});
+      conn.on('open',function(){safeSend(conn,{t:'hello',w:net.watch?1:0,n:net.name});});
       conn.on('data',clientData);
       conn.on('close',function(){hostGone();});
     });
@@ -587,7 +608,7 @@ function clientData(d){
     net.gotSeat=true; net.myId=d.id; net.sig=''; lobbyText();
   }else if(d.t==='s'){
     if(d.q<=net.q) return; net.q=d.q; net.lastSnap=Date.now();
-    cfg.n=d.n; cfg.kind=d.k; if(SPEEDS[d.sp])cfg.speed=d.sp; paused=!!d.p; winner=d.w; timer=d.tm;
+    cfg.n=d.n; cfg.kind=d.k; if(d.nm)cfg.names=d.nm.map(cleanName); if(SPEEDS[d.sp])cfg.speed=d.sp; paused=!!d.p; winner=d.w; timer=d.tm;
     var sig=d.P.map(function(p){return p[1];}).join('')+':'+net.myId, i;
     var prev=state; state=d.st;
     if(state!=='menu'){
@@ -610,14 +631,15 @@ function clientData(d){
 }
 function lobbyText(){
   if(!net.gotSeat) return;
-  if(net.myId>=0) joinMsg('You’re in! You are '+NAMES[net.myId]+' (P'+(net.myId+1)+')','Waiting for the host to start. Drag along your side, or use A / D or the arrow keys.');
+  if(net.myId>=0) joinMsg('You’re in! You are '+NAMES[net.myId]+' (P'+(net.myId+1)+')','Type your name below. Waiting for the host to start. To play, drag along your side, or use A / D or the arrow keys.');
   else if(net.watch) joinMsg('You\u2019re watching','The game will appear here when the host starts it.');
   else joinMsg('This game is full','You can watch this round.');
+  if(net.myId<0) $('joinName').style.display='none';
   $('joinTitle').style.color=net.myId>=0?COLORS[net.myId]:'';
 }
 function clientTick(dt){
   if(net.role!=='client') return;
-  if(net.conn&&!net.gotSeat){net.helloT+=dt;if(net.helloT>1){net.helloT=0;safeSend(net.conn,{t:'hello',w:net.watch?1:0});}}
+  if(net.conn&&!net.gotSeat){net.helloT+=dt;if(net.helloT>1){net.helloT=0;safeSend(net.conn,{t:'hello',w:net.watch?1:0,n:net.name});}}
   if(net.gotSeat&&net.conn&&net.lastSnap&&Date.now()-net.lastSnap>8000){hostGone();return;}
   var me=null,ms=null,i;
   for(i=0;i<sides.length;i++) if(sides[i].owner&&sides[i].owner.id===net.myId){ms=sides[i];me=ms.owner;}
