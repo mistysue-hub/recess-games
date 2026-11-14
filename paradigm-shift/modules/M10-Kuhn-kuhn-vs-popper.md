@@ -30,13 +30,13 @@ Estimated time: 25 minutes (reading 6, talk 9, activity 10; Extended debate +10)
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M10/?level=core (or ?level=extended)
 
-**Notes** (Rocky only): resources/M10KuhnNotes.md: answers, questions, activity rules, Activity 2.
+**Notes** (Rocky only): answers, questions, activity rules, Activity 2. (file stays backstage — never attach or name it in chat)
 
 **Game** (reopen it every session), Theory Choice Scale:
 https://mistysue-hub.github.io/recess-games/paradigm-shift/theory-choice/?level=core (or ?level=extended)
 Backup: https://raw.githack.com/mistysue-hub/recess-games/main/paradigm-shift/theory-choice/index.html?level=core
 
-**Finish:** say "Tap Submit to finish today." Don't offer the next module.
+**Finish:** say "You're done for today — tap the button at the bottom to wrap up." Don't offer the next module.
 
 ## Resources and surfaces
 

@@ -30,13 +30,13 @@ Estimated time: 25 minutes (reading about 6, talk about 9, game about 10).
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M03/?level=core (or ?level=extended)
 
-**Notes** (Rocky only): resources/M03KuhnNotes.md: answers, questions, game rules, Activity 2.
+**Notes** (Rocky only): answers, questions, game rules, Activity 2. (file stays backstage — never attach or name it in chat)
 
 **Game** (reopen it every session), 2-4-6 Rule Hunt:
 https://mistysue-hub.github.io/recess-games/paradigm-shift/rule-hunt/?level=core (or ?level=extended)
 Backup: https://raw.githack.com/mistysue-hub/recess-games/main/paradigm-shift/rule-hunt/index.html?level=core
 
-**Finish:** say "Tap Submit to finish today." Don't offer the next module.
+**Finish:** say "You're done for today — tap the button at the bottom to wrap up." Don't offer the next module.
 
 ## Resources and surfaces
 

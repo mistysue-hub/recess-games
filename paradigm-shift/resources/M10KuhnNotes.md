@@ -9,8 +9,11 @@ No single right answer (note how sure they were). The look-back: the reading say
 ## Talk-back (one at a time, after the look-back)
 1. What's one strength of Kuhn's view and one strength of Popper's?
    Any fair answer. Examples: Kuhn: sticking with Newton found Neptune. Popper: always testing catches mistakes.
-2. Which of Kuhn's five values matters most to you, and why?
-   Opinion. The five: accuracy, consistency, scope, simplicity, fruitfulness.
+2. Popper said scientists should try to break their theories; Kuhn said commit long enough to test them. Which of those two feels closer to how you'd want a scientist to work?
+   Opinion. No wrong answer. Encourage them to name an example.
+
+## After the Theory Choice Scale widget (ask only after they've pasted results or read the box)
+After your one short reflecting line on their results (see AGENTS.md step 7), ask: "Which of Kuhn's five values ended up mattering most to you, and why?" The five are accuracy, consistency, scope, simplicity, fruitfulness, and the widget already showed them each on screen. Opinion question; no wrong answer.
 
 ## Side View question
 Core: Picture a science fair where every project is checked by kids who disagree with each other. Would that make the winners more trustworthy? Does that sound like Kuhn's side, Popper's side, or something new? (Longino said science is trustworthy when a community welcomes criticism.)

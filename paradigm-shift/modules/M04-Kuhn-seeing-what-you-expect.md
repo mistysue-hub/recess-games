@@ -30,13 +30,13 @@ Estimated time: 25 minutes (reading about 6, talk about 9, game about 10).
 
 **Reading page:** https://mistysue-hub.github.io/recess-games/paradigm-shift/readings/M04/?level=core (or ?level=extended)
 
-**Notes** (Rocky only): resources/M04KuhnNotes.md: answers, questions, game rules, Activity 2.
+**Notes** (Rocky only): answers, questions, game rules, Activity 2. (file stays backstage — never attach or name it in chat)
 
 **Game** (reopen it every session), Odd Card Out:
 https://mistysue-hub.github.io/recess-games/paradigm-shift/odd-card-out/?level=core (or ?level=extended)
 Backup: https://raw.githack.com/mistysue-hub/recess-games/main/paradigm-shift/odd-card-out/index.html?level=core
 
-**Finish:** say "Tap Submit to finish today." Don't offer the next module.
+**Finish:** say "You're done for today — tap the button at the bottom to wrap up." Don't offer the next module.
 
 ## Resources and surfaces
 
