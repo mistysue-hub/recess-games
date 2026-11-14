@@ -45,7 +45,7 @@ button.picked{outline:3px solid var(--gold)}
 .two{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
 .view{background:#fff;border-radius:6px;padding:10px 12px;border-left:4px solid var(--lapis);font-size:16px}
 .view b{font-family:"Marcellus",Georgia,serif;font-weight:400;font-size:15px;color:var(--lapis)}
-pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+pre.res{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px;font-size:16px;line-height:1.5;font-family:inherit;margin:10px 0}
 .hide{display:none}
 dl.bins{margin:0}dl.bins dt{font-family:"Marcellus",Georgia,serif;color:var(--violet);font-size:16px;margin-top:6px}dl.bins dd{margin:0}
 @media (max-width:420px){.btns{grid-template-columns:1fr}}
@@ -59,7 +59,7 @@ dl.bins{margin:0}dl.bins dt{font-family:"Marcellus",Georgia,serif;color:var(--vi
     <p class="sub">Is Anything Really Wrong? · Session 6</p>
     <div id="stage"></div>
   </div>
-  <div class="card info">
+  <div class="card info" id="ringinfo">
     <b>Gyges' ring:</b> twist it inward and you're invisible; twist it back and you reappear. Nobody would ever know what you did while wearing it.
   </div>
 </div>
@@ -103,39 +103,12 @@ function showResults(text){
  document.getElementById('cp').onclick=()=>copyText(text);
  document.getElementById('again').onclick=()=>location.reload();
 }
-// Returns a Promise<boolean>: true only if the text really reached the clipboard.
-function rkCopy(text, box){
-  return new Promise(function(done){
-    function legacy(){
-      var el = box, tmp = null, wasHidden;
-      if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
-      el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
-      var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
-      if (tmp) tmp.remove(); else el.hidden = wasHidden;
-      done(ok);
-    }
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
-        return;
-      }
-    } catch (e) {}
-    legacy();
-  });
-}
-function rkManual(btn,text){
- var m=document.getElementById('cpmanual');
- if(!m){m=document.createElement('div');m.id='cpmanual';m.innerHTML='<p class="sub" style="margin-top:12px"></p><textarea readonly style="width:100%;height:140px;box-sizing:border-box"></textarea>';btn.parentNode.insertAdjacentElement('afterend',m);}
- m.querySelector('p').textContent="Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky.";
- var ta=m.querySelector('textarea');ta.value=text;ta.focus();ta.select();
-}
 function copyText(t){
  const b=document.getElementById('cp');
- rkCopy(t).then(function(ok){
-  if(ok){b.textContent='Copied! Now paste it to Rocky';}
-  else{b.textContent='Copy didn\'t work';rkManual(b,t);}
- });
+ let ok=false;const fin=()=>{ok=true;b.textContent='Copied! Now paste it to Rocky';};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(fin,()=>{if(!ok)fallback(t,fin);});setTimeout(()=>{if(!ok)fallback(t,fin);},1500);}else fallback(t,fin);
 }
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('cp').textContent='Select the box above and copy it';}a.remove();}
 
 let ring=[],path=[],place=null,cScore=0,log=[];
 const RING=[
@@ -165,18 +138,19 @@ function intro(){
 }
 function rq(i){
  const r=RING[i];
- choose({prog:`Part 1 · Situation ${i+1} of ${RING.length}`,head:`<div class="claim">${esc(r.s)}</div>`,q:"What would you do?",opts:r.o,
+ choose({prog:`Part 1 · Question ${i+1} of ${RING.length+1}`,head:`<div class="claim">${esc(r.s)}</div>`,q:"What would you do?",opts:r.o,
   reveal:j=>views([["Glaucon (arguing the case)",r.g],["Plato's side",r.p]]),next:i<RING.length-1?'Next situation':'One more question',
-  cb:j=>{ring.push(`S${i+1}: ${r.o[j]}`);i<RING.length-1?rq(i+1):fs();}});
+  cb:j=>{ring.push(`Situation ${i+1}: ${r.o[j]}`);i<RING.length-1?rq(i+1):fs();}});
 }
 let fsAns='';
 function fs(){
- choose({prog:'Part 1 · Does morality bind everyone?',head:`<div class="claim">Someone says: "I understand the rules. I just don't care about anyone but me."</div>`,q:"Is she making a mistake, or does morality just give her no reason to follow it, the way etiquette gives no reason to someone who doesn't care about manners?",
+ choose({prog:`Part 1 · Question ${RING.length+1} of ${RING.length+1}`,head:`<div class="claim">Someone says: "I understand the rules. I just don't care about anyone but me."</div>`,q:"Is she making a mistake, or does morality just give her no reason to follow it, the way etiquette gives no reason to someone who doesn't care about manners?",
   opts:["She's making a mistake","Morality gives her no reason","Not sure"],
   reveal:j=>views([["Shafer-Landau (moral rationalist)","Moral reasons apply to you whatever you want, like the rules of logic. Not caring doesn't free her; it's a mistake."],["Philippa Foot (1972)","Maybe morality is like etiquette: the rules still apply to her, but they only give a reason to people who care about what they protect. (Foot later changed her mind.)"]]),
   next:'On to your map',cb:j=>{fsAns=["she's making a mistake","morality gives her no reason","not sure"][j];m1();}});
 }
 function m1(){
+ const ri=document.getElementById('ringinfo'); if(ri) ri.remove();
  choose({prog:'Part 2 · Your map, question 1',head:`<h2>Where do you stand?</h2>`,q:"When people say \"stealing is wrong,\" are they trying to state a fact?",
   opts:["Yes, they're stating (or trying to state) a fact","No, they're expressing an attitude or a plan","Not sure yet"],
   cb:j=>{path.push(["fact","attitude","unsure"][j]);j===1?land('express'):j===2?land('unsure'):m2();}});
@@ -204,7 +178,7 @@ const CHECK=[
 function chk(i){
  const c=CHECK[i];
  ask({prog:`Part 3 · Check question ${i+1} of ${CHECK.length}`,q:c.q,opts:c.opts,a:c.a,why:c.why,next:i<CHECK.length-1?'Next question':'See my results',
-  cb:(first,tries)=>{if(first)cScore++;log.push(`Q${i+1} ${tries===1?'right first try':tries===2?'right on try 2':'missed twice'}`);i<CHECK.length-1?chk(i+1):finish();}});
+  cb:(first,tries)=>{if(first)cScore++;log.push(`question ${i+1} ${tries===1?'right first try':tries===2?'right on try 2':'missed twice'}`);i<CHECK.length-1?chk(i+1):finish();}});
 }
 function finish(){
  showResults(`The Ring and Your Map (Is Anything Really Wrong? M06)
@@ -213,7 +187,7 @@ With the ring I would:
 Someone who doesn't care: ${fsAns}
 My map: ${place.n} (answers: ${path.join(' > ')})
 Objection to face: ${place.obj}
-Check questions: ${cScore} of ${CHECK.length} right first try (${log.join('; ')})`);
+Check questions: ${cScore} of ${CHECK.length} right on the first try${cScore<CHECK.length?' ('+log.filter(x=>!x.includes('right first try')).join('; ')+')':''}`);
 }
 intro();
 </script>
