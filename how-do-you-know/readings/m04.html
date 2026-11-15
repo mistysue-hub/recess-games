@@ -279,22 +279,26 @@
       m.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;visibility:hidden;pointer-events:none';
       R.appendChild(m);
       const out=[], src=[];
+      let chunk=[], chunkSrc=0;
       pages.forEach((html,i)=>{
         const tmp=document.createElement('div'); tmp.innerHTML=html;
-        let chunk=[]; m.innerHTML='';
+        // A new section starts a new page, unless the page so far is less than half full: then it continues there.
+        const used=m.lastElementChild?(m.lastElementChild.offsetTop+m.lastElementChild.offsetHeight):0;
+        if(chunk.length && used>=m.clientHeight*0.5){ out.push(chunk.map(x=>x.outerHTML).join('')); src.push(chunkSrc); chunk=[]; m.innerHTML=''; }
+        if(!chunk.length) chunkSrc=i;
         [...tmp.children].forEach(k=>{
           const c=k.cloneNode(true); m.appendChild(c);
           if(chunk.length && c.offsetHeight>0 && m.scrollHeight>m.clientHeight+2){
             // keep a heading with the block after it: never leave a heading alone at the foot of a page
             const carry=[];
             while(chunk.length>1 && /^H[1-4]$/.test(chunk[chunk.length-1].tagName)) carry.unshift(chunk.pop());
-            out.push(chunk.map(x=>x.outerHTML).join('')); src.push(i);
-            chunk=carry; m.innerHTML=''; carry.forEach(x=>m.appendChild(x.cloneNode(true))); m.appendChild(c);
+            out.push(chunk.map(x=>x.outerHTML).join('')); src.push(chunkSrc);
+            chunk=carry; chunkSrc=i; m.innerHTML=''; carry.forEach(x=>m.appendChild(x.cloneNode(true))); m.appendChild(c);
           }
           chunk.push(k);
         });
-        if(chunk.length){ out.push(chunk.map(x=>x.outerHTML).join('')); src.push(i); }
       });
+      if(chunk.length){ out.push(chunk.map(x=>x.outerHTML).join('')); src.push(chunkSrc); }
       m.remove(); view=out; srcOf=src;
     }
     N=view.length;
