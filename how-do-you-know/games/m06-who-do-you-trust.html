@@ -320,6 +320,11 @@
     first.parentNode.insertBefore(b,first);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',showBack); else setTimeout(showBack,0);
+  // Any "Next ..." button moves on to a new item: start it at the top so its text isn't off-screen.
+  document.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('button'); if(!b) return;
+    if(/^\s*Next\b/i.test(b.textContent||'')) setTimeout(()=>{ if(window.scrollY>0) window.scrollTo(0,0); },40);
+  });
   window.HDYK=H;
 })();
 </script>

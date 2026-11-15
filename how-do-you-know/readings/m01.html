@@ -280,6 +280,9 @@
         });
       });
       if(chunk.length){ out.push(chunk.map(x=>x.outerHTML).join('')); src.push(chunkSrc); }
+      // Never leave a page holding only the collapsed Sources line: tuck it under the page before.
+      if(out.length>1){ const t=document.createElement('div'); t.innerHTML=out[out.length-1];
+        if(t.children.length===1 && t.firstElementChild.matches('details.srcbox')){ out[out.length-2]+=out.pop(); src.pop(); } }
       m.remove(); view=out; srcOf=src;
     }
     N=view.length;

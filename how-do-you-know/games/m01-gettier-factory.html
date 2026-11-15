@@ -327,6 +327,11 @@
     first.parentNode.insertBefore(b,first);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',showBack); else setTimeout(showBack,0);
+  // Any "Next ..." button moves on to a new item: start it at the top so its text isn't off-screen.
+  document.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('button'); if(!b) return;
+    if(/^\s*Next\b/i.test(b.textContent||'')) setTimeout(()=>{ if(window.scrollY>0) window.scrollTo(0,0); },40);
+  });
   window.HDYK=H;
 })();
 </script>
@@ -591,6 +596,7 @@
     const c=$('wClaim'); c.className='claim'; c.textContent=WORD[wi].q;
     $('wFb').classList.add('hidden'); $('wNextWrap').classList.add('hidden');
     jars().forEach(j=>j.disabled=false);
+    window.scrollTo(0,0);
   }
   const wLevel={how:0,that:0};
   jars().forEach(btn=>btn.onclick=()=>{
@@ -606,6 +612,7 @@
     if(!ok) HDYK.miss(1,{q:'Skill (knowing-how) or statement (knowing-that)? '+w.q, opts:['Knowing-how: a skill','Knowing-that: a statement'], a:w.a==='how'?0:1, why:w.why});
     $('wNext').textContent = wi===WORD.length-1 ? 'On to the factory' : 'Next';
     $('wNextWrap').classList.remove('hidden');
+    setTimeout(()=>$('wNextWrap').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
   });
   $('wNext').onclick=()=>{ wi++; if(wi<WORD.length) showWarm(); else { show('sLine'); showCase(); } };
 
@@ -620,6 +627,7 @@
     HDYK.dots($('dots'), ORDER.length, results);
     $('hint').classList.add('hidden'); $('fb').classList.add('hidden'); $('nextWrap').classList.add('hidden');
     $('nextBtn').textContent = ci===ORDER.length-1 ? 'End of shift' : 'Next case';
+    window.scrollTo(0,0);
     if(cur.gym){ $('std').classList.add('hidden'); $('gymBox').classList.remove('hidden'); buildGym(); return; }
     $('std').classList.remove('hidden'); $('gymBox').classList.add('hidden');
     startGauges();
@@ -650,7 +658,7 @@
     const ready=complete()&&!locked;
     $('stamps').classList.toggle('wait', !ready && !locked);
     $('stamps').querySelectorAll('.stamp').forEach(s=>s.disabled=!ready);
-    $('stampNote').classList.toggle('hidden', ready||locked);
+    $('stampNote').style.visibility=(ready||locked)?'hidden':'visible';
   }
 
   function onStamp(st){
