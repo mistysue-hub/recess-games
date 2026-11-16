@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Inside Leonardo's Notebook</title>
+<style>
+/* Layout: a dark "desk" band on top with ten wax stamps; below it one parchment page at a time (the desk hub, or one notebook page). Single parchment look by choice. */
+:root{--parch:#f4ead0;--card:#fbf4de;--paper:#fff8e6;--ink:#3b2a1a;--soft:#5b4630;--wax:#8c2f1b;--wax-dark:#5e1d10;--blue:#1f3a5f;--green:#2f5a3a;--gold:#b8892b;--gold-lt:#e0b95a;--line:#cdb98a;--night:#2a1c10;
+--serif:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{margin:0;background:var(--parch);background-image:radial-gradient(ellipse at 50% 0,#fbf3dc 0,#f4ead0 55%,#ecdfba 100%);color:var(--ink);font-family:var(--serif);font-size:clamp(17px,2.2vw,20px);line-height:1.6}
+.band{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--night) 0,var(--ink) 55%,var(--wax-dark) 140%);color:var(--parch);border-bottom:7px solid var(--wax);box-shadow:0 3px 0 var(--gold)}
+.wrap{max-width:760px;margin:0 auto;padding-block:18px 20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{font-size:.72em;letter-spacing:.14em;text-transform:uppercase;color:#f0cf7a;margin:0 0 6px}
+h1{font-size:clamp(28px,5.2vw,42px);line-height:1.12;margin:0 0 8px;text-shadow:0 2px 0 rgba(0,0,0,.35);text-wrap:balance}
+.tease{margin:0 0 12px;font-style:italic;color:#f1e1b8}
+.stamps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.stamps i{width:26px;height:26px;border-radius:50%;border:1.5px dashed var(--gold-lt);display:grid;place-items:center;font-style:normal;font-size:.62em;font-weight:700;color:var(--gold-lt)}
+.stamps i.got{background:var(--wax);border:0;color:var(--card);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 2px 4px rgba(0,0,0,.4);transform:rotate(-8deg)}
+.stamps span{font-size:.78em;color:#f1e1b8;margin-left:6px}
+main{max-width:760px;margin:0 auto;padding-block:22px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main p{margin:0 0 1em}
+h2{font-size:1.5em;line-height:1.2;margin:0 0 .5em;color:var(--wax);text-wrap:balance}
+h3{font-size:1em;letter-spacing:.1em;text-transform:uppercase;margin:0 0 .5em;color:var(--wax)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin:18px 0}
+.door{display:block;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-top:7px solid var(--c,var(--wax));border-radius:12px;padding:12px 14px 14px;cursor:pointer;box-shadow:0 4px 12px rgba(59,42,26,.14);position:relative;min-width:0}
+.door:hover,.door:focus-visible{transform:translateY(-2px);box-shadow:0 8px 18px rgba(59,42,26,.25)}
+.door b{display:block;font-size:1.05em;line-height:1.25;margin-bottom:4px}
+.door small{display:block;color:var(--soft);line-height:1.4}
+.door .tag{display:inline-block;font-size:.62em;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--card);background:var(--c,var(--wax));border-radius:999px;padding:2px 9px;margin-bottom:8px}
+.door.done::after{content:"✓";position:absolute;right:10px;top:8px;width:26px;height:26px;border-radius:50%;background:var(--wax);color:var(--card);display:grid;place-items:center;font-weight:700;transform:rotate(-8deg)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.quote{position:relative;background-color:var(--card);background-image:repeating-linear-gradient(180deg,transparent 0,transparent 1.55em,rgba(184,137,43,.18) 1.55em,rgba(184,137,43,.18) calc(1.55em + 1px));border:1px solid var(--line);border-left:8px solid var(--wax);border-radius:4px;padding:26px 18px 8px 20px;margin:1.6em 0 1.3em;box-shadow:0 4px 10px rgba(59,42,26,.12)}
+.quote .lbl{position:absolute;top:-.9em;left:14px;background:var(--wax);color:var(--card);font-size:.64em;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:999px;font-weight:700;font-style:normal;margin:0}
+.quote p{margin:0 0 .8em;font-style:italic}
+.play{background:#fff;border:3px solid var(--wax);border-radius:12px;box-shadow:6px 6px 0 var(--gold);padding:16px 18px 14px;margin:1.6em 0}
+.play h3{display:inline-block;color:var(--card);background:var(--wax);padding:3px 14px;border-radius:999px;margin:-30px 0 .7em -4px}
+.verdict{background:#e8eef6;border:2px solid var(--blue);border-radius:12px;padding:14px 18px 6px;margin:1.4em 0}
+.verdict h3{color:var(--blue)}
+.hands{background:var(--card);border:2px dashed var(--wax);border-radius:12px;padding:14px 18px 6px;margin:1.4em 0}
+.btn{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:999px;padding:9px 20px;background:var(--wax);color:var(--card);box-shadow:0 3px 0 var(--wax-dark)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wax-dark)}
+.btn.ghost{background:var(--card);color:var(--wax);box-shadow:inset 0 0 0 2px var(--wax)}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:.6em 0 1em}
+.opts button{font:inherit;cursor:pointer;background:var(--paper);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:8px 14px;text-align:left;min-width:0}
+.opts button.right{background:#dcebdc;border-color:var(--green)}
+.opts button.wrong{background:#f3d9d2;border-color:var(--wax);opacity:.75}
+.opts button.pick{background:#f7e6b8;border-color:var(--gold)}
+.fb{font-weight:700;color:var(--wax-dark);min-height:1.6em;margin:0 0 .6em}
+input[type=number],input[type=text]{font:inherit;padding:7px 10px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);max-width:100%}
+input[type=range]{width:100%;accent-color:var(--wax)}
+label{font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:.5em 0}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;margin:.6em 0}
+td,th{padding:6px 8px;border-bottom:1px dotted var(--line);text-align:left}
+td:last-child,th:last-child{text-align:right;font-weight:700}
+.tw{overflow-x:auto}
+figure{margin:1.4em auto;text-align:center}
+figure img{display:block;margin:0 auto;max-width:100%;height:auto;border:1px solid var(--line);background:var(--paper);padding:8px;border-radius:3px;box-shadow:0 8px 20px rgba(59,42,26,.28),0 0 0 6px var(--card),0 0 0 7px var(--gold)}
+figcaption{font-size:.76em;color:var(--soft);margin-top:16px;font-style:italic}
+.mirror{display:inline-block;transform:scaleX(-1);transition:transform .6s}
+.mirror.flip{transform:none}
+.mbox{text-align:center;font-size:1.25em;font-weight:700;padding:16px;background:var(--card);border:1px dashed var(--wax);border-radius:8px;margin:1em 0;overflow-wrap:anywhere}
+svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:1.8em;padding-top:1em;border-top:2px dotted var(--line)}
+footer{max-width:760px;margin:0 auto;padding-block:0 30px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:.72em;color:var(--soft);line-height:1.5}
+.big{font-size:1.7em;font-weight:700;color:var(--wax)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+
+<header class="band"><div class="wrap">
+<p class="kicker">Florence and Milan, about 1480 to 1519</p>
+<h1>Inside Leonardo's Notebook</h1>
+<p class="tease">Eleven pages from real notebooks. Open them in any order. Finish a page to earn its wax stamp.</p>
+<div class="stamps" id="stamps" role="img" aria-label="Stamps earned"></div>
+</div></header>
+
+<main>
+<section id="hub">
+<p>Leonardo da Vinci painted the Mona Lisa. He also designed war machines, measured the human body in fractions, argued about the moon, and wrote riddles to stump his friends. He kept it all in notebooks, written backwards.</p>
+<p>About 7,000 of his pages survive. Every quote here is his own, from those pages. Your job is to do what he did: guess, test, measure and argue. Sometimes he was right. Sometimes he was wrong, and you get to catch him.</p>
+<div class="grid" id="doors"></div>
+<div id="finale" hidden>
+<div class="play"><h3>Your notebook is full</h3>
+<p>You earned every stamp. Based on the pages you chose first, you think most like <span class="big" id="who"></span></p>
+<p id="whoWhy"></p>
+<p>Leonardo left this line on a page, with nothing around it:</p>
+<div class="quote"><p class="lbl">In his own words</p><p>Tell me if anything was ever done.</p></div>
+<p>He started far more than he finished. He kept asking anyway. Pick one question from your own list on the To-Do page and chase it this week.</p>
+</div></div>
+</section>
+
+<!-- 1 MIRROR -->
+<section class="page" id="p-mirror" hidden>
+<h2>The Backwards Hand</h2>
+<p>Open any of Leonardo's notebooks and the first thing you notice is that you can't read it. He wrote from right to left, with every letter flipped. Hold the page up to a mirror and it turns into normal writing.</p>
+<figure style="max-width:496px"><img src="img/mirror-writing.jpg" alt="Lines of Leonardo's handwriting, written right to left in mirror script"><figcaption>Leonardo's mirror writing. (Wikimedia Commons, public domain)</figcaption></figure>
+<p>He was left-handed. Writing right to left with ink means your hand never drags through the wet line. Some people think it was a secret code. A mirror beats it in two seconds, so it was a weak code if it was one.</p>
+<div class="play"><h3>Decode it</h3>
+<p>Here is a real instruction from his notebook, written his way. Try to read it before you use the mirror.</p>
+<div class="mbox"><span class="mirror" id="mtxt">Describe the tongue of the woodpecker and the jaw of the crocodile.</span></div>
+<div class="row"><button class="btn" id="mflip">Hold up a mirror</button></div>
+<div class="row"><label for="mname">Your turn:</label><input type="text" id="mname" maxlength="30" placeholder="Type your name"></div>
+<div class="mbox"><span class="mirror" id="mout">your name here</span></div>
+</div>
+<div class="hands"><h3>Try it for real</h3><p>Write your name backwards on paper, right to left, with every letter flipped. Check it in a mirror. Then try it with your other hand. Which hand is better at it?</p></div>
+</section>
+
+<!-- 2 LETTER -->
+<section class="page" id="p-letter" hidden>
+<h2>The Job Application</h2>
+<p>Around 1482 Leonardo was about thirty and wanted a job with the ruler of Milan. He was already a trained painter. He wrote a numbered list of what he could do. Before you read it, make a guess.</p>
+<div class="play"><h3>Guess first</h3>
+<p>His list has ten numbered skills, then a few extra lines. How many of the ten numbered skills are about <b>war</b>?</p>
+<div class="opts" id="lq"></div><p class="fb" id="lfb"></p></div>
+<div id="lrest" hidden>
+<div class="quote"><p class="lbl">In his own words</p><p>I will make covered chariots, safe and unattackable which, entering among the enemy with their artillery, there is no body of men so great but they would break them.</p><p>Where the operation of bombardment should fail, I would contrive catapults, mangonels, trabocchi and other machines of marvellous efficacy and not in common use.</p></div>
+<figure style="max-width:560px"><img src="img/war-machines.jpg" alt="Leonardo's drawing of a scythed chariot and a round armored car"><figcaption>War machines drawn by Leonardo, including a covered car. (Wikimedia Commons, public domain)</figcaption></figure>
+<p>Bridges, tunnels, cannons, armored cars and ships fill nine of the ten. Only number ten turns to peace, and painting comes after that:</p>
+<div class="quote"><p class="lbl">In his own words</p><p>In time of peace I believe I can give perfect satisfaction and to the equal of any other in architecture and the composition of buildings public and private; and in guiding water from one place to another.</p><p>Item: I can carry out sculpture in marble, bronze or clay, and also in painting whatever may be done, and as well as any other, be he whom he may.</p></div>
+<p>The man who would paint the Mona Lisa put painting near the bottom. Milan was often at war, and he wrote for his reader. He ended with a dare: if anything on the list seemed impossible, he was "most ready to make the experiment."</p>
+<div class="hands"><h3>Try it for real</h3><p>His first promise was "extremely light and strong bridges." Build one from a single sheet of paper across two books a hand apart. How many coins does it hold flat? Now fold it into a zigzag and test again.</p></div>
+</div>
+</section>
+
+<!-- 3 BODY -->
+<section class="page" id="p-body" hidden>
+<h2>The Body Ruler</h2>
+<p>Leonardo read an old Roman architect named Vitruvius, who said the human body follows number rules. Leonardo wrote the rules down and drew the famous man in a circle and a square to test them.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>The length of a man's outspread arms is equal to his height.</p><p>The foot is the seventh part of the man. The whole hand will be the tenth part of the man. From the elbow to the tip of the hand will be the fifth part of a man.</p></div>
+<div class="play"><h3>Run the numbers</h3>
+<div class="row"><label for="bh">Your height:</label><input type="number" id="bh" min="30" max="250" value="60" style="width:6em"><span>
+<button class="btn ghost" id="bu" aria-pressed="false">inches</button></span></div>
+<div class="tw"><table><thead><tr><th>Leonardo's rule</th><th>Fraction</th><th>Predicted for you</th></tr></thead><tbody id="bt"></tbody></table></div>
+<p>Now measure your real arm span, fingertip to fingertip.</p>
+<div class="row"><label for="ba">My arm span:</label><input type="number" id="ba" min="30" max="250" style="width:6em"><button class="btn" id="bgo">Check the rule</button></div>
+<p class="fb" id="bfb"></p></div>
+<div class="verdict"><h3>Was he right?</h3><p><b>Close, on average.</b> Arm span and height match within a few percent for most people. The foot rule runs a little small for many modern feet. These are averages, and nobody's body is a perfect fraction. That includes yours.</p></div>
+<div class="hands"><h3>Try it for real</h3><p>Measure three people at home. Whose foot is closest to one seventh of their height? Whose is furthest off?</p></div>
+</section>
+
+<!-- 4 TREE -->
+<section class="page" id="p-tree" hidden>
+<h2>The Tree Rule</h2>
+<p>Leonardo stared at trees long enough to find math in them.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>All the branches of a tree at every stage of its height when put together are equal in thickness to the trunk below them.</p></div>
+<p>"Put together" is the tricky part. Bundle the branches like a fistful of straws, and the bundle should be as thick as the trunk. In math terms, the areas of the cut ends add up.</p>
+<div class="play"><h3>Split the trunk</h3>
+<p>The trunk is 12 cm across. Before you move the slider: if it splits into 4 equal branches, how wide is each one?</p>
+<div class="opts" id="tq"></div><p class="fb" id="tfb"></p>
+<label for="tn">Number of branches: <span id="tnv">2</span></label>
+<input type="range" id="tn" min="2" max="9" value="2">
+<svg id="tsvg" viewBox="0 0 360 230" width="360" role="img" aria-label="A trunk splitting into equal branches"></svg>
+<div class="tw"><table><tbody id="tt"></tbody></table></div>
+</div>
+<div class="verdict"><h3>Was he right?</h3><p><b>Mostly.</b> Scientists have measured real trees, and most come close to his rule. One modern idea for why: a tree built this way bends evenly in the wind and is less likely to snap.</p><p>He saw the same pattern in rivers. Streams that join make a river as big as all of them together.</p></div>
+<div class="hands"><h3>Try it for real</h3><p>Find a branch that forks in two. Wrap a strip of paper around each part and mark where it meets. Call the three lengths trunk, A and B. Test whether trunk × trunk is close to A × A + B × B.</p></div>
+</section>
+
+<!-- 5 MOON -->
+<section class="page" id="p-moon" hidden>
+<h2>The Borrowed Light</h2>
+<p>In Leonardo's time many people believed the moon glowed with its own light. He disagreed, in writing.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>The moon has no light in itself; but so much of it as faces the sun is illuminated, and of that illumined portion we see so much as faces the earth.</p></div>
+<div class="play"><h3>Move the moon</h3>
+<p>The sun is far off to the right. Slide the moon around the earth and watch what we see from the ground.</p>
+<input type="range" id="mo" min="0" max="360" value="60" aria-label="Moon position">
+<svg id="msvg" viewBox="0 0 360 200" width="360" role="img" aria-label="Moon orbit diagram and the phase seen from earth"></svg>
+<p class="fb" id="mofb"></p>
+<p>When the moon is a thin crescent, you can sometimes see the rest of it glowing faintly. What lights the dark part?</p>
+<div class="opts" id="mq"></div><p class="fb" id="mqfb"></p></div>
+<div class="verdict" id="mver" hidden><h3>Was he right?</h3><p><b>Yes, and a century early.</b> He wrote that the moon's night side gets light "lent it by our waters as they reflect the image of the sun." That faint glow is sunlight bounced off the earth, now called earthshine. He gave the credit to the oceans. Clouds do most of the work.</p><p>On another page, in extra-large letters among his math notes, he wrote one more sentence: <i>"The sun does not move."</i> Nobody knows exactly what he meant by it.</p></div>
+<div class="hands"><h3>Try it for real</h3><p>In a dark room, set a lamp on a table as the sun. Hold a ball at arm's length as the moon and turn slowly in a circle. Your head is the earth. Watch the ball go through its phases.</p></div>
+</section>
+
+<!-- 6 SHELLS -->
+<section class="page" id="p-shells" hidden>
+<h2>The Case of the Mountain Shells</h2>
+<p>High in the Italian hills, far from any coast, people kept finding seashells stuck in the rock. Oysters, corals, the lot. Everyone had a theory. You are the detective.</p>
+<div class="play"><h3>Pick your suspect</h3>
+<div class="opts" id="sq"></div><p class="fb" id="sfb"></p></div>
+<div id="srest" hidden>
+<div class="quote"><p class="lbl">In his own words</p><p>The shells, oysters, and other similar animals, which originate in sea-mud, bear witness to the changes of the earth.</p><p>...and the ancient bottoms of the seas have become mountain ridges.</p></div>
+<p>Leonardo looked at the evidence. The shells lay in layers, mud over shells over mud. A single flood would dump everything in a jumble, and heavy shells would not ride floodwater up a mountain. So the layers had to form slowly on a sea floor, and the sea floor had to rise.</p>
+<div class="verdict"><h3>Was he right?</h3><p><b>Yes.</b> Sea floors do become mountains, over millions of years. He had the wrong engine for it, since nobody knew yet about the moving plates of the earth's crust. He still read the rocks correctly about 300 years before geology became a science.</p></div>
+<div class="hands"><h3>Try it for real</h3><p>Layer sand, soil and small pebbles in a clear jar of water, one handful at a time, letting each settle. Then shake the jar hard once, like a flood. Which version looks like neat rock layers?</p></div>
+</div>
+</section>
+
+<!-- 7 SKY -->
+<section class="page" id="p-sky" hidden>
+<h2>Why Far Mountains Turn Blue</h2>
+<p>Painters before Leonardo often painted distant hills the same green and brown as near ones. He noticed that real hills fade toward blue, and he wanted to know why the sky is blue at all.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>...the atmosphere assumes this azure hue by reason of the particles of moisture which catch the rays of the sun.</p></div>
+<p>His test used a dark room with a sunbeam coming through a hole. Dust in the beam looked ash grey. Thin smoke in the beam looked "a most beautiful blue."</p>
+<div class="play"><h3>Paint with air</h3>
+<p>Slide to put more air between you and the hills. This is the trick behind the hazy background of the Mona Lisa.</p>
+<input type="range" id="sk" min="0" max="100" value="0" aria-label="Amount of air">
+<svg id="ssvg" viewBox="0 0 360 180" width="360" role="img" aria-label="Three rows of hills that turn paler and bluer with distance"></svg>
+<p>Which hill should a painter make the bluest and palest?</p>
+<div class="opts" id="kq"></div><p class="fb" id="kfb"></p></div>
+<figure style="max-width:412px"><img src="img/tuscan-landscape.jpg" alt="Pen drawing of a river valley seen from a hill"><figcaption>A landscape Leonardo drew in 1473, when he was 21. (Wikimedia Commons, public domain)</figcaption></figure>
+<div class="verdict"><h3>Was he right?</h3><p><b>Half right.</b> Tiny things in the air do scatter sunlight, and blue light scatters most. The scatterers are mainly the air's own molecules, though, not drops of moisture. His painting rule works perfectly either way.</p></div>
+<div class="hands"><h3>Try it for real</h3><p>Stir a few drops of milk into a clear glass of water. Shine a flashlight through the side in a dark room. Look from the side, then from the far end. Which view is bluish, and which is orange?</p></div>
+</section>
+
+<!-- 8 RIDDLES -->
+<section class="page" id="p-riddles" hidden>
+<h2>The Prophecies</h2>
+<p>Leonardo wrote scary-sounding predictions to read aloud at parties. Each one describes something completely ordinary. The fun was watching people guess. Your score counts.</p>
+<div class="play"><h3>Riddle <span id="rn">1</span> of 4</h3>
+<div class="quote" style="margin-top:.6em"><p class="lbl">In his own words</p><p id="rtxt"></p></div>
+<div class="opts" id="rq"></div><p class="fb" id="rfb"></p>
+<button class="btn" id="rnext" hidden>Next riddle</button>
+</div>
+<div class="hands"><h3>Try it for real</h3><p>Write your own. Pick something boring, like a toaster or a zipper, and describe it as a terrifying event from the future. Read it to someone and see if they can guess.</p></div>
+</section>
+
+<!-- 9 FLIGHT -->
+<section class="page" id="p-flight" hidden>
+<h2>The Great Bird</h2>
+<p>Leonardo watched birds for years and filled pages with wings. He was sure a person could fly, and he wrote about the day it would happen as if it were already famous.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>The great bird will take its first flight; on the back of his great swan, filling the universe with wonders; filling all writings with his fame and bringing eternal glory to his birthplace.</p></div>
+<figure style="max-width:520px"><img src="img/flying-machine.jpg" alt="Leonardo's drawing of a flying machine with a wooden frame and wing mechanism"><figcaption>One of Leonardo's flying machine designs. (Wikimedia Commons, public domain)</figcaption></figure>
+<p>"The great swan" was probably a hill near Florence with a name that means swan. His machines were mostly powered by a person flapping the wings with arms and legs.</p>
+<div class="play"><h3>Engineer's call</h3>
+<p>Why did his flapping machines never get off the ground?</p>
+<div class="opts" id="fq"></div><p class="fb" id="ffb"></p></div>
+<div class="verdict" id="fver" hidden><h3>Was he right?</h3><p><b>Right dream, wrong engine.</b> People did fly, about 400 years later, with fixed wings and gliding first. That was closer to his later bird notes than to his flapping machines. A human body is too heavy for its muscle power to flap into the air.</p></div>
+<div class="hands"><h3>Try it for real</h3><p>Drop a flat sheet of paper and a crumpled one from the same height. Then fold a glider and change one thing at a time: wing size, nose weight, a bent wingtip. Write down what each change does, the way he did.</p></div>
+</section>
+
+<!-- 10 SECRET -->
+<section class="page" id="p-secret" hidden>
+<h2>The Secret He Wouldn't Tell</h2>
+<p>Leonardo offered a duke armored cars and cannons. Yet one invention he refused to explain to anyone.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>How by a certain machine many may stay some time under water. And how and wherefore I do not describe my method of remaining under water and how long I can remain without eating.</p></div>
+<figure style="max-width:190px"><img src="img/diving-suit.jpg" alt="Pen sketch of a figure in a hooded diving suit with a breathing tube"><figcaption>A diving-suit sketch attributed to Leonardo. (Wikimedia Commons, public domain)</figcaption></figure>
+<div class="play"><h3>Your call</h3>
+<p>You invent a way to stay underwater for a long time. What do you do with it?</p>
+<div class="opts" id="cq"></div><p class="fb" id="cfb"></p></div>
+<div id="crest" hidden>
+<div class="quote"><p class="lbl">In his own words</p><p>And I do not publish nor divulge these, by reason of the evil nature of men, who would use them for assassinations at the bottom of the sea by destroying ships, and sinking them, together with the men in them.</p><p>Nevertheless I will impart others, which are not dangerous because the mouth of the tube through which you breathe is above the water, supported on air sacks or cork.</p></div>
+<p>He hid the dangerous version and shared the safe one, which is basically a snorkel. Here is the puzzle: this is the same man who advertised catapults. Was he being careful, or inconsistent? People still argue about what inventors owe the world. There isn't one right answer.</p>
+<div class="hands"><h3>Try it for real</h3><p>Ask two people the question you just answered. Write down their reasons. Did anyone change your mind?</p></div>
+</div>
+</section>
+
+<!-- 11 TODO -->
+<section class="page" id="p-todo" hidden>
+<h2>The To-Do List</h2>
+<p>Leonardo's notebooks are full of notes to himself. Shopping, errands and wild questions sit side by side. These are all real:</p>
+<div class="quote"><p class="lbl">In his own words</p><p>Describe the tongue of the woodpecker and the jaw of the crocodile.</p><p>Learn the multiplication of roots from Maestro Luca.</p><p>...a ruler, a very sharp knife, Spectacles...</p></div>
+<p>Maestro Luca was Luca Pacioli, a famous math teacher and his friend. Leonardo was past forty and still booking math lessons. He also wrote a fable about what happens to a mind that stops working. A razor is so proud of its shine that it hides instead of shaving beards. Months later it comes out covered in rust.</p>
+<div class="quote"><p class="lbl">In his own words</p><p>The same thing happens to those minds which instead of exercise give themselves up to sloth. They are like the razor here spoken of, and lose the keenness of their edge, while the rust of ignorance spoils their form.</p></div>
+<div class="play"><h3>Write yours</h3>
+<p>Add three things you want to find out. Make at least one of them as odd as a woodpecker's tongue.</p>
+<div class="row"><input type="text" id="td1" maxlength="90" placeholder="Find out why..." style="flex:1 1 220px"></div>
+<div class="row"><input type="text" id="td2" maxlength="90" placeholder="Learn how to..." style="flex:1 1 220px"></div>
+<div class="row"><input type="text" id="td3" maxlength="90" placeholder="Describe the..." style="flex:1 1 220px"></div>
+<button class="btn" id="tdgo">Ink it in</button><p class="fb" id="tdfb"></p></div>
+<div class="verdict"><h3>About that woodpecker</h3><p>A woodpecker's tongue is so long that it wraps around the back of its skull when pulled in. Nobody knows if Leonardo ever found that out.</p></div>
+</section>
+
+<div class="nav" id="nav" hidden><button class="btn ghost" id="back">Back to the desk</button><button class="btn" id="next">Next page</button></div>
+</main>
+<footer>Leonardo's words are from <em>The Notebooks of Leonardo da Vinci</em>, translated by Jean Paul Richter (1888), Project Gutenberg #5000 (public domain). Drawings shown are public-domain works by Leonardo. Ask a grown-up before trying the hands-on ideas.</footer>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var P=[
+ {id:'mirror',t:'The Backwards Hand',d:'Crack his mirror writing.',tag:'Code',c:'#8c2f1b',k:'story'},
+ {id:'letter',t:'The Job Application',d:'What did the painter brag about?',tag:'Life',c:'#8c2f1b',k:'build'},
+ {id:'body',t:'The Body Ruler',d:'Measure yourself in fractions.',tag:'Math',c:'#b8892b',k:'math'},
+ {id:'tree',t:'The Tree Rule',d:'Find the math in a branch.',tag:'Math',c:'#b8892b',k:'math'},
+ {id:'moon',t:'The Borrowed Light',d:'Move the moon. Catch a glow.',tag:'Science',c:'#1f3a5f',k:'sci'},
+ {id:'shells',t:'The Mountain Shells',d:'Seashells on a mountain. Whodunit?',tag:'Science',c:'#1f3a5f',k:'sci'},
+ {id:'sky',t:'Why Far Mountains Turn Blue',d:'Paint with air.',tag:'Art',c:'#2f5a3a',k:'art'},
+ {id:'riddles',t:'The Prophecies',d:'Four spooky riddles. Keep score.',tag:'Riddles',c:'#2f5a3a',k:'story'},
+ {id:'flight',t:'The Great Bird',d:'Why his flying machine stayed down.',tag:'Invention',c:'#8c2f1b',k:'build'},
+ {id:'secret',t:"The Secret He Wouldn't Tell",d:'Share the invention or hide it?',tag:'Big question',c:'#1f3a5f',k:'art'},
+ {id:'todo',t:'The To-Do List',d:'His errands. Then yours.',tag:'Life',c:'#b8892b',k:'story'}
+];
+P=P.filter(function(p){return p.id!=='todo'}).concat(P.filter(function(p){return p.id==='todo'}));
+var done={},order=[],cur=null;
+var N=P.length;
+function drawStamps(){var h='',n=0;P.forEach(function(p,i){if(done[p.id])n++;h+='<i class="'+(done[p.id]?'got':'')+'">'+(done[p.id]?'L':(i+1))+'</i>'});
+ $('stamps').innerHTML=h+'<span>'+n+' of '+N+' stamps</span>';
+ P.forEach(function(p){var b=$('d-'+p.id);if(b)b.classList.toggle('done',!!done[p.id])});
+ if(n===N)finale();}
+function earn(id){if(!done[id]){done[id]=1;order.push(id);drawStamps();}}
+function show(id){document.querySelectorAll('.page').forEach(function(s){s.hidden=true});
+ $('hub').hidden=!!id;$('nav').hidden=!id;cur=id;if(id)$('p-'+id).hidden=false;window.scrollTo(0,0);}
+P.forEach(function(p){var b=document.createElement('button');b.className='door';b.id='d-'+p.id;b.style.setProperty('--c',p.c);
+ b.innerHTML='<span class="tag">'+p.tag+'</span><b>'+p.t+'</b><small>'+p.d+'</small>';b.onclick=function(){show(p.id)};$('doors').appendChild(b)});
+$('back').onclick=function(){show(null)};
+$('next').onclick=function(){var i=P.findIndex(function(p){return p.id===cur});for(var j=1;j<=N;j++){var q=P[(i+j)%N];if(!done[q.id]){show(q.id);return}}show(null)};
+function finale(){var c={};order.slice(0,4).forEach(function(id,i){var k=P.find(function(p){return p.id===id}).k;c[k]=(c[k]||0)+(4-i)});
+ var best=Object.keys(c).sort(function(a,b){return c[b]-c[a]})[0]||'sci';
+ var W={math:['Leonardo the Mathematician.','You went for the numbers first. He wrote, "Let no man who is not a Mathematician read the elements of my work."'],
+ sci:['Leonardo the Investigator.','You went for the evidence first. He wrote, "Experience never errs; it is only your judgments that err."'],
+ build:['Leonardo the Engineer.','You went for the machines first. He wrote, "Mechanics are the Paradise of mathematical science, because here we come to the fruits of mathematics."'],
+ art:['Leonardo the Painter.','You went for the eye first. He called the eye "the window of the soul."'],
+ story:['Leonardo the Riddler.','You went for the codes and stories first. He filled pages with fables, jokes and riddles for his friends.']};
+ $('who').textContent=W[best][0];$('whoWhy').textContent=W[best][1];$('finale').hidden=false;}
+function quiz(box,fb,opts,after){opts.forEach(function(o){var b=document.createElement('button');b.textContent=o[0];b.onclick=function(){
+  if(o[1]){b.className='right';$(fb).textContent=o[2];box.querySelectorAll('button').forEach(function(x){x.disabled=true});after&&after(true)}
+  else{b.className='wrong';b.disabled=true;$(fb).textContent=o[2];after&&after(false)}};box.appendChild(b)})}
+
+/* mirror */
+var fl=0;$('mflip').onclick=function(){$('mtxt').classList.toggle('flip');$('mout').classList.toggle('flip');fl++;$('mflip').textContent=$('mtxt').classList.contains('flip')?'Take the mirror away':'Hold up a mirror';earn('mirror')};
+$('mname').oninput=function(){$('mout').textContent=this.value||'your name here'};
+/* letter */
+quiz($('lq'),'lfb',[['2',0,'More than that.'],['5',0,'More than that. Keep going.'],['9',1,'Nine of ten. War came first, and painting almost last.'],['None',0,'The opposite, nearly.']],function(ok){if(ok){$('lrest').hidden=false;earn('letter')}});
+/* body */
+var unit='inches';var R=[['Arm span','1/1',1],['Elbow to fingertip','1/5',1/5],['Foot','1/7',1/7],['Hand','1/10',1/10],['Shoulder width','1/4',1/4],['Chin to top of head','1/8',1/8]];
+function body(){var h=parseFloat($('bh').value)||0;$('bt').innerHTML=R.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+(h*r[2]).toFixed(1)+' '+(unit==='inches'?'in':'cm')+'</td></tr>'}).join('')}
+$('bh').oninput=body;$('bu').onclick=function(){unit=unit==='inches'?'cm':'inches';this.textContent=unit;$('bh').value=unit==='cm'?152:60;body()};body();
+$('bgo').onclick=function(){var h=parseFloat($('bh').value),a=parseFloat($('ba').value);if(!h||!a){$('bfb').textContent='Type your height and your measured arm span first.';return}
+ var pct=(a-h)/h*100,ab=Math.abs(pct).toFixed(1);$('bfb').textContent=Math.abs(pct)<0.05?'Exactly equal. Leonardo would have drawn you.':'Your arms are '+ab+'% '+(pct>0?'longer':'shorter')+' than your height. '+(Math.abs(pct)<=4?'The rule holds for you.':'You break the rule. Averages hide people like you.');earn('body')};
+/* tree */
+quiz($('tq'),'tfb',[['3 cm',0,'That is 12 ÷ 4. Four 3 cm branches bundle up much thinner than the trunk. Try the slider.'],['6 cm',1,'Yes. Four circles 6 cm across have the same total area as one circle 12 cm across.'],['4 cm',0,'Not quite. Use the slider and look at the areas.']],function(ok){if(ok)earn('tree')});
+function tree(){var n=+$('tn').value;$('tnv').textContent=n;var D=12,d=D/Math.sqrt(n),s=4,g='<rect x="'+(180-D*s/2)+'" y="140" width="'+(D*s)+'" height="85" fill="#6b4a2b"/>';
+ for(var i=0;i<n;i++){var a=(-60+120*(n===1?.5:i/(n-1)))*Math.PI/180,x=180+Math.sin(a)*150,y=140-Math.cos(a)*120;g+='<line x1="180" y1="142" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="#6b4a2b" stroke-width="'+(d*s).toFixed(1)+'" stroke-linecap="round" fill="none"/>'}
+ $('tsvg').innerHTML=g;var A=Math.PI*D*D/4;
+ $('tt').innerHTML='<tr><td>Each branch is</td><td>'+d.toFixed(1)+' cm across</td></tr><tr><td>All '+n+' branch areas together</td><td>'+A.toFixed(0)+' cm²</td></tr><tr><td>Trunk area</td><td>'+A.toFixed(0)+' cm²</td></tr><tr><td>Branch widths added in a row</td><td>'+(d*n).toFixed(1)+' cm (more than 12)</td></tr>';}
+$('tn').oninput=tree;tree();
+/* moon */
+var moved=0,mqok=0;
+function moon(){var a=+$('mo').value,r=a*Math.PI/180,ex=95,ey=100,R=62,mx=ex+Math.cos(r)*R,my=ey-Math.sin(r)*R;
+ var g='<rect x="0" y="0" width="360" height="200" fill="#1b1410"/><circle cx="'+ex+'" cy="'+ey+'" r="'+R+'" fill="none" stroke="#5b4630" stroke-dasharray="3 4"/>';
+ g+='<text x="186" y="18" fill="#f0cf7a" font-size="11" text-anchor="end">sunlight comes from this side →</text>';
+ g+='<circle cx="'+ex+'" cy="'+ey+'" r="13" fill="#1f3a5f"/><path d="M'+ex+' '+(ey-13)+'a13 13 0 0 1 0 26z" fill="#4f86c6"/>';
+ g+='<circle cx="'+mx+'" cy="'+my+'" r="8" fill="#3b342c"/><path d="M'+mx+' '+(my-8)+'a8 8 0 0 1 0 16z" fill="#f4ead0"/>';
+ /* phase view: lit fraction; a=0 moon toward sun = new */
+ var k=(1-Math.cos(r))/2,cx=280,cy=100,rad=50,wax=a<=180;
+ var rx=Math.abs(Math.cos(r))*rad;
+ g+='<circle cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="#3b342c"/>';
+ var lit='M'+cx+' '+(cy-rad)+'A'+rad+' '+rad+' 0 0 '+(wax?1:0)+' '+cx+' '+(cy+rad)+'A'+rx.toFixed(1)+' '+rad+' 0 0 '+((k>0.5)===wax?1:0)+' '+cx+' '+(cy-rad)+'z';
+ g+='<path d="'+lit+'" fill="#f4ead0"/><text x="'+cx+'" y="176" fill="#f0cf7a" font-size="11" text-anchor="middle">what we see</text><text x="'+ex+'" y="190" fill="#f0cf7a" font-size="11" text-anchor="middle">seen from above</text>';
+ $('msvg').innerHTML=g;
+ var nm=k<0.03?'New moon. The lit half faces away from us.':k>0.97?'Full moon. We see the whole lit half.':Math.abs(k-0.5)<0.06?'Half moon. We see half of the lit half.':k<0.5?'Crescent. We see a sliver of the lit half.':'Gibbous. We see most of the lit half.';
+ $('mofb').textContent=nm+' The moon itself is always half lit.';}
+$('mo').oninput=moon;moon();
+quiz($('mq'),'mqfb',[['The moon glows a little by itself',0,'Leonardo said no: "The moon has no light in itself."'],['Sunlight bouncing off the earth',1,'Yes. The earth lights the moon the way the moon lights our nights.'],['Starlight',0,'Far too faint. Think of something big and bright near the moon.']],function(ok){if(ok){mqok=1;$('mver').hidden=false;earn('moon')}});
+/* shells */
+quiz($('sq'),'sfb',[['A giant flood washed them up there',0,'Popular in his day. But a flood would leave a jumble, and these shells lie in neat layers. Try again.'],['They grew inside the rock by themselves',0,'People really believed this. But they look exactly like living sea animals, some with holes bored by other animals.'],['The mountain used to be a sea floor',1,'That was Leonardo\'s answer.']],function(ok){if(ok){$('srest').hidden=false;earn('shells')}});
+/* sky */
+function sky(){var t=+$('sk').value/100;function mix(c,f){var b=[150,178,214];return 'rgb('+c.map(function(v,i){return Math.round(v+(b[i]-v)*f)}).join(',')+')'}
+ var g='<rect width="360" height="180" fill="rgb(150,178,214)"/><circle cx="300" cy="36" r="16" fill="#f7e6b8"/>';
+ g+='<path d="M0 110Q60 50 120 100T240 90T360 105V180H0z" fill="'+mix([92,104,70],t*.85)+'"/>';
+ g+='<path d="M0 135Q70 85 150 125T300 115T360 130V180H0z" fill="'+mix([78,98,56],t*.5)+'"/>';
+ g+='<path d="M0 160Q90 120 180 150T360 150V180H0z" fill="'+mix([62,88,44],t*.12)+'"/>';
+ $('ssvg').innerHTML=g}
+$('sk').oninput=sky;sky();
+quiz($('kq'),'kfb',[['The nearest hill',0,'Almost no air between you and it. It keeps its true color.'],['The farthest hill',1,'Yes. More air in between means more blue. Painters call it aerial perspective.'],['All the same',0,'That was the old way. Move the slider and look again.']],function(ok){if(ok)earn('sky')});
+/* riddles */
+var RD=[['There will be many men who will move one against another, holding in their hands a cutting tool. But these will not do each other any injury beyond tiring each other; for, when one pushes forward the other will draw back.',['A sword fight','Two men using a long saw','A tug of war'],1,'Sawyers. Two people on a two-handled saw.'],
+ ['Feathers will raise men, as they do birds, towards heaven.',['Flying machines','Feather pillows','Writing with quill pens'],2,'Quill pens. Writing lifts people up. Odd that the flight-obsessed inventor did not mean flying.'],
+ ['Happy will they be who lend ear to the words of the Dead.',['Ghost stories','Reading good books','Listening at gravestones'],1,'Reading. The authors are long gone, and their words still talk.'],
+ ['The works of men\'s hands will occasion their death.',['Swords and spears','Bad cooking','Tall towers'],0,'Swords and spears. People make the things that kill them.']];
+var ri=0,score=0,first=true;
+function riddle(){var r=RD[ri];$('rn').textContent=ri+1;$('rtxt').textContent=r[0];$('rq').innerHTML='';$('rfb').textContent='';$('rnext').hidden=true;first=true;
+ r[1].forEach(function(o,i){var b=document.createElement('button');b.textContent=o;b.onclick=function(){if(i===r[2]){b.className='right';if(first)score++;$('rq').querySelectorAll('button').forEach(function(x){x.disabled=true});
+   $('rfb').textContent=r[3]+(ri===3?' You got '+score+' of 4 on the first try.':'');if(ri<3)$('rnext').hidden=false;else earn('riddles')}else{b.className='wrong';b.disabled=true;first=false;$('rfb').textContent='Too scary. Think of something ordinary.'}};$('rq').appendChild(b)})}
+$('rnext').onclick=function(){ri++;riddle()};riddle();
+/* flight */
+quiz($('fq'),'ffb',[['The wings were too big',0,'Big wings help. Something else was missing.'],['Human muscles are too weak for our weight',1,'Yes. A bird\'s flight muscles are a huge share of its body. Ours are not.'],['Wood cannot fly',0,'Early gliders and planes were wood and cloth.']],function(ok){if(ok){$('fver').hidden=false;earn('flight')}});
+/* secret */
+[['Tell everyone. Knowledge should be free.','You trust people more than Leonardo did.'],['Hide it. Someone will use it to hurt people.','That was Leonardo\'s choice, for the dangerous part.'],['Share only a safe version.','That is exactly what he did.']].forEach(function(o){var b=document.createElement('button');b.textContent=o[0];b.onclick=function(){$('cq').querySelectorAll('button').forEach(function(x){x.className=''});b.className='pick';$('cfb').textContent=o[1];$('crest').hidden=false;earn('secret')};$('cq').appendChild(b)});
+/* todo */
+$('tdgo').onclick=function(){var n=['td1','td2','td3'].filter(function(i){return $(i).value.trim().length>2}).length;if(n<3){$('tdfb').textContent='Leonardo would not stop at '+n+'. Fill in all three.';return}$('tdfb').textContent='Inked. Copy them onto real paper so they outlast this page.';earn('todo')};
+drawStamps();
+})();
+</script>
+
+</body></html>
