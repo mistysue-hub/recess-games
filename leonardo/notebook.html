@@ -66,6 +66,9 @@ figcaption{font-size:.76em;color:var(--soft);margin-top:16px;font-style:italic}
 svg{display:block;max-width:100%;height:auto;margin:0 auto}
 .nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:1.8em;padding-top:1em;border-top:2px dotted var(--line)}
 footer{max-width:760px;margin:0 auto;padding-block:0 30px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:.72em;color:var(--soft);line-height:1.5}
+.rocky{background:#e8eef6;border:2px solid var(--blue);border-radius:12px;padding:14px 18px 8px;margin:1.6em 0}
+.rocky h3{color:var(--blue)}
+.rocky textarea{font:inherit;font-size:.85em;width:100%;padding:8px 10px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
 .big{font-size:1.7em;font-weight:700;color:var(--wax)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -89,6 +92,7 @@ footer{max-width:760px;margin:0 auto;padding-block:0 30px;padding-left:max(16px,
 <p id="whoWhy"></p>
 <p>Leonardo left this line on a page, with nothing around it:</p>
 <div class="quote"><p class="lbl">In his own words</p><p>Tell me if anything was ever done.</p></div>
+<div class="rocky"><h3>Notes for Rocky</h3><textarea readonly rows="2" id="fin" aria-label="Result for Rocky"></textarea><div class="row"><button class="btn" id="finb">Copy my result for Rocky</button></div><p class="fb" id="finf"></p></div>
 <p>He started far more than he finished. He kept asking anyway. Pick one question from your own list on the To-Do page and chase it this week.</p>
 </div></div>
 </section>
@@ -286,15 +290,38 @@ var P=[
  {id:'todo',t:'The To-Do List',d:'His errands. Then yours.',tag:'Life',c:'#b8892b',k:'story'}
 ];
 P=P.filter(function(p){return p.id!=='todo'}).concat(P.filter(function(p){return p.id==='todo'}));
-var done={},order=[],cur=null;
+var done={},order=[],cur=null,Q={},pickS='',maxN=2;
+try{var sv=JSON.parse(localStorage.getItem('leoNotebook')||'null');if(sv&&sv.order){sv.order.forEach(function(id){if(P.some(function(p){return p.id===id})&&!done[id]){done[id]=1;order.push(id)}})}}catch(e){}
+function save(){try{localStorage.setItem('leoNotebook',JSON.stringify({order:order}))}catch(e){}}
+function title(id){return P.find(function(p){return p.id===id}).t}
+function qn(k){var q=Q[k];return q?'"'+q.first+'" (tries: '+q.tries+')':'(not answered this visit)'}
+function note(id){var L=['Leonardo notebook page: '+title(id)];
+ if(id==='mirror')L.push('I used the mirror on his line.','My name in mirror writing: '+($('mname').value||'(not typed)'));
+ if(id==='letter')L.push('My first guess for war skills out of ten: '+qn('lq'));
+ if(id==='body'){var h=parseFloat($('bh').value),a=parseFloat($('ba').value),u=unit==='inches'?'in':'cm';L.push('My height: '+(h||'?')+' '+u,"Leonardo's rule predicts arm span: "+(h||'?')+' '+u,'My measured arm span: '+(a||'(not entered)')+(a?' '+u:''));if(h&&a)L.push('Difference: '+((a-h)/h*100).toFixed(1)+'%')}
+ if(id==='tree')L.push('My first guess for 4 branches from a 12 cm trunk: '+qn('tq'),'Most branches I tried on the slider: '+maxN);
+ if(id==='moon')L.push('My first answer for what lights the dark part: '+qn('mq'));
+ if(id==='shells')L.push('My first suspect: '+qn('sq'));
+ if(id==='sky')L.push('My first pick for the bluest hill: '+qn('kq'));
+ if(id==='riddles')L.push(ri>=3&&$('rnext').hidden?'Riddles solved on the first try: '+score+' of 4':'(riddles not replayed this visit)');
+ if(id==='flight')L.push('My first answer for why it stayed down: '+qn('fq'));
+ if(id==='secret')L.push('My choice: '+(pickS||'(not chosen this visit)'));
+ if(id==='todo')L.push('My three questions:','1. '+$('td1').value,'2. '+$('td2').value,'3. '+$('td3').value);
+ return L.join('\n')}
+function copyTo(ta,fb){function fin(ok){fb.textContent=ok?'Copied!':'Copy did not work. Your notes are selected. Press Ctrl+C or Cmd+C.';if(!ok){ta.focus();ta.select()}}
+ function fall(){ta.focus();ta.select();try{return document.execCommand('copy')}catch(e){return false}}
+ try{navigator.clipboard.writeText(ta.value).then(function(){fin(true)},function(){fin(fall())})}catch(e){fin(fall())}}
+function rockyBox(id){var s=$('p-'+id);if(!s||s.querySelector('.rocky'))return;var d=document.createElement('div');d.className='rocky';
+ d.innerHTML='<h3>Notes for Rocky</h3><p>Stamp earned. Copy your notes and paste them into your chat with Rocky.</p><textarea readonly rows="4" id="rk-'+id+'" aria-label="Notes for Rocky"></textarea><div class="row"><button class="btn" id="rkb-'+id+'">Copy my notes for Rocky</button></div><p class="fb" id="rkf-'+id+'"></p>';
+ s.appendChild(d);var ta=$('rk-'+id);ta.value=note(id);$('rkb-'+id).onclick=function(){ta.value=note(id);copyTo(ta,$('rkf-'+id))}}
 var N=P.length;
 function drawStamps(){var h='',n=0;P.forEach(function(p,i){if(done[p.id])n++;h+='<i class="'+(done[p.id]?'got':'')+'">'+(done[p.id]?'L':(i+1))+'</i>'});
  $('stamps').innerHTML=h+'<span>'+n+' of '+N+' stamps</span>';
  P.forEach(function(p){var b=$('d-'+p.id);if(b)b.classList.toggle('done',!!done[p.id])});
  if(n===N)finale();}
-function earn(id){if(!done[id]){done[id]=1;order.push(id);drawStamps();}}
+function earn(id){if(!done[id]){done[id]=1;order.push(id);save();drawStamps();}rockyBox(id);var t=$('rk-'+id);if(t)t.value=note(id)}
 function show(id){document.querySelectorAll('.page').forEach(function(s){s.hidden=true});
- $('hub').hidden=!!id;$('nav').hidden=!id;cur=id;if(id)$('p-'+id).hidden=false;window.scrollTo(0,0);}
+ $('hub').hidden=!!id;$('nav').hidden=!id;cur=id;if(id){$('p-'+id).hidden=false;if(done[id])rockyBox(id)}window.scrollTo(0,0);}
 P.forEach(function(p){var b=document.createElement('button');b.className='door';b.id='d-'+p.id;b.style.setProperty('--c',p.c);
  b.innerHTML='<span class="tag">'+p.tag+'</span><b>'+p.t+'</b><small>'+p.d+'</small>';b.onclick=function(){show(p.id)};$('doors').appendChild(b)});
 $('back').onclick=function(){show(null)};
@@ -306,8 +333,8 @@ function finale(){var c={};order.slice(0,4).forEach(function(id,i){var k=P.find(
  build:['Leonardo the Engineer.','You went for the machines first. He wrote, "Mechanics are the Paradise of mathematical science, because here we come to the fruits of mathematics."'],
  art:['Leonardo the Painter.','You went for the eye first. He called the eye "the window of the soul."'],
  story:['Leonardo the Riddler.','You went for the codes and stories first. He filled pages with fables, jokes and riddles for his friends.']};
- $('who').textContent=W[best][0];$('whoWhy').textContent=W[best][1];$('finale').hidden=false;}
-function quiz(box,fb,opts,after){opts.forEach(function(o){var b=document.createElement('button');b.textContent=o[0];b.onclick=function(){
+ $('who').textContent=W[best][0];$('whoWhy').textContent=W[best][1];$('finale').hidden=false;$('fin').value='Leonardo notebook: all '+N+' stamps earned.\nMy result: '+W[best][0];}
+function quiz(box,fb,opts,after){opts.forEach(function(o){var b=document.createElement('button');b.textContent=o[0];b.onclick=function(){var q=Q[box.id]=Q[box.id]||{first:o[0],tries:0};q.tries++;
   if(o[1]){b.className='right';$(fb).textContent=o[2];box.querySelectorAll('button').forEach(function(x){x.disabled=true});after&&after(true)}
   else{b.className='wrong';b.disabled=true;$(fb).textContent=o[2];after&&after(false)}};box.appendChild(b)})}
 
@@ -324,7 +351,7 @@ $('bgo').onclick=function(){var h=parseFloat($('bh').value),a=parseFloat($('ba')
  var pct=(a-h)/h*100,ab=Math.abs(pct).toFixed(1);$('bfb').textContent=Math.abs(pct)<0.05?'Exactly equal. Leonardo would have drawn you.':'Your arms are '+ab+'% '+(pct>0?'longer':'shorter')+' than your height. '+(Math.abs(pct)<=4?'The rule holds for you.':'You break the rule. Averages hide people like you.');earn('body')};
 /* tree */
 quiz($('tq'),'tfb',[['3 cm',0,'That is 12 ÷ 4. Four 3 cm branches bundle up much thinner than the trunk. Try the slider.'],['6 cm',1,'Yes. Four circles 6 cm across have the same total area as one circle 12 cm across.'],['4 cm',0,'Not quite. Use the slider and look at the areas.']],function(ok){if(ok)earn('tree')});
-function tree(){var n=+$('tn').value;$('tnv').textContent=n;var D=12,d=D/Math.sqrt(n),s=4,g='<rect x="'+(180-D*s/2)+'" y="140" width="'+(D*s)+'" height="85" fill="#6b4a2b"/>';
+function tree(){var n=+$('tn').value;if(n>maxN)maxN=n;$('tnv').textContent=n;var D=12,d=D/Math.sqrt(n),s=4,g='<rect x="'+(180-D*s/2)+'" y="140" width="'+(D*s)+'" height="85" fill="#6b4a2b"/>';
  for(var i=0;i<n;i++){var a=(-60+120*(n===1?.5:i/(n-1)))*Math.PI/180,x=180+Math.sin(a)*150,y=140-Math.cos(a)*120;g+='<line x1="180" y1="142" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="#6b4a2b" stroke-width="'+(d*s).toFixed(1)+'" stroke-linecap="round" fill="none"/>'}
  $('tsvg').innerHTML=g;var A=Math.PI*D*D/4;
  $('tt').innerHTML='<tr><td>Each branch is</td><td>'+d.toFixed(1)+' cm across</td></tr><tr><td>All '+n+' branch areas together</td><td>'+A.toFixed(0)+' cm²</td></tr><tr><td>Trunk area</td><td>'+A.toFixed(0)+' cm²</td></tr><tr><td>Branch widths added in a row</td><td>'+(d*n).toFixed(1)+' cm (more than 12)</td></tr>';}
@@ -371,10 +398,12 @@ $('rnext').onclick=function(){ri++;riddle()};riddle();
 /* flight */
 quiz($('fq'),'ffb',[['The wings were too big',0,'Big wings help. Something else was missing.'],['Human muscles are too weak for our weight',1,'Yes. A bird\'s flight muscles are a huge share of its body. Ours are not.'],['Wood cannot fly',0,'Early gliders and planes were wood and cloth.']],function(ok){if(ok){$('fver').hidden=false;earn('flight')}});
 /* secret */
-[['Tell everyone. Knowledge should be free.','You trust people more than Leonardo did.'],['Hide it. Someone will use it to hurt people.','That was Leonardo\'s choice, for the dangerous part.'],['Share only a safe version.','That is exactly what he did.']].forEach(function(o){var b=document.createElement('button');b.textContent=o[0];b.onclick=function(){$('cq').querySelectorAll('button').forEach(function(x){x.className=''});b.className='pick';$('cfb').textContent=o[1];$('crest').hidden=false;earn('secret')};$('cq').appendChild(b)});
+[['Tell everyone. Knowledge should be free.','You trust people more than Leonardo did.'],['Hide it. Someone will use it to hurt people.','That was Leonardo\'s choice, for the dangerous part.'],['Share only a safe version.','That is exactly what he did.']].forEach(function(o){var b=document.createElement('button');b.textContent=o[0];b.onclick=function(){$('cq').querySelectorAll('button').forEach(function(x){x.className=''});b.className='pick';pickS=o[0];$('cfb').textContent=o[1];$('crest').hidden=false;earn('secret')};$('cq').appendChild(b)});
 /* todo */
 $('tdgo').onclick=function(){var n=['td1','td2','td3'].filter(function(i){return $(i).value.trim().length>2}).length;if(n<3){$('tdfb').textContent='Leonardo would not stop at '+n+'. Fill in all three.';return}$('tdfb').textContent='Inked. Copy them onto real paper so they outlast this page.';earn('todo')};
+$('finb').onclick=function(){copyTo($('fin'),$('finf'))};
 drawStamps();
+var dl=/[?&]page=([a-z]+)/.exec(location.search);if(dl&&$('p-'+dl[1]))show(dl[1]);
 })();
 </script>
 
