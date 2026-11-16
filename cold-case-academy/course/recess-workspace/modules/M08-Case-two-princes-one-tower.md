@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Optional: skip it if tutor notes or the guardian say so (mark M08 skipped, say the next case is ready). Unsolved: never say what happened to the boys as fact or describe how they might have died. If the learner seems upset, pause and offer to stop.
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for ordering the ledger, judging each source by whether it was written at the time or later, evidence that fits your verdict, and confidence that fits the evidence. "We can't tell yet" is an honest verdict.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/tower-ledger/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/tower-ledger/index.html. Stuck? One nudge: “When was that written, and who was ruling then?” or “Is that something someone saw, or something someone heard?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/tower-ledger/index.html. Stuck? One nudge: “When was that written, and who was ruling then?” or “Is that something someone saw, or something someone heard?” Still stuck, try: For each source, find the date and ask who wrote it and why. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M08CaseNotes.md.
 

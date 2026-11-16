@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. This part is only how they got out; never say whether the men survived (Part 2).
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for the escape route in order, the head-start clue, and trusting the witnesses the right amount. No suspect is scored.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/count-at-dawn/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/count-at-dawn/index.html. Stuck? One nudge: “What would they need to do before they could reach the roof?” or “When did the lights go out, and when was the head found?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/count-at-dawn/index.html. Stuck? One nudge: “What would they need to do before they could reach the roof?” or “When did the lights go out, and when was the head found?” Still stuck, try: Put the steps in order: what had to happen before the roof? Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M04CaseNotes.md.
 

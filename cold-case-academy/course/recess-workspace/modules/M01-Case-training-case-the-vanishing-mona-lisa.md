@@ -38,7 +38,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/the-missing-smile/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/the-missing-smile/index.html. Stuck? One nudge: “Which place haven't you checked yet?” or “Which two clues might fit together?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/the-missing-smile/index.html. Stuck? One nudge: “Which place haven't you checked yet?” or “Which two clues might fit together?” Still stuck, try: Look at the rooms and stairwells staff used, not just the famous painting. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M01CaseNotes.md.
 

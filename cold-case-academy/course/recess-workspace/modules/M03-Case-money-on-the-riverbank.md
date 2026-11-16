@@ -27,7 +27,7 @@ Estimated time: 35 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never say whether Cooper survived or call any suspect Cooper or any verdict wrong; "we can't tell yet" is honest.
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for evidence that fits your verdict, confidence that fits that evidence, looking at the other side, and your theory board. "We can't tell yet" can earn stars when the evidence on both sides is there.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 35 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/tena-bar-riddle/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/tena-bar-riddle/index.html. Stuck? One nudge: “Have you found any clue that points the other way?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/tena-bar-riddle/index.html. Stuck? One nudge: “Have you found any clue that points the other way?” Still stuck, try: Check the map: where does the river flow, and where did the money turn up? Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M03CaseNotes.md.
 

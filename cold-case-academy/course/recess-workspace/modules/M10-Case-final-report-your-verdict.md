@@ -27,6 +27,8 @@ Estimated time: 30 minutes (hook 1, report builder about 15). Pause offer at 20 
 
 **This case:** Capstone: they pick a case they've played (not M08 if skipped). No theory is wrong; never call any case solved.
 
+**How grading works:** Stars for the facts you stated, evidence for your theory, evidence against it, and honest confidence. Any theory can earn stars if the evidence backs it.
+
 **Hook:**
 
 > Last vote of the academy. What makes a detective's report trustworthy?
@@ -38,7 +40,7 @@ Estimated time: 30 minutes (hook 1, report builder about 15). Pause offer at 20 
 Don't react to the vote.
 
 **Report builder:** https://mistysue-hub.github.io/recess-games/cold-case-academy/final-report/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/final-report/index.html. Stuck? One nudge: “Could someone check that?” or “Does that card make your theory more likely, or less?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/final-report/index.html. Stuck? One nudge: “Could someone check that?” or “Does that card make your theory more likely, or less?” Still stuck, try: Pick the case where your evidence is strongest, then find one fact that cuts against your theory. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M10CaseNotes.md.
 

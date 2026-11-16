@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never say whether the men survived or call any verdict wrong; "we can't tell yet" is honest.
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for evidence that fits your verdict, confidence that fits that evidence, sorting facts from claims and opinions, and a file decision backed by evidence. "We can't tell yet" can earn stars when it fits the evidence.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/marshals-file/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/marshals-file/index.html. Stuck? One nudge: “Could anyone check that clue, or do we just have someone's word?” or “Have you found any clue that points the other way?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/marshals-file/index.html. Stuck? One nudge: “Could anyone check that clue, or do we just have someone's word?” or “Have you found any clue that points the other way?” Still stuck, try: For each clue, ask whether anyone could check it, or whether it's only a claim. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M05CaseNotes.md.
 

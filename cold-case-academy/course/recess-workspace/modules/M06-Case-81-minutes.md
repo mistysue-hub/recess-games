@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never say who the thieves were or where the art is, and never suggest the night guard was guilty (never charged).
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for how long the theft took, which rooms the thieves entered, and what doesn't fit the record. No suspect is scored.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/sensor-log/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/sensor-log/index.html. Stuck? One nudge: “Where would a record of the night be kept?” or “Was anything taken from a room nobody walked through?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/sensor-log/index.html. Stuck? One nudge: “Where would a record of the night be kept?” or “Was anything taken from a room nobody walked through?” Still stuck, try: Compare the times on the motion-detector record with when the guards were moved. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M06CaseNotes.md.
 

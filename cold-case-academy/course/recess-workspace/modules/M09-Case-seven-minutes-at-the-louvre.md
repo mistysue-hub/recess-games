@@ -29,6 +29,8 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **Why this case is here:** This heist happened in October 2025. If it resolves (new trial, conviction, or recovery), Rocky will let you know. For now, you're looking at a case in real time.
 
+**How grading works:** Stars for the timeline, separating who did it from how, the solved meter, and a verdict whose reasons rest on evidence rather than assumptions.
+
 **Hook:**
 
 > Quick vote. In 2025, thieves stole crown jewels from the most famous museum in the world, and police caught the people they think did it. Is the case solved?
@@ -40,7 +42,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/apollo-gallery/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/apollo-gallery/index.html. Stuck? One nudge: “Could that clue lead to a name?” or “Has a court decided that yet?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/apollo-gallery/index.html. Stuck? One nudge: “Could that clue lead to a name?” or “Has a court decided that yet?” Still stuck, try: Put the break-in and the getaway in order on the timeline. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M09CaseNotes.md.
 

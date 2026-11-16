@@ -12,7 +12,7 @@ For Rocky only. Never open this on screen, read it out or share it. Use it to an
 
 - **Debate (a light chat about the choice):** "Should the Marshals close the Alcatraz case now that the men would be about 100 years old?"
   - Side A: Close it
-    - The men would be about 100 years old, the age when the Marshals usually stop.
+    - The men would be about 100 years old, the age some reports say the Marshals' warrants run to.
     - Time and money could go to fugitives who are still a danger today.
     - The FBI already decided they most likely drowned.
   - Side B: Keep it open

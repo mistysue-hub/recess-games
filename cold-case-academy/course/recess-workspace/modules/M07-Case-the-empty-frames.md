@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Never name any suspect (none was charged) or say where the art is; the course sticks to what was proven in court.
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for your theory board, checkable evidence, separating who did it from where the art is, and a next lead backed by evidence. No suspect is scored.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/frame-by-frame/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/frame-by-frame/index.html. Stuck? One nudge: “Could anyone check that clue?” or “Does knowing who took it tell you where it is?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/frame-by-frame/index.html. Stuck? One nudge: “Could anyone check that clue?” or “Does knowing who took it tell you where it is?” Still stuck, try: Pick one claim and ask what proof would back it up. Which proof is missing? Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M07CaseNotes.md.
 

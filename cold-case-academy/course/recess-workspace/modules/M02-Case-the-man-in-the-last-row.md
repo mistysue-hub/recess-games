@@ -27,7 +27,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 
 **This case:** Unsolved. Nobody knows who D.B. Cooper was or whether he survived; Part 2 covers survival.
 
-**How grading works:** There's no "right" answer. The game rates how well your suspect's story fits the evidence you found. A verdict like "we can't tell yet" can earn full stars if it fits the clues.
+**How grading works:** Stars for a timeline in the right order, a wanted poster built on two witnesses who agree, and a search area backed by the bump time and route. No suspect is scored, so there's no right name to find.
 
 **Hook:**
 
@@ -40,7 +40,7 @@ Estimated time: 30 minutes (hook 1, game about 15). Pause offer at 20 minutes. N
 Don't react to the vote.
 
 **Game:** https://mistysue-hub.github.io/recess-games/cold-case-academy/flight-305/
-Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/flight-305/index.html. Stuck? One nudge: “Which witness haven't you talked to yet?” or “Do any two witnesses agree?” Never name a suspect or verdict.
+Backup if it won't load: https://raw.githack.com/mistysue-hub/recess-games/main/cold-case-academy/flight-305/index.html. Stuck? One nudge: “Which witness haven't you talked to yet?” or “Do any two witnesses agree?” Still stuck, try: Start with the two flight attendants' interviews, since they saw him up close. Never name a suspect or verdict.
 
 **Notes** (Rocky only; never on screen): resources/M02CaseNotes.md.
 
