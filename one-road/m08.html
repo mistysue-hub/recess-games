@@ -250,26 +250,6 @@
   <footer>Readings written in our own words for this course. Plague origins: M. Spyrou et al., <i>Nature</i> (2022). Further reading: Morris Rossabi, <i>The Mongols: A Very Short Introduction</i> (2012); Jack Weatherford, <i>Genghis Khan and the Making of the Modern World</i> (2004), a lively but much-debated case for the "connectors" side; primary sources on the Internet Medieval Sourcebook (Fordham) and Silk Road Seattle (University of Washington). Part of <i>One Road</i>, a Recess course.</footer>
 </div>
 <script>
-// Returns a Promise<boolean>: true only if the text really reached the clipboard.
-function rkCopy(text, box){
-  return new Promise(function(done){
-    function legacy(){
-      var el = box, tmp = null, wasHidden;
-      if (!el) { tmp = document.createElement('textarea'); tmp.setAttribute('readonly',''); tmp.style.position='fixed'; tmp.style.top='0'; tmp.style.opacity='0'; document.body.appendChild(tmp); el = tmp; }
-      el.value = text; wasHidden = el.hidden; el.hidden = false; el.focus(); el.select();
-      var ok = false; try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
-      if (tmp) tmp.remove(); else el.hidden = wasHidden;
-      done(ok);
-    }
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(function(){ done(true); }, legacy);
-        return;
-      }
-    } catch (e) {}
-    legacy();
-  });
-}
 (function(){
 
   var NEXT_LAST_LABEL = 'Open my ledger';
@@ -305,12 +285,9 @@ function rkCopy(text, box){
   });
   document.getElementById('copy1').addEventListener('click', function(){
     var t=document.getElementById('out1');
-    var note = document.getElementById('copied1');
-    rkCopy(t.value, t).then(function(ok){
-      if (ok) { note.textContent = 'Copied. Paste it into the chat.'; note.style.color = ''; }
-      else { note.textContent = "Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky."; note.style.color = 'inherit'; t.focus(); t.select(); }
-      note.classList.remove('hidden');
-    });
+    function done(){ document.getElementById('copied1').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); }); }
+    else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
   });
   document.getElementById('toVerdict').addEventListener('click', function(){ show('verdict'); });
   var vt=document.getElementById('vtext');
@@ -320,8 +297,8 @@ function rkCopy(text, box){
     var days={}; (txt.match(/day\s*([1-8])/gi)||[]).forEach(function(m){ days[m.replace(/\D/g,'')]=1; });
     var dn=Object.keys(days).length, words=txt.trim().split(/\s+/).filter(Boolean).length;
     var dw={}; (txt.toLowerCase().match(/[a-z']+/g)||[]).forEach(function(w){ dw[w]=1; }); var dist=Object.keys(dw).length;
-    document.getElementById('vcount').textContent=n+' sentence'+(n===1?'':'s')+(n<5?' (aim for 5)':'')+' · '+dn+' day'+(dn===1?'':'s')+' cited'+(dn<2?' (cite 2)':'')+' · '+words+' words'+(words<60?' (at least 60)':'')+' · '+dist+' different words'+(dist<30?' (at least 30)':'');
-    document.getElementById('seal').disabled = !(n>=5 && dn>=2 && words>=60 && dist>=30);
+    document.getElementById('vcount').textContent=n+' sentence'+(n===1?'':'s')+(n<5?' (aim for 5)':'')+' · '+dn+' day'+(dn===1?'':'s')+' cited'+(dn<2?' (cite 2)':'')+' · '+words+' words'+(words<45?' (at least 45)':'')+' · '+dist+' different words'+(dist<30?' (at least 30)':'');
+    document.getElementById('seal').disabled = !(n>=5 && dn>=2 && words>=45 && dist>=30);
   });
   document.getElementById('seal').addEventListener('click', function(){
     var line=function(col){ return pick[col].map(function(d){ return 'Day '+d; }).join(', '); };
@@ -350,12 +327,10 @@ function rkCopy(text, box){
   document.getElementById('copy').addEventListener('click', function(){
     var t = document.getElementById('out');
     if (t.value.indexOf('Minutes on this page') < 0) t.value += '\nMinutes on this page: ' + minsOn();
-    var note = document.getElementById('copied');
-    rkCopy(t.value, t).then(function(ok){
-      if (ok) { note.textContent = 'Copied. Paste it into the chat.'; note.style.color = ''; }
-      else { note.textContent = "Copy didn't work here. Select the text in the box, copy it, then paste it into your chat with Rocky."; note.style.color = 'inherit'; t.focus(); t.select(); }
-      note.classList.remove('hidden');
-    });
+    function done(){ document.getElementById('copied').classList.remove('hidden'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t.value).then(done, function(){ t.select(); try{document.execCommand('copy');}catch(e){} done(); });
+    } else { t.select(); try{document.execCommand('copy');}catch(e){} done(); }
   });
   var T0 = Date.now();
   function minsOn(){ return Math.max(1, Math.round((Date.now()-T0)/60000)); }
