@@ -319,8 +319,9 @@ function rkCopy(text, box){
     var n=(txt.match(/[^.!?]+[.!?]+/g)||[]).filter(function(x){return x.trim().split(/\s+/).length>=4;}).length;
     var days={}; (txt.match(/day\s*([1-8])/gi)||[]).forEach(function(m){ days[m.replace(/\D/g,'')]=1; });
     var dn=Object.keys(days).length, words=txt.trim().split(/\s+/).filter(Boolean).length;
-    document.getElementById('vcount').textContent=n+' sentence'+(n===1?'':'s')+(n<5?' (aim for 5)':'')+' · '+dn+' day'+(dn===1?'':'s')+' cited'+(dn<2?' (cite 2)':'')+' · '+words+' words'+(words<60?' (at least 60)':'');
-    document.getElementById('seal').disabled = !(n>=5 && dn>=2 && words>=60);
+    var dw={}; (txt.toLowerCase().match(/[a-z']+/g)||[]).forEach(function(w){ dw[w]=1; }); var dist=Object.keys(dw).length;
+    document.getElementById('vcount').textContent=n+' sentence'+(n===1?'':'s')+(n<5?' (aim for 5)':'')+' · '+dn+' day'+(dn===1?'':'s')+' cited'+(dn<2?' (cite 2)':'')+' · '+words+' words'+(words<60?' (at least 60)':'')+' · '+dist+' different words'+(dist<30?' (at least 30)':'');
+    document.getElementById('seal').disabled = !(n>=5 && dn>=2 && words>=60 && dist>=30);
   });
   document.getElementById('seal').addEventListener('click', function(){
     var line=function(col){ return pick[col].map(function(d){ return 'Day '+d; }).join(', '); };
