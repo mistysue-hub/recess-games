@@ -22,7 +22,7 @@
 <p><b>4. Contagion.</b> People also noticed that the sick seemed to pass it on, and so did their belongings. Boccaccio wrote that "any that touched the cloth of the sick… seemed thereby to contract the disease." People acted on this long before anyone could explain it.</p></div>
 
 <section class="task"><div class="q"><span class="num">Look back.</span>Which hook-vote option was <i>not</i> a 1348 theory? Find the line that shows it.</div>
-<textarea data-key="f1" data-label="Find it 1" placeholder="They didn't have… because the reading says…"></textarea>
+<textarea data-key="f1" data-label="Look back" placeholder="The option that wasn't a 1348 theory is… The line that shows it:"></textarea>
 <div class="sealwrap"><button class="seal" data-needs="f1" data-target="f1a" data-lock="f1"></button></div>
 <div class="sealed" id="f1a"><b>Germs.</b> It isn't one of the four theories. "Nobody in 1348 knew about bacteria. The plague bacterium wasn't identified until 1894." If you voted bad air, the stars or God's anger, all three were real 1348 theories. Contagion is the closest they came to the germ idea: they saw it spread without knowing why.</div></section>
 
@@ -78,7 +78,7 @@
 <section class="later-add task"><div class="q">Questions for later</div>
 <p class="small">Curious about something this page doesn't cover? Park it here so you don't lose it. Rocky will stay on today's leaf.</p>
 <textarea placeholder="My question…"></textarea><p><button class="opt" type="button">Park it</button></p><div class="later-list"></div></section>
-<section class="copybox" data-required="hook,f1,talked,m_physician,m_priest,m_merchant,m_gravedigger,o1,o2,o3,talk,map,locker" data-labels='{&quot;hook&quot;: &quot;Hook vote&quot;, &quot;f1&quot;: &quot;Find it 1&quot;, &quot;talked&quot;: &quot;Street talks&quot;, &quot;m_physician&quot;: &quot;Physician&#x27;s theory&quot;, &quot;m_priest&quot;: &quot;Priest&#x27;s theory&quot;, &quot;m_merchant&quot;: &quot;Merchant&#x27;s theory&quot;, &quot;m_gravedigger&quot;: &quot;Gravedigger&#x27;s view&quot;, &quot;o1&quot;: &quot;Ordinance: travel ban&quot;, &quot;o2&quot;: &quot;Ordinance: used cloth&quot;, &quot;o3&quot;: &quot;Ordinance: sealed coffins&quot;, &quot;talk&quot;: &quot;Talk-back&quot;, &quot;map&quot;: &quot;Map prediction&quot;, &quot;locker&quot;: &quot;Evidence Locker&quot;}'>
+<section class="copybox" data-required="hook,f1,talked,m_physician,m_priest,m_merchant,m_gravedigger,o1,o2,o3,talk,map,locker" data-labels='{&quot;hook&quot;: &quot;Hook vote&quot;, &quot;f1&quot;: &quot;Look back&quot;, &quot;talked&quot;: &quot;Street talks&quot;, &quot;m_physician&quot;: &quot;Physician&#x27;s theory&quot;, &quot;m_priest&quot;: &quot;Priest&#x27;s theory&quot;, &quot;m_merchant&quot;: &quot;Merchant&#x27;s theory&quot;, &quot;m_gravedigger&quot;: &quot;Gravedigger&#x27;s view&quot;, &quot;o1&quot;: &quot;Ordinance: travel ban&quot;, &quot;o2&quot;: &quot;Ordinance: used cloth&quot;, &quot;o3&quot;: &quot;Ordinance: sealed coffins&quot;, &quot;talk&quot;: &quot;Talk-back&quot;, &quot;map&quot;: &quot;Map prediction&quot;, &quot;locker&quot;: &quot;Evidence Locker&quot;}'>
 <h2>Copy my answers for Rocky</h2>
 <p class="status"></p>
 <p><button class="copybtn" type="button">Copy my answers for Rocky</button></p>
@@ -95,18 +95,16 @@
   };
   const NAMES={physician:"Physician",priest:"Priest",merchant:"Cloth merchant",gravedigger:"Gravedigger"};
   const talked=new Set(), log=document.getElementById('talklog');
-  document.querySelectorAll('#street .npc').forEach(b=>b.addEventListener('click',()=>{
-    const w=b.dataset.who; if(talked.has(w)) return; talked.add(w); b.classList.add('talked'); b.disabled=true;
+  function talk(b){ const w=b.dataset.who; if(talked.has(w)) return; talked.add(w); b.classList.add('talked'); b.disabled=true;
     const d=document.createElement('div'); d.className='card'; d.innerHTML='<h4>'+NAMES[w]+'</h4><p>"'+LINES[w]+'"</p>'; log.appendChild(d);
-    if(talked.size===4){ PY.record('talked','Street talks','talked to all four'); document.getElementById('matching').classList.add('open'); }
-  }));
+    if(talked.size===4){ document.getElementById('matching').classList.add('open'); if(!PY.get('talked')) PY.record('talked','Street talks','talked to all four'); } }
+  document.querySelectorAll('#street .npc').forEach(b=>b.addEventListener('click',()=>talk(b)));
+  document.addEventListener('py-restored',()=>{ if(PY.get('talked')) document.querySelectorAll('#street .npc').forEach(talk); });
   const TH=['Bad air','The stars',"God's anger",'Contagion','No theory'];
   const items=[['m_physician',"Physician's theory","The physician"],['m_priest',"Priest's theory","The priest"],['m_merchant',"Merchant's theory","The cloth merchant"],['m_gravedigger',"Gravedigger's view","The gravedigger"],
                ['o1','Ordinance: travel ban','Rule: travel ban'],['o2','Ordinance: used cloth','Rule: no used cloth'],['o3','Ordinance: sealed coffins','Rule: sealed coffins, deep graves']];
   const mt=document.getElementById('mt');
   mt.innerHTML=items.map(([k,l,q])=>'<div class="q">'+q+'</div><div class="opts" data-key="'+k+'" data-label="'+l+'">'+TH.map(t=>'<button class="opt" data-val="'+t+'">'+t+'</button>').join('')+'</div>').join('');
-  mt.querySelectorAll('.opts').forEach(g=>{const key=g.dataset.key,label=g.dataset.label;
-    g.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{ if(g.dataset.locked==='1')return; g.querySelectorAll('.opt').forEach(x=>x.classList.remove('chosen')); b.classList.add('chosen'); PY.record(key,label,b.dataset.val); PY.updateSeals(); }));});
 })();
 </script>
 <script src="assets/register.js"></script></body></html>

@@ -32,6 +32,8 @@
 <h2>IV. All of Europe</h2>
 <div class="entry"><p>For Europe as a whole, the usual estimate is that <b>30–50%</b> of the population died. The historian Ole Benedictow argues for about <b>60%</b>. In 2022 a team led by Adam Izdebski tried a new kind of evidence: <b>ancient pollen</b> from 261 sites. Where many people died, farming stopped and wild plants took over, and the pollen shows it. Their finding: the toll <b>varied widely</b>. Some regions were devastated, while others show little or no sign of collapse.</p></div>
 
+<div class="checkpoint" data-opens="qs"><p><b>Back to Rocky.</b> This reading includes a father burying his children. Tell Rocky you've finished reading (or copy your answers so far and paste them). He'll check in with you, then come back for the three questions.</p></div>
+<div class="chunk" id="qs">
 <h2>The Gravedigger's Count</h2>
 <p>Three questions. Answer whichever way suits you: type a number, tap an estimate, or write in words.</p>
 
@@ -41,7 +43,7 @@
 <p><b>How many normal years' worth of burials did Givry have in those 15 weeks?</b></p>
 <div class="opts" data-key="q1" data-label="Givry answer">
 <button class="opt" data-val="About 2">About 2</button><button class="opt" data-val="About 5">About 5</button><button class="opt" data-val="About 20">About 20</button><button class="opt" data-val="About 100">About 100</button></div>
-<p class="small">Or type your own number: <input type="number" id="q1num" style="width:120px" placeholder="e.g. 18"> <button class="opt" type="button" id="q1use">Use my number</button></p>
+<p class="small">Or type your own number: <input type="number" id="q1num" style="width:120px" placeholder="e.g. 18"> <button class="opt" type="button" id="q1use">Use my number</button> <span id="q1msg"></span></p>
 <div class="sealwrap"><button class="seal" data-needs="q1" data-target="q1a" data-lock="q1"></button></div>
 <div class="sealed" id="q1a"><b>About 20 years' worth</b>: 615 ÷ 30 = 20.5. Anything from 19 to 21 is right. Twenty years of funerals in fifteen weeks, in one village.</div></div>
 
@@ -59,6 +61,7 @@
 <div class="sealwrap"><button class="seal" data-needs="q3" data-target="q3a" data-lock="q3" data-go="Break the seal: one historian's answer"></button></div>
 <div class="sealed" id="q3a">Most historians would trust the <b>register for the count</b>: it was written at the time, one entry per burial, by someone whose job was counting. They'd trust the <b>chronicle for the experience</b>: no register tells you a father buried five children with his own hands. Good history uses both, and checks each against the other. There's room to disagree; your reason is what Rocky will ask about. <b>And your hook vote?</b> Historians combine several sources, because each kind of record gets something different right.</div></div>
 
+</div>
 <section class="routemap task"><div class="q"><span class="num">Map stop.</span>Givry is a village in Burgundy, far inland from Marseille. Did the plague reach it before or after Florence (March 1348)?</div>
 <div class="opts" data-key="map" data-label="Map prediction">
 <button class="opt" data-val="Before Florence">Before Florence</button><button class="opt" data-val="After Florence">After Florence</button></div>
@@ -91,11 +94,13 @@
   const t=document.getElementById('tiles'); let h='';
   for(let i=0;i<615;i++) h+='<i'+(i<30?' class="y"':'')+'></i>';
   t.innerHTML=h;
+  document.addEventListener('py-restored',()=>{ const v=PY.get('q1'); if(v&&/typed/.test(v)) document.getElementById('q1msg').textContent='Using your number: '+v.replace(' (typed)','')+' ✓'; });
   document.getElementById('q1use').addEventListener('click',()=>{
     const g=document.querySelector('.opts[data-key="q1"]'); if(g.dataset.locked==='1') return;
-    const v=document.getElementById('q1num').value.trim(); if(!v) return;
+    const v=document.getElementById('q1num').value.trim(), msg=document.getElementById('q1msg');
+    if(!v){ msg.textContent='Type a number first.'; return; }
     g.querySelectorAll('.opt').forEach(x=>x.classList.remove('chosen'));
-    PY.record('q1','Givry answer',v+' (typed)'); PY.updateSeals();
+    PY.record('q1','Givry answer',v+' (typed)'); msg.textContent='Using your number: '+v+' ✓';
   });
 })();
 </script>
