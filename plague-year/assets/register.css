@@ -1,0 +1,196 @@
+/* The Plague Year — "The Notary's Register" look
+   A bound 14th-century notarial register: rag paper with foxing, a stitched spine,
+   rubricated entries (red and blue), folio numbers and "Item" marks in the margin,
+   the notary's own signum, papers tucked between the leaves, and wax-sealed answers. */
+
+@font-face{font-family:'Register Hand';src:url('fonts/almendra-latin-700-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Register Black';src:url('fonts/grenze-gotisch-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Register Text';src:url('fonts/eb-garamond-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Register Text';src:url('fonts/eb-garamond-latin-400-italic.woff2') format('woff2');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'Register Text';src:url('fonts/eb-garamond-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Register Caps';src:url('fonts/im-fell-english-sc-latin-400-normal.woff2') format('woff2');font-display:swap}
+
+:root{
+  --paper:#f1e6cf; --paper2:#e8dabd; --slip:#f8f0dc; --ink:#2a1f16; --ink2:#5b4a39;
+  --rubric:#9e1b1b; --azure:#23466e; --wax:#a3201f; --waxdark:#5f0e0e; --rule:#c8b28a;
+  --green:#3f5d3a; --thread:#8b6a3e;
+  --gothic:'Register Hand','Almendra',Georgia,serif;
+  --black:'Register Black',Georgia,serif;
+  --text:'Register Text','EB Garamond',Georgia,'Times New Roman',serif;
+  --caps:'Register Caps','IM Fell English SC',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;color:var(--ink)}
+body{font-family:var(--text);font-size:19px;line-height:1.58;
+  background:#3b2a1d radial-gradient(ellipse at 50% 0,#5a4130 0,#3b2a1d 55%,#24180f 100%) fixed;padding:26px 10px 40px}
+
+/* ---- the leaf ---- */
+.shadowwrap{filter:drop-shadow(0 12px 24px rgba(0,0,0,.55))}
+.page{position:relative;max-width:780px;margin:0 auto;padding:30px 34px 56px 92px;min-height:100vh;
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(circle at 88% 7%,rgba(150,105,40,.16) 0,rgba(150,105,40,0) 5%),
+    radial-gradient(circle at 12% 63%,rgba(150,105,40,.12) 0,rgba(150,105,40,0) 4%),
+    radial-gradient(circle at 79% 81%,rgba(150,105,40,.10) 0,rgba(150,105,40,0) 6%),
+    radial-gradient(ellipse at 50% 50%,rgba(255,250,235,.55) 0,rgba(255,250,235,0) 70%),
+    linear-gradient(90deg,rgba(80,50,20,.18) 0,rgba(80,50,20,0) 26px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .33 0 0 0 0 .18 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-shadow:inset 0 0 70px rgba(120,80,30,.18)}
+/* stitched spine and double red margin rule */
+.page::before{content:"";position:absolute;top:0;bottom:0;left:14px;width:0;border-left:2px dashed var(--thread);opacity:.75}
+.page::after{content:"";position:absolute;top:0;bottom:0;left:70px;width:5px;border-left:1.5px solid rgba(158,27,27,.55);border-right:1.5px solid rgba(158,27,27,.55)}
+@media (max-width:600px){
+  body{font-size:18px;padding:0}
+  .page{padding:20px 16px 44px 40px}
+  .page::after{left:28px;width:3px}
+  .page::before{left:7px}
+}
+
+/* ---- header: signum + title ---- */
+header.reg{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center;margin-bottom:18px;padding-bottom:12px;
+  border-bottom:3px double var(--rubric);box-shadow:0 2px 0 -1px var(--azure)}
+header.reg .signum{width:76px;height:96px}
+@media (max-width:600px){header.reg{grid-template-columns:50px 1fr;gap:10px} header.reg .signum{width:50px;height:64px}}
+.folio{font-family:var(--caps);color:var(--rubric);letter-spacing:.06em;font-size:14px}
+.folio .az{color:var(--azure)}
+h1{font-family:var(--gothic);font-weight:600;font-size:38px;line-height:1.1;margin:.15em 0 .2em;letter-spacing:.01em}
+@media (max-width:600px){h1{font-size:31px}}
+header.reg p.small{grid-column:1 / -1;margin:6px 0 0}
+
+/* ---- rubricated headings with folio numbers in the margin ---- */
+main.page{counter-reset:fol}
+h2{counter-increment:fol;position:relative;font-family:var(--gothic);font-weight:600;font-size:27px;line-height:1.15;
+  color:var(--rubric);margin:1.7em 0 .5em;padding-bottom:4px;border-bottom:1px solid var(--rule)}
+h2::before{content:"¶ ";color:var(--azure)}
+h2:nth-of-type(even){color:var(--azure)}
+h2:nth-of-type(even)::before{color:var(--rubric)}
+h2::after{content:"fo. " counter(fol,lower-roman);position:absolute;left:-84px;top:.45em;width:60px;text-align:right;
+  font-family:var(--caps);font-size:13px;color:var(--ink2);letter-spacing:.04em}
+@media (max-width:600px){h2{font-size:23px} h2::after{display:none}}
+h3{font-family:var(--gothic);font-weight:600;font-size:21px;margin:1.2em 0 .3em}
+p{margin:0 0 .8em}
+
+/* ---- entries: "Item" in the margin, Lombard initial ---- */
+.entry{position:relative;padding:0 0 10px;margin:0 0 14px;border-bottom:1px solid var(--rule)}
+.entry::before{content:"Item";position:absolute;left:-84px;top:2px;width:60px;text-align:right;
+  font-family:var(--gothic);font-size:17px;color:var(--rubric)}
+@media (max-width:600px){.entry::before{display:none}}
+.lead::first-letter,.dropcap::first-letter{float:left;font-family:var(--gothic);font-weight:600;color:var(--azure);
+  font-size:3.35em;line-height:.82;margin:5px 10px 0 0;padding:6px 8px 4px;border:1.5px solid var(--rubric);
+  background:repeating-linear-gradient(45deg,rgba(158,27,27,.13) 0 2px,transparent 2px 7px),var(--slip)}
+
+.note{background:rgba(232,218,189,.75);border-left:4px solid var(--azure);padding:10px 14px;margin:14px 0;font-size:.95em}
+.content-note{position:relative;background:var(--slip);border:1px solid var(--rubric);padding:10px 14px 10px 92px;margin:10px 0 18px;font-size:.95em;min-height:48px}
+.content-note::before{content:"Nota bene";position:absolute;left:12px;top:9px;font-family:var(--black);color:var(--rubric);font-size:19px;line-height:1.05;width:70px}
+blockquote.source{position:relative;margin:14px 0;padding:14px 18px 10px 26px;background:rgba(252,246,230,.8);border:1px solid var(--rule);
+  border-left:6px double var(--rubric)}
+blockquote.source::before{content:"“";position:absolute;left:6px;top:-4px;font-family:var(--gothic);font-size:42px;color:var(--rubric);opacity:.55}
+blockquote.source p{margin-bottom:.6em}
+.omit{color:var(--ink2);font-style:italic}
+.gloss{border-bottom:1px dotted var(--rubric)}
+.credit{font-size:.82em;color:var(--ink2);margin-top:6px}
+small,.small{font-size:.86em;color:var(--ink2)}
+.hand::before{content:"☞ ";color:var(--rubric)}
+
+/* ---- buttons & choices ---- */
+button{font-family:inherit;font-size:17px;cursor:pointer}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.opt{background:#fdf8ec;border:1.5px solid var(--ink2);border-radius:3px;padding:8px 14px;color:var(--ink);text-align:left;
+  box-shadow:2px 2px 0 rgba(91,74,57,.35);transition:transform .1s,box-shadow .1s}
+.opt:hover:not([disabled]){transform:translate(-1px,-1px);box-shadow:3px 3px 0 rgba(91,74,57,.45)}
+.opt.chosen{background:var(--ink);color:var(--paper);border-color:var(--ink);box-shadow:2px 2px 0 var(--rubric)}
+.opt[disabled]{opacity:.6;cursor:default}
+.opt.chosen[disabled]{opacity:.9}
+textarea,input[type=text],input[type=number]{width:100%;font-family:var(--text);font-size:18px;padding:8px 10px;border:none;border-bottom:1.5px solid var(--ink2);
+  background:rgba(255,253,245,.75);color:var(--ink);border-radius:2px}
+textarea:focus,input:focus{outline:2px solid var(--azure);outline-offset:1px}
+textarea{min-height:72px}
+
+/* ---- tasks: slips of paper tucked between the leaves ---- */
+.task{position:relative;background:var(--slip);border:1px solid #d9c7a0;padding:18px 18px 14px;margin:20px 4px;
+  box-shadow:0 3px 8px rgba(70,45,15,.18),0 1px 0 rgba(255,255,255,.6) inset;transform:rotate(-.25deg)}
+.task:nth-of-type(even){transform:rotate(.25deg)}
+.task::before{content:"";position:absolute;top:-7px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#d9d0c0,#7d6f5c 60%,#4b4033);box-shadow:0 2px 2px rgba(0,0,0,.35)}
+.task .q{font-weight:600;margin-bottom:6px}
+.task .num{font-family:var(--gothic);font-weight:600;color:var(--rubric);margin-right:6px;font-size:1.08em}
+@media (max-width:600px){.task,.task:nth-of-type(even){transform:none;margin:18px 0}}
+
+/* ---- wax seals bearing the notary's signum ---- */
+.sealwrap{margin-top:12px}
+.seal{display:inline-flex;align-items:center;gap:12px;background:none;border:none;padding:0;color:var(--ink2)}
+.seal .wax{width:60px;height:60px;flex:none;position:relative;display:flex;align-items:center;justify-content:center;
+  border-radius:47% 53% 50% 50% / 52% 48% 52% 48%;
+  background:radial-gradient(circle at 35% 30%,#d65050,var(--wax) 45%,var(--waxdark) 100%);
+  box-shadow:0 3px 0 var(--waxdark),0 4px 6px rgba(0,0,0,.35),inset 0 0 0 6px rgba(0,0,0,.13),inset 0 0 0 10px rgba(255,255,255,.07);transition:transform .2s}
+.seal .wax svg{width:34px;height:42px;opacity:.85;filter:drop-shadow(0 1px 0 rgba(0,0,0,.45)) drop-shadow(0 -1px 0 rgba(255,200,200,.25))}
+.seal:not([disabled]):hover .wax{transform:rotate(-10deg) scale(1.06)}
+.seal[disabled] .wax{filter:grayscale(.5) brightness(.88)}
+.seal[data-opened] .wax{transform:rotate(14deg);clip-path:polygon(0 0,46% 0,56% 38%,44% 62%,52% 100%,0 100%);filter:none}
+.seal[data-opened] .wax::after{content:"";position:absolute;inset:0}
+.seal .lbl{font-style:italic}
+.sealed{display:none;position:relative;margin-top:12px;padding:14px 16px 12px 18px;background:#fffaf0;border:1px solid var(--rubric);
+  box-shadow:0 2px 6px rgba(70,45,15,.15)}
+.sealed::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;background:var(--rubric)}
+.sealed.open{display:block;animation:unfold .5s ease-out;transform-origin:top}
+@keyframes unfold{from{opacity:0;transform:scaleY(.6)}to{opacity:1;transform:none}}
+
+/* ---- chunked reading ---- */
+.chunk{display:none}.chunk.open{display:block;animation:unfold .45s ease-out}
+
+/* ---- route chart ---- */
+.routemap .mapdraw{margin-top:10px;border:1px solid var(--rule);background:#eee0c2}
+.routemap svg{width:100%;height:auto;display:block}
+.routemap .legend{font-size:.84em;color:var(--ink2);padding:6px 8px}
+
+/* ---- Evidence Locker: an iron-bound chest ---- */
+.locker{position:relative;color:#f3e7cf;border-radius:6px;padding:18px 18px 16px;margin:24px 0;
+  background:
+    linear-gradient(90deg,transparent 0 24px,#2b2b2b 24px 34px,transparent 34px calc(100% - 34px),#2b2b2b calc(100% - 34px) calc(100% - 24px),transparent 0),
+    repeating-linear-gradient(0deg,#4a3020 0 22px,#3f2819 22px 24px),#4a3020;
+  box-shadow:inset 0 0 0 3px #2b2b2b,0 6px 14px rgba(0,0,0,.4)}
+.locker>*{position:relative;margin-left:22px;margin-right:22px}
+.locker h3{font-family:var(--gothic);color:#f0c98f;margin-top:0;font-size:24px}
+.locker ol{margin:0;padding-left:22px}
+.locker li{margin-bottom:8px}
+.locker .angle{display:block;font-size:.85em;color:#dcc6a0;font-style:italic}
+.locker button{background:var(--wax);color:#fff;border:none;border-radius:3px;padding:9px 15px;box-shadow:0 2px 0 var(--waxdark)}
+.locker button[disabled]{opacity:.65}
+
+/* ---- copy for Rocky: the fair copy ---- */
+.copybox{position:relative;background:var(--ink);color:var(--paper);padding:20px 18px 18px;margin:30px 0;border-radius:4px;
+  box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.copybox::before{content:"";position:absolute;right:16px;top:-10px;width:22px;height:46px;background:var(--rubric);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%)}
+.copybox h2{color:#f0c98f;border-color:#5b4a39;margin-top:0}
+.copybox h2::before{content:"✒ ";color:#f0c98f}
+.copybox h2::after{display:none}
+.copybox pre{white-space:pre-wrap;background:#1a120c;color:#f1e6cf;padding:12px;border-radius:3px;font-size:14px;max-height:260px;overflow:auto;border:1px solid #4a3a2a}
+.copybtn{background:var(--wax);color:#fff;border:none;border-radius:3px;padding:12px 18px;font-size:18px;box-shadow:0 3px 0 var(--waxdark)}
+.missing{color:#f0b0a0;font-size:.9em}
+.done-msg{color:#b9e0a8}
+
+/* ---- game boards ---- */
+.card{position:relative;background:#fdf8ec;border:1.5px solid var(--ink2);padding:14px 16px;margin:14px 0;box-shadow:3px 3px 0 rgba(91,74,57,.25)}
+.card h4{margin:0 0 6px;font-family:var(--gothic);font-weight:600;font-size:21px;color:var(--rubric)}
+.progress{font-family:var(--caps);color:var(--rubric);font-size:15px}
+.street{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;padding:10px;background:repeating-linear-gradient(90deg,#d9c7a0 0 38px,#cfbb92 38px 40px);border:1px solid var(--rule)}
+@media (max-width:600px){.street{grid-template-columns:repeat(2,1fr)}}
+.npc{background:#fdf8ec;border:1.5px solid var(--ink2);border-radius:2px;padding:10px;text-align:center;box-shadow:2px 2px 0 rgba(91,74,57,.3)}
+.npc.talked{border-color:var(--green);box-shadow:inset 0 0 0 2px var(--green)}
+.npc svg{width:64px;height:64px}
+.bar{height:16px;background:#e2d3b3;border:1px solid var(--rule);overflow:hidden;margin:3px 0 8px}
+.bar>span{display:block;height:100%;background:var(--rubric);transition:width .5s}
+.tiles{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0}
+.tiles i{width:12px;height:12px;background:var(--ink2);display:block;border-radius:1px}
+.tiles i.y{background:var(--rubric)}
+
+/* ---- deeper seal: a folded insert ---- */
+.deeper{position:relative;border:1.5px solid var(--azure);padding:4px 16px 10px;margin:24px 0;background:rgba(220,228,236,.35)}
+.deeper summary{cursor:pointer;font-family:var(--gothic);font-weight:600;color:var(--azure);font-size:21px;padding:8px 0}
+.deeper[open]{background:rgba(220,228,236,.55)}
+
+/* ---- colophon ---- */
+footer.reg{margin-top:34px;padding-top:12px;font-size:.82em;color:var(--ink2);border-top:3px double var(--rubric)}
+footer.reg .explicit{font-family:var(--gothic);font-size:20px;color:var(--rubric);text-align:center;margin:0 0 10px}
+.hidden{display:none}
