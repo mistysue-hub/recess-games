@@ -24,11 +24,9 @@ Write one joke twice: the normal way, with a punchline, then Steve's way, with t
 
 Two words you'll hear all week: a *bit* is one funny chunk about one thing. A *set* is your bits in a row, the way a comedian does them on stage.
 
-
-## Watch the clip
-
-[King Tut — SNL, 1978](https://youtu.be/FYbavuReVF4)
-
 ## Backstage (optional)
 
 Steve did stand-up for about eighteen years and quit in 1981 at the top. The no-punchline idea played to near-empty rooms for years before it filled arenas. Cousins of this idea: Andy Kaufman, working in the same years (he once read a whole novel aloud on stage until the room cracked), and later Norm Macdonald's moth joke, which runs five minutes to reach one flat pun.
+## Watch the clip
+
+[King Tut — SNL, 1978](https://youtu.be/FYbavuReVF4)

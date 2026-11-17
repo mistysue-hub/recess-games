@@ -18,11 +18,9 @@ All the foolishness was pointed at the man in the suit, who was happy to take it
 
 Write about six lines for a character who is one hundred percent confident and one hundred percent wrong. A coach who has never won. A pilot who's afraid of heights. They never, ever realize.
 
-
-## Watch the clip
-
-[Steve Martin Is The Great Flydini — Johnny Carson's Tonight Show, 1992](https://youtu.be/s9xKU8eYCFk)
-
 ## Backstage (optional)
 
 You can see something similar in Nathan Fielder (Nathan for You, The Rehearsal): a confident fool who never winks, and the question of who the laugh lands on is the argument people have about his shows.
+## Watch the clip
+
+[Steve Martin Is The Great Flydini — Johnny Carson's Tonight Show, 1992](https://youtu.be/s9xKU8eYCFk)

@@ -22,11 +22,9 @@ This is Steve, about 23, on The Smothers Brothers Comedy Hour, the show where he
 
 Write the first five lines of a set about something you're bad at but keep doing anyway. Honest beats clever.
 
-
-## Watch the clip
-
-[Steve Martin Magic Tricks — The Smothers Brothers Comedy Hour](https://youtu.be/HQVnHltFYvc)
-
 ## Backstage (optional)
 
 The TV job was The Smothers Brothers Comedy Hour; he was 21, and shared an Emmy at 23. Where this went: every comedian you like has a version of these years. Most just don't talk about them.
+## Watch the clip
+
+[Steve Martin Magic Tricks — The Smothers Brothers Comedy Hour](https://youtu.be/HQVnHltFYvc)

@@ -26,11 +26,9 @@ Assemble your set: opener, build, callback. Perform it, out loud to someone at h
 
 That's the course. The stage is yours.
 
-
-## Watch the clip
-
-[The enduring friendship of Steve Martin and Martin Short — PBS NewsHour, 2020](https://youtu.be/1ldySPjTtgU?end=150)
-
 ## Backstage (optional)
 
 Other comedians have stepped away at a peak too, each for their own reasons; Bo Burnham stopped touring after Make Happy (2016) and later made Inside alone in one room.
+## Watch the clip
+
+[The enduring friendship of Steve Martin and Martin Short — PBS NewsHour, 2020](https://youtu.be/1ldySPjTtgU?end=150)

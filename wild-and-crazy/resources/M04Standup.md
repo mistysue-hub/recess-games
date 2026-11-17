@@ -24,11 +24,9 @@ Steve, in a forest with a guitar, wants to sing to Stephen Colbert. Colbert keep
 
 Write a bit where the tension builds for five beats and the release never comes. Then decide which beat you'd walk off on.
 
-
-## Watch the clip
-
-[Steve Martin Has A Song In His Heart — The Late Show with Stephen Colbert, 2020](https://youtu.be/widw_ySBraI)
-
 ## Backstage (optional)
 
 You can hear the same idea in the long silences in Nathan Fielder's shows, and in every deadpan pause (deadpan: saying something funny with a totally straight face) you've laughed at without knowing why.
+## Watch the clip
+
+[Steve Martin Has A Song In His Heart — The Late Show with Stephen Colbert, 2020](https://youtu.be/widw_ySBraI)
