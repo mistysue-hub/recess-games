@@ -26,6 +26,11 @@ A CBS Sunday Morning visit with Steve and Harry Bliss. Watch how he talks about 
 
 Take the joke you wrote in Module 1 and cut it to half its length without losing the laugh. Then, if you dare, cut once more.
 
+
+## Watch the clip
+
+[The concise joy of cartoons — CBS Sunday Morning](https://youtu.be/U4yisjMFMSs?end=120)
+
 ## Backstage (optional)
 
 He co-wrote The Jerk, wrote Roxanne, and has written plays, novels, and pieces for The New Yorker. Where this went: every caption that ever got screenshotted.

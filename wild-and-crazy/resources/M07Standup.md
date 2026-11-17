@@ -26,6 +26,11 @@ Steve accepting the Mark Twain Prize for American Humor in 2005. Watch the first
 
 Write a three-bit mini set: opener, a bigger second bit, a closer that calls back the opener. Then one note, like Steve's: the thing you'd fix next time.
 
+
+## Watch the clip
+
+[Steve Martin Acceptance Speech — 2005 Mark Twain Prize](https://youtu.be/xGv5zBShF5Q?end=180)
+
 ## Backstage (optional)
 
 Where this went: many stand-up specials end on a callback. Now you'll notice when they do.

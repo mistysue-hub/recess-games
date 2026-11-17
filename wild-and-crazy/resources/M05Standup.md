@@ -22,6 +22,11 @@ Steve and a bluegrass band crammed behind an office desk at NPR. Watch for the m
 
 Write three high/low pairings, one line each. Pick your favorite and stretch it to four lines, both halves dead serious.
 
+
+## Watch the clip
+
+[Steve Martin and the Steep Canyon Rangers — NPR Music Tiny Desk Concert, 2017](https://youtu.be/ZyHipL45pwM?end=180)
+
 ## Backstage (optional)
 
 The play is Picasso at the Lapin Agile, first staged in Chicago in 1993. Where this went: most absurdist short-form comedy is juxtaposition with the explanation removed.
