@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 4: Hold It... Hold It...</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--brick:#5b1f17;--mortar:#3c130e;--cork:#1f1a18;--cork2:#2a2320;--card:#fffbe9;--ink:#2b2320;--red:#c8372d;--pin:#d94a3b;--spot:rgba(255,220,150,.42);--green:#2f7d4a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cork);background-image:radial-gradient(ellipse at 50% 0,rgba(255,215,140,.18),transparent 55%),repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.035) 118px 120px);color:var(--ink);font-family:Lora,Georgia,serif;line-height:1.55}
+header{position:relative;background:var(--brick);background-image:repeating-linear-gradient(0deg,transparent 0 28px,var(--mortar) 28px 32px),repeating-linear-gradient(90deg,transparent 0 60px,var(--mortar) 60px 64px);padding:28px 16px 36px;color:#fff5d6;text-align:center;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+header::before{content:"";position:absolute;left:50%;top:-40px;width:420px;height:420px;transform:translateX(-50%);background:radial-gradient(circle at 50% 0,var(--spot),transparent 62%);pointer-events:none}
+.marquee{font-family:'Special Elite',monospace;letter-spacing:.14em;font-size:.8rem;opacity:.85;text-transform:uppercase}
+header h1{font-family:'Special Elite',monospace;font-size:clamp(1.2rem,4vw,2rem);margin:.4em 0 0;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+main{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--card);background-image:repeating-linear-gradient(0deg,transparent 0 27px,#d9e4ef 27px 28px);background-position:0 44px;border:1px solid #e3d9bd;border-radius:3px;box-shadow:0 10px 22px rgba(0,0,0,.6);padding:40px 22px 24px;margin:0 0 22px;position:relative}
+.card::before{content:"";position:absolute;left:0;right:0;top:36px;height:2px;background:var(--red);opacity:.65}
+.pin{position:absolute;top:-10px;left:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9a8a,var(--pin) 55%,#8a1f16);box-shadow:0 3px 4px rgba(0,0,0,.4);transform:translateX(-50%)}
+.card h2{font-family:'Patrick Hand',cursive;font-size:1.45rem;margin:0 0 8px;color:var(--red)}
+.card p{margin:0 0 12px;font-size:1.03rem}
+.note{font-family:'Patrick Hand',cursive;font-size:1.05rem;background:#fff2b3;border:1px dashed #d9b84a;padding:10px 14px;margin:4px 0 18px}
+.fine{font-size:.82rem;color:#5e534b;font-style:italic}
+.btn{display:inline-block;font-family:'Special Elite',monospace;font-size:1rem;background:var(--red);color:#fff;border:none;border-radius:4px;padding:12px 24px;cursor:pointer;box-shadow:0 3px 0 #8a1f16;margin:6px 4px}
+.btn:hover{filter:brightness(1.1)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.green{background:var(--green);box-shadow:0 3px 0 #1d5230}
+.btn.outline{background:#fff;color:var(--red);border:2px solid var(--red);box-shadow:0 3px 0 #d9c9a0}
+.step{display:none}.step.active{display:block}
+.step-indicator{font-family:'Special Elite',monospace;font-size:.85rem;color:#d8c9a6;text-align:center;margin:0 0 16px;letter-spacing:.1em}
+.hook-choices{display:flex;gap:12px;justify-content:center;margin:16px 0}
+.hook-choices .btn{min-width:120px}
+.hook-reveal{display:none;margin:12px 0;padding:12px;background:#fff2b3;border-radius:4px;font-family:'Patrick Hand',cursive;font-size:1.1rem}
+.video-wrap{position:relative;width:100%;padding-bottom:56.25%;margin:12px 0;border-radius:4px;overflow:hidden;background:#000}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.game-frame{width:100%;border:none;border-radius:4px;min-height:500px;margin:12px 0;background:var(--cork2)}
+textarea{width:100%;min-height:100px;padding:12px;font-family:Lora,Georgia,serif;font-size:1rem;line-height:1.5;border:2px solid #d9c9a0;border-radius:4px;background:#fff;color:var(--ink);resize:vertical}
+textarea:focus{outline:none;border-color:var(--red)}
+.writing-prompt{font-family:'Patrick Hand',cursive;font-size:1.1rem;color:var(--red);margin:12px 0 8px}
+.finish-box{background:#fff;border:3px solid var(--green);border-radius:8px;padding:20px;margin:16px 0}
+.finish-box h3{font-family:'Special Elite',monospace;color:var(--green);margin:0 0 12px}
+.finish-item{margin:8px 0;padding:8px;background:#f8f6f0;border-radius:4px;font-size:.95rem}
+.finish-item label{font-family:'Patrick Hand',cursive;color:var(--red);display:block;font-size:.9rem;margin-bottom:2px}
+.copy-btn{font-size:.85rem;padding:8px 16px;margin-top:12px}
+@media(max-width:480px){.card{padding:36px 16px 20px}.hook-choices{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<header>
+<div class="marquee">Wild and Crazy &middot; Module 4</div>
+<h1>Hold It... Hold It...</h1>
+</header>
+<main>
+
+<!-- STEP 1: HOOK -->
+<section class="step active" id="s-hook">
+<div class="step-indicator">Step 1 of 6</div>
+<div class="card"><span class="pin"></span>
+<h2>Tonight's question</h2>
+<p>A comedian goes silent for ten seconds on purpose. Is that a mistake or a tool?</p>
+<div class="hook-choices">
+<button class="btn outline" onclick="hookAnswer('A mistake')">A mistake</button>
+<button class="btn" onclick="hookAnswer('A tool')">A tool</button>
+</div>
+<div class="hook-reveal" id="hook-reveal">
+A tool. Steve let the quiet stretch until the quiet <em>was</em> the material: a long stare, a promise never kept, a story that circles the point and never lands. The audience is squirming, grinning, waiting — and the laugh leaks out around the edges.
+</div>
+</div>
+<button class="btn green" id="hook-next" style="display:none" onclick="goStep('s-read')">Read the set card →</button>
+</section>
+
+<!-- STEP 2: SET CARD -->
+<section class="step" id="s-read">
+<div class="step-indicator">Step 2 of 6 · Set Card</div>
+<div class="card"><span class="pin"></span>
+<h2>The balloon</h2>
+<p>This card is about not finishing things. It ends on time, though. Probably.</p>
+<p>Think of tension as a balloon. Each beat of a bit (one line, one look, one pause) adds a little air. A punchline is a pin. Steve's idea was to keep adding air and never bring out the pin, so the audience is squirming, grinning, waiting, and the laugh leaks out around the edges.</p>
+<p>Picture a bit in his style: announce a song, start tuning the banjo, and keep tuning. Past the point where it was a joke, through the point where it was annoying, out the other side into something else. The room would laugh, stop, get uncomfortable, and laugh harder, at nothing, because nothing was still happening.</p>
+</div>
+<div class="card"><span class="pin"></span>
+<h2>Silence is a tool</h2>
+<p>Beginners rush. A quiet room feels like failure, so they fill it. Steve let the quiet stretch until the quiet was the material: a long stare, a promise never kept, a story that circles the point and never lands.</p>
+</div>
+<div class="card"><span class="pin"></span>
+<h2>Counting beats</h2>
+<p>Writers count beats. A tension bit might go: promise (1), delay (2), delay with a tiny change (3), almost (4), nope (5). Every beat has to add a half-inch more air. The same line five times isn't tension; it's a loop. The hardest skill is knowing which beat to walk off on.</p>
+</div>
+<div class="card"><span class="pin"></span>
+<h2>Backstage (optional)</h2>
+<p>You can hear the same idea in the long silences in Nathan Fielder's shows, and in every deadpan pause (deadpan: saying something funny with a totally straight face) you've laughed at without knowing why.</p>
+</div>
+<button class="btn green" onclick="goStep('s-clip')">Watch the clip →</button>
+</section>
+
+<!-- STEP 3: CLIP -->
+<section class="step" id="s-clip">
+<div class="step-indicator">Step 3 of 6 · Clip</div>
+<div class="card"><span class="pin"></span>
+<h2>Tonight's clip: the song that never gets sung</h2>
+<p>Steve, in a forest with a guitar, wants to sing to Stephen Colbert. Colbert keeps stopping him. Each try gets a little further. It never happens.</p>
+<p><strong>Watch for:</strong> How many times did he almost get to sing?</p>
+<div class="video-wrap">
+<iframe src="https://www.youtube-nocookie.com/embed/widw_ySBraI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+</div>
+</div>
+<button class="btn green" onclick="goStep('s-game')">Play the game →</button>
+</section>
+
+<!-- STEP 4: GAME -->
+<section class="step" id="s-game">
+<div class="step-indicator">Step 4 of 6 · Game: Hold the Pause</div>
+<div class="card"><span class="pin"></span>
+<h2>Hold the Pause</h2>
+<p>Six bits, told one beat at a time. The balloon grows with each beat. Tap Hold to keep going or Walk Off to leave at the peak. When you're done, come back here.</p>
+<iframe class="game-frame" src="../games/hold-the-pause/" loading="lazy"></iframe>
+<p class="fine">When the game shows your score, write it below and continue.</p>
+</div>
+<div style="margin:12px 0">
+<div class="writing-prompt">My game score:</div>
+<input type="text" id="game-score" placeholder="e.g. Tension held: 8 of 12" style="width:100%;padding:10px;font-family:Lora,Georgia,serif;font-size:1rem;border:2px solid #d9c9a0;border-radius:4px">
+</div>
+<button class="btn green" onclick="goStep('s-write')">Write your bit →</button>
+</section>
+
+<!-- STEP 5: WRITING -->
+<section class="step" id="s-write">
+<div class="step-indicator">Step 5 of 6 · Your Turn</div>
+<div class="card"><span class="pin"></span>
+<h2>Pick a situation</h2>
+<p>Name a situation where something is about to happen — a secret about to be told, the food about to arrive, a trick about to be revealed.</p>
+<textarea id="w-situation" rows="2" placeholder="Something is about to happen..."></textarea>
+</div>
+<div class="card"><span class="pin"></span>
+<h2>Write the first three beats</h2>
+<p>Each adds a little air. It never happens.</p>
+<textarea id="w-beats1" rows="4" placeholder="Beat 1:&#10;Beat 2:&#10;Beat 3:"></textarea>
+</div>
+<div class="card"><span class="pin"></span>
+<h2>Add two more beats</h2>
+<p>Keep adding air. Then mark which beat you would walk off on.</p>
+<textarea id="w-beats2" rows="4" placeholder="Beat 4:&#10;Beat 5:&#10;Walk off at beat: "></textarea>
+<p class="fine">If two beats feel the same, ask yourself: what tiny thing changes in the second one?</p>
+</div>
+<button class="btn green" onclick="goStep('s-finish')">See my finish screen →</button>
+</section>
+
+<!-- STEP 6: FINISH -->
+<section class="step" id="s-finish">
+<div class="step-indicator">Step 6 of 6 · Finish</div>
+<div class="card"><span class="pin"></span>
+<h2>🎤 Module 4 Complete</h2>
+<div class="finish-box">
+<h3>Your session summary</h3>
+<div class="finish-item"><label>Hook answer</label><span id="f-hook"></span></div>
+<div class="finish-item"><label>Game score</label><span id="f-game"></span></div>
+<div class="finish-item"><label>Situation</label><span id="f-situation"></span></div>
+<div class="finish-item"><label>Five-beat bit</label><span id="f-beats"></span></div>
+</div>
+<p style="margin-top:16px"><strong>Show this screen to Rocky</strong> (screenshot or paste the text below).</p>
+<button class="btn copy-btn" onclick="copyFinish()">📋 Copy summary to clipboard</button>
+<p class="fine" id="copy-msg" style="display:none">Copied! Paste it to Rocky.</p>
+</div>
+</section>
+
+</main>
+<script>
+var hookAns='';
+function hookAnswer(a){
+  hookAns=a;
+  document.getElementById('hook-reveal').style.display='block';
+  document.getElementById('hook-next').style.display='inline-block';
+  document.querySelectorAll('.hook-choices .btn').forEach(function(b){b.disabled=true});
+}
+function goStep(id){
+  document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='s-finish') buildFinish();
+}
+function buildFinish(){
+  document.getElementById('f-hook').textContent=hookAns||'—';
+  document.getElementById('f-game').textContent=document.getElementById('game-score').value||'(not entered)';
+  document.getElementById('f-situation').textContent=document.getElementById('w-situation').value||'(not written)';
+  var beats=(document.getElementById('w-beats1').value||'')+(document.getElementById('w-beats2').value?'\n'+document.getElementById('w-beats2').value:'');
+  document.getElementById('f-beats').textContent=beats||'(not written)';
+}
+function copyFinish(){
+  var beats=(document.getElementById('w-beats1').value||'')+(document.getElementById('w-beats2').value?'\n'+document.getElementById('w-beats2').value:'');
+  var t='Module 4: Hold It... Hold It...\n';
+  t+='Hook: '+(hookAns||'—')+'\n';
+  t+='Game: '+(document.getElementById('game-score').value||'—')+'\n';
+  t+='Situation: '+(document.getElementById('w-situation').value||'—')+'\n';
+  t+='Five-beat bit:\n'+(beats||'—')+'\n';
+  navigator.clipboard.writeText(t).then(function(){
+    document.getElementById('copy-msg').style.display='block';
+  });
+}
+</script>
+</body>
+</html>
