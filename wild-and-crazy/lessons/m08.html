@@ -32,7 +32,7 @@ main{max-width:720px;margin:0 auto;padding:20px 16px 60px}
 .hook-reveal{display:none;margin:12px 0;padding:12px;background:#fff2b3;border-radius:4px;font-family:'Patrick Hand',cursive;font-size:1.1rem}
 .video-wrap{position:relative;width:100%;padding-bottom:56.25%;margin:12px 0;border-radius:4px;overflow:hidden;background:#000}
 .video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
-.game-frame{width:100%;border:none;border-radius:4px;min-height:500px;margin:12px 0;background:var(--cork2)}
+.game-frame{width:100%;border:none;border-radius:4px;min-height:min(500px,70vh);margin:12px 0;background:var(--cork2)}
 textarea{width:100%;min-height:100px;padding:12px;font-family:Lora,Georgia,serif;font-size:1rem;line-height:1.5;border:2px solid #d9c9a0;border-radius:4px;background:#fff;color:var(--ink);resize:vertical}
 textarea:focus{outline:none;border-color:var(--red)}
 .writing-prompt{font-family:'Patrick Hand',cursive;font-size:1.1rem;color:var(--red);margin:12px 0 8px}
@@ -44,6 +44,11 @@ textarea:focus{outline:none;border-color:var(--red)}
 .copy-btn{font-size:.85rem;padding:8px 16px;margin-top:12px}
 .grad-msg{font-family:'Special Elite',monospace;font-size:1.15rem;color:var(--gold);text-align:center;margin:20px 0 8px;letter-spacing:.05em}
 @media(max-width:480px){.card{padding:36px 16px 20px}}
+.model-answer{margin:8px 0;border-left:3px solid var(--red);padding-left:12px}
+.model-answer summary{font-family:'Patrick Hand',cursive;color:var(--red);cursor:pointer;font-size:1rem}
+.model-answer .model-content{padding:8px 0}
+.finish-item span{white-space:pre-wrap}
+#copy-fallback{width:100%;min-height:80px;font-family:Lora,Georgia,serif;font-size:.9rem;margin-top:8px;padding:8px;border:2px solid var(--green);border-radius:4px}
 </style>
 </head>
 <body>
@@ -119,7 +124,16 @@ He said the act was built on one idea, and once everyone knew it there was nothi
 <div class="writing-prompt">My Open Mic results:</div>
 <input type="text" id="game-score" placeholder="e.g. Set performed: 0:45 on stage, applause 3" style="width:100%;padding:10px;font-family:Lora,Georgia,serif;font-size:1rem;border:2px solid #d9c9a0;border-radius:4px">
 </div>
-<button class="btn green" onclick="goStep('s-write')">Write your set →</button>
+<details class="model-answer">
+<summary>Need a spark? Tap for an example</summary>
+<div class="model-content">
+<p class="fine"><em>Example set:</em> "I'm Gary's owner. He was a plant. I talked to him every day. He didn't make it. But I still water the spot."</p>
+<p class="fine"><strong>Does yours have...</strong></p>
+<ul class="fine"><li>&#10003; Opener?</li><li>&#10003; Build?</li><li>&#10003; Callback?</li></ul>
+</div>
+</details>
+<button id="write-next" disabled class="btn green" onclick="goStep('s-write')">Write your set →</button>
+<p class="fine" id="write-hint">Write at least a sentence in each box to continue.</p>
 </section>
 
 <!-- STEP 5: WRITING -->
@@ -160,6 +174,7 @@ He said the act was built on one idea, and once everyone knew it there was nothi
 <p style="margin-top:16px"><strong>Show this screen to Rocky</strong> (screenshot or paste the text below). That&#x27;s the course. You wrote a set. 🎤</p>
 <button class="btn gold copy-btn" onclick="copyFinish()">📋 Copy final set to clipboard</button>
 <p class="fine" id="copy-msg" style="display:none">Copied! Paste it to Rocky.</p>
+<p class="fine">After Rocky responds, tap <strong>Submit</strong> in Recess.</p>
 </div>
 </section>
 
@@ -192,10 +207,38 @@ function copyFinish(){
   t+='MY SET:\n'+(document.getElementById('w-set').value||'—')+'\n\n';
   t+='Proudest line: '+(document.getElementById('w-proud').value||'—')+'\n';
   t+='I\'d change: '+(document.getElementById('w-change').value||'—')+'\n';
-  navigator.clipboard.writeText(t).then(function(){
-    document.getElementById('copy-msg').style.display='block';
-  });
+  try{navigator.clipboard.writeText(t).then(function(){document.getElementById('copy-msg').style.display='block'}).catch(function(){_clipFallback(t)})}catch(x){_clipFallback(t)}
 }
+
+// Fix 4: Listen for game score via postMessage
+window.addEventListener('message',function(e){
+  try{if(e.data&&e.data.type==='gameScore'){document.getElementById('game-score').value=e.data.score}}catch(x){}
+});
+// Fix 1: Require writing before finish
+var _writeIds=["w-set", "w-proud", "w-change"];
+function _checkWrite(){
+  var ok=true;
+  _writeIds.forEach(function(id){if((document.getElementById(id).value||'').length<15)ok=false});
+  var btn=document.getElementById('write-next');
+  if(btn){btn.disabled=!ok}
+  var hint=document.getElementById('write-hint');
+  if(hint){hint.style.display=ok?'none':'block'}
+}
+// Fix 3: Clipboard fallback
+function _clipFallback(t){
+  var old=document.getElementById('copy-fallback');if(old)old.remove();
+  var ta=document.createElement('textarea');ta.id='copy-fallback';ta.readOnly=true;ta.value=t;
+  document.getElementById('copy-msg').parentNode.insertBefore(ta,document.getElementById('copy-msg'));
+  ta.select();
+  document.getElementById('copy-msg').textContent="Couldn't copy automatically — select and copy the text above.";
+  document.getElementById('copy-msg').style.display='block';
+}
+// Fix 7: localStorage draft saving
+var _taIds=["w-set", "w-proud", "w-change"];
+function _saveAll(){try{_taIds.forEach(function(id){localStorage.setItem('wc-m08-'+id,document.getElementById(id).value)})}catch(x){}}
+function _loadAll(){try{_taIds.forEach(function(id){var v=localStorage.getItem('wc-m08-'+id);if(v)document.getElementById(id).value=v})}catch(x){}}
+_taIds.forEach(function(id){document.getElementById(id).addEventListener('input',function(){_saveAll();_checkWrite()});});
+_loadAll();_checkWrite();
 </script>
 </body>
 </html>
