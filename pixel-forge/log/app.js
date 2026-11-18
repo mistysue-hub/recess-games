@@ -116,11 +116,7 @@
   ran.addEventListener("change", function () { ck.ran = ran.checked; save(); });
 
   function hash(str) { var h = 5381; for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h; }
-  function shipCode(name, date) {
-    var h = hash(build + "|" + name.trim().toLowerCase() + "|" + date), A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", out = "";
-    for (var i = 0; i < 4; i++) { out += A[h % A.length]; h = Math.floor(h / A.length); }
-    return "PF-" + build.replace("build", "") + "-" + out;
-  }
+  function shipCode() { return answers.code || ("PF-" + build.replace("build", "") + "-????"); }
   function looksLikeCode(s) { return /\b(function|if|for|while|local|end|then|do)\b/.test(s) || /=/.test(s); }
   function hasAny(s, groups) {
     for (var g = 0; g < groups.length; g++) {
@@ -169,7 +165,7 @@
     save();
     if (!allOk) { verdict.textContent = "Not shipped yet. Fix the marked parts and check again."; verdict.className = "verdict bad"; if (first && first.scrollIntoView) first.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
     var date = new Date().toISOString().slice(0, 10);
-    ck.shipped = { name: dev.value.trim(), date: date, code: shipCode(dev.value, date) };
+    ck.shipped = { name: dev.value.trim(), date: date, code: shipCode() };
     save(); verdict.textContent = "Shipped."; verdict.className = "verdict good"; showFinish();
   });
 
