@@ -134,6 +134,8 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
   <h1>GAME OVER</h1>
   <div class="tape">STRATEGY CARD UNLOCKED: <b>Work Backward</b><br><a id="decklink" href="gn2-deck.html?card=1">See your deck</a></div>
   <div id="verdict"></div>
+  <button id="again" onclick="practice()">PLAY BEA AGAIN (PRACTICE)</button>
+  <p class="note">Practice doesn't change your score or your results line.</p>
   <p>This is your <b>game</b> line (it starts with GN2-M01). Copy it and paste it to Rocky in the chat. The reading gives you a second, different line later.</p>
   <textarea id="out" readonly></textarea><br>
   <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
@@ -176,7 +178,7 @@ var M=[{n:"Random Rook",first:"you",bot:"random",intro:"Random Rook picks at ran
  {n:"Bishop Bea",first:"you",bot:"perfect",intro:"Bishop Bea knows the secret. Slip once and she pounces."},
  {n:"Knight Nico",first:"bot",bot:"perfect",open:2,intro:"Knight Nico goes first this time, and opens with a shaky move."}];
 var KEY=[1,5,9,13,17,21];
-var m=0,c=0,wins=0,busy=false,said=[],trail=[],res=[],mv=[];
+var m=0,c=0,wins=0,busy=false,said=[],trail=[],res=[],mv=[],prac=false;
 function botMove(){var x=M[m];
   if(x.open&&c===0)return x.open;
   if(21-c<=3)return 21-c;
@@ -195,13 +197,17 @@ function bot(){var k=botMove();c+=k;trail.push(M[m].n.split(" ")[1]+" "+c);
   if(c===21){busy=true;draw();end(false);return}
   busy=false;el("prompt").textContent=M[m].n+" added "+k+". Your move.";draw();}
 function missed(){for(var i=0;i<mv.length;i++){var f=mv[i].f,t=mv[i].t;if(KEY.indexOf(f)>=0)continue;for(var k=1;k<=3;k++){if(KEY.indexOf(f+k)>=0&&f+k!==t)return {f:f,to:f+k}}}return null}
-function end(won){if(won)wins++;el("wn").textContent=wins;var keys=said.filter(function(v){return KEY.indexOf(v)>=0}).length;
-  res.push({n:M[m].n,won:won,said:said.slice(),keys:keys});
+function end(won){if(won&&!prac)wins++;el("wn").textContent=wins;var keys=said.filter(function(v){return KEY.indexOf(v)>=0}).length;
+  if(!prac)res.push({n:M[m].n,won:won,said:said.slice(),keys:keys});
   el("headline").textContent=won?"YOU SAID 21. YOU WIN!":M[m].n.toUpperCase()+" SAID 21.";
   el("detail").innerHTML="You said: "+said.join(", ")+".<br><span class=\"note\">Key numbers you landed on: "+keys+". (Key numbers are the safe spots, 1, 5, 9, 13, 17 and 21: hit one, keep hitting them, and 21 is yours.)</span>";
   var ms=won?null:missed();if(ms)el("detail").innerHTML+="<br><span class=\"note\">Hint: at "+ms.f+", saying "+ms.to+" would have "+(ms.to===21?"won it":"locked it")+".</span>";
-  el("next").textContent=m===2?"SEE FINAL SCORE":"NEXT MATCH";show("pick",false);show("round",true);}
-function nextMatch(){m++;if(m>=3){finish();return}setup()}
+  if(!won){var lastSaid=said[said.length-1];
+    if(M[m].n==="Bishop Bea")el("detail").innerHTML+="<br><span class=\"note\">Bishop Bea adjusts her tiny crown: \"You said "+lastSaid+". I said thank you.\"</span>";
+    if(M[m].n==="Random Rook")el("detail").innerHTML+="<br><span class=\"note\">Random Rook shrugs: \"I closed my eyes and pressed buttons. It was a strategy.\"</span>";}
+  el("next").textContent=prac?"BACK TO RESULTS":(m===2?"SEE FINAL SCORE":"NEXT MATCH");show("pick",false);show("round",true);}
+function nextMatch(){if(prac){prac=false;m=3;show("round",false);show("final",true);return}m++;if(m>=3){finish();return}setup()}
+function practice(){prac=true;m=1;show("final",false);setup();el("mn").textContent="PRACTICE";el("who").innerHTML="Practice match vs <b>"+M[1].n+"</b> (doesn't count)<br><span class=\"note\">"+M[1].intro+"</span>"}
 function finish(){show("round",false);
   var rank=wins===3?"ENDGAME EXPERT":(wins===2?"SHARP PLAYER":"LEARNING THE BOARD");
   var rows="<tr><th>Match</th><th>Result</th><th>You said</th></tr>";res.forEach(function(r,i){rows+="<tr><td>"+(i+1)+". "+r.n+"</td><td>"+(r.won?"WIN":"LOSS")+"</td><td>"+r.said.join(", ")+"</td></tr>"});

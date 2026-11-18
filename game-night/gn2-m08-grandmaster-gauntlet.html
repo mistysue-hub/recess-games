@@ -127,11 +127,11 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>THE GRANDMASTER'S GAUNTLET</h1>
-<p class="note">Boss round! The Grandmaster has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life (except round 8, the race, which costs none). Lose all 3 lives and the Grandmaster wins that round. REMATCH then replays only the puzzles you haven't hit, with 3 fresh lives, and his HP stays where you left it.</p>
+<p class="note">Boss round! The Grandmaster has 8 HP. You have 4 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life (except round 8, the race, which costs none). Lose all 3 lives and the Grandmaster wins that round. REMATCH then replays only the puzzles you haven't hit, with 4 fresh lives, and his HP stays where you left it.</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/8</b></div>
   <div class="box">GRANDMASTER HP<b id="hp">8</b></div>
-  <div class="box">YOUR LIVES<b id="lives">3</b></div>
+  <div class="box">YOUR LIVES<b id="lives">4</b></div>
 </div>
 <div class="hpbar"><div id="hpfill"></div></div>
 <div id="pick">
@@ -213,7 +213,7 @@ var R=[
   short:"Give Annie 1: it beats the 0 she'd get from Bo.",
   why:"You need 2 of 3 votes. Bo would get 100 without you, so he's expensive. Annie would get 0, so 1 coin buys her vote."},
  {t:"ROUND 3: THE GROWING POT",taunt:"\"Patience... or greed?\"",
-  scene:"<div class=\"story\">Take the big pile or pass; every pass doubles both piles. There are 6 turns, and on turn 6 the piles are 128 and 64. Your <b>perfectly logical</b> partner makes the last move (turn 6).</div>",
+  scene:"<div class=\"story\">Take the big pile or pass; every pass doubles both piles. Piles start at 4 and 1. There are 6 turns. On turn 6 the piles are 128 and 32. If your partner passes, they double once more and the partner gets only 64. Your <b>perfectly logical</b> partner makes the last move.</div>",
   q:"Backward induction says the first player should...",ch:["TAKE right away","PASS every time","PASS once, then take"],a:0,
   ma:"TAKE right away",mr:"the partner takes on the last move, so taking is better one move earlier, all the way back to turn 1",
   short:"Take right away: logic unravels from the last move.",
@@ -249,7 +249,7 @@ function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%"
 function puz(i){return i===0&&vt[0]?mkR1(vt[0]):(i===7&&vt[7]?mkR8(vt[7]):R[i])}
 function sfx(){return cur.vt&&!cur.race?" (race to "+cur.vt+")":""}
 function note(s){log.push(s);res[parseInt(s.slice(1),10)-1]=s.split(":")[1]}
-function begin(){lives=3;log=[];qi=0;r=queue[0];setHP();setup()}
+function begin(){lives=4;log=[];qi=0;r=queue[0];setHP();setup()}
 function start(){attempt=1;hp=8;hitSet=[];res=[];vt=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
 function pickVar(list,prev){var o=list.filter(function(t){return t!==prev&&t!==list[0]});return o[rnd(o.length)]}
 function setup(){
@@ -278,7 +278,7 @@ function pick(i){
     } else {
       el("c"+i).disabled=true;
       var out=loseLife();if(out)note("R"+(r+1)+":miss (last life)"+sfx());
-      el("fb").innerHTML="<b>Miss! You lose a life.</b> "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
+      el("fb").innerHTML="<b>Miss! You lose a life.</b> The Grandmaster yawns. It is a very tidy yawn. "+(out?"That was your last life...":"One more try, but it won't do damage now. Look at the numbers again.");
       if(!out)locked=false;
     }
   },650);
@@ -305,14 +305,14 @@ function nextRound(){qi++;if(qi>=queue.length){finish(false);return}r=queue[qi];
 function rankOf(h){return h===8?"GRANDMASTER":(h>=6?"MASTERMIND":(h>=4?"STRATEGIST":"ROOKIE"))}
 function finish(lost){
   show("pick",false);var hits=8-hp,rank=rankOf(hits);
-  el("endt").textContent=lost?"THE GRANDMASTER WINS":(hp===0?"CHECKMATE! YOU WIN!":"GAUNTLET OVER");
+  el("endt").textContent=lost?"THE GRANDMASTER WINS":(hp===0?"CHECKMATE! YOU WIN!":(hp===1?"ONE HP FROM GLORY":"GAUNTLET OVER"));
   var rows="";for(var n=0;n<8;n++)rows+="<tr><td>"+R[n].t.replace(/^ROUND \d+: /,"")+"</td><td>"+res[n]+"</td></tr>";
   var foil=(!lost&&hits===8&&attempt===1)?"&foil=1":"";
   var won=(!lost&&hp===0),close=(!lost&&hp>0);window.gnWon=won;
   var missed="",unr=[];for(var m=0;m<8;m++){var q=puz(m);if(/^(miss|fixed)/.test(res[m]))missed+="<li><b>"+q.t.replace(/^ROUND \d+: /,"")+"</b> (miss: "+q.ma+", because "+q.mr+")</li>";else if(res[m]==="not reached")unr.push(q.t.replace(/^ROUND \d+: /,""))}
   var review=(won||(!missed&&!unr.length))?"":"<div class=\"story\"><b>What you missed</b><ul style=\"text-align:left;padding-left:20px\">"+missed+"</ul>"+(unr.length?"<p>Not reached yet: "+unr.join(", ")+".</p>":"")+"</div>";
-  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you haven't hit (missed or not reached), with 3 fresh lives.</p>":"")+
-   (close?"<p><b>So close!</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you missed, with 3 fresh lives. Checkmate him to unlock the Endgame card.</p>":"")+
+  el("verdict").innerHTML=(lost?"<p><b>You ran out of lives.</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you haven't hit (missed or not reached), with 4 fresh lives.</p>":"")+
+   (close?"<p><b>So close!</b> The Grandmaster has "+hp+" HP left. REMATCH replays just the "+hp+" puzzle"+(hp===1?"":"s")+" you missed, with 4 fresh lives. Checkmate him to unlock the Endgame card.</p>":"")+
    review+"<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
    (!won?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>ENDGAME</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn2-deck.html?card=8"+foil+"\">See your deck</a></div>")+
    (!won?"":"<div class=\"tape\"><b>WANT MORE?</b> See where these ideas come from, and what's next in Game Night. <a href=\"gn2-read.html?m=9\" target=\"_blank\" rel=\"noopener\">Go deeper</a></div>");

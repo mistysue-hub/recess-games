@@ -175,17 +175,17 @@ var r=0,coins=0,propLog=[],respLog=[],propKept=0;
 function setup(){el("rn").textContent=(r+1)+"/6";
   if(r<3){var p=PR[r];el("title").textContent="ROUND "+(r+1)+": YOU PROPOSE";el("who").innerHTML="Responder: <b>"+p.n+"</b> "+p.say+"<br><span class=\"note\">How many of the 10 coins do you offer? You keep the rest.</span>";
     var h="<div class=\"numrow\">";for(var k=0;k<=10;k++)h+="<button onclick=\"offer("+k+")\">"+k+"</button>";el("choices").innerHTML=h+"</div>";}
-  else{var q=RS[r-3];el("title").textContent="ROUND "+(r+1)+": YOU RESPOND";el("who").innerHTML="<b>"+q.n+"</b> offers you <b>"+q.offer+"</b> coin"+(q.offer===1?"":"s")+" and keeps "+(10-q.offer)+".";
+  else{var q=RS[r-3];el("title").textContent="ROUND "+(r+1)+": YOU RESPOND";el("who").innerHTML="<b>"+q.n+"</b> offers you <b>"+q.offer+"</b> coin"+(q.offer===1?"":"s")+" and keeps "+(10-q.offer)+"."+(q.offer===1?"<br><span class=\"note\">"+q.n+": \"1 coin! Ooh, shiny. Practically a 2.\"</span>":"");
     el("choices").innerHTML="<button onclick=\"respond(true)\">ACCEPT</button><button onclick=\"respond(false)\">REJECT</button>";}
   show("pick",true);show("round",false)}
 function offer(k){var p=PR[r],ok=k>=p.min,g=ok?10-k:0;coins+=g;propKept+=g;el("yc").textContent=coins;propLog.push({n:p.n,k:k,ok:ok,g:g,min:p.min});
   el("headline").textContent=ok?p.n.toUpperCase()+" ACCEPTS!":p.n.toUpperCase()+" REJECTS!";
   el("detail").innerHTML=ok?"You keep <b>"+(10-k)+"</b>. "+p.n+" gets "+k+".":"Nobody gets anything. "+p.n+" felt "+k+" was too low.";
-  el("detail").innerHTML+="<br><span class=\"note\">Secret: "+p.n+" accepts any offer of "+p.min+" or more.</span>";
+  el("detail").innerHTML+="<br><span class=\"note\">Reminder: "+p.n+" accepts any offer of "+p.min+" or more.</span>";
   end()}
 function respond(a){var q=RS[r-3],g=a?q.offer:0;coins+=g;el("yc").textContent=coins;respLog.push({n:q.n,offer:q.offer,a:a});
   el("headline").textContent=a?"YOU ACCEPT":"YOU REJECT";
-  el("detail").innerHTML=a?"You get <b>"+q.offer+"</b>. "+q.n+" gets "+(10-q.offer)+".":"Nobody gets anything. You gave up "+q.offer+" coin"+(q.offer===1?"":"s")+", and "+q.n+" lost "+(10-q.offer)+".";end()}
+  el("detail").innerHTML=a?"You get <b>"+q.offer+"</b>. "+q.n+" gets "+(10-q.offer)+".":"Nobody gets anything. You gave up "+q.offer+" coin"+(q.offer===1?"":"s")+", and "+q.n+" lost "+(10-q.offer)+". Principle tastes like nothing.";end()}
 function end(){el("next").textContent=r===5?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=6){finish();return}setup()}
 function finish(){show("round",false);var rank=propKept===21?"MASTER NEGOTIATOR":(propKept>=15?"DEAL MAKER":"DEAL BREAKER");var rej=respLog.filter(function(x){return !x.a}).length;

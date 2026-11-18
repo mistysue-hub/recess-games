@@ -171,7 +171,7 @@ function copyIt(){
 }
 function finalBlock(card,n,rank,foilRanks){var dl=el("decklink");dl.href="gn2-deck.html?card="+n+(foilRanks.indexOf(rank)>=0?"&foil=1":"");if(foilRanks.indexOf(rank)>=0)dl.textContent="Top rank! See your GOLD FOIL card"}
 
-var P=[{n:"Trusting Tess",takeAt:6,intro:"Tess likes to let the pot grow."},{n:"Grabby Gus",takeAt:2,intro:"Gus has a reputation. Just saying."},{n:"Middle Max",takeAt:4,intro:"Max never lets the pot grow past 32."}];
+var P=[{n:"Trusting Tess",takeAt:6,intro:"Tess likes to let the pot grow. (She still believes in tooth fairies and doubling.)"},{n:"Grabby Gus",takeAt:2,intro:"Gus has a reputation. Just saying. (He has never met a pile he didn't grab.)"},{n:"Middle Max",takeAt:4,intro:"Max never lets the pot grow past 32."}];
 var BEST=[64,4,16];
 var r=0,t=1,total=0,busy=false,log=[];
 function big(){return 4*Math.pow(2,t-1)}function small(){return Math.pow(2,t-1)}
@@ -189,14 +189,14 @@ function partner(){var p=P[r];
 function reveal(){var p=P[r],bt=p.takeAt-1;return p.n.split(" ")[1]+" would have "+(p.takeAt===6?"waited until turn 6":"taken at turn "+p.takeAt)+". "+(p.takeAt===6?"Passing until turn 5":"Waiting until turn "+bt)+" was worth "+BEST[r]+"."}
 function done(who,turn){var b=4*Math.pow(2,turn-1),s=Math.pow(2,turn-1),you,them,txt;
   if(who==="you"){you=b;them=s;txt="You took at turn "+turn}else if(who==="partner"){you=s;them=b;txt=P[r].n.split(" ")[1]+" took at turn "+turn}else{you=4*Math.pow(2,6);them=Math.pow(2,6);txt="Nobody took"}
-  total+=you;el("yc").textContent=total;log.push({n:P[r].n,txt:txt,you:you});
+  total+=you;el("yc").textContent=total;log.push({n:P[r].n,txt:txt,you:you,pt:who==="partner"});
   el("headline").textContent=txt.toUpperCase()+"!";el("detail").innerHTML="You get <b>"+you+"</b> coins. "+P[r].n+" gets "+them+".";
   if(who==="you"&&you<BEST[r])el("detail").innerHTML+="<br><span class=\"note\">"+reveal()+"</span>";
   el("next").textContent=r===2?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=3){finish();return}setup()}
-function finish(){show("round",false);var rank=total>=84?"MIND READER":(total>=40?"SMART TRUSTER":"PLAYING IT SAFE");
+function finish(){show("round",false);var ptk=log.filter(function(l){return l.pt}).length;var rank=total>=84?"MIND READER":(total>=70?"SMART TRUSTER":(ptk>=2?"TOO TRUSTING":"PLAYING IT SAFE"));
   var rows="<tr><th>Partner</th><th>What happened</th><th>You got</th><th>Best possible</th></tr>";log.forEach(function(l,i){rows+="<tr><td>"+l.n+"</td><td>"+l.txt+"</td><td>"+l.you+"</td><td>"+BEST[i]+"</td></tr>"});
-  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You earned <b>"+total+"</b> coins. Best possible against these partners: 84.</p><table>"+rows+"</table>"+
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You earned <b>"+total+"</b> coins. Best possible against these partners: 84.</p><p class=\"note\">Ranks: 84 MIND READER; 70 or more SMART TRUSTER; under 70 is TOO TRUSTING if partners grabbed the pot right after you passed in 2 or more rounds, otherwise PLAYING IT SAFE.</p><table>"+rows+"</table>"+
    "<h2>WHAT LOGIC SAYS</h2><div class=\"tape\">Work backward: at turn 6 your partner takes (128 beats 64). So at turn 5 you should take (64 beats 32). Keep going back and logic says <b>take at turn 1</b>, every round: just 4 coins each, <b>12</b> total.</div>"+
    "<div class=\"tape\">Real partners don't always follow that logic. Against each one, the best move was to take <b>one turn before they would</b>.</div>"+
    "<div class=\"fact\">This is called the centipede game. When economists Richard McKelvey and Thomas Palfrey tested it with real players in 1992, very few took the pot at the first chance.</div>";

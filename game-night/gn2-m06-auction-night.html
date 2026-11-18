@@ -170,12 +170,12 @@ function copyIt(){
 }
 function finalBlock(card,n,rank,foilRanks){var dl=el("decklink");dl.href="gn2-deck.html?card="+n+(foilRanks.indexOf(rank)>=0?"&foil=1":"");if(foilRanks.indexOf(rank)>=0)dl.textContent="Top rank! See your GOLD FOIL card"}
 
-var L=[{kind:2,n:"Signed skateboard",val:60,other:48},{kind:2,n:"Concert poster",val:60,other:66},{kind:2,n:"Retro game cartridge",val:45,other:33},
+var L=[{kind:2,n:"Signed skateboard",val:60,other:48},{kind:2,n:"Concert poster",val:60,other:66,fl:"Signed by a band that just discovered the bass."},{kind:2,n:"Retro game cartridge",val:45,other:33,fl:"Works if you blow on it."},
  {kind:1,n:"Jar of coins #1",guess:58,real:50,robots:[52,47,44,49,41],opts:[40,45,50,55,60]},{kind:1,n:"Jar of coins #2",guess:72,real:80,robots:[62,58,64,55,60],opts:[60,65,70,75,80]}];
-var r=0,pts=0,log=[],over=null;
+var r=0,pts=0,log=[],det=[],over=null;
 function setup(){var x=L[r];el("rn").textContent=(r+1)+"/5";
   if(x.kind===2){el("title").textContent="LOT "+(r+1)+": SECOND-PRICE AUCTION";el("rules").innerHTML="<b>Rule:</b> highest bid wins, but the winner pays the <b>second-highest</b> bid, not their own. 3 robot bidders are in.";
-    el("item").innerHTML="<b>"+x.n+"</b>: worth <b>"+x.val+"</b> points to you.";var o=[x.val-20,x.val-10,x.val,x.val+10,x.val+20];
+    el("item").innerHTML="<b>"+x.n+"</b>: worth <b>"+x.val+"</b> points to you."+(x.fl?" <span class=\"note\">("+x.fl+")</span>":"");var o=[x.val-20,x.val-10,x.val,x.val+10,x.val+20];
     var h="";o.forEach(function(b){h+="<button onclick=\"bid("+b+")\">BID "+b+"</button>"});el("choices").innerHTML=h;}
   else{el("title").textContent="LOT "+(r+1)+": MYSTERY JAR";el("rules").innerHTML="<b>New rule:</b> highest bid wins and pays <b>its own bid</b>. The jar is worth the same to everyone, but nobody knows exactly how much. Everyone peeks and makes a guess. 5 robot bidders bid their own guesses.";
     el("item").innerHTML="<b>"+x.n+"</b>: you peek and guess it's worth about <b>"+x.guess+"</b>.";var h="";x.opts.forEach(function(b){h+="<button onclick=\"bid("+b+")\">BID "+b+"</button>"});el("choices").innerHTML=h;}
@@ -186,13 +186,19 @@ function bid(b){var x=L[r],g,txt,line;
     txt+="<br><span class=\"note\">The top robot bid was "+x.other+". Bidding exactly "+x.val+" would have "+(x.val>x.other?"won and paid "+x.other:"lost, which was the right result")+".</span>";}
   else{var top=Math.max.apply(null,x.robots);if(b>top){g=x.real-b;txt="You win the jar and pay <b>"+b+"</b>. The jar is opened: it's really worth <b>"+x.real+"</b>. Points: <b>"+(g>0?"+":"")+g+"</b>.";line="jar "+(r-2)+" (guess "+x.guess+", really "+x.real+"): bid "+b+", won, "+(g>0?"+":"")+g}
     else{g=0;txt="A robot bid "+top+" and won. The jar was really worth <b>"+x.real+"</b>, so that robot "+(top>x.real?"lost "+(top-x.real)+" points. Phew!":"gained "+(x.real-top)+" points.");line="jar "+(r-2)+" (guess "+x.guess+", really "+x.real+"): bid "+b+", lost, 0"}}
+  var won=(x.kind===2)?(b>x.other):(b>Math.max.apply(null,x.robots));det.push({k:x.kind,n:x.n,b:b,v:(x.kind===2?x.val:x.real),won:won,g:g,price:(x.kind===2?x.other:b)});
   pts+=g;el("yp").textContent=pts;log.push(line);el("headline").textContent=(g>0?"+":"")+g+" POINTS";el("detail").innerHTML=txt;
   el("next").textContent=r===4?"SEE FINAL SCORE":"NEXT LOT";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=5){finish();return}setup()}
-function finish(){show("round",false);var rank=pts>=34?"AUCTION ACE":(pts>=24?"SHARP BIDDER":"CURSED WINNER");
-  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 39.</p><div class=\"story\">"+log.join("<br>")+"</div>"+
+function finish(){show("round",false);
+  var rows="<tr><th>Lot</th><th>Your bid vs true value</th><th>Result</th><th>Pts</th></tr>";
+  det.forEach(function(d,i){var df=d.b-d.v;var tv=d.k===2?"worth "+d.v:"really "+d.v;
+    rows+="<tr><td>"+(i+1)+". "+(d.k===2?d.n.split(" ").slice(-1)[0]:"Jar "+(i-2))+"</td><td>bid "+d.b+" vs "+tv+" ("+(df>0?"+"+df+" over":(df<0?(-df)+" under":"exact"))+")</td><td>"+(d.won?"won, paid "+d.price:"lost")+"</td><td>"+(d.g>0?"+":"")+d.g+"</td></tr>"});
+  var d0=det[0],whatif="<b>What if?</b> "+(d0.won?"Your bid of "+d0.b+" on the skateboard won and paid 48. "+(d0.b>60?"A bid of exactly 60 would have paid the same 48.":"Even a bid of 80 would have paid the same 48."):"Your bid of "+d0.b+" on the skateboard lost a +12 deal. A bid of 60 would have won at 48, and so would a bid of 80.")+" Bidding above your value only hurts when the top rival is above your value, as on the poster (a rival bid 66 for something worth 60).";
+  var rank=pts>=39?"AUCTION ACE":(pts>=24?"SHARP BIDDER":"CURSED WINNER");
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You scored <b>"+pts+"</b> of a possible 39.</p><p class=\"note\">Ranks: 39 AUCTION ACE, 24 or more SHARP BIDDER, under 24 CURSED WINNER.</p><table>"+rows+"</table><div class=\"story\">"+whatif+"</div>"+
    "<h2>TWO LESSONS</h2><div class=\"tape\"><b>Second-price auctions:</b> bid exactly what the item is worth to you. Your bid only decides <b>whether</b> you win; someone else's bid sets the price. Bid lower and you can miss a bargain. Bid higher and you can overpay"+(over?" (you did on the "+over.n.toLowerCase().replace("concert ","")+": paid "+over.other+" for something worth "+over.val+")":" (on the poster, a bid of 70 would have won at 66 for something worth 60)")+".<br>Bidding your true value is never worse than any other bid, and sometimes better: other bids can tie it, but none beats it.</div>"+
-   "<div class=\"tape\"><b>Mystery jars:</b> the winner is usually the person who guessed <b>too high</b>. That's the <b>winner's curse</b>. When the value is hidden, bid below your guess.</div>"+
+   "<div class=\"tape\"><b>Mystery jars:</b> the winner is usually the person who guessed <b>too high</b>. That's the <b>winner's curse</b>. When the value is hidden, bid below your guess. There are two separate reasons: the curse (on average, winning means your guess was high) and the pay-your-own-bid rule (you keep the gap between your bid and the true value).</div>"+
    "<div class=\"fact\">The economist William Vickrey explained second-price auctions in 1961 and shared the 1996 Nobel Prize in economics. The winner's curse was named by oil-company engineers in 1971, after companies kept 'winning' drilling rights that turned out to be worth less than they paid.</div>";
   el("out").value="GN2-M06 | "+log.join(" | ")+" | total "+pts+" of 39";
   finalBlock("",6,rank,["AUCTION ACE"]);show("final",true)}
