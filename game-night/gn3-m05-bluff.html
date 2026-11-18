@@ -114,7 +114,8 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>BLUFF</h1>
-<p class="note">Each hand, you and your rival each put 1 point on the prize pile. You get a card: <b>HIGH</b> or <b>LOW</b> (about half of each). Your rival can't see it. 14 hands, 2 rivals.</p>
+<p class="note">Each hand, you and your rival each put 1 point on the prize pile. You get a card: <b>HIGH</b> or <b>LOW</b> (about half of each). Your rival can't see it. 14 hands, 2 rivals: Tess for 2 hands, then Wes for 12. Of Wes's 12 hands, <b>6 are HIGH and 6 are LOW</b>.</p>
+<p class="note"><b>Top rank, BLUFF MASTER:</b> against Wes, push on <b>2 or 3 of your 6 LOW cards</b> (not 0, not 4 or more) and score <b>+2 or more</b> against him.</p>
 <div class="fact" style="text-align:left">
 Your rival holds a hidden <b>middle</b> card: your <b>HIGH beats your rival's card</b>, and your <b>LOW loses to it</b>. So when cards are shown, your own card decides who wins.<br>
 <b>STAY:</b> cards are shown. HIGH wins the pile (+1), LOW loses (-1).<br>
@@ -176,7 +177,7 @@ function copyIt(){
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 
-var TESS=2,TOTAL=14,h=0,pts=0,log=[],ptsA=0,ptsB=0,lowsB=0,bluffsB=0,pushB=0,pushHighB=0,hist=[],lastGuess=null;
+var wesWoke=false,TESS=2,TOTAL=14,h=0,pts=0,log=[],ptsA=0,ptsB=0,lowsB=0,bluffsB=0,pushB=0,pushHighB=0,hist=[],lastGuess=null;
 /* Fixed, pre-shuffled deck: 2 hands vs Tess (1 HIGH, 1 LOW), 12 vs Wes (6 HIGH, 6 LOW). Same cards every time. */
 var deck="HL".split("").concat("LHHHHLLHLLHL".split(""));
 /* Wes's "dice": fixed too (hand number picks the die), so every run is reproducible. */
@@ -204,7 +205,9 @@ function play(m){var c=deck[h],res,txt,opp="",w=h>=TESS;
  pts+=res;if(w)ptsB+=res;else ptsA+=res;el("pts").textContent=pts;
  log.push({c:c,m:m,o:opp,r:res});
  el("headline").textContent="Your card: "+(c==="H"?"HIGH":"LOW")+"   You: "+m;
- el("detail").innerHTML=txt+" <b>"+(res>0?"+":"")+res+"</b>"+(w?"<br><span class=\"note\">Wes now guesses about <b>"+Math.round(100*lastGuess)+"%</b> of your pushes are HIGH. He starts challenging when that drops below about 3 in 4.</span>":"");
+ var woke="";if(w&&!wesWoke&&wesChance(lastGuess)>0){wesWoke=true;woke="<br><span class=\"note\"><b>Wes just learned something:</b> your pushes are not all HIGH anymore, so from now on he will sometimes challenge.</span>"}
+ if(w&&m==="PUSH"&&opp==="CHALLENGE"&&c==="L")txt+=" Wes squints. Wes has seen this face before.";
+ el("detail").innerHTML=txt+" <b>"+(res>0?"+":"")+res+"</b>"+(w?"<br><span class=\"note\">Wes now guesses about <b>"+Math.round(100*lastGuess)+"%</b> of your pushes are HIGH. He starts challenging when that drops below about 3 in 4.</span>"+woke:"");
  el("next").textContent=h===TOTAL-1?"SEE FINAL SCORE":(h===TESS-1?"MEET WATCHFUL WES":"NEXT HAND");
  show("pick",false);show("round",true)}
 function nextHand(){h++;if(h>=TOTAL){finish();return}setup()}
@@ -219,6 +222,7 @@ function finish(){show("round",false);show("pick",false);var NW=TOTAL-TESS;
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Tess never challenged, so pushing <b>every</b> hand won +1 every time.</div>"+
  "<div class=\"tape\">Wes learns from every card he sees (when you STAY, and when he challenges) and works out how often a push is HIGH. If your pushes are HIGH less than about 3 times in 4, he challenges. If you never bluff, your push always means HIGH and he backs down. Pushing only on LOW cards is the worst: your stays show HIGH, so he catches the pattern fast.</div>"+
  "<div class=\"tape\"><b>Why 3 in 4?</b> Out of 12 hands: 6 HIGH (always push) + 2 bluffs on the 6 LOW = 8 pushes, and 6 of 8 = 3 in 4 are HIGH. That is the sweet spot: Wes can't gain by challenging or by backing down.</div>"+
+ "<div class=\"tape\"><b>Heads up:</b> in this game, always pushing (+2 against Wes) scored more than never bluffing (+1). That is because this Wes is not a perfect rival: he learns slowly and challenges by a fixed rule. A smart rival would hold both plans to about 0, and the only plan he can't beat is the mix.</div>"+
  "<div class=\"tape\">Against a smart rival, mixing earns about <b>+1/3 per hand</b> (about +4 over 12 hands); never bluffing earns <b>0</b>.</div>"+
  "<p class=\"note\">Bluffing isn't lying for fun. It's a mixed strategy: if you only push with HIGH cards, your push gives your card away.</p>";
  el("out").value="GN3-M05 | vs Tess: "+log.slice(0,TESS).map(function(x){return x.c+" "+x.m}).join(", ")+" ("+ptsA+") | vs Wes: "+log.slice(TESS).map(function(x){return x.c+" "+x.m+(x.o?" "+x.o:"")}).join(", ")+" ("+ptsB+") | pushes vs Wes: "+pushB+" of "+NW+" | bluffs vs Wes: "+bluffsB+" of "+lowsB+" low cards | total "+pts+" | rank "+rank;

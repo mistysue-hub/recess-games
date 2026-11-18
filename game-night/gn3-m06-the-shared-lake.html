@@ -117,6 +117,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <body>
 <h1>THE SHARED LAKE</h1>
 <p class="note">You and 3 neighbors (Bo, Cam and Gil) fish the same lake for 8 seasons. Each fish you catch is 1 point. After each season, the fish left in the lake <b>double</b> (the lake holds at most 60). If the lake empties, it's gone.</p>
+<p class="note"><b>Good to know:</b> the lake can lose <b>30 fish a season</b> and still refill to 60 (30 doubled is 60). Take more than that and it shrinks.<br><b>Top rank, COMMONS KEEPER:</b> at least <b>30 fish left</b> at the end, at least <b>32 fish caught</b>, and <b>never over the fair share</b> (1 fish per 10 in the lake) after the town meeting.</p>
 <div class="bar">
   <div class="box">SEASON<b id="rn">1/8</b></div>
   <div class="box">FISH IN LAKE<b id="fish">60</b></div>
@@ -183,10 +184,10 @@ function setup(){el("rn").textContent=(s+1)+"/8";upd();show("round",false);show(
  if(s===3&&!meetingDone){el("ptitle").textContent="TOWN MEETING";
   el("ask").innerHTML="The lake has "+fish+" fish. Everyone's worried. The town votes on a plan. Which plan do you choose?";
   el("choices").innerHTML="<div class=\"opt3\">"+["A","B","C"].map(function(k){return "<button onclick=\"choose('"+k+"')\">"+k+": "+RULES[k]+"</button>"}).join("")+"</div>";return}
- if(fish<=0){el("ptitle").textContent="SEASON "+(s+1);el("ask").textContent="The lake is empty. Nothing to catch.";el("choices").innerHTML="<button onclick=\"cast(0)\">OK</button>";return}
+ if(fish<=0){el("ptitle").textContent="SEASON "+(s+1);el("ask").textContent="The lake is empty. Nothing to catch. The fish have left a note: \"We needed a break.\"";el("choices").innerHTML="<button onclick=\"cast(0)\">OK</button>";return}
  if(meBanned){el("ptitle").textContent="SEASON "+(s+1)+": YOU'RE BANNED";el("ask").textContent="The watchers saw you take more than the limit last season. You sit this one out.";el("choices").innerHTML="<button onclick=\"cast(0)\">OK</button>";return}
  el("ptitle").textContent="SEASON "+(s+1);
- el("ask").innerHTML="How many fish will you catch?"+(rule&&rule!=="A"?" <b>Limit this season: "+limit()+"</b> each (1 for every 10 fish).":(rule==="A"&&s>=3?" <b>Fair share: "+limit()+"</b> (1 for every 10 fish). No one will check, though.":""))+(s>1&&s<3?"<br><span class=\"note\">Last season Bo, Cam and Gil each took 9.</span>":"");
+ el("ask").innerHTML="How many fish will you catch?"+(rule&&rule!=="A"?" <b>Limit this season: "+limit()+"</b> each (1 for every 10 fish).":(rule==="A"&&s>=3?" <b>Fair share: "+limit()+"</b> (1 for every 10 fish). No one will check, though.":""))+(s<3?"<br><span class=\"note\">Fair-share yardstick: 1 fish for every 10 in the lake, so "+limit()+" right now."+(s>1?" Last season Bo, Cam and Gil each took 9.":"")+"</span>":"");
  el("choices").innerHTML="<div class=\"amts\">"+[0,1,2,3,4,5,6,8,10].map(function(a){return "<button onclick=\"cast("+a+")\">"+a+"</button>"}).join("")+"</div>"}
 function choose(k){rule=k;meetingDone=true;setup()}
 function cast(me){var lim=limit(),bots,note="";
@@ -218,6 +219,7 @@ function finish(){show("round",false);show("pick",false);
  el("verdict").innerHTML="<p>Your catch: <b>"+tot+"</b> fish. Plan chosen: <b>"+rule+"</b>. Fish left for next year: <b>"+fish+"</b>.</p><div class=\"rank\">RANK: "+rank+"</div><p class=\"note\">"+why+"</p>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">With no rule, everyone keeps taking 9 and the lake crashes. With a promise nobody checks, Gil keeps taking 9. When Bo and Cam see him get away with it, they start taking more too, and unless you hold back almost completely, the lake shrinks.</div>"+
  "<div class=\"tape\">With watchers and a ban, Gil tests the rule once, gets caught, and the lake grows back.</div>"+
+ "<div class=\"tape\"><b>Points are not the whole story.</b> You can out-fish the honest path by overfishing: taking 3, 6 and 10 early and then 10 every time you are not banned scores <b>49</b> fish but leaves only <b>36</b> in the lake and loses the top rank. The honest path scores <b>39</b> and leaves <b>60</b>. The fish count alone would reward cheating, so the lake you leave and your rank are what the town cares about. Real penalties have to be big enough that cheating loses.</div>"+
  "<div class=\"fact\">The political scientist Elinor Ostrom studied real fishing villages, forests and farms that share resources. She found many communities protect them with local rules, watchers and fair punishments. She won a Nobel Prize for it in 2009.</div>";
  el("out").value="GN3-M06 | my catches: "+mine.join(",")+" | fish at start of each season: "+hist.join(",")+" | plan: "+rule+" | my total "+tot+" | fish left "+fish+" | seasons over the limit "+over+" | rank "+rank;
  if(rank==="COMMONS KEEPER"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}

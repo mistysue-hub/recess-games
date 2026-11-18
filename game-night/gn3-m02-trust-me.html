@@ -115,11 +115,13 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <body>
 <h1>TRUST ME</h1>
 <p class="note">Part A: you get 10 coins each round. Any coins you SEND to your partner are TRIPLED. Your partner decides how many to send back. Part B: you switch seats.</p>
+<p class="note"><b>Part A is 4 rounds. Part B is 4 rounds.</b> Partners remember how you treated them. Robin starts by sending back a third of what she gets. If you sent her 6 or more coins last round, she sends back half.</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/8</b></div>
   <div class="box">YOUR COINS<b id="tot">0</b></div>
 </div>
 <div id="pick">
+  <p class="note newbanner" id="rules" style="display:none;border:2px solid;border-radius:8px;padding:8px"><b>NEW PARTNER, NEW RULES.</b> Max starts by sending you 6. After that: if you send back <b>half or more</b>, he sends 10. If you send back <b>a third</b>, he sends 4. If you <b>keep it all</b>, he stops sending for good.</p>
   <h2 id="ptitle"></h2>
   <p class="partner" id="who"></p>
   <p id="ask"></p>
@@ -172,6 +174,8 @@ function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rint(n){try{var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}}
 
+function simA(sends){var ls=null,t=0;sends.forEach(function(a,i){var f=(i>0&&ls!==null&&ls>=6)?1/2:1/3;t+=10-a+Math.round(3*a*f);ls=a});return t}
+function simB(fracs){var lr=null,t=0;fracs.forEach(function(fr,i){var s=(i===0||lr===null)?6:(lr>=1/2?10:(lr>0?4:0)),got=3*s;t+=got-Math.round(got*fr);if(s>0)lr=fr});return t}
 var r=0,tot=0,sent=[],back=[],partA=0,partB=0,keepLog=[],maxSends=[],lastRet=null,lastSend=null;
 function setup(){el("rn").textContent=(r+1)+"/8";show("round",false);
  if(r<4){el("ptitle").textContent="PART A: YOU ARE THE SENDER";
@@ -181,6 +185,7 @@ function setup(){el("rn").textContent=(r+1)+"/8";show("round",false);
  }else{var s=maxSend();el("ptitle").textContent="PART B: YOU ARE THE RECEIVER";
   el("who").innerHTML="Partner: <b>Max</b> sent you <b>"+s+"</b> coins. Tripled, you now hold <b>"+(3*s)+"</b>."+(r===7?"<br><span class=\"note\"><b>FINAL ROUND.</b> There is no round after this one.</span>":"");
   el("ask").textContent=s===0?"Max sent nothing, so there is nothing to split.":"How much will you send back to Max?";
+  el("rules").style.display=r===4?"block":"none";
   el("amts").innerHTML=s===0?"<button onclick=\"ret(0)\">OK</button>":[["keep it all",0],["send back a third",1/3],["send back half",1/2],["send back two-thirds",2/3]].map(function(o){return "<button onclick=\"ret("+o[1]+")\">"+o[0].toUpperCase()+"</button>"}).join("");
  }
  show("pick",true)}
@@ -195,7 +200,7 @@ function ret(fr){var s=maxSend(),got=3*s,give=Math.round(got*fr),keep=got-give;
  maxSends.push(s);keepLog.push(s===0?"had nothing to split":(fr===0?"kept all":fr<0.4?"returned a third":fr<0.6?"returned half":"returned two-thirds"));
  if(s>0)lastRet=fr;partB+=keep;tot+=keep;el("tot").textContent=tot;
  el("headline").textContent=s===0?"Max didn't trust you this time.":"You kept "+keep+" and sent "+give+" back.";
- el("detail").innerHTML=r===7?"That was the last round.":(s===0?"Max remembers. Once burned, he's done sending.":"<span class=\"note\">Max decides next round's send by how you treated him.</span>");
+ el("detail").innerHTML=r===7?"That was the last round.":(s===0?"Max remembers. Once burned, he's done sending.":(fr===0?"Max has updated his Notes app. Your name is in red.":"<span class=\"note\">Max decides next round's send by how you treated him.</span>"));
  el("next").textContent=r===7?"SEE FINAL SCORE":"NEXT ROUND";show("pick",false);show("round",true)}
 function nextRound(){r++;if(r>=8){finish();return}setup()}
 function finish(){show("round",false);show("pick",false);
@@ -204,10 +209,10 @@ function finish(){show("round",false);show("pick",false);
  for(var j=0;j<4;j++)rows+="<tr><td>"+(j+5)+"</td><td>Max sent "+maxSends[j]+": you "+keepLog[j]+"</td></tr>";
  el("log").innerHTML=rows;
  var rank=tot>=109?"TRUST TYCOON":(tot>=85?"SOLID PARTNER":"LONE SAVER");
- el("verdict").innerHTML="<p>Part A: <b>"+partA+"</b> coins. Part B: <b>"+partB+"</b> coins. Total: <b>"+tot+"</b> (best possible 124).</p><div class=\"rank\">RANK: "+rank+"</div>"+
- "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Send 10 every round: Robin returns a third in round 1 (break even), then half: <b>55</b> coins in Part A.</div>"+
- "<div class=\"tape\">Return half to Max every round: <b>54</b> coins in Part B. Keep it all in round 5: Max stops sending, and you get <b>18</b>. That 55 + 54 = <b>109</b> is the best an honest player can do, and it earns the top rank.</div>"+
- "<p class=\"note\">The sneaky 124: return half until the very last round, then keep it all (69 in Part B). Max can't punish you because there's no round left. With no tomorrow, keeping it all is tempting. Trust needs a tomorrow.</p>"+
+ el("verdict").innerHTML="<p>Part A: <b>"+partA+"</b> coins. Part B: <b>"+partB+"</b> coins. Total: <b>"+tot+"</b> (best possible "+(simA([10,10,10,10])+simB([.5,.5,.5,0]))+").</p><div class=\"rank\">RANK: "+rank+"</div>"+
+ "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Send 10 every round: Robin returns a third in round 1 (break even), then half: <b>"+simA([10,10,10,10])+"</b> coins in Part A.</div>"+
+ "<div class=\"tape\">Return half to Max every round: <b>"+simB([.5,.5,.5,.5])+"</b> coins in Part B, so <b>"+(simA([10,10,10,10])+simB([.5,.5,.5,.5]))+"</b> in all (TRUST TYCOON starts at 109). Keep it all in round 5: Max stops sending, and Part B is only <b>"+simB([0,0,0,0])+"</b>.</div>"+
+ "<p class=\"note\">The last round is different, because Max can't punish you when there's no round left. Return half until then and only a third in round 8, and you get <b>"+(simA([10,10,10,10])+simB([.5,.5,.5,1/3]))+"</b>. Keep it all in round 8 and you get <b>"+(simA([10,10,10,10])+simB([.5,.5,.5,0]))+"</b>. With no tomorrow, keeping it all is tempting. Trust needs a tomorrow.</p>"+
  "<div class=\"fact\">In 1995 the economists Joyce Berg, John Dickhaut and Kevin McCabe ran this \"trust game\" with real people and real money. Most senders trusted a stranger with some of their money, even though nothing forced the stranger to pay it back.</div>";
  el("out").value="GN3-M02 | sent to Robin: "+sent.join(",")+" | Robin returned: "+back.join(",")+" | Part A "+partA+" | Max sent: "+maxSends.join(",")+" | I "+keepLog.join(", ")+" | Part B "+partB+" | total "+tot+" | rank "+rank;
  if(rank==="TRUST TYCOON"){var dl=el("decklink");dl.href+="&foil=1";dl.textContent="Top rank! See your GOLD FOIL card"}

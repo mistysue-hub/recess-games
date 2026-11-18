@@ -189,26 +189,27 @@ function revealHTML(){var r=compute4(),ws=[r.pw,r.ro,r.bw,r.con||"none"],uniq=ws
  var w=function(x){return "<b>"+x+"</b>"};
  var h="<table class=\"standings\"><tr><th>System</th><th>Winner</th><th>How</th></tr>"+
  "<tr><td>Plurality</td><td>"+w(r.pw)+"</td><td>ZOO "+r.plur.ZOO+", MUSEUM "+r.plur.MUSEUM+", WATER PARK "+r.plur["WATER PARK"]+" first-place votes</td></tr>"+
- "<tr><td>Top-two runoff</td><td>"+w(r.ro)+"</td><td>"+r.a+" vs "+r.b+": "+r.pv[0]+" to "+r.pv[1]+"</td></tr>"+
- "<tr><td>Borda count (2-1-0 points)</td><td>"+w(r.bw)+"</td><td>ZOO "+r.bo.ZOO+", MUSEUM "+r.bo.MUSEUM+", WATER PARK "+r.bo["WATER PARK"]+"</td></tr>"+
- "<tr><td>Condorcet winner</td><td>"+w(r.con||"none")+"</td><td>"+(r.con?"beats each other trip head to head":"no trip beats all the others")+"</td></tr></table>";
+ "<tr><td>Top-two runoff<br><span class=\"note\">the two with the most first-place votes vote again</span></td><td>"+w(r.ro)+"</td><td>"+r.a+" vs "+r.b+": "+r.pv[0]+" to "+r.pv[1]+"</td></tr>"+
+ "<tr><td>Borda count<br><span class=\"note\">2 points for a 1st choice, 1 for a 2nd, 0 for a 3rd</span></td><td>"+w(r.bw)+"</td><td>ZOO "+r.bo.ZOO+", MUSEUM "+r.bo.MUSEUM+", WATER PARK "+r.bo["WATER PARK"]+"</td></tr>"+
+ "<tr><td>Condorcet winner<br><span class=\"note\">beats every other trip one on one</span></td><td>"+w(r.con||"none")+"</td><td>"+(r.con?"beats each other trip head to head":"no trip beats all the others")+"</td></tr></table>";
  h+="<p>Same ballots (everyone voting honestly), <b>"+uniq+" different winner"+(uniq===1?"":"s")+"</b>.</p>";
- if(r.con&&r.con!==r.pw)h+="<p class=\"note\"><i>Your vote-splitting can sink the one trip that beats everything head to head.</i> Here "+r.con+" beats every other trip one on one, yet plurality picks "+r.pw+".</p>";
+ if(r.con&&r.con!==r.pw){var nl=CLASS2.every(function(g){return g.r[2]!==r.con});h+="<p class=\"note\"><i>A trip can be "+(nl?"nobody's last choice":"a popular choice")+" and still lose when only first choices count.</i> Here "+r.con+" beats every other trip one on one, yet plurality picks "+r.pw+": it has the fewest first-place votes ("+r.plur[r.con]+"), so it is squeezed out.</p>"}
  sys4=r;return h}
-var stage=0,tries=0,solvedOn=0,score=0,log=[],sincere=null,done=false;
+var tried={},stage=0,tries=0,solvedOn=0,score=0,log=[],sincere=null,done=false;
 function h2h(x,y){var vx=0,vy=0;["A","B","C"].forEach(function(g){if(R[g].indexOf(x)<R[g].indexOf(y))vx+=7;else vy+=7});return [vx,vy]}
 var PAIRS=[["ZOO","MUSEUM","WATER PARK"],["MUSEUM","WATER PARK","ZOO"],["ZOO","WATER PARK","MUSEUM"]];
 function setup(){show("round",false);show("pick",true);el("rn").textContent=(stage+1)+"/2";
  if(stage===0){el("ptitle").textContent="STAGE 1: SET THE AGENDA (TRY "+(tries+1)+" OF 3)";
   el("ask").innerHTML="Secret: <b>you</b> really want the <b>MUSEUM</b>. Votes are head-to-head: first two trips face off, then the winner faces the third. Which two go first?";
-  el("choices").innerHTML="<div class=\"agenda\">"+PAIRS.map(function(p,i){return "<button onclick=\"agenda("+i+")\">"+p[0]+" vs "+p[1]+"</button>"}).join("<br>")+"</div>";}
+  el("choices").innerHTML="<div class=\"agenda\">"+PAIRS.map(function(p,i){return "<button"+(tried[i]?" disabled":"")+" onclick=\"agenda("+i+")\">"+p[0]+" vs "+p[1]+(tried[i]?"<br><small>tried: "+tried[i]+" won</small>":"")+"</button>"}).join("<br>")+"</div>";}
  else{el("ptitle").textContent="STAGE 2: A DIFFERENT CLASS";
   el("ask").innerHTML="A different class (different kids) uses one simple vote: everyone votes once, most votes wins.<br>Zoo Crew (9 kids): ZOO > WATER PARK > MUSEUM<br>Museum Club (7 kids): MUSEUM > WATER PARK > ZOO<br><b>Your group in that class, Splash Squad (5 kids): WATER PARK > MUSEUM > ZOO</b><br>How should your group vote?";
   el("choices").innerHTML="<button onclick=\"cast('WATER PARK')\">WATER PARK</button><button onclick=\"cast('MUSEUM')\">MUSEUM</button><button onclick=\"cast('ZOO')\">ZOO</button>";}
 }
-function agenda(i){var p=PAIRS[i],v1=h2h(p[0],p[1]),w1=v1[0]>v1[1]?p[0]:p[1],v2=h2h(w1,p[2]),w2=v2[0]>v2[1]?w1:p[2];tries++;
+function agenda(i){var p=PAIRS[i],v1=h2h(p[0],p[1]),w1=v1[0]>v1[1]?p[0]:p[1],v2=h2h(w1,p[2]),w2=v2[0]>v2[1]?w1:p[2];tries++;tried[i]=w2;
  log.push(p[0]+" vs "+p[1]+" first -> "+w2);var ok=w2==="MUSEUM";
  el("headline").textContent=ok?"THE MUSEUM WINS!":"The "+w2+" wins.";
+ if(ok)el("headline").textContent+=" Congratulations, you are now a minor local politician.";
  el("detail").innerHTML="Vote 1: "+p[0]+" "+v1[0]+", "+p[1]+" "+v1[1]+" → <b>"+w1+"</b><br>Vote 2: "+w1+" "+v2[0]+", "+p[2]+" "+v2[1]+" → <b>"+w2+"</b>"+(ok?"<br>Same kids, same opinions. Only the <b>order</b> changed.":"<br><span class=\"note\">Each group of 7 never changed its mind. Try a different order?</span>");
  if(ok&&!solvedOn){solvedOn=tries;score+=tries===1?2:1;el("sc").textContent=score}
  el("next").textContent=(ok||tries>=3)?"NEXT STAGE":"TRY ANOTHER ORDER";show("pick",false);show("round",true)}

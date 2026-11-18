@@ -241,6 +241,11 @@ function tourney(c,noisy){var all=BOTS.concat([mybot(c)]),tot=all.map(function()
  var order=all.map(function(b,i){return {n:b.n,s:tot[i]}}).sort(function(x,y){return (y.s-x.s)||((y.n==="YOUR BOT")-(x.n==="YOUR BOT"))});
  var my=tot[all.length-1],rank=1,tie=false;order.forEach(function(o){if(o.s>my)rank++;if(o.s===my&&o.n!=="YOUR BOT")tie=true});
  return {order:order,my:my,rank:rank,tie:tie,mine:mine}}
+/* True only if Grabby Gus never scores less than his partner against ANY of the 5 arena bots or the 8 bots a player can build. */
+function gusNeverLoses(){var gus=BOTS[1],ok=true;
+ BOTS.forEach(function(b){if(b!==gus){var m=match(gus,b);if(m[0]<m[1])ok=false}});
+ ["S","G"].forEach(function(a){["S","G"].forEach(function(b){["S","G"].forEach(function(c){var m=match(gus,mybot([a,b,c]));if(m[0]<m[1])ok=false})})});
+ return ok}
 function opts(k){var h="";["S","G"].forEach(function(m){h+="<button id=\"b"+k+m+"\" onclick=\"pick("+k+",'"+m+"')\">"+W(m)+"</button>"});el("q"+k).innerHTML=h}
 function pick(k,m){choice[k]=m;["S","G"].forEach(function(x){el("b"+k+x).classList.toggle("on",x===m)});
  if(choice[0]&&choice[1]&&choice[2]){var key=choice.join("");el("botdesc").innerHTML="Your bot's style: <b>"+NAMES[key]+"</b>";el("go").style.display="inline-block"}}
@@ -254,7 +259,8 @@ function runIt(){var t=tourney(choice),key=choice.join("");
  el("headline").textContent="RUN "+(run+1)+": "+NAMES[key]+" finished "+(t.tie?"tied for ":"")+"#"+t.rank+" of 6";
  el("table").innerHTML="<tr><th>#</th><th>Bot</th><th>Total</th></tr>"+t.order.map(function(o,i){return "<tr"+(o.n==="YOUR BOT"?" class=\"me\"":"")+"><td>"+(i+1)+"</td><td>"+o.n+"</td><td>"+o.s+"</td></tr>"}).join("");
  el("matches").innerHTML="Your matches (10 rounds each): "+t.mine.map(function(m){return m.vs+" "+m.me+"-"+m.them}).join(" · ");
- el("lesson").textContent=t.rank===1?"Champion! Notice how you did against the grabbers AND the sharers.":"Look at which bots beat you, and which bots you beat. Can a different rule do better?";
+ var gusPos=0;t.order.forEach(function(o,i){if(o.n==="Grabby Gus")gusPos=i+1});
+ el("lesson").textContent=(t.rank===1?"Champion! Notice how you did against the grabbers AND the sharers.":"Look at which bots beat you, and which bots you beat. Can a different rule do better?")+(gusNeverLoses()?" Fun fact: Grabby Gus won or tied every match he played, yet he finished #"+gusPos+" in the tournament. Winning matches is not the same as winning the tournament.":"");
  el("next").textContent=run<2?"TRY ANOTHER BOT":"SEE FINAL RESULTS";
  show("pick",false);show("round",true)}
 function nextRun(){run++;if(run>=3){showOops();return}setup()}
@@ -280,7 +286,7 @@ function runOops(){if(oopsDone)return;oopsDone=true;el("oopsbtn").disabled=true;
 function traceHTML(){var cora=BOTS[2],ha=[],hb=[],sa=0,sb=0,h="<table class=\"standings\"><tr><th>Round</th><th>Left Copycat</th><th>Right Copycat</th><th>Points</th></tr>";
  for(var r=1;r<=8;r++){var ma=cora.f(ha),mb=cora.f(hb),slip=(r===2);if(slip)ma=flip(ma);var p=P[ma+"|"+mb];sa+=p[0];sb+=p[1];
   h+="<tr><td>"+r+"</td><td>"+W(ma)+(slip?" (slip!)":"")+"</td><td>"+W(mb)+"</td><td>"+p[0]+"-"+p[1]+"</td></tr>";ha.push({me:ma,them:mb});hb.push({me:mb,them:ma})}
- el("tracewhy").innerHTML="After one slip the two bots swap grabs forever: each time one gets a 5, the other gets a 0, so each averages about 2.5 a round instead of 3. Nobody meant to start a feud, but strict Tit for Tat never lets it end. Over these 8 rounds: left <b>"+sa+"</b>, right <b>"+sb+"</b> (two bots that kept sharing would each have 24).";
+ el("tracewhy").innerHTML="Two polite bots, one accidental grab, and a feud that outlasts the lunch period. After one slip the two bots swap grabs forever: each time one gets a 5, the other gets a 0, so each averages about 2.5 a round instead of 3. Nobody meant to start a feud, but strict Tit for Tat never lets it end. Over these 8 rounds: left <b>"+sa+"</b>, right <b>"+sb+"</b> (two bots that kept sharing would each have 24).";
  return h+"</table>"}
 var cchoice=[null,null,null],cbest=null;
 function opts2(){[0,1,2].forEach(function(k){var h="";["S","G"].forEach(function(m){h+="<button id=\"c"+k+m+"\" onclick=\"cpick("+k+",'"+m+"')\">"+W(m)+"</button>"});el("c"+k).innerHTML=h})}
@@ -296,6 +302,7 @@ function finish(){if(finished)return;finished=true;show("round",false);show("pic
  var rank=best.rank===1?"CHAMPION":(best.rank<=2?"CONTENDER":"ROOKIE BOT");
  el("verdict").innerHTML="<p>Best bot: <b>"+best.name+"</b> with <b>"+best.score+"</b> points, rank <b>#"+best.rank+"</b> of 6.</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Tit for Tat (share first, then copy) in this arena scores <b>"+tft.my+"</b> and finishes <b>"+(tft.tie?"tied for ":"")+"#"+tft.rank+"</b> (Copycat Cora and Grudge Greta score the same).</div>"+
+ (gusNeverLoses()?"<div class=\"tape\">Grabby Gus <b>won or tied every match he played</b> (against every bot in the arena and every bot you could build), yet finished behind Tit for Tat. Winning each match is not the same as winning the tournament. The total decides.</div>":"")+
  "<p class=\"note\">Tit for Tat never scores more than its partner in any single match. It wins by getting lots of 3-point rounds with nice bots, and refusing to be a pushover against grabbers.</p>"+
  "<div class=\"fact\">Around 1980 the political scientist Robert Axelrod ran a computer tournament like this. The winner was Tit for Tat, sent in by Anatol Rapoport.</div>";
  el("out").value="GN3-M01 | runs: "+runs.map(function(r){return r.name+" "+r.score+" (#"+r.rank+")"}).join(", ")+" | best: "+best.name+" "+best.score+" points, rank "+best.rank+" of 6 | rank "+rank+(oops?" | oops round: "+best.name+" "+oops.score+" (#"+oops.rank+"), winner "+oops.winner:"");
