@@ -167,6 +167,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
   <textarea id="out" readonly></textarea><br>
   <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
+  <p class="note">Lost your line? The <a href="gn1-read.html?m=9" target="_blank" rel="noopener" style="color:#ffe14d">Go Deeper page</a> has a MY RESULTS FOR ROCKY button that keeps your game lines.</p>
 </div>
 
 <script>
@@ -215,14 +216,14 @@ var R=[
   why:"So if you just threw ROCK, the Glitch throws PAPER next, and SCISSORS beats it. Spotting a habit and playing the best response to it is exactly how you beat a predictable player."}
 ];
 var BEATS={ROCK:"PAPER",PAPER:"SCISSORS",SCISSORS:"ROCK"};
-var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1,queue,qi,hitSet,res,replayed,pendingLoss,lastMiss;
+var firstMissed=[],r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1,queue,qi,hitSet,res,replayed,pendingLoss,lastMiss;
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function rnd(n){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return a[0]%n}
 function setHP(){el("hp").textContent=hp;el("hpfill").style.width=(hp/8*100)+"%";el("lives").textContent=lives}
 function note(s){log.push(s);res[parseInt(s.slice(1),10)-1]=s.split(":")[1]}
 function begin(){lives=3;log=[];qi=0;r=queue[0];pendingLoss=false;lastMiss=null;setHP();setup()}
-function start(){attempt=1;hp=8;hitSet=[];res=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
+function start(){attempt=1;firstMissed=[];hp=8;hitSet=[];res=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
 function setup(){
   var x=R[r];tries=0;locked=false;firstMiss=false;
   el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE GLITCH: "+x.taunt;el("rtitle").textContent=x.t;
@@ -263,7 +264,7 @@ function throwIt(i){
     var res=(BEATS[glitch]===me)?"WIN":(glitch===me?"TIE":"LOSS");
     if(res==="WIN")rps.wins++;rps.n++;rps.last=me;rps.hist.push(me[0]+"v"+glitch[0]+":"+res);
     el("fb").innerHTML="You: <b>"+me+"</b> &nbsp; Glitch: <b>"+glitch+"</b> &nbsp; "+(res==="WIN"?"<b>You win the throw!</b>":(res==="TIE"?"Tie.":"The Glitch takes it."))+" (wins: "+rps.wins+" of "+rps.n+")<br><span class=\"note\">Your throws so far: "+rps.hist.map(function(h){return h.split("v")[0]}).join(", ")+" &middot; Glitch: "+rps.hist.map(function(h){return h.split("v")[1].split(":")[0]}).join(", ")+"</span>";
-    if(rps.n<5){locked=false;return}
+    if(rps.n<5){if(rps.n>=2)el("fb").innerHTML+="<br><b>Look at the two lists:</b> what did the Glitch throw right after each of your throws?";locked=false;return}
     var hit=rps.wins>=3;
     if(hit){hp--;hitSet[r]=true;setHP();note("R8:hit ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>HIT!</b> You beat the Glitch's habit. "+R[r].short;endRound();}
     else{note("R8:miss ("+rps.wins+"/5)");el("fb").innerHTML+="<br><b>The Glitch wins the showdown.</b> No hit. "+R[r].short;endRound();}
@@ -287,13 +288,14 @@ function finish(lost){
   else if(left>0){msg="<p><b>So close!</b> The Glitch has "+left+" HP left. REMATCH replays just the "+left+" puzzle"+plural+" you haven't hit, with 3 fresh lives. A perfect first attempt is the only way to earn gold foil.</p>"}
   else if(attempt>1){msg="<p>The Glitch is down! Gold foil needs a perfect first attempt, so this one earns the regular card.</p>"}
   el("verdict").innerHTML=msg+
-   "<div class=\"rank\">RANK: "+rank+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
-   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>STRATEGIST</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn1-deck.html?card=8"+foil+"\">See your deck</a></div>")+"<div class=\"tape\"><b>WANT MORE?</b> See the real college course this was built from, plus games and books to go deeper. <a href=\"gn1-read.html?m=9\" target=\"_blank\" rel=\"noopener\">Go deeper</a></div>";
+   "<div class=\"rank\">RANK: "+rank+(attempt>1?" (after rematch)":"")+"</div><p>You knocked off <b>"+hits+"</b> of 8 HP. Lives left: <b>"+lives+"</b>.</p><table><tr><th>Puzzle</th><th>Result</th></tr>"+rows+"</table>"+
+   (lost?"":"<div class=\"tape\">STRATEGY CARD UNLOCKED: <b>STRATEGIST</b>"+(foil?" (GOLD FOIL!)":"")+". <a href=\"gn1-deck.html?card=8"+foil+"\" target=\"_blank\" rel=\"noopener\">See your deck</a></div>")+"<div class=\"tape\"><b>WANT MORE?</b> See the real college course this was built from, plus games and books to go deeper. <a href=\"gn1-read.html?m=9\" target=\"_blank\" rel=\"noopener\">Go deeper</a></div>";
   show("rematch",hp>0);
-  el("out").value="GN1-M08 | attempt "+attempt+" | "+(lost?"GLITCH WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Glitch HP left "+hp+" | rank "+rank+(attempt>1?" | replayed puzzles: "+replayed.map(function(i){return "R"+(i+1)}).join(", "):"");
+  el("out").value="GN1-M08 | attempt "+attempt+" | "+(lost?"GLITCH WINS":"BEAT THE GAUNTLET")+" | round results: "+log.join(", ")+" | lives left "+lives+" | Glitch HP left "+hp+" | rank "+rank+(attempt>1?" | replayed puzzles: "+replayed.map(function(i){return "R"+(i+1)}).join(", ")+" | attempt 1 missed: "+(firstMissed.length?firstMissed.map(function(i){return "R"+(i+1)}).join(", "):"none"):"");
   show("final",true);
 }
-function rematch(){attempt++;queue=[];for(var i=0;i<8;i++){if(!hitSet[i])queue.push(i);res[i]=hitSet[i]?"hit (earlier)":"not reached"}
+function rematch(){if(attempt===1){firstMissed=[];for(var q=0;q<8;q++)if(/^(miss|fixed)/.test(res[q]||""))firstMissed.push(q)}
+  attempt++;queue=[];for(var i=0;i<8;i++){if(!hitSet[i])queue.push(i);res[i]=hitSet[i]?"hit (earlier)":"not reached"}
   replayed=queue.slice();begin()}
 // Returns a Promise<boolean>: true only if the text really reached the clipboard.
 function rkCopy(text, box){
@@ -352,7 +354,8 @@ start();
 (function(){
   var snaps=[],last="",timers=[];
   var st=document.createElement("style");
-  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  st.textContent='#lbBtn{position:fixed;left:8px;bottom:8px;z-index:9998;display:none;font:700 12px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.8);border:2px solid #9fe7ff;border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.72;transition:opacity .25s}'+
+  'body{padding-bottom:96px !important}#lbBtn.fade{opacity:.12;pointer-events:none}'+
   '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
   '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
   '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
@@ -391,6 +394,7 @@ start();
   function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
   function close(){ov.style.display="none";document.documentElement.style.overflow=""}
   btn.addEventListener("click",open);
+  var ft;window.addEventListener("scroll",function(){btn.classList.add("fade");clearTimeout(ft);ft=setTimeout(function(){btn.classList.remove("fade")},700)},{passive:true});
   document.getElementById("lbX").addEventListener("click",close);
   document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
   document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});

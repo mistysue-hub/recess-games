@@ -110,7 +110,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>MEET ME AT THE MALL</h1>
-<p class="note">You and your friend Jordan got split up at the mall, and both your phones just died. Each round you both pick at the same moment. You only score if you match.</p>
+<p class="note">You and your friend Jordan got split up at the mall, and both your phones just died. Each round you both pick at the same moment. You only score if you match. Jordan is a typical mall-goer.</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/5</b></div>
   <div class="box">MATCHES<b id="mt">0</b></div>
@@ -132,19 +132,20 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 
 <div id="final">
   <h1>FOUND EACH OTHER?</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: The Four Parts<br><a id="decklink" href="gn1-deck.html?card=1">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: The Four Parts<br><a id="decklink" href="gn1-deck.html?card=1" target="_blank" rel="noopener">See your deck</a></div>
   <div id="verdict"></div>
   <p>This is your <b>game</b> line (it starts with GN1-M01). Copy it and paste it to Rocky in the chat. The reading gives you a second, different line later.</p>
   <textarea id="out" readonly></textarea><br>
   <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
+  <p class="note">Lost your line? The <a href="gn1-read.html?m=9" target="_blank" rel="noopener" style="color:#ffe14d">Go Deeper page</a> has a MY RESULTS FOR ROCKY button that keeps your game lines.</p>
 </div>
 
 <script>
 var ROUNDS=[
   {tag:"WHERE",news:"Phones dead. No way to text. Where will Jordan go?",q:"WHERE WILL YOU WAIT?",
-   opts:["Main Entrance","Fountain","Food Court","Arcade","Shoe Store"],crowd:[18,50,20,9,3]},
-  {tag:"WHEN",news:"New plan: you will meet at the Fountain. But at what time?",q:"WHAT TIME WILL YOU BE THERE?",
+   opts:["Main Entrance","Fountain","Food Court","Arcade","Shoe Store"],lab:[null,null,null,null,"Shoe Store (nobody ever meets anyone here)"],crowd:[18,50,20,9,3]},
+  {tag:"WHEN",news:"New plan, agreed earlier by text: meet at the Fountain. But at what time?",q:"WHAT TIME WILL YOU BE THERE?",
    opts:["Noon","12:15","1:00","2:30","4:45"],crowd:[55,5,22,10,8]},
   {tag:"NUMBER",news:"Bonus round: you both get a prize if you pick the same number.",q:"PICK A NUMBER FROM 1 TO 10",
    opts:["1","2","3","4","5","6","7","8","9","10"],crowd:[10,3,12,4,8,4,45,2,2,10]},
@@ -162,7 +163,7 @@ function fav(R){var b=0;for(var i=1;i<R.crowd.length;i++)if(R.crowd[i]>R.crowd[b
 function setup(){
   var R=ROUNDS[r];el("rn").textContent=(r+1)+"/"+total;
   el("news").textContent=R.news;el("q").textContent=R.q;
-  var h="";R.opts.forEach(function(o,i){h+="<button onclick=\"play("+i+")\">"+o+"</button>"});
+  var h="";R.opts.forEach(function(o,i){h+="<button onclick=\"play("+i+")\">"+((R.lab&&R.lab[i])||o)+"</button>"});
   el("choices").innerHTML=h;show("pick",true);show("round",false);
 }
 function grid(R,me,jo){
@@ -195,7 +196,7 @@ function finish(){
   var rows="<tr><th>Round</th><th>You</th><th>Jordan</th><th>Crowd favorite</th></tr>";
   log.forEach(function(x,i){rows+="<tr><td>"+(i+1)+" "+x.tag+"</td><td>"+x.me+"</td><td>"+x.jo+(x.hit?" ✔":"")+"</td><td>"+(i===4?"(Jordan texted) "+x.fav:x.fav)+(x.crowdPick?" ✔":"")+"</td></tr>"});
   var rank=cf===5?"MIND MELD":(cf===4?"BEST FRIENDS":(cf===3?"IN SYNC":"LOST IN THE MALL"));
-  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You picked the crowd favorite <b>"+cf+"</b> of 5 times.</p><p>Matches with Jordan: <b>"+mt+"</b> of 5. A match also depends on Jordan's pick, so your rank counts how often you found the obvious spot.</p><table>"+rows+"</table>"+
+  el("verdict").innerHTML="<div class=\"rank\">RANK: "+rank+"</div><p>You picked the crowd favorite <b>"+cf+"</b> of 5 times.</p><p>Matches with Jordan: <b>"+mt+"</b> of 5. A match also depends on Jordan's pick, so your rank counts how often you found the obvious spot.</p><p class=\"note\">Even a perfect focal pick matches only about half the time in rounds 1 to 4 (the crowd favorites there are 50%, 55%, 45% and 60% likely), because Jordan is random too. If you missed after a smart pick, that was not a mistake. It was Jordan's dice.</p><table>"+rows+"</table>"+
     "<h2>REPLAY THE TAPE</h2>"+
     "<div class=\"tape\">In rounds 1 to 4 there was no single right answer. The trick was to pick what you guessed Jordan would guess you would pick: the spot that stands out to both of you.</div>"+
     "<div class=\"tape\">In round 5 one text made matching easy. In games like this, talking first helps everyone.</div>"+
@@ -264,7 +265,8 @@ setup();
 (function(){
   var snaps=[],last="",timers=[];
   var st=document.createElement("style");
-  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  st.textContent='#lbBtn{position:fixed;left:8px;bottom:8px;z-index:9998;display:none;font:700 12px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.8);border:2px solid #9fe7ff;border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.72;transition:opacity .25s}'+
+  'body{padding-bottom:96px !important}#lbBtn.fade{opacity:.12;pointer-events:none}'+
   '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
   '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
   '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
@@ -303,6 +305,7 @@ setup();
   function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
   function close(){ov.style.display="none";document.documentElement.style.overflow=""}
   btn.addEventListener("click",open);
+  var ft;window.addEventListener("scroll",function(){btn.classList.add("fade");clearTimeout(ft);ft=setTimeout(function(){btn.classList.remove("fade")},700)},{passive:true});
   document.getElementById("lbX").addEventListener("click",close);
   document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
   document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});

@@ -139,7 +139,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 
 <div id="final">
   <h1>GAME OVER</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Dominant Move<br><a id="decklink" href="gn1-deck.html?card=2">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Dominant Move<br><a id="decklink" href="gn1-deck.html?card=2" target="_blank" rel="noopener">See your deck</a></div>
 
   <table id="log"></table>
   <div id="verdict"></div>
@@ -147,6 +147,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
   <textarea id="out" readonly></textarea><br>
   <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
+  <p class="note">Lost your line? The <a href="gn1-read.html?m=9" target="_blank" rel="noopener" style="color:#ffe14d">Go Deeper page</a> has a MY RESULTS FOR ROCKY button that keeps your game lines.</p>
 </div>
 
 <script>
@@ -159,7 +160,7 @@ var keeps=null,promises=["I'll SHARE, promise!","SHARE, I swear. Trust me.","Let
 function setup(){
   if(!keeps){keeps=[true,true,true,false];for(var i=3;i>0;i--){var j=rnd5(i+1),t=keeps[i];keeps[i]=keeps[j];keeps[j]=t}}
   el("rn").textContent=(r+1)+"/"+total;
-  var twist=(r===4)?"<br><span class=\"note\"><b>TWIST:</b> Partner 5 heard about your last four games. Word gets around...</span>":"";
+  var twist=(r===4)?"<br><span class=\"note\"><b>TWIST:</b> Partner 5 heard about your last four games. Word gets around. <b>Partner 5 will GRAB if you grabbed 3 or more of your first 4 games. Otherwise Partner 5 will SHARE.</b></span>":"";
   el("who").innerHTML="Partner "+(r+1)+": "+names[r]+"<br><span class=\"promise\">\""+promises[r]+"\"</span><br><span class=\"note\">Promises here can't be enforced.</span>"+twist;
   show("pick",true);show("round",false);
 }
@@ -181,7 +182,7 @@ function play(me){
   var rr=r;
   setTimeout(function(){
     el("headline").textContent="You: "+me+"   "+names[rr]+": "+g+(g==="GRAB"?"  (promise BROKEN!)":"  (promise kept)");
-    el("detail").innerHTML="You scored "+p[0]+". "+names[rr]+" scored "+p[1]+". Team +"+(p[0]+p[1])+"."+(rr===4?"<br><span class=\"note\">"+names[rr]+" heard you grabbed "+grabsSoFar()+" of your first 4 games, so "+(g==="GRAB"?"they grabbed first.":"they trusted you.")+"</span>":"");
+    el("detail").innerHTML="You scored "+p[0]+". "+names[rr]+" scored "+p[1]+". Team +"+(p[0]+p[1])+"."+(rr===4?"<br><span class=\"note\">"+names[rr]+" heard you grabbed "+grabsSoFar()+" of your first 4 games, so "+(g==="GRAB"?"they grabbed first.":"they trusted you.")+"</span>"+((me==="GRAB"&&g==="GRAB")?"<br><span class=\"note\">You and "+names[rr]+" both grabbed. You each got a cracker and a lesson.</span>":""):"");
     el("ms").textContent=ms;el("ts").textContent=ts;
     el("next").style.visibility="visible";
   },700);
@@ -207,10 +208,11 @@ function finish(){
     allGrab+=pts["GRAB|"+tG][0];
     allShare+=pts["SHARE|"+tS][0];
   }
-  var rank=grabs<=1?"TEAM PLAYER":(grabs<=3?"SWITCH HITTER":"LONE WOLF");
+  var rank=ts>=27?"TEAM PLAYER":(ts>=23?"SWITCH HITTER":"LONE WOLF");
   el("verdict").innerHTML=
     "<p>Your total: <b>"+ms+"</b> out of a possible 18 (grab at most 2 of the first 4 so Partner 5 shares, then grab in round 5). Team total: <b>"+ts+"</b> out of a possible 29.</p>"+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
+    "<p class=\"note\">Your rank comes from the TEAM total ("+ts+" of 29): 27 or more is TEAM PLAYER, 23 to 26 is SWITCH HITTER, and 22 or less is LONE WOLF. The team does best when partners can trust each other.</p>"+
     "<p class=\"note\">You grabbed "+grabs+" of 5 times. Promises kept: "+(5-pGrabs)+" of 5. Partner 5 "+(theirs[4]==="GRAB"?"grabbed because of your reputation":"shared because your reputation was good")+". Every partner promised to SHARE. Did the promises change your moves?</p>"+
     "<h2>REPLAY THE TAPE</h2>"+
     "<p class=\"note\">Same partners 1 to 4. Partner 5 heard about your record: if you grabbed 3 or more of your first 4 games, Partner 5 grabbed; otherwise Partner 5 shared.</p>"+
@@ -281,7 +283,8 @@ setup();
 (function(){
   var snaps=[],last="",timers=[];
   var st=document.createElement("style");
-  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  st.textContent='#lbBtn{position:fixed;left:8px;bottom:8px;z-index:9998;display:none;font:700 12px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.8);border:2px solid #9fe7ff;border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.72;transition:opacity .25s}'+
+  'body{padding-bottom:96px !important}#lbBtn.fade{opacity:.12;pointer-events:none}'+
   '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
   '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
   '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
@@ -320,6 +323,7 @@ setup();
   function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
   function close(){ov.style.display="none";document.documentElement.style.overflow=""}
   btn.addEventListener("click",open);
+  var ft;window.addEventListener("scroll",function(){btn.classList.add("fade");clearTimeout(ft);ft=setTimeout(function(){btn.classList.remove("fade")},700)},{passive:true});
   document.getElementById("lbX").addEventListener("click",close);
   document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
   document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});

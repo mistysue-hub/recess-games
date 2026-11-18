@@ -140,13 +140,14 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 
 <div id="final">
   <h1>GAME OVER</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Level Up<br><a id="decklink" href="gn1-deck.html?card=4">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Level Up<br><a id="decklink" href="gn1-deck.html?card=4" target="_blank" rel="noopener">See your deck</a></div>
 
   <div id="verdict"></div>
   <p>This is your <b>game</b> line (it starts with GN1-M04). Copy it and paste it to Rocky in the chat. The reading gives you a second, different line later.</p>
   <textarea id="out" readonly></textarea><br>
   <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
+  <p class="note">Lost your line? The <a href="gn1-read.html?m=9" target="_blank" rel="noopener" style="color:#ffe14d">Go Deeper page</a> has a MY RESULTS FOR ROCKY button that keeps your game lines.</p>
 </div>
 
 <script>
@@ -191,7 +192,7 @@ function lock(){
   el("tbl").innerHTML=rows;
   el("headline").textContent=winners.indexOf("YOU")>=0?"YOU WIN THIS ROUND!":"Winner: "+winners.join(" and ");
   el("detail").innerHTML="Average of all six: <b>"+r2(avg)+"</b>. Two-thirds of that: <b>"+r2(target)+"</b>."+
-    "<br><span class=\"note\">"+(r===0?"Round 2 is next. Same classmates. Will they think harder this time?":"")+"</span>";
+    "<br><span class=\"note\">"+(r===0?"Round 2 is next. Same classmates. Will they think harder this time?":"")+"</span>"+(winners.indexOf("YOU")>=0?"<br><span class=\"note\">Eli: \"I was thinking one level deeper. Evidently not.\"</span>":"");
   el("next").textContent=(r===1)?"SEE FINAL SCORE":"NEXT ROUND";
   show("pick",false);show("result",true);
 }
@@ -206,7 +207,7 @@ function finish(){
   show("result",false);show("pick",false);
   var a=data[0],b=data[1];
   var youWon=(a.winners.indexOf("YOU")>=0?1:0)+(b.winners.indexOf("YOU")>=0?1:0);
-  var rank=youWon>0?"MIND READER":(b.g<=a.g?"QUICK LEARNER":"STUBBORN THINKER");
+  var rank=youWon>0?"MIND READER":(b.g<a.g?"QUICK LEARNER":"STUBBORN THINKER");
   var lv=levelOf(b.g);
   el("verdict").innerHTML=
     "<div class=\"rank\">RANK: "+rank+"</div>"+
@@ -214,7 +215,7 @@ function finish(){
     "<h2>REPLAY THE TAPE</h2>"+
     "<div class=\"tape\">Round 1: you picked <b>"+a.g+"</b>. The winning target was <b>"+r2(a.target)+"</b>.</div>"+
     "<div class=\"tape\">Round 2: you picked <b>"+b.g+"</b>. The winning target was <b>"+r2(b.target)+"</b>.</div>"+
-    "<h2>THE SECRET: THINKING LEVELS</h2><p class=\"note\">Each classmate thinks a set number of steps ahead. Level 0 picks at random. Level 1 assumes everyone else is Level 0 (average 50, so guess about 33). Level 2 assumes everyone is Level 1 (guess about 22), and so on. In round 1 your classmates were Levels 0 to 4. In round 2 each one thought one level deeper (Levels 1 to 5).</p>"+"<p class=\"note\">The average moved from "+r2(a.avg)+" to "+r2(b.avg)+" because the classmates thought one level deeper. Your round 2 number sits at about Level "+(lv>=6?"6+":lv)+".</p>"+
+    "<h2>THE SECRET: THINKING LEVELS</h2><p class=\"note\">Each classmate thinks a set number of steps ahead. Level 0 picks at random. Level 1 assumes everyone else is Level 0 (average 50, so guess about 33). Level 2 assumes everyone is Level 1 (guess about 22), and so on. In round 1 your classmates were Levels 0 to 4. In round 2 each one thought one level deeper (Levels 1 to 5).</p>"+"<p class=\"note\">The average moved from "+r2(a.avg)+" to "+r2(b.avg)+" because the classmates thought one level deeper. Your round 2 number sits at about Level "+(lv>=6?"6+":lv)+".</p>"+"<p class=\"note\">One more detail: your own guess is part of the average. If the other five players all guess 30, two-thirds of 30 is 20, but your own guess pulls the average down, so the exact winning guess is <b>18.75</b>.</p>"+
     "<div class=\"fact\">When the website Wait But Why ran this game, 4,940 readers sent guesses. The average was about 23, so the winning number was 15. Why might the lowest possible guess still not win?</div>";
   el("out").value="GN1-M04 | r1 my guess: "+a.g+", classmates: "+a.bots.join(", ")+", average: "+r2(a.avg)+", target: "+r2(a.target)+", winner: "+a.winners.join("+")+
     " | r2 my guess: "+b.g+", classmates: "+b.bots.join(", ")+", average: "+r2(b.avg)+", target: "+r2(b.target)+", winner: "+b.winners.join("+");
@@ -278,7 +279,8 @@ function copyIt(){
 (function(){
   var snaps=[],last="",timers=[];
   var st=document.createElement("style");
-  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  st.textContent='#lbBtn{position:fixed;left:8px;bottom:8px;z-index:9998;display:none;font:700 12px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.8);border:2px solid #9fe7ff;border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.72;transition:opacity .25s}'+
+  'body{padding-bottom:96px !important}#lbBtn.fade{opacity:.12;pointer-events:none}'+
   '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
   '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
   '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
@@ -317,6 +319,7 @@ function copyIt(){
   function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
   function close(){ov.style.display="none";document.documentElement.style.overflow=""}
   btn.addEventListener("click",open);
+  var ft;window.addEventListener("scroll",function(){btn.classList.add("fade");clearTimeout(ft);ft=setTimeout(function(){btn.classList.remove("fade")},700)},{passive:true});
   document.getElementById("lbX").addEventListener("click",close);
   document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
   document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});

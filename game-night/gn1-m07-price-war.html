@@ -26,6 +26,8 @@
   .tape{display:inline-block;border:2px solid #ff2bd6;box-shadow:0 0 8px #ff2bd655;padding:8px 14px;margin:8px;text-align:left}
   .tape b{color:#39ff14}
   .fact{border-top:2px dashed #00e5ff;margin:14px auto;padding-top:10px;max-width:580px;color:#9fb4c8;font-size:14px}
+  .rt{margin:10px auto}.rt td,.rt th{font-size:12px !important;padding:4px 4px !important}
+  .rt tr.hit td{background:rgba(247,201,72,.35);font-weight:800;color:#fff}
 </style>
 
 
@@ -111,7 +113,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 </head>
 <body>
 <h1>PRICE WAR</h1>
-<p class="note">You and Penny's Pops sell the same soda on the same street. 100 customers a day. Each soda costs you both 2 coins to make. Every round you set a price, then Penny answers.</p>
+<p class="note">You and Penny's Pops sell the same soda on the same street. 100 customers a day. Each soda costs you both 2 coins to make. Every round you set a price. Penny's price decides who gets the customers.</p>
 <div class="bar">
   <div class="box">ROUND<b id="rn">1/7</b></div>
   <div class="box">YOUR PROFIT<b id="ms">0</b></div>
@@ -120,8 +122,11 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <div id="pick">
   <p class="news" id="rules"></p>
   <p class="rival" id="who"></p>
+  <p class="note" id="hint"></p>
   <p>Pick your price:</p>
   <div id="choices"></div>
+  <div class="note" id="prev"></div>
+  <button class="big" id="lock" style="display:none" onclick="lockIt()">CHARGE</button>
 </div>
 
 <div id="round">
@@ -132,18 +137,20 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 
 <div id="final">
   <h1>STORE CLOSED</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Price War<br><a id="decklink" href="gn1-deck.html?card=7">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Price War<br><a id="decklink" href="gn1-deck.html?card=7" target="_blank" rel="noopener">See your deck</a></div>
 
   <div id="verdict"></div>
   <p>This is your <b>game</b> line (it starts with GN1-M07). Copy it and paste it to Rocky in the chat. The reading gives you a second, different line later.</p>
   <textarea id="out" readonly></textarea><br>
   <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
+  <p class="note">Lost your line? The <a href="gn1-read.html?m=9" target="_blank" rel="noopener" style="color:#ffe14d">Go Deeper page</a> has a MY RESULTS FOR ROCKY button that keeps your game lines.</p>
 </div>
 
 <script>
 var total=7,half=4,r=0,log=[],ms=0,PRICES=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-var TAUNTS={win:["Penny: \"Enjoy it while it lasts.\"","Penny: \"Hmph. Nice price.\""],lose:["","Penny: \"My customers say thanks.\""],tie:["Penny: \"Split the street? Fine. For now.\""]};
+var TAUNTS={win:["Penny: \"Enjoy it while it lasts.\"","Penny: \"Hmph. Nice price.\""],lose:["Penny: \"I stole your customers AND your slogan.\"","Penny: \"My customers say thanks.\""],tie:["Penny: \"Split the street? Fine. For now.\""],zero:["Penny: \"Zero customers. Nice price though.\""]};
+var sel=null;
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
 function phase(){return r<half?1:2}
@@ -158,45 +165,80 @@ function bestList(pr,ph){
   PRICES.forEach(function(p){var x=profit(p,pr,ph);if(x>m){m=x;list=[p]}else if(x===m)list.push(p)});
   return {profit:m,ps:list};
 }
-function rivalP(p){
-  if(phase()===1)return Math.max(2,p-1);
+function rivalP(){
+  if(phase()===1)return r===0?10:Math.max(2,log[r-1].p-1);
   if(r===half)return 10;
   return bestList(log[r-1].p,2).ps[0];
 }
+function pvText(p){
+  var ph=phase(),pr=rivalP(),n=customers(p,pr,ph),e=profit(p,pr,ph),t;
+  if(ph===1){
+    if(p<pr)t="At "+p+": you are cheaper than Penny, so you sell all 100 and earn "+e+".";
+    else if(p===pr)t="At "+p+": same price as Penny, so you split the street, sell 50 and earn "+e+".";
+    else t="At "+p+": Penny is cheaper, so you sell 0 and earn 0.";
+    if(r<half-1)t+=" Next round Penny will charge "+Math.max(2,p-1)+".";
+    return t;
+  }
+  var h="<table class=\"rt\"><tr><th>If you charge</th><th>You sell</th><th>You earn</th></tr>";
+  [p-1,p,p+1].forEach(function(q){
+    if(PRICES.indexOf(q)<0)return;
+    h+="<tr"+(q===p?" class=\"hit\"":"")+"><td>"+q+(q===p?" (this one)":"")+"</td><td>"+customers(q,pr,2)+"</td><td>"+profit(q,pr,2)+"</td></tr>";
+  });
+  return "At "+p+": you sell "+n+" and earn "+e+".<br>"+h+"</table>";
+}
+function pv(p){
+  var q=(p===null||p===undefined)?sel:p;
+  el("prev").innerHTML=(q===null)?"Tap a price to see what it would earn you, then lock it in.":pvText(q);
+}
+function choose(p){
+  sel=p;
+  Array.prototype.forEach.call(document.querySelectorAll("#choices button"),function(b){b.className=(+b.getAttribute("data-p")===p)?"on":""});
+  pv(p);
+  el("lock").textContent="CHARGE "+p;show("lock",true);
+}
+function lockIt(){if(sel!==null)play(sel)}
 function setup(){
   el("rn").textContent=(r+1)+"/"+total;
+  sel=null;
   el("rules").textContent=(phase()===1)
     ?"RULE: the sodas are identical. Every customer buys from the cheaper store. Same price: split 50/50."
     :"NEW RULE: your sodas now taste different and each store has fans. Customers = 50 + 5 x (Penny's price minus yours), from 0 to 100.";
-  var last=r>0?log[r-1]:null,sign=last?last.pr:10,who;
-  if(phase()===1){who="Penny's sign says <b>"+sign+"</b> coins right now"+(last?" (you charged "+last.p+" last round)":"")+". Post your price and she answers 1 coin lower (never below the 2-coin cost).";}
-  else{var pen=rivalP(0);who="Penny's price this round: <b>"+pen+"</b> coins"+(r===half?" (she reopens at 10 for the new rules)":" (her best reply to your "+last.p+" last round)")+". Your customers = 50 + 5 x ("+pen+" minus your price).";}
+  var last=r>0?log[r-1]:null,who,pen=rivalP();
+  if(phase()===1){who=(last?"Penny undercut your last price of "+last.p+" and now charges <b>"+pen+"</b> coins.":"Penny's sign says <b>"+pen+"</b> coins.")+" She never goes below the 2-coin cost.";
+    el("hint").textContent="Same soda: the cheaper store gets every customer. Can you steal them?";}
+  else{who="Penny's price this round: <b>"+pen+"</b> coins"+(r===half?" (she reopens at 10 for the new rules)":" (her best reply to your "+last.p+" last round)")+". Your customers = 50 + 5 x ("+pen+" minus your price).";
+    el("hint").textContent="Fans: every coin you charge below Penny adds 5 customers, but you earn less per soda. Tap a price to see it and its neighbors.";}
   el("who").innerHTML=who;
   var c="";
-  PRICES.forEach(function(p){c+="<button onclick=\"play("+p+")\">"+p+"</button>"});
+  PRICES.forEach(function(p){c+="<button data-p=\""+p+"\" onclick=\"choose("+p+")\" onmouseover=\"pv("+p+")\" onmouseout=\"pv(null)\">"+p+"</button>"});
   el("choices").innerHTML=c;
+  pv(null);show("lock",false);
   show("pick",true);show("round",false);
 }
 function play(p){
-  var ph=phase(),pr=rivalP(p),n=customers(p,pr,ph),mine=profit(p,pr,ph),his=profit(pr,p,ph),b=bestList(pr,ph);
+  var ph=phase(),pr=rivalP(),n=customers(p,pr,ph),mine=profit(p,pr,ph),his=profit(pr,p,ph),b=bestList(pr,ph);
   log.push({ph:ph,p:p,pr:pr,n:n,mine:mine,his:his,best:b,hit:ph===2&&mine===b.profit});
   ms+=mine;
   el("ms").textContent=ms;
   el("headline").textContent="You charged "+p+". Penny charged "+pr+". You sold "+n+" sodas.";
-  var tk=mine>his?"win":(mine<his?"lose":"tie"),tl=TAUNTS[tk][r%TAUNTS[tk].length];
+  var tk=(n===0)?"zero":(ph===1?(n===100?"win":"tie"):(mine===0?"lose":(mine>his?"win":(mine<his?"lose":"tie")))),tl=TAUNTS[tk][r%TAUNTS[tk].length];
   if(tk==="lose"){
-    if(p>pr&&r%2===0){var gap=p-pr;tl="Penny: \""+gap+(gap===1?" coin":" coins")+" cheaper and "+(ph===1?"they all":"more of them")+" came to me!\""}
-    else if(p<=pr){tl="Penny: \"Cheap isn't the same as profitable, friend.\""}
-    else tl=TAUNTS.lose[1];
+    if(p<=pr)tl="Penny: \"Cheap isn't the same as profitable, friend.\"";
+    else if(r===half){var gap=p-pr;tl="Penny: \""+gap+(gap===1?" coin":" coins")+" cheaper and more of them came to me!\""}
+    else tl=TAUNTS.lose[r%2];
   }
-  el("detail").innerHTML="Your profit: <b>"+mine+"</b>. Penny's profit: <b>"+his+"</b>.<br><span class=\"rival\">"+tl+"</span><br><span class=\"note\">"+(ph===1?"Penny answers every price with a price 1 lower, so the only way to avoid losing every customer is to charge 2, and that earns 0.":"Your best reply to Penny's "+pr+" was "+showBest(b)+" ("+b.profit+" coins).")+"</span>"+(r===half-1?"<br>"+ledger(false):"");
+  var why;
+  if(ph===1){
+    why=(n===100?"You were cheaper, so every customer came to you.":(n===50?"Same price, so you split the street.":"Penny was cheaper, so every customer went to her."))+(r<half-1?" Next round Penny will charge "+Math.max(2,p-1)+", one coin below you.":"");
+  } else why="Your best reply to Penny's "+pr+" was "+showBest(b)+" ("+b.profit+" coins).";
+  el("detail").innerHTML="Your profit: <b>"+mine+"</b>. Penny's profit: <b>"+his+"</b>.<br><span class=\"rival\">"+tl+"</span><br><span class=\"note\">"+why+"</span>"+(r===half-1?"<br>"+ledger(false):"");
   el("next").textContent=(r===total-1)?"SEE FINAL SCORE":(r===half-1?"NEW RULE AHEAD":"NEXT ROUND");
   show("pick",false);show("round",true);
 }
 function sum(a,k){var t=0;a.forEach(function(x){t+=x[k]});return t}
 function ledger(withFan){
   var war=log.filter(function(x){return x.ph===1}),fan=log.filter(function(x){return x.ph===2});
-  var h="<h2>WAR LEDGER</h2><table><tr><th>Round</th><th>Your price</th><th>Penny's price</th><th>Your profit</th><th>Penny's profit</th></tr>";
+  var h="<h2>WAR LEDGER</h2><table class=\"rt\"><tr><th>Round</th><th>Your price</th><th>Penny's price</th><th>Your profit</th><th>Penny's profit</th></tr>";
   war.forEach(function(x,i){h+="<tr><td>"+(i+1)+"</td><td>"+x.p+"</td><td>"+x.pr+"</td><td>"+x.mine+"</td><td>"+x.his+"</td></tr>"});
   var wm=sum(war,"mine"),wp=sum(war,"his");
   h+="<tr><th>Total</th><td></td><td></td><th>"+wm+"</th><th>"+wp+"</th></tr></table>";
@@ -204,7 +246,7 @@ function ledger(withFan){
   var wa=(wm+wp)/war.length,fa=(sum(fan,"mine")+sum(fan,"his"))/fan.length;
   h+="<p>Same-soda war: you <b>"+wm+"</b> + Penny <b>"+wp+"</b> = <b>"+(wm+wp)+"</b> in "+war.length+" rounds, about <b>"+Math.round(wa)+"</b> per round for both stores together.<br>Fan rounds: you <b>"+sum(fan,"mine")+"</b> + Penny <b>"+sum(fan,"his")+"</b> = <b>"+(sum(fan,"mine")+sum(fan,"his"))+"</b> in "+fan.length+" rounds, about <b>"+Math.round(fa)+"</b> per round.</p>";
   h+=wa<fa?"<p class=\"news\">The war hurt everyone: the stores together made less per round fighting over the same soda than when fans made them different.</p>"
-    :"<p class=\"news\">Penny profited because you left your price high and she undercut you. Chasing her down to cost would have left both stores near 0, which is the war's real ending.</p>";
+    :"<p class=\"news\">This time the stores together made more in the war rounds than in the fan rounds, mostly because the fan prices were far from the best reply. But look at where the war prices were heading: down toward the 2-coin cost, where nobody earns anything.</p>";
   return h;
 }
 function nextRound(){
@@ -220,15 +262,16 @@ function finish(){
     var x=log[i];if(x.hit)hits++;
     rows+="<tr><td>"+(i+1)+"</td><td>"+(x.ph===1?"same soda":"fans")+"</td><td>"+x.p+"</td><td>"+x.pr+"</td><td>"+x.n+"</td><td>"+x.mine+"</td><td>"+(x.ph===1?"n/a":showBest(x.best)+(x.hit?" ✔":""))+"</td></tr>";
   }
+  var war=log.filter(function(x){return x.ph===1});
   var p1=0,p2=0;for(i=0;i<half;i++)p1+=log[i].mine;for(i=half;i<total;i++)p2+=log[i].mine;
   var rank=hits>=3?"PRICE PRO":(hits>=2?"SHARP SELLER":"BARGAIN BIN");
   el("verdict").innerHTML=
-    "<table>"+rows+"</table>"+
+    "<table class=\"rt\">"+rows+"</table>"+
     "<p>Profit with same soda: <b>"+p1+"</b>. Profit with fans: <b>"+p2+"</b>. Best reply in <b>"+hits+"</b> of 3 fan rounds.</p>"+ledger(true)+
     "<div class=\"rank\">RANK: "+rank+"</div>"+
     "<h2>REPLAY THE TAPE</h2>"+
-    "<div class=\"tape\">Same soda: Penny undercut you by a coin every time, so she got every customer unless you charged the 2-coin cost, where you split the street and earned 0. A price war ends at cost.</div>"+
-    "<div class=\"tape\">With fans: undercutting only steals a few customers, so prices settle at <b>12</b> each and each store earns <b>500</b>.</div>"+
+    "<div class=\"tape\">Same soda: the cheaper store got every customer (a tie split the street), and Penny answered each of your prices with one coin lower. Your prices were <b>"+war.map(function(x){return x.p}).join(", ")+"</b> and Penny's were <b>"+war.map(function(x){return x.pr}).join(", ")+"</b>. Each time you undercut her you won everyone but earned less per soda, and each time you stayed above her you won no one. A price war pulls prices toward the 2-coin cost.</div>"+
+    "<div class=\"tape\">With fans: undercutting only steals a few customers, so prices settle near <b>11 to 12</b> and each store earns about <b>450 to 500</b>. In your game Penny's last price was <b>"+log[total-1].pr+"</b> and she earned <b>"+log[total-1].his+"</b> in the last round.</div>"+
     "<p class=\"note\">Same street, same cost. What made the second half so different?</p>"+
     "<div class=\"fact\">This is one reason companies spend so much on making their products feel different, even when they are nearly the same.</div>";
   el("out").value="GN1-M07 | my prices: "+log.map(function(x){return x.p}).join(", ")+
@@ -297,7 +340,8 @@ setup();
 (function(){
   var snaps=[],last="",timers=[];
   var st=document.createElement("style");
-  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  st.textContent='#lbBtn{position:fixed;left:8px;bottom:8px;z-index:9998;display:none;font:700 12px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.8);border:2px solid #9fe7ff;border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.72;transition:opacity .25s}'+
+  'body{padding-bottom:96px !important}#lbBtn.fade{opacity:.12;pointer-events:none}'+
   '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
   '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
   '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
@@ -336,6 +380,7 @@ setup();
   function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
   function close(){ov.style.display="none";document.documentElement.style.overflow=""}
   btn.addEventListener("click",open);
+  var ft;window.addEventListener("scroll",function(){btn.classList.add("fade");clearTimeout(ft);ft=setTimeout(function(){btn.classList.remove("fade")},700)},{passive:true});
   document.getElementById("lbX").addEventListener("click",close);
   document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
   document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});

@@ -140,13 +140,14 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 
 <div id="final">
   <h1>FULL TIME</h1>
-  <div class="cardwin">STRATEGY CARD UNLOCKED: Keep 'Em Guessing<br><a id="decklink" href="gn1-deck.html?card=6">See your deck</a></div>
+  <div class="cardwin">STRATEGY CARD UNLOCKED: Keep 'Em Guessing<br><a id="decklink" href="gn1-deck.html?card=6" target="_blank" rel="noopener">See your deck</a></div>
 
   <div id="verdict"></div>
   <p>This is your <b>game</b> line (it starts with GN1-M06). Copy it and paste it to Rocky in the chat. The reading gives you a second, different line later.</p>
   <textarea id="out" readonly></textarea><br>
   <button onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
+  <p class="note">Lost your line? The <a href="gn1-read.html?m=9" target="_blank" rel="noopener" style="color:#ffe14d">Go Deeper page</a> has a MY RESULTS FOR ROCKY button that keeps your game lines.</p>
 </div>
 
 <script>
@@ -199,7 +200,7 @@ function setup(){
   el("rn").textContent=(r+1)+"/"+total;
   el("who").textContent=(r<half)
     ?"Goalie: Lefty. Scouting report: dives LEFT most of the time."
-    :"Goalie: Scout. Studies your recent kicks for a pattern (a lean, a repeat or a flip-flop) and dives where the pattern says you will go next.";
+    :"Goalie: Scout. Studies your recent kicks for a pattern (a lean, a repeat or a flip-flop) and dives where the pattern says you will go next. (Scout writes in a notebook. It says 'LEFT?' with a doodle.)";
   show("pick",true);show("round",false);
 }
 var busy=false;
@@ -315,7 +316,8 @@ setup();
 (function(){
   var snaps=[],last="",timers=[];
   var st=document.createElement("style");
-  st.textContent='#lbBtn{position:fixed;left:10px;bottom:10px;z-index:9998;display:none;font:700 13px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.88);border:2px solid #9fe7ff;border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)}'+
+  st.textContent='#lbBtn{position:fixed;left:8px;bottom:8px;z-index:9998;display:none;font:700 12px system-ui,sans-serif;letter-spacing:.5px;color:#fff;background:rgba(10,10,30,.8);border:2px solid #9fe7ff;border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);opacity:.72;transition:opacity .25s}'+
+  'body{padding-bottom:96px !important}#lbBtn.fade{opacity:.12;pointer-events:none}'+
   '#lbOv{position:fixed;inset:0;z-index:9999;display:none;background:#080818;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
   '#lbOv .lbBar{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;font:700 13px system-ui,sans-serif}'+
   '#lbOv .lbBar button{font:700 13px system-ui,sans-serif;color:#fff;background:#2a2a55;border:2px solid #9fe7ff;border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}'+
@@ -354,6 +356,7 @@ setup();
   function open(){snap();if(snaps.length<2)return;view(snaps.length-2);ov.style.display="block";document.documentElement.style.overflow="hidden"}
   function close(){ov.style.display="none";document.documentElement.style.overflow=""}
   btn.addEventListener("click",open);
+  var ft;window.addEventListener("scroll",function(){btn.classList.add("fade");clearTimeout(ft);ft=setTimeout(function(){btn.classList.remove("fade")},700)},{passive:true});
   document.getElementById("lbX").addEventListener("click",close);
   document.getElementById("lbPrev").addEventListener("click",function(){view(k-1)});
   document.getElementById("lbNext").addEventListener("click",function(){view(k+1)});
