@@ -93,4 +93,89 @@
     b.addEventListener("change", function () { state["ship" + b.dataset.ship] = b.checked; save(); paint(); });
   });
   paint();
+
+  // ---- Ship-It Check: answers checked on this page; a finish screen is the proof ----
+  var check = document.getElementById("check");
+  if (!check) return;
+  var answers = window.PF_ANSWERS || {};
+  var dev = document.getElementById("devname");
+  try { dev.value = localStorage.getItem("pixelforge:dev") || ""; } catch (e) {}
+  dev.addEventListener("input", function () { try { localStorage.setItem("pixelforge:dev", dev.value); } catch (e) {} });
+
+  var ck = state.check || (state.check = {});
+  // restore
+  check.querySelectorAll("fieldset.q").forEach(function (fs) {
+    var v = ck[fs.dataset.q]; if (v != null) { var r = fs.querySelector('input[value="' + v + '"]'); if (r) r.checked = true; }
+    fs.addEventListener("change", function () { ck[fs.dataset.q] = fs.querySelector("input:checked").value; fs.querySelector(".verdict").textContent = ""; fs.classList.remove("bad", "good"); save(); });
+  });
+  check.querySelectorAll(".task").forEach(function (t) {
+    var ta = t.querySelector("textarea"); ta.value = ck["t_" + t.dataset.task] || "";
+    ta.addEventListener("input", function () { ck["t_" + t.dataset.task] = ta.value; t.querySelector(".verdict").textContent = ""; t.classList.remove("bad", "good"); save(); });
+  });
+  var ran = document.getElementById("ran"); ran.checked = !!ck.ran;
+  ran.addEventListener("change", function () { ck.ran = ran.checked; save(); });
+
+  function hash(str) { var h = 5381; for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h; }
+  function shipCode(name, date) {
+    var h = hash(build + "|" + name.trim().toLowerCase() + "|" + date), A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", out = "";
+    for (var i = 0; i < 4; i++) { out += A[h % A.length]; h = Math.floor(h / A.length); }
+    return "PF-" + build.replace("build", "") + "-" + out;
+  }
+  function looksLikeCode(s) { return /\b(function|if|for|while|local|end|then|do)\b/.test(s) || /=/.test(s); }
+  function hasAny(s, groups) {
+    for (var g = 0; g < groups.length; g++) {
+      var ok = false; for (var k = 0; k < groups[g].length; k++) if (s.indexOf(groups[g][k]) >= 0) ok = true;
+      if (!ok) return groups[g];
+    }
+    return null;
+  }
+
+  function showFinish() {
+    var f = document.getElementById("finish"), sh = ck.shipped;
+    document.getElementById("fwho").textContent = sh.name;
+    document.getElementById("fwhen").textContent = sh.date;
+    document.getElementById("fcode").textContent = sh.code;
+    f.hidden = false; document.body.classList.add("finished"); window.scrollTo(0, 0);
+  }
+  document.getElementById("finishclose").addEventListener("click", function () { document.getElementById("finish").hidden = true; document.body.classList.remove("finished"); });
+  document.getElementById("copycode").addEventListener("click", function () {
+    var btn = this, code = document.getElementById("fcode").textContent;
+    var done = function () { btn.textContent = "copied"; setTimeout(function () { btn.textContent = "Copy ship code"; }, 1400); };
+    if (navigator.clipboard) navigator.clipboard.writeText(code).then(done, done); else done();
+  });
+
+  document.getElementById("checkbtn").addEventListener("click", function () {
+    var allOk = true, first = null, verdict = document.getElementById("checkverdict");
+    function fail(el, msg) { allOk = false; el.classList.add("bad"); el.classList.remove("good"); el.querySelector(".verdict").textContent = msg; if (!first) first = el; }
+    function pass(el, msg) { el.classList.add("good"); el.classList.remove("bad"); el.querySelector(".verdict").textContent = msg || "✓"; }
+    if (!dev.value.trim()) { allOk = false; first = dev; dev.classList.add("bad"); } else dev.classList.remove("bad");
+    check.querySelectorAll("fieldset.q").forEach(function (fs) {
+      var picked = fs.querySelector("input:checked"), key = fs.dataset.q, a = answers[key];
+      if (!picked) return fail(fs, "Pick one.");
+      if (!a) return pass(fs);
+      if (String(picked.value) === String(a.answer)) pass(fs, "✓ " + (a.why || ""));
+      else fail(fs, a.nudge || "Not that one. Reread the step it points at and try again.");
+    });
+    check.querySelectorAll(".task").forEach(function (t) {
+      var s = t.querySelector("textarea").value, min = +t.dataset.min || 40;
+      if (s.trim().length < min) return fail(t, "That's too short to be the whole thing.");
+      var groups = []; try { groups = JSON.parse(t.dataset.any || "[]"); } catch (e) {}
+      if (t.dataset.task !== "proud" && groups.length && !looksLikeCode(s)) return fail(t, "That doesn't look like Lua. Paste the code itself.");
+      var missing = hasAny(s, groups);
+      if (missing) return fail(t, "This task needs " + missing.join(" or ") + " somewhere in it. Is the whole task pasted?");
+      pass(t);
+    });
+    if (!ran.checked) { allOk = false; ran.parentNode.classList.add("bad"); if (!first) first = ran; } else ran.parentNode.classList.remove("bad");
+    save();
+    if (!allOk) { verdict.textContent = "Not shipped yet. Fix the marked parts and check again."; verdict.className = "verdict bad"; if (first && first.scrollIntoView) first.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+    var date = new Date().toISOString().slice(0, 10);
+    ck.shipped = { name: dev.value.trim(), date: date, code: shipCode(dev.value, date) };
+    save(); verdict.textContent = "Shipped."; verdict.className = "verdict good"; showFinish();
+  });
+
+  if (ck.shipped) {
+    var again = document.createElement("button"); again.type = "button"; again.className = "btn ghost shipped-btn"; again.textContent = "Shipped ✓ — show finish screen";
+    again.addEventListener("click", showFinish); document.querySelector(".checkrow").appendChild(again);
+    var railA = document.querySelector('.rail a[href="#check"]'); if (railA) railA.closest("li").classList.add("done");
+  }
 })();
