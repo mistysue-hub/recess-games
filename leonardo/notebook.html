@@ -136,7 +136,7 @@ footer{max-width:760px;margin:0 auto;padding-block:0 30px;padding-left:max(16px,
 <p>Leonardo read an old Roman architect named Vitruvius, who said the human body follows number rules. Leonardo wrote the rules down and drew the famous man in a circle and a square to test them. Vitruvius said the foot is one sixth of a person's height. Leonardo changed it to one seventh. Who was closer? You will find out. He drew the man around 1490, and he also put the distance from hairline to chin at one tenth of the height.</p>
 <div class="quote"><p class="lbl">In his own words</p><p>The length of a man's outspread arms is equal to his height.</p><p>The foot is the seventh part of the man. The whole hand will be the tenth part of the man. From the elbow to the tip of the hand will be the fifth part of a man.</p></div>
 <div class="play"><h3>Run the numbers</h3>
-<div class="row"><label for="bh">Your height:</label><input type="number" id="bh" min="30" max="250" value="60" style="width:6em"><span>
+<div class="row"><label for="bh">Your height:</label><input type="number" id="bh" min="30" max="250" placeholder="e.g. 61" style="width:6em"><span>
 <button class="btn ghost" id="bu" aria-pressed="false">inches</button></span></div>
 <div class="tw"><table><thead><tr><th>Leonardo's rule</th><th>Fraction</th><th>Predicted for you</th></tr></thead><tbody id="bt"></tbody></table></div>
 <p>Now measure your real arm span, fingertip to fingertip.</p>
@@ -346,9 +346,9 @@ $('mname').oninput=function(){$('mout').textContent=this.value||'your name here'
 quiz($('lq'),'lfb',[['2',0,'More than that.'],['5',0,'More than that. Keep going.'],['9',1,'Nine of ten. War came first, and painting almost last.'],['None',0,'The opposite, nearly.']],function(ok){if(ok){$('lrest').hidden=false;earn('letter')}});
 /* body */
 var unit='inches';var R=[['Arm span','1/1',1],['Elbow to fingertip','1/5',1/5],['Foot','1/7',1/7],['Hand','1/10',1/10],['Shoulder width','1/4',1/4],['Chin to top of head','1/8',1/8]];
-function body(){var h=parseFloat($('bh').value)||0;$('bt').innerHTML=R.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+(h*r[2]).toFixed(1)+' '+(unit==='inches'?'in':'cm')+'</td></tr>'}).join('')}
-$('bh').oninput=body;$('bu').onclick=function(){unit=unit==='inches'?'cm':'inches';this.textContent=unit;$('bh').value=unit==='cm'?152:60;body()};body();
-$('bgo').onclick=function(){var h=parseFloat($('bh').value),a=parseFloat($('ba').value);if(!h||!a){$('bfb').textContent='Type your height and your measured arm span first.';return}
+function body(){var h=parseFloat($('bh').value)||0;$('bt').innerHTML=R.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+(h?(h*r[2]).toFixed(1)+' '+(unit==='inches'?'in':'cm'):'type your height')+'</td></tr>'}).join('')}
+$('bh').oninput=body;$('bu').onclick=function(){unit=unit==='inches'?'cm':'inches';this.textContent=unit;$('bh').value='';$('bh').placeholder=unit==='cm'?'e.g. 155':'e.g. 61';body()};body();
+$('bgo').onclick=function(){var h=parseFloat($('bh').value),a=parseFloat($('ba').value);if(!h||!a){$('bfb').textContent='Type your own height and your measured arm span first.';return}
  var pct=(a-h)/h*100,ab=Math.abs(pct).toFixed(1);if(Math.abs(pct)>25){$('bfb').textContent='That looks off. Stand against a wall, stretch both arms straight out, and measure fingertip to fingertip again.';return}$('bfb').textContent=Math.abs(pct)<0.05?'Exactly equal. Leonardo would have drawn you.':'Your arms are '+ab+'% '+(pct>0?'longer':'shorter')+' than your height. '+(Math.abs(pct)<=4?'The rule holds for you.':'You break the rule. Averages hide people like you.');earn('body')};
 /* tree */
 quiz($('tq'),'tfb',[['3 cm',0,'That is 12 ÷ 4. Four 3 cm branches bundle up much thinner than the trunk. Try the slider.'],['6 cm',1,'Yes. Four circles 6 cm across have the same total area as one circle 12 cm across. The four branches share the trunk\'s area, so each one is half as wide: 12 ÷ √4 = 6.'],['4 cm',0,'Not quite. Use the slider and look at the areas.']],function(ok){if(ok)earn('tree')});
