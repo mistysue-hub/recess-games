@@ -1017,7 +1017,7 @@ gotBtns.forEach(function(b){
 objEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.open){ repliesOpen[i]=true; d.classList.add("seen"); refreshGot(); saveState(); } }); });
 $("jumpCover").addEventListener("click",function(){ var L=$("lockin"); try{ L.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"center"}); }catch(e){} var t=COVER.v ? $("myReason") : L.querySelector(".vbtn"); try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } });
 
-/* ---------- shared two-tap lock: first tap arms, second tap confirms (not before 500 ms); arm resets after 4 s ---------- */
+/* ---------- shared two-tap lock: first tap arms, second tap confirms (not before 500 ms); arm reset after 20 s ---------- */
 function makeArm(btn, label, validate, commit, onReset){
   var armedAt=0, tmr=null, waitT=null;
   function clearTimers(){ clearTimeout(tmr); clearTimeout(waitT); }
@@ -1028,7 +1028,7 @@ function makeArm(btn, label, validate, commit, onReset){
       if(validate && validate()===false) return;
       armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","wait"); btn.setAttribute("aria-disabled","true");
       waitT=setTimeout(function(){ btn.classList.remove("wait"); btn.removeAttribute("aria-disabled"); }, 500);
-      tmr=setTimeout(reset, 4000); return;
+      tmr=setTimeout(reset, 20000); return;
     }
     if(Date.now()-armedAt<500) return;   /* the button is shown dimmed during this half second */
     clearTimers(); armedAt=0; btn.classList.remove("armed","wait"); btn.removeAttribute("aria-disabled");
@@ -1054,7 +1054,7 @@ var coverArm=makeArm($("lockBtn"),"Lock it in",function(){
   var r=one($("myReason").value);
   if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick an answer first."; return false; }
   if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason. Lead 1 stays closed until you do."; $("myReason").focus(); return false; }
-  $("lockMsg").style.color=""; $("lockMsg").textContent="Check it, then tap again within 4 seconds. After that it can't be changed.";
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Check it, then tap again. After that it can't be changed.";
   return true;
 },function(){
   COVER.reason=one($("myReason").value); COVER.locked=true; freezeCover();
@@ -1578,7 +1578,7 @@ var finArm=makeArm($("finBtn"),"Lock my verdict",function(){
   if(!FIN.view){ setFb($("finFb"),"bad","One more.","Pick the view on Singer closest to yours."); return false; }
   if(reason.length<2){ setFb($("finFb"),"bad","Almost.","Add a reason. A few words is fine, even \"I just think so because...\"."); $("finReason").focus(); return false; }
   if(!mv){ setFb($("finFb"),"bad","Last one.","Pick what moved you most."); $("finMoved").focus(); return false; }
-  finArmed=true; setFb($("finFb"),"","Ready.","Check your answers, then tap the button again within 4 seconds to file your verdict. After that it can't be changed.");
+  finArmed=true; setFb($("finFb"),"","Ready.","Check your answers, then tap the button again to file your verdict. After that it can't be changed.");
   return true;
 },function(){
   var reason=one($("finReason").value), mv=$("finMoved").value;

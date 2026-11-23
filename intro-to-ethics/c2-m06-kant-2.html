@@ -1040,7 +1040,7 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-/* round 3: one lock pattern. First tap arms ("Tap again to lock it in"); the second tap counts only after 500 ms; the arm resets after 4 s. */
+/* round 3: one lock pattern. First tap arms ("Tap again to lock it in"); the second tap counts only after 500 ms; the arm reset after 20 s. */
 function armedLock(btn, label, check, commit){
   var armedAt=0, t=null, w=null;
   function disarm(){ armedAt=0; clearTimeout(t); clearTimeout(w); btn.classList.remove("armed"); btn.classList.remove("wait"); if(!btn.disabled) btn.textContent=label; }
@@ -1050,7 +1050,7 @@ function armedLock(btn, label, check, commit){
       if(!check()) return;
       armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed"); btn.classList.add("wait");
       clearTimeout(w); w=setTimeout(function(){ btn.classList.remove("wait"); }, 500);
-      clearTimeout(t); t=setTimeout(disarm, 4000); return;
+      clearTimeout(t); t=setTimeout(disarm, 20000); return;
     }
     if(Date.now()-armedAt<500) return;
     clearTimeout(t); clearTimeout(w); btn.classList.remove("armed"); btn.classList.remove("wait"); armedAt=0;

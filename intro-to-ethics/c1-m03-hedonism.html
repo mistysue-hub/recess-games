@@ -821,7 +821,7 @@ html.guarding .wu-tile, html.guarding #plugCard .choice, html.guarding #plugCard
   <h2 id="g4h">Plug In? (pocket edition)</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The Experience Machine" and "Experience vs reality" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Four machines. The gauges show how good each option <i>feels</i>, out of 5. For each one, first predict what a <b>hedonist</b> says (graded), then make <b>your own</b> call (never graded). On the last machine, <i>you</i> set the gauges. Rocky's Plug In? app has more machines.</p>
+  <p class="how">Four machines. The gauges show how good each option <i>feels</i>, out of 5. For each one, first predict what a <b>hedonist</b> says (graded), then make <b>your own</b> call (never graded). On the last machine, <i>you</i> set the gauges.</p>
   <p class="m-nav" id="plugNav"></p>
   <div class="mach" id="plugCard"></div>
   <div class="fb" id="plugFb" aria-live="polite" tabindex="-1"></div>
@@ -928,7 +928,6 @@ html.guarding .wu-tile, html.guarding #plugCard .choice, html.guarding #plugCard
     <a class="linkbtn" href="https://youtu.be/yWc0dz4_um0" target="_blank" rel="noopener">MIT clip: The Basic Idea</a>
     <a class="linkbtn" href="https://youtu.be/jhb5fZ3HE5Y" target="_blank" rel="noopener">MIT clip: The Experience Machine</a>
   </div>
-  <p>Rocky will also send you to the full <b>Plug In?</b> app.</p>
 </section>
 
 <!-- ================= 17 COPY FOR ROCKY ================= -->
@@ -1090,8 +1089,8 @@ replyEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.ope
 
 /* ---------- first call: truly locked after "Lock it in" ---------- */
 var VL={"in":"I'd plug in", out:"I'd stay out", torn:"I'm undecided"};
-/* two-tap lock (same on every page): the first tap arms ("Tap again to lock it in"); the second tap only counts after 500 ms; the arm resets after 4 s */
-var ARM_MIN=500, ARM_RESET=4000, ARM_TEXT="Tap again to lock it in";
+/* two-tap lock (same on every page): the first tap arms ("Tap again to lock it in"); the second tap only counts after 500 ms; the arm reset after 20 s */
+var ARM_MIN=500, ARM_RESET=20000, ARM_TEXT="Tap again to lock it in";
 function disarm(btn, normalText){
   clearTimeout(btn._armT); clearTimeout(btn._armD);
   btn.setAttribute("data-armed","0"); btn.classList.remove("arming");
@@ -1416,7 +1415,7 @@ function buildLQ(Ls, Hs, Lj){
     o:[["a","It lasts longer, so it adds up to more pleasure"],["b","It's higher quality, as judged by people who know both"],["c","It's the more morally admirable way to spend time"]], a:"b",
     ok:"Quality, judged by people who have properly experienced both. Not quantity, and not morality.",
     no:{a:"That's still quantity (duration is one of Bentham's dimensions). Mill's point is that kind matters, not just amount.",c:"Careful: this is about well-being, not morality. Mill's claim is that the pleasure itself is higher in quality."}},
-   {q:"A student has honestly tried both and prefers <b>"+Lj+"</b>. A fan of Mill says: \"Then that student didn't really appreciate "+Hs+".\" What's the worry? (Hint: the circle, where the test's answer is built into its start.)",
+   {q:"A student has honestly tried both and prefers <b>"+Lj+"</b>. A fan of Mill says: \"Then that student didn't really appreciate "+Hs+".\" What's the worry?",
     o:[["a","It's circular: anyone who disagrees gets ruled out"],["b","It blames the student's morals instead of the test"],["c","No worry: Mill's test doesn't involve judges"]], a:"a",
     ok:"That's the circle. If any judge who disagrees gets ruled incompetent, the test can't come out against Mill, so it doesn't really test anything.",
     no:{b:"Nobody's accusing the student of anything moral. The worry is about the test itself.",c:"It does: Mill's test is exactly about people who have experienced both. That's where the worry starts."}}
@@ -1446,7 +1445,7 @@ $("ladLock").addEventListener("click",function(){
         if(REC.lad.q[qi].done) return;
         wrap.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
         if(o[0]===item.a){ REC.lad.q[qi].done=true; setFb(fb,"good",vword("g3","ok"),item.ok); wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); lqDone++; focusFb(fb);
-          if(lqDone===LQ.length){ $("ladScore").textContent="All three answered correctly."; clear("g3"); } }
+          if(lqDone===LQ.length){ $("ladScore").textContent="All three questions done."; clear("g3"); } }
         else { REC.lad.q[qi].misses++; setFb(fb,"bad",vword("g3","no"),item.no[o[0]]); }
         touch("g3");
       });
@@ -1475,10 +1474,10 @@ var PLUG=[
   o:[["m","The machine is better for you"],["r","Real friendship is better for you"],["e","They're equally good for you"]], a:"e",
   ok:"Same feelings, same well-being. This is the twins case again.",
   trap:{r:"That counts whether the friends are real. Hedonism only counts how the friendships feel, and they feel the same.",m:"The gauges match, so the hedonist can't say the machine is better either."}},
- {n:"The Gray Machine", real:"Your real days", r:4, m:2, d:"Feels completely real, but every day inside is a little less enjoyable than your real days.",
+ {n:"The Gray Machine", real:"Your real days", r:4, m:3, d:"Feels completely real, but every day inside is a little less enjoyable than your real days.",
   o:[["m","Plug in"],["r","Stay out"],["e","It makes no difference"]], a:"r",
   ok:"A hedonist doesn't always plug in. Less pleasure inside means stay out.",
-  trap:{m:"A hedonist doesn't love machines; they love pleasure. This one gives less.",e:"The gauges differ: 4 outside, 2 inside. Less pleasure means it's worse."}},
+  trap:{m:"A hedonist doesn't love machines; they love pleasure. This one gives less.",e:"The gauges differ: 4 outside, 3 inside. Less pleasure means it's worse."}},
  {n:"The Long-Flight Machine", real:"The dull flight", own:true, d:"A pleasant dream for a 10-hour flight. You wake up when you land, and nothing else changes. This time <b>you</b> set the gauges: how good would each feel <i>to you</i>?",
   o:[["m","Plug in"],["r","Stay out"],["e","It makes no difference"]]}
 ];

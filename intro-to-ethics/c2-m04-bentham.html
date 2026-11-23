@@ -1150,7 +1150,7 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-/* one lock pattern for the cover and the verdict: first tap arms, second tap confirms (not sooner than 500 ms), the arm resets after 4 s */
+/* one lock pattern for the cover and the verdict: first tap arms, second tap confirms (not sooner than 500 ms), the arm reset after 20 s */
 function armLock(btn, idleText, check, commit, onArm, onReset){
   var armedAt=0, t500=null, t4=null;
   function reset(){ armedAt=0; clearTimeout(t500); clearTimeout(t4); btn.classList.remove("armed","arming"); if(!btn.disabled) btn.textContent=idleText; if(onReset) onReset(); }
@@ -1160,7 +1160,7 @@ function armLock(btn, idleText, check, commit, onArm, onReset){
       if(check && !check()) return;
       armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","arming");
       clearTimeout(t500); t500=setTimeout(function(){ btn.classList.remove("arming"); },500);
-      clearTimeout(t4); t4=setTimeout(reset,4000);
+      clearTimeout(t4); t4=setTimeout(reset,20000);
       if(onArm) onArm();
       return;
     }

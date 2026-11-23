@@ -1119,7 +1119,7 @@ function freezeCover(){
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
   b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); cDisarm(); });
 });
-/* one lock pattern: the first tap arms, the second confirms (not sooner than 500 ms later); the arm resets after 4 s or when anything changes */
+/* one lock pattern: the first tap arms, the second confirms (not sooner than 500 ms later); the arm reset after 20 s or when anything changes */
 var cArm={on:false,t:0,timer:null,dim:null};
 function cDisarm(){
   if(!cArm.on) return;
@@ -1138,7 +1138,7 @@ $("lockBtn").addEventListener("click",function(){
   if(!r){ cDisarm(); $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
   if(!cArm.on){
     cArm.on=true; cArm.t=Date.now(); var lb=$("lockBtn"); lb.textContent="Tap again to lock it in"; lb.classList.add("armed","arming");
-    cArm.dim=setTimeout(function(){ lb.classList.remove("arming"); },500); cArm.timer=setTimeout(cDisarm,4000);
+    cArm.dim=setTimeout(function(){ lb.classList.remove("arming"); },500); cArm.timer=setTimeout(cDisarm,20000);
     $("lockMsg").style.color=""; $("lockMsg").textContent="Ready? Tap the button again. You can't change it after.";
     return;
   }
@@ -1882,7 +1882,7 @@ $("finBtn").addEventListener("click",function(){
   if(!moved){ fDisarm(); setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
   if(!fArm.on){
     fArm.on=true; fArm.t=Date.now(); var fb=$("finBtn"); fb.textContent="Tap again to lock it in"; fb.classList.add("armed","arming");
-    fArm.dim=setTimeout(function(){ fb.classList.remove("arming"); },500); fArm.timer=setTimeout(fDisarm,4000);
+    fArm.dim=setTimeout(function(){ fb.classList.remove("arming"); },500); fArm.timer=setTimeout(fDisarm,20000);
     setFb($("finFb"),"","Ready?","Tap the button again to lock your verdict. You can't change it after."); fArm.msg=true;
     return;
   }

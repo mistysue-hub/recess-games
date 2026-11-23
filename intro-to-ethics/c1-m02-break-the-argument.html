@@ -633,7 +633,7 @@ details.optbox summary{min-height:44px}
     <li><a href="https://youtu.be/d4Q1HJIX9Dg" target="_blank" rel="noopener">MIT clip: Valid Arguments</a></li>
     <li><a href="https://www.philosophyexperiments.com/validorinvalid" target="_blank" rel="noopener">Valid or Invalid? (Philosophy Experiments)</a></li>
   </ol>
-  <p>The second link is a practice page Rocky will also send you to. Use the counterexample trick on every argument there.</p>
+  <p>The second link is an optional practice page. Use the counterexample trick on every argument there.</p>
 </section>
 
 <!-- ================= CASE FILE FOR ROCKY ================= -->
@@ -784,7 +784,7 @@ function syncLockins(){
   var a=$("myReason"), f=$("finReason"); if(a && document.activeElement!==a) a.value=COVER.reason; if(f && document.activeElement!==f) f.value=COVER.reason;
 }
 buildLockin($("lockin"));
-/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm resets after 4 s */
+/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm reset after 20 s */
 function armLock(btn, idleText, ready, confirm){
   var armedAt=0, timer=null, waitT=null;
   function disarm(){ armedAt=0; clearTimeout(timer); btn.classList.remove("armed"); btn.textContent=idleText; }
@@ -792,7 +792,7 @@ function armLock(btn, idleText, ready, confirm){
     if(!armedAt){
       if(!ready()) return;
       armedAt=Date.now(); btn.classList.add("armed"); btn.textContent="Tap again to lock it in";
-      clearTimeout(timer); timer=setTimeout(disarm,4000); return;
+      clearTimeout(timer); timer=setTimeout(disarm,20000); return;
     }
     if(Date.now()-armedAt<500){ btn.classList.add("wait"); clearTimeout(waitT); waitT=setTimeout(function(){ btn.classList.remove("wait"); },500-(Date.now()-armedAt)); return; }
     disarm(); confirm();

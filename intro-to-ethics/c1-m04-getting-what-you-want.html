@@ -1187,13 +1187,13 @@ function freezeCover(){
 }
 var LOCKS={};
 function lockReset(btn,idle){ var S=LOCKS[btn.id]; if(S){ S.armed=false; clearTimeout(S.t); } btn.textContent=idle; btn.classList.remove("armed","wait"); }
-/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm resets after 4 s */
+/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm reset after 20 s */
 function lockTap(btn,idle,valid,go,msg){
   var S=LOCKS[btn.id]||(LOCKS[btn.id]={armed:false,at:0,t:0}), now=Date.now();
   if(!valid()){ lockReset(btn,idle); return; }
   if(!S.armed){
     S.armed=true; S.at=now; btn.textContent="Tap again to lock it in"; btn.classList.add("armed","wait"); if(msg) msg("Tap the button again to lock it in. You can't change it after that.");
-    clearTimeout(S.t); S.t=setTimeout(function(){ lockReset(btn,idle); if(msg) msg(""); },4000);
+    clearTimeout(S.t); S.t=setTimeout(function(){ lockReset(btn,idle); if(msg) msg(""); },20000);
     setTimeout(function(){ if(S.armed) btn.classList.remove("wait"); },500);
     return;
   }

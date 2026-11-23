@@ -956,7 +956,7 @@ function oneLine(s){ return String(s==null?"":s).replace(/[\u0000-\u001f\u007f\u
 var guardUntil=0, guardTimer=null;
 function armGuard(){ guardUntil=Date.now()+250; document.body.classList.add("is-guarding"); clearTimeout(guardTimer); guardTimer=setTimeout(function(){ document.body.classList.remove("is-guarding"); },250); }
 function guarded(){ return Date.now()<guardUntil; }
-/* two-tap lock, one pattern for the cover and the verdict: the first tap arms, the second confirms (not sooner than 500 ms later), the arm resets after 4 s */
+/* two-tap lock, one pattern for the cover and the verdict: the first tap arms, the second confirms (not sooner than 500 ms later), the arm reset after 20 s */
 function twoTap(btn, validate, confirm, onArm, onReset){
   var armedAt=0, tArm=null, tWait=null; btn.setAttribute("data-idle", btn.textContent);
   function reset(){ armedAt=0; clearTimeout(tArm); clearTimeout(tWait); btn.classList.remove("armed","waiting"); if(!btn.disabled) btn.textContent=btn.getAttribute("data-idle"); if(onReset) onReset(); }
@@ -964,7 +964,7 @@ function twoTap(btn, validate, confirm, onArm, onReset){
     if(btn.disabled) return;
     if(!validate()){ reset(); return; }
     var now=Date.now();
-    if(!armedAt){ armedAt=now; btn.textContent="Tap again to lock it in"; btn.classList.add("armed","waiting"); tWait=setTimeout(function(){ btn.classList.remove("waiting"); },500); tArm=setTimeout(reset,4000); if(onArm) onArm(); return; }
+    if(!armedAt){ armedAt=now; btn.textContent="Tap again to lock it in"; btn.classList.add("armed","waiting"); tWait=setTimeout(function(){ btn.classList.remove("waiting"); },500); tArm=setTimeout(reset,20000); if(onArm) onArm(); return; }
     if(now-armedAt<500) return;
     clearTimeout(tArm); clearTimeout(tWait); armedAt=0; btn.classList.remove("armed","waiting"); confirm();
   });

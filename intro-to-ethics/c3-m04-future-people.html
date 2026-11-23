@@ -1060,7 +1060,7 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-/* one lock pattern for the cover and the verdict: the first tap arms the button, a second tap confirms (not sooner than 500 ms later), and the arm resets after 4 s */
+/* one lock pattern for the cover and the verdict: the first tap arms the button, a second tap confirms (not sooner than 500 ms later), and the arm reset after 20 s */
 function armable(btn, label, check, commit, onReset){
   var armedAt=0, timer=null, waitT=null;
   function reset(){ armedAt=0; clearTimeout(timer); clearTimeout(waitT); btn.classList.remove("wait"); if(!btn.disabled) btn.textContent=label; if(onReset) onReset(); }
@@ -1070,7 +1070,7 @@ function armable(btn, label, check, commit, onReset){
       if(!check()) return;
       armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("wait");
       waitT=setTimeout(function(){ btn.classList.remove("wait"); },500);
-      timer=setTimeout(reset,4000); return;
+      timer=setTimeout(reset,20000); return;
     }
     if(Date.now()-armedAt<500) return;   /* the button is dimmed during this half second, so a swallowed tap is visible */
     if(!check()){ reset(); return; }

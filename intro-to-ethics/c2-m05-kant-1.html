@@ -1073,7 +1073,7 @@ function freezeCover(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
   $("myReason").readOnly=true; $("lockBtn").classList.remove("armed"); $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
-/* one lock pattern for the cover and the verdict: first tap arms, second tap (after 500 ms) confirms, arm resets after 4 s */
+/* one lock pattern for the cover and the verdict: first tap arms, second tap (after 500 ms) confirms, arm reset after 20 s */
 function makeLock(btn, idle, validate, confirmFn, onDisarm){
   var armedAt=0, timer=null;
   function disarm(){ var was=armedAt; armedAt=0; clearTimeout(timer); btn.classList.remove("armed","lockwait"); if(!btn.disabled) btn.textContent=idle; if(was && onDisarm) onDisarm(); }
@@ -1083,7 +1083,7 @@ function makeLock(btn, idle, validate, confirmFn, onDisarm){
       if(!validate()) return;
       armedAt=Date.now(); btn.classList.add("armed","lockwait"); btn.textContent="Tap again to lock it in";
       setTimeout(function(){ btn.classList.remove("lockwait"); }, 500);
-      clearTimeout(timer); timer=setTimeout(disarm, 4000);
+      clearTimeout(timer); timer=setTimeout(disarm, 20000);
       return;
     }
     if(Date.now()-armedAt<500) return;   /* a quick double tap does not confirm */

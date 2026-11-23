@@ -1088,7 +1088,7 @@ refreshGot();
     var f=$(id).querySelector(".lab-body .how"); if(f){ f.setAttribute("tabindex","-1"); f.focus(); } });
 });
 
-/* ---------- shared two-tap lock: first tap arms, second tap (after 500 ms) confirms, arm resets after 4 s ---------- */
+/* ---------- shared two-tap lock: first tap arms, second tap (after 500 ms) confirms, arm reset after 20 s ---------- */
 function armLock(btn, idleText, check, confirm){
   var armedAt=0, timer=null, dimT=null;
   function disarm(){ armedAt=0; clearTimeout(timer); clearTimeout(dimT); btn.textContent=idleText; btn.classList.remove("armed","wait"); btn.removeAttribute("aria-disabled"); }
@@ -1098,7 +1098,7 @@ function armLock(btn, idleText, check, confirm){
       if(!check()) return;
       armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","wait"); btn.setAttribute("aria-disabled","true");
       clearTimeout(dimT); dimT=setTimeout(function(){ btn.classList.remove("wait"); btn.removeAttribute("aria-disabled"); }, 500);
-      clearTimeout(timer); timer=setTimeout(disarm, 4000); return;
+      clearTimeout(timer); timer=setTimeout(disarm, 20000); return;
     }
     if(Date.now()-armedAt<500) return;
     if(!check()){ disarm(); return; }

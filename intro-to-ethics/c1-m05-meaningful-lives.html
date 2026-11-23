@@ -1039,7 +1039,7 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-/* ---------- shared two-step lock: first tap arms, second tap confirms after 500 ms, arm resets after 4 s ---------- */
+/* ---------- shared two-step lock: first tap arms, second tap confirms after 500 ms, arm reset after 20 s ---------- */
 function makeLock(btn, check, commit, onArm){
   var armed=false, armAt=0, t1=null, t2=null, base=btn.textContent;
   function reset(){ armed=false; clearTimeout(t1); clearTimeout(t2); btn.classList.remove("armed","arming"); if(!btn.disabled) btn.textContent=base; }
@@ -1051,7 +1051,7 @@ function makeLock(btn, check, commit, onArm){
     }
     if(!check()) return;
     armed=true; armAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","arming");
-    t2=setTimeout(function(){ btn.classList.remove("arming"); },500); t1=setTimeout(reset,4000);
+    t2=setTimeout(function(){ btn.classList.remove("arming"); },500); t1=setTimeout(reset,20000);
     if(onArm) onArm();
   });
   return reset;

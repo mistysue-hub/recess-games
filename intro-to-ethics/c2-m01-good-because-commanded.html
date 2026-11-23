@@ -1068,7 +1068,7 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm resets after 4 s */
+/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm reset after 20 s */
 function armLock(btn, idleText, validate, confirm, onArm, onDisarm){
   var armed=false, armedAt=0, t4=null, t5=null;
   function disarm(){ if(!armed) return; armed=false; clearTimeout(t4); clearTimeout(t5); btn.classList.remove("wait"); btn.removeAttribute("aria-busy"); btn.textContent=idleText; if(onDisarm) onDisarm(); }
@@ -1079,7 +1079,7 @@ function armLock(btn, idleText, validate, confirm, onArm, onDisarm){
       armed=true; armedAt=Date.now(); btn.textContent="Tap again to lock it in";
       btn.classList.add("wait"); btn.setAttribute("aria-busy","true");   /* dimmed while the 500 ms wait runs, so a quick second tap is visibly ignored */
       t5=setTimeout(function(){ btn.classList.remove("wait"); btn.removeAttribute("aria-busy"); }, 500);
-      t4=setTimeout(disarm, 4000);
+      t4=setTimeout(disarm, 20000);
       if(onArm) onArm(); return;
     }
     if(Date.now()-armedAt<500) return;

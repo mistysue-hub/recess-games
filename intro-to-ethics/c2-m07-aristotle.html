@@ -1033,7 +1033,7 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-/* two-step lock, same on every page: first tap arms, second tap (after half a second) confirms, arm resets after 4 s */
+/* two-step lock, same on every page: first tap arms, second tap (after half a second) confirms, arm reset after 20 s */
 function armLock(btn, idleText, validate, commit){
   var armedAt=0, resetT=null, waitT=null;
   function reset(){ armedAt=0; clearTimeout(resetT); clearTimeout(waitT); btn.classList.remove("armed","wait"); btn.textContent=idleText; btn.removeAttribute("data-armed"); }
@@ -1043,7 +1043,7 @@ function armLock(btn, idleText, validate, commit){
       if(!validate()) return;
       armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.setAttribute("data-armed","1"); btn.classList.add("armed","wait");
       waitT=setTimeout(function(){ btn.classList.remove("wait"); },500);
-      resetT=setTimeout(reset,4000);
+      resetT=setTimeout(reset,20000);
       return;
     }
     if(Date.now()-armedAt<500) return;   /* the button looks dimmed during this half second */
