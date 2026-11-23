@@ -125,7 +125,7 @@ details.sealed .inner{padding:0 16px 16px}
 details.sealed .inner p{font-size:1rem}
 
 /* ---------- games ---------- */
-.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:var(--dockh,120px)}
 .lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
   font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
 .lab h2{margin-bottom:.4em}
@@ -230,7 +230,8 @@ details.sealed .inner p{font-size:1rem}
 .dock .pip.done{border:2px solid var(--c,#FFE15A); background:var(--c,#FFE15A); color:#1E1609}
 @media (max-width:420px){ .dock .pip{width:26px;height:26px;font-size:12px} }
 .gotit{margin-top:20px; padding-top:16px; border-top:2px dashed var(--paper-edge); display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
-.gotit .gmsg{font-family:var(--type); font-size:.88rem; color:var(--ink-soft)}
+.gotit .gmsg{font-family:var(--type); font-size:1rem; color:var(--ink); flex:1 1 220px}
+.gotit .gmsg:empty{display:none}
 .gotit .btn.ok, .gotit .btn.ok:disabled{background:var(--hl-g); color:var(--hl-ink); border-color:var(--ink); opacity:1}
 .lockcard{display:flex; gap:14px; align-items:center; background:var(--card); border:2px dashed var(--ink-soft); border-radius:10px; padding:14px 16px; font-size:1rem}
 .lockcard .padlock{flex:none; width:34px; height:34px}
@@ -254,6 +255,7 @@ details.sealed .inner p{font-size:1rem}
 .dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
 .dock .pip:not(:disabled){cursor:pointer}
 .dock .pip:disabled{opacity:1}
+.dock .pip[aria-disabled="true"]{opacity:.8}
 @media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
 .evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
 .evpanel h3{font-size:1rem; margin-bottom:4px}
@@ -268,6 +270,11 @@ details.sealed .inner p{font-size:1rem}
 .lockin .row{margin-top:8px}
 .lockin .vbtn{cursor:pointer; min-height:44px; padding:8px 18px; border-radius:999px; border:2px solid var(--ink); background:transparent; font-family:var(--type); font-weight:700; color:var(--ink)}
 .lockin .vbtn[aria-pressed="true"]{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.btn.armed{background:var(--hl-y); color:var(--hl-ink); border-color:var(--ink)}
+.btn.wait{opacity:.5; cursor:default}
+.gatenote{font-size:.95rem; margin:10px 0 0}
+.lab.is-cleared h2{padding-right:5.6rem}
+details.objcard.seen > summary::before{content:"\2713  "; color:var(--ok); font-weight:700}
 .lockin label{font-family:var(--type); font-weight:700; font-size:.92rem; display:block; margin-top:12px}
 .lockin input[type=text], .lockin textarea{width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
 .lockmsg{font-family:var(--type); font-size:.9rem; color:var(--ok); margin-left:6px}
@@ -334,6 +341,9 @@ details.sealed .inner p{font-size:1rem}
 .scale{display:grid; grid-template-columns:repeat(6,1fr); gap:6px}
 .scale button{min-height:44px; border-radius:8px; border:2px solid var(--ink); background:transparent; color:var(--ink); font-family:var(--type); font-weight:700; font-size:1rem; cursor:pointer}
 .scale button[aria-pressed="true"]{background:var(--hl-y); color:var(--hl-ink)}
+.scale button:disabled:not([aria-pressed="true"]){opacity:.4; cursor:default}
+.scale button:disabled{cursor:default}
+.bdback:disabled{opacity:.4}
 .scale-l{display:flex; justify-content:space-between; font-family:var(--type); font-size:.75rem; color:var(--ink-soft); margin-top:4px}
 .dots{display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 2px}
 .dots i{width:12px; height:12px; border-radius:50%; border:2px solid var(--ink-soft)}
@@ -400,18 +410,17 @@ html,body{overflow-x:clip}
 
 /* ---------- re-based on M03 review pass 1 (reusable fixes) ---------- */
 @media (max-width:520px){ .hook{flex-direction:column; align-items:flex-start} }
-.toast{pointer-events:none; position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
-  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@media (max-width:600px){ .toast{left:16px; right:16px; bottom:72px; transform:none; max-width:none; text-align:center; animation-name:toastInM} }
-@keyframes toastInM{0%{transform:translateY(30px); opacity:0}100%{transform:translateY(0); opacity:1}}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.toast{pointer-events:none; position:fixed; top:0; left:0; right:0; margin:0 auto; max-width:760px; z-index:40; display:flex; align-items:center; justify-content:center; text-align:center;
+  background:var(--desk); color:#F4E3B4; font-family:var(--type); font-weight:700; font-size:.95rem; line-height:1.3; padding:8px 16px; border-bottom:5px solid var(--tc,var(--hl-y)); animation:toastIn .2s ease both}
+.toast[hidden]{display:none}
+@keyframes toastIn{0%{opacity:0}100%{opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
 .clearline .stamp{font-size:.9rem; transform:rotate(-6deg); animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both; flex:none}
 .clearline p{margin:0; font-size:.95rem}
 @media (prefers-reduced-motion: reduce){ .toast, .dock .pip.pulse, .clearline .stamp{animation:none} }
+.clearline{scroll-margin-top:var(--dockh,120px); scroll-margin-bottom:16px}
 details.copymini{margin-top:14px}
 details.copymini > summary{cursor:pointer; font-family:var(--type); font-size:.85rem; color:var(--ink-soft); min-height:44px; display:flex; align-items:center}
 details.reply{display:block; margin:12px 0; border-radius:10px; background:var(--card); border-left:8px solid var(--rc,var(--hl-y))}
@@ -482,7 +491,7 @@ details.pair .pbody{padding:0 14px 12px}
   <div class="tab">Challenge 3 &middot; Case #3</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">Why Don't We Help?</h1>
-  <p class="dek">One child in a pond gets everyone's shoes wet. Millions of children far away barely get a glance. This file puts your own gut on trial: is it a moral compass, or a very old machine with some well-documented glitches?</p>
+  <p class="dek">One child falls in a pond and everyone rushes in, shoes and all. Millions of children far away get hardly a thought. This file puts your own gut feeling (your quick first reaction) on trial: is it a moral compass, or a very old machine with some well-documented glitches?</p>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of a magnifying glass over a crowd of gray dots, with one dot inside the lens colored bright pink">
     <g fill="#B9B2A3">
       <circle cx="30" cy="30" r="7"/><circle cx="58" cy="44" r="7"/><circle cx="86" cy="26" r="7"/><circle cx="40" cy="70" r="7"/><circle cx="74" cy="84" r="7"/><circle cx="26" cy="112" r="7"/><circle cx="60" cy="124" r="7"/><circle cx="98" cy="112" r="7"/><circle cx="112" cy="62" r="7"/><circle cx="130" cy="96" r="7"/><circle cx="140" cy="30" r="7"/><circle cx="166" cy="128" r="7"/>
@@ -496,7 +505,7 @@ details.pair .pbody{padding:0 14px 12px}
   </svg>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 4 C 9 4, 6 9, 8 14 C 9 17, 12 18, 12 22 L 18 22 C 18 18, 21 17, 22 14 C 24 9, 21 4, 15 4z" fill="#FFFDF5" stroke="#2A2016" stroke-width="2"/><path d="M12 25h6" stroke="#2A2016" stroke-width="2.4" stroke-linecap="round"/></svg></div>
-    <p>Gut call before anything else. When you feel a strong pull to help someone, and no pull at all for someone else, is that feeling a good guide to how much you <i>ought</i> to help? There's no right answer yet. You'll answer again at the end.</p>
+    <p>First, your gut call: your quick first feeling, before you think it through. Sometimes you feel a strong urge to help one person and no urge at all to help another. Is that feeling a good guide to how much you <i>ought</i> to help? There's no right answer yet. You'll answer again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row three" role="group" aria-label="Your gut call">
@@ -504,18 +513,19 @@ details.pair .pbody{padding:0 14px 12px}
       <button class="vbtn" type="button" data-v="some" aria-pressed="false">Sometimes</button>
       <button class="vbtn" type="button" data-v="no" aria-pressed="false">No, not really</button>
     </div>
-    <label for="myReason">My reason, in one sentence</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <label for="myReason">My reason, in one sentence (needed to open Lead 1)</label>
+    <textarea id="myReason" rows="3" maxlength="220" autocomplete="off"></textarea>
+    <p class="gatenote" id="gateNote"><b>Why this matters:</b> Lead 1 stays locked until this is locked in. Pick an answer, write your one sentence, then tap the lock button twice.</p>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 30 minutes, with a 1-minute warm-up</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 3: Doing Right by Others</span><span>Read, then open each lead</span><span>About 55 minutes (slower readers: allow more), including a 1-minute warm-up</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
-  <div class="wtab">Warm-up &middot; 1 minute</div>
+  <div class="wtab">Warm-up &middot; about 1 minute</div>
   <h2 id="wuh"><span style="--mark:var(--hl-g)">Where's your line?</span></h2>
-  <p>One more gut check, this time about distance. Picture a child who has tripped and can't get up. Imagine you could help from anywhere with one tap, at almost no cost. Tap the <b>farthest place</b> the child could be where you'd still feel you simply must help. Nothing here is graded.</p>
+  <p>One more quick check of your first feeling, this time about distance. Picture a child who has tripped and can't get up. Imagine you could help from anywhere with one tap, at almost no cost. Tap the <b>farthest place</b> the child could be where you'd still feel you simply must help. Nothing here is graded.</p>
   <div class="route" id="warmRoute" role="group" aria-label="Pick the farthest place where you'd still feel you must help">
     <div class="road" aria-hidden="true"></div>
   </div>
@@ -524,22 +534,23 @@ details.pair .pbody{padding:0 14px 12px}
 
 <!-- ================= 2-3 GUT ON TRIAL (short) ================= -->
 <section class="sheet" aria-labelledby="b1">
-  <h2 id="b1"><span style="--mark:var(--hl-p)">Your gut on the witness stand</span></h2>
+  <h2 id="b1"><span style="--mark:var(--hl-p)">Your gut feeling on the witness stand</span></h2>
   <p class="wow">Your bathroom scale can be wrong in two very different ways, and only one of them is a bias.</p>
-  <p>A <b>moral intuition</b> is a gut judgment that shows up before any argument, like "you <i>have</i> to pull that kid out of the pond." Philosophers treat intuitions as evidence.</p>
+  <p>A <b>moral intuition</b> is a gut feeling about right and wrong that shows up before any argument, like "you <i>have</i> to pull that kid out of the pond." Philosophers treat intuitions as evidence.</p>
   <p>But evidence can be faulty. A scale that is off by a different random amount each time is just <b>noisy</b>. A scale that always reads 2 pounds heavy is <b>biased</b>: wrong the same way every time, for a reason built into the machine. A <b>bias</b> in thinking is the same kind of tilt. It pushes our judgments one way whenever a certain feature shows up.</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit A: the one-feature test</span>
     <p>Take two cases that are the same in everything that matters morally: how bad the need is, how much your help would do, and what it costs you. Change <b>one</b> other feature. If your reaction moves, ask: <i>on reflection, should that feature matter?</i> If not, you've probably caught a bias.</p>
   </div>
-  <p>The next lead runs this test on you. Nothing is real money, and at the end the page shows you how the cards pair up. Rate each card by gut, fast.</p>
+  <p>The next lead runs this test on you. Nothing is real money. Rate each card quickly, by your first feeling.</p>
   <p class="note">One promise: this file won't tell you what to do with your money. It's about how to think about the argument.</p>
+  <p class="note">Misses cost nothing here; Rocky just uses them to see what to review.</p>
   <details class="reply" style="--rc:var(--hl-y)">
     <summary><b>Optional:</b> a reminder of Singer's pond argument</summary>
     <div class="inner"><p>Last file, Peter Singer (1972) said: if you could save a child drowning in a shallow pond at the cost of muddy clothes, you obviously should, and distance makes no moral difference. So the same goes for people in need far away.</p>
-    <p>This file asks <b>why</b> the pond feels obvious and the far-away case doesn't. First we look at what psychologists have measured. Then we ask whether our feelings are telling us something true. Then Singer's critics get their best shot.</p></div>
+    <p>This file asks <b>why</b> the pond feels obvious and the far-away case doesn't. First we look at what psychologists have measured. Then we ask whether our feelings are telling us something true. Then Singer's critics make their strongest case.</p></div>
   </details>
-  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
+  <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span><button class="btn ghost" type="button" id="jumpCover" hidden>Go to the gut call</button></div>
 </section>
 
 <!-- ================= LEAD 1: BIAS DETECTOR ================= -->
@@ -549,7 +560,7 @@ details.pair .pbody{padding:0 14px 12px}
   <h2 id="g1h">The Bias Detector</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Your gut on the witness stand" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Eight short cards, all imaginary. Rate each one from 0 to 5 by gut. Don't scroll back to compare: that's the whole point. Your ratings are never graded.</p>
+  <p class="how">Eight short cards, all imaginary. Rate each one from 0 to 5 by your first feeling. Don't scroll back to compare, because that would spoil the test. Your ratings are never graded.</p>
   <div class="dots" id="bdDots" aria-hidden="true"></div>
   <p class="m-nav" id="bdNav"></p>
   <div id="bdCard"></div>
@@ -564,10 +575,10 @@ details.pair .pbody{padding:0 14px 12px}
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-o)">One face beats a million</span></h2>
   <p class="wow">People gave more to help a stranger they knew nothing about, as long as that stranger had already been chosen.</p>
-  <p>In 1968 the economist Thomas Schelling (later a Nobel prize winner) pointed out a strange imbalance. Let one particular person be in danger, and people will spend almost anything to save them. Let a policy save the same number of lives as anonymous statistics, and the money dries up. His distinction between <b>identified lives</b> and <b>statistical lives</b> launched decades of research. The pattern is now called the <b>identifiable victim effect</b>: we help more when there's a specific someone to help.</p>
+  <p>In 1968 the economist Thomas Schelling (later a Nobel prize winner) pointed out a strange imbalance. Let one particular person be in danger, and people will spend almost anything to save them. Let a policy save the same number of lives as anonymous statistics, and the money stops coming. His distinction between <b>identified lives</b> and <b>statistical lives</b> launched decades of research. The pattern is now called the <b>identifiable victim effect</b>: we help more when there's a specific someone to help.</p>
   <p>Is it just that a face and a name are vivid? Partly, but not only. In a 2003 study, Deborah Small and George Loewenstein had people donate to help another participant identified only by a number, drawn from a bag. People gave more when the number had <i>already been drawn</i> than when it would be drawn afterwards. No face, no name, no story: just "a determined person" versus "someone, to be decided." That alone moved the money.</p>
   <details class="reply" style="--rc:var(--hl-o)">
-    <summary><b>Tap to think (not graded):</b> why would a number already drawn pull harder?</summary>
+    <summary><b>Tap to think (not graded):</b> why would a number already drawn feel more urgent?</summary>
     <div class="inner"><p>One idea: a number that is already settled feels like a real, particular person who is out there right now. A number still to be drawn feels like a maybe. The need is the same either way. Only the feeling of "someone specific" changed.</p></div>
   </details>
   <div class="exhibit" style="--hl-c:var(--hl-o)">
@@ -596,16 +607,19 @@ details.pair .pbody{padding:0 14px 12px}
   <p class="wow">In one series of studies, compassion may begin to fade as soon as there are two people to feel for.</p>
   <p>The psychologist Paul Slovic, borrowing a term from the psychiatrist Robert Jay Lifton, calls this <b>psychic numbing</b>. Our feelings respond well to one person, then flatten out as numbers grow. Numbers deliver the information, but the feeling doesn't arrive with it. Large numbers can make us care <i>less</i>, not more.</p>
   <div class="numline">1 person: strong feeling &rarr; 2 people: already fading &rarr; 1,000,000 people: "a statistic"</div>
-  <p>That last word comes from a line often pinned on Joseph Stalin: "one death is a tragedy, a million deaths is a statistic." Nobody has found good evidence he said it. Psychology agrees with the line anyway. Two findings, tap each to open:</p>
+  <p>That last word comes from a line often credited to Joseph Stalin: "one death is a tragedy, a million deaths is a statistic." Nobody has found good evidence he said it. Psychology agrees with the line anyway. Two findings, tap each to open:</p>
   <details class="reply" style="--rc:var(--hl-b)">
     <summary><b>Compassion fade:</b> when does feeling start to drop?</summary>
     <div class="inner"><p>In a 2014 set of studies, Daniel V&auml;stfj&auml;ll, Slovic and colleagues measured feelings (what people said, and in some studies body signals) and donations for one child versus more than one. Both seemed to start dropping once a second child was added. Describing the children as one family or group helped undo the drop.</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-o)">
     <summary><b>Proportion dominance:</b> which refugee camp would you fund?</summary>
-    <div class="inner"><p>In a 1997 study from Slovic's lab, led by David Fetherstonhaugh, people judged a rescue of a fixed number of lives as less valuable when the refugee camp was described as bigger. Same lives saved. Your camp cards in Lead 1 used this design: 4,500 lives in a camp of 11,000 versus the same 4,500 in a camp of 250,000. The bigger camp made it feel like "a drop in the bucket." We react to the <i>fraction</i> saved, not the number.</p></div>
+    <div class="inner"><p>In a 1997 study from Slovic's lab, led by David Fetherstonhaugh, people judged a rescue of a fixed number of lives as less valuable when the refugee camp was described as bigger. Same lives saved. Your camp cards in Lead 1 used this design: 4,500 lives in a camp of 11,000 versus the same 4,500 in a camp of 250,000. The bigger camp made it feel like "a drop in the bucket" (too small to matter). We react to the <i>fraction</i> saved, not the number.</p></div>
   </details>
-  <p class="note">Why might minds work like this? One common story: our feelings evolved for small groups, where helping meant the person in front of you. They weren't built for a world where you can read about millions. That's a hypothesis about origins, and we'll come back to what it would prove.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: why might minds work like this?</summary>
+    <div class="inner"><p>One common story: our feelings evolved for small groups, where helping meant the person in front of you. They weren't built for a world where you can read about millions. That's a hypothesis about origins, and we'll come back to what it would prove.</p></div>
+  </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -616,7 +630,7 @@ details.pair .pbody{padding:0 14px 12px}
   <h2 id="g2h">Effect Spotter</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "One face beats a million" and "The feeling system can't count" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Seven cases. Which pattern is at work in each? Careful: one of them isn't a bias at all. It's just a good reason.</p>
+  <p class="how">Seven cases. Which pattern is at work in each? Careful: one of them isn't a bias at all. It's just a good reason. If you miss one, the hint will remind you of the four labels.</p>
   <div id="binList"></div>
   <p class="score" id="binScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -674,15 +688,18 @@ details.pair .pbody{padding:0 14px 12px}
     <div class="r">Nobody saw the whole thing. Far fewer people saw or heard part of it. Many thought it was a quarrel, and some say they did call the police. A neighbor, Sophia Farrar, went out and held her until help arrived.</div>
   </div>
   <p>In 2007 three psychologists, Rachel Manning, Mark Levine and Alan Collins, called the 38-witness version a "parable" (a story told to teach a lesson) rather than a fact. In 2016 the <i>Times</i> itself said its original reporting had overstated the number of witnesses and what they saw. Lesson one: check the famous story.</p>
-  <p>Lesson two is even better. In 2020 a team led by Richard Philpot studied CCTV footage of 219 real arguments and fights in public, in Amsterdam, Lancaster (UK) and Cape Town. In about 9 out of 10 cases, at least one bystander stepped in, and the more bystanders there were, the <i>more</i> likely the victim got help.</p>
-  <p>How can both be true? Diffusion of responsibility is about each <b>individual's</b> chance of acting. With more people around, each one may be less likely to act, but there are more people who might, so the <b>group</b> may still come through. The danger is the case where everyone waits for someone else, and nobody comes. A related lab finding: when Latan&eacute; and Darley filled a room with smoke, most people sitting alone reported it, but people sitting with two calm strangers (secretly part of the study) mostly didn't.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: lesson two, groups that do help</summary>
+    <div class="inner"><p>In 2020 a team led by Richard Philpot studied CCTV footage of 219 real arguments and fights in public, in Amsterdam, Lancaster (UK) and Cape Town. In about 9 out of 10 cases, at least one bystander stepped in, and the more bystanders there were, the <i>more</i> likely the victim got help.</p>
+    <p>How can both be true? Diffusion of responsibility is about each <b>individual's</b> chance of acting. With more people around, each one may be less likely to act, but there are more people who might, so the <b>group</b> may still help. The danger is the case where everyone waits for someone else, and nobody comes. A related lab finding: when Latan&eacute; and Darley filled a room with smoke, most people sitting alone reported it, but people sitting with two calm strangers (secretly part of the study) mostly didn't.</p></div>
+  </details>
 </section>
 
 <!-- ================= 11 DEBUNKING ================= -->
 <section class="sheet" aria-labelledby="b6">
   <h2 id="b6"><span style="--mark:var(--hl-p)">Intuition or glitch? The debunking argument</span></h2>
   <p class="wow">A philosopher noticed that most people's verdicts flip depending on whether the person in need is bleeding by your car or asking by letter.</p>
-  <p>Peter Unger, in his 1996 book <i>Living High and Letting Die</i>, compared two thought experiments, retold here. In one, you drive past an injured stranger on a lonely road; getting him to the hospital will ruin your car's expensive leather seats. Almost everyone says you must help. In the other, a charity letter tells you a $100 check would save more than thirty children's lives; you throw it away. Most people say that's not great, but not monstrous either. Unger suggested that a big part of the difference is how <b>conspicuous</b> (attention-grabbing) the need is, and argued that this isn't morally important. He said the same about other differences, such as distance.</p>
+  <p>Peter Unger, in his 1996 book <i>Living High and Letting Die</i>, compared two thought experiments, retold here. In one, you drive past an injured stranger on a lonely road; getting him to the hospital will ruin your car's expensive leather seats. Almost everyone says you must help. In the other, you throw away a charity letter whose $100 check would save more than thirty children's lives. Most people say that's not great, but not monstrous either. Unger suggested that much of the difference is how <b>conspicuous</b> (attention-grabbing) the need is, and argued that this isn't morally important. He said the same about distance.</p>
   <p>That's a <b>debunking argument</b>: showing that a belief is caused by something that has nothing to do with whether it's true.</p>
   <div class="poll" id="sockPoll">
     <p><b>Quick one (not graded):</b> you learn you believe it'll rain today only because you're wearing your lucky socks. Do you still trust that forecast?</p>
@@ -703,9 +720,9 @@ details.pair .pbody{padding:0 14px 12px}
     <div style="--sc:var(--stamp)"><b>Not relevant:</b> how far away they are; whether you know who they are; whether other people could help but aren't; whether you caused the problem (you must help even if you didn't).</div>
     <div style="--sc:var(--ok)"><b>Relevant:</b> how bad the outcome is; how much good your help would do (more lives beat fewer); what it would cost you.</div>
   </div>
-  <p><b>Three ways to push back.</b> Tap each to open.</p>
+  <p><b>Three ways to disagree with the argument.</b> Tap each to open.</p>
   <details class="reply" style="--rc:var(--hl-p)">
-    <summary><b>It may prove too much</b></summary>
+    <summary><b>It may prove too much</b> (the same logic would undermine beliefs we want to keep)</summary>
     <div class="inner"><p>Evolution also shaped our sense that pain is bad and that helping the drowning child is required. If origins in evolution debunk one intuition, why not those? Singer's answer is that some judgments survive careful reflection better than others.</p>
     <p class="other"><b>The other side says:</b> whether that line can be drawn cleanly is exactly what's in dispute.</p></div>
   </details>
@@ -715,7 +732,7 @@ details.pair .pbody{padding:0 14px 12px}
     <p class="other"><b>The other side says:</b> then name the reason it matters. "It just feels like it does" is the very thing under suspicion.</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-o)">
-    <summary><b>Fixing a bias can backfire</b></summary>
+    <summary><b>Fixing a bias can make things worse</b></summary>
     <div class="inner"><p>Remember Rokia: learning about the bias cut giving to the identified child without raising it for anyone else. Even if the feeling is a bad guide, the "fix" matters.</p>
     <p class="other"><b>The other side says:</b> that's a point about how to correct a bias, not about whether it is one.</p></div>
   </details>
@@ -729,7 +746,7 @@ details.pair .pbody{padding:0 14px 12px}
   <h2 id="g4h">The Relevance Tribunal</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Intuition or glitch? The debunking argument" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Six features on trial. For each, two taps: first predict <b>Singer's</b> verdict (graded, from his scorecard), then give <b>your own</b> (never graded). Is this feature morally relevant to whether you must help?</p>
+  <p class="how">Six features on trial. For each, two taps: first predict <b>Singer's</b> verdict (graded, from his scorecard above), then give <b>your own</b> (never graded). Is this feature morally relevant to whether you must help?</p>
   <p class="m-nav" id="trNav"></p>
   <div class="mach" id="trCard"></div>
   <div class="fb" id="trFb" aria-live="polite"></div>
@@ -744,7 +761,7 @@ details.pair .pbody{padding:0 14px 12px}
 <section class="sheet" aria-labelledby="b7">
   <h2 id="b7"><span style="--mark:var(--hl-g)">Singer's critics take the stand</span></h2>
   <p class="wow">The strongest objection to Singer isn't about the pond. It's that, if he's right, morality would take over your life.</p>
-  <p>Five objections. Each card holds the objection, a reply from Singer's side, and the critics' comeback. Open all five; Lead 5 needs them.</p>
+  <p>Five objections. Each card holds the objection, a reply from Singer's side, and what the critics say back. Open all five (tap each card to open it; a tick appears when you have); Lead 5 needs them.</p>
   <details class="reply objcard" style="--rc:var(--hl-p)">
     <summary><b>Objection 1: demandingness.</b> It asks too much.</summary>
     <div class="inner"><p>Follow the strong principle all the way (prevent something bad unless it costs something of comparable moral importance). You'd have to keep giving until giving more would cost you something as important as what it prevents. Hobbies, savings, nice things: all hard to justify. A morality that asks that much, critics say, can't be right. Susan Wolf's 1982 essay "Moral Saints" made a related point. A life devoted entirely to maximizing moral good, she argued, wouldn't be an especially good or attractive ideal.</p>
@@ -759,7 +776,7 @@ details.pair .pbody{padding:0 14px 12px}
   </details>
   <details class="reply objcard" style="--rc:var(--hl-b)">
     <summary><b>Objection 3: that's the government's job.</b></summary>
-    <div class="inner"><p>Global poverty is a problem for institutions: governments, international bodies, fair trade rules. Asking individuals to fix it lets the real culprits off the hook.</p>
+    <div class="inner"><p>Global poverty is a problem for institutions: governments, international bodies, fair trade rules. Asking individuals to fix it lets the people really at fault avoid blame.</p>
     <p><b>Reply:</b> Maybe institutions <i>should</i> fix it. But at the pond, "the lifeguard should have done this" is no excuse when the lifeguard isn't there. While institutions fall short, the need is still there. (And individuals can act on institutions too, for example by voting and campaigning. Singer agrees with this part.)</p>
     <p class="other"><b>The other side says:</b> the lifeguard reply assumes the pond and the world are alike, when real help passes through governments, organizations and long supply chains.</p></div>
   </details>
@@ -770,9 +787,9 @@ details.pair .pbody{padding:0 14px 12px}
     <p class="other"><b>The other side says:</b> that shows something about an emergency right in front of you; ongoing, worldwide needs may work differently.</p></div>
   </details>
   <details class="reply objcard" style="--rc:var(--hl-y)">
-    <summary><b>Objection 5: it's a drop in the ocean.</b></summary>
+    <summary><b>Objection 5: it's a drop in the ocean</b> (my help is too small to matter).</summary>
     <div class="inner"><p>The problem is so huge that anything one person does makes no real difference.</p>
-    <p><b>Reply:</b> That's proportion dominance and psychic numbing talking. Helping one person isn't helping 0.0001% of a problem; it's helping a whole person. The 4,500 lives in the big camp are just as many lives as in the small one.</p>
+    <p><b>Reply:</b> That is proportion dominance and psychic numbing at work. Helping one person isn't helping 0.0001% of a problem; it's helping a whole person. The 4,500 lives in the big camp are just as many lives as in the small one.</p>
     <p class="other"><b>The other side says:</b> the real worry may be about facts, not feelings: whether a particular effort actually works is a fair question.</p></div>
   </details>
   <p>Philosophers still argue about every one of these.</p>
@@ -786,7 +803,7 @@ details.pair .pbody{padding:0 14px 12px}
   <h2 id="g5h">Objection, Meet Reply</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Singer's critics take the stand" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">The replies below are reworded, and shuffled. Match each objection to the reply that answers it. Then, ungraded: which objection do <i>you</i> think survives best?</p>
+  <p class="how">The replies below are reworded, and shuffled. Match each objection to the reply that answers it. Then, ungraded: which objection do <i>you</i> think is still strongest after its reply?</p>
   <div class="replies" id="repList"></div>
   <div id="objList"></div>
   <div id="survive" hidden></div>
@@ -803,13 +820,13 @@ details.pair .pbody{padding:0 14px 12px}
   <h2 id="finh">Case closed: why don't we help?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all five pieces of evidence (clear all five leads) to open the final file.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Two calls and a reason. First, the cover question again. Then the view on Singer closest to yours. Any view is fine; the reason is what counts.</p>
-  <p class="step-lbl">1. Is how strongly you feel pulled to help a good guide to how much you ought to help?</p>
+  <p class="how">Two answers and a reason. First, the cover question again. Then the view on Singer closest to yours. Any view is fine; the reason is what counts.</p>
+  <p class="step-lbl">1. Is the strength of your urge to help a good guide to how much you ought to help?</p>
   <div class="row" id="finGut" role="group" aria-label="Gut question again"></div>
   <p class="step-lbl">2. Where do you land on Singer?</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
   <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
-  <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
+  <textarea class="reasonbox" id="finReason" rows="3" maxlength="400"></textarea>
   <label class="small" for="finMoved" style="display:block;margin-top:12px"><b>What moved me most in this file</b></label>
   <select class="reasonbox" id="finMoved">
     <option value="">Pick one</option>
@@ -829,7 +846,7 @@ details.pair .pbody{padding:0 14px 12px}
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will argue the other side once; sticking with your answer, if you give a reason, is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -844,12 +861,15 @@ details.pair .pbody{padding:0 14px 12px}
 <!-- ================= 17 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
   <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
-  <ul>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: four places to read more</summary>
+    <div class="inner"><ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is built around. Lecture 14 is "What You Owe to Needy Strangers." <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>Justice with Michael Sandel</b> (Harvard). A famous intro course that also asks what we owe each other; its lectures have been posted online. <a class="linkbtn" href="https://justiceharvard.org" target="_blank" rel="noopener">justiceharvard.org</a></li>
     <li><b>"The Arithmetic of Compassion"</b>, a project on psychic numbing edited by Scott Slovic, with Paul Slovic as contributing editor. Short readable pieces on the research in this file. <a class="linkbtn" href="https://www.arithmeticofcompassion.org" target="_blank" rel="noopener">arithmeticofcompassion.org</a></li>
     <li><b>Peter Singer, "Famine, Affluence, and Morality" (1972)</b> and <b>Peter Unger, <i>Living High and Letting Die</i> (1996)</b>. The essay is short and widely reprinted; ask a library for both.</li>
-  </ul>
+  </ul></div>
+  </details>
 </section>
 
 <p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT.</p>
@@ -868,11 +888,11 @@ var MID="C3-M03";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Caught it.","That's the test.","Exactly."], no:["Close, but no.","Not quite.","Tempting, but..."]},
- g2:{ok:["Spotted.","Yep.","Sharp eyes.","Nailed it."], no:["Close, but no.","Tempting, but...","Not that pattern."]},
- g3:{ok:["Called it.","Darley would nod.","Exactly."], no:["Tempting, but...","Not quite.","Close, but no."]},
- g4:{ok:["Scorecard agrees.","Singer would sign that.","Yep.","Clean."], no:["Check the scorecard.","Tempting, but...","Close, but no."]},
- g5:{ok:["Matched.","Clean.","That's the pair.","Nailed it."], no:["Not that one.","Tempting, but...","Close, but no."]}
+ g1:{ok:["Right.","That's the test.","Exactly."], no:["Close, but no.","Not quite.","Tempting, but not it."]},
+ g2:{ok:["Spotted.","Yes.","Sharp eyes.","Exactly right."], no:["Close, but no.","Tempting, but not it.","Not that pattern."]},
+ g3:{ok:["Right.","Darley would agree.","Exactly."], no:["Tempting, but not it.","Not quite.","Close, but no."]},
+ g4:{ok:["Matches Singer's list.","Singer would agree.","Yes.","Correct."], no:["Not Singer's view.","Tempting, but not it.","Close, but no."]},
+ g5:{ok:["Matched.","Correct.","That's the pair.","Exactly right."], no:["Not that one.","Tempting, but not it.","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -902,14 +922,14 @@ var GAMES=[
  {id:"g1",c:"var(--hl-p)",lead:1,title:"The one-feature test",body:"A <b>bias</b> is a steady tilt, the same way every time. Hold fixed everything that matters morally, change one feature, and see if your reaction moves. If it does and the feature shouldn't matter, that's a likely bias.",ex:"Mira with a name versus an unnamed child with the same need and cost."},
  {id:"g2",c:"var(--hl-o)",lead:2,title:"Identifiable victims and numbing",body:"<b>Identifiable victim effect:</b> we help a specific someone more. <b>Psychic numbing:</b> feelings flatten as numbers grow (compassion fade may begin at two). <b>Proportion dominance:</b> we react to the fraction saved, not the number.",ex:"Rokia raised about twice what the statistics did; 4,500 of 11,000 felt better than 4,500 of 250,000 (the camp cards)."},
  {id:"g3",c:"var(--hl-g)",lead:3,title:"Diffusion of responsibility",body:"With more possible helpers, each person feels less responsible and is less likely to act (Darley and Latan&eacute;, 1968). But groups often still help (Philpot, 2020), and the famous 38-witness story was badly overstated.",ex:"85% went for help when they thought they were the only listener; 31% with four others."},
- {id:"g4",c:"var(--hl-b)",lead:4,title:"The debunking argument",body:"If an intuition is caused by features that aren't morally relevant (nearness, vividness, being the only one there), it isn't good evidence. Pushback: it may prove too much, and some features might really matter.",ex:"Unger: the injured stranger by your car versus the charity letter you throw away."},
- {id:"g5",c:"var(--hl-y)",lead:5,title:"Objections and replies",body:"Demandingness, special obligations, \"the government's job,\" fair share, and \"a drop in the ocean,\" each with a reply, and each reply with its own critics.",ex:"Two children drowning, one other adult who won't help: do you stop at your share?"}
+ {id:"g4",c:"var(--hl-b)",lead:4,title:"The debunking argument",body:"If an intuition is caused by features that aren't morally relevant (nearness, vividness, being the only one there), it isn't good evidence. Pushback: it may prove too much (the same logic would undermine beliefs we want to keep), and some features might really matter.",ex:"Unger: the injured stranger by your car versus the charity letter you throw away."},
+ {id:"g5",c:"var(--hl-y)",lead:5,title:"Objections and replies",body:"Demandingness, special obligations, \"the government's job,\" fair share, and \"a drop in the ocean\" (my help is too small to matter), each with a reply, and each reply with its own critics.",ex:"Two children drowning, one other adult who won't help: do you stop at your share?"}
 ];
 var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true");
   b.addEventListener("click",function(){ showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
@@ -926,16 +946,24 @@ function showCard(g){
   if(openCard===g.id){ P.hidden=true; openCard=null; return; }
   openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
   P.style.setProperty("--c",g.c);
+  if(!cleared[g.id]){
+    P.innerHTML='<h3>Evidence '+g.lead+' is not collected yet</h3><p>Clear Lead '+g.lead+' to unlock this card. Tap the number again to close this note.</p>';
+    P.hidden=false; return;
+  }
   P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
   P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
 }
 /* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
 var toastTimer=null;
 function toast(msg, color){
+  /* shows over the top bar only (never over a card, instruction or feedback); 1.8 s; ignores taps */
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
+  try{ T.style.minHeight=$("dock").offsetHeight+"px"; }catch(e){}
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1800);
 }
+function setDockH(){ try{ document.documentElement.style.setProperty("--dockh", ($("dock").offsetHeight+10)+"px"); }catch(e){} }
+setDockH(); window.addEventListener("resize",setDockH); try{ if(window.ResizeObserver) new ResizeObserver(setDockH).observe($("dock")); }catch(e){}
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
   toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
@@ -948,7 +976,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -964,50 +992,75 @@ var objEls=[].slice.call(document.querySelectorAll("details.objcard"));
 var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
 function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
 function extraNeed(k){
-  if(k===1 && !COVER.locked) return "Lock in your gut call at the top first.";
-  if(k===5 && Object.keys(repliesOpen).length<objEls.length) return "Open all five objection cards above first.";
+  if(k===1 && !COVER.locked) return "This button is off because your gut call at the top is not locked in yet. Pick an answer, write one sentence, then tap the lock button twice.";
+  if(k===5 && Object.keys(repliesOpen).length<objEls.length) return "This button is off until you open all five objection cards above ("+Object.keys(repliesOpen).length+" of "+objEls.length+" opened). Tap each card to open it.";
   return "";
 }
 function refreshGot(){
   gotBtns.forEach(function(b){
     var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
-    if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; return; }
+    if(k<=unlockedStep){ b.disabled=true; b.classList.add("ok"); b.textContent="Opened"; msg.textContent="Lead below is open."; if(k===1) $("jumpCover").hidden=true; return; }
     var prevOk = k===1 || cleared[UNLOCKS[k-1]];
-    if(k===unlockedStep+1 && prevOk && !extraNeed(k)){ b.disabled=false; msg.textContent=""; }
-    else { b.disabled=true; msg.textContent = (k>unlockedStep+1) ? "Open the earlier leads first (scroll up)." : (!prevOk ? "Clear Lead "+(k-1)+" first (scroll up)." : extraNeed(k)); }
+    if(k===unlockedStep+1 && prevOk && !extraNeed(k)){ b.disabled=false; msg.textContent=""; if(k===1) $("jumpCover").hidden=true; }
+    else { b.disabled=true; msg.textContent = (k>unlockedStep+1) ? "Open the earlier leads first (scroll up)." : (!prevOk ? "Clear Lead "+(k-1)+" first (scroll up)." : extraNeed(k)); if(k===1) $("jumpCover").hidden = !(k===unlockedStep+1 && extraNeed(1)); }
   });
 }
 function doUnlock(k, focus){
   unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
-  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body input, .lab-body textarea"); if(first) first.focus(); }
+  if(focus){ var lab=$(UNLOCKS[k]); var first=lab.querySelector(".lab-body button, .lab-body input, .lab-body textarea");
+    if(first){ try{ first.focus({preventScroll:true}); }catch(e){ first.focus(); } }
+    try{ lab.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"start"}); }catch(e){} }
 }
 gotBtns.forEach(function(b){
   b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
 });
-objEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.open){ repliesOpen[i]=true; refreshGot(); saveState(); } }); });
+objEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.open){ repliesOpen[i]=true; d.classList.add("seen"); refreshGot(); saveState(); } }); });
+$("jumpCover").addEventListener("click",function(){ var L=$("lockin"); try{ L.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"center"}); }catch(e){} var t=COVER.v ? $("myReason") : L.querySelector(".vbtn"); try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } });
 
-/* ---------- gut call: truly locked after "Lock it in" ---------- */
+/* ---------- shared two-tap lock: first tap arms, second tap confirms (not before 500 ms); arm resets after 4 s ---------- */
+function makeArm(btn, label, validate, commit, onReset){
+  var armedAt=0, tmr=null, waitT=null;
+  function clearTimers(){ clearTimeout(tmr); clearTimeout(waitT); }
+  function reset(){ if(!armedAt) return; clearTimers(); armedAt=0; btn.textContent=label; btn.classList.remove("armed","wait"); btn.removeAttribute("aria-disabled"); if(onReset) onReset(); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armedAt){
+      if(validate && validate()===false) return;
+      armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","wait"); btn.setAttribute("aria-disabled","true");
+      waitT=setTimeout(function(){ btn.classList.remove("wait"); btn.removeAttribute("aria-disabled"); }, 500);
+      tmr=setTimeout(reset, 4000); return;
+    }
+    if(Date.now()-armedAt<500) return;   /* the button is shown dimmed during this half second */
+    clearTimers(); armedAt=0; btn.classList.remove("armed","wait"); btn.removeAttribute("aria-disabled");
+    commit();
+  });
+  return {reset:reset};
+}
+/* ---------- gut call: truly locked after the second tap ---------- */
 var VL={yes:"Yes, mostly", some:"Sometimes", no:"No, not really"};
 function freezeCover(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
-  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
+  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked"; $("lockBtn").classList.remove("armed","wait"); $("gateNote").hidden=true;
 }
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); coverArm.reset(); });
 });
+$("myReason").addEventListener("input",function(){ coverArm.reset(); });
 function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-$("lockBtn").addEventListener("click",function(){
-  if(COVER.locked) return;
-  var r=$("myReason").value.trim();
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick an answer first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
+var coverArm=makeArm($("lockBtn"),"Lock it in",function(){
+  var r=one($("myReason").value);
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick an answer first."; return false; }
+  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason. Lead 1 stays closed until you do."; $("myReason").focus(); return false; }
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Check it, then tap again within 4 seconds. After that it can't be changed.";
+  return true;
+},function(){
+  COVER.reason=one($("myReason").value); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   refreshGot(); saveState();
-});
+},function(){ $("lockMsg").style.color=""; $("lockMsg").textContent=""; });
 
 /* ---------- warm-up: where's your line? (ungraded; locks on the first tap) ---------- */
 var STOPS=[
@@ -1032,8 +1085,8 @@ function warmApply(focus){
     b.classList.toggle("line",k===i); b.classList.toggle("beyond",k>i);
   });
   setFb($("warmFb"),"","", i===STOPS.length-1
-    ? "No line at all: you'd help anywhere. But does the pull follow you that far? Lead 1 puts your gut to the test."
-    : (i===0?"Plenty of people draw the line right here. ":"")+"Past your line, one tap would still help the child just as much; what changes with distance is the pull. Is that pull a good guide or a glitch? Lead 1 puts your gut to the test.");
+    ? "No line at all: you'd help anywhere. But does the urge to help follow you that far? Lead 1 puts your gut feeling to the test."
+    : (i===0?"Plenty of people draw the line right here. ":"")+"Past your line, one tap would still help the child just as much; what changes with distance is the urge. Is that urge a good guide or a glitch? Lead 1 puts your gut feeling to the test.");
   if(focus) focusFb($("warmFb"));
 }
 function warmLine(){
@@ -1063,7 +1116,7 @@ wirePoll("mythPoll","myth",function(){ $("mythBox").hidden=false; });
 wirePoll("sockPoll","sock",function(v){ setFb($("sockFb"),"","",POLLTXT.sock[v]+POLLTXT.sock.all); });
 function pollLines(){
   var P={up:"statistics got more",same:"nothing changed",down:"Rokia got less",most:"most",half:"about half",few:"very few",yes:"yes, still trust it",no:"no"};
-  return ["Ungraded taps: after the bias lesson I guessed = "+(POLLS.rokia?P[POLLS.rokia]:"not answered")+"; how many of the 38 watched the whole attack, my guess = "+(POLLS.myth?P[POLLS.myth]:"not answered")+"; trust the lucky-socks forecast = "+(POLLS.sock?P[POLLS.sock]:"not answered")];
+  return ["Ungraded taps: after the bias lesson I guessed = "+(POLLS.rokia?P[POLLS.rokia]:"skipped")+"; how many of the 38 watched the whole attack, my guess = "+(POLLS.myth?P[POLLS.myth]:"skipped")+"; trust the lucky-socks forecast = "+(POLLS.sock?P[POLLS.sock]:"skipped")];
 }
 
 /* ---------- copy for Rocky (shared machinery) ---------- */
@@ -1075,7 +1128,7 @@ function linesFor(g){
   return LIVE[g]();
 }
 function one(s){ return String(s==null?"":s).replace(/[\r\n\u2028\u2029]+/g," ").replace(/ {2,}/g," ").trim(); }
-function coverLines(){ return ["Gut call, locked before reading (is how strongly I feel pulled to help a good guide to how much I ought to help?): "+(COVER.locked ? VL[COVER.v]+". My reason: "+one(COVER.reason) : "not locked in")]; }
+function coverLines(){ return ["Gut call, locked before reading (is the strength of my urge to help a good guide to how much I ought to help?): "+(COVER.locked ? VL[COVER.v]+". My reason: "+one(COVER.reason) : "not locked in")]; }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
   box.value=txt; box.hidden=false;
@@ -1112,16 +1165,16 @@ function mcq(host, opts, isRight, onRight, onWrong, fb, isDone){
 
 /* ================= LEAD 1: BIAS DETECTOR ================= */
 /* Four pairs. In A and C everything that matters morally is identical; in B the need goes up eightfold; in D only the crowd changes. */
-var PULL="How strongly do you feel pulled to help?";
+var PULL="How strong is your urge to help?";
 var BD=[
  {id:"A1", sit:"A charity needs $300 to pay for one child's medical treatment. That's all you know.", ask:PULL},
  {id:"B1", sit:"One child in a distant country needs a $300 treatment to recover from a serious illness.", ask:PULL},
  {id:"C2", sit:"A refugee camp holds 250,000 people. A clean-water project would save 4,500 lives there.", ask:"How strongly do you support funding it?"},
- {id:"D1", sit:"You're walking alone on a quiet path. A jogger ahead trips, hurts an ankle and can't get up.", ask:"How responsible do you feel to step in?"},
+ {id:"D1", sit:"You're walking alone on a quiet path. A jogger ahead trips, hurts an ankle and can't get up.", ask:"How much do you feel it is up to you to help?"},
  {id:"A2", sit:"A charity needs $300 to pay for the medical treatment of Mira, who is 8 and draws horses on everything.", ask:PULL},
  {id:"B2", sit:"Eight children in a distant country each need the same $300 treatment to recover from a serious illness.", ask:PULL},
  {id:"C1", sit:"A refugee camp holds 11,000 people. A clean-water project would save 4,500 lives there.", ask:"How strongly do you support funding it?"},
- {id:"D2", sit:"You're crossing a busy square with about 30 people nearby. A jogger ahead trips, hurts an ankle and can't get up.", ask:"How responsible do you feel to step in?"}
+ {id:"D2", sit:"You're crossing a busy square with about 30 people nearby. A jogger ahead trips, hurts an ankle and can't get up.", ask:"How much do you feel it is up to you to help?"}
 ];
 var bdReadyAt=0, BDANS={}, bdI=0, bdQ={misses:0, done:false}, bdHits=[], bdBuilt=false;
 var SCL=["0","1","2","3","4","5"];
@@ -1137,10 +1190,11 @@ function bdRender(){
     var b=el("button",{type:"button","aria-pressed":String(BDANS[c.id]===+v),"aria-label":v+" out of 5"}); b.textContent=v;
     b.addEventListener("click",function(){
       if(Date.now()<bdReadyAt) return;
-      bdReadyAt=Date.now()+400;
+      bdReadyAt=Date.now()+200;   /* short guard; while it runs every button is visibly dimmed and off, so no tap is swallowed silently */
       BDANS[c.id]=+v; touch("g1");
       sc.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed",String(x===b)); x.disabled=true; });
-      setTimeout(function(){ bdI++; bdRender(); var f=$("bdCard").querySelector(".scale button"); if(f) f.focus(); }, 140);
+      box.querySelectorAll(".bdback").forEach(function(x){ x.disabled=true; });
+      setTimeout(function(){ bdI++; bdRender(); var f=$("bdCard").querySelector(".scale button"); if(f) f.focus(); }, 230);
     });
     sc.appendChild(b);
   });
@@ -1155,25 +1209,25 @@ function bdRender(){
 }
 /* A gap needs 2 or more points to count: on a 0 to 5 scale, 1 point is within the noise of a wobbly scale. */
 var SMALLCHIP="small gap, could be noise";
-function smallTxt(pat){ return "Only 1 point apart. On a 0 to 5 scale that is small enough to be <i>noise</i>, like a scale that wobbles a little. A bias is a bigger, steadier gap, so this one doesn't count. (The pattern this pair tests is "+pat+".)"; }
+function smallTxt(pat){ return "Only 1 point apart. On a 0 to 5 scale that is small enough to be <i>noise</i>, like a scale that gives a slightly different reading each time. A bias is a bigger, steadier gap, so this one doesn't count. (The pattern this pair tests is "+pat+".)"; }
 function bdAnalyse(){
   var a=BDANS, vals=BD.map(function(c){return a[c.id];});
   var allSame=vals.every(function(v){return v===vals[0];});
   var A={k:"A", name:"Identifiable victim effect", c:"var(--hl-p)", l1:"Unnamed child", v1:a.A1, l2:"Mira (named)", v2:a.A2};
   var dA=a.A2-a.A1;
-  if(dA>=2){ A.hit=true; A.chip="gap detected"; A.txt="Same need, same cost, same help. The only change: a name and a detail. Your pull went up. That's the <b>identifiable victim effect</b>: we help more when there's a specific someone."; }
+  if(dA>=2){ A.hit=true; A.chip="gap detected"; A.txt="Same need, same cost, same help. The only change: a name and a detail. Your urge went up. That's the <b>identifiable victim effect</b>: we help more when there's a specific someone."; }
   else if(dA<=-2){ A.hit=false; A.chip="other direction"; A.txt="You rated the named child <i>lower</i>. That's unusual; most people go the other way (the <b>identifiable victim effect</b>). Maybe you spotted the pair, or the detail put you off."; }
   else if(dA!==0){ A.hit=false; A.chip=SMALLCHIP; A.txt=smallTxt("the <b>identifiable victim effect</b>: we help more when there's a specific someone"); }
   else { A.hit=false; A.chip="no gap"; A.txt="Same rating for both. A name and a detail didn't move you. Most people's ratings go up for the named child; that's the <b>identifiable victim effect</b>."; }
   var B={k:"B", name:"Psychic numbing / compassion fade", c:"var(--hl-b)", l1:"One child", v1:a.B1, l2:"Eight children", v2:a.B2};
   var dB=a.B1-a.B2;
-  if(allSame){ B.hit=false; B.chip="can't tell"; B.txt="With every card rated the same, this pair can't show much. Here, the need went up eightfold, so a well-calibrated pull should go <i>up</i>. For most people it doesn't, or barely does. That's <b>psychic numbing</b>."; }
-  else if(a.B1===5 && a.B2===5){ B.hit=false; B.chip="can't tell"; B.txt="You maxed out both, so this pair can't tell whether your feelings scale: the scale stops at 5. The need went up eightfold. For most people, the pull rises little or not at all. That's <b>psychic numbing</b>."; }
-  else if(dB>=2){ B.hit=true; B.chip="pull dropped"; B.txt="Eight times the need, and your pull went <i>down</i>. That's <b>psychic numbing</b>: feelings don't scale with numbers, and in studies compassion may start to fade as soon as there's a second person."; }
-  else if(dB===1){ B.hit=false; B.chip=SMALLCHIP; B.txt=smallTxt("<b>psychic numbing</b>: feelings that don't grow with the numbers. Eight times the need, and your pull barely moved"); }
-  else if(a.B2===a.B1 && a.B1===0){ B.hit=false; B.chip="can't tell"; B.txt="You rated both at 0, so this pair can't tell whether your feelings scale. The need went up eightfold, so a well-calibrated pull should go <i>up</i>. For most people it rises little or not at all. That's <b>psychic numbing</b>."; }
-  else if(a.B2===a.B1){ B.hit=true; B.chip="flat ratings"; B.txt="Eight times the need, and your pull stayed exactly where it was. A well-calibrated pull would go up. A flat line like that matches <b>psychic numbing</b>: feelings that don't scale with numbers. (Two ratings are a thin sample, so treat it as a hint.)"; }
-  else { B.hit=false; B.chip="went up"; B.txt="Your pull went up for eight, which is the direction the numbers point. But not eight times, and on a 0 to 5 scale it couldn't. That's the point: feelings have a ceiling, and numbers don't. The pattern is called <b>psychic numbing</b>."; }
+  if(allSame){ B.hit=false; B.chip="can't tell"; B.txt="With every card rated the same, this pair can't show much. Here, the need went up eightfold, so a well-calibrated urge should go <i>up</i>. For most people it doesn't, or barely does. That's <b>psychic numbing</b>."; }
+  else if(a.B1===5 && a.B2===5){ B.hit=false; B.chip="can't tell"; B.txt="You maxed out both, so this pair can't tell whether your feelings scale: the scale stops at 5. The need went up eightfold. For most people, the urge rises little or not at all. That's <b>psychic numbing</b>."; }
+  else if(dB>=2){ B.hit=true; B.chip="urge dropped"; B.txt="Eight times the need, and your urge went <i>down</i>. That's <b>psychic numbing</b>: feelings don't scale with numbers, and in studies compassion may start to fade as soon as there's a second person."; }
+  else if(dB===1){ B.hit=false; B.chip=SMALLCHIP; B.txt=smallTxt("<b>psychic numbing</b>: feelings that don't grow with the numbers. Eight times the need, and your urge barely moved"); }
+  else if(a.B2===a.B1 && a.B1===0){ B.hit=false; B.chip="can't tell"; B.txt="You rated both at 0, so this pair can't tell whether your feelings scale. The need went up eightfold, so a well-calibrated urge should go <i>up</i>. For most people it rises little or not at all. That's <b>psychic numbing</b>."; }
+  else if(a.B2===a.B1){ B.hit=true; B.chip="flat ratings"; B.txt="Eight times the need, and your urge stayed exactly where it was. A well-calibrated urge would go up. A flat line like that matches <b>psychic numbing</b>: feelings that don't scale with numbers. (Two ratings are a thin sample, so treat it as a hint.)"; }
+  else { B.hit=false; B.chip="went up"; B.txt="Your urge went up for eight, which is the direction the numbers point. But not eight times, and on a 0 to 5 scale it couldn't. That's the point: feelings have a ceiling, and numbers don't. The pattern is called <b>psychic numbing</b>."; }
   var Cc={k:"C", name:"Proportion dominance", c:"var(--hl-o)", l1:"4,500 of 11,000", v1:a.C1, l2:"4,500 of 250,000", v2:a.C2};
   var dC=a.C1-a.C2;
   if(dC>=2){ Cc.hit=true; Cc.chip="gap detected"; Cc.txt="Exactly the same 4,500 lives. You backed the small camp more. That's <b>proportion dominance</b>: we react to the fraction saved, not the number of lives."; }
@@ -1193,15 +1247,15 @@ function bdReveal(){
   if(bdBuilt) return; bdBuilt=true;
   var R0=bdAnalyse(), P=R0.pairs; bdHits=P.filter(function(p){return p.hit;}).map(function(p){return p.name;});
   var R=$("bdReveal"); R.hidden=false;
-  var h='<p class="pause">Reveal time. The eight cards were four pairs. In pairs A and C, everything that matters morally was identical and one feature changed. In pair B, the need went up eightfold, so a well-calibrated pull should go <b>up</b>. In pair D, only the crowd changed. A gap of 2 or more points counts; 1 point could just be noise.</p>';
+  var h='<p class="pause">Reveal time. The eight cards were four pairs. In pairs A and C, everything that matters morally was identical and one feature changed. In pair B, the need went up eightfold, so a well-calibrated urge should go <b>up</b>. In pair D, only the crowd changed. A gap of 2 or more points counts; 1 point could just be noise.</p>';
   if(R0.allSame) h+='<p class="small"><b>You gave every card the same rating, so this test can\'t see much.</b> That\'s a fair way to play it. Here\'s the kind of thing most people\'s ratings show (an illustration, not real data): unnamed child 2, Mira 4; one child 4, eight children 3; small camp 4, big camp 2; alone 4, with 30 people nearby 2.</p>';
   h+='<p class="small">Tap a pair to open or close it.</p><div class="pairs">';
   P.forEach(function(p,idx){
-    var cls = p.hit ? (p.chip==="gap detected"||p.chip==="pull dropped" ? " hit" : " flat") : (p.chip===SMALLCHIP ? " small" : "");
+    var cls = p.hit ? (p.chip==="gap detected"||p.chip==="urge dropped" ? " hit" : " flat") : (p.chip===SMALLCHIP ? " small" : "");
     h+='<details class="pair" style="--pc:'+p.c+'"'+(idx<1?' open':'')+'><summary><h4>Pair '+p.k+': '+p.name+'<span class="chip'+cls+'">'+p.chip+'</span></h4></summary>'+
        '<div class="pbody"><div class="nums"><span>'+p.l1+'</span><b>'+p.v1+'/5</b><span>'+p.l2+'</span><b>'+p.v2+'/5</b></div><p>'+p.txt+'</p></div></details>';
   });
-  h+='</div><p class="biascount">'+(R0.allSame?'Every card got the same rating, so nothing to match here (0 of 4).':'Your ratings matched '+bdHits.length+' of 4 classic patterns.')+'</p><p class="small">Most people show at least one, even when they know a test is coming. Showing none is fine too, and may mean you spotted the pairs. Either way, you now know what these four look like from the inside.</p>';
+  h+='</div><p class="biascount">'+(R0.allSame?'Every card got the same rating, so nothing to match here (0 of 4).':'Your ratings matched '+bdHits.length+' of 4 classic patterns.')+'</p><p class="small">Most people show at least one, even when they know a test is coming. Showing none is fine too, and may mean you spotted the pairs. Either way, you now know what these four look like in your own ratings.</p>';
   h+='<div class="mq"><p class="small"><b>One question to clear this lead.</b> Using the one-feature test from the reading: why is a gap between the unnamed child and Mira a likely sign of bias?</p><div id="bdQ"></div></div>';
   R.innerHTML=h;
   var Q=[["a","Only her name and a detail changed, not the need or what help would do"],["b","Naming a person always makes helping them the wrong choice, no matter what"],["c","Your two ratings just varied by chance, like a noisy scale's random readings"]];
@@ -1218,7 +1272,7 @@ function bdLines(){
   if(n<BD.length || !bdBuilt) return ["Lead 1 Bias Detector: "+n+" of 8 cards rated (not finished)"];
   var P=bdAnalyse().pairs;
   var l=P.map(function(p){ return p.name+": "+p.l1+" "+p.v1+"/5 vs "+p.l2+" "+p.v2+"/5 ("+p.chip+")"; });
-  return ["Lead 1 Bias Detector, my ratings: "+l.join("; "), "Lead 1 patterns my ratings matched: "+(bdHits.length?bdHits.join(", "):"none")+" ("+bdHits.length+" of 4); bias-test question "+(bdQ.done?"right"+(bdQ.misses?" after "+bdQ.misses+" miss(es)":" first try"):"not done")];
+  return ["Lead 1 Bias Detector, my ratings: "+l.join("; "), "Lead 1 patterns my ratings matched: "+(bdHits.length?bdHits.join(", "):"none")+" ("+bdHits.length+" of 4); bias-test question "+(bdQ.done?"right"+(bdQ.misses?" (needed another go)":" on the first go"):"not done")];
 }
 
 /* ================= LEAD 2: EFFECT SPOTTER ================= */
@@ -1228,8 +1282,8 @@ var BINS=[
   why:"One specific someone versus a statistical crowd. That's the Rokia result: the identifiable victim effect."},
  {t:"Donors give more to a person whose ID number has already been drawn from a bag than to one whose number will be drawn later.", short:"lottery number", a:["id"],
   why:"No face, no name: just a determined person. That's Small and Loewenstein's 2003 finding, and it's still the identifiable victim effect."},
- {t:"In a survey, people say they'd pay about the same to rescue 2,000 stranded birds as 200,000.", short:"birds", a:["num"],
-  why:"A hundred times the need, about the same feeling. Feelings don't scale with numbers: psychic numbing. (Researchers also call this scope insensitivity.)"},
+ {t:"In a survey, people say they'd pay about the same to save 2,000 oil-covered birds as to save 200,000. No fractions, no names: just a much bigger number.", short:"birds", a:["num"],
+  why:"A hundred times the need, about the same feeling. Feelings don't scale with numbers: psychic numbing. (Researchers also call this scope insensitivity.) No fraction is given and no bird is singled out, so the other two patterns don't fit."},
  {t:"Your concern for one sick child is high. Add a second child, and your concern for the pair drops.", short:"second child", a:["num","id"],
   why:"Compassion fading as soon as a second person appears: the 2014 compassion fade finding, part of psychic numbing. (It's also a cousin of the one-face-beats-eight result, so \"Identifiable victim\" counts too.)"},
  {t:"A project saving 300 villagers out of 400 is rated better than one saving 300 out of 30,000.", short:"villagers", a:["prop"],
@@ -1259,7 +1313,7 @@ shuffle(BINS.map(function(_,i){return i;})).forEach(function(i){
         if(binDone===BINS.length){ $("binScore").textContent="All "+BINS.length+" spotted. You now know three of the best-measured patterns in the psychology of helping."; clear("g2"); }
       } else {
         r.misses.push(v);
-        if(r.misses.length===1) setFb(fb,"bad",vword("g2","no"), "Ask what changed: is it a specific someone versus a crowd, a bigger number with no bigger feeling, or the fraction saved? Or is the reason actually a good one?");
+        if(r.misses.length===1) setFb(fb,"bad",vword("g2","no"), "The four labels: Identifiable victim = one specific someone beats a crowd. Psychic numbing = a bigger number brings no bigger feeling. Proportion dominance = the fraction saved matters more than the number of lives. Not a bias = the reason is a good one. Which fits what changed here?");
         else setFb(fb,"bad",vword("g2","no"),it.why);
       }
       touch("g2");
@@ -1273,7 +1327,7 @@ function binLines(){
   if(!done) return ["Lead 2 Effect Spotter: not started"];
   var first=BINS.filter(function(_,i){return REC2[i].final && !REC2[i].misses.length;}).length;
   var miss=BINS.map(function(it,i){ return REC2[i].misses.length ? it.short : null; }).filter(Boolean);
-  return ["Lead 2 Effect Spotter: "+done+" of "+BINS.length+" sorted, "+first+" of "+done+" right first try"+(miss.length?"; needed a second go on: "+miss.join(", "):"")];
+  return ["Lead 2 Effect Spotter: "+done+" of "+BINS.length+" sorted, "+first+" of "+done+" right on the first go"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 3: CALL THE RESULT ================= */
@@ -1288,14 +1342,15 @@ PRED.forEach(function(p){
   var id="rng-"+p.k;
   box.innerHTML='<label for="'+id+'">'+p.l+'</label><span class="hint">My prediction: <output id="out-'+p.k+'" for="'+id+'">not set</output> went for help</span>';
   var r=el("input",{type:"range",id:id,min:"0",max:"100",step:"5",value:"50"});
-  r.addEventListener("input",function(){ PV[p.k]=+r.value; moved[p.k]=true; $("out-"+p.k).textContent=r.value+"%"; touch("g3"); });
+  r.addEventListener("input",function(){ PV[p.k]=+r.value; moved[p.k]=true; $("out-"+p.k).textContent=r.value+"%"; touch("g3");
+    if(!predLocked && !PRED.some(function(q){return !moved[q.k];})){ $("predFb").className="fb"; $("predFb").innerHTML=""; } });
   box.appendChild(r); $("predList").appendChild(box);
 });
 var PQ=[
  {q:"What was the one thing the researchers changed between the three conditions?",
-  o:[["a","How many other listeners each student believed were on the line"],["b","How serious the seizure sounded on the tape for each group"],["c","Whether the students could see one another through a window"]], a:"a",
+  o:[["a","How many other listeners each student believed were listening"],["b","How serious the seizure sounded on the tape for each group"],["c","Whether the students could see one another through a window"]], a:"a",
   ok:"Same recording, same rooms. Only the believed number of listeners changed, which is what makes the result so striking.",
-  no:{b:"Everyone heard the same recording. The reading points out that only one feature changed.",c:"Nobody could see anybody else in any condition. The only change was the believed number of listeners."}},
+  no:{b:"Everyone heard the same recording, so the seizure sounded the same in every group. Only the believed number of listeners changed.",c:"Nobody could see anybody else in any condition. The only change was the believed number of listeners."}},
  {q:"200 classmates get one email: \"Can someone stay after to stack the chairs?\" Nobody replies. Using the study, what's the most likely explanation?",
   o:[["a","Each one assumes somebody else on the list will reply and do it"],["b","Each one is too busy to help, and the size of the group makes no difference"],["c","Each one thinks the request is meant for a few other specific people"]], a:"a",
   ok:"Diffusion of responsibility in your inbox. One person asked by name would probably say yes.",
@@ -1334,7 +1389,7 @@ function predRevealBuild(){
     var fb=el("div",{class:"fb","aria-live":"polite"});
     mcq(host, item.o, function(k){return k===item.a;},
       function(){ predQ[qi].done=true; setFb(fb,"good",vword("g3","ok"),item.ok); pqDone++;
-        if(pqDone===PQ.length){ $("predScore").textContent="Both cracked. Next screen: the famous story behind this research, and why it's wrong."; clear("g3"); } touch("g3"); },
+        if(pqDone===PQ.length){ $("predScore").textContent="Both right. Next screen: the famous story behind this research, and why it's wrong."; clear("g3"); } touch("g3"); },
       function(k){ predQ[qi].misses++; setFb(fb,"bad",vword("g3","no"),item.no[k]); touch("g3"); },
       fb, function(){return predQ[qi].done;});
     wrap.appendChild(fb); Q.appendChild(wrap);
@@ -1350,17 +1405,17 @@ function predLines(){
 /* ================= LEAD 4: RELEVANCE TRIBUNAL ================= */
 var TR=[
  {n:"Distance", d:"The person you could help is 10,000 km away instead of 10 meters.", a:"no",
-  ok:"Singer: distance makes no moral difference. A child's need isn't smaller because she's far away.", trap:"Distance is the first thing on Singer's \"not relevant\" list. It's the whole point of the pond."},
+  ok:"Singer: distance makes no moral difference. A child's need isn't smaller because she's far away.", trap:"Singer's rule: distance is not relevant. A child in need is in need whether she is 10 meters or 10,000 km away. That is the whole point of the pond."},
  {n:"Anonymity", d:"You'll never know the person's name or see their face.", a:"no",
-  ok:"Singer: whether you know who they are doesn't change how much they need help. That's the identifiable victim effect, on trial.", trap:"The scorecard lists \"whether you know who they are\" as not relevant."},
+  ok:"Singer: whether you know who they are doesn't change how much they need help. That's the identifiable victim effect, on trial.", trap:"Singer's rule: whether you know who the person is does not change how much they need help, so it is not relevant."},
  {n:"Other helpers", d:"Lots of other people could help too, but they aren't.", a:"no",
-  ok:"Singer: other people's failure to help doesn't shrink your duty. That's diffusion of responsibility, on trial.", trap:"On the scorecard: \"whether other people could help but aren't\" is not relevant for Singer."},
+  ok:"Singer: other people's failure to help doesn't shrink your duty. That's diffusion of responsibility, on trial.", trap:"Singer's rule: other people's failure to help does not cancel your duty, so it is not relevant."},
  {n:"Cost to you", d:"Helping would cost you something of comparable moral importance.", a:"yes",
-  ok:"Relevant. It's built into his principle: you must help unless it costs something of comparable moral importance.", trap:"Cost to you is on the \"relevant\" side. His principle has that limit built in."},
+  ok:"Relevant. It's built into his principle: you must help unless it costs something of comparable moral importance.", trap:"Singer's rule: what helping costs you is relevant. His principle only requires you to help if it does not cost something of comparable moral importance."},
  {n:"Numbers", d:"Your help would save five people rather than one.", a:"yes",
-  ok:"Relevant. More good done is more reason. (Notice that our feelings often don't agree: psychic numbing.)", trap:"The scorecard says how much good your help would do is relevant: more lives beat fewer."},
+  ok:"Relevant. More good done is more reason. (Notice that our feelings often don't agree: psychic numbing.)", trap:"Singer's rule: how much good your help would do is relevant. More lives saved is more reason to act."},
  {n:"Who caused it", d:"You did nothing to cause this person's problem.", a:"no",
-  ok:"Singer: you must help even if you didn't cause it. You didn't push the child into the pond, and you still have to pull her out.", trap:"On the scorecard: you must help even if you didn't cause the problem. Think of the pond."}
+  ok:"Singer: you must help even if you didn't cause it. You didn't push the child into the pond, and you still have to pull her out.", trap:"Singer's rule: you must help even if you didn't cause the problem, so who caused it is not relevant. You didn't push the child into the pond."}
 ];
 var TRL={yes:"Relevant", no:"Not relevant"}, MINE=[["yes","Relevant"],["no","Not relevant"],["unsure","Unsure"]];
 var trI=0, REC4={}, trAgree=0;
@@ -1392,7 +1447,7 @@ function trRender(){
         trTally();
         if(first){
           if(trI<TR.length-1){ $("trNext").hidden=false; }
-          else { $("trFb").innerHTML+="<br><br><b>Tribunal adjourned.</b> Every feature where you split from Singer is a place where you think a feeling might be tracking something real. That's exactly where to push back on him, with Rocky."; clear("g4"); }
+          else { $("trFb").innerHTML+="<br><br><b>Tribunal adjourned.</b> Every feature where you disagreed with Singer is a place where you think a feeling might be tracking something real. That's exactly where to argue back at him, with Rocky."; clear("g4"); }
         }
         touch("g4");
       });
@@ -1406,7 +1461,7 @@ function trTally(){
   TR.forEach(function(M,i){
     var R=REC4[i]; if(!R||!R.mine) return; n++;
     var same=R.mine===M.a; if(same) trAgree++;
-    var s=el("span",{class:same?"on":""}); s.textContent=M.n+": "+(same?"with Singer":(R.mine==="unsure"?"unsure":"split")); T.appendChild(s);
+    var s=el("span",{class:same?"on":""}); s.textContent=M.n+": "+(same?"with Singer":(R.mine==="unsure"?"unsure":"disagree")); T.appendChild(s);
   });
   if(n){ var s=el("span",{class:"on"}); s.textContent="Agreed with Singer "+trAgree+"/"+n; T.appendChild(s); }
 }
@@ -1427,7 +1482,7 @@ var OBJ=[
  {k:"fam", n:"Special obligations", t:"I owe more to my own family than to strangers."},
  {k:"gov", n:"Government's job", t:"Ending poverty is the job of governments and institutions, not individuals."},
  {k:"fair", n:"Fair share", t:"If everyone did a little, the problem would be solved. I only owe my share."},
- {k:"drop", n:"Drop in the ocean", t:"The problem is so big that nothing I do makes a difference."}
+ {k:"drop", n:"Drop in the ocean (too small to matter)", t:"The problem is so big that nothing I do makes a difference."}
 ];
 /* replies share no key nouns with screen 13 */
 var REP=[
@@ -1437,7 +1492,7 @@ var REP=[
  {k:"fair", t:"Picture a second rescue that another person refuses to make. Having done one already, is it fine to stop?"},
  {k:"drop", t:"Each person helped is helped completely. Measuring them against the size of the total is the proportion mistake."}
 ];
-var HINT={dem:"Look for the reply about how much is being asked, and a weaker version of the rule.", fam:"Look for the reply that grants a priority but keeps outsiders in the picture.", gov:"Look for the reply about who is supposed to act, and what happens when they don't.", fair:"Look for the reply about stopping after doing your part while others refuse.", drop:"Look for the reply about how big the problem looks versus each single person."};
+var HINT={dem:"Not that one. This objection says Singer asks for too much, so the matching reply offers a weaker version of the rule and says \"it costs a lot\" doesn't prove a duty is fake.", fam:"Not that one. This objection says family comes first, so the matching reply grants that family can come first but says strangers still count.", gov:"Not that one. This objection says it is the government's job, so the matching reply says the need does not wait for the people whose job it is, if they don't act.", fair:"Not that one. This objection says you only owe your share, so the matching reply asks whether it is fine to stop after one rescue when another person refuses to do theirs.", drop:"Not that one. This objection says nothing one person does matters, so the matching reply says each person helped is helped completely, whatever the size of the total."};
 var LET="ABCDE".split(""), repOrder=shuffle(REP.map(function(_,i){return i;})), REPLET={}, REC5={}, mDone=0, survive=null;
 repOrder.forEach(function(ri,pos){
   REPLET[REP[ri].k]=LET[pos];
@@ -1464,7 +1519,7 @@ shuffle(OBJ).forEach(function(o){
 });
 function showSurvive(){
   var S=$("survive"); if(!S.hidden) return; S.hidden=false;
-  S.innerHTML='<p class="step-lbl">All five matched. Now, not graded: which objection do you think survives its reply best?</p><div id="survOpts"></div>';
+  S.innerHTML='<p class="step-lbl">All five matched. Now, not graded: which objection do you think is still strongest after its reply?</p><div id="survOpts"></div>';
   var opts=OBJ.map(function(o){return [o.k,o.n];}).concat([["none","None: the replies win every time"]]);
   opts.forEach(function(o){
     var b=el("button",{class:"choice",type:"button","aria-pressed":"false"}); b.textContent=o[1];
@@ -1494,13 +1549,13 @@ var VIEWS=[
 ];
 Object.keys(VL).forEach(function(k){
   var b=el("button",{class:"btn ghost",type:"button","aria-pressed":"false","data-v":k}); b.textContent=VL[k];
-  b.addEventListener("click",function(){ if(FIN.done) return; FIN.gut=k; syncFinGut(); });
+  b.addEventListener("click",function(){ if(FIN.done) return; FIN.gut=k; syncFinGut(); finArm.reset(); });
   $("finGut").appendChild(b);
 });
 function syncFinGut(){ $("finGut").querySelectorAll("button").forEach(function(x){ var on=x.getAttribute("data-v")===FIN.gut; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; }); }
 VIEWS.forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); finArm.reset(); });
   $("finOpts").appendChild(b);
 });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
@@ -1516,19 +1571,25 @@ function finRender(){
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>Feelings as a guide:</b> '+esc(VL[FIN.gut]||"")+'</p><p><b>On Singer:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
-  if(FIN.done) return;
-  var reason=$("finReason").value.trim(), mv=$("finMoved").value;
-  if(!FIN.gut){ setFb($("finFb"),"bad","First things first.","Answer the cover question again."); return; }
-  if(!FIN.view){ setFb($("finFb"),"bad","One more.","Pick the view on Singer closest to yours."); return; }
-  if(reason.length<2){ setFb($("finFb"),"bad","Almost.","Add a reason. A few words is fine, even \"I just think so because...\"."); $("finReason").focus(); return; }
-  if(!mv){ setFb($("finFb"),"bad","Last one.","Pick what moved you most."); $("finMoved").focus(); return; }
-  FIN.reason=reason; FIN.moved=mv; FIN.done=true; freezeFinale();
+var finArmed=false;
+var finArm=makeArm($("finBtn"),"Lock my verdict",function(){
+  var reason=one($("finReason").value), mv=$("finMoved").value;
+  if(!FIN.gut){ setFb($("finFb"),"bad","First, answer the cover question again.",""); return false; }
+  if(!FIN.view){ setFb($("finFb"),"bad","One more.","Pick the view on Singer closest to yours."); return false; }
+  if(reason.length<2){ setFb($("finFb"),"bad","Almost.","Add a reason. A few words is fine, even \"I just think so because...\"."); $("finReason").focus(); return false; }
+  if(!mv){ setFb($("finFb"),"bad","Last one.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  finArmed=true; setFb($("finFb"),"","Ready.","Check your answers, then tap the button again within 4 seconds to file your verdict. After that it can't be changed.");
+  return true;
+},function(){
+  var reason=one($("finReason").value), mv=$("finMoved").value;
+  finArmed=false; FIN.reason=reason; FIN.moved=mv; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
   toast("Case closed. Verdict filed.", "var(--stamp)");
   try{ $("rcard").scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){}
-});
+},function(){ if(finArmed){ finArmed=false; $("finFb").className="fb"; $("finFb").innerHTML=""; } });
+$("finReason").addEventListener("input",function(){ finArm.reset(); });
+$("finMoved").addEventListener("change",function(){ finArm.reset(); });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
   return ["Cover question again at the end (locked): "+VL[FIN.gut], "Final verdict on Singer (locked): "+viewText(FIN.view), "My reason: "+one(FIN.reason), "What moved me most: "+one(FIN.moved)];
@@ -1547,7 +1608,7 @@ if(SAVED){
   try{
     if(SAVED.cover && SAVED.cover.locked && SAVED.cover.v){ COVER.v=SAVED.cover.v; COVER.reason=SAVED.cover.reason||""; COVER.locked=true; syncLockin(); freezeCover(); $("lockMsg").textContent="Locked in (saved)."; }
     if(SAVED.polls){ Object.keys(POLLS).forEach(function(k){ if(SAVED.polls[k]) POLLS[k]=SAVED.polls[k]; }); syncPoll("rokiaPoll","rokia"); syncPoll("mythPoll","myth"); syncPoll("sockPoll","sock"); if(POLLS.myth) $("mythBox").hidden=false; }
-    if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; }); }
+    if(SAVED.replies){ Object.keys(SAVED.replies).forEach(function(i){ repliesOpen[i]=true; if(objEls[i]) objEls[i].classList.add("seen"); }); }
     /* a half-finished lead reopens empty, so its saved copy line is dropped: screen and copy text agree */
     if(SAVED.lines){ GAME_IDS.forEach(function(g){ if((SAVED.cleared||[]).indexOf(g)<0) delete SAVED.lines[g]; }); }
     var u=+SAVED.unlock||0; for(var k=1;k<=Math.min(NG,u);k++) doUnlock(k,false);

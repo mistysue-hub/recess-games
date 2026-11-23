@@ -251,9 +251,8 @@ details.sealed .inner p{font-size:1rem}
 .hl-pass{line-height:2.7}
 .seg{padding:6px 3px}
 .dock{flex-wrap:wrap}
-.dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
-.dock .pip:not(:disabled){cursor:pointer}
-.dock .pip:disabled{opacity:1}
+.dock .pip{font-family:var(--type); background:transparent; width:44px; height:44px}
+.dock .pip{cursor:pointer}
 @media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
 .evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
 .evpanel h3{font-size:1rem; margin-bottom:4px}
@@ -413,16 +412,16 @@ html,body{overflow-x:clip}
 
 /* ---------- review pass 1 additions (ported from M03) ---------- */
 @media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
-.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
+.toast{position:fixed; left:50%; top:0; transform:translateX(-50%); z-index:40; width:min(100%,760px); box-sizing:border-box; text-align:center; pointer-events:none; display:flex; align-items:center; justify-content:center; min-height:44px;
   background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+  box-shadow:0 6px 16px -6px #000a; border:3px solid var(--tc,var(--hl-y)); border-top:0; border-radius:0 0 12px 12px}
+.toast[hidden]{display:none}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
 .clearline .stamp{font-size:.9rem; transform:rotate(-6deg); animation:thunk .42s cubic-bezier(.2,1.6,.4,1) both; flex:none}
 .clearline p{margin:0; font-size:.95rem}
-@media (prefers-reduced-motion: reduce){ .toast, .dock .pip.pulse, .clearline .stamp{animation:none} }
+@media (prefers-reduced-motion: reduce){ .dock .pip.pulse, .clearline .stamp{animation:none} }
 details.copymini{margin-top:14px}
 details.copymini > summary{cursor:pointer; font-family:var(--type); font-size:.85rem; color:var(--ink-soft); min-height:44px; display:flex; align-items:center}
 details.reply{margin:12px 0; border-radius:10px; background:var(--card); border-left:8px solid var(--rc,var(--hl-y))}
@@ -476,7 +475,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 .cover .stamp small, .m-line .lamp, .tog, .cleared, .compare .hd, .meantab .h, .meantab .sp, .sort-item .stampmini, .axis,
 .sim-card .opt em, .gends, .mf h3 i, .mf-ends, .meanmap, .three .th dt{font-size:.82rem}
 .meantab div{font-size:.84rem; padding:6px 5px; overflow-wrap:break-word; hyphens:auto}
-@media (max-width:520px){ .toast{max-width:calc(100vw - 32px)} }
+html{scroll-padding-top:84px}
+@media (max-width:520px){ html{scroll-padding-top:136px} }
+.warmcards.guard .wcard:not(.ranked){opacity:.5}
+.btn.wait{opacity:.5}
+.btn.armed{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.dock .pip.locked{cursor:pointer; opacity:.75}
+.dock .pip.locked.done{opacity:1}
 .rcard p b, .rcard p i{line-height:1}
 .payoff{margin:14px 0}
 </style>
@@ -511,10 +516,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="plug-hook">
     <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><rect x="5" y="9" width="20" height="13" rx="3" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M5 13h20" stroke="#2A2016" stroke-width="2"/><circle cx="20" cy="17" r="2" fill="#2A2016"/></svg></div>
-    <p>Two people find the same lost wallet with $200 inside, and both hand it in. <b>Maya</b> does it without a second thought; keeping it never even crossed her mind. <b>Sam</b> badly wants the money, argues with himself for an hour, and hands it in anyway. Who is the better person? Lock in your gut call. You'll make the call again at the end.</p>
+    <p>Two people find the same lost wallet with $200 inside, and both turn it in to its owner. <b>Maya</b> does it without a second thought; keeping it never even crossed her mind. <b>Sam</b> badly wants the money, argues with himself for an hour, and hands it in anyway. Who is the better person? Lock in your first instinct (your first quick answer). You'll make the call again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
-    <div class="row" role="group" aria-label="Your gut call">
+    <div class="row" role="group" aria-label="Your first instinct">
       <button class="vbtn" type="button" data-v="maya" aria-pressed="false">Maya</button>
       <button class="vbtn" type="button" data-v="sam" aria-pressed="false">Sam</button>
       <button class="vbtn" type="button" data-v="equal" aria-pressed="false">Equally good</button>
@@ -523,7 +528,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <input type="text" id="myReason" maxlength="220" autocomplete="off">
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 33 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 60 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP (ungraded) ================= -->
@@ -544,12 +549,12 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="exhibit tight" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit B: four tests of flourishing</span>
     <p><b>1. A whole life.</b> One good day doesn't count: "one swallow does not make a summer."</p>
-    <p><b>2. Activity.</b> You have to actually live it out. A good character that sleeps through life doesn't count.</p>
+    <p><b>2. Activity.</b> You have to actually live it out. A good character that never acts doesn't count.</p>
     <p><b>3. Some luck.</b> Fine deeds need friends and enough money to live on. Ordinary setbacks don't ruin a life. A disaster like Priam's does: a good king of Troy who lost his sons, his city and his life in old age.</p>
     <p><b>4. You can be wrong about it.</b> A life of pure pleasure, he said, is fit for grazing animals (like cows), however good it feels.</p>
   </div>
   <div class="poll" id="feelPoll">
-    <p><b>Quick gut check (not graded):</b> is feeling great all day the same as living well?</p>
+    <p><b>Quick first reaction (not graded):</b> is feeling great all day the same as living well?</p>
     <div class="row" role="group" aria-label="Is feeling great the same as living well?">
       <button class="btn ghost" type="button" data-r="yes">Yes</button>
       <button class="btn ghost" type="button" data-r="no">No</button>
@@ -564,6 +569,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="chain" aria-label="A chain of reasons"><span>Why study?</span><b>&rarr;</b><span>to pass the test</span><b>&rarr;</b><span>to get into a good program</span><b>&rarr;</b><span>to get a good job</span><b>&rarr;</b><span class="end">to live well</span></div>
     <p>Ask "why live well?" and there's no further answer. The <b>highest good</b> is like that: wanted for its own sake and never for anything else, and <b>self-sufficient</b>, meaning that on its own it makes a life worth choosing. Everyone agrees on its name, <i>eudaimonia</i>, but not on what it is.</p></div></details>
   <details class="reply" style="--rc:var(--hl-o)"><summary><b>More on the four tests</b></summary><div class="inner"><p><i>Eu</i> means well; a <i>daimōn</i> is a guardian spirit. "Happiness" is the usual translation, but flourishing is better. In W. D. Ross's translation the line is "For one swallow does not make a summer, nor does one day."</p><p>On activity: at the Olympics, he says, the crown goes to those who compete, not to the strongest people watching.</p><p>On being wrong about it: Aristotle names three popular lives, pleasure, honor (public life) and study. He dismisses money as only a means to something else.</p></div></details>
+  <p class="small"><b>Before Lead 1:</b> misses cost nothing here; Rocky just uses them to see what to review.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -574,7 +580,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g1h">Flourishing or not?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "A different question" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Five lives. For each one, first <b>your own</b> verdict (never graded; it locks as soon as you predict), then predict what <b>Aristotle's four tests</b> (Exhibit B) say (graded).</p>
+  <p class="how">Five lives. For each one, first <b>your own</b> verdict (never graded; it locks as soon as you predict), then predict what <b>Aristotle's four tests</b> say (graded). The tests: a whole life, real activity, some luck, and pleasure alone isn't enough. Flourishing here means <i>eudaimonia</i>, living well as a human being.</p>
   <p class="m-nav" id="lifeNav"></p>
   <div class="mach" id="lifeCard"></div>
   <div class="fb" id="lifeFb" aria-live="polite" tabindex="-1"></div>
@@ -598,7 +604,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="argline">4. That part has two sides: one that thinks, and one that can <i>listen</i> to reason, the way you follow good advice. The second side is our feelings and desires.</span>
     <span class="argline concl">So the human good is the soul's activity in line with <b>virtue</b> (excellence), the best and most complete one if there are several, over a complete life.</span>
   </div>
-  <p><b>Fine print.</b> Book I doesn't say "think all day": step 4 brings in trained feelings (though Book X praises a life of study as best, a tension scholars still argue about). No designer is named. And he calls it all a rough outline: ethics allows only as much precision as its subject does.</p>
+  <p class="optlbl">Short on time? Skip this one</p>
+  <details class="reply" style="--rc:var(--hl-y)"><summary><b>Fine print on the argument</b> (Lead 2 repeats the key points)</summary><div class="inner"><p>Book I doesn't say "think all day": step 4 brings in trained feelings (though Book X praises a life of study as best, a tension scholars still argue about). No designer is named. And he calls it all a rough outline: ethics allows only as much precision as its subject does.</p></div></details>
   <p><b>Three objections.</b> Tap each to see the other side.</p>
   <details class="reply" style="--rc:var(--hl-o)"><summary><b>Special isn't the same as good.</b></summary><div class="inner"><p>Humans may be the only animals that file taxes or write cruel jokes. Being unique to us doesn't make something our good.</p><p class="other">The other side says: Aristotle means doing the special thing <i>well</i>, in line with excellence, and cruelty isn't an excellence.</p></div></details>
   <details class="reply" style="--rc:var(--hl-y)"><summary><b>Good <i>at</i> isn't good <i>for</i>.</b></summary><div class="inner"><p>A good thief steals well. That doesn't make stealing well good <i>for</i> the thief. Aristotle needs "excellent human" and "flourishing human" to line up.</p><p class="other">The other side says: a thief's skill isn't a human excellence; it's cleverness aimed at a bad goal.</p></div></details>
@@ -652,7 +659,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g3h">30 days of small choices</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Virtue is a trained habit" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Six small moments across a month. Choose honestly; nothing here is graded. Each choice digs a groove (a worn path your habits follow), and the same choice twice in a row digs deeper. Watch the <b>effort</b> tag on the right-thing option. Two questions at the end. If you reload the page before you answer them, this lead starts over.</p>
+  <p class="how">Six small moments across a month. Choose honestly; the six choices are not graded, but the two questions at the end are. Each choice digs a groove (a worn path your habits follow), and the same choice twice in a row digs deeper. Watch the <b>effort</b> tag on the right-thing option. Two questions at the end. If you reload the page before you answer them, this lead starts over.</p>
   <div class="grooves" id="grooves"></div>
   <div id="simStage"></div>
   <div id="simQs" hidden></div>
@@ -688,9 +695,12 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <details class="reply" style="--rc:var(--hl-y)"><summary><b>Your turn (not graded):</b> is getting angry ever the right thing to do?</summary><div class="inner"><p>Aristotle says yes. In Book IV he says that a person who never gets angry when something truly deserves it is being foolish. The good-tempered person gets angry at the right thing, in the right way and for the right length of time.</p></div></details>
   <ul>
     <li><b>Some things have no mean.</b> Spite, shamelessness, envy, theft and murder are bad by their very names. There's no "right amount" of theft, or of cheating someone.</li>
+  </ul>
+  <p class="optlbl">Short on time? Skip this one</p>
+  <details class="reply" style="--rc:var(--hl-g)"><summary><b>Two more points about the mean</b></summary><div class="inner"><ul>
     <li><b>The extremes aren't equally far away.</b> Cowardice is more opposed to courage than recklessness is. Aim away from your own worse extreme, the way you straighten a bent stick by bending it the other way.</li>
     <li><b>It's hard.</b> In Ross's translation: "any one can get angry—that is easy." The hard part is getting everything right at once: the right person, the right amount, the right time, the right reason and the right way.</li>
-  </ul>
+  </ul></div></details>
   <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -701,7 +711,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g4h">The virtue sorter</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The doctrine of the mean" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Eight people. Each card names its row in the table. Is the person at <b>too little</b> of the virtue, <b>the mean</b>, or <b>too much</b>? Or is it something with <b>no mean at all</b>?</p>
+  <p class="how">Eight people. Each card names its row in the table. Is the person at <b>too little</b> of the virtue, <b>the mean</b>, or <b>too much</b>? Or is it something with <b>no mean at all</b>? Reminder: "too little" means too little of the virtue itself. Cowardice is too much fear, so it counts as too little courage.</p>
   <div id="svList"></div>
   <p class="score" id="svScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -730,7 +740,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g5h">The mean-finder</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Practical wisdom" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">You're the practically wise friend now. Six situations. Move the dial (or tap a number) from <b>too little</b> to <b>too much</b>, read what that response looks like, and lock in the one that hits the mean. It won't always be the middle.</p>
+  <p class="how">You're the practically wise friend now. Six situations. Move the dial (or tap a number) from <b>too little</b> to <b>too much</b>, read what that response looks like, and lock in the one that lands on the mean. It won't always be the middle.</p>
   <p class="m-nav" id="mfNav"></p>
   <div class="mf" id="mfCard"></div>
   <div class="fb" id="mfFb" aria-live="polite" tabindex="-1"></div>
@@ -744,7 +754,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 13 THREE THEORIES ================= -->
 <section class="sheet" aria-labelledby="b6">
   <h2 id="b6"><span style="--mark:var(--hl-b)">Three theories, one screen</span></h2>
-  <p class="wow">Virtue ethics came back in a big way after 1958.</p>
+  <p class="wow">Virtue ethics became popular again after 1958.</p>
   <p>That year the British philosopher Elizabeth Anscombe published "Modern Moral Philosophy." She argued that talk of moral "oughts" and duties had lost its foundations. Philosophers, she said, should look again at human psychology, virtue and flourishing. The revival of Aristotle's approach followed. Side by side:</p>
   <div class="three">
     <div class="th" style="--tc:var(--hl-o)"><h3>Bentham: consequences</h3><dl>
@@ -843,7 +853,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will disagree with you once, from the other side; holding firm with a reason is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -884,12 +894,12 @@ var MID="C2-M07";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["His tests agree.","Spot on.","Right reading.","That's what the tests say."], no:["His tests say otherwise.","Not by his tests.","Check the four points."]},
- g2:{ok:["Stamped.","Good eye.","Sharp."], no:["Look again.","Not quite."]},
- g3:{ok:["Exactly.","That's the idea.","Nailed it."], no:["Not quite.","Think about the grooves.","Close, but no."]},
- g4:{ok:["Right bin.","Binned.","Sorted.","Clean."], no:["Wrong bin.","Check the table.","Not that one."]},
- g5:{ok:["Bullseye.","On the mean.","Spot on.","Practically wise."], no:["Off the mean.","Not quite there."]},
- g6:{ok:["Matched.","That's the one.","Exactly.","Right theory."], no:["Not that theory.","Check the first questions.","Close, but no."]}
+ g1:{ok:["His tests agree.","Right.","Right reading.","That's what the tests say."], no:["His tests say otherwise.","Not by his tests.","Not quite."]},
+ g2:{ok:["Stamped.","Good catch.","Correct."], no:["Not quite.","Not that stamp."]},
+ g3:{ok:["Exactly.","That's the idea.","Correct."], no:["Not quite.","Close, but no.","Not that one."]},
+ g4:{ok:["Right bin.","Sorted.","Correct."], no:["Wrong bin.","Not that one.","Not quite."]},
+ g5:{ok:["Right on the mean.","On the mean.","Correct.","Practically wise."], no:["Off the mean.","Not quite there."]},
+ g6:{ok:["Matched.","That's the one.","Exactly.","Right theory."], no:["Not that theory.","Not that one.","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -927,8 +937,8 @@ var GAMES=[
 var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
-  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet. Tap to see what it needs.","aria-expanded":"false"});
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.classList.add("locked"); b.setAttribute("aria-disabled","true");
   b.addEventListener("click",function(){ showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
@@ -945,6 +955,11 @@ function showCard(g){
   if(openCard===g.id){ P.hidden=true; openCard=null; return; }
   openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
   P.style.setProperty("--c",g.c);
+  if(!cleared[g.id]){
+    P.innerHTML='<h3>Evidence '+g.lead+': not collected yet</h3><p>Clear Lead '+g.lead+' to collect this card. Then tap this number any time to review it.</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+    P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
+    return;
+  }
   P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
   P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
 }
@@ -952,9 +967,10 @@ function showCard(g){
 var toastTimer=null;
 function toast(msg, color){
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
-  T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  try{ if(window.matchMedia("(max-width:520px)").matches){ T.style.top=(Math.max(0,$("dock").getBoundingClientRect().bottom)+8)+"px"; T.style.bottom="auto"; } else { T.style.top=""; T.style.bottom=""; } }catch(e){}
-  var ms=1800; try{ if(window.matchMedia("(max-width:520px)").matches) ms=1200; }catch(e){}
+  
+  /* the toast sits on top of the evidence bar, so it never covers a card, instruction or feedback */
+  try{ T.style.minHeight=$("dock").offsetHeight+"px"; }catch(e){}
+  var ms=1500;
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, ms);
 }
 function celebrate(g, n){
@@ -969,7 +985,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.classList.remove("locked"); b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -993,7 +1009,12 @@ function refreshGot(){
 }
 function doUnlock(k, focus){
   unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
-  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body input"); if(first) first.focus(); }
+  if(focus){
+    var lab=$(UNLOCKS[k]), first=lab.querySelector(".lab-body button, .lab-body input");
+    if(first){ try{ first.focus({preventScroll:true}); }catch(e){ first.focus(); } }
+    /* bring the lead's title into view below the sticky evidence bar */
+    try{ lab.style.scrollMarginTop=($("dock").offsetHeight+44)+"px"; lab.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"start"}); }catch(e){}
+  }
 }
 gotBtns.forEach(function(b){
   b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
@@ -1012,12 +1033,34 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-$("lockBtn").addEventListener("click",function(){
-  if(COVER.locked) return;
+/* two-step lock, same on every page: first tap arms, second tap (after half a second) confirms, arm resets after 4 s */
+function armLock(btn, idleText, validate, commit){
+  var armedAt=0, resetT=null, waitT=null;
+  function reset(){ armedAt=0; clearTimeout(resetT); clearTimeout(waitT); btn.classList.remove("armed","wait"); btn.textContent=idleText; btn.removeAttribute("data-armed"); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armedAt){
+      if(!validate()) return;
+      armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.setAttribute("data-armed","1"); btn.classList.add("armed","wait");
+      waitT=setTimeout(function(){ btn.classList.remove("wait"); },500);
+      resetT=setTimeout(reset,4000);
+      return;
+    }
+    if(Date.now()-armedAt<500) return;   /* the button looks dimmed during this half second */
+    clearTimeout(resetT); clearTimeout(waitT);
+    if(!validate()){ reset(); return; }
+    armedAt=0; btn.classList.remove("armed","wait"); btn.removeAttribute("data-armed");
+    commit();
+  });
+}
+armLock($("lockBtn"),"Lock it in",function(){
   var r=$("myReason").value.replace(/\s+/g," ").trim();
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick Maya, Sam or equal first."; return; }
-  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent= r ? "Give a real reason, in a sentence." : "Add your one-sentence reason."; $("myReason").focus(); return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick Maya, Sam or equal first."; return false; }
+  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent= r ? "Give a real reason, in a sentence." : "Add your one-sentence reason."; $("myReason").focus(); return false; }
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Tap the button again to lock it in. You can't change it after.";
+  return true;
+},function(){
+  COVER.reason=$("myReason").value.replace(/\s+/g," ").trim(); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
 });
@@ -1050,7 +1093,7 @@ function warmLines(){
   return [o.length>=WITEMS.length ? "Warm-up: four people who all told the truth, ranked most to least admired (ungraded): "+names
                                   : "Warm-up: unfinished; ranked so far, most admired first (ungraded): "+names];
 }
-function coverLines(){ return ["Gut call, who is the better person (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+one(COVER.reason) : "not locked in")]; }
+function coverLines(){ return ["Gut call (first instinct), who is the better person (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+one(COVER.reason) : "not locked in")]; }
 var PL={feel:{yes:"yes",no:"no",dep:"depends"}, how:{out:"outcomes",pri:"principles",cha:"character"}};
 function pollLines(){
   function v(k){ return POLLS[k]?PL[k][POLLS[k]]:"not answered"; }
@@ -1113,7 +1156,7 @@ function mcq(container, g, item, rec, onDone, label){
   wrap.appendChild(fb); container.appendChild(wrap);
   return wrap;
 }
-function firstTry(n){ return n ? "after "+n+" miss"+(n>1?"es":"") : "first try"; }
+function firstTry(n){ return n ? "after needing "+n+" more go"+(n>1?"es":"") : "first try"; }
 
 /* ================= WARM-UP: four people, one deed (ungraded) ================= */
 var wOrder=shuffle(WITEMS.map(function(w){return w.id;}));
@@ -1130,7 +1173,7 @@ function warmBuild(){
 var warmLast=0;
 function warmTap(id, byUser){
   if(WARM.order.length>=WITEMS.length || WARM.order.indexOf(id)>=0) return;   /* each tap is final */
-  if(byUser){ var nw=Date.now(); if(nw-warmLast<400) return; warmLast=nw; }   /* double-tap guard */
+  if(byUser){ var nw=Date.now(); if(nw-warmLast<250) return; warmLast=nw; var wc=$("warmCards"); wc.classList.add("guard"); setTimeout(function(){ wc.classList.remove("guard"); },250); }   /* double-tap guard: the other cards look dimmed for 0.25 s so a swallowed tap is never silent */
   WARM.order.push(id);
   if(WARM.order.length===WITEMS.length-1){ WITEMS.forEach(function(w){ if(WARM.order.indexOf(w.id)<0) WARM.order.push(w.id); }); }   /* the last one takes the last place */
   warmShow(byUser); saveState();
@@ -1156,19 +1199,19 @@ warmBuild(); warmShow(false);
 var LIVES=[
  {n:"Baby Ari", d:"Two months old. Well fed, giggly, adored by everyone.", a:"no",
   ok:"Aristotle says children aren't yet called happy (flourishing), because they can't yet do the activities flourishing consists of. We call them happy only out of hope for what's coming.",
-  no:"Think about point 2: flourishing is an <i>activity</i> of living out human excellences. Can a baby do that yet?"},
+  no:"The rule: flourishing is an <i>activity</i> of living out human excellences over a whole life. Can a two-month-old do that yet?"},
  {n:"The Party Lifer", d:"Spends every day chasing fun: food, parties, endless videos. Nothing else. Feels great.", a:"no",
   ok:"Aristotle dismisses a life of pure pleasure as fit for grazing animals. Feeling great isn't the test.",
-  no:"Point 4: you can be wrong about whether you're flourishing. What did Aristotle say about the life of pleasure?"},
+  no:"The rule: you can be wrong about whether you're flourishing, and a life of pure pleasure doesn't count, however good it feels. Does this life have anything besides fun?"},
  {n:"Priam's ending", d:"An admired, good king who, in old age, loses his sons, his city and finally his life.", a:"no",
   ok:"Aristotle uses exactly this example: nobody calls a person with Priam's fortunes happy. (He adds that a good person bears disaster nobly and never becomes truly wretched.)",
-  no:"Point 3: ordinary setbacks don't spoil a life, but disaster on Priam's scale does. Aristotle uses this very king."},
+  no:"The rule: ordinary setbacks don't spoil a life, but a disaster on Priam's scale (losing sons, city and life) does. Aristotle uses this very king."},
  {n:"The Nurse", d:"Works hard at a job she's good at and loves. Honest, brave, has close friends and enough to live on. Often tired, sometimes stressed.", a:"yes",
   ok:"Real activity, real excellences, friends and enough resources, over a long stretch of life. Stress and tiredness don't stop it. (By the four tests, at least. The historical Aristotle thought hard manual work left too little leisure for virtue, another \"whose virtues?\" moment you'll meet later.)",
-  no:"Run the checklist: whole life? active? living out excellences like honesty and courage? enough luck? Feeling tired isn't on the list."},
+  no:"The rule: a flourishing life is a whole life of real activity, with excellences like honesty and courage, plus enough friends and money. Feeling tired isn't on that list. Does she have the rest?"},
  {n:"The Retired Teacher", d:"Seventy. Taught for 40 years, volunteers, gardens, argues about ideas with her grandkids. Lost much of her savings five years ago, but still has enough to live on.", a:"yes",
   ok:"A long life of real activity and excellence, with friends and family, and still enough to live on. Losing savings is an ordinary setback, borne well, not Priam's ruin. (Aristotle himself would have doubted that a woman could fully flourish. You'll meet that problem under \"whose virtues?\")",
-  no:"Point 3: a good person bears ordinary setbacks well. Is losing some savings on Priam's scale?"}
+  no:"The rule: a good person bears ordinary setbacks well; only a disaster on Priam's scale spoils a life. Is losing some savings that big?"}
 ];
 function makeLifeOrder(){ var o; do{ o=shuffle(LIVES.map(function(_,i){return i;})); }while(LIVES[o[o.length-1]].a==="yes"); return o; }  /* fair shuffle, rejected until a "no" is last */
 var lifeOrder=makeLifeOrder();
@@ -1192,7 +1235,7 @@ function lRender(){
   });
   C.appendChild(g1);
   function showAri(){
-    var lbl=el("p",{class:"step-lbl"}); lbl.innerHTML="2. What do Aristotle's four tests (Exhibit B) say?"; C.appendChild(lbl);
+    var lbl=el("p",{class:"step-lbl"}); lbl.innerHTML="2. What do Aristotle's four tests say?"; C.appendChild(lbl);
     var g2=el("div",{role:"group","aria-label":"Aristotle's verdict"});
     shuffle([["yes","By his tests: flourishing"],["no","By his tests: not (or not yet) flourishing"]]).forEach(function(o){
       var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
@@ -1215,7 +1258,7 @@ function lRender(){
 function lTally(){
   var T=$("lifeTally"); T.innerHTML=""; var agree=0, n=0;
   var uns=0; LIVES.forEach(function(L,i){ var R=REC1[i]; if(!R||!R.done||!R.mine) return; n++; if(R.mine===L.a) agree++; if(R.mine==="unsure") uns++; });
-  if(n){ var s=el("span",{class:"on"}); s.textContent="Your verdict matched his tests on "+agree+" of "+n+" so far"+(uns?" (can't say: "+uns+")":""); T.appendChild(s); }
+  if(n){ var s=el("span",{class:"on"}); s.textContent="For interest only (your verdicts are never graded): yours and his tests agreed on "+agree+" of "+n+" so far"+(uns?" (can't say: "+uns+")":""); T.appendChild(s); }
 }
 $("lifeNext").addEventListener("click",function(){ lStep++; lRender(); $("lifeCard").querySelector("button").focus(); });
 lRender();
@@ -1223,18 +1266,19 @@ function lifeLines(){
   var done=LIVES.filter(function(_,i){return REC1[i]&&REC1[i].done;});
   if(!done.length) return ["Lead 1 Flourishing or not: not started"];
   var first=LIVES.filter(function(_,i){return REC1[i]&&REC1[i].done&&!REC1[i].misses;}).length;
+  var lmiss=LIVES.map(function(L,i){return REC1[i]&&REC1[i].misses?L.n:null;}).filter(Boolean);
   var ML={yes:"flourishing",no:"not flourishing",unsure:"can't say"}, agree=0, unsure=0;
   var mine=LIVES.map(function(L,i){ var R=REC1[i]; if(!R||!R.done) return null; if(R.mine===L.a) agree++; if(R.mine==="unsure") unsure++; return L.n+" = "+ML[R.mine]; }).filter(Boolean);
-  return ["Lead 1 Flourishing or not, my own verdicts (each locked before predicting): "+mine.join("; "), "Lead 1 predictions of what Aristotle's four tests say: "+done.length+" of "+LIVES.length+" judged, "+first+" right first try; my own verdict matched his tests on "+agree+" of "+done.length+(unsure?" (can't say: "+unsure+")":"")];
+  return ["Lead 1 Flourishing or not, my own verdicts (each locked before predicting): "+mine.join("; "), "Lead 1 predictions of what Aristotle's four tests say: "+done.length+" of "+LIVES.length+" judged, "+first+" right first try"+(lmiss.length?" (needed another go on: "+lmiss.join(", ")+")":"")+"; my own verdict matched his tests on "+agree+" of "+done.length+(unsure?" (can't say: "+unsure+")":"")];
 }
 
 /* ================= LEAD 2: FACT-CHECK ================= */
 var FC=[
- {t:"A good flute player is one who plays the flute well, and Aristotle uses that as his model for what 'good' means.", s:"flute player", a:"in", why:"Straight from Book I, chapter 7: the good of anything with a function lies in doing its function well."},
- {t:"Aristotle says a good character is enough to flourish, even if you never get to act on it.", s:"character without action", a:"out", why:"Distortion. Flourishing is <i>activity</i> in line with virtue. A good character slept through life doesn't count; the crown goes to those who compete."},
- {t:"Aristotle calls his account of the good a rough outline, to be filled in later.", s:"rough outline", a:"in", why:"True, and easy to miss. He sketches the good \"roughly\" first and says ethics allows only as much precision as its subject does."},
- {t:"Since animals also have feelings, Aristotle leaves feelings out of the human function entirely.", s:"feelings left out", a:"out", why:"Distortion. Sensing is shared with animals, but the part of us that can <i>listen</i> to reason (feelings and desires) is part of the rational life. That's why trained feelings matter."},
- {t:"The function argument says a creator designed humans for reasoning, the way a smith designs a knife.", s:"designed by a creator", a:"out", why:"Distortion. The argument's examples are crafts and body parts, and it names no designer. For Aristotle, living things have ends by nature."}
+ {t:"A good flute player is one who plays the flute well, and Aristotle uses that as his model for what 'good' means.", s:"flute player", a:"in", h:"The rule: Aristotle says the good of anything with a function lies in doing that function well. Does the claim say that?", why:"Straight from Book I, chapter 7: the good of anything with a function lies in doing its function well."},
+ {t:"Aristotle says a good character is enough to flourish, even if you never get to act on it.", s:"character without action", a:"out", h:"The rule: flourishing is an activity, not just a trait. Does the claim let you flourish without ever acting?", why:"Distortion. Flourishing is <i>activity</i> in line with virtue. A good character slept through life doesn't count; the crown goes to those who compete."},
+ {t:"Aristotle calls his account of the good a rough outline, to be filled in later.", s:"rough outline", a:"in", h:"The rule: Aristotle calls his own account a rough outline and says ethics allows only as much precision as its subject does. Does the claim match that?", why:"True, and easy to miss. He sketches the good \"roughly\" first and says ethics allows only as much precision as its subject does."},
+ {t:"Since animals also have feelings, Aristotle leaves feelings out of the human function entirely.", s:"feelings left out", a:"out", h:"The rule: the part of us that listens to reason (feelings and desires) counts as part of the human function. Does the claim leave it out?", why:"Distortion. Sensing is shared with animals, but the part of us that can <i>listen</i> to reason (feelings and desires) is part of the rational life. That's why trained feelings matter."},
+ {t:"The function argument says a creator designed humans for reasoning, the way a smith designs a knife.", s:"designed by a creator", a:"out", h:"The rule: the argument's examples are crafts and body parts, and it names no designer. Does the claim bring one in?", why:"Distortion. The argument's examples are crafts and body parts, and it names no designer. For Aristotle, living things have ends by nature."}
 ];
 var FCL={"in":"In Book I","out":"Distortion"};
 var fcOrder=shuffle(FC.map(function(_,i){return i;}));
@@ -1258,7 +1302,7 @@ fcOrder.forEach(function(i){
         if(fcDone===FC.length){ $("fcScore").textContent="All five stamped. The sneaky ones sound like Aristotle but quietly drop activity, feelings or nature."; clear("g2"); }
       } else {
         R.misses++;
-        setFb(fb,"bad",vword("g2","no"), R.misses===1 ? "Look back at Exhibit C and the fine print under it." : it.why);
+        setFb(fb,"bad",vword("g2","no"), R.misses===1 ? it.h : it.why);
       }
       touch("g2");
     });
@@ -1270,7 +1314,7 @@ function fcLines(){
   if(!fcDone) return ["Lead 2 Fact-check the function argument: not started"];
   var first=FC.filter(function(_,i){return REC2.items[i].done && !REC2.items[i].misses;}).length;
   var miss=FC.map(function(it,i){return REC2.items[i].misses?it.s:null;}).filter(Boolean);
-  return ["Lead 2 Fact-check: "+fcDone+" of "+FC.length+" stamped so far, "+first+" first try"+(miss.length?"; needed a second go on: "+miss.join(", "):"")];
+  return ["Lead 2 Fact-check: "+fcDone+" of "+FC.length+" stamped so far, "+first+" first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 3: HABIT SIMULATOR ================= */
@@ -1279,7 +1323,7 @@ var TN={}; TRAITS.forEach(function(t){TN[t[0]]=t[1];});
 var MOMENTS=[
  {day:1, t:"hon", s:"The cashier hands you $5 too much change.", v:"Hand the extra back", d:"Pocket it. Their mistake."},
  {day:5, t:"sel", s:"11:40 p.m., test tomorrow. Another video autoplays.", v:"Phone down. Sleep.", d:"Just one more... (it's never one)"},
- {day:10, t:"cou", s:"The group chat starts ganging up on a kid who isn't in it.", v:"Post: \"not cool, drop it\"", d:"Send a laughing emoji to fit in"},
+ {day:10, t:"cou", s:"The group chat starts attacking a kid who isn't in it.", v:"Post: \"not cool, stop it\"", d:"Send a laughing emoji to fit in"},
  {day:15, t:"hon", s:"You forgot to do your part of the group project.", v:"Tell the group and offer to fix it tonight", d:"Say your file \"got corrupted\""},
  {day:22, t:"cou", s:"Tryouts for the team (or the play) are tomorrow. You might not make it.", v:"Sign up anyway", d:"Skip it. Maybe next year."},
  {day:30, t:"sel", s:"You promised yourself 30 minutes of guitar practice today.", v:"Do the 30 minutes", d:"Skip it and \"do double tomorrow\""}
@@ -1380,7 +1424,7 @@ function simEnd(){
   if(!sqBuilt){
     sqBuilt=true; var Q=$("simQs"); Q.hidden=false;
     var intro=el("p",{class:"pause"}); intro.textContent="Now two questions to clear this lead."; Q.appendChild(intro);
-    SQ.forEach(function(item,qi){ mcq(Q,"g3",item,REC3.q[qi],function(){ sqDone++; if(sqDone===SQ.length){ $("simScore").textContent="Both questions cracked."; clear("g3"); } },"Q"+(qi+1)+"."); });
+    SQ.forEach(function(item,qi){ mcq(Q,"g3",item,REC3.q[qi],function(){ sqDone++; if(sqDone===SQ.length){ $("simScore").textContent="Both questions answered."; clear("g3"); } },"Q"+(qi+1)+"."); });
   }
 }
 drawGrooves(); simRender();
@@ -1401,7 +1445,7 @@ var SV=[
  {ax:"Money: giving, getting, spending", t:"Treats the whole team to pizza with this month's rent money.", s:"pizza with rent money", a:"exc", why:"Giving more than you can, to the wrong ends: wastefulness."},
  {ax:"Money: giving, getting, spending", t:"Shoplifts, but only a moderate amount.", s:"moderate shoplifting", a:"none", why:"Theft has no mean: \"a moderate amount of theft\" is still theft."},
  {ax:"Money: giving, getting, spending", t:"Cheats a younger kid in a trade of game cards, but only by a little.", s:"cheating in a trade", a:"none", why:"Like theft, cheating someone has no right amount: \"cheating in moderation\" is still cheating."},
- {ax:"Truth about yourself", t:"Wins the science fair and insists \"it was nothing, anyone could have done it.\"", s:"science fair", a:"def", why:"Claiming less than is true: false modesty."},
+ {ax:"Truth about yourself", t:"Wins the science fair and insists, 'It was nothing, anyone could have done it.'", s:"science fair", a:"def", why:"Claiming less than is true: false modesty."},
  {ax:"Joking", t:"Can't let any serious moment pass without a joke, even when a friend is upset.", s:"jokes when friend is upset", a:"exc", why:"Too much joking, at the wrong time: clowning (Aristotle's \"buffoonery\")."},
  {ax:"Anger", t:"Gets angry at the right person, for the right reason, and says so calmly but firmly.", s:"calm firm anger", a:"mean", why:"Right person, right reason, right way: good temper. Good temper still includes anger."},
  {ax:"Getting along with people", t:"Tells a friend kindly when they're wrong, without picking a fight about it.", s:"kind disagreement", a:"mean", why:"Neither flattering nor quarrelsome: friendliness."}
@@ -1427,7 +1471,7 @@ shuffle(SV.map(function(_,i){return i;})).forEach(function(i){
         if(svDone===SV.length){ $("svScore").textContent="All "+SV.length+" sorted. Every row has two ways to miss and one way to hit."; clear("g4"); }
       } else {
         R.misses++;
-        var hint = R.misses>1 ? it.why : (it.a==="none" ? "Is there any right amount of this at all? Check the list under the table." : v==="none" ? "This one does have a right amount. Is the person above it, below it, or on it?" : "Find this row in the table. Which column describes this person? (The columns mean too little or too much of the virtue itself: cowardice is too little courage, because fear is not the virtue.)");
+        var hint = R.misses>1 ? it.why : (it.a==="none" ? "The rule: theft, cheating, envy and murder are bad by their very names, so they have no right amount. Is there any right amount of this?" : v==="none" ? "This one does have a right amount. Is the person above it, below it, or on it?" : "Too little means short of the virtue itself (cowardice is too little courage, because fear is not the virtue). The mean is the right amount. Too much is past it. Which fits this person?");
         setFb(fb,"bad",vword("g4","no"),hint);
       }
       touch("g4");
@@ -1440,31 +1484,31 @@ function svLines(){
   if(!svDone) return ["Lead 4 Virtue sorter: not started"];
   var first=SV.filter(function(_,i){return REC4[i].done&&!REC4[i].misses;}).length;
   var miss=SV.map(function(it,i){return REC4[i].misses?it.s:null;}).filter(Boolean);
-  return ["Lead 4 Virtue sorter: "+svDone+" of "+SV.length+" sorted so far, "+first+" first try"+(miss.length?"; tricky ones: "+miss.join(", "):"")];
+  return ["Lead 4 Virtue sorter: "+svDone+" of "+SV.length+" sorted so far, "+first+" first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 5: MEAN-FINDER ================= */
 var MF=[
  {v:"Courage", lo:"Cowardice", hi:"Recklessness", n:"Smoke in the hallway", s:"The fire alarm goes off, and this time there's real smoke. A younger student is frozen in the hallway near you.",
-  o:["Duck into an empty classroom and wait for it all to blow over.","Get yourself out fast and hope somebody else notices her.","Shout \"Come on, follow me!\" at her as you run on past.","Take her hand, lead her out low, and tell the first adult you see.","Get her out, then head straight back into the smoke to fight the fire."], a:3,
+  o:["Hide in an empty classroom and wait until it is all over.","Get yourself out fast and hope somebody else notices her.","Shout \"Come on, follow me!\" at her as you run on past.","Take her hand, lead her out low, and tell the first adult you see.","Get her out, then head straight back into the smoke to fight the fire."], a:3,
   why:"Real danger, a real person to help, a sensible way to do it, and an adult told. Courage here is near the bold end, but heading back in to fight a fire is recklessness.",
   lo_h:"She's frozen. Does this response actually get her out? Courage means facing the fear for something that matters. (Cowardice counts as too little courage, because fear is not the virtue.)", hi_h:"You're past the person who needed help and into danger nobody asked you to face. That's the reckless side."},
  {v:"Courage", lo:"Cowardice", hi:"Recklessness", n:"The railing dare", s:"A friend dares you to film yourself hanging off a high bridge railing for a viral clip.",
-  o:["Get so spooked you avoid walking over any bridge for a month.","Say \"nah, not worth it\" and tell them it's how people get hurt.","Do a \"safer\" version on a lower railing, just for the clip.","Do it, but have a friend filming close by in case something goes wrong.","Do it one-handed, since the scarier version gets more views."], a:1,
+  o:["Get so scared that you avoid every bridge for a month.","Say \"nah, not worth it\" and tell them it's how people get hurt.","Do a \"safer\" version on a lower railing, just for the clip.","Do it, but have a friend filming close by in case something goes wrong.","Do it one-handed, since the scarier version gets more views."], a:1,
   why:"Courage is facing danger for something worth it. A risk for views is recklessness, so the mean is near the cautious end. Saying no under peer pressure takes some nerve too.",
   lo_h:"Avoiding all bridges is fear out of proportion: that's the cowardly side (too little courage).", hi_h:"What's the fine reason for this risk? Without one, facing danger isn't courage, it's recklessness."},
  {v:"Good temper", lo:"Spinelessness", hi:"Short temper", n:"The spilled drink", s:"Your little brother, rushing past, knocks your drink onto your finished homework. It's an accident, but he's been told twice not to run near your desk.",
-  o:["Say nothing and quietly redo the page; he'll do it again tomorrow.","\"Hey! Slow down near my desk.\" Then mop up together and move on.","Snap at him so hard that he ends up in tears for the evening.","Yell, then tell your parents he obviously did it on purpose.","Rage, and break one of his toys so that it feels even."], a:1,
-  why:"It was an accident, but a careless one. Aristotle says the good-tempered person leans toward forgiving, so near the gentle end is right, but not silent: he's been told twice.",
+  o:["Say nothing and quietly redo the page; he'll do it again tomorrow.","\"Hey! Slow down near my desk.\" Then clean up together and move on.","Shout at him so harshly that he cries for the rest of the evening.","Yell, then tell your parents he obviously did it on purpose.","Explode with rage and break one of his toys to pay him back."], a:1,
+  why:"It was an accident, but a careless one. Aristotle says the good-tempered person leans toward forgiving, so near the gentle end is right, but not silent, because he's been told twice.",
   lo_h:"He's been told twice. Some annoyance is fitting, and saying nothing means it keeps happening.", hi_h:"It was an accident. Is this the right amount of anger, toward the right person, in the right way?"},
  {v:"Good temper", lo:"Spinelessness", hi:"Short temper", n:"The fake photo", s:"Someone at school posts an edited, humiliating fake photo of your friend, and it's spreading.",
-  o:["Shrug it off. It isn't your photo, so it isn't your business.","Feel a bit bad about it, then keep on scrolling past it.","Message your friend \"that sucks, sorry\" and leave it there.","Get angry: tell them to delete it, report it, loop in an adult.","Post something cruel about the poster and get everyone to join in."], a:3,
-  why:"A real wrong against a friend deserves real anger, aimed at the right person, with the right goal: stopping it. Here the mean is near the fierce end, while piling on goes too far.",
-  lo_h:"Your friend was seriously wronged. Aristotle thinks not getting angry at what deserves it is a failing too.", hi_h:"Angry at the right person, yes, but now you're piling on and creating a new wrong."},
+  o:["Ignore it. It isn't your photo, so it isn't your problem.","Feel a bit bad about it, then keep on scrolling past it.","Message your friend \"that sucks, sorry\" and do nothing else.","Get angry: tell them to delete it, report it, bring in an adult.","Post something cruel about the poster and get everyone to join in."], a:3,
+  why:"A real wrong against a friend deserves real anger, aimed at the right person, with the right goal: stopping it. Here the mean is near the fierce end, while attacking back as part of a crowd goes too far.",
+  lo_h:"Your friend was seriously wronged. Aristotle thinks not getting angry at what deserves it is a failing too.", hi_h:"Angry at the right person, yes, but now you're joining a crowd attack, which is a new wrong."},
  {v:"Generosity", lo:"Stinginess", hi:"Wastefulness", n:"The fire fundraiser", s:"A classmate's family lost a lot in a house fire. There's a fundraiser. You have $40 saved.",
   o:["Give nothing at all. You earned that money, so it stays yours.","Give $1, mostly so your name shows up on the list of donors.","Give what you can spare, say $15, and help sort donations.","Give all $40, then borrow $30 from your sister to give more.","Pledge $500 in front of everyone, though you don't have it."], a:2,
   why:"Generosity is relative to what you have: a real gift you can afford, plus your time. This time the mean really is in the middle.",
-  lo_h:"Someone is in real need and you can help. This is the stingy side.", hi_h:"Giving away other people's money (borrowing it, or promising money you don't have) tips into wastefulness."},
+  lo_h:"Someone is in real need and you can help. This is the stingy side.", hi_h:"Giving away other people's money (borrowing it, or promising money you don't have) is wastefulness."},
  {v:"Truthfulness", lo:"False modesty", hi:"Boastfulness", n:"The coding win", s:"You won a regional coding competition after months of work. A friend asks how it went.",
   o:["\"Oh, I didn't really do anything. It was mostly luck.\"","\"It went fine, I guess. Nothing special to report.\"","\"I won! I'm proud of it. It took months of practice.\"","\"I won, obviously. I'm basically the best coder in the country.\"","\"I won, and a tech company already wants to hire me.\" (They don't.)"], a:2,
   why:"Truthfulness about yourself means saying what's true, no more and no less. Pride in real work is fine.",
@@ -1497,7 +1541,7 @@ function mfRender(){
     } else {
       R.misses++;
       var h=k<M.a?M.lo_h:M.hi_h;
-      setFb($("mfFb"),"bad",vword("g5","no")+" "+(k<M.a?"Too far toward "+M.lo.toLowerCase()+".":"Too far toward "+M.hi.toLowerCase()+"."), h+(R.misses>=2?" (Hint: try notch "+(M.a+1)+".)":""));
+      setFb($("mfFb"),"bad",vword("g5","no")+" "+(k<M.a?"Too far toward "+M.lo.toLowerCase()+".":"Too far toward "+M.hi.toLowerCase()+"."), h+(R.misses>=3?" (Hint: try notch "+(M.a+1)+".)":R.misses===2?" (Hint: the mean is never at either end here. It is notch 2, 3 or 4.)":""));
     }
     touch("g5");
   });
@@ -1515,12 +1559,12 @@ function mfLines(){
   var done=MF.filter(function(_,i){return REC5[i]&&REC5[i].done;});
   if(!done.length) return ["Lead 5 Mean-finder: not started"];
   var miss=MF.map(function(M,i){return REC5[i]&&REC5[i].misses?M.n:null;}).filter(Boolean);
-  return ["Lead 5 Mean-finder: "+done.length+" of "+MF.length+" situations done, "+mfFirst+" first try"+(miss.length?"; took more than one try: "+miss.join(", "):"")];
+  return ["Lead 5 Mean-finder: "+done.length+" of "+MF.length+" situations done, "+mfFirst+" first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 6: ONE CASE, THREE ADVISORS ================= */
 var ADV=[
- {k:"b", tag:"Add it up", t:"\"Add it up. The concert is a huge, rare joy for you. If Dev can easily find another helper, his loss is small. If the total comes out ahead, go.\"",
+ {k:"b", tag:"Add it up", t:"\"Add it up. The concert is a huge, rare joy for you. If Dev can easily find another helper, his loss is small. If the good adds up to more than the harm, go.\"",
   why:"Weighing the happiness on each side: consequences, Bentham-style."},
  {k:"k", tag:"Could everyone?", t:"\"Could everyone break a promise whenever something better came along? Then promises would mean nothing. You gave your word, so keep it and help Dev.\"",
   why:"Testing the principle behind the act as a law for everyone: Kant."},
@@ -1541,7 +1585,7 @@ shuffle(ADV.map(function(_,i){return i;})).forEach(function(i){
       var R=REC6.adv[i]; if(R.done) return;
       row.querySelectorAll(".pick").forEach(function(x){x.classList.remove("chosen");}); b.classList.add("chosen");
       if(v===it.k){ R.done=true; box.classList.add("locked"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;}); setFb(fb,"good",vword("g6","ok"),it.why); focusFb(fb); advDone++; if(advDone===ADV.length) showTw(); }
-      else { R.misses++; setFb(fb,"bad",vword("g6","no"), R.misses>1?it.why:"Look at the first question each theory asks on the three-theories screen. Which one is this advisor asking?"); }
+      else { R.misses++; setFb(fb,"bad",vword("g6","no"), R.misses>1?it.why:"The first questions: Bentham asks which act brings the most happiness; Kant asks whether the principle could be a law for everyone; Aristotle asks what a person of good character would do. Which one is this advisor asking?"); }
       touch("g6");
     });
     row.appendChild(b);
@@ -1623,13 +1667,18 @@ function finRender(){
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>Wallet:</b> '+esc(WL[FIN.wallet])+'. '+esc(who)+'</p><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
+function finCheck(){
+  var reason=$("finReason").value.replace(/\s+/g," ").trim(), moved=String($("finMoved").value).replace(/\s+/g," ").trim();
+  if(!pickWallet){ setFb($("finFb"),"bad","First things first.","Make the wallet call again: Maya, Sam or equal."); return false; }
+  if(!pickView){ setFb($("finFb"),"bad","One more.","Pick the view closest to yours."); return false; }
+  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return false; }
+  if(!moved){ setFb($("finFb"),"bad","Last thing.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  setFb($("finFb"),"","Ready.","Tap the button again to lock your verdict. You can't change it after.");
+  return true;
+}
+armLock($("finBtn"),"Lock my verdict",finCheck,function(){
   if(FIN.done) return;
   var reason=$("finReason").value.replace(/\s+/g," ").trim(), moved=String($("finMoved").value).replace(/\s+/g," ").trim();
-  if(!pickWallet){ setFb($("finFb"),"bad","First things first.","Make the wallet call again: Maya, Sam or equal."); return; }
-  if(!pickView){ setFb($("finFb"),"bad","One more.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","Last thing.","Pick what moved you most."); $("finMoved").focus(); return; }
   FIN.wallet=pickWallet; FIN.view=pickView; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below."); focusFb($("finFb"));
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();

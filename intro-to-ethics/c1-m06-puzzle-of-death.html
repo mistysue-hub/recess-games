@@ -421,8 +421,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 .poll .btn[aria-pressed="true"]:disabled, .pillcard .btn[aria-pressed="true"]:disabled{opacity:1; cursor:default}
 
 /* ---------- engagement pass: warm-up game, toast at the top, lead tip ---------- */
-.toast{top:76px; bottom:auto}
+.toast{top:0; bottom:auto; width:min(100vw,760px); max-width:none; display:flex; align-items:center; justify-content:center; text-align:center; pointer-events:none;
+  border-width:0 0 4px; border-style:solid; border-radius:0 0 12px 12px; padding:6px 14px; font-size:.88rem; line-height:1.25}
+.toast[hidden]{display:none}
+.toast{animation:toastIn .25s ease-out both}
 @keyframes toastIn{0%{transform:translate(-50%,-26px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+/* a tap that is briefly ignored always looks dimmed, so it is never silent */
+.btn.dim, .wu-b.dim{opacity:.45; cursor:default}
+.btn.armed{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+:root[data-theme="dark"] .btn.armed{color:var(--hl-ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn.armed{color:var(--hl-ink)} }
+.dock .pip.locked{cursor:default; opacity:.8}
+.lockin textarea#myReason, textarea.reasonbox{min-height:88px; resize:vertical}
 .leadnote{color:var(--ink-soft); margin:0 0 10px}
 .warm .wu{margin:14px 0 4px}
 .wu-dots{display:flex; gap:8px; margin:0 0 4px; min-height:22px}
@@ -468,7 +478,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <p style="margin:0"><b>Before you start:</b> this file is about ideas and imaginary people. Pausing is fine, and your progress saves.</p>
   </div>
   <div class="hook">
-    <p>Epicurus, a Greek philosopher, said death is "nothing to us": being dead can't be bad for the one who's dead. Lock in your gut call now. You'll make it again at the end.</p>
+    <p>Epicurus, a Greek philosopher, said death is "nothing to us": being dead can't be bad for the one who's dead. Make your gut call now: your first quick feeling, before you think it through. Lock it in. You'll make the call again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row" role="group" aria-label="Your gut call">
@@ -477,7 +487,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
       <button class="vbtn" type="button" data-v="unsure" aria-pressed="false">Not sure yet</button>
     </div>
     <label for="myReason">My reason, in a few words</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="3" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of an hourglass standing in front of a hand mirror, with stars around it">
@@ -495,13 +505,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <path d="M300 118 l3 -7 3 7 7 3 -7 3 -3 7 -3 -7 -7 -3z" fill="#74E5AA" stroke="#2A2016" stroke-width="2"/>
     <circle cx="44" cy="110" r="5" fill="#FF93C9" stroke="#2A2016" stroke-width="2"/>
   </svg>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Lock your gut call, then read and open each lead</span><span>About 33 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Lock your gut call, then read and open each lead</span><span>About 45 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
 <section class="sheet warm" aria-labelledby="wuh">
   <h2 id="wuh"><span style="--mark:var(--hl-g)">Warm-up: felt it or not?</span></h2>
-  <p>Six tiny cases, about a minute. Tap your gut answer. Nothing is graded, and your first tap on each case sticks.</p>
+  <p>Six tiny cases, about 2 minutes. Tap your first quick answer. Nothing is graded, and your first tap on each case sticks.</p>
   <div class="wu" id="wu">
     <div class="wu-dots" id="wuDots" aria-hidden="true"></div>
     <div id="wuPlay">
@@ -526,6 +536,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="argline concl">So, being dead can't be bad for them.</span>
   </div>
   <p><b>Premises</b> are an argument's starting claims. The <b>conclusion</b> is what they're meant to prove. This argument is also <b>valid</b>: if both premises are true, the conclusion has to be true. So anyone who thinks Epicurus is wrong must say which premise is false.</p>
+  <p>Epicurus also gave a second version, the <b>no-subject</b> argument: while a person exists, their death hasn't happened; once it has, they no longer exist. The two never meet, so there's never a <i>subject</i> (a someone) for it to be bad for.</p>
+  <p>Premise 2 assumes there is no afterlife. Many people, in many faiths, believe there is one, and Epicurus did not. This file doesn't try to settle that. It asks: if Premise 2 is true, does the argument work?</p>
+  <details class="sealed"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: Epicurus, a little more</summary><div class="inner">
+    <p>Epicurus taught in a house with a garden, so his school was called "the Garden." He was a hedonist (yes, Case 3's Epicurus): he sought freedom from bodily pain and from trouble in the mind.</p>
+    <p>Notice how narrow the claim is. It's about being dead, and whether that is bad <i>for the one who is dead</i>. Not about whether dying can hurt, and not about how other people are affected. Those are different questions, and not the ones in this file.</p>
+    <p class="note">Epicurus wasn't saying life doesn't matter. He thought a pleasant, peaceful life was the best thing there is. His aim was to let people enjoy it without dread.</p>
+  </div></details>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -536,8 +553,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g1h">Spot the premise</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Lock in your gut call on the cover, read "Epicurus: 'nothing to us'" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="small leadnote">Tip: finish a lead in one sitting. If you reload halfway, it starts over.</p>
+  <p class="small leadnote">Tip: try to finish a lead in one sitting. If you reload halfway, that lead starts over (finished leads stay saved).</p>
+  <p class="small leadnote">Misses cost nothing here; Rocky just uses them to see what to review.</p>
   <p class="how"><b>Part 1.</b> A modern Epicurus fan makes the case at lunch, mixed with chatter. Tag each sentence: is it a <b>premise</b>, the <b>conclusion</b>, or <b>just chatter</b> that isn't part of the argument?</p>
+  <div class="row" id="spotSkipRow"><button class="btn ghost" type="button" id="spotSkip">Already know premises? Skip to Part 2</button></div>
   <p class="streak" id="spotStreak" aria-live="polite"></p>
   <div id="spotList"></div>
   <div id="spotPart2" hidden>
@@ -552,26 +571,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
 </section>
 
-<!-- ================= EPICURUS, A LITTLE MORE ================= -->
-<section class="sheet" aria-labelledby="bx">
-  <h2 id="bx"><span style="--mark:var(--hl-p)">Epicurus, a little more</span></h2>
-  <p>Epicurus taught in a house with a garden, so his school was called "the Garden." He was a hedonist (yes, Case 3's Epicurus): he sought freedom from bodily pain and from trouble in the mind.</p>
-  <p>He had a catchy second version of the argument too, which philosophers call the <b>no-subject</b> argument: while a person exists, their death hasn't happened; once it has, they no longer exist. The two never meet, so there's never a <i>subject</i> (a someone) for it to be bad for.</p>
-  <p>Notice how narrow the claim is. It's about being dead, and whether that is bad <i>for the one who is dead</i>. Not about whether dying can hurt, and not about how other people are affected. Those are different questions, and not the ones in this file.</p>
-  <p class="note">And don't misread him: Epicurus wasn't saying life doesn't matter. He thought a pleasant, peaceful life was the best thing there is. His aim was to let people enjoy it without dread.</p>
-</section>
-
 <!-- ================= 2 RECAP ================= -->
 <section class="sheet" aria-labelledby="b0">
-  <h2 id="b0"><span style="--mark:var(--hl-y)">Your toolkit so far</span></h2>
-  <p>For three cases you've been asking one question: what makes a life go well <i>for the person living it</i>? That's <b>well-being</b>. You've met the three big families of answers:</p>
-  <div class="dims">
-    <div style="--dc:var(--hl-p)"><b>Hedonism (Case 3):</b> only pleasure is good for you in itself, and only pain is bad for you in itself.</div>
-    <div style="--dc:var(--hl-o)"><b>Desire theory (Case 4):</b> your life goes well when the things you want actually happen, whether or not you find out.</div>
-    <div style="--dc:var(--hl-g)"><b>Objective list theories (Case 5):</b> some things, like friendship, knowledge and achievement, are good for you whether or not you want them or enjoy them.</div>
-  </div>
-  <p>Plus the Case 2 move: an argument is <b>valid</b> when, <i>if</i> its premises (the starting claims) are true, its conclusion has to be true too. If you think a valid argument's conclusion is false, you must reject at least one premise.</p>
-  <p>Next, all of it gets tested from the strangest angle there is. Two questions run through this file. Can being dead be bad for the one who's dead? And would never dying be good?</p>
+  <h2 id="b0"><span style="--mark:var(--hl-y)">Where we are</span></h2>
+  <p>Two questions run through this file. Can being dead be bad for the one who's dead? And would never dying be good? For three cases you've asked what makes a life go well <i>for the person living it</i>. That's <b>well-being</b>.</p>
+  <details class="sealed"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: your toolkit so far</summary><div class="inner">
+    <p>You've met three big families of answers:</p>
+    <div class="dims">
+      <div style="--dc:var(--hl-p)"><b>Hedonism (Case 3):</b> only pleasure is good for you in itself, and only pain is bad for you in itself.</div>
+      <div style="--dc:var(--hl-o)"><b>Desire theory (Case 4):</b> your life goes well when the things you want actually happen, whether or not you find out.</div>
+      <div style="--dc:var(--hl-g)"><b>Objective list theories (Case 5):</b> some things, like friendship, knowledge and achievement, are good for you whether or not you want them or enjoy them.</div>
+    </div>
+    <p>Plus the Case 2 idea: an argument is <b>valid</b> when, <i>if</i> its premises (the starting claims) are true, its conclusion has to be true too. If you think a valid argument's conclusion is false, you must reject at least one premise.</p>
+  </div></details>
 </section>
 
 <!-- ================= 5 DEPRIVATION ================= -->
@@ -607,8 +619,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="compFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <p>Here's a distinction that helps untangle the puzzle. Something is <b>intrinsically bad</b> for you if it's bad in itself, the way pain is. Something is <b>comparatively bad</b> (philosophers also say <i>extrinsically</i> bad) if it's bad because of the good it stops you from having. On the deprivation account, being dead isn't bad the way pain is. It's bad the way the lost letter is.</p>
-  <p>Now look at Premise 1 again. "Bad only if experienced" sounds true for <i>intrinsic</i> badness: a pain nobody feels isn't a pain. It sounds false for <i>comparative</i> badness. So the argument may get its power by sliding between the two.</p>
-  <p>And the no-subject argument? The deprivationist says death is bad for <b>the person who lived</b>: it's a fact about their life as a whole, which held less good than it would have. (Exactly <i>when</i> it's bad is still argued over; Nagel thought a misfortune doesn't need a date.)</p>
+  <p>Now look at Premise 1 again. "Bad only if experienced" sounds true for <i>intrinsic</i> badness: a pain nobody feels isn't a pain. It sounds false for <i>comparative</i> badness. So the argument may seem convincing only because it quietly switches between the two.</p>
+  <p>What about the no-subject argument? The deprivationist says death is bad for <b>the person who lived</b>: it's a fact about their life as a whole, which held less good than it would have. (Exactly <i>when</i> it's bad is still argued over; Nagel thought a misfortune doesn't need a date.)</p>
   </div>
 </section>
 
@@ -631,7 +643,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div style="--dc:var(--hl-o)"><b>Desire theory:</b> death leaves desires unsatisfied: plans never finished, hopes never met. Desire theorists already say a desire can go unsatisfied without the person finding out, so never feeling it is no problem for them.</div>
     <div style="--dc:var(--hl-g)"><b>Objective list:</b> death takes away future goods on the list, like friendship, knowledge and achievement. They'd have been good for the person whether or not they wanted or felt them.</div>
   </div>
-  <p>So who is still on Epicurus's side? Only someone who says the <i>only</i> way anything can be bad for you is by being an unpleasant experience. That's a much narrower club than "hedonists."</p>
+  <p>So who is still on Epicurus's side? Only someone who says the <i>only</i> way anything can be bad for you is by being an unpleasant experience. That's a much smaller group than "hedonists."</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -642,8 +654,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g2h">Three theories, one question</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 1, read "What death takes away" and "How your three theories answer" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="small leadnote">Tip: finish a lead in one sitting. If you reload halfway, it starts over.</p>
-  <p class="how">Seven people explain whether death is bad for the one who dies. Which theory is each one speaking for? Careful: the words on the surface can mislead. Ask what is actually doing the work. One of them isn't a deprivation theorist at all.</p>
+  <p class="small leadnote">Tip: try to finish a lead in one sitting. If you reload halfway, that lead starts over (finished leads stay saved).</p>
+  <p class="how">Seven people explain whether death is bad for the one who dies. Which theory is each one speaking for? Careful: the words on the surface can mislead. Ask what the real reason is. One of them isn't a deprivation theorist at all.</p>
   <p class="streak" id="theoStreak" aria-live="polite"></p>
   <div id="theoList"></div>
   <p class="score" id="theoScore" aria-live="polite"></p>
@@ -656,7 +668,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b4">
   <h2 id="b4"><span style="--mark:var(--hl-b)">Lucretius's mirror</span></h2>
   <p class="wow">A Roman poet held up a mirror made of time.</p>
-  <p>Lucretius (about 99 to about 55 BCE) was a Roman poet and a big fan of Epicurus. He wrote a long poem, <i>On the Nature of Things</i> (in Latin, <i>De rerum natura</i>), that explains Epicurus's ideas in verse, everything from atoms to the weather. In its third book he adds a famous argument.</p>
+  <p>Lucretius (about 99 to about 55 BCE) was a Roman poet who admired Epicurus a great deal. He wrote a long poem, <i>On the Nature of Things</i> (in Latin, <i>De rerum natura</i>), that explains Epicurus's ideas in verse, everything from atoms to the weather. In its third book he adds a famous argument.</p>
   <p>Think about all the time that passed before anyone alive today was born: the pyramids being built, the dinosaurs, the whole history of the universe. Nobody worries about having missed it. Lucretius says nature is holding up a mirror: the time after a life is the reflection of the time before it. If nobody is troubled by the first, why should anyone be troubled by the second?</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit C: the symmetry argument</span>
@@ -672,7 +684,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="mirrorFb" aria-live="polite" tabindex="-1"></div>
   </div>
-  <p>Meet Sam, an imaginary person we'll use from here on. Turned against the deprivation account, the mirror looks like this: if Sam dying at 80 instead of 90 deprives Sam of ten good years, doesn't Sam being born in 1999 instead of 1989 deprive Sam of ten good years too? Yet nobody mourns being born late. So either both are bad, or neither is.</p>
+  <p>Meet Sam, an imaginary person we'll use from here on. Turned against the deprivation account, the mirror looks like this: if Sam dying at 80 instead of 90 deprives Sam of ten good years, doesn't Sam being born in 1999 instead of 1989 deprive Sam of ten good years too? Yet nobody feels sad about being born late. So either both are bad, or neither is.</p>
   <p>The deprivationist wants to keep "death can be bad" and drop "a late birth is bad." To do that, they need to break the mirror: find a difference between the two stretches that matters.</p>
 </section>
 
@@ -693,9 +705,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="patientFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <div id="patientMore" hidden>
-  <p>Most people hope to be Patient A, even though A's total unpleasantness is far bigger. Parfit called this pattern being <b>biased toward the future</b>: caring more about bad things ahead of you than about equally bad (or worse) things behind you. (In Parfit's original the procedures are painful operations; we've kept it mild.)</p>
-  <p><b>Break-the-mirror attempt 1: future-bias.</b> Maybe the stretch before birth doesn't trouble us for the same reason yesterday's procedure doesn't: it's behind us. If caring more about the future is <i>reasonable</i>, the two stretches really do differ in a way that matters, and premise 2 of the symmetry argument fails. But that's a big assumption. Parfit himself argued we'd be better off without the bias: as we aged, we'd have less to look forward to but more to look back on, and what's behind us would count just as much. Philosophers still argue about it.</p>
-  <p><b>Break-the-mirror attempt 2: Sam couldn't have been born earlier.</b> Thomas Nagel's reply. Anyone born substantially earlier than Sam would, Nagel says, have been someone else (one common way to see why: they'd have started from a different egg and sperm). But Sam could easily have lived longer: the same person, with more years. So the time after a life takes away good that could have been that person's; the time before took nothing that could have been. (In a footnote Nagel confessed he was troubled by this reply, and said Lucretius's argument still needs an answer.)</p>
+  <p>Most people hope to be Patient A, even though A's total unpleasantness is far bigger. Parfit called this being <b>biased toward the future</b>: caring more about bad things ahead of you than about equally bad (or worse) things behind you.</p>
+  <p><b>Break-the-mirror attempt 1: future-bias.</b> Maybe the time before birth doesn't trouble us for the same reason yesterday's procedure doesn't: it's behind us. If caring more about the future is <i>reasonable</i>, the two stretches really do differ in a way that matters, and premise 2 of the symmetry argument fails. But that's a big assumption. Parfit himself argued we'd be better off without the bias. Philosophers still argue about it.</p>
+  <p><b>Break-the-mirror attempt 2: Sam couldn't have been born earlier.</b> This is Thomas Nagel's reply. Anyone born much earlier than Sam would, Nagel says, have been someone else (they'd have started from a different egg and sperm). But Sam could easily have lived longer: the same person, with more years. So the time after a life takes away good that could have been that person's; the time before took nothing that could have been. (Nagel himself admitted he was troubled by this reply.)</p>
   </div>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -707,8 +719,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g3h">The mirror machine</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 2, read "Lucretius's mirror" and "Yesterday vs tomorrow" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="small leadnote">Tip: finish a lead in one sitting. If you reload halfway, it starts over.</p>
-  <p class="how"><b>Part 1: test the mirror.</b> Here's Sam's timeline. Slide to show how bad <b>most people's gut</b> says each stretch of nonexistence is for Sam. Not graded: this is about intuitions.</p>
+  <p class="small leadnote">Tip: try to finish a lead in one sitting. If you reload halfway, that lead starts over (finished leads stay saved).</p>
+  <p class="how"><b>Part 1: test the mirror.</b> Here's Sam's timeline. Slide to show how bad <b>most people's first feeling</b> says each stretch of nonexistence is for Sam. 0 means not bad at all; 10 means as bad as it gets. Not graded: this is about feelings, not right answers.</p>
   <div class="tl" id="tl" aria-hidden="true"><div class="pre" id="tlPre">before Sam was born</div><div class="life">Sam's life</div><div class="post" id="tlPost">after Sam's life</div></div>
   <div class="tl-l" aria-hidden="true"><span>&larr; forever</span><span>forever &rarr;</span></div>
   <div class="sl"><label for="slPre">Before Sam was born</label><input type="range" id="slPre" min="0" max="10" step="1" value="0" aria-valuetext="0: not bad at all"><output id="outPre" for="slPre">0: not bad at all</output></div>
@@ -717,12 +729,12 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div id="mirRead" aria-live="polite"></div>
   <div id="dentWrap" hidden>
     <p class="part">Part 2: move the appointment.</p>
-    <p class="how">A two-hour, very boring and uncomfortable dentist appointment has to happen sometime this week. Slide it to where you'd rather it be. The red line is right now. Not graded.</p>
+    <p class="how">Pretend a two-hour, very boring and uncomfortable dentist appointment is on one day in a six-day span: from 3 days ago to 3 days from now. (It's make-believe, so you can choose a day that has already passed.) Slide it to the day you'd rather it be on. The red line is right now. Not graded.</p>
     <div class="dent" aria-hidden="true"><div class="now"><span>now</span></div><div class="chair" id="chair">2 hrs</div></div>
     <div class="dent-l" aria-hidden="true"><span>3 days ago</span><span>in 3 days</span></div>
     <div class="sl"><label for="slDent">When is the appointment?</label><input type="range" id="slDent" min="0" max="5" step="1" value="5" aria-valuetext="in 3 days"><output id="outDent" for="slDent">in 3 days</output></div>
     <p class="fixed" id="dentFixed">Hours in the chair: 2. (Moving it never changes this.)</p>
-    <div class="row"><button class="btn" type="button" id="dentLock" disabled>Lock my spot</button><span class="gmsg" id="dentMsg" aria-live="polite">Move the slider first (nudge it and back if you like where it starts).</span></div>
+    <div class="row"><button class="btn" type="button" id="dentLock" disabled>Lock my spot</button><span class="gmsg" id="dentMsg" aria-live="polite">Drag the slider to choose a day. (To keep "in 3 days", drag away and back.)</span></div>
     <div class="fb" id="dentFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <div id="mirQs" hidden></div>
@@ -737,9 +749,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b6"><span style="--mark:var(--hl-g)">Would living forever be good?</span></h2>
   <p class="wow">A character in a play has lived for more than 300 years, and she turns down more.</p>
   <p>If death is bad because of the good it takes away, never dying sounds wonderful: endless good, nothing taken. The British philosopher Bernard Williams (1929 to 2003) thought that was too quick. In a 1973 essay, "The Makropulos Case: Reflections on the Tedium of Immortality," he argued that death can be bad <i>and</i> that living forever would be bad too.</p>
-  <p>His title comes from a 1922 play by the Czech writer Karel Čapek (later an opera by Leoš Janáček). Its heroine, Elina Makropulos, took a potion that has kept her alive for over three centuries. When she finally gets the formula that would renew it, she lets it go. Everything has gone flat for her; nothing excites her anymore.</p>
+  <p>His title comes from a 1922 play by the Czech writer Karel Čapek. Its heroine, Elina Makropulos, took a potion that has kept her alive for over three centuries. When she finally gets the formula that would renew it, she chooses not to use it. Everything has become dull for her; nothing excites her anymore.</p>
   <div class="poll" id="elinaPoll">
-    <p><b>Quick tap:</b> in the play, Elina lets her extra life lapse. Is she making a mistake?</p>
+    <p><b>Quick tap:</b> in the play, Elina chooses not to renew her extra life. Is she making a mistake?</p>
     <div class="row" role="group" aria-label="Is Elina making a mistake?">
       <button class="btn ghost" type="button" data-r="mistake">Mistake</button>
       <button class="btn ghost" type="button" data-r="sense">Makes sense</button>
@@ -764,7 +776,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="hornFb" aria-live="polite" tabindex="-1"></div>
   </div>
-  <p>Williams does not name a best length. His point is that death can come too soon, and that a life with no end could go flat. One more view for the next lead. A hedonist who simply adds up pleasure would ask just one question about an endless life: will it keep feeling good? (Epicurus himself disagreed: he held that a limited life can already hold as much pleasure as an unlimited one.)</p>
+  <p>Williams does not name a best length. His point is that death can come too soon, and that a life with no end could become dull. One more view is needed for the next lead. A hedonist who simply adds up pleasure would ask just one question about an endless life: will it keep feeling good? (Epicurus himself disagreed: he held that a limited life can already hold as much pleasure as an unlimited one.)</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -775,7 +787,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g4h">Would you take the pill?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 3, read "Would living forever be good?" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="small leadnote">Tip: finish a lead in one sitting. If you reload halfway, it starts over.</p>
+  <p class="small leadnote">Tip: try to finish a lead in one sitting. If you reload halfway, that lead starts over (finished leads stay saved).</p>
   <p class="how">Four imaginary pills on the table. For each, two taps: first <b>predict</b> what the named thinker would say (graded), then make <b>your own</b> call (never graded; any answer is fine, but your first tap is final).</p>
   <p class="m-nav" id="pillNav"></p>
   <div class="pillcard" id="pillCard"></div>
@@ -790,19 +802,20 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 13 WILLIAMS UNDER FIRE ================= -->
 <section class="sheet" aria-labelledby="b7">
   <h2 id="b7"><span style="--mark:var(--hl-o)">Williams under fire</span></h2>
-  <p class="wow">Your favorite song might be the best argument for living forever.</p>
-  <p>Not everyone bought the boredom argument. In 1994 the American philosopher John Martin Fischer replied with a distinction:</p>
+  <p class="wow">Your favorite song might be a good argument for living forever.</p>
+  <p>Not everyone agreed with the boredom argument. In 1994 the American philosopher John Martin Fischer replied with a distinction:</p>
   <ul>
     <li><b>Self-exhausting pleasures</b> lose their pull once you've had them. Once you've finally beaten a particular game or climbed a particular mountain, you may never want to do it again.</li>
     <li><b>Repeatable pleasures</b> stay good every time: a favorite song, a great meal, a long walk with a friend. Coming back to them after a break is part of the joy.</li>
   </ul>
   <p>If an endless life could be built around repeatable pleasures, mixed with new projects as you slowly change, maybe boredom never has to win. Williams's defenders reply that over thousands of years even repeatables might get old.</p>
-  <p>And here's how your three theories handle the question:</p>
-  <div class="dims">
-    <div style="--dc:var(--hl-p)"><b>Hedonism (the kind that adds up pleasure):</b> if the pleasures keep coming, more life is more good, forever. Boredom only matters because it feels bad. Fischer's repeatables are good news for the hedonist.</div>
-    <div style="--dc:var(--hl-o)"><b>Desire theory:</b> it depends whether you keep having things to want. Williams's argument runs on desires: once categorical desires run out, he thinks more life stops being good for you. (Whether that commits him to desire theory is a fair question.)</div>
-    <div style="--dc:var(--hl-g)"><b>Objective list:</b> endless time means endless chances for friendship and knowledge. But some ask whether achievements would mean as much if you had forever and could always do them later.</div>
-  </div>
+  <details class="sealed"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: how the three theories handle forever</summary><div class="inner">
+    <div class="dims">
+      <div style="--dc:var(--hl-p)"><b>Hedonism (the kind that adds up pleasure):</b> if the pleasures keep coming, more life is more good, forever. Boredom only matters because it feels bad. Fischer's repeatables are good news for the hedonist.</div>
+      <div style="--dc:var(--hl-o)"><b>Desire theory:</b> it depends whether you keep having things to want. Williams's argument runs on desires: once categorical desires run out, he thinks more life stops being good for you. (Whether that commits him to desire theory is a fair question.)</div>
+      <div style="--dc:var(--hl-g)"><b>Objective list:</b> endless time means endless chances for friendship and knowledge. But some ask whether achievements would mean as much if you had forever and could always do them later.</div>
+    </div>
+  </div></details>
   <div class="gotit"><button class="btn" type="button" data-unlock="5">Got it: open Lead 5</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -813,8 +826,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g5h">Objection, meet your reply</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 4, read "Williams under fire" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="small leadnote">Tip: finish a lead in one sitting. If you reload halfway, it starts over.</p>
-  <p class="how">The whole debate in six moves. Each card is a claim someone makes. Pick the reply from this file that answers it most directly. Matched replies leave the pile, but watch out: two replies in the pile aren't replies any thinker in this file gives.</p>
+  <p class="small leadnote">Tip: try to finish a lead in one sitting. If you reload halfway, that lead starts over (finished leads stay saved).</p>
+  <p class="how">The whole debate in six moves. Each card is a claim someone makes. Pick the reply from this file that answers it most directly. Matched replies leave the pile. Careful: two replies in the pile aren't replies any thinker in this file gives.</p>
   <p class="m-nav" id="matNav"></p>
   <div class="objcard" id="matObj" aria-live="polite"></div>
   <div class="replies" id="matReplies" role="group" aria-label="Replies"></div>
@@ -829,10 +842,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
   <div class="gtab fintab">The verdict</div>
   <div class="stamp cleared" aria-hidden="true">CLOSED</div>
-  <h2 id="finh">Case closed: is death nothing to us?</h2>
+  <h2 id="finh">The verdict: is death nothing to us?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all five pieces of evidence (clear all five leads) to open the final file.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Time to commit. Pick the views closest to yours and give the reason that does the most work. Any view is fine; the reason is what counts. Once you lock it, it stays locked.</p>
+  <p class="how">Time to commit. Pick the views closest to yours and give the reason that matters most to you. Any view is fine; the reason is what counts. Once you lock it, it stays locked.</p>
   <p class="step-lbl">1. Can being dead be bad for the one who's dead?</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view on Epicurus"></div>
   <p class="step-lbl">2. Would living forever be good? (Your opinion on an imaginary pill.)</p>
@@ -842,21 +855,21 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <label class="small" for="finMoved" style="display:block;margin-top:12px"><b>What moved me most in this file</b></label>
   <select class="reasonbox" id="finMoved">
     <option value="">Pick one</option>
-    <option>The lost letter: bad things don't have to be felt</option>
+    <option>The lost letter: bad without being felt</option>
     <option>Intrinsic vs comparative badness</option>
     <option>Lucretius's mirror</option>
     <option>Future-bias and the hospital mix-up</option>
-    <option>Nagel: no one could have been born much earlier</option>
-    <option>Williams and the 300-year-old who said no</option>
+    <option>Nagel: no one could be born much earlier</option>
+    <option>Williams and Elina's 300 years</option>
     <option>Fischer's repeatable pleasures</option>
     <option>How each theory of well-being answers</option>
   </select>
-  <div class="row" style="margin-top:12px"><button class="btn" type="button" id="finBtn">Lock my verdict</button></div>
+  <div class="row" style="margin-top:12px"><button class="btn" type="button" id="finBtn">Lock my verdict</button><span class="lockmsg" id="finArmMsg" aria-live="polite"></span></div>
   <div class="fb" id="finFb" aria-live="polite" tabindex="-1"></div>
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will disagree with you once, from the other side. Sticking with your view for a good reason is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -875,19 +888,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 17 COPY FOR ROCKY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all five leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (The small "Rocky asked about this lead?" boxes inside the leads are only for when Rocky asks about one lead.)</p>
+  <p>Rocky can't see this page. When you're done, copy your whole case file below and paste it to Rocky as one message. It covers your gut call, quick taps, all five leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (The small "Rocky asked about this lead?" boxes are only for when Rocky asks about one lead.)</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
 <!-- ================= 18 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
-  <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <details class="sealed"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: bonus files, where to go deeper</summary><div class="inner"><h2 id="b12" class="sr">Bonus files: where to go deeper</h2>
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by, including its lecture on death.<br><a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>Yale's "Death" course with Shelly Kagan</b> (Open Yale Courses, PHIL 176). A whole free semester on these exact puzzles, filmed in class.<br><a class="linkbtn" href="https://oyc.yale.edu/philosophy/death" target="_blank" rel="noopener">oyc.yale.edu</a></li>
     <li><b>Stanford Encyclopedia of Philosophy, "Death"</b>. A free, detailed overview of Epicurus, deprivation, symmetry and immortality. Tough but rewarding.<br><a class="linkbtn" href="https://plato.stanford.edu/entries/death/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
     <li><b>Lucretius, <i>On the Nature of Things</i>, Book 3</b>. The mirror passage, free on Project Gutenberg in an old verse translation.<br><a class="linkbtn" href="https://www.gutenberg.org/ebooks/785" target="_blank" rel="noopener">gutenberg.org</a></li>
-  </ul>
+  </ul></div></details>
 </section>
 
 <p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT. The clips are MIT's, linked from their original pages.</p>
@@ -905,9 +918,9 @@ var MID="C1-M06";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Premise spotted.","Sharp eye.","Logic checks out.","Correct."], no:["Not this one.","Close, but no.","Try another angle."]},
- g2:{ok:["Right theory.","Spot on.","Correct.","That's the one."], no:["Not this one.","Close, but no.","Not quite yet."]},
- g3:{ok:["Found the flaw.","That's the one.","Exactly.","Correct."], no:["Not this one.","Close, but no.","Try another angle."]},
+ g1:{ok:["Right tag.","Sharp eye.","Logic checks out.","Correct."], no:["Not this one.","Close, but no.","Try another angle."]},
+ g2:{ok:["Right match.","Well spotted.","Correct.","That's the one."], no:["Not this one.","Close, but no.","Not quite yet."]},
+ g3:{ok:["Right.","That's the one.","Exactly.","Correct."], no:["Not this one.","Close, but no.","Try another angle."]},
  g4:{ok:["Right call.","Williams nods.","Exactly.","That's the one."], no:["Not this one.","Close, but no.","Try another angle."]},
  g4h:{ok:["Right call.","The hedonist nods.","Exactly."], no:["Not this one.","Close, but no."]},
  g5:{ok:["Matched.","Perfect pair.","That's the one.","Debate move found."], no:["Not this one.","Close, but no.","Try another angle."]}
@@ -954,8 +967,8 @@ var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
-  b.addEventListener("click",function(){ showCard(g); });
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true"); b.classList.add("locked");
+  b.addEventListener("click",function(){ if(!cleared[g.id]){ toast("Evidence "+g.lead+" is not collected yet. Clear Lead "+g.lead+" first.", g.c); return; } showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
 $("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
@@ -977,14 +990,16 @@ function showCard(g){
 /* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
 var toastTimer=null;
 function toast(msg, color){
+  if(openCard) return;   /* never cover an open evidence card */
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
-  try{ T.style.top=(Math.max(0,$("dock").getBoundingClientRect().bottom)+8)+"px"; }catch(e){}
+  /* the toast sits exactly on the sticky top bar, so it can never cover a card, instruction or feedback */
+  try{ T.style.height=$("dock").offsetHeight+"px"; }catch(e){}
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2200);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1700);
 }
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
-  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Verdict open!":""), g.c);
   var slot=$(g.id).querySelector(".clearslot");
   if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':' The next reading is below.')+'</p></div>';
     try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
@@ -994,7 +1009,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.classList.remove("locked"); b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -1028,6 +1043,27 @@ gotBtns.forEach(function(b){
   b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1 || needFor(k)) return; doUnlock(k,true); saveState(); });
 });
 
+/* ---------- one lock pattern: first tap arms, second tap (after 0.5 s) confirms, arm resets after 4 s ---------- */
+function armLock(btn, idleText, check, confirm, onArm, onReset){
+  var armedAt=0, tDim=null, tReset=null;
+  function undim(){ btn.classList.remove("dim"); btn.removeAttribute("aria-disabled"); }
+  function reset(quiet){ var was=armedAt; armedAt=0; clearTimeout(tDim); clearTimeout(tReset); undim(); btn.classList.remove("armed"); if(!btn.disabled) btn.textContent=idleText; if(was && !quiet && onReset) onReset(); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armedAt){
+      if(!check()) return;
+      armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","dim"); btn.setAttribute("aria-disabled","true");
+      if(onArm) onArm();
+      tDim=setTimeout(undim, 500); tReset=setTimeout(function(){ reset(false); }, 4000);
+      return;
+    }
+    if(Date.now()-armedAt<500) return;   /* dimmed: a quick double-tap can't lock by accident */
+    reset(true);
+    confirm();
+  });
+  return {reset:function(){ if(armedAt) reset(false); }};
+}
+
 /* ---------- gut call: truly locked after "Lock it in" ---------- */
 var VL={right:"Epicurus is right", wrong:"Epicurus is wrong", unsure:"Not sure yet"};
 function freezeCover(){
@@ -1035,21 +1071,28 @@ function freezeCover(){
   $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); coverArm.reset(); });
 });
 function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-$("lockBtn").addEventListener("click",function(){
+var MINR=8;   /* same minimum for the gut-call reason and the verdict reason */
+var coverArm=armLock($("lockBtn"),"Lock it in",function(){
+  if(COVER.locked) return false;
+  var r=oneLine($("myReason").value);
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return false; }
+  if(r.length<MINR){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a few words of reason (8 or more letters)."; $("myReason").focus(); return false; }
+  return true;
+},function(){
   if(COVER.locked) return;
   var r=oneLine($("myReason").value);
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return; }
-  if(r.length<3){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a short reason (a few words)."; $("myReason").focus(); return; }
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   refreshGot(); saveState();
-});
+},function(){ $("lockMsg").style.color=""; $("lockMsg").textContent="Tap the button again to lock it in. After that you can't change it."; },
+function(){ $("lockMsg").style.color=""; $("lockMsg").textContent="Not locked yet. Tap Lock it in to try again."; });
+$("myReason").addEventListener("input",function(){ coverArm.reset(); });
 refreshGot();
 
 /* ---------- copy for Rocky (shared machinery) ---------- */
@@ -1068,11 +1111,11 @@ function warmLine(){
   var A=WU.ans, any=A.some(function(x){return x;});
   if(!any) return ["Warm-up: not played"];
   var parts=WU_CASES.map(function(c,i){ return c.k ? c.k+" = "+(A[i] ? (A[i]==="bad" ? "bad for them" : "not bad for them") : "not reached") : null; }).filter(Boolean);
-  return ["Warm-up: ungraded gut taps on the three cases where the person never finds out: "+parts.join("; ")];
+  return ["Warm-up: ungraded first-instinct taps on the three cases where the person never finds out: "+parts.join("; ")];
 }
 function pollLines(){
   function g(k){ return POLLS[k] ? PT[k][POLLS[k]] : "not answered"; }
-  return ["Ungraded taps: lost scholarship letter bad for you = "+g("letter")+"; Lucretius's mirror = "+g("mirror")+"; hospital mix-up, I'd hope to be = "+g("patient")+"; Elina letting her extra life lapse = "+g("elina")+"; lost letter bad in itself or for what it cost = "+g("comp")+"; could a hedonist call the lost letter bad = "+g("hed")+"; which of Williams's worries bothers me more = "+g("horn")];
+  return ["Ungraded taps: lost scholarship letter bad for you = "+g("letter")+"; Lucretius's mirror = "+g("mirror")+"; hospital mix-up, I'd hope to be = "+g("patient")+"; Elina choosing not to renew her extra life = "+g("elina")+"; lost letter bad in itself or for what it cost = "+g("comp")+"; could a hedonist call the lost letter bad = "+g("hed")+"; which of Williams's worries bothers me more = "+g("horn")];
 }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1111,7 +1154,7 @@ var POLLFX={
  patient:function(v){ setFb($("patientFb"),"","Noted.", v==="a" ? "Same as most people, even though A's procedure was far longer." : "Less common! You're weighing the total unpleasantness, not its timing."); $("patientMore").hidden=false; },
  elina:function(){ setFb($("elinaFb"),"","Noted.","Williams thinks it makes sense, and you need one term to see why."); },
  comp:function(v){ setFb($("compFb"),"","Noted.", v==="itself" ? "Many people say that at first. The next paragraph asks whether the letter itself hurts, or only what it cost you." : "That is the deprivation view in one line. The next paragraph gives the name for it."); },
- hed:function(v){ setFb($("hedFb"),"","Noted.", v==="no" ? "That is Epicurus's line. Read on: a hedonist has another move." : "Hold that thought. The first card below says why a hedonist can say yes."); },
+ hed:function(v){ setFb($("hedFb"),"","Noted.", v==="no" ? "That is Epicurus's line. Read on: a hedonist has another move." : "Keep that in mind. The first card below says why a hedonist can say yes."); },
  horn:function(v){ setFb($("hornFb"),"","Noted.", v==="bored" ? "That is horn one: the same you, with nothing left to want." : v==="other" ? "That is horn two: change enough to stay interested and it may stop being you." : "Fair. Williams would say both worries still apply, one for each way the endless life could go."); }
 };
 wirePoll("letterPoll","letter",POLLFX.letter);
@@ -1156,7 +1199,7 @@ function doneCount(recs){ return Object.keys(recs).filter(function(k){return rec
 /* ================= LEAD 1: SPOT THE PREMISE ================= */
 var SPOT_OPTS=[["p","Premise"],["c","Conclusion"],["x","Just chatter"]];
 var SPOT=[
- {t:"Look, I'm not trying to ruin anyone's lunch.", a:"x", why:"Friendly, but it gives no reason for anything. Not part of the argument."},
+ {t:"Look, I don't want to spoil anyone's lunch.", a:"x", why:"Friendly, but it gives no reason for anything. Not part of the argument."},
  {t:"Nothing can be bad for you unless you actually experience it.", a:"p", why:"A starting claim the conclusion rests on: Premise 1."},
  {t:"Also, these olives are amazing.", a:"x", why:"Delicious, irrelevant. Chatter."},
  {t:"And dead people don't experience anything at all.", a:"p", why:"The second starting claim: Premise 2."},
@@ -1165,22 +1208,28 @@ var SPOT=[
 var ATK_OPTS=[["p1","Attacks P1"],["p2","Attacks P2"],["no","Attacks neither"]];
 var ATK=[
  {t:"Your friends throw a brilliant party and forget to invite you. You never find out. Missing it was still bad for you.", a:"p1", k:"missed party",
-  hint:"Does this case say the dead experience something, or that something can be bad without being experienced?",
+  hint:"P1 says a thing is bad for you only if you experience it. P2 says the dead experience nothing. A loss you never feel pushes against which one?",
   why:"You never experienced missing the party, yet it seems bad for you. If so, something can be bad for you without being experienced, and P1 is false."},
  {t:"Some people believe experience carries on after the body dies. If they're right, the dead do experience things.", a:"p2", k:"experience continues",
-  hint:"Which premise is about what the dead experience?",
-  why:"This targets P2 directly. (Whether it's true is a big question this file sets aside; the logic point is just which premise it hits.)"},
+  hint:"P1 says a thing is bad for you only if you experience it. P2 says the dead experience nothing. Which of the two is this claim about?",
+  why:"This targets P2 directly. If they're right, Epicurus's argument fails for them. This file doesn't try to settle whether they're right; the logic point here is just which premise the claim hits."},
  {t:"Dreamless sleep isn't bad for you, and you don't experience anything then either.", a:"no", k:"dreamless sleep",
-  hint:"Is this pushing against Epicurus, or on his side?",
+  hint:"A claim attacks a premise only if it says that premise is false. Does this one say P1 or P2 is false, or does it back Epicurus up?",
   why:"This is an analogy that <i>supports</i> Epicurus: something experience-free that isn't bad. It doesn't attack either premise."},
  {t:"A letter offering you a job gets lost in the mail. You never learn it existed. That was still bad for you.", a:"p1", k:"lost job letter",
-  hint:"Ask: does it say the dead experience something, or that a loss can be bad without being felt?",
+  hint:"P1 says a thing is bad for you only if you experience it. P2 says the dead experience nothing. A loss nobody feels pushes against which one?",
   why:"A loss you never feel. If it's bad for you, P1 is false."}
 ];
-var spotDone=0, atkDone=0;
+var spotDone=0, atkDone=0, spotSkipped=false;
+$("spotList").addEventListener("click",function(){ $("spotSkipRow").hidden=true; });
+$("spotSkip").addEventListener("click",function(){
+  if(spotDone>0) return; spotSkipped=true; $("spotSkipRow").hidden=true; $("spotList").hidden=true; $("spotStreak").hidden=true;
+  $("spotScore").textContent="Part 1 skipped. On to Part 2."; $("spotPart2").hidden=false; touch("g1");
+  try{ $("spotPart2").scrollIntoView({behavior:reduceMotion?"auto":"smooth", block:"start"}); }catch(e){}
+});
 SPOT.forEach(function(it,i){
   REC.spot[i]={final:null, misses:[]};
-  sortItem($("spotList"), it.t, SPOT_OPTS, it.a, REC.spot[i], "Ask: is it a reason, the thing being proved, or neither?", it.why, function(){
+  sortItem($("spotList"), it.t, SPOT_OPTS, it.a, REC.spot[i], "A premise is a starting reason. The conclusion is what the premises are meant to prove (often after \"So\"). Chatter is neither.", it.why, function(){
     spotDone++; $("spotScore").textContent=spotDone+" of "+SPOT.length+" sentences tagged";
     if(spotDone===SPOT.length){ $("spotScore").textContent="Argument found: two premises, one conclusion. Now Part 2."; $("spotPart2").hidden=false; }
   }, "g1", "spotStreak");
@@ -1194,16 +1243,16 @@ shuffle(ATK.map(function(_,i){return i;})).forEach(function(i){
 });
 function spotLines(){
   var d1=doneCount(REC.spot), d2=doneCount(REC.atk);
-  if(!d1) return ["Lead 1 Spot the premise: not started"];
+  if(!d1 && !spotSkipped && !d2) return ["Lead 1 Spot the premise: not started"];
   var miss=ATK.map(function(it,i){ return REC.atk[i].misses.length ? it.k : null; }).filter(Boolean);
-  return ["Lead 1 Spot the premise: sentences tagged "+d1+" answered ("+firstTry(REC.spot)+" first try); premise attacks "+d2+" answered ("+firstTry(REC.atk)+" first try)"+(cleared.g1?"; lead cleared":"; lead not finished")+(miss.length?"; needed a second go on: "+miss.join(", "):"")];
+  return ["Lead 1 Spot the premise: sentences tagged "+(spotSkipped&&!d1?"skipped (already knew it)":d1+" answered ("+firstTry(REC.spot)+" on the first go)")+"; premise attacks "+d2+" answered ("+firstTry(REC.atk)+" on the first go)"+(cleared.g1?"; lead cleared":"; lead not finished")+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 2: THEORY SORT ================= */
 var THEO_OPTS=shuffle([["h","Hedonism"],["d","Desire theory"],["o","Objective list"],["ep","None: that's Epicurus"]]);
 var THEO=[
- {t:"Death is bad because it cuts off all the pleasure the person would have felt.", a:"h", k:"lost pleasure",
-  why:"Lost pleasure, and nothing else, is doing the work. A hedonist deprivationist."},
+ {t:"Death is bad because it stops all the pleasure the person would have felt.", a:"h", k:"lost pleasure",
+  why:"Lost pleasure, and nothing else, is the reason given. A hedonist deprivationist."},
  {t:"Death is bad because the person had a big wish, like seeing their team win the championship, and now that wish can never come true.", a:"d", k:"team wish",
   why:"A want that will never be satisfied: that's desire theory talking."},
  {t:"Death is bad because it ends friendships and learning that would have been good for the person even if they never cared about them.", a:"o", k:"friendship and learning",
@@ -1220,7 +1269,7 @@ var THEO=[
 var theoDone=0;
 shuffle(THEO.map(function(_,i){return i;})).forEach(function(i){
   var it=THEO[i]; REC.theo[i]={final:null, misses:[]};
-  sortItem($("theoList"), it.t, THEO_OPTS, it.a, REC.theo[i], "Ignore the surface words. What is doing the work: a feeling, a want, a good that counts whatever you want or feel, or no loss at all?", it.why, function(){
+  sortItem($("theoList"), it.t, THEO_OPTS, it.a, REC.theo[i], "Ignore the surface words. Ask what makes the death bad: lost pleasure (hedonism), a want left unmet (desire theory), a good that counts whatever you want or feel (objective list), or no loss at all (Epicurus).", it.why, function(){
     theoDone++; $("theoScore").textContent=theoDone+" of "+THEO.length+" sorted";
     if(theoDone===THEO.length){ $("theoScore").textContent="All seven sorted. Three different theories, one shared verdict against Epicurus: death can deprive."; clear("g2"); }
   }, "g2", "theoStreak");
@@ -1228,7 +1277,7 @@ shuffle(THEO.map(function(_,i){return i;})).forEach(function(i){
 function theoLines(){
   var d=doneCount(REC.theo); if(!d) return ["Lead 2 Three theories: not started"];
   var miss=THEO.map(function(it,i){ return REC.theo[i].misses.length ? it.k : null; }).filter(Boolean);
-  return ["Lead 2 Three theories, one question: "+d+" answered, "+firstTry(REC.theo)+" first try"+(cleared.g2?"; lead cleared":"; lead not finished")+(miss.length?"; needed a second go on: "+miss.join(", "):"")];
+  return ["Lead 2 Three theories, one question: "+d+" answered, "+firstTry(REC.theo)+" on the first go"+(cleared.g2?"; lead cleared":"; lead not finished")+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 3: MIRROR MACHINE ================= */
@@ -1248,10 +1297,10 @@ $("mirLock").addEventListener("click",function(){
   var a=+$("slPre").value, b=+$("slPost").value; REC.mir.pre=a; REC.mir.post=b;
   $("slPre").disabled=true; $("slPost").disabled=true; $("mirLock").disabled=true; $("mirLock").textContent="Mirror locked";
   var t, d=b-a;
-  if(d>=2) t="<b>Lopsided mirror.</b> You rated the stretch after Sam's life worse than the stretch before ("+b+" vs "+a+"). That's the usual gut reaction, and it's what Lucretius's mirror challenges. To defend it, you need a difference between the stretches that matters.";
-  else if(d===1 || d===-1) t="<b>Close to a mirror.</b> Your two ratings are one point apart ("+a+" before, "+b+" after). Lucretius would say they should match. The usual gut rates the stretch after a life as worse. Part 2 explores one reason why.";
-  else if(d===0) t="<b>Even mirror.</b> You rated both stretches the same ("+a+"). Lucretius would say that's how the gut should rate them, though the usual gut rates the stretch after a life as worse. Part 2 explores one reason why.";
-  else t="<b>Reverse mirror.</b> You rated the stretch before Sam's life as worse ("+a+" vs "+b+"). That's unusual. Lucretius says the two should match, and the usual gut rates the stretch after a life as worse. Part 2 explores why.";
+  if(d>=2) t="<b>Uneven mirror.</b> You rated the stretch after Sam's life worse than the stretch before ("+b+" vs "+a+"). That's the usual first reaction, and it's what Lucretius's mirror challenges. To defend it, you need a difference between the stretches that matters.";
+  else if(d===1 || d===-1) t="<b>Close to a mirror.</b> Your two ratings are one point apart ("+a+" before, "+b+" after). Lucretius would say they should match. Most people rate the stretch after a life as worse. Part 2 explores one reason why.";
+  else if(d===0) t="<b>Even mirror.</b> You rated both stretches the same ("+a+"). Lucretius would say that's how they should be rated, though most people rate the stretch after a life as worse. Part 2 explores one reason why.";
+  else t="<b>Reverse mirror.</b> You rated the stretch before Sam's life as worse ("+a+" vs "+b+"). That's unusual. Lucretius says the two should match, and most people rate the stretch after a life as worse. Part 2 explores why.";
   $("mirRead").innerHTML='<div class="mirror-read">'+t+'</div>';
   $("dentWrap").hidden=false; $("slDent").focus();
   touch("g3");
@@ -1265,7 +1314,7 @@ $("dentLock").addEventListener("click",function(){
   if(dentLocked || $("dentLock").disabled) return; dentLocked=true;
   var v=+$("slDent").value; REC.mir.dent=DPOS[v]; $("slDent").disabled=true; $("dentLock").disabled=true; $("dentLock").textContent="Spot locked";
   if(v<=2) setFb($("dentFb"),"","Future-bias spotted.","You'd rather it were already over, even though the hours in the chair are exactly the same either way. That's the pattern Parfit pointed at. If it's reasonable, the mirror might be broken: the time after a life is ahead, the time before is behind.");
-  else setFb($("dentFb"),"","Your pick.","You'd rather it were still to come. Many people pick the past, wanting it over with. Maybe you like getting ready for things. Either way, the hours in the chair are the same. Only whether it is ahead or behind changed.");
+  else setFb($("dentFb"),"","Your pick.","You'd rather it were still to come. Many people pick the past, wanting to get it done. Maybe you like getting ready for things. Either way, the hours in the chair are the same. Only whether it is ahead or behind changed.");
   focusFb($("dentFb")); mirQuestions(); touch("g3");
 });
 var MQ=[
@@ -1276,7 +1325,7 @@ var MQ=[
  {q:"In Parfit's hospital mix-up, why do most people hope to be the patient whose procedure was yesterday?",
   o:[["a","Because yesterday's procedure was the shorter of the two"],["b","Because what's still ahead matters more to them than what's over"],["c","Because they'll remember yesterday and feel proud of coping"]], a:"b",
   ok:"Yesterday's was actually longer, and the medicine means no memories either way. What's left is pure future-bias.",
-  no:{a:"Look again: yesterday's procedure was the <i>longer</i> one. That's what makes the case so striking.",c:"In the case, the medicine wipes the memory either way, so there's nothing to feel proud about. Something else is doing the work."}},
+  no:{a:"Yesterday's procedure was the <i>longer</i> one, so \"it was shorter\" can't be the reason. That's what makes the case so striking.",c:"In the case, the medicine wipes the memory either way, so there's nothing to feel proud about. So the reason must be something else."}},
  {q:"Lucretius-style challenge: \"If Sam dying at 80 rather than 90 takes ten good years from Sam, then Sam being born ten years late takes ten good years from Sam too.\" Whose reply is it that a person could not have been born much earlier?",
   o:[["a","Future-bias: it's reasonable to care less about what's behind you"],["b","Nagel: a person comes from one particular egg and sperm, so a much earlier birth would have been someone else"],["c","Williams: an endless life would be boring, so years don't matter"]], a:"b",
   ok:"The challenge says an earlier birth would have given <i>Sam</i> more years. Nagel denies exactly that: a much earlier birth would have meant a different person, while a later death would still have been Sam.",
@@ -1296,7 +1345,7 @@ function mirQuestions(){
         if(REC.mir.q[qi].done) return;
         wrap.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
         if(o[0]===item.a){ REC.mir.q[qi].done=true; setFb(fb,"good",vword("g3","ok"),item.ok); wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); focusFb(fb); mqDone++;
-          if(mqDone===MQ.length){ $("mirScore").textContent="Mirror tested, weak spots found."; clear("g3"); } }
+          if(mqDone===MQ.length){ $("mirScore").textContent="Mirror tested. You've found where it can be challenged."; clear("g3"); } }
         else { REC.mir.q[qi].misses++; b.disabled=true; setFb(fb,"bad",vword("g3","no"),item.no[o[0]]); }
         touch("g3");
       });
@@ -1307,10 +1356,10 @@ function mirQuestions(){
 }
 function mirLines(){
   if(REC.mir.pre===null) return ["Lead 3 Mirror machine: not started"];
-  var out=["Lead 3 Mirror machine: I rated most people's gut on Sam's nonexistence as before birth "+REC.mir.pre+"/10, after life "+REC.mir.post+"/10"+(Math.abs(REC.mir.post-REC.mir.pre)<=1?(REC.mir.post===REC.mir.pre?" (even)":" (close to a mirror)"):REC.mir.post>REC.mir.pre?" (lopsided)":" (reverse)")];
+  var out=["Lead 3 Mirror machine: I rated most people's first feeling about Sam's nonexistence as before birth "+REC.mir.pre+"/10, after life "+REC.mir.post+"/10"+(Math.abs(REC.mir.post-REC.mir.pre)<=1?(REC.mir.post===REC.mir.pre?" (even)":" (close to a mirror)"):REC.mir.post>REC.mir.pre?" (lopsided)":" (reverse)")];
   if(REC.mir.dent) out.push("Lead 3 dentist slider: I'd rather the 2-hour appointment be "+REC.mir.dent);
   var ks=Object.keys(REC.mir.q).filter(function(k){return REC.mir.q[k].done || REC.mir.q[k].misses;});
-  if(ks.length){ var d=ks.filter(function(k){return REC.mir.q[k].done;}).length, f=ks.filter(function(k){return REC.mir.q[k].done && !REC.mir.q[k].misses;}).length; out.push("Lead 3 questions (future-bias, Parfit, Nagel): right on "+d+" of "+ks.length+" answered"+(cleared.g3?"":" so far")+", "+f+" first try"); }
+  if(ks.length){ var d=ks.filter(function(k){return REC.mir.q[k].done;}).length, f=ks.filter(function(k){return REC.mir.q[k].done && !REC.mir.q[k].misses;}).length; out.push("Lead 3 questions (future-bias, Parfit, Nagel): right on "+d+" of "+ks.length+" answered"+(cleared.g3?"":" so far")+", "+f+" on the first go"); }
   return out;
 }
 
@@ -1318,7 +1367,7 @@ function mirLines(){
 function pillSvg(c){ return '<svg viewBox="0 0 40 24" aria-hidden="true"><rect x="2" y="2" width="36" height="20" rx="10" fill="#FFFDF5" stroke="#2A2016" stroke-width="2.5"/><path d="M20 2h8a10 10 0 0 1 0 20h-8z" fill="'+c+'" stroke="#2A2016" stroke-width="2.5"/></svg>'; }
 var PILLS=[
  {n:"The Forever Pill", c:"#FF93C9", who:"Williams", vg:"g4", d:"You stop aging and can never die. You stay exactly you: same personality, same memories, same interests, forever.",
-  o:[["a","Take it: more life always means more good for you"],["b","Pass: the same you would run out of things to care about"],["c","Pass: endless years would mean endless illness and decline"]], a:"b",
+  o:[["a","Take it: more life always means more good for you"],["b","Don't take it: the same you would run out of things to care about"],["c","Don't take it: endless years would mean endless illness and decline"]], a:"b",
   ok:"That's horn one of his dilemma. Same character, endless time: eventually your categorical desires run out and boredom wins.",
   no:{a:"That's the view Williams is arguing <i>against</i>. He thinks endless life eventually stops being good for you.",c:"The pill keeps you healthy. Williams's worry is boredom: running out of things to care about."}},
  {n:"The Reset Pill", c:"#86CFFF", who:"Williams", vg:"g4", d:"You live forever, but every 200 years your memories and personality are wiped and you start fresh, so nothing ever gets old.",
@@ -1326,15 +1375,15 @@ var PILLS=[
   ok:"Horn two. Boredom is avoided, but only by changing so completely that the future life isn't really yours. Williams wants it to be <i>you</i> whose wants get met.",
   no:{a:"It avoids boredom, but Williams would ask whose life you're saving. After a total wipe, is it still yours?",c:"Sleep doesn't erase your memories and personality. A total wipe is far more drastic, and that's Williams's point."}},
  {n:"The Top-Up Pill", c:"#FFE15A", who:"Williams", vg:"g4", d:"One dose: fifty extra healthy years, then you age normally. It works once, and that's it.",
-  o:[["a","His worry doesn't block this: fifty years isn't a vastly long life"],["b","Pass: any extra years past a normal lifespan end in boredom"],["c","Pass: it's wrong to change the lifespan nature gave you"]], a:"a",
+  o:[["a","His worry doesn't block this: fifty years isn't a vastly long life"],["b","Don't take it: any extra years past a normal lifespan end in boredom"],["c","Don't take it: it's wrong to change the lifespan nature gave you"]], a:"a",
   ok:"Williams thought dying while you still have categorical desires is bad. His worry is about endless, or enormously long, lives, like Elina's 300-plus years. Williams doesn't discuss fifty years, but his argument is about endless or vast lives. Fifty extra years could easily be full of things you care about.",
   no:{b:"Williams didn't say every extra year leads to boredom. His worry is about endless or vastly long lives, like Elina's. He thought dying too soon is bad.",c:"\"Unnatural\" isn't Williams's argument at all. His argument is about categorical desires and boredom."}},
  {n:"The Wonder Pill", c:"#74E5AA", who:"a hedonist who simply adds up pleasure", vg:"g4h", d:"You live forever, and a built-in brain chemical keeps everything feeling fresh and delightful. You'll repeat the same few activities endlessly, but every time will feel like the first.",
-  o:[["a","Pass: chemical excitement isn't real excitement, so it's worthless"],["b","Take it: endless delight adds up to endless well-being"],["c","Pass: you'd still get bored of the same few things eventually"]], a:"b",
+  o:[["a","Don't take it: chemical excitement isn't real excitement, so it's worthless"],["b","Take it: endless delight adds up to endless well-being"],["c","Don't take it: you'd still get bored of the same few things eventually"]], a:"b",
   ok:"For a hedonist who adds up pleasure, the one question is: will it keep feeling good? Here it will, forever, so endless delight is endless well-being. (Epicurus himself would disagree: he thought a limited life already holds all the pleasure there is. And Williams would ask where the categorical desires are.)",
-  no:{a:"That's Experience Machine thinking from Case 3, the anti-hedonist side. A hedonist cares only how it feels.",c:"The pill rules boredom out by design: it always feels fresh. For a hedonist who adds up pleasure, nothing else is left to worry about."}}
+  no:{a:"That's Experience Machine thinking from Case 3, the anti-hedonist side. A hedonist cares only how it feels.",c:"The pill removes boredom by design: it always feels fresh. For a hedonist who adds up pleasure, nothing else is left to worry about."}}
 ];
-var MINE=[["take","I'd take it"],["pass","I'd pass"],["unsure","Can't decide"]];
+var MINE=[["take","I'd take it"],["pass","I'd say no"],["unsure","Can't decide"]];
 var pI=0;
 function pRender(){
   var M=PILLS[pI]; REC.pill[pI]=REC.pill[pI]||{misses:0, pred:false, mine:null};
@@ -1364,7 +1413,7 @@ function pRender(){
         pTally();
         if(first){
           if(pI<PILLS.length-1){ $("pillNext").hidden=false; $("pillNext").focus({preventScroll:true}); }
-          else { $("pillFb").innerHTML+="<br><br><b>All four pills done.</b> Look at your tally. If you'd take the Top-Up but pass on the Forever Pill, you and Williams agree more than you might think."; clear("g4"); }
+          else { $("pillFb").innerHTML+="<br><br><b>All four pills done.</b> Check your tally below. If you'd take the Top-Up but not the Forever Pill, you and Williams agree more than you might think."; clear("g4"); }
         }
         touch("g4");
       });
@@ -1373,7 +1422,7 @@ function pRender(){
     C.appendChild(g2); g2.querySelector("button").focus();
   }
 }
-var ML={take:"take it",pass:"pass",unsure:"can't decide"};
+var ML={take:"take it",pass:"wouldn't take it",unsure:"can't decide"};
 function pTally(){
   var T=$("pillTally"); T.innerHTML="";
   PILLS.forEach(function(M,i){ var R=REC.pill[i]; if(!R||!R.mine) return; var s=el("span",{class:R.mine==="take"?"on":""}); s.textContent=M.n.replace("The ","")+": "+ML[R.mine]; T.appendChild(s); });
@@ -1385,25 +1434,25 @@ function pillLines(){
   if(!ks.length) return ["Lead 4 Would you take the pill?: not started"];
   var d=ks.filter(function(k){return REC.pill[k].pred;}).length, f=ks.filter(function(k){return REC.pill[k].pred && !REC.pill[k].misses;}).length;
   var mine=PILLS.map(function(M,i){ var R=REC.pill[i]; return R&&R.mine ? M.n.replace("The ","")+" = "+ML[R.mine] : null; }).filter(Boolean);
-  return ["Lead 4 pill predictions (Williams x3, hedonist x1): right on "+d+" of "+ks.length+" answered"+(cleared.g4?"":" so far")+", "+f+" first try", "Lead 4 my own calls: "+(mine.length?mine.join("; "):"none yet")];
+  return ["Lead 4 pill predictions (Williams x3, hedonist x1): right on "+d+" of "+ks.length+" answered"+(cleared.g4?"":" so far")+", "+f+" on the first go", "Lead 4 my own calls: "+(mine.length?mine.join("; "):"none yet")];
 }
 
 /* ================= LEAD 5: MATCHER (with two decoy replies) ================= */
 var MAT=[
  {o:"\"Nothing is bad for you unless you feel it, and the dead feel nothing.\"", r:"Things can be bad for you without being felt, like the party nobody told you about.", k:"Epicurus vs deprivation",
-  hint:"Which reply denies that a thing has to be felt to be bad for you?", why:"Epicurus's Premise 1 meets the deprivation account."},
- {o:"\"There's no one for death to be bad for: while a person exists it isn't here, and once it's here they don't exist.\"", r:"There is someone it's bad for: the person who lived, whose life as a whole holds less good than it would have.", k:"no-subject vs whole life",
-  hint:"This is the no-subject argument. Which reply names a subject?", why:"The no-subject argument meets the deprivationist's answer: the subject is the person who lived."},
- {o:"\"The time before birth and the time after death are both just nothingness. One is behind a person and one is ahead, but that difference shouldn't matter.\"", r:"We reasonably care more about what lies ahead, the way most people would rather the dentist visit were already over.", k:"Lucretius vs future-bias",
-  hint:"The claim says behind vs ahead shouldn't matter. Which reply says it does?", why:"Lucretius's mirror, aimed at our attitudes, meets future-bias (Parfit)."},
- {o:"\"If a later death would give someone more good years, an earlier birth would too. So a late birth should be just as bad as an early death.\"", r:"No one could have been born much earlier and still been themselves, but they could have died later.", k:"late birth vs Nagel",
-  hint:"This one is about what was possible for that person.", why:"The deprivation version of the mirror meets Nagel's reply."},
+  hint:"The claim says something is bad only if felt. Which reply says a thing can be bad for you even if you never feel it?", why:"Epicurus's Premise 1 meets the deprivation account."},
+ {o:"\"There's no one for death to be bad for: while a person exists it isn't here, and once it's here they don't exist.\"", r:"There is someone it's bad for: the person who lived, whose life holds less good than it could have.", k:"no-subject vs whole life",
+  hint:"The claim says there is no subject, no someone, for death to be bad for. Which reply names a someone?", why:"The no-subject argument meets the deprivationist's answer: the subject is the person who lived."},
+ {o:"\"We don't mind the endless time before we were born, so we shouldn't mind the endless time after we die. Whether a stretch is behind us or ahead of us shouldn't change how much we care.\"", r:"We reasonably care more about what lies ahead than what is behind, the way most people would rather the dentist visit were already over.", k:"Lucretius vs future-bias",
+  hint:"The claim says behind vs ahead shouldn't change how much we care. Which reply says it reasonably does?", why:"Lucretius's mirror, aimed at our attitudes, meets future-bias (Parfit)."},
+ {o:"\"If a later death would give someone more good years, an earlier birth would too. So a late birth should be just as bad as an early death.\"", r:"Someone born much earlier would have been a different person, but the same person could have died later.", k:"late birth vs Nagel",
+  hint:"This claim is about whether a different birth date or a different death date was possible for the same person. Which reply answers that?", why:"The deprivation version of the mirror meets Nagel's reply."},
  {o:"\"Death is bad because it takes good things away, so never dying would be the best thing possible.\"", r:"An endless life would end up either boring or no longer really yours.", k:"immortality vs Williams",
-  hint:"Which reply is about endless life?", why:"\"Immortality must be great\" meets Williams's dilemma."},
+  hint:"The claim says never dying would be best. Which reply says endless life would not be good?", why:"\"Immortality must be great\" meets Williams's dilemma."},
  {o:"\"Over endless time you'd run out of things worth doing and be bored forever.\"", r:"Some pleasures are repeatable: a favorite song or a meal with friends doesn't wear out.", k:"Williams vs Fischer",
-  hint:"Which reply says some pleasures don't wear out?", why:"Williams's boredom worry meets Fischer's repeatable pleasures."}
+  hint:"The claim says endless life means endless boredom. Which reply says some pleasures never get old?", why:"Williams's boredom worry meets Fischer's repeatable pleasures."}
 ];
-var DECOYS=["Death is unnatural, so it has to be bad for the one who dies.","Most people fear death, and that fear proves it's bad."];
+var DECOYS=["Death is unnatural, so it must be bad for the one who dies.","Most people fear death, so it must be bad."];
 var mOrder=shuffle(MAT.map(function(_,i){return i;})), mI=0, mUsed={};
 var rOrder=shuffle(MAT.map(function(_,i){return i;}).concat(["d0","d1"]));
 function mRender(){
@@ -1424,7 +1473,7 @@ function mRender(){
         mI++;
         var w=vword("g5","ok");
         if(mI<MAT.length){ mRender(); setFb($("matFb"),"good",w,M.why+" Next claim above."); var f=$("matReplies").querySelector(".choice"); if(f) f.focus(); }
-        else { $("matObj").innerHTML="<b>Debate map complete.</b> Six claims, six replies, two fake replies avoided. That's the whole debate in six moves."; R.innerHTML=""; $("matNav").textContent="All "+MAT.length+" matched"; setFb($("matFb"),"good",w,M.why); focusFb($("matFb")); clear("g5"); }
+        else { $("matObj").innerHTML="<b>Debate map complete.</b> Six claims, six replies, two fake replies avoided. That's the whole debate in six steps."; R.innerHTML=""; $("matNav").textContent="All "+MAT.length+" matched"; setFb($("matFb"),"good",w,M.why); focusFb($("matFb")); clear("g5"); }
       } else {
         rec.misses++; b.disabled=true;
         setFb($("matFb"),"bad",vword("g5","no"), decoy ? "That's not a reply anyone in this file gives. "+M.hint : (rec.misses===1 ? M.hint : "That reply answers a different claim. "+M.hint));
@@ -1440,7 +1489,7 @@ function matLines(){
   if(!ks.length) return ["Lead 5 Objection, meet your reply: not started"];
   var d=ks.filter(function(k){return REC.mat[k].done;}).length, f=ks.filter(function(k){return REC.mat[k].done && !REC.mat[k].misses;}).length;
   var miss=MAT.map(function(M,i){ return REC.mat[i] && REC.mat[i].misses ? M.k : null; }).filter(Boolean);
-  return ["Lead 5 Objection, meet your reply: matched "+d+" of "+ks.length+" claims tried"+(cleared.g5?"":" so far")+", "+f+" first try"+(miss.length?"; tricky: "+miss.join(", "):"")];
+  return ["Lead 5 Objection, meet your reply: matched "+d+" of "+ks.length+" claims tried"+(cleared.g5?"":" so far")+", "+f+" on the first go"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= FINALE (truly locked once filed) ================= */
@@ -1455,12 +1504,12 @@ var IMM=[["yes","Yes, forever sounds good"],["no","No, Williams is right"],["exi
 var pend={view:null, imm:null};
 VIEWS.forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; pend.view=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; pend.view=v[0]; if(window.__finArmReset) window.__finArmReset(); $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
   $("finOpts").appendChild(b);
 });
 IMM.forEach(function(v){
   var b=el("button",{class:"pick",type:"button","data-v":v[0],"aria-pressed":"false"}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; pend.imm=v[0]; $("finImm").querySelectorAll(".pick").forEach(function(x){x.classList.toggle("chosen",x===b); x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; pend.imm=v[0]; if(window.__finArmReset) window.__finArmReset(); $("finImm").querySelectorAll(".pick").forEach(function(x){x.classList.toggle("chosen",x===b); x.setAttribute("aria-pressed",String(x===b));}); });
   $("finImm").appendChild(b);
 });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
@@ -1478,18 +1527,26 @@ function finRender(){
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>On Epicurus:</b> '+esc(viewText(FIN.view))+'</p><p><b>On living forever:</b> '+esc(immText(FIN.imm))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
+var finArm=armLock($("finBtn"),"Lock my verdict",function(){
+  if(FIN.done) return false;
+  var reason=oneLine($("finReason").value), moved=oneLine($("finMoved").value);
+  if(!pend.view){ setFb($("finFb"),"bad","First things first.","Pick your view on Epicurus."); return false; }
+  if(!pend.imm){ setFb($("finFb"),"bad","One more pick.","Say whether living forever would be good."); return false; }
+  if(reason.length<MINR){ setFb($("finFb"),"bad","Almost.","Add a few words of reason (8 or more letters)."); $("finReason").focus(); return false; }
+  if(!moved){ setFb($("finFb"),"bad","Last one.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  $("finFb").className="fb"; $("finFb").innerHTML="";
+  return true;
+},function(){
   if(FIN.done) return;
   var reason=oneLine($("finReason").value), moved=oneLine($("finMoved").value);
-  if(!pend.view){ setFb($("finFb"),"bad","First things first.","Pick your view on Epicurus."); return; }
-  if(!pend.imm){ setFb($("finFb"),"bad","One more pick.","Say whether living forever would be good."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","Last one.","Pick what moved you most."); $("finMoved").focus(); return; }
-  FIN.view=pend.view; FIN.imm=pend.imm; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
-  setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below."); focusFb($("finFb"));
+  $("finArmMsg").textContent=""; FIN.view=pend.view; FIN.imm=pend.imm; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
+  setFb($("finFb"),"good","Filed.","Your verdict is locked and saved. Now copy your case file for Rocky below."); focusFb($("finFb"));
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
-  toast("Case closed. Verdict filed.", "var(--stamp)");
-});
+  toast("Verdict filed.", "var(--stamp)");
+},function(){ $("finArmMsg").textContent="Tap again to lock. After that you can't change it."; },function(){ $("finArmMsg").textContent="Not locked yet. Tap Lock my verdict to try again."; });
+window.__finArmReset=function(){ finArm.reset(); };
+$("finReason").addEventListener("input",function(){ finArm.reset(); });
+$("finMoved").addEventListener("change",function(){ finArm.reset(); });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
   return ["Final verdict on Epicurus (locked): "+viewText(FIN.view), "Would living forever be good (imaginary pill): "+immText(FIN.imm), "My reason: "+oneLine(FIN.reason), "What moved me most: "+oneLine(FIN.moved)];
@@ -1502,10 +1559,10 @@ var WU_CASES=[
  {t:"Jo's diary is read in secret. Jo never finds out, and nothing changes in Jo's life.", n:"Jo", k:"diary read in secret"},
  {t:"Lee's left shoe is swapped overnight for an identical one.", n:"Lee"},
  {t:"Ana has a stomachache all afternoon.", n:"Ana"},
- {t:"Pip's best friend secretly can't stand Pip, but acts friendly. Pip never finds out and has fun every time.", n:"Pip", k:"pretend friend"},
+ {t:"Pip's best friend secretly dislikes Pip, but acts friendly. Pip never finds out and has fun every time.", n:"Pip", k:"pretend friend"},
  {t:"Kit would have found $50 on the sidewalk tomorrow. A gust of wind blows it away tonight. Kit never knows.", n:"Kit", k:"windblown $50"}
 ];
-var wuBusy=false, wuGuard=0;
+var wuBusy=false, wuT=null, WU_MS=250;   /* the brief pause after each tap is shown: the buttons dim, so a swallowed tap is never silent */
 function wuCount(){ var n=0; WU.ans.forEach(function(x){ if(x) n++; }); return n; }
 function wuDots(){
   var D=$("wuDots"); D.innerHTML="";
@@ -1516,10 +1573,10 @@ function wuShow(focus){
   if(n>=WU_CASES.length){
     $("wuPlay").hidden=true;
     var unfelt=0; WU_CASES.forEach(function(c,i){ if(c.k && WU.ans[i]==="bad") unfelt++; });
-    var lead = unfelt===0 ? "You called none of the three never-felt cases bad. You went with a rule: if they never feel it, it isn't bad."
+    var lead = unfelt===0 ? "You called none of the three never-felt cases bad. You used a rule: if they never feel it, it isn't bad."
       : unfelt===3 ? "You called all three never-felt cases bad. You think things can be bad for you even when you never feel them."
-      : "You called "+unfelt+" of the three never-felt cases bad. Your gut splits, and that split is the puzzle.";
-    var R=$("wuReveal"); R.hidden=false; R.innerHTML="<b>Case closed.</b> "+lead+" Epicurus's argument rests on that exact rule. Read it next, then test it in Lead 1.";
+      : "You called "+unfelt+" of the three never-felt cases bad. Your feelings are split, and that split is the puzzle.";
+    var R=$("wuReveal"); R.hidden=false; R.innerHTML="<b>Warm-up done.</b> "+lead+" Epicurus's argument rests on that exact rule. Read it next, then test it in Lead 1.";
     if(focus) focusFb(R);
     return;
   }
@@ -1527,17 +1584,20 @@ function wuShow(focus){
   var c=WU_CASES[n];
   $("wuLbl").textContent="Case "+(n+1)+" of "+WU_CASES.length;
   $("wuQ").innerHTML=esc(c.t)+" <b>Bad for "+esc(c.n)+"?</b>";
-  $("wuBtns").querySelectorAll("button").forEach(function(b){ b.disabled=false; b.classList.remove("picked"); });
-  if(focus){ try{ $("wuBtns").querySelector("button").focus({preventScroll:true}); }catch(e){} }
+  var bs=$("wuBtns").querySelectorAll("button");
+  bs.forEach(function(b){ b.classList.remove("picked"); });
+  clearTimeout(wuT);
+  function ready(){ bs.forEach(function(b){ b.disabled=false; b.classList.remove("dim"); }); if(focus){ try{ bs[0].focus({preventScroll:true}); }catch(e){} } }
+  if(focus && !reduceMotion){ bs.forEach(function(b){ b.disabled=true; b.classList.add("dim"); }); wuT=setTimeout(ready, WU_MS); } else ready();
 }
 $("wuBtns").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){
-    if(wuBusy || b.disabled || Date.now()-wuGuard<400) return;   /* double-tap guard after a card advances */
+    if(wuBusy || b.disabled) return;
     var n=wuCount(); if(n>=WU_CASES.length) return;
     wuBusy=true; WU.ans[n]=b.getAttribute("data-a");   /* first tap is final */
-    $("wuBtns").querySelectorAll("button").forEach(function(x){ x.disabled=true; });
+    $("wuBtns").querySelectorAll("button").forEach(function(x){ x.disabled=true; if(x!==b) x.classList.add("dim"); });
     b.classList.add("picked"); wuDots(); saveState();
-    setTimeout(function(){ wuBusy=false; wuGuard=Date.now(); wuShow(true); }, reduceMotion ? 0 : 700);
+    setTimeout(function(){ wuBusy=false; wuShow(true); }, reduceMotion ? 0 : WU_MS);
   });
 });
 

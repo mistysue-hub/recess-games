@@ -416,10 +416,15 @@ select.reasonbox{min-height:44px}
 
 
 /* ---------- ported from M03 reusable fixes ---------- */
-.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
-  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.toast{position:absolute; left:0; top:0; height:64px; max-width:56%; z-index:5; display:flex; align-items:center; box-sizing:border-box;
+  background:var(--desk); color:#F4E3B4; font-family:var(--type); font-weight:700; font-size:.9rem; padding:0 14px 0 16px;
+  border-bottom:4px solid var(--tc,var(--hl-y)); pointer-events:none; animation:toastIn .2s ease-out both}
+.toast[hidden]{display:none}
+@keyframes toastIn{0%{opacity:0}100%{opacity:1}}
+/* guard window: guarded buttons look dimmed while a tap would be ignored */
+body.tapheld .mcard:not(.matched), body.tapheld .mlabel, body.tapheld .wround .btn{opacity:.4}
+.btn.arming{opacity:.5}
+.btn.armed{background:var(--stamp); color:#fff; border-color:var(--ink)}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -493,8 +498,8 @@ html,body{overflow-x:clip}
   <ol id="dockList"></ol>
   <div class="prog" id="prog" role="progressbar" aria-label="Case progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><i id="progFill"></i></div>
   <div class="evpanel" id="evPanel" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <main class="wrap">
 <!-- ================= 1 COVER ================= -->
@@ -526,26 +531,26 @@ html,body{overflow-x:clip}
   </svg>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 5v20M7 10h16" stroke="#2A2016" stroke-width="2.6" stroke-linecap="round"/><path d="M4 18h8l-4-8zM18 18h8l-4-8z" fill="#FFFDF5" stroke="#2A2016" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-    <p>The one-rule offer: some philosophers think all of morality comes down to this. <b>Do whatever makes things go best overall, counting everyone's happiness equally.</b> Before you read anything, lock in your gut call. Once locked, it stays locked. At the end of the file you'll answer again, knowing what philosophers know.</p>
+    <p>The one-rule offer: some philosophers think all of morality comes down to this. <b>Do whatever makes things go best overall, counting everyone's happiness equally.</b> Before you read anything, lock in your first instinct. Once locked, it stays locked. At the end of the file you'll answer again, knowing what philosophers know.</p>
   </div>
   <div class="lockin" id="lockin">
-    <div class="row" role="group" aria-label="Your gut call">
+    <div class="row" role="group" aria-label="Your first instinct">
       <button class="vbtn" type="button" data-v="yes" aria-pressed="false">Yes, that's basically it</button>
       <button class="vbtn" type="button" data-v="mostly" aria-pressed="false">Mostly, not always</button>
       <button class="vbtn" type="button" data-v="no" aria-pressed="false">No, there's more to it</button>
     </div>
     <label for="myReason">My reason, in one sentence (optional)</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="2" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 35 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 45 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP (ungraded, not an evidence lead) ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wh">
   <div class="wtab">Warm-up · about 1 minute · not graded</div>
-  <h2 id="wh"><span style="--mark:var(--hl-y)">Cookie crowd: where's your line?</span></h2>
-  <p>Gut only. In each round, <b>one stranger pays a cost</b> so that a crowd of other strangers can each get <b>one free cookie</b>. Slide to the smallest crowd that would make it OK with you, or to "No crowd is big enough." There are no right answers, and each round locks when you lock it.</p>
+  <h2 id="wh"><span style="--mark:var(--hl-y)">Cookie crowd: how big is big enough?</span></h2>
+  <p>Use your first reaction. In each round, <b>one stranger pays a cost</b> so that a crowd of other strangers can each get <b>one free cookie</b>. Slide to the smallest crowd that would make it OK with you, or to "No crowd is big enough." There are no right answers.</p>
   <div id="warmRounds"></div>
   <div class="pattern" id="warmReveal" hidden></div>
 </section>
@@ -553,11 +558,11 @@ html,body{overflow-x:clip}
 <!-- ================= 2 SAME MAN, NEW QUESTION ================= -->
 <section class="sheet" aria-labelledby="b0">
   <h2 id="b0"><span style="--mark:var(--hl-y)">Same man, new question</span></h2>
-  <p>You met Jeremy Bentham (1748 to 1832) in Challenge 1, counting pleasures. That was about <b>well-being</b>: what makes a life go well for the person living it.</p>
+  <p>You met Jeremy Bentham (1748 to 1832) in Challenge 1. That was about <b>well-being</b>: what makes a life go well for the person living it.</p>
   <p>This file asks something else: <b>what makes an action right or wrong?</b> An answer to that is a <b>theory of right action</b>.</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit A: words you'll need</span>
-    <p><b>Consequences</b> are the results of an action. A <b>consequentialist</b> theory says an action is right or wrong <i>only</i> because of its consequences. <b>Utilitarianism</b>, Bentham's theory, is the most famous kind.</p>
+    <p><b>Consequences</b> are the results of an action. A <b>consequentialist</b> theory says an action is right or wrong <i>only</i> because of its consequences. <b>Utilitarianism</b>, Bentham's theory, is one kind.</p>
   </div>
 </section>
 
@@ -568,19 +573,19 @@ html,body{overflow-x:clip}
   <div class="eq">An act is right if no other act you could do instead would produce more total well-being, counting everyone affected.</div>
   <p>Three ideas are packed into that line:</p>
   <div class="dims" aria-label="Three parts of utilitarianism">
-    <div style="--dc:var(--hl-y)"><b>Add it up.</b> Gains and losses for different people go into one total. (The fancy word is <i>aggregation</i>.)</div>
-    <div style="--dc:var(--hl-g)"><b>Everyone counts as one.</b> The slogan, passed on by John Stuart Mill: "everybody to count for one, nobody for more than one." You, your best friend and a stranger all weigh the same. This is called <i>impartiality</i>: no favorites.</div>
+    <div style="--dc:var(--hl-y)"><b>Add it up.</b> Everyone's gains and losses go into one total. (The technical word is <i>aggregation</i>.)</div>
+    <div style="--dc:var(--hl-g)"><b>Everyone counts as one.</b> Mill's slogan: "everybody to count for one, nobody for more than one." You, your best friend and a stranger all weigh the same. This is called <i>impartiality</i>: no favorites.</div>
     <div style="--dc:var(--hl-b)"><b>Maximize.</b> Doing <i>some</i> good isn't enough. The right act is the <i>best</i> one available.</div>
   </div>
   <div class="poll" id="clashPoll">
-    <p><b>Quick gut check (not graded):</b> "The greatest happiness of the greatest number" names two things. When they clash, which should win?</p>
+    <p><b>Quick first-reaction check (not graded):</b> "The greatest happiness of the greatest number" names two things. When they conflict, which should win?</p>
     <div class="row" role="group" aria-label="Which should win?">
       <button class="btn ghost" type="button" data-r="total">Most happiness in total</button>
       <button class="btn ghost" type="button" data-r="number">Most people helped</button>
     </div>
     <div class="fb" id="clashFb" aria-live="polite"></div>
   </div>
-  <p class="note" id="clashNote" hidden>Here's the official answer. The two usually agree, but when they clash (most happiness in total versus most people helped), utilitarians go with the <b>total</b>. Lead 1 puts that to the test.</p>
+  <p class="note" id="clashNote" hidden>Here's the official answer. The two usually agree, but when they conflict (most happiness in total versus most people helped), utilitarians go with the <b>total</b>. Lead 1 puts that to the test.</p>
   <details class="sealed">
     <summary><span class="seal" aria-hidden="true">?</span>Optional: the other two ideas, who said it first, and "the community"</summary>
     <div class="inner">
@@ -598,7 +603,8 @@ html,body{overflow-x:clip}
   <div class="gtab">Lead 1 of 4</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
   <h2 id="g1h">The Happiness Ledger</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span><b>To unlock:</b> read "The Greatest Happiness Principle" above, answer its gut check, then press <b>Got it</b>.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span><b>To unlock:</b> read "The Greatest Happiness Principle" above, answer its quick check, then press <b>Got it</b>.</span></div>
+  <p class="small">Misses cost nothing here; Rocky just uses them to see what to review.</p>
   <div class="lab-body" hidden>
   <p class="how">The town of Millbrook can afford <b>one</b> project this year. You're the town's utilitarian accountant. For each line, work out the total change in happiness, and the ledger fills in. Then advise the council.</p>
   <p class="small"><i>The "happiness points" are pretend units, made up so we can do the math. Bentham never had real ones.</i></p>
@@ -615,8 +621,8 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-g)">Who counts?</span></h2>
   <p class="wow">In 1789, in a footnote in a book about law, Bentham asked a question animal-welfare thinkers still quote today.</p>
-  <p>Impartiality is a radical idea. No extra weight for yourself, your family, your country, your religion or your skin color. To get into the sum, it doesn't matter <i>who</i> you are. It only matters whether things can go better or worse <i>for</i> you.</p>
-  <p>So where's the edge of the circle? Bentham's answer comes in a footnote in the <i>Introduction</i>. The French, he noted, had already realized that dark skin is no reason to abandon a human being to cruelty. One day, he hoped, people would see that the number of legs an animal has is no better a reason. Then comes the famous line:</p>
+  <p>Impartiality is a radical idea: no extra weight for yourself, your family, your country or your skin color. <i>Who</i> you are doesn't matter. Only whether things can go better or worse <i>for</i> you.</p>
+  <p>So where's the edge of the circle? Bentham's answer comes in a footnote in the <i>Introduction</i>. The French, he noted, had already realized that dark skin is no reason to abandon a human being to cruelty. One day, he hoped, people would see that the number of legs an animal has is no better a reason. The famous line:</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit B: the test</span>
     <p>"The question is not, Can they reason? nor, Can they talk? but, Can they suffer?"</p>
@@ -630,30 +636,22 @@ html,body{overflow-x:clip}
     </div>
     <div class="fb" id="fishFb" aria-live="polite"></div>
   </div>
-  <p>A being that can feel pleasure and pain is called <b>sentient</b>. For a utilitarian, sentience is the ticket into the moral sum. That has consequences:</p>
+  <p>A being that can feel pleasure and pain is called <b>sentient</b>. For a utilitarian, sentience is what gets a being into the moral sum. That has consequences:</p>
   <ul>
-    <li><b>Distance doesn't matter.</b> Pain on the other side of the world hurts exactly as much as pain next door.</li>
-    <li><b>Time doesn't matter.</b> Someone who will be born in 2150 will feel just as much as you do. When they're born doesn't change that.</li>
-    <li><b>Things that can't feel don't count in themselves.</b> A river or a statue isn't in the sum. But what happens to it can still matter, because of its effects on beings who <i>can</i> feel: a poisoned river hurts the people and fish who depend on it.</li>
+    <li><b>Distance doesn't matter.</b> Pain far away hurts as much as pain next door.</li>
+    <li><b>Time doesn't matter.</b> Someone born in 2150 will feel just as much as you do.</li>
+    <li><b>Things that can't feel don't count in themselves.</b> A river or a statue isn't in the sum. What happens to it can still matter through its effects on beings who <i>can</i> feel: a poisoned river hurts the people and fish who depend on it. Many environmental ethicists dispute this: they argue that rivers, species and ecosystems matter in themselves, so "Can it suffer?" is not the last word.</li>
   </ul>
-  <p class="note">Can a fish feel pain? An insect? A future AI? Those are questions for science. Bentham's test doesn't answer them. It tells you which question to ask.</p>
+  <p class="note">Whether a fish, an insect or a future AI can feel pain is a question for science. Bentham's test just tells you which question to ask.</p>
 </section>
 
 <!-- ================= 6 REFORMER ================= -->
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-p)">Bentham the reformer</span></h2>
   <p class="wow">Around 1785 Bentham wrote an essay arguing that sex between consenting men should not be a crime. Guess how long it waited to be published.</p>
-  <p>Bentham pointed his principle at the laws of his day and kept finding needless suffering. Three of his positions were well ahead of those laws:</p>
-  <div class="exhibit" style="--hl-c:var(--hl-g)">
-    <span class="lbl">Exhibit C: animals</span>
-    <p>That "Can they suffer?" footnote belongs to a passage complaining that the law ignored animals' interests. If an animal can suffer, its suffering goes in the sum, and cruelty to it is a real harm.</p>
-  </div>
-  <div class="exhibit" style="--hl-c:var(--hl-b)">
-    <span class="lbl">Exhibit D: slavery</span>
-    <p>Bentham condemned the slave trade, at a time when a large British abolition movement was already campaigning against it. In a 1789 newspaper letter he mocked the idea of paying compensation to slave traders, asking, in effect, whether stealing handkerchiefs was worse than stealing people. For ending slave-holding itself, he favored a step-by-step plan meant to make sure freed people had a living and were safe. Historians still argue about how far he went.</p>
-  </div>
+  <p>Bentham pointed his principle at the laws of his day. Animals were one case; here are two more positions well ahead of their time:</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
-    <span class="lbl">Exhibit E: sex laws</span>
+    <span class="lbl">Exhibit C: sex laws</span>
     <p>In Bentham's England, sex between men could be punished by death. In an essay written around 1785 he argued that it should not be a crime at all.</p>
     <div class="poll" id="essayPoll">
       <p><b>Guess (not graded):</b> when was that essay first published?</p>
@@ -667,13 +665,22 @@ html,body{overflow-x:clip}
       <p><b>1978,</b> almost two centuries later. Bentham never published it. His argument was the utilitarian test: whose happiness do these private, consenting acts reduce? Nobody's, he argued, while the punishments caused terrible suffering. So the law was making the world worse. Its 1978 editor, the scholar Louis Crompton, called it the first known argument for reforming these laws in England.</p>
     </div>
   </div>
+  <div class="exhibit" style="--hl-c:var(--hl-b)">
+    <span class="lbl">Exhibit D: slavery</span>
+    <p>Bentham condemned the slave trade while a large British abolition movement was already campaigning against it. In a June 1789 letter in a London newspaper, the <i>Public Advertiser</i>, he mocked the idea of paying compensation to slave traders, asking whether it was worse to steal handkerchiefs and snuff-boxes than to steal men. For ending slave-holding itself, he favored a step-by-step plan that kept freed people safe and able to earn a living. Historians still argue about how far he went.</p>
+  </div>
   <details class="sealed">
     <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: the prison Bentham designed</summary>
     <div class="inner">
       <p><b>Not every idea aged well.</b> In 1791 Bentham published plans for the <b>Panopticon</b>, a round prison in which a hidden guard could watch every cell at once. Bentham saw it as a reform: prisoners would be reformed by being watched, and the contractor running it would be fined for every prisoner who died. It was never built the way he planned it, and today it's a symbol of constant surveillance.</p>
     </div>
   </details>
-  <p><b>"Nonsense upon stilts."</b> Many reformers argue from <b>natural rights</b>: rights you have just by being human, before any law gives them to you. Bentham thought that idea was confused. Attacking the French Declaration of the Rights of Man, he called natural rights "nonsense upon stilts". His reforms rested on one thing only: their effects on happiness. That's a strength (no mysterious extras) and, as you'll see later, a possible weakness (no rights to protect you if the sum goes against you).</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: "nonsense upon stilts"</summary>
+    <div class="inner">
+      <p>Many reformers argue from <b>natural rights</b>: rights you have just by being human, before any law gives them to you. Bentham thought that idea was confused. Attacking the French Declaration of the Rights of Man, he called natural rights "nonsense upon stilts". His reforms rested on one thing only: their effects on happiness. That's a strength (no mysterious extras) and, as you'll see later, a possible weakness (no rights to protect you if the sum goes against you).</p>
+    </div>
+  </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -704,7 +711,7 @@ html,body{overflow-x:clip}
 <!-- ================= 8 CONSEQUENCES ================= -->
 <section class="sheet" aria-labelledby="b4">
   <h2 id="b4"><span style="--mark:var(--hl-b)">What counts as a consequence?</span></h2>
-  <p class="wow">To a utilitarian, "but I meant well" is mostly beside the point.</p>
+  <p class="wow">To a utilitarian, "but I meant well" is mostly irrelevant.</p>
   <p>"Look at the consequences" sounds simple. It hides three big choices (and a bonus one about motives).</p>
   <div class="objcard" style="--oc:var(--hl-y)">
     <h3>1. Compared with what?</h3>
@@ -718,10 +725,10 @@ html,body{overflow-x:clip}
     <h3>3. Actual or expected?</h3>
     <p>You can't see the future. Bentham talked about an action's <i>tendency</i>: what it's likely to bring about. Many utilitarians judge a choice by its <b>expected value</b>: each possible outcome multiplied by its chance of happening, then added up.</p>
     <div class="poll" id="evPoll">
-      <p><b>Your call (not graded):</b> a sure +60, or a 50% shot at +100 (and a 50% chance of nothing)?</p>
-      <div class="row" role="group" aria-label="Sure thing or the shot?">
+      <p><b>Your call (not graded):</b> a sure +60, or a 50% chance of +100 (and a 50% chance of nothing)?</p>
+      <div class="row" role="group" aria-label="Sure thing or the chance?">
         <button class="btn ghost" type="button" data-r="sure">Sure +60</button>
-        <button class="btn ghost" type="button" data-r="shot">Take the shot</button>
+        <button class="btn ghost" type="button" data-r="shot">Take the 50% chance</button>
       </div>
       <div class="fb" id="evFb" aria-live="polite"></div>
     </div>
@@ -734,7 +741,7 @@ html,body{overflow-x:clip}
     <h3>What about motives?</h3>
     <p>Bentham argued that no motive is good or bad in itself. The same desire, say wanting money, can drive honest hard work or a burglary. It's the effects that differ. Motives still matter for judging <i>people</i>, because they predict what someone will do next. But for a utilitarian they don't decide whether <i>this act</i> was right.</p>
   </div>
-  <p class="note">Neat twist: praising and blaming are acts too. So a utilitarian should praise and blame in whatever ways do the most good. That might mean not blaming someone who did her honest best and got unlucky, even if her act turned out wrong.</p>
+  <p class="note">An interesting twist: praising and blaming are acts too. So a utilitarian should praise and blame in whatever ways do the most good. That might mean not blaming someone who did her honest best and got unlucky, even if her act turned out wrong.</p>
     </div>
   </details>
 </section>
@@ -760,8 +767,13 @@ html,body{overflow-x:clip}
     </div>
     <div class="fb" id="campFb" aria-live="polite"></div>
   </div>
-  <p>Rule utilitarianism fits common sense better: keep promises, don't punish the innocent, even when breaking the rule looks useful this once. But it faces a famous dilemma. If breaking the rule <i>really would</i> do more good this time, isn't sticking to it just rule-worship? And if you patch the rule ("keep off the grass, unless nobody will notice"), keep patching, and you end up back at act utilitarianism.</p>
-  <p class="note">Which camp was Bentham in? He is usually read as an act utilitarian, since he stated his principle for every single action. But he wrote mostly about laws, which are rules for everyone, so some scholars think the picture is more complicated.</p>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: the rule utilitarian's dilemma</summary>
+    <div class="inner">
+      <p>Rule utilitarianism fits common sense better: keep promises, don't punish the innocent, even when breaking the rule looks useful this once. But it faces a famous dilemma. If breaking the rule <i>really would</i> do more good this time, isn't sticking to it just rule-worship (obeying a rule even when breaking it would do more good)? And if you keep adding exceptions to the rule ("keep off the grass, unless nobody will notice"), you end up back at act utilitarianism.</p>
+      <p class="note">Which camp was Bentham in? He is usually read as an act utilitarian, since he stated his principle for every single action. But he wrote mostly about laws, which are rules for everyone, so some scholars think the picture is more complicated.</p>
+    </div>
+  </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -772,7 +784,7 @@ html,body{overflow-x:clip}
   <h2 id="g3h">Predict the verdict</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span><b>To unlock:</b> clear Lead 2, read "What counts as a consequence?" (including its quick call) and "Act or rule?", then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Four cases. For each: first <b>your</b> verdict (never graded), then predict what an <b>act utilitarian</b> says (graded). Your verdict locks as soon as you make your prediction. Read the small print; it fixes the facts so there's one right prediction. Sometimes the right prediction is that it makes no difference. At the end you'll see how often you and the theory agreed.</p>
+  <p class="how">Four cases. For each: first <b>your</b> verdict (never graded), then predict what an <b>act utilitarian</b> says (graded). Your verdict locks as soon as you make your prediction. Read the "Small print" line: it adds the facts that make one prediction correct. Sometimes the right prediction is that it makes no difference. At the end you'll see how often you and the theory agreed.</p>
   <div id="caseList"></div>
   <div id="pollReveal" hidden></div>
   <p class="score" id="pollScore" aria-live="polite"></p>
@@ -785,11 +797,11 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b6">
   <h2 id="b6"><span style="--mark:var(--hl-p)">Objection file 1: the surgeon</span></h2>
   <p class="wow">The most famous objection to utilitarianism happens in a hospital.</p>
-  <p>Here's a case made famous by the philosopher Judith Jarvis Thomson, in our own words. A surgeon has five patients, each of whom will die soon without a different organ transplant. A healthy young man comes in for a check-up, and he happens to be a perfect match for all five. If the surgeon secretly ended his life and used his organs, five people would live instead of one. Five beats one.</p>
+  <p>Here's a case made famous by the philosopher Judith Jarvis Thomson, told in our own words. A surgeon has five patients, each of whom will die soon without a different organ transplant. A healthy young man comes in for a check-up, and he happens to be a perfect match for all five. If the surgeon secretly ended his life and used his organs, five people would live instead of one. Five lives outweigh one.</p>
   <div class="poll" id="surgPoll">
     <p><b>Your call (not graded):</b> would the surgeon be doing the right thing?</p>
     <div class="row" role="group" aria-label="Would the surgeon be doing the right thing?">
-      <button class="btn ghost" type="button" data-r="yes">Yes, five beats one</button>
+      <button class="btn ghost" type="button" data-r="yes">Yes, five lives outweigh one</button>
       <button class="btn ghost" type="button" data-r="no">No, never</button>
       <button class="btn ghost" type="button" data-r="secret">Only if nobody ever found out</button>
     </div>
@@ -799,12 +811,17 @@ html,body{overflow-x:clip}
   <p>Nearly everyone says it would be monstrous. Two objections grow out of cases like this.</p>
   <div class="objcard" style="--oc:var(--hl-p)">
     <h3>Objection A: rights (using a person)</h3>
-    <p>Some things you may not do to a person, even to produce more good overall. The healthy man has a <b>right</b> not to be killed, and that right isn't up for trade just because the numbers favor it. Utilitarianism seems to allow using people as mere tools. (Kant builds a whole theory around that complaint. You'll meet that part of it in Case 6.)</p>
+    <p>Some things you may not do to a person, even to produce more good overall. The healthy man has a <b>right</b> not to be killed, and that right can't be bargained away just because the numbers favor it. Utilitarianism seems to allow using people as mere tools. (Kant builds a theory around this complaint; you'll meet it in Case 6.)</p>
   </div>
   <div class="objcard" style="--oc:var(--hl-o)">
     <h3>Objection B: fair shares vs the total</h3>
     <p>Only the total counts, so how it's <b>shared</b> doesn't matter in itself. Compare two plans for 100 people. Plan X: everyone gets 10 happiness points, a total of 1,000. Plan Y: 50 people get 25 and 50 get nothing, a total of 1,250. The theory picks Y. In the same way, a policy that makes a small minority miserable can win if the majority gains enough.</p>
-    <p class="crit">Think back to slavery. Utilitarians condemned it because its suffering hugely outweighed any gains. Critics reply: right answer, wrong reason. Slavery would be unjust even in a world where the sums somehow came out the other way.</p>
+    <details class="sealed">
+      <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: the slavery point</summary>
+      <div class="inner">
+        <p class="crit">Think back to slavery. Utilitarians condemned it because its suffering hugely outweighed any gains. Critics reply: right answer, wrong reason. Slavery would be unjust even in a world where the sums somehow came out the other way.</p>
+      </div>
+    </details>
   </div>
   </div>
 </section>
@@ -814,11 +831,11 @@ html,body{overflow-x:clip}
   <h2 id="b7"><span style="--mark:var(--hl-b)">Objection file 2: too much, too merged</span></h2>
   <div class="objcard" style="--oc:var(--hl-y)">
     <h3>Objection C: demandingness (it asks too much)</h3>
-    <p>Maximizing means anything less than the best is wrong. The money you'd spend on concert tickets could do more good given to an effective charity. The free afternoon you'd spend on your hobby could go to tutoring a kid who's struggling. It's hard to find a moment when the theory doesn't require you to do more. It seems to leave almost no room for your own life, projects and people. (Challenge 3 comes back to this with the philosopher Peter Singer.)</p>
+    <p>Maximizing means anything less than the best is wrong. Money spent on concert tickets could do more good given to an effective charity; a free afternoon could go to tutoring a struggling kid. The theory almost never lets you rest. It seems to leave almost no room for your own life, projects and people. (Challenge 3 comes back to this with the philosopher Peter Singer.)</p>
   </div>
   <div class="poll" id="demPoll">
-    <p><b>Does that one land for you (not graded)?</b></p>
-    <div class="row" role="group" aria-label="Does demandingness land?">
+    <p><b>Does that objection convince you (not graded)?</b></p>
+    <div class="row" role="group" aria-label="Does demandingness convince you?">
         <button class="btn ghost" type="button" data-r="yes">Yes, it asks too much</button>
         <button class="btn ghost" type="button" data-r="no">No, maybe we should do more</button>
     </div>
@@ -846,7 +863,7 @@ html,body{overflow-x:clip}
   <details class="reply" style="--rc:var(--hl-p)">
     <summary><b>Reply 2 (to the surgeon):</b> some rules are worth keeping</summary>
     <div class="inner">
-      <p><b>Go rule.</b> "Doctors never harm one patient to help others" is a rule that works out best when nearly everyone follows it. A rule utilitarian keeps it, even in the secret case.</p>
+      <p><b>Choose rules.</b> "Doctors never harm one patient to help others" is a rule that works out best when nearly everyone follows it. A rule utilitarian keeps it, even in the secret case.</p>
       <p class="other">The other side says: rule-worship (obeying a rule even when breaking it would do more good), or a slide back into act utilitarianism (see "Act or rule?").</p>
     </div>
   </details>
@@ -861,7 +878,7 @@ html,body{overflow-x:clip}
     <summary><b>Reply 4 (to demandingness):</b> right isn't the same as blameworthy</summary>
     <div class="inner">
       <p>The theory tells you what's best. But blaming is an act too, and condemning everyone who isn't a saint would do little good. A sensible utilitarian praises people for doing more good than before, not for being perfect.</p>
-      <p class="other">The other side says: the act is still called wrong. Some utilitarians bite the bullet (accept the uncomfortable conclusion instead of changing the theory): maybe morality really is that demanding.</p>
+      <p class="other">The other side says: the act is still called wrong. Some utilitarians accept the uncomfortable conclusion instead of changing the theory: maybe morality really is that demanding.</p>
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-g)">
@@ -872,10 +889,10 @@ html,body{overflow-x:clip}
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-b)">
-    <summary><b>Reply 6 (to all of them):</b> maybe your gut is wrong</summary>
+    <summary><b>Reply 6 (to all of them):</b> maybe your instincts are wrong</summary>
     <div class="inner">
-      <p><b>Bite the bullet.</b> That means accepting the uncomfortable conclusion rather than giving up the theory. Maybe our gut reactions are the mistake. They were shaped by life in small groups, not for cases involving huge numbers. And utilitarians were sometimes right while gut feelings were wrong: about animals and about sex laws.</p>
-      <p class="other">The other side says: the track record cuts both ways. Bentham also designed the Panopticon, a prison that became a symbol of constant surveillance.</p>
+      <p><b>Accept the uncomfortable conclusion.</b> That means keeping the theory rather than giving it up. Maybe our instinctive reactions are the mistake. They were shaped by life in small groups, not for cases involving huge numbers. And utilitarians were sometimes right while common instincts were wrong: about animals and about sex laws.</p>
+      <p class="other">The other side says: the record is mixed. Bentham also designed the Panopticon, a prison that became a symbol of constant surveillance.</p>
     </div>
   </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
@@ -905,10 +922,10 @@ html,body{overflow-x:clip}
 <section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
   <div class="gtab fintab">The verdict</div>
   <div class="stamp cleared" aria-hidden="true">CLOSED</div>
-  <h2 id="finh">Case closed: is the greatest happiness the whole story?</h2>
+  <h2 id="finh">The verdict: is the greatest happiness the whole story?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span><b>To unlock:</b> collect all four pieces of evidence (clear all four leads) to open the final file.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Time to commit. You've seen the principle, the circle, Bentham's reforms, act versus rule, the surgeon and the replies. Pick the view closest to yours and give the reason that does the most work for you. Any view is fine; the reason is what counts. Once you lock it, it stays locked.</p>
+  <p class="how">Time to choose. You've seen the principle, the circle, Bentham's reforms, act versus rule, the surgeon and the replies. Pick the view closest to yours and give the reason that does the most work for you. Any view is fine; the reason is what counts. Once you lock it, it stays locked.</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
   <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
   <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
@@ -939,13 +956,16 @@ html,body{overflow-x:clip}
 <!-- ================= 16 COPY FOR ROCKY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. When you're done, copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. It also shows how many questions you got right on the first try, so Rocky sees how you played. (Each lead also has a small "Rocky asked about this lead?" drawer, for when Rocky asks about just one.)</p>
+  <p>Rocky can't see this page. When you're done, copy your whole case file below and paste it to Rocky as one message. It includes your first-instinct call, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. It also notes which questions needed another go, so Rocky knows what to review. Misses cost nothing. (Each lead also has a small "Rocky asked about this lead?" drawer, for when Rocky asks about just one.)</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
 <!-- ================= 17 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
   <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <details class="sealed">
+  <summary><span class="seal" aria-hidden="true">?</span>Short on time? Skip this one: bonus links</summary>
+  <div class="inner">
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by. Lecture 9, "Bentham and Mill", covers the same ground from MIT's side. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>1000-Word Philosophy: "Consequentialism and Utilitarianism"</b>. A short, free introduction, including act vs rule and the transplant case. <a class="linkbtn" href="https://1000wordphilosophy.com/2014/05/15/consequentialism/" target="_blank" rel="noopener">1000wordphilosophy.com</a></li>
@@ -955,6 +975,8 @@ html,body{overflow-x:clip}
     <li><b>Utilitarianism.net</b>. A free, peer-reviewed online textbook by philosophers sympathetic to utilitarianism, with chapters on the objections. Read it knowing whose side it's on. <a class="linkbtn" href="https://utilitarianism.net/" target="_blank" rel="noopener">utilitarianism.net</a></li>
     <li><b>Transcribe Bentham</b> (University College London). Volunteers have typed up more than 40,000 of Bentham's handwritten pages, and the project invites the public to take part. <a class="linkbtn" href="https://transcribe-bentham.ucl.ac.uk/" target="_blank" rel="noopener">transcribe-bentham.ucl.ac.uk</a></li>
   </ul>
+  </div>
+  </details>
 </section>
 
 <p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT.</p>
@@ -974,9 +996,12 @@ var MOD="C2-M04";
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
  g1:{ok:["Ledger balanced.","The accountant approves.","Sums check out.","Clean math."], no:["The books don't balance.","Recount.","Not quite."]},
- g2:{ok:["Bentham nods.","Can it suffer? Settled.","Spot on.","Exactly."], no:["Ask the one question.","Not by Bentham's test.","Not quite."]},
- g3:{ok:["Called it.","That's the theory talking.","Prediction holds.","Spot on."], no:["The theory disagrees.","Read the small print again.","Not quite."]},
- g4:{ok:["Filed.","Right drawer.","Matched.","Spot on."], no:["Wrong drawer.","Not that one.","Close, but no."]}
+ g1q:{ok:["Good advice.","The council agrees.","That's the case for it."], no:["Not quite.","Not that one.","Close, but no."]},
+ g2:{ok:["Bentham nods.","Right call.","Spot on.","Exactly."], no:["Ask the one question.","Not by Bentham's test.","Not quite."]},
+ g2q:{ok:["Bentham nods.","Spot on.","Exactly."], no:["Not Bentham's reasoning.","Not quite.","Close, but no."]},
+ g3:{ok:["Called it.","Prediction holds.","Spot on.","Right prediction."], no:["The theory disagrees.","Not that prediction.","Not quite."]},
+ g3q:{ok:["Spot on.","Exactly.","That's the reason."], no:["Not quite.","Not that reason.","Close, but no."]},
+ g4:{ok:["Matched.","Right match.","Filed.","Spot on."], no:["Wrong match.","Not that one.","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -989,7 +1014,7 @@ function clearTray(node){
 }
 function focusFb(node){ if(restoring) return; if(!node.hasAttribute("tabindex")) node.setAttribute("tabindex","-1"); try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
 /* honest counts: "x of N answered so far" until everything is answered */
-function tally(done, first, total, noun){ return (done===total ? (total===2?"both ":"all "+total+" ")+noun : done+" of "+total+" "+noun+" so far")+", "+first+" right first try"; }
+function tally(done, first, total, noun){ var again=done-first; return (done===total ? (total===2?"both ":"all "+total+" ")+noun : done+" of "+total+" "+noun+" so far")+(again>0 ? ", "+again+" needed another go" : ", none needed another go"); }
 
 /* ---------- optional saving (page works without it) ---------- */
 var KEY="ethics-c2m04-v2", canSave=false, SAVED=null;
@@ -1024,9 +1049,9 @@ var POLLS={clash:null, essay:null, fish:null, ev:null, camp:null, surg:null, dem
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
  {id:"g1",c:"var(--hl-o)",lead:1,title:"The greatest happiness principle",body:"The right act is the one that produces the most <b>total</b> well-being, with everyone counted equally. Most happiness beats most people helped.",ex:"The clinic (60 patients, +1,900) beats the Wi-Fi (2,000 people, +900)."},
- {id:"g2",c:"var(--hl-g)",lead:2,title:"Who counts",body:"Sentience is the ticket in: <b>Can they suffer?</b> Distance, date of birth, species and whether you like them don't change the weight.",ex:"A dog counts. A river counts only through its effects on those who can feel."},
+ {id:"g2",c:"var(--hl-g)",lead:2,title:"Who counts",body:"Sentience is what gets a being in: <b>Can they suffer?</b> Distance, date of birth, species and whether you like them don't change the weight.",ex:"A dog counts. A river counts only through its effects on those who can feel."},
  {id:"g3",c:"var(--hl-b)",lead:3,title:"Consequences, act and rule",body:"A consequence is the difference an act makes, side effects included, often judged by <b>expected value</b>. Act utilitarians judge each act; rule utilitarians judge rules and follow the ones that work out best when nearly everyone follows them.",ex:"The lawn: the act utilitarian cuts across; the rule utilitarian keeps off."},
- {id:"g4",c:"var(--hl-p)",lead:4,title:"Objections and replies",body:"Rights (using a person), fair shares vs the total, demandingness, the separateness of persons. Replies: count all the consequences, go rule, diminishing returns, right vs blameworthy, equal counting, bite the bullet.",ex:"Five beats one, says the sum. Nearly everyone says no."}
+ {id:"g4",c:"var(--hl-p)",lead:4,title:"Objections and replies",body:"Rights (using a person), fair shares vs the total, demandingness, the separateness of persons. Replies: count all the consequences, choose rules, diminishing returns, right vs blameworthy, equal counting, accepting the odd result.",ex:"Five lives outweigh one, says the sum. Nearly everyone says no."}
 ];
 var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
@@ -1057,11 +1082,11 @@ var toastTimer=null;
 function toast(msg, color){
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1700);
 }
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
-  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  toast("Evidence "+n+"/"+NG+" filed"+(n===NG?": final file open":""), g.c);
   var slot=$(g.id).querySelector(".clearslot");
   if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':' The next reading is below.')+'</p></div>';
     try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
@@ -1125,14 +1150,41 @@ function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-$("lockBtn").addEventListener("click",function(){
-  if(COVER.locked) return;
-  var r=$("myReason").value.replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim();
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
-  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
-  saveState();
-});
+/* one lock pattern for the cover and the verdict: first tap arms, second tap confirms (not sooner than 500 ms), the arm resets after 4 s */
+function armLock(btn, idleText, check, commit, onArm, onReset){
+  var armedAt=0, t500=null, t4=null;
+  function reset(){ armedAt=0; clearTimeout(t500); clearTimeout(t4); btn.classList.remove("armed","arming"); if(!btn.disabled) btn.textContent=idleText; if(onReset) onReset(); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armedAt){
+      if(check && !check()) return;
+      armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","arming");
+      clearTimeout(t500); t500=setTimeout(function(){ btn.classList.remove("arming"); },500);
+      clearTimeout(t4); t4=setTimeout(reset,4000);
+      if(onArm) onArm();
+      return;
+    }
+    if(Date.now()-armedAt<500) return;
+    clearTimeout(t500); clearTimeout(t4); armedAt=0; btn.classList.remove("armed","arming");
+    if(onReset) onReset();
+    commit();
+  });
+}
+armLock($("lockBtn"),"Lock it in",
+  function(){
+    if(COVER.locked) return false;
+    if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return false; }
+    return true;
+  },
+  function(){
+    if(COVER.locked) return;
+    var r=$("myReason").value.replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim();
+    COVER.reason=r; COVER.locked=true; freezeCover();
+    $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
+    saveState();
+  },
+  function(){ $("lockMsg").style.color=""; $("lockMsg").textContent="Tap the button again to lock it in for good."; },
+  function(){ if(!COVER.locked) $("lockMsg").textContent=""; });
 
 /* ---------- copy for Rocky (shared machinery) ---------- */
 function linesFor(g){
@@ -1141,11 +1193,11 @@ function linesFor(g){
   if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
   return LIVE[g]();
 }
-function coverLines(){ return ["Gut call (is morality just 'do whatever makes things go best, counting everyone equally'?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". "+(COVER.reason ? "My reason: "+COVER.reason : "No reason given") : "not locked in")]; }
+function coverLines(){ return ["First-instinct call (is morality just 'do whatever makes things go best, counting everyone equally'?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". "+(COVER.reason ? "My reason: "+COVER.reason : "No reason given") : "not locked in")]; }
 function tapLines(){
-  var P={total:"most happiness in total",number:"most people helped","1790s":"1790s","1890s":"1890s","1978":"1978",sure:"sure +60",act:"judge each act on its own",rule:"stick to rules that work",unsure:"not sure",shot:"take the 50% shot",yes:"yes, five beats one",no:"no, never",secret:"only if nobody ever found out"};
+  var P={total:"most happiness in total",number:"most people helped","1790s":"1790s","1890s":"1890s","1978":"1978",sure:"sure +60",act:"judge each act on its own",rule:"stick to rules that work",unsure:"not sure",shot:"take the 50% chance",yes:"yes, five lives outweigh one",no:"no, never",secret:"only if nobody ever found out"};
   function v(k){ return POLLS[k] ? P[POLLS[k]] : "not answered"; }
-  return ["Ungraded taps: when total and number clash = "+v("clash")+"; guessed the sex-law essay was published in = "+v("essay")+"; sure thing or gamble = "+v("ev")+"; surgeon doing the right thing = "+v("surg")+"; can a fish feel pain = "+(POLLS.fish?{yes:"yes",no:"no",unsure:"not sure"}[POLLS.fish]:"not answered")+"; act or rule sounds more like me = "+v("camp")+"; demandingness lands for me = "+(POLLS.dem?(POLLS.dem==="yes"?"yes":"no, maybe we should do more"):"not answered")];
+  return ["Ungraded taps: when total and number conflict = "+v("clash")+"; guessed the sex-law essay was published in = "+v("essay")+"; sure thing or gamble = "+v("ev")+"; surgeon doing the right thing = "+v("surg")+"; can a fish feel pain = "+(POLLS.fish?{yes:"yes",no:"no",unsure:"not sure"}[POLLS.fish]:"not answered")+"; act or rule sounds more like me = "+v("camp")+"; demandingness lands for me = "+(POLLS.dem?(POLLS.dem==="yes"?"yes":"no, maybe we should do more"):"not answered")];
 }
 function report(key){ return MOD+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1181,11 +1233,11 @@ function syncPoll(id,key){ $(id).querySelectorAll("button[data-r]").forEach(func
 var POLLFX={
  clash:function(v){ setFb($("clashFb"),"","Noted.", v==="total" ? "That's the utilitarian answer. See the note below for why." : "Lots of people feel that way, and it's a real rival view. Utilitarians disagree; see the note below."); $("clashNote").hidden=false; },
  essay:function(v){ $("essayMore").hidden=false; },
- ev:function(v){ setFb($("evFb"),"","Noted.", "The shot's expected value is 50% × 100 = +50, so the sure +60 is worth more. "+(v==="sure"?"You picked the sure thing, and by expected value you're right.":"You took the gamble; by expected value the sure thing wins, though luck could still go your way.")); },
+ ev:function(v){ setFb($("evFb"),"","Noted.", "The gamble's expected value is 50% × 100 = +50, so the sure +60 is worth more. "+(v==="sure"?"You picked the sure thing, and by expected value you're right.":"You took the gamble; by expected value the sure thing wins, though luck could still go your way.")); },
  fish:function(v){ setFb($("fishFb"),"","Noted.", "Scientists still argue about this one: some say fish show real pain behavior, others say their brains lack what conscious pain needs. For Bentham, the answer is what decides whether fish count."); },
  camp:function(v){ setFb($("campFb"),"","Noted.", v==="act" ? "That's the act utilitarian's instinct. Lead 3 will test whether you stick to it." : "That's the rule utilitarian's instinct. Lead 3 will test whether you stick to it."); },
  dem:function(v){ setFb($("demFb"),"","Noted.", v==="yes" ? "You're with most critics. Reply 4, below, is the utilitarian's answer." : "Some utilitarians agree: maybe morality really is that demanding. Peter Singer argues this in Challenge 3."); },
- surg:function(v){ setFb($("surgFb"),"","Noted.", v==="yes" ? "That's what the simple sum says. Most people recoil; see why below." : v==="no" ? "That's what nearly everyone says. The question is whether utilitarianism can agree." : "Hold that thought: it's exactly where Reply 1, a few screens down, runs into trouble."); $("surgMore").hidden=false; }
+ surg:function(v){ setFb($("surgFb"),"","Noted.", v==="yes" ? "That's what the simple sum says. Most people recoil; see why below." : v==="no" ? "That's what nearly everyone says. The question is whether utilitarianism can agree." : "Keep that in mind: it's exactly where Reply 1, a few screens down, runs into trouble."); $("surgMore").hidden=false; }
 };
 wirePoll("clashPoll","clash",POLLFX.clash);
 wirePoll("essayPoll","essay",POLLFX.essay);
@@ -1256,7 +1308,7 @@ POL.forEach(function(P){
           if(ledDone===ledTotalRows) showLedQs();
         } else {
           R.misses++; b.disabled=true;
-          var hint = (v===-right) ? "Check the sign: is this group gaining happiness or losing it?" : "Multiply the number of people by the change for each person.";
+          var hint = (v===-right) ? "Check the sign: a group that gains gets a plus, a group that loses gets a minus." : "Multiply the number of people by the change for each person.";
           setFb(fb,"bad",vword("g1","no"),hint);
         }
         touch("g1");
@@ -1283,7 +1335,7 @@ var LEDQ=[
  {q:"The council asks for your advice. Which project does a utilitarian tell them to fund?",
   o:[["A","Plan A: the skate park"],["B","Plan B: the downtown Wi-Fi"],["C","Plan C: shorter clinic waits"]], a:"C",
   ok:"Plan C has the biggest total (+1,900), so it's the one that maximizes well-being.",
-  no:{A:"The skate park is a strong second (+1,600), but second isn't good enough. The theory says maximize.",B:"Look at the bars: the Wi-Fi has the smallest total of the three."}},
+  no:{A:"The skate park is a strong second (+1,600), but second isn't good enough. The theory says maximize.",B:"The rule is: fund the biggest total. The Wi-Fi total is +900, the smallest of the three."}},
  {q:"The Wi-Fi plan helps by far the most people (2,000 of them). Why doesn't it win?",
   o:[["a","The theory maximizes total well-being, not people helped"],["b","Gains under one point are dropped from a utilitarian sum"],["c","Internet access isn't a pleasure Bentham would count at all"]], a:"a",
   ok:"\"The greatest number\" loses to \"the greatest happiness\". Lots of tiny gains can add up to less than a few big ones.",
@@ -1301,7 +1353,7 @@ function showLedQs(){
   var intro=el("p",{class:"pause"}); intro.textContent="Ledger complete. Now advise the council: three questions."; Q.appendChild(intro);
   LEDQ.forEach(function(item,qi){
     REC.led.q[qi]={misses:0, done:false};
-    mcq(Q,item,REC.led.q[qi],function(){ ledQDone++; touch("g1"); if(ledQDone===LEDQ.length){ $("ledScore").textContent="Ledger balanced and council advised."; clear("g1"); } },"Q"+(qi+1)+".","g1");
+    mcq(Q,item,REC.led.q[qi],function(){ ledQDone++; touch("g1"); if(ledQDone===LEDQ.length){ $("ledScore").textContent="Ledger balanced and council advised."; clear("g1"); } },"Q"+(qi+1)+".","g1q");
   });
   Q.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g1"); }); });
 }
@@ -1324,8 +1376,8 @@ var TOK=[
  {k:"future", n:"Someone who'll be born in 2150", c:"#74E5AA", ben:"in", why:"They'll feel just as much as you do. When they're born doesn't change that."},
  {k:"dog", n:"A dog", c:"#FFB25C", ben:"in", why:"Can a dog suffer? Clearly. So it's in."},
  {k:"chicken", n:"A chicken", c:"#FF93C9", ben:"in", why:"Chickens can feel pain too. Bentham's test doesn't care how many legs you have."},
- {k:"rival", n:"Someone you really can't stand", c:"#C9B6FF", ben:"in", why:"Impartiality cuts both ways: people you dislike count exactly as much as people you love."},
- {k:"river", n:"A river", c:"#B8E3E0", ben:"out", why:"A river can't feel anything, so its own happiness isn't in the sum. What happens to it still matters through its effects on the people and animals who depend on it."},
+ {k:"rival", n:"Someone you really can't stand", c:"#C9B6FF", ben:"in", why:"Impartiality works in both directions: people you dislike count exactly as much as people you love."},
+ {k:"river", n:"A river", c:"#B8E3E0", ben:"out", why:"A river can't feel anything, so by Bentham's test its own happiness isn't in the sum. What happens to it still matters through its effects on the people and animals who depend on it. (Environmental ethicists dispute this: they argue rivers and ecosystems matter in themselves.)"},
  {k:"robot", n:"A super-advanced robot from the future", c:"#D9D9D9", ben:"dep", why:"Bentham's test asks whether it can feel. That's a science question nobody can answer yet, so: it depends."}
 ];
 var MR=[["0","Counts a lot"],["1","Counts some"],["2","Counts a little"],["3","Doesn't count"]];
@@ -1429,7 +1481,7 @@ var REFQ=[
  {q:"Bentham argued that private acts between consenting men should not be crimes. Which reasoning was his?",
   o:[["a","The acts harmed no one, and the punishments caused great suffering"],["b","Everyone has a natural right to privacy, which the law broke"],["c","The law was centuries old, and old laws should be replaced"]], a:"a",
   ok:"Pure utilitarian reasoning: weigh the effects. No victim on one side; great suffering from punishment on the other.",
-  no:{b:"Many modern reformers argue that way, but Bentham called natural rights \"nonsense upon stilts\". His case rested on effects, not rights.",c:"Age isn't Bentham's test. A law is bad if its effects on happiness are bad, however old or new it is."}},
+  no:{b:"Many modern reformers argue that way, but Bentham rejected natural rights (rights you have just by being human) as \"nonsense upon stilts\". His case rested on effects on happiness, not rights.",c:"Age isn't Bentham's test. A law is bad if its effects on happiness are bad, however old or new it is."}},
  {q:"By Bentham's test, why do animals count?",
   o:[["a","Because they can feel pain and pleasure"],["b","Because many of them can reason, in their own way"],["c","Because they are useful and valuable to humans"]], a:"a",
   ok:"Feeling is the whole test: can they suffer?",
@@ -1443,7 +1495,7 @@ function benCompare(){
   var msg='<div class="pattern"><b>You and Bentham agreed on '+agreeN+' of '+agreeOf+'</b> beings that can clearly suffer: you gave '+(agreeN===agreeOf?'all of them':'that many')+' some weight. (The river and the robot are left out of the count: see below.)';
   var fr=+mine.friend, st=+mine.stranger;
   partialNote = fr<st;
-  if(partialNote) msg+='<br><br>You put your best friend closer in than the stranger. Most people do. In the utilitarian sum, though, they weigh exactly the same. Hold that thought: it comes back in the objection files, when the theory asks you to treat your friend and a stranger the same.';
+  if(partialNote) msg+='<br><br>You put your best friend closer in than the stranger. Most people do. In the utilitarian sum, though, they weigh exactly the same. Keep that in mind: it comes back in the objection files, when the theory asks you to treat your friend and a stranger the same.';
   if(mine.river!=="3") msg+='<br><br>You gave the river some weight. Bentham would agree if that\'s because of the people and fish who depend on it, but not if it\'s for the river\'s own sake.';
   else msg+='<br><br>You gave the river no weight. In itself, Bentham agrees. But careful: what happens to a river still counts through its effects on the people and animals who depend on it.';
   if(mine.rival==="3") msg+='<br><br>You left out the person you can\'t stand. Impartiality says they count fully.';
@@ -1454,7 +1506,7 @@ function benCompare(){
   var intro=el("p",{class:"pause"}); intro.textContent="Two questions from \"Bentham the reformer\" to clear this lead."; Q.appendChild(intro);
   REFQ.forEach(function(item,qi){
     REC.circ.q[qi]={misses:0, done:false};
-    mcq(Q,item,REC.circ.q[qi],function(){ refDone++; touch("g2"); if(refDone===REFQ.length){ $("circScore").textContent="Circle drawn, reforms explained."; clear("g2"); } },"Q"+(qi+1)+".","g2");
+    mcq(Q,item,REC.circ.q[qi],function(){ refDone++; touch("g2"); if(refDone===REFQ.length){ $("circScore").textContent="Circle drawn, reforms explained."; clear("g2"); } },"Q"+(qi+1)+".","g2q");
   });
   Q.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g2"); }); });
 }
@@ -1468,7 +1520,7 @@ function circLines(){
   if(bk.length){
     var bd=bk.filter(function(k){return REC.circ.ben[k].done;}).length, bf=bk.filter(function(k){return REC.circ.ben[k].done && !REC.circ.ben[k].misses;}).length;
     var missed=TOK.filter(function(t){return REC.circ.ben[t.k] && REC.circ.ben[t.k].misses;}).map(function(t){return t.n;});
-    out.push("Lead 2 Bentham's circle: "+tally(bd,bf,TOK.length,"placed")+(missed.length?"; needed a second go on: "+missed.join(", "):""));
+    out.push("Lead 2 Bentham's circle: "+tally(bd,bf,TOK.length,"placed")+(missed.length?"; needed another go on: "+missed.join(", "):""));
     if(bd===TOK.length) out.push("Lead 2 my circle gave weight to "+agreeN+" of the "+agreeOf+" beings that can clearly suffer"+(partialNote?" (I put my best friend closer than the stranger)":""));
   }
   var qk=Object.keys(REC.circ.q);
@@ -1484,14 +1536,14 @@ var CASES=[
   stip:"Small print: nobody will ever find out, and it won't change your habits or anyone's trust in anyone.",
   mine:[["ret","Return it"],["give","Give it to the charity"],["unsure","Not sure"]],
   o:[["ret","Return it to the owner"],["give","Give it to the charity"],["same",NODIFF]], a:"give",
-  ok:"With the side effects ruled out, the charity produces far more well-being than a rich person's tiny relief. The act utilitarian says give it away. If that feels wrong to you, you've found a spot where the theory and common sense split.",
+  ok:"With the side effects ruled out, the charity produces far more well-being than a rich person's tiny relief. The act utilitarian says give it away. If that feels wrong to you, you've found a spot where the theory and common sense disagree.",
   no:{ret:"That's the honest, common-sense answer. But the act utilitarian only compares totals, and with the side effects ruled out, the charity wins easily.",same:"The totals aren't close: several families much better off versus one person who barely notices."}},
  {k:"promise", n:"The promise", tag:"keeping your word",
   d:"You promised to meet a friend at the movies. On the way, an elderly man trips in front of you and is hurt. Nobody else is around. Staying with him until the ambulance arrives means missing the movie, and your friend will be annoyed.",
   stip:"Small print: your friend will forgive you once you explain.",
   mine:[["stay","Stay with him"],["go","Go to the movies"],["unsure","Not sure"]],
   o:[["stay","Stay with the hurt man"],["go","Keep the promise and go"],["same",NODIFF]], a:"stay",
-  ok:"Helping the hurt man prevents far more suffering than a missed movie causes. Here the theory and almost everyone's gut agree. Worth remembering: most of the time, utilitarianism tells you to do ordinary, decent things.",
+  ok:"Helping the hurt man prevents far more suffering than a missed movie causes. Here the theory and almost everyone's instincts agree. Worth remembering: most of the time, utilitarianism tells you to do ordinary, decent things.",
   no:{go:"For a utilitarian, a promise has no weight of its own; only its effects count. Breaking this one costs a little annoyance; leaving the man costs a lot more.",same:"A hurt man waiting alone versus a missed movie: the totals are far apart."}},
  {k:"ashes", n:"The deathbed promise", tag:"promises to the dead",
   d:"An old family friend, before he died, made you promise to scatter his ashes at one particular beach. You could do that, or scatter them in his garden instead.",
@@ -1514,7 +1566,7 @@ var CASES=[
 var POLLQ=[
  {q:"Why did the wallet case need the small print \"nobody will ever find out\"?",
   o:[["a","Trust and habits are consequences too, and could change the total"],["b","Utilitarians only care about whether you get caught doing it"],["c","The law says anyone who finds a wallet must return it"]], a:"a",
-  ok:"Side effects count. Without the small print, the damage to trust and to your own honesty could tip the balance back toward returning it.",
+  ok:"Side effects count. Without the small print, the damage to trust and to your own honesty could change the answer back to returning it.",
   no:{b:"Getting caught matters only because of its effects: lost trust, worse habits, a bad example. Those are what the small print rules out.",c:"The law isn't what a utilitarian is weighing here. Effects on well-being are."}},
  {q:"Back in Millbrook: suppose the clinic plan has only a 50% chance of working (+1,900 if it works, nothing if it doesn't), while the other two plans are sure things. What's the clinic's expected value, and what follows?",
   o:[["a","+950, so the skate park now wins"],["b","+1,900, so the clinic still wins"],["c","+3,800, so the clinic wins by more"]], a:"a",
@@ -1567,17 +1619,17 @@ function pollReveal(){
   if(sidePoll===0){ t="Undecided"; b="You weren't sure about any of the four, which is a fair place to start. The objections coming next are about exactly these hard cases."; }
   else if(sidePoll===1){ t="Too few to call"; b="You took a side on just one case, so there's no pattern yet. The objections coming next will give you more to think with."; }
   else {
-    t = (r===1 && sidePoll>=3) ? "Card-carrying act utilitarian" : r>=0.75 ? "Mostly utilitarian" : r>=0.5 ? "Split down the middle" : "Not buying it";
-    b = r>=0.75 ? "Your gut and the act utilitarian mostly line up. Where they split, ask yourself: is that a mistake in my gut, or a hole in the theory?"
+    t = (r===1 && sidePoll>=3) ? "Strong act utilitarian" : r>=0.75 ? "Mostly utilitarian" : r>=0.5 ? "Split about half and half" : "Mostly disagree";
+    b = r>=0.75 ? "Your instincts and the act utilitarian mostly agree. Where they differ, ask yourself: is that a mistake in my instincts, or a hole in the theory?"
       : r>=0.5 ? "You sided with the theory some of the time. Notice which cases: many people agree on the promise but split on the wallet and the ashes."
-      : "Your gut keeps splitting from the act utilitarian. That's exactly the raw material for the objections coming next.";
+      : "Your instincts keep disagreeing with the act utilitarian. That's exactly the raw material for the objections coming next.";
   }
   var unNote = unsurePoll ? ' you picked a side on ('+unsurePoll+' marked "not sure" and left out)' : '';
   var R=$("pollReveal"); R.hidden=false;
   R.innerHTML='<div class="pattern"><b>'+t+(sidePoll?': you agreed with the act utilitarian on '+agreePoll+' of '+sidePoll+(unsurePoll?' cases'+unNote:'')+'.':'.')+'</b> (For the ashes, "the garden is fine" counts as agreeing, since the theory says the two choices come out the same.)<br>'+b+'</div><p class="small"><b>Two more questions to clear this lead.</b></p>';
   POLLQ.forEach(function(item,qi){
     REC.poll.q[qi]={misses:0, done:false};
-    mcq(R,item,REC.poll.q[qi],function(){ pollQDone++; touch("g3"); if(pollQDone===POLLQ.length){ $("pollScore").textContent="All verdicts predicted."; clear("g3"); } },"Q"+(qi+1)+".","g3");
+    mcq(R,item,REC.poll.q[qi],function(){ pollQDone++; touch("g3"); if(pollQDone===POLLQ.length){ $("pollScore").textContent="All verdicts predicted."; clear("g3"); } },"Q"+(qi+1)+".","g3q");
   });
   R.querySelectorAll(".choice").forEach(function(b){ b.addEventListener("click",function(){ touch("g3"); }); });
 }
@@ -1586,7 +1638,7 @@ function pollLines(){
   if(!locked.length) return ["Lead 3 Predict the verdict: no verdicts locked yet"];
   var out=["Lead 3 my own verdicts (each locked before I saw the theory's answer): "+locked.map(function(C){ var m=REC.poll.mine[C.k]; var o=C.mine.filter(function(x){return x[0]===m;})[0]; return C.n.replace("The ","")+" = "+o[1].toLowerCase(); }).join("; ")];
   var ud=CASES.filter(function(C){return REC.poll.util[C.k].done;}), uf=ud.filter(function(C){return !REC.poll.util[C.k].misses;});
-  if(ud.length) out.push("Lead 3 act-utilitarian predictions: "+tally(ud.length,uf.length,CASES.length,"answered")+(ruleRec.done?"; rule-utilitarian lawn prediction right"+(ruleRec.misses?" after a miss":" first try"):""));
+  if(ud.length) out.push("Lead 3 act-utilitarian predictions: "+tally(ud.length,uf.length,CASES.length,"answered")+(ruleRec.done?"; rule-utilitarian lawn prediction right"+(ruleRec.misses?" after another go":" on the first go"):""));
   if(pollBuilt){
     out.push(sidePoll ? "Lead 3 I agreed with the act utilitarian on "+agreePoll+" of "+sidePoll+" cases"+(unsurePoll?" I picked a side on ("+unsurePoll+" marked not sure, left out)":"") : "Lead 3 I was not sure on any of the "+CASES.length+" cases (so no agreement count)");
     var qk=Object.keys(REC.poll.q), qd=qk.filter(function(k){return REC.poll.q[k].done;}).length, qf=qk.filter(function(k){return REC.poll.q[k].done && !REC.poll.q[k].misses;}).length;
@@ -1602,19 +1654,19 @@ var OBJ=[
  {k:"D", n:"Demandingness", s:"it asks too much: always more to do", c:"var(--hl-y)"},
  {k:"S", n:"Separateness of persons", s:"treats us as one big person", c:"var(--hl-g)"}
 ];
-var ALL={k:"ALL", n:"All four (bite the bullet)", s:"answers every objection at once", c:"var(--hl-b)"};
+var ALL={k:"ALL", n:"All four (accept the odd result)", s:"answers every objection at once", c:"var(--hl-b)"};
 var ROUNDS=[
- [ {id:"m1", t:"A mayor could calm a town-wide panic by framing a newcomer she knows is innocent, using him as a tool so everyone else feels safe. He'd be fined and sent away.", a:"R", hint:"Look at what's done to the newcomer himself: is he being shortchanged in a share-out, or used?", why:"An innocent person is deliberately used as a means. That's the surgeon's structure."},
-   {id:"m2", t:"Plan Y gives half the country a huge boost and leaves the other half with nothing, and it wins because its total beats a plan that shares things fairly.", a:"J", hint:"Nobody is being used here. Look at how the happiness is shared out.", why:"Nobody is used as a tool; the complaint is purely about the split."},
-   {id:"m3", t:"A policy leaves a small group permanently unhappy, because the total for everyone goes up. Nobody is being used as a tool; the question is about the split.", a:"J", hint:"A minority loses out in the share-out so the sum gets bigger. Which objection is about the split?", why:"The minority isn't used as a means; they just get a bad share of a bigger total."},
-   {id:"m4", t:"You can't buy your sister a birthday present, because the same money would do more good as a donation.", a:"D", hint:"The theory is asking a lot of you personally here.", why:"Maximizing leaves no room for your own people and projects."},
-   {id:"m6", t:"\"When I get a filling, my pain buys my healthy teeth. But your pain can't buy my fun. We're not the same person.\"", a:"S", hint:"Trade-offs inside one life versus trade-offs between lives...", why:"The dentist trade works inside one life; the theory makes it between lives."} ],
- [ {id:"p1", t:"If people knew doctors might do that, everyone would avoid check-ups and far more would die. So even by the numbers, the surgeon should stop.", a:"R", hint:"This reply says that even counting only results, the surgeon shouldn't do it. Which objection was about a healthy person being used?", why:"Reply 1: counting all the consequences, to rescue the surgeon case."},
-   {id:"p6", t:"Adopt the policy 'doctors never sacrifice a patient'. A world that keeps that policy does best overall, even if breaking it once would help.", a:"R", hint:"This reply protects individuals with a firm policy. Which objection was about an individual being sacrificed?", why:"Reply 2: going rule, so the healthy patient is protected."},
-   {id:"p2", t:"A dollar does more for someone with almost nothing, so the biggest total usually comes from sharing.", a:"J", hint:"This reply says maximizing tends to produce equality. Which objection was worried about inequality?", why:"Reply 3: diminishing returns push the total toward fair shares."},
-   {id:"p3", t:"Nobody improves by being scolded for every free afternoon; cheering on people who give a bit more does more good.", a:"D", hint:"Which objection complained that the theory leaves you no free time?", why:"Reply 4: what's best isn't the same as what deserves blame."},
-   {id:"p4", t:"No one gets left out: each person's well-being is entered on its own line, weighted the same as everyone else's.", a:"S", hint:"This reply insists each individual is still seen. Which objection said individuals vanish into the total?", why:"Reply 5: equal counting as a form of respect for each separate person."},
-   {id:"p5", t:"Maybe the gut feelings behind every one of these complaints are the mistake. They evolved for small groups, not billions.", a:"ALL", hint:"This reply doesn't fix one objection; it questions the feelings behind them all.", why:"Reply 6: bite the bullet, against every objection at once."} ]
+ [ {id:"m1", t:"A mayor could calm a town-wide panic by falsely blaming a newcomer she knows is innocent, using him as a tool so everyone else feels safe. He'd be fined and sent away.", a:"R", hint:"The Rights objection says it is wrong to use a person as a tool for others' good. Is the newcomer being used as a tool, or just given a small share?", why:"An innocent person is deliberately used as a means. That's the surgeon's structure."},
+   {id:"m2", t:"Plan Y gives half the country a huge boost and leaves the other half with nothing, and it wins because its total beats a plan that shares things fairly.", a:"J", hint:"Nobody is used as a tool here. The Fair-shares objection says only the total counts, not how it is split.", why:"Nobody is used as a tool; the complaint is purely about the split."},
+   {id:"m3", t:"A policy leaves a small group permanently unhappy, because the total for everyone goes up. Nobody is being used as a tool; the question is about the split.", a:"J", hint:"A minority gets a bad split so the total can grow. Which objection says a bigger total can hide an unfair split?", why:"The minority isn't used as a means; they just get a bad share of a bigger total."},
+   {id:"m4", t:"You can't buy your sister a birthday present, because the same money would do more good as a donation.", a:"D", hint:"Demandingness says the theory asks too much of you and leaves no room for your own people and projects. Does that fit a gift you are told not to buy?", why:"Maximizing leaves no room for your own people and projects."},
+   {id:"m6", t:"\"When I get a filling, my pain buys my healthy teeth. But your pain can't buy my fun. We're not the same person.\"", a:"S", hint:"Separateness says a trade inside one life (pain now, health later) is fine, but making that trade between different people treats us as one big person.", why:"The dentist trade works inside one life; the theory makes it between lives."} ],
+ [ {id:"p1", t:"If people knew doctors might do that, everyone would avoid check-ups and far more would die. So even by the numbers, the surgeon should stop.", a:"R", hint:"This reply says that even counting only results, the surgeon shouldn't do it. Which objection was about a healthy person being used as a tool?", why:"Reply 1: counting all the consequences, to rescue the surgeon case."},
+   {id:"p6", t:"Adopt the policy 'doctors never sacrifice a patient'. A world that keeps that policy does best overall, even if breaking it once would help.", a:"R", hint:"This reply protects individuals with a firm policy. Which objection was about an individual being sacrificed for the total?", why:"Reply 2: going rule, so the healthy patient is protected."},
+   {id:"p2", t:"A dollar does more for someone with almost nothing, so the biggest total usually comes from sharing.", a:"J", hint:"This reply says maximizing the total tends to produce more equal shares. Which objection was worried about unequal shares?", why:"Reply 3: diminishing returns push the total toward fair shares."},
+   {id:"p3", t:"Nobody improves by being scolded for every free afternoon; cheering on people who give a bit more does more good.", a:"D", hint:"This reply says scolding people for every free afternoon does little good. Which objection complained that the theory leaves you no free time?", why:"Reply 4: what's best isn't the same as what deserves blame."},
+   {id:"p4", t:"No one gets left out: each person's well-being is entered on its own line, weighted the same as everyone else's.", a:"S", hint:"This reply says each individual is still counted separately. Which objection said individuals vanish into one total?", why:"Reply 5: equal counting as a form of respect for each separate person."},
+   {id:"p5", t:"Maybe the instinctive reactions behind every one of these complaints are the mistake. They evolved for small groups, not billions.", a:"ALL", hint:"This reply doesn't fix one objection; it says the instincts behind all of them may be mistaken, so it answers every objection at once.", why:"Reply 6: accept the uncomfortable result, against every objection at once."} ]
 ];
 var round=0, sel=null, roundLeft=0, matchDone=false;
 function renderRound(){
@@ -1712,22 +1764,29 @@ function finRender(){
   var shift="";
   if(COVER.locked && COVER.v==="yes") shift = util ? "You started a utilitarian and you're still one. Rocky will test which objection you find hardest." : "You started out agreeing with the one-rule offer and ended up rejecting it. What changed your mind? Worth a sentence to Rocky.";
   else if(COVER.locked && COVER.v==="no") shift = util ? "You started out skeptical and ended up a utilitarian. What won you over? Worth a sentence to Rocky." : "You were skeptical at the start and still are, now with reasons.";
-  else if(COVER.locked && COVER.v==="mostly") shift = FIN.view==="rule"||FIN.view==="mixed" ? "\"Mostly, not always\" was your gut call, and your verdict is a version of that. Can you say exactly where the line is?" : "Your gut said \"mostly, not always\", and your verdict picked a side. Which case pushed you?";
+  else if(COVER.locked && COVER.v==="mostly") shift = FIN.view==="rule"||FIN.view==="mixed" ? "\"Mostly, not always\" was your first instinct, and your verdict is a version of that. Can you say exactly where the line is?" : "Your first instinct said \"mostly, not always\", and your verdict picked a side. Which case pushed you?";
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+esc(shift)+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
+function finClean(){ return { reason:$("finReason").value.replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim(), moved:String($("finMoved").value).replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim() }; }
+function finCheck(){
+  if(FIN.done) return false;
+  var c=finClean();
+  if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return false; }
+  if(c.reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return false; }
+  if(!c.moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  setFb($("finFb"),"","Ready.","Tap the button again to lock your verdict for good.");
+  return true;
+}
+armLock($("finBtn"),"Lock my verdict",finCheck,function(){
   if(FIN.done) return;
-  var reason=$("finReason").value.replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim(), moved=String($("finMoved").value).replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s+/g," ").trim();
-  if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  var c=finClean(), reason=c.reason, moved=c.moved;
   FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   focusFb($("finFb"));
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
-  toast("Case closed: verdict filed", "var(--stamp)");
-});
+  toast("Verdict filed", "var(--stamp)");
+},null,function(){ if(!FIN.done){ $("finFb").className="fb"; $("finFb").innerHTML=""; } });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
   return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];
@@ -1777,7 +1836,12 @@ function warmLines(){
 }
 var TAPFREEZE=0;
 function tapHeld(){ return !restoring && Date.now()<TAPFREEZE; }
-function tapFreeze(){ if(!restoring) TAPFREEZE=Date.now()+400; }
+var heldTimer=null;
+function tapFreeze(){
+  if(restoring) return;
+  TAPFREEZE=Date.now()+250; document.body.classList.add("tapheld");
+  clearTimeout(heldTimer); heldTimer=setTimeout(function(){ document.body.classList.remove("tapheld"); },250);
+}
 function warmLock(i, quiet){
   var w=WEL[i];
   if(!quiet) tapFreeze();
@@ -1798,7 +1862,7 @@ function warmReveal(){
   else if(WARM[0]<=WARM[1] && WARM[1]<=WARM[2]) line="Your line moved as the cost got heavier. Where it stops moving is where the arguments start.";
   else line="Your lines don't climb with the cost. Where they stop moving is where the arguments start.";
   R.hidden=false;
-  R.innerHTML='<b>Your lines are locked.</b> '+esc(line)+' One famous rule says the adding-up always wins in the end. The next two screens meet that rule, and then Lead 1 puts it to work.';
+  R.innerHTML='<b>Your lines are locked.</b> '+esc(line)+' Next you meet the famous rule that says the adding-up always wins.';
 }
 (function buildWarm(){
   var host=$("warmRounds");

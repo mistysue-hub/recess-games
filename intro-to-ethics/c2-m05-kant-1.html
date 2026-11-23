@@ -46,7 +46,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%; scroll-padding-top:100px}
 body{
   margin:0; background-color:var(--desk);
   background-image:radial-gradient(var(--desk-dot) 1.2px, transparent 1.4px);
@@ -381,10 +381,11 @@ html,body{overflow-x:clip}
 
 /* ---------- review pass 1 additions (ported from M03) ---------- */
 @media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
-.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
-  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.toast{position:absolute; inset:0; z-index:30; display:flex; align-items:center; justify-content:center; text-align:center; pointer-events:none;
+  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:6px 14px;
+  border:3px solid var(--tc,var(--hl-y)); animation:toastIn .2s ease-out both}
+.toast[hidden]{display:none}
+@keyframes toastIn{0%{opacity:0}100%{opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -429,8 +430,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 .wubtn[data-v="k"]{background:var(--hl-g); color:var(--hl-ink)}
 .wubtn[data-v="b"]{background:var(--hl-o); color:var(--hl-ink)}
 #wuBtns[hidden]{display:none}
-/* toast sits under the dock on phones so it never covers feedback */
-@media (max-width:500px){ .toast{bottom:auto; top:70px; padding:6px 12px; font-size:.82rem; border-width:2px; border-radius:999px; white-space:nowrap; pointer-events:none} }
+/* the toast now lives inside the sticky dock, so it can never cover a card, an instruction or feedback */
+@media (max-width:500px){ .toast{font-size:.82rem; border-width:2px; padding:4px 8px} }
+/* brief dimmed look while a tap is being ignored, so a swallowed tap is never silent */
+body.guarding .warm button:not(:disabled), body.guarding .lab-body button:not(:disabled):not(.cstat){opacity:.45}
+body.guarding .copymini button, body.guarding .copymini summary{opacity:1}
+.lockin .btn.armed{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+:root[data-theme="dark"] .lockin .btn.armed, :root[data-theme="dark"] #finBtn.armed{color:var(--hl-ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lockin .btn.armed, :root:not([data-theme="light"]) #finBtn.armed{color:var(--hl-ink)} }
+#finBtn.armed{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.skipd{margin:12px 0}
+.lockin .btn.lockwait, #finBtn.lockwait{opacity:.55}
+.dock .pip.locked{opacity:.75; cursor:pointer}
 </style>
 </head>
 <body>
@@ -439,8 +450,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <ol id="dockList"></ol>
   <div class="prog" id="prog" role="progressbar" aria-label="Case progress" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0"><i id="progFill"></i></div>
   <div class="evpanel" id="evPanel" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <main class="wrap">
 <!-- ================= 1 COVER ================= -->
@@ -448,7 +459,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 2 · Case #5</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">The Rule You Can't Break</h1>
-  <p class="dek">A philosopher who almost never left home, a shopkeeper who is honest for the wrong reason, and a test you can run in your head: what if your rule were a law of nature?</p>
+  <p class="dek">A philosopher who almost never left home, a shopkeeper who is honest for the wrong reason, and a test you can run in your head.</p>
   <svg class="cover-art" viewBox="0 0 340 150" role="img" aria-label="Drawing of a stone tablet with a rule on it, and an arrow pointing to a globe covered in copies of the same rule">
     <path d="M30 132 V44 a40 40 0 0 1 80 0 V132 z" fill="#D9D2C3" stroke="#2A2016" stroke-width="4"/>
     <path d="M46 56h48M46 72h48M46 88h36M46 104h44M46 120h28" stroke="#2A2016" stroke-width="4" stroke-linecap="round"/>
@@ -461,25 +472,25 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="plug-hook">
     <div class="plug-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><rect x="7" y="6" width="16" height="19" rx="7" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M11 12h8M11 16h8M11 20h5" stroke="#2A2016" stroke-width="2" stroke-linecap="round"/></svg></div>
-    <p>Last case, Bentham said an action is right if it makes the most happiness. Today's thinker says that's backwards. Gut call first: <b>is there any rule you should never break, no matter how good the results?</b> Lock it in. You'll answer again at the end.</p>
+    <p>Last case, Bentham said an action is right if it makes the most happiness. Today's thinker says that's backwards. First, a quick answer: <b>is there any rule you should never break, no matter how good the results?</b> You'll answer again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
-    <div class="row" role="group" aria-label="Your gut call">
+    <div class="row" role="group" aria-label="Your first answer">
       <button class="vbtn" type="button" data-v="yes" aria-pressed="false">Yes, some rules are unbreakable</button>
       <button class="vbtn" type="button" data-v="no" aria-pressed="false">No, it always depends on the results</button>
     </div>
     <label for="myReason">My reason, in one sentence</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="3" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 30 minutes, including a 1-minute warm-up</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 70 minutes (slower readers: allow more), including a 1-minute warm-up</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
   <div class="wtab">Warm-up · 1 minute · no right answers</div>
-  <h2 id="wuh"><span style="--mark:var(--hl-o)">Warm-up: Where's your break point?</span></h2>
-  <p class="how">You gave your word to keep a friend's secret. Five times, the payoff for telling it gets bigger. Keep your word, or break it? Go with your gut. Each tap locks.</p>
+  <h2 id="wuh"><span style="--mark:var(--hl-o)">Warm-up: Where would you stop keeping your word?</span></h2>
+  <p class="how">You gave your word to keep a friend's secret. In five steps, the payoff for telling it gets bigger. Keep your word, or break it? Answer fast; there's no wrong answer. Each tap is final.</p>
   <div class="ladder" id="wuLadder" aria-hidden="true"></div>
   <div class="wucard" id="wuCard" aria-live="polite"></div>
   <div class="row" id="wuBtns" role="group" aria-label="Keep or break your word"></div>
@@ -489,15 +500,15 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 2 MEET KANT ================= -->
 <section class="sheet" aria-labelledby="b0">
   <h2 id="b0"><span style="--mark:var(--hl-y)">Meet Kant, the rule person</span></h2>
-  <p class="wow">He changed philosophy without ever traveling far from his home town.</p>
-  <p>Immanuel Kant (1724 to 1804) lived in Königsberg, a port city in Prussia. (Today it's Kaliningrad, in Russia.) In 1785 he published the <b><i>Groundwork</i></b>, a short, dense book about right and wrong. This whole file is built on it.</p>
+  <p class="wow">He changed philosophy without ever traveling far from home.</p>
+  <p>Immanuel Kant (1724 to 1804) lived in Königsberg, a port city in Prussia (today Kaliningrad, in Russia). In 1785 he published the <b><i>Groundwork</i></b>, a short, dense book about right and wrong. This file is built on it.</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit A: the big flip</span>
     <p><b>Bentham (last case):</b> look at the <i>results</i>.</p>
-    <p><b>Kant (this case):</b> look at the <i>will</i>, your power to choose and act for reasons. The principle you act on matters, not what happens afterward.</p>
+    <p><b>Kant (this case):</b> look at the <i>will</i>, your power to choose and act for reasons. The principle you act on matters, not what happens next.</p>
   </div>
   <div class="poll" id="flipPoll">
-    <p><b>Your hunch (not graded):</b> what mostly makes an action right?</p>
+    <p><b>Your first guess (not graded):</b> what mostly makes an action right?</p>
     <div class="row" role="group" aria-label="What makes an action right?">
       <button class="btn ghost" type="button" data-r="results">What happens because of it</button>
       <button class="btn ghost" type="button" data-r="reason">The reason behind it</button>
@@ -507,9 +518,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <details class="reply gloss" style="--rc:var(--hl-y)">
     <summary><b>More about Kant (optional)</b></summary>
     <div class="inner">
-      <p>Kant was a university professor famous for his routines. The story goes that his neighbors could set their clocks by his afternoon walk. It's probably exaggerated, but it fits the man.</p>
-      <p>The book's full title is <i>Groundwork of the Metaphysics of Morals</i>, and every example in this file has been checked against it.</p>
-      <p>This is the first of two Kant files. This one covers the good will, duty, two kinds of "ought", and Kant's first big test. The next file covers treating people as ends, never merely as tools.</p>
+      <p>Kant was a university professor famous for his routines. The story goes that his neighbors could tell the time by his afternoon walk. It's probably exaggerated, but it fits the man.</p>
+      <p>The book's full title is <i>Groundwork of the Metaphysics of Morals</i>. This is the first of two Kant files: the good will, duty, two kinds of "ought", and Kant's first big test. The next covers treating people as ends, never merely as tools.</p>
     </div>
   </details>
 </section>
@@ -517,10 +527,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 3 DUTY: FOUR GROUPS ================= -->
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-o)">Duty, inclination and four kinds of action</span></h2>
-  <p>A <b>duty</b> is something morality requires of you. An <b>inclination</b> is a feeling or want that pulls you toward an action: you love it, enjoy it, or just want it. Kant says an action can be:</p>
+  <p>A <b>duty</b> is something morality requires of you. An <b>inclination</b> is a feeling or want that pulls you toward an action: you love it, enjoy it, or just want it. Kant says a right action can be:</p>
   <ul>
     <li><b>In line with duty</b>: it's what duty requires, whatever your reason.</li>
-    <li><b>From duty</b>: you do it <i>because</i> it's your duty. That reason does the work.</li>
+    <li><b>From duty</b>: you do it <i>because</i> it's your duty.</li>
   </ul>
   <p>Only actions done from duty have <b>moral worth</b>, Kant's word for the kind of value that earns real moral respect. He sorts actions into four groups:</p>
   <div class="dims" aria-label="Kant's four kinds of action">
@@ -529,7 +539,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div style="--dc:var(--hl-b)"><b>3. Direct inclination.</b> The right action, done because you want that very thing. Example: keeping yourself alive is a duty, but most of us do it because we want to live.</div>
     <div style="--dc:var(--hl-g)"><b>4. From duty.</b> The right action, done because it's right, even when no feeling pulls you there. Only this group has moral worth.</div>
   </div>
-  <p class="small">(In the games, "Inclination" means group 3 only. Payoffs and penalties are group 2.)</p>
+  <p class="small">To tell groups 2 and 3 apart, ask "what do I get besides doing the act?" A payoff from outside it is group 2. Just wanting the act itself is group 3. (In the games, "Inclination" means group 3 only.)</p>
+  <p>Misses cost nothing here; Rocky just uses them to see what to review.</p>
   <details class="reply gloss" style="--rc:var(--hl-b)">
     <summary><b>Word help: "will" (optional)</b></summary>
     <div class="inner">
@@ -546,7 +557,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g1h">Motive detective</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Duty, inclination and four kinds of action" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Seven suspects, seven actions. Read each motive carefully and file it in one of Kant's four groups. Four of these are modern versions of Kant's own examples (you'll meet the originals right after).</p>
+  <p class="how">Seven suspects, seven actions. Read each motive and put it in one of Kant's four groups. Four of these are modern versions of Kant's own examples (you'll meet the originals right after).</p>
   <div class="binkey" aria-hidden="true"><span class="bkl">The four groups (labels, not buttons):</span><span style="--pc:var(--hl-p)">Against duty</span><span style="--pc:var(--hl-o)">Self-interest</span><span style="--pc:var(--hl-b)">Inclination</span><span style="--pc:var(--hl-g)">From duty</span></div>
   <div id="motList"></div>
   <p class="score" id="motScore" aria-live="polite"></p>
@@ -559,15 +570,15 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-p)">The only thing that's always good</span></h2>
   <p class="wow">Intelligence, courage, even happiness: Kant says every one of them can turn bad.</p>
-  <p>The <i>Groundwork</i> opens with a bold claim: there's nothing in the world, or even beyond it, that is good <b>without qualification</b> except a <b>good will</b>. "Without qualification" means good in every situation, with no "it depends".</p>
-  <p>Test it. Intelligence is great, until it belongs to a criminal mastermind. Courage is great, until a bully has it. Even happiness can be bad: Kant thinks success and good fortune can make people smug and arrogant if a good will isn't steering them. A cool, calm villain is <i>more</i> dangerous than a nervous one.</p>
-  <p>So what is a good will? Roughly: a will that chooses what's right <i>because it's right</i>. That's group 4 from Lead 1. And here's the part that makes Kant Bentham's opposite:</p>
+  <p>The <i>Groundwork</i> opens with a bold claim: nothing is good <b>without qualification</b> except a <b>good will</b>. "Without qualification" means good in every situation, with no "it depends".</p>
+  <p>Test it. Intelligence is great, until it belongs to a criminal mastermind. Courage is great, until a bully has it. Even happiness can go bad: Kant thinks success can make people smug if a good will isn't guiding them.</p>
+  <p>A good will chooses what's right <i>because it's right</i>: group 4 from Lead 1. And this is what makes Kant Bentham's opposite:</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit B: the jewel</span>
-    <p>Suppose a person tries with everything they've got to do the right thing, and bad luck means they achieve nothing at all. Kant says their good will would still shine like a jewel, all by itself, as something with full value in itself. Success doesn't add to its value. Failure doesn't take any away.</p>
+    <p>Suppose a person tries as hard as they can to do the right thing, but bad luck means they achieve nothing at all. Kant says their good will would still shine like a jewel (be just as valuable) all by itself. Success doesn't add to its value. Failure doesn't take any away.</p>
   </div>
   <div class="poll" id="jewelPoll">
-    <p><b>Quick call (not graded):</b> Nia tries hard to save a stranger's lost dog and fails. Ben, chasing his own frisbee, scares the dog home by accident. Who deserves more moral credit?</p>
+    <p><b>Quick pick (not graded):</b> Nia tries hard to save a stranger's lost dog and fails. Ben, chasing his own frisbee, scares the dog home by accident. Who deserves more moral credit?</p>
     <div class="row" role="group" aria-label="Who deserves more credit?">
       <button class="btn ghost" type="button" data-r="ana">Nia, who tried</button>
       <button class="btn ghost" type="button" data-r="ben">Ben, who got the result</button>
@@ -582,49 +593,55 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p class="wow">The famous shopkeeper example is easy to retell wrong. You already met a modern version in Lead 1: Mo.</p>
   <div class="exhibit" style="--hl-c:var(--hl-o)">
     <span class="lbl">Exhibit C: the shopkeeper, as Kant actually tells it</span>
-    <p>A shopkeeper doesn't overcharge customers who don't know the going price. He keeps one fixed price for everybody, so even a child could shop there safely. Customers are treated honestly. But Kant points out that this doesn't show he acted from duty: honesty is simply good for business. And Kant adds that we can't assume he has a warm feeling for his customers either. His verdict: the shopkeeper acted <b>neither from duty nor from a direct inclination, but out of self-interest</b>. Group 2.</p>
+    <p>A shopkeeper doesn't overcharge customers who don't know the usual price. He keeps one fixed price for everybody, so even a child could shop there safely. But Kant points out that this doesn't show he acted from duty: honesty is simply good for business. We can't assume he feels warmly toward his customers either. His verdict: the shopkeeper acted <b>neither from duty nor from a direct inclination, but out of self-interest</b>. Group 2.</p>
   </div>
-  <p class="note">A tempting retelling says the shopkeeper is honest "because he likes his customers". That's not Kant's example; Kant explicitly rules it out. Kant gives separate examples for group 3.</p>
+  <p class="note">A tempting retelling says the shopkeeper is honest "because he likes his customers". Kant explicitly rules that out. His examples for group 3 are separate.</p>
   <div class="poll" id="moPoll">
-    <p><b>Quick gut check (not graded):</b> would you call this shopkeeper a good person?</p>
+    <p><b>Quick check (not graded):</b> would you call this shopkeeper a good person?</p>
     <div class="row" role="group" aria-label="Is the shopkeeper a good person?">
       <button class="btn ghost" type="button" data-r="yes">Yes, he's honest</button>
-      <button class="btn ghost" type="button" data-r="no">Not really, it's just business</button>
+      <button class="btn ghost" type="button" data-r="no">Not really, he's honest only because it pays</button>
     </div>
     <div class="fb" id="moFb" aria-live="polite"></div>
   </div>
-  <p><b>Your own life.</b> Kant says looking after your life is a duty. But most of us do it simply because we want to live, so it's direct inclination, group 3.</p>
-  <p><b>The kind helper.</b> Kant then describes people with a naturally sympathetic temperament, who feel joy in spreading happiness around them. Their kindness is lovely and deserves praise and encouragement, he says, but it doesn't have true moral worth.</p>
-  <p><b>The grief step.</b> Now imagine one of those people hit by grief so heavy that they stop feeling anything for anyone. If they still help someone, not from feeling but simply because it's their duty, <i>now</i> the action has moral worth.</p>
-  <p><b>Careful: Kant does not say enjoying doing good is bad.</b> The point is about what's doing the work. If the feeling disappeared, would you still do it? A will that would is the good will. (The idea is easy to caricature. The poet Friedrich Schiller, who admired Kant, wrote a famous joke verse about someone who worries he isn't virtuous because he enjoys helping his friends.)</p>
+  <details class="reply gloss skipd" style="--rc:var(--hl-o)">
+    <summary><b>Short on time? Skip this one: Kant's other examples</b></summary>
+    <div class="inner">
+      <p><b>Your own life.</b> Looking after your life is a duty, but most of us do it because we want to live: direct inclination, group 3.</p>
+      <p><b>The kind helper.</b> Some people are naturally sympathetic and feel joy in spreading happiness. Their kindness deserves praise, Kant says, but it doesn't have true moral worth.</p>
+      <p><b>The grief step.</b> Now imagine one of them hit by grief so heavy that they feel nothing for anyone. If they still help someone, only because it's their duty, <i>now</i> the action has moral worth.</p>
+      <p>The poet Friedrich Schiller admired Kant but wrote a joke verse about a man who worries he isn't virtuous because he enjoys helping his friends. It shows how easily this idea gets exaggerated.</p>
+    </div>
+  </details>
+  <p><b>Careful: Kant does not say enjoying doing good is bad.</b> Kind, sympathetic acts deserve praise; they just don't earn moral worth. The point is what's doing the work: if the feeling disappeared, would you still do it? A will that would is the good will.</p>
 </section>
 
 <!-- ================= 6 IMPERATIVES ================= -->
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-b)">Two kinds of "ought"</span></h2>
-  <p class="wow">"You ought to practice piano" and "you ought not to lie" sound alike. Kant says they're completely different animals.</p>
-  <p>Kant calls any "ought" that reason gives you an <b>imperative</b>: a command. He splits them into two kinds.</p>
+  <p class="wow">"You ought to practice piano" and "you ought not to lie" sound alike. Kant says they're two completely different kinds of "ought".</p>
+  <p>Kant calls any "ought" that reason gives you an <b>imperative</b> (a command). He splits them into two kinds.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit D: hypothetical imperatives</span>
-    <p>"<b>If</b> you want X, do Y." The command depends on a goal you happen to have. "If you want to pass the driving test, practice parallel parking." Drop the goal (you don't care about driving) and the command loses its grip on you.</p>
-    <p>Kant names two types: rules of <b>skill</b> (how to reach some particular goal, like winning at chess) and counsels of <b>prudence</b> (advice) (how to reach your own happiness, like "save money for later").</p>
+    <p>"<b>If</b> you want X, do Y." The command depends on a goal you happen to have. "If you want to pass the driving test, practice parallel parking." Drop the goal and the command no longer applies to you.</p>
+    <p>Kant names two types: rules of <b>skill</b> (how to reach some particular goal, like winning at chess) and counsels of <b>prudence</b> (advice on how to reach your own happiness, like "save money for later").</p>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit E: the categorical imperative</span>
-    <p>"Do Y." Full stop. No goal it depends on, no escape clause. It applies to you whatever you want. Kant thinks moral commands are like this: "don't make lying promises" doesn't evaporate if you say "but I don't care about being trusted".</p>
+    <p>"Do Y." No goal it depends on, no escape clause. It applies to you whatever you want. Kant thinks moral commands are like this: "don't make lying promises" still applies if you say "but I don't care about being trusted".</p>
   </div>
   <div class="poll" id="optPoll">
-    <p><b>Your take (not graded):</b> a friend says, "Don't lie to people? I don't care about being trusted, so that rule doesn't apply to me." Is your friend off the hook?</p>
-    <div class="row" role="group" aria-label="Is the friend off the hook?">
+    <p><b>Your take (not graded):</b> a friend says, "Don't lie to people? I don't care about being trusted, so that rule doesn't apply to me." Does the rule still apply to your friend?</p>
+    <div class="row" role="group" aria-label="Does the rule still apply to the friend?">
       <button class="btn ghost" type="button" data-r="off">Yes, no goal means no rule</button>
       <button class="btn ghost" type="button" data-r="on">No, it still applies</button>
     </div>
     <div class="fb" id="optFb" aria-live="polite"></div>
   </div>
-  <p>That's why morality <i>has</i> to be categorical for Kant. If morality were only hypothetical, anyone could get out of it by not wanting the goal. "Don't steal, if you want people to like you." "Cool, I don't care what people think." Done, off the hook? Kant says no way.</p>
-  <p><b>Two detective tips.</b></p>
+  <p>That's why morality <i>has</i> to be categorical for Kant. If morality were only hypothetical, anyone could escape it by not wanting the goal. "Don't steal, if you want people to like you." "I don't care what people think." Is that person free of the rule? Kant says no.</p>
+  <p><b>Two tips.</b></p>
   <ul>
-    <li><b>Hidden ifs.</b> Lots of hypothetical imperatives hide their "if". "Eat your vegetables" really means "if you want to stay healthy, eat your vegetables". Ask: <i>is there a goal this depends on?</i></li>
+    <li><b>Hidden ifs.</b> Many hypothetical imperatives hide their "if". "Eat your vegetables" means "if you want to stay healthy, eat your vegetables". Ask: <i>is there a goal this depends on?</i></li>
     <li><b>Fake ifs.</b> The word "if" doesn't make a command hypothetical. "If you've borrowed something, give it back" names a <i>situation</i>, not a <i>goal you want</i>. It applies whether or not you want anything. That one is categorical.</li>
   </ul>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
@@ -637,7 +654,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g2h">Hunt the hidden "if"</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Two kinds of 'ought'" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Eight commands, one at a time. Hypothetical (depends on a goal) or categorical (applies whatever you want)? Build a streak. Watch for hidden ifs and fake ifs.</p>
+  <p class="how">Eight commands, one at a time. Hypothetical (depends on a goal) or categorical (applies whatever you want)? Build a streak of right answers. Remember: hidden ifs still count; fake ifs (situations) don't.</p>
   <div class="rf-top"><span id="ifNav">Card 1 of 8</span><span class="streak" id="ifStreak">Streak 0</span></div>
   <div class="rf-card" id="ifCard" aria-live="polite"></div>
   <div class="row" id="ifBtns" role="group" aria-label="Which kind of imperative?" style="margin-top:12px">
@@ -654,16 +671,16 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 8 MAXIMS ================= -->
 <section class="sheet" aria-labelledby="b4">
   <h2 id="b4"><span style="--mark:var(--hl-y)">Maxims: the rule behind what you do</span></h2>
-  <p class="wow">Two people can do exactly the same thing and be acting on totally different rules.</p>
-  <p>Kant thinks whenever you act on purpose, you're following a personal rule, even if you never say it out loud. He calls it a <b>maxim</b>: your own principle of action. A handy way to write one out has three parts:</p>
+  <p class="wow">Two people can do exactly the same thing while acting on different rules.</p>
+  <p>Kant thinks whenever you act on purpose, you're following a personal rule, even if you never say it out loud. He calls it a <b>maxim</b>: your own principle of action. One way to write a maxim has three parts:</p>
   <div class="eq"><span class="s1">When [situation]</span>, <span class="s2">I will [action]</span>, <span class="s3">so that [purpose]</span>.</div>
   <p>Example: "<i>When I'm tired after school, I will nap for twenty minutes, so that I can concentrate on homework.</i>"</p>
-  <p>The purpose matters. Remember Kant's shopkeeper? His maxim is something like "when a customer doesn't know the price, I'll charge the normal price, so that I keep my reputation". A different shopkeeper doing the same thing might act on "...so that I treat people fairly". Same action, different maxims. That's how Kant can say one has moral worth and the other doesn't.</p>
+  <p>The purpose matters. The shopkeeper's maxim is something like "when a customer doesn't know the price, I'll charge the normal price, so that I keep my reputation". Another shopkeeper might act on "...so that I treat people fairly". Same action, different maxims: that's how Kant can say one has moral worth and the other doesn't.</p>
   <p>Three ways to write a maxim badly:</p>
   <ul>
     <li><b>Leaving out the part that matters.</b> "I'll ask my sister for money" hides the fact that the promise to repay is fake.</li>
     <li><b>Writing a feeling, not a rule.</b> "I feel stressed about money" isn't something you <i>do</i>.</li>
-    <li><b>Stuffing in random detail.</b> "When it's a Tuesday and I'm wearing blue..." Good maxims keep what's relevant to why you act.</li>
+    <li><b>Adding random detail.</b> "When it's a Tuesday and I'm wearing blue..." Good maxims keep only what's relevant to why you act.</li>
   </ul>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -675,7 +692,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g3h">Maxim builder</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Maxims: the rule behind what you do" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Three stories. For each, build the maxim the person is really acting on: pick a tile for each slot. You'll test all three of these maxims in Lead 4, so build them well.</p>
+  <p class="how">Three stories. For each, build the maxim the person is really acting on: pick a tile for each slot. You'll test all three of these maxims in Lead 4.</p>
   <p class="m-nav" id="mbNav"></p>
   <div class="clue" id="mbStory"></div>
   <div id="mbSlots"></div>
@@ -691,7 +708,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b5">
   <h2 id="b5"><span style="--mark:var(--hl-g)">The test: could your rule be a law of nature?</span></h2>
   <p class="wow">Kant claims one test can sort every maxim into "allowed" and "forbidden".</p>
-  <p>Kant's categorical imperative comes in a few versions. The first is called the <b>Formula of Universal Law</b>. In plain words: <b>only act on a maxim that you could, at the same time, will to be a universal law</b>, a rule that everyone follows. ("Will" here means choose, or sign up for. So the question is: could you choose for everyone to follow your rule?) Kant also gives a vivid version. This one is in Thomas Kingsmill Abbott's classic 19th-century translation:</p>
+  <p>Kant's categorical imperative comes in a few versions. The first is called the <b>Formula of Universal Law</b>. In plain words: <b>only act on a maxim that you could, at the same time, will to be a universal law</b>, a rule that everyone follows. ("Will" here means choose. So the question is: could you choose for everyone to follow your rule?) Here is Kant's own wording, in Thomas Kingsmill Abbott's 19th-century translation:</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit F: the formula</span>
     <p>"Act as if the maxim of thy action were to become by thy will a universal law of nature."</p>
@@ -705,16 +722,16 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="breakFb" aria-live="polite"></div>
   </div>
-  <p>A <b>law of nature</b> is something everyone does automatically, the way objects fall. So the test is a thought experiment in four steps:</p>
+  <p>A <b>law of nature</b> is something that happens automatically, the way objects fall. So the test is a thought experiment in four steps:</p>
   <ol class="steps">
     <li><b>Write your maxim.</b> (You did this in Lead 3.)</li>
     <li><b>Universalize it.</b> Imagine a world where everyone acts on that maxim, automatically, always.</li>
-    <li><b>Test A, contradiction in conception.</b> Can that world even be <i>conceived</i> (thought through consistently) with your maxim still working in it? Or does the maxim destroy the very thing it needs?</li>
-    <li><b>Test B, contradiction in will.</b> If the world <i>can</i> exist, could you consistently <i>will</i> (choose) to live in it, given what every rational person must want?</li>
+    <li><b>Test A, contradiction in conception.</b> Can that world be <i>conceived</i> (thought through without contradiction) with your maxim still working in it? Or does the maxim destroy what it needs?</li>
+    <li><b>Test B, contradiction in will.</b> If that world <i>can</i> exist, could you consistently <i>will</i> (choose) to live in it, given what every rational person must want?</li>
   </ol>
-  <p>Fail either test and acting on that maxim is wrong. Pass both and it's allowed. (Allowed, not necessarily required: most maxims, like "I'll have toast for breakfast", pass and are simply fine.)</p>
+  <p>Fail either test and acting on that maxim is wrong. Pass both and it's allowed (most maxims, like "I'll have toast for breakfast", just pass).</p>
   <div class="poll" id="cheatPoll">
-    <p><b>Your hunch (not graded):</b> "I'll copy answers on a test whenever I can get away with it." Could that rule pass both tests?</p>
+    <p><b>Your first guess (not graded):</b> "I'll copy answers on a test whenever I can do it without getting caught." Could that rule pass both tests?</p>
     <div class="row" role="group" aria-label="Could the cheating rule pass both tests?">
       <button class="btn ghost" type="button" data-r="pass">Yes, it could pass</button>
       <button class="btn ghost" type="button" data-r="fail">No, something breaks</button>
@@ -725,14 +742,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="lbl">Exhibit G: Kant's lying promise, step by step</span>
     <span class="argline"><b>Maxim:</b> when I need money, I'll borrow it by promising to repay, even though I know I never will, so that I get the money.</span>
     <span class="argline"><b>Universalize:</b> everyone who needs money makes false promises to repay, automatically.</span>
-    <span class="argline"><b>Test A:</b> in that world, nobody would believe a promise to repay. Kant says people would laugh at such promises as empty words. So the lying promise couldn't even <i>work</i>: the maxim needs a world where promises are trusted, and universalizing it wipes that world out.</span>
+    <span class="argline"><b>Test A:</b> in that world, nobody would believe a promise to repay. So the lying promise couldn't even <i>work</i>: the maxim needs a world where promises are trusted, and universalizing it destroys that world.</span>
     <span class="argline concl"><b>Verdict:</b> fails Test A. The maxim contradicts itself, so acting on it is wrong.</span>
   </div>
-  <p>Notice what the argument does <i>not</i> say. It doesn't say "trust would collapse, and that would be a bad result". It says your maxim would <b>undermine itself</b>: you'd be relying on everyone else <i>not</i> doing what you're doing. You'd be making an exception of yourself. That's the heart of Kant's idea.</p>
+  <p>Notice what this argument does <i>not</i> say: "trust would collapse, and that would be a bad result". It says your maxim would <b>undermine itself</b>: you'd be relying on everyone else <i>not</i> doing what you do, an exception for yourself. That is the center of Kant's idea.</p>
   <div class="poll" id="helpPoll">
     <p><b>Before you read on (not graded):</b> could a world where nobody ever helps anybody even <i>exist</i>?</p>
     <div class="row" role="group" aria-label="Could a no-help world exist?">
-      <button class="btn ghost" type="button" data-r="yes">Yes, grimly</button>
+      <button class="btn ghost" type="button" data-r="yes">Yes, but it would be a grim world</button>
       <button class="btn ghost" type="button" data-r="no">No, it would collapse</button>
     </div>
     <div class="fb" id="helpFb" aria-live="polite"></div>
@@ -742,11 +759,11 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 11 TEST B ================= -->
 <section class="sheet" aria-labelledby="b6">
   <h2 id="b6"><span style="--mark:var(--hl-b)">Test B and the two kinds of duty</span></h2>
-  <p>Some maxims pass Test A but still fail. Kant's examples:</p>
+  <p>Some maxims pass Test A but still fail Test B:</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit H: the person who never helps</span>
-    <p>Maxim: "I'll never help anyone in need, so that I keep all my time and money for myself." Universalize it: nobody ever helps anybody. Could that world exist? Sure; humans would survive, grimly. It passes Test A.</p>
-    <p>But could you <i>will</i> it? Kant says no. You can't rule out needing help yourself; almost everyone does at some point. Willing this world means willing that you'd be refused help when you need it most. Your will would be at war with itself. Fails Test B.</p>
+    <p>Maxim: "I'll never help anyone in need, so that I keep all my time and money for myself." Universalize it: nobody ever helps anybody. Could that world exist? Sure; humans would survive, though life would be grim. It passes Test A.</p>
+    <p>But could you <i>will</i> it? Kant says no. Almost everyone needs help at some point, so willing this world means willing that you'd be refused help when you need it most. Your will would want two things that can't both happen. Fails Test B.</p>
   </div>
   <div class="poll" id="worldPoll">
     <p><b>Be honest (not graded):</b> would you choose to live in a world where nobody ever helps anybody?</p>
@@ -757,18 +774,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="worldFb" aria-live="polite"></div>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
-    <span class="lbl">Exhibit I: the person who lets their talents rust</span>
-    <p>Maxim: "I'll never develop any of my abilities, so that I can just relax and enjoy myself." Kant thinks a world like this could exist. But as a rational being you necessarily want your abilities to be developed, because they're useful for all sorts of possible purposes. So you can't consistently will a world where nobody develops any. Fails Test B.</p>
+    <span class="lbl">Exhibit I: the person who never develops their talents</span>
+    <p>Maxim: "I'll never develop any of my abilities, so that I can just relax and enjoy myself." Kant thinks such a world could exist. But as a rational being you necessarily want your abilities developed, because they're useful for all sorts of purposes. So you can't consistently will a world where nobody develops any. Fails Test B.</p>
   </div>
   <p>This gives Kant two kinds of duty:</p>
   <div class="twins" aria-label="Perfect versus imperfect duties">
     <div class="hd">Perfect duties</div><div class="hd b">Imperfect duties</div>
-    <div>In Kant's own examples, these come from failing <b>Test A</b>. Never act on the maxim. No exceptions for what you'd like.</div>
-    <div>In Kant's own examples, these come from failing <b>Test B</b>. You can't adopt "never", but you have leeway over when and how.</div>
+    <div>From failing <b>Test A</b>. Never act on the maxim. No exceptions for what you'd like.</div>
+    <div>From failing <b>Test B</b>. You can't adopt "never", but you have room to choose when and how.</div>
     <div>Example: don't make lying promises.</div>
     <div>Example: help others <i>sometimes</i>; develop <i>some</i> of your talents.</div>
   </div>
-  <p class="note">Kant's original list has four examples. We've skipped one about ending one's own life; it's a heavy topic, and the other three show both tests clearly.</p>
+  <p class="note">Kant's original list has four examples. We've skipped one about ending one's own life; it's a very serious topic, and the other three show both tests clearly.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -794,36 +811,37 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b7">
   <h2 id="b7"><span style="--mark:var(--hl-p)">Four ways people get Kant wrong</span></h2>
   <p class="wow">One of the most famous objections to Kant may rest on misreading him.</p>
-  <p>Tap each misreading open. Lead 5 opens once you've read all four.</p>
+  <p>Open misreadings 1 to 3. Lead 5 opens once you've read them. The fourth repeats a point from earlier, so you can skip it.</p>
   <details class="reply" style="--rc:var(--hl-p)">
     <summary><b>1. "What if everyone did it? Bad results!"</b></summary>
     <div class="inner">
-      <p>People often treat Kant's test as a consequence check: imagine everyone doing it, and if the results would be bad, it's wrong. That turns Kant into Bentham with extra steps. Kantians say the test asks something else: does your maxim <b>defeat itself</b>, or put your will <b>at odds with itself</b>, once it's universal? The lying promise is wrong because it only works if you're the exception, not because a low-trust world is unpleasant.</p>
+      <p>People often treat Kant's test as a consequence check: imagine everyone doing it, and if the results would be bad, it's wrong. That makes Kant a Bentham again, just with more steps. Kantians say the test asks something else: does your maxim <b>defeat itself</b>, or put your will <b>at odds with itself</b>, once it's universal? The lying promise is wrong because it only works if you're the exception, not because a low-trust world is unpleasant.</p>
       <p class="other">The other side says: John Stuart Mill complained in 1861 that Kant never shows a real contradiction, only that everyone doing it would have results nobody would choose. Whether the Kantian reply fully answers Mill is still argued about.</p>
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-o)">
     <summary><b>2. "What if everyone became a dentist?"</b></summary>
     <div class="inner">
-      <p>"I'll become a dentist. But what if everyone did? Nobody would grow food! So it's wrong." Obviously not. Two mistakes: it's consequence thinking (misreading 1), and the maxim is written badly. What you're really acting on is closer to "I'll choose a career I like from the ones open to me". Universalize that and nothing contradicts itself.</p>
-      <p class="other">The other side says: if you can always rewrite a maxim until it passes, can't a clever cheater do the same? Kantians answer that a maxim has to state your real reasons.</p>
+      <p>"I'll become a dentist. But what if everyone did? Nobody would grow food! So it's wrong." Obviously not. Two mistakes: it's consequence thinking (misreading 1), and the maxim is badly written. What you're really acting on is closer to "I'll choose a career I like from the ones open to me". Universalize that and nothing contradicts itself.</p>
+      <p class="other">The other side says: if you can rewrite a maxim until it passes, can't a clever cheater do the same? Kantians answer that a maxim has to state your real reasons.</p>
     </div>
   </details>
   <details class="reply" style="--rc:var(--hl-b)">
     <summary><b>3. "It's just the Golden Rule"</b></summary>
     <div class="inner">
-      <p>The Golden Rule asks what <i>you</i> would mind. Kant's test asks whether your maxim could be a law for <i>everyone</i> without contradiction, whatever you'd mind. In a footnote, Kant says the familiar rule "don't do to others what you wouldn't want done to you" can't serve as a universal law. One of his reasons: plenty of people would happily agree to get no help from others, as long as they never had to help anyone.</p>
+      <p>The Golden Rule (treat others as you would want to be treated) asks what <i>you</i> would mind. Kant's test asks whether your maxim could be a law for <i>everyone</i> without contradiction, whatever you'd mind. In a footnote, Kant says the familiar rule can't serve as a universal law. One reason: plenty of people would happily agree to get no help from others, as long as they never had to help anyone.</p>
       <p class="other">The other side says: the two often give the same answer in everyday cases, which is why people mix them up.</p>
     </div>
   </details>
-  <details class="reply" style="--rc:var(--hl-g)">
-    <summary><b>4. "Kant says feelings are bad"</b></summary>
+  <details class="reply gloss skipd" style="--rc:var(--hl-g)">
+    <summary><b>4. "Kant says feelings are bad" (Short on time? Skip this one)</b></summary>
     <div class="inner">
       <p>Enjoying doing good isn't wrong. Feelings just can't be the thing that gives an action <i>moral worth</i>. Kant's question is whether you'd still do it if the feeling were gone.</p>
-      <p class="other">The other side says: a friend who visits you only "from duty" sounds a bit cold. Many philosophers think Kant undervalues love and care here.</p>
+      <p class="other">The other side says: a friend who visits you only "from duty" sounds cold. Many philosophers think Kant undervalues love and care.</p>
     </div>
   </details>
   <p>One more thing to keep straight: the test tells you whether an action is <b>permitted</b>. Moral worth is a separate question about your <b>motive</b>. The profit-minded shopkeeper's maxim passes the test (his action is fine), but it still has no moral worth.</p>
+  <p class="note"><b>One real limit, not a misreading.</b> Kant ties duty to our rational nature (our ability to act on reasons), so he said we owe animals no direct duties, only indirect ones (for example, cruelty to animals can make us cruel to people). Christine Korsgaard and other philosophers argue that Kant's own principles should cover animals too.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="5">Got it: open Lead 5</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -834,7 +852,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g5h">What would Kant say?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Four ways people get Kant wrong" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Six new cases. For each, two taps: first <b>your own view</b> (never graded), then <b>predict Kant's verdict</b> (graded) by applying what you've learned. The tally shows how often you and Kant agree. The last case is the one that has haunted Kant for over 200 years.</p>
+  <p class="how">Six new cases. For each, two taps: first <b>your own view</b> (never graded), then <b>predict Kant's verdict</b> (graded). The tally shows how often you and Kant agree. The last case has been argued about for over 200 years.</p>
   <p class="m-nav" id="pkNav"></p>
   <div class="mach" id="pkCard"></div>
   <div class="fb" id="pkFb" aria-live="polite"></div>
@@ -850,9 +868,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="gtab fintab">The verdict</div>
   <div class="stamp cleared" aria-hidden="true">CLOSED</div>
   <h2 id="finh">Case closed: is there a rule you can't break?</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all five pieces of evidence (clear all five leads) to open the final file.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear all five leads to open the final file.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">You've seen the good will, duty versus inclination, the two kinds of "ought", maxims, both tests and the misreadings. Back to the cover question. Pick the view closest to yours and give the reason that does the most work. Any view is fine; the reason is what counts.</p>
+  <p class="how">Back to the cover question. Pick the view closest to yours and give your best reason. Any view is fine; the reason is what counts.</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
   <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
   <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
@@ -865,7 +883,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <option>Morality has to be categorical, or you could opt out</option>
     <option>The lying promise undermining itself</option>
     <option>Test B: you can't will a world where nobody helps</option>
-    <option>Mill's "it's just consequences" objection</option>
+    <option>Mill's objection that the test is really about consequences</option>
     <option>The case of lying to protect a friend</option>
   </select>
   <div class="row" style="margin-top:12px"><button class="btn" type="button" id="finBtn">Lock my verdict</button></div>
@@ -873,7 +891,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will disagree once from the other side; keeping your view and giving a reason is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -881,13 +899,16 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 16 COPY FOR ROCKY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your gut call, all five leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (The small "Copy just this lead" buttons inside the leads are only for when Rocky asks about one lead.)</p>
+  <p>Rocky can't see this page. Done? Copy your whole case file and paste it to Rocky as one message. It has your first answer, all five leads and your verdict. Nothing is sent anywhere unless you paste it. (The small "Copy just this lead" buttons are for when Rocky asks about one lead.)</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
 <!-- ================= 17 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
   <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <details class="reply gloss skipd" style="--rc:var(--hl-g)">
+  <summary><b>Short on time? Skip this one: reading and courses about Kant</b></summary>
+  <div class="inner">
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by; Lecture 10, "Kant I", covers the same ground from MIT's side. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>Kant, <i>Groundwork</i>, in Jonathan Bennett's plain-English version</b>. Bennett rewrote classic philosophy texts so they're easier to read, and posts them free. Read Section 1 (the good will, the shopkeeper) and the first part of Section 2 (imperatives, the universal law test). <a class="linkbtn" href="https://www.earlymoderntexts.com/authors/kant" target="_blank" rel="noopener">earlymoderntexts.com</a></li>
@@ -896,6 +917,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <li><b>Christine Korsgaard, "The Right to Lie: Kant on Dealing with Evil" (1986)</b>. A famous Kantian argument about the lying-to-protect-a-friend case. Harder reading, free on Harvard's archive. <a class="linkbtn" href="https://dash.harvard.edu/server/api/core/bitstreams/7312037c-70d5-6bd4-e053-0100007fdf3b/content" target="_blank" rel="noopener">dash.harvard.edu</a></li>
     <li><b>Next file:</b> Kant, part two: treating people as ends, never merely as tools.</li>
   </ul>
+  </div>
+  </details>
 </section>
 
 <p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT.</p>
@@ -909,19 +932,23 @@ function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k 
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function setFb(node, kind, verdict, body){ node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
 function oneLine(t){ return String(t==null?"":t).replace(/[\s\u0085\u2028\u2029]+/g," ").trim(); }
-var GUARD_MS = (typeof window.__GUARD_MS==="number") ? window.__GUARD_MS : 400, tapUntil=0;
-function armGuard(){ tapUntil=Date.now()+GUARD_MS; }
+var GUARD_MS = (typeof window.__GUARD_MS==="number") ? Math.min(250, window.__GUARD_MS) : 250, tapUntil=0, guardTimer=null;
+function armGuard(){
+  tapUntil=Date.now()+GUARD_MS;
+  document.body.classList.add("guarding");   /* buttons look dimmed while a tap would be ignored */
+  clearTimeout(guardTimer); guardTimer=setTimeout(function(){ document.body.classList.remove("guarding"); }, GUARD_MS);
+}
 function guarded(){ return Date.now()<tapUntil; }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Case filed.","Motive found.","Kant nods.","Spot on."], hint:["Look again.","Have another look.","Not yet."], no:["Not quite.","The motive says otherwise."]},
- g2:{ok:["Spotted it.","No escape clause there.","Clean sort.","Sharp eyes."], hint:["Look again.","Have another look.","Not yet."], no:["Not quite.","Not that one."]},
- g3:{ok:["Slot filled.","That's the real rule.","Spot on.","Exactly."], no:["Not that one.","Not quite."]},
- g4:{ok:["The machine agrees.","Right call.","Clean verdict.","Spot on."], no:["Not quite.","The machine disagrees."]},
- g5:{ok:["That's Kant.","Spoken like a Königsberg professor.","Kant nods.","Exactly."], no:["Not quite.","Kant would shake his head."]}
+ g1:{ok:["Case filed.","Motive found.","Kant agrees.","Exactly right."], hint:["Not yet.","Try another group.","Close, but not that one."], no:["Not quite.","The motive says otherwise."]},
+ g2:{okH:["Spotted the goal.","Clean sort.","Sharp eyes.","Right: it depends on a goal."], okC:["No goal behind it.","Clean sort.","Sharp eyes.","Right: it applies whatever you want."], hint:["Not yet.","Try the other kind.","Close, but not that one."], no:["Not quite.","Not that one."]},
+ g3:{ok:["Slot filled.","That's the real rule.","Exactly right.","Exactly."], no:["Not that one.","Not quite."]},
+ g4:{ok:["The machine agrees.","Right call.","Clean verdict.","Exactly right."], no:["Not quite.","The machine disagrees."]},
+ g5:{ok:["That's Kant's answer.","That matches Kant.","Kant agrees.","Exactly."], no:["Not quite.","Kant would not agree."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -961,7 +988,7 @@ var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true"); b.classList.add("locked");
   b.addEventListener("click",function(){ showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
@@ -978,21 +1005,22 @@ function showCard(g){
   if(openCard===g.id){ P.hidden=true; openCard=null; return; }
   openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
   P.style.setProperty("--c",g.c);
+  if(!cleared[g.id]){
+    P.innerHTML='<h3>Evidence '+g.lead+': not collected yet</h3><p>Clear Lead '+g.lead+' to collect this evidence and read its summary here.</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  } else {
   P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  }
   P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
 }
 /* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
 var toastTimer=null, toastAt=0;
 function toast(msg, color, shortMsg){
+  /* the toast covers only the sticky bar at the top (never a card, instruction or feedback) and ignores taps */
   var T=$("toast"); var ph0=false; try{ ph0=window.matchMedia("(max-width:500px)").matches; }catch(e){}
   T.textContent=(ph0 && shortMsg) ? shortMsg : msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false; toastAt=Date.now();
-  var phone=false; try{ phone=window.matchMedia("(max-width:500px)").matches; }catch(e){}
-  if(phone){ var d=$("dock").getBoundingClientRect(); T.style.top=Math.max(0,Math.round(d.bottom))+8+"px"; T.style.bottom="auto"; }
-  else { T.style.top=""; T.style.bottom=""; }
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1700);
 }
-document.addEventListener("pointerdown",function(){ var T=$("toast"); if(T && !T.hidden && Date.now()-toastAt>500) T.hidden=true; },true);
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
   toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c, "Evidence "+n+"/"+NG+" filed");
@@ -1005,7 +1033,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.classList.remove("locked"); b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -1020,7 +1048,7 @@ var repliesOpen={};
 var replyEls=[].slice.call(document.querySelectorAll("details.reply:not(.gloss)"));
 var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
 function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
-function extraNeed(k){ if(k===5 && Object.keys(repliesOpen).length<replyEls.length) return "Open all four misreadings above first."; return ""; }
+function extraNeed(k){ if(k===5 && Object.keys(repliesOpen).filter(function(i){return +i<replyEls.length;}).length<replyEls.length) return "Open misreadings 1 to 3 above first."; return ""; }
 function refreshGot(){
   gotBtns.forEach(function(b){
     var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
@@ -1032,7 +1060,7 @@ function refreshGot(){
 }
 function doUnlock(k, focus){
   unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
-  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body textarea"); if(first) first.focus(); }
+  if(focus){ try{ $("g"+k+"h").scrollIntoView({block:"start"}); }catch(e){} var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body textarea"); if(first){ try{ first.focus({preventScroll:true}); }catch(e){ first.focus(); } } }
 }
 gotBtns.forEach(function(b){
   b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
@@ -1043,24 +1071,49 @@ replyEls.forEach(function(d,i){ d.addEventListener("toggle",function(){ if(d.ope
 var VL={yes:"Yes, some rules are unbreakable", no:"No, it always depends on the results"};
 function freezeCover(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
-  $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
+  $("myReason").readOnly=true; $("lockBtn").classList.remove("armed"); $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
+/* one lock pattern for the cover and the verdict: first tap arms, second tap (after 500 ms) confirms, arm resets after 4 s */
+function makeLock(btn, idle, validate, confirmFn, onDisarm){
+  var armedAt=0, timer=null;
+  function disarm(){ var was=armedAt; armedAt=0; clearTimeout(timer); btn.classList.remove("armed","lockwait"); if(!btn.disabled) btn.textContent=idle; if(was && onDisarm) onDisarm(); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armedAt){
+      if(!validate()) return;
+      armedAt=Date.now(); btn.classList.add("armed","lockwait"); btn.textContent="Tap again to lock it in";
+      setTimeout(function(){ btn.classList.remove("lockwait"); }, 500);
+      clearTimeout(timer); timer=setTimeout(disarm, 4000);
+      return;
+    }
+    if(Date.now()-armedAt<500) return;   /* a quick double tap does not confirm */
+    if(!validate()){ disarm(); return; }
+    clearTimeout(timer); armedAt=0; btn.classList.remove("armed"); confirmFn();
+  });
+  return disarm;
+}
+var disarmCover=function(){};
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); disarmCover(); });
 });
 function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-$("lockBtn").addEventListener("click",function(){
-  if(COVER.locked) return;
+disarmCover=makeLock($("lockBtn"),"Lock it in",function(){
+  if(COVER.locked) return false;
   var r=oneLine($("myReason").value);
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no first."; return false; }
+  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return false; }
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Tap the button again to lock it for good.";
+  return true;
+},function(){
+  var r=oneLine($("myReason").value);
   COVER.reason=r; COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
-});
+},function(){ if(!COVER.locked) $("lockMsg").textContent=""; });
+$("myReason").addEventListener("input",function(){ disarmCover(); });
 
 /* ---------- copy for Rocky (shared machinery) ---------- */
 function savedLines(g){ var a = SAVED && SAVED.lines && SAVED.lines[g]; return Array.isArray(a) ? a.map(oneLine).filter(Boolean) : null; }
@@ -1079,7 +1132,7 @@ function linesFor(g){
   if(cleared[g]) FIRST[g]=lv.concat();   /* first time this lead is finished: remember that record */
   return lv;
 }
-function coverLines(){ return ["Gut call (is there a rule you should never break?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". My reason: "+oneLine(COVER.reason) : "not locked in")]; }
+function coverLines(){ return ["First answer (is there a rule you should never break?), locked before reading: "+(COVER.locked ? VL[COVER.v]+". My reason: "+oneLine(COVER.reason) : "not locked in")]; }
 var WUQ=[
  ["cheer up someone you barely know for an afternoon"],
  ["save a classmate a whole day of embarrassment"],
@@ -1091,11 +1144,13 @@ function wuLines(){
   if(!WU.a.length) return ["Warm-up: not played"];
   var words=WU.a.map(function(x){return x==="k"?"kept my word":"broke it";}).join(", ");
   var fb=WU.a.indexOf("b");
-  return ["Warm-up: secret-keeping as the payoff grew ("+WU.a.length+" of "+WUQ.length+" rungs answered; ungraded): "+words+(fb>=0?"; first broke it at rung "+(fb+1)+" ("+WUQ[fb][0]+")":(WU.a.length===WUQ.length?"; never broke it":""))];
+  return ["Warm-up: secret-keeping as the payoff grew ("+WU.a.length+" of "+WUQ.length+" steps answered; ungraded): "+words+(fb>=0?"; first broke it at step "+(fb+1)+" ("+WUQ[fb][0]+")":(WU.a.length===WUQ.length?"; never broke it":""))];
 }
 function pollLines(){
-  var M={yes:"yes, he's honest",no:"not really, it's just business"}, H={yes:"yes, grimly",no:"no, it would collapse"}, F={results:"what happens because of it",reason:"the reason behind it"}, J={ana:"Nia, who tried",ben:"Ben, who got the result"};
-  return ["Ungraded taps: what makes an action right = "+(POLLS.flip?F[POLLS.flip]:"not answered")+"; more credit = "+(POLLS.jewel?J[POLLS.jewel]:"not answered")+"; is the shopkeeper a good person = "+(POLLS.mo?M[POLLS.mo]:"not answered")+"; what breaks first = "+(POLLS.brk?{promise:"the promise itself",annoyed:"people get annoyed"}[POLLS.brk]:"not answered")+"; could a no-help world exist = "+(POLLS.help?H[POLLS.help]:"not answered")+"; would I choose a no-help world = "+(POLLS.world?{yes:"yes, I'd manage on my own",no:"no, I might need help someday"}[POLLS.world]:"not answered")+"; friend who doesn't care about being trusted = "+(POLLS.opt?{off:"off the hook, no goal means no rule",on:"still bound by the rule"}[POLLS.opt]:"not answered")+"; copying answers rule = "+(POLLS.cheat?{pass:"could pass both tests",fail:"something breaks"}[POLLS.cheat]:"not answered")+"; misreading cards opened = "+Object.keys(repliesOpen).length+" of "+replyEls.length];
+  var M={yes:"yes, he's honest",no:"not really, he's honest only because it pays"}, H={yes:"yes, but it would be grim",no:"no, it would collapse"}, F={results:"what happens because of it",reason:"the reason behind it"}, J={ana:"Nia, who tried",ben:"Ben, who got the result"};
+  var P=[["what makes an action right",POLLS.flip&&F[POLLS.flip]],["more credit",POLLS.jewel&&J[POLLS.jewel]],["is the shopkeeper a good person",POLLS.mo&&M[POLLS.mo]],["what breaks first",POLLS.brk&&{promise:"the promise itself",annoyed:"people get annoyed"}[POLLS.brk]],["could a no-help world exist",POLLS.help&&H[POLLS.help]],["would I choose a no-help world",POLLS.world&&{yes:"yes, I'd manage on my own",no:"no, I might need help someday"}[POLLS.world]],["friend who doesn't care about being trusted",POLLS.opt&&{off:"free of the rule, no goal means no rule",on:"still bound by the rule"}[POLLS.opt]],["copying answers rule",POLLS.cheat&&{pass:"could pass both tests",fail:"something breaks"}[POLLS.cheat]]];
+  var got=P.filter(function(x){return x[1];});
+  return ["Ungraded taps ("+got.length+" of "+P.length+" answered; skipped ones are left out): "+(got.length?got.map(function(x){return x[0]+" = "+x[1];}).join("; "):"none answered")+"; misreading cards opened = "+Object.keys(repliesOpen).filter(function(i){return +i<replyEls.length;}).length+" of "+replyEls.length];
 }
 function report(key){ return MID+" case file for Rocky:\n"+BUILDERS[key]().map(function(l){return "- "+l;}).join("\n"); }
 function copyText(txt, box, stat){
@@ -1119,20 +1174,20 @@ function wireCopies(){
 
 /* ---------- ungraded taps in the reading ---------- */
 var POLLTXT={
- flip:{results:"That's Bentham's camp, from the last file. Kant is about to argue the opposite. See if he moves you.",
-       reason:"That's Kant's camp. The next few screens show how far he takes it, further than most people expect."},
- jewel:{ana:"Kant agrees: Nia's good will shines like a jewel even though she failed. Bentham's test would find nothing to count in what she did: no happiness produced. Hold on to that clash. It runs through the whole file.",
-        ben:"Bentham would side with you: Ben produced the happiness. Kant says Ben's action has no moral worth at all; it wasn't even chosen. Nia's good will shines like a jewel even though she failed. Hold on to that clash. It runs through the whole file."},
+ flip:{results:"That's Bentham's side, from the last file. Kant is about to argue the opposite. See if he changes your mind.",
+       reason:"That's Kant's side. The next few screens show how far he takes it, further than most people expect."},
+ jewel:{ana:"Kant agrees: Nia's good will shines like a jewel even though she failed. Bentham's test would find nothing to count in what she did: no happiness produced. Keep that clash in mind. It runs through the whole file.",
+        ben:"Bentham would side with you: Ben produced the happiness. Kant says Ben's action has no moral worth at all; it wasn't even chosen. Nia's good will shines like a jewel even though she failed. Keep that clash in mind. It runs through the whole file."},
  mo:{yes:"Most people say yes, and Kant agrees his action is right. But ask: take away the profit, and would the honesty survive? If not, Kant says it shows nothing about a good will.",
-     no:"That's close to Kant's instinct. The action is right, but profit is doing the work, so it has no moral worth. Kant wouldn't call him a bad person either, just not a morally worthy one, yet."},
- brk:{promise:"Kant agrees. Watch Exhibit G: the lying promise defeats itself.",
-      annoyed:"That's a bad result. Kant's point is sharper: see Exhibit G."},
+     no:"That's close to Kant's view. The action is right, but profit is doing the work, so it has no moral worth. Kant wouldn't call him a bad person either; the honesty just isn't a sign of a good will."},
+ brk:{promise:"Kant agrees. Exhibit G shows it: the lying promise defeats itself.",
+      annoyed:"That's a bad result. Kant's point is sharper, and Exhibit G shows it."},
  help:{yes:"Kant agrees: such a world could exist, so it passes Test A. Read on to see why it still fails.",
-       no:"Kant thinks it could exist, grim as it is, so it passes Test A. Read on: it still fails, on a different test."},
- opt:{off:"That's the hypothetical view: a rule that only grips you while you want the goal. Kant says moral rules aren't like that (Exhibit E). The next paragraph shows why he needs them to be categorical.",
+       no:"Kant thinks it could exist, even though it would be grim, so it passes Test A. Read on: it still fails, on a different test."},
+ opt:{off:"That's the hypothetical view: a rule that only applies while you want the goal. Kant says moral rules aren't like that (Exhibit E). The next paragraph shows why he needs them to be categorical.",
       on:"That matches Exhibit E: for Kant a moral command still applies when you don't care about the goal. The next paragraph shows why he needs it to."},
- cheat:{pass:"Hold that hunch. Exhibit G runs the same test on a similar case, a lying promise, one step at a time. See whether your answer survives.",
-        fail:"Hold that hunch. Exhibit G runs the same test on a similar case, a lying promise, one step at a time. See what exactly breaks."},
+ cheat:{pass:"Keep that guess in mind. Exhibit G runs the same test on a similar case, a lying promise, one step at a time. See whether your answer survives.",
+        fail:"Keep that guess in mind. Exhibit G runs the same test on a similar case, a lying promise, one step at a time. See what exactly breaks."},
  world:{yes:"Fair: you might manage. Kant's worry is narrower. You can't rule out being the one in need, and there you'd be refused. Test B asks whether you can consistently choose that.",
         no:"That is Kant's point: you could be the one who needs help, so choosing this world means choosing to be refused. Exhibit I runs the same test on talents."}
 };
@@ -1171,15 +1226,15 @@ function wuRender(focusIt){
   var n=WU.a.length, done=n>=WUQ.length;
   [].forEach.call($("wuLadder").children,function(r,i){ r.className="rung"+(i<n?(WU.a[i]==="b"?" brk":" kept"):(i===n?" now":"")); });
   if(!done){
-    $("wuCard").innerHTML='<span class="wuk">Rung '+(n+1)+' of '+WUQ.length+'</span>Telling the secret would <b>'+esc(WUQ[n][0])+'</b>.';
+    $("wuCard").innerHTML='<span class="wuk">Step '+(n+1)+' of '+WUQ.length+'</span>Telling the secret would <b>'+esc(WUQ[n][0])+'</b>.';
     var flip=Math.random()<0.5; wuBtn.k.style.order=flip?"2":"1"; wuBtn.b.style.order=flip?"1":"2";
     $("wuFb").className="fb"; $("wuFb").innerHTML="";
     if(focusIt) wuBtn.k.focus();
   } else {
-    $("wuCard").innerHTML='<span class="wuk">All five rungs locked</span>';
+    $("wuCard").innerHTML='<span class="wuk">All five steps locked</span>';
     $("wuBtns").hidden=true;
     var fbk=WU.a.indexOf("b");
-    var first = fbk<0 ? "You kept your word on every rung, even the biggest." : fbk===0 ? "You'd bend on the very first rung." : "Your break point was rung "+(fbk+1)+".";
+    var first = fbk<0 ? "You kept your word at every step, even the biggest." : fbk===0 ? "You'd break your word at the very first step." : "Your break point was step "+(fbk+1)+".";
     setFb($("wuFb"),"","Warm-up locked.",first+" Kant thought some rules have no break point at all, because what makes an act right is the reason behind it, not the size of the payoff. Let's see why.");
     if(focusIt) focusFb($("wuFb"));
   }
@@ -1190,21 +1245,22 @@ wuRender(false);
 var ML={against:"Against duty", self:"Self-interest", incl:"Inclination", duty:"From duty"};
 var MC={against:"var(--hl-p)", self:"var(--hl-o)", incl:"var(--hl-b)", duty:"var(--hl-g)"};
 var MOT=[
- {t:"Mo runs a corner shop. A tourist has no idea what things cost, but Mo charges the normal price, because word gets around and cheating people would lose him his regulars.", short:"Mo the shopkeeper", a:"self", kant:true, h:"Is Mo honest for the customers' sake, or for what happens to his business?",
+ {t:"Mo runs a corner shop. A tourist has no idea what things cost, but Mo charges the normal price, because people talk and cheating people would lose him his regular customers.", short:"Mo the shopkeeper", a:"self", kant:true, h:"Which is Mo working for here: his customers, or his business?",
   why:"This is Kant's own shopkeeper, modernized. Honest action, but the reason doing the work is profit. Kant: neither from duty nor from direct inclination, but from self-interest."},
- {t:"Priya hands a lost wallet in, because she loves making a stranger's day. Helping is the part she enjoys.", short:"Priya's wallet", a:"incl", kant:true, h:"Is she paid back afterward, or is the helping itself what she wants?",
+ {t:"Priya hands in a lost wallet, because she loves making a stranger happy. Helping is the part she enjoys.", short:"Priya's wallet", a:"incl", kant:true, h:"Does Priya get anything back afterward, or is the helping itself what she wants?",
   why:"Kant's own sympathetic helper, modernized: lovely, and worth praising, but the feeling is doing the work, so no moral worth in his special sense."},
  {t:"Sam is exhausted and would rather do anything else, but he keeps his promise to help a friend study, simply because he promised and it's the right thing.", short:"Sam's promise", a:"duty", h:"Is any feeling or payoff pulling Sam here? What is left doing the work?",
   why:"No feeling pulling him there, no payoff. He does it because it's his duty. That's moral worth."},
- {t:"The cashier gives Jae too much change by mistake. Jae notices, says nothing and pockets it.", short:"Jae's change", a:"against", h:"Forget the motive for a moment. Does duty allow what Jae does?",
+ {t:"The cashier gives Jae too much change by mistake. Jae notices, says nothing and keeps it.", short:"Jae's change", a:"against", h:"Set Jae's motive aside for a moment. Does duty allow what Jae does?",
   why:"Keeping money you know isn't yours goes against duty, whatever the motive."},
- {t:"Lena fills in her tax form honestly, but only because she's scared of getting caught and fined.", short:"Lena's taxes", a:"self", h:"What is Lena trying to dodge? Is it a penalty from outside the act, or a feeling for the act itself?",
+ {t:"Lena fills in her tax form honestly, but only because she's scared of getting caught and fined.", short:"Lena's taxes", a:"self", h:"What is Lena trying to avoid? Is it a penalty from outside the act, or does she want the act itself?",
   why:"Right action, done to avoid a penalty. Fear of punishment is self-interest, just like the shopkeeper's profit: the payoff comes from outside the action."},
- {t:"Theo has always loved helping people. Then a rough few months leave him numb: he feels nothing for anyone. He still helps his elderly neighbor carry her groceries, just because it's the right thing to do.", short:"Theo the numb helper", a:"duty", kant:true, h:"Is any feeling still pulling Theo toward helping? What is left doing the work?",
+ {t:"Theo has always loved helping people. Then a hard few months leave him numb: he feels nothing for anyone. He still helps his elderly neighbor carry her groceries, just because it's the right thing to do.", short:"Theo the numb helper", a:"duty", kant:true, h:"Is any feeling still pulling Theo toward helping? What is left doing the work?",
   why:"Kant's own example, modernized. With the feeling gone, duty is the only thing left doing the work. This is exactly where Kant says moral worth shows up."},
- {t:"Ava takes good care of herself and crosses roads carefully, simply because she loves being alive and wants to keep living.", short:"Ava looking after her life", a:"incl", kant:true, h:"Does Ava get anything out of it besides living? Or does she just want to live?",
+ {t:"Ava takes good care of herself and crosses roads carefully, simply because she loves being alive and wants to keep living.", short:"Ava looking after her life", a:"incl", kant:true, h:"Does Ava get anything out of it besides staying alive? Or does she just want to live?",
   why:"Kant's own example: looking after your life is a duty, but doing it because you want to live is direct inclination, not duty. (No outside payoff or penalty here; she just wants to live.)"}
 ];
+var RULE1={against:"Against duty means the action itself is forbidden.", self:"Self-interest means the right action, done for a payoff from outside the act (money, reputation, dodging a fine).", incl:"Inclination means the right action, done because you want that very thing, with no outside payoff.", duty:"From duty means the right action, done because it's right, even when no feeling or payoff pulls you there."};
 var REC1={}, motDone=0;
 shuffle(MOT.map(function(_,i){return i;})).forEach(function(i){
   var it=MOT[i];
@@ -1222,11 +1278,11 @@ shuffle(MOT.map(function(_,i){return i;})).forEach(function(i){
         row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
         motDone++; $("motScore").textContent=motDone+" of "+MOT.length+" filed";
         focusFb(fb);
-        if(motDone===MOT.length){ $("motScore").innerHTML="All "+MOT.length+" filed, "+MOT.filter(function(_,k){return !REC1[k].misses.length;}).length+" on the first try. <b>Bonus thought (not graded):</b> what if someone helps <i>both</i> because it's right <i>and</i> because they enjoy it? Kant scholars still argue about that one. Try it on Rocky."; clear("g1"); }
+        if(motDone===MOT.length){ $("motScore").innerHTML="All "+MOT.length+" filed. <b>Bonus thought (not graded):</b> what if someone helps <i>both</i> because it's right <i>and</i> because they enjoy it? Kant scholars still argue about that one. Try it on Rocky."; clear("g1"); }
       } else {
         if(r.misses.indexOf(v)<0) r.misses.push(v);
         b.disabled=true;
-        if(r.misses.length===1) setFb(fb,"bad",vword("g1","hint"), v==="against" ? "Is the action itself wrong? Think about what they actually do." : it.h);
+        if(r.misses.length===1) setFb(fb,"bad",vword("g1","hint"), RULE1[v]+" "+it.h);
         else setFb(fb,"bad",vword("g1","no"),it.why);
       }
       touch("g1");
@@ -1239,20 +1295,20 @@ function motLines(){
   var done=MOT.filter(function(_,i){return REC1[i].final;}).length;
   if(!done) return ["Lead 1 Motive detective: not started"];
   var first=MOT.filter(function(_,i){return REC1[i].final && !REC1[i].misses.length;}).length;
-  var miss=MOT.map(function(it,i){ return REC1[i].misses.length ? it.short+" (first said "+ML[REC1[i].misses[0]]+")" : null; }).filter(Boolean);
-  return ["Lead 1 Motive detective: "+done+" of "+MOT.length+" filed, "+first+" right first try"+(miss.length?"; needed a second go on: "+miss.join(", "):"")];
+  var miss=MOT.map(function(it,i){ return REC1[i].misses.length ? it.short+" (first picked "+ML[REC1[i].misses[0]]+")" : null; }).filter(Boolean);
+  return ["Lead 1 Motive detective: "+done+" of "+MOT.length+" filed"+(miss.length?"; needed another go on: "+miss.join(", "):"; no second goes needed")];
 }
 
 /* ================= LEAD 2: HIDDEN IF ================= */
 var IFS=shuffle([
  {t:"If you want to pass your driving test, practice parallel parking.", a:"H", why:"A rule of skill. The goal (passing) is right there in the if. No interest in driving? No grip."},
- {t:"Don't make promises you mean to break.", a:"C", why:"No goal it depends on. It applies to you whatever you want. Categorical.", hint:"Is there a goal this depends on? Would it still apply to you if you wanted nothing in particular?"},
+ {t:"Don't make promises you mean to break.", a:"C", why:"No goal it depends on. It applies to you whatever you want. Categorical.", hint:"Categorical means it applies whatever you want, with no goal behind it. Does this command name a goal you'd have to want?"},
  {t:"Eat your vegetables.", a:"H", why:"Hidden if: <i>if you want to stay healthy</i>. A counsel of prudence, aimed at your own well-being."},
  {t:"If you've borrowed something, give it back.", a:"C", why:"Fake if! \"You've borrowed something\" is a situation, not a goal you want. It holds whether you want anything or not."},
  {t:"To win at chess, control the center of the board.", a:"H", why:"A rule of skill: it depends on wanting to win at chess. No if-word, same structure."},
- {t:"Help people in need, at least sometimes.", a:"C", why:"Kant thinks this is a moral command that applies whatever you want. (It's flexible about when, but not about whether.)", hint:"Is there a goal this command depends on? Or does it hold whatever you want?"},
+ {t:"Help people in need, at least sometimes.", a:"C", why:"Kant thinks this is a moral command that applies whatever you want. (It's flexible about when, but not about whether.)", hint:"Categorical means it applies whatever you want, with no goal behind it. Does this command name a goal you'd have to want?"},
  {t:"Be honest with your customers, if you want repeat business.", a:"H", why:"The shopkeeper's rule! It depends on wanting repeat business. That's exactly why it can't give his honesty moral worth."},
- {t:"Don't cheat on a test, even if you know you'd never be caught.", a:"C", why:"No escape clause. \"But I won't get caught\" doesn't get you out of it. Categorical.", hint:"Would this still hold if you wanted nothing in particular? Look for a goal it depends on."}
+ {t:"Don't cheat on a test, even if you know you'd never be caught.", a:"C", why:"No escape clause. \"But I won't get caught\" doesn't get you out of it. Categorical.", hint:"Categorical means it applies whatever you want, with no goal behind it. Does this command name a goal you'd have to want?"}
 ]);
 var iI=0, iStreak=0, iBest=0, iFirst=0, iMiss=0, iMissed=[], iAns=false;
 function iRender(){
@@ -1270,15 +1326,15 @@ $("ifBtns").querySelectorAll("button").forEach(function(b){
       iAns=true; b.classList.add("right"); $("ifBtns").querySelectorAll("button").forEach(function(x){x.disabled=true;});
       if(!iMiss){ iFirst++; iStreak++; if(iStreak>iBest) iBest=iStreak; }
       var s=$("ifStreak"); s.textContent="Streak "+iStreak; s.classList.toggle("hot",iStreak>=3); s.classList.remove("pulse"); void s.offsetWidth; if(!reduceMotion) s.classList.add("pulse");
-      setFb($("ifFb"),"good", vword("g2","ok")+(c.a==="H"?" Hypothetical.":" Categorical."), c.why);
+      setFb($("ifFb"),"good", vword("g2",c.a==="H"?"okH":"okC")+(c.a==="H"?" Hypothetical.":" Categorical."), c.why);
       if(iI<IFS.length-1) $("ifNext").hidden=false;
-      else { $("ifFb").innerHTML+="<br><br><b>All "+IFS.length+" sorted.</b> "+iFirst+" on the first try. Best streak: "+iBest+". Notice the pattern: every hypothetical depends on something you want; every categorical holds no matter what you want."; clear("g2"); }
+      else { $("ifFb").innerHTML+="<br><br><b>All "+IFS.length+" sorted.</b> Best streak: "+iBest+". Notice the pattern: every hypothetical depends on something you want; every categorical holds no matter what you want."; clear("g2"); }
       focusNextOr($("ifNext"),$("ifFb"));
     } else {
       iMiss++; iStreak=0; $("ifStreak").textContent="Streak 0"; $("ifStreak").classList.remove("hot");
       b.classList.add("wrongpick"); b.disabled=true;
       if(iMissed.indexOf(c.t)<0) iMissed.push(c.t);
-      setFb($("ifFb"),"bad",vword("g2","hint"), c.a==="H" ? "Is there a goal this depends on, even a hidden one? If you didn't want that goal, would the command still apply?" : c.hint||"Is the if a situation, or a goal you want? A situation isn't a goal.");
+      setFb($("ifFb"),"bad",vword("g2","hint"), c.a==="H" ? "Hypothetical means it only applies if you want some goal, even an unstated one. If you didn't want that goal, would the command still apply?" : c.hint||"Categorical means it applies whatever you want. An \"if\" that names a situation, not a goal you want, doesn't make a command hypothetical.");
     }
     touch("g2");
   });
@@ -1288,23 +1344,23 @@ iRender();
 function ifLines(){
   var done = iI + (iAns?1:0);
   if(!done) return ["Lead 2 Hunt the hidden if: not started"];
-  return ["Lead 2 Hunt the hidden if: "+done+" of "+IFS.length+" sorted, "+iFirst+" first try, best streak "+iBest+(iMissed.length?"; slipped on: "+iMissed.map(function(t){return "\""+t+"\"";}).join(", "):"")];
+  return ["Lead 2 Hunt the hidden if: "+done+" of "+IFS.length+" sorted, best streak "+iBest+(iMissed.length?"; needed another go on: "+iMissed.map(function(t){return "\""+t+"\"";}).join(", "):"")];
 }
 
 /* ================= LEAD 3: MAXIM BUILDER ================= */
 var SLOTN=["When...","I will...","so that..."];
-var LATER="That's what would happen if everyone did it, which you'll test after this lead. It isn't ";
+var LATER="That's what would happen if everyone did it, which you'll test in Lead 4. It isn't ";
 var MB=[
- {name:"Kai's loan", story:"Kai is broke and wants concert tickets. He asks his older sister for a loan and promises to pay her back next week. He already knows he won't.",
+ {name:"Kai's loan", story:"Kai has no money and wants concert tickets. He asks his older sister for a loan and promises to pay her back next week. He already knows he won't.",
   slots:[
-   [["when I need money and can't get it any other way",1,"The situation that sets the maxim off."],["when it's a Tuesday and the concert is on Saturday",0,"Random detail. It isn't why he acts."],["whenever I'm chatting with my sister at home",0,"Off target. The trigger is needing money, not chatting with his sister."]],
+   [["when I need money and can't get it any other way",1,"The situation that sets the maxim off."],["when it's a Tuesday and the concert is on Saturday",0,"Random detail. It isn't why he acts."],["whenever I'm chatting with my sister at home",0,"Not the trigger. What sets the maxim off is needing money, not chatting with his sister."]],
    [["borrow money by promising to repay, knowing I won't",1,"The false promise is the morally important part, so it has to be in there."],["ask my sister to give me some money for the tickets",0,"This hides the key part: the promise he doesn't mean to keep."],["feel really stressed about money for the whole week",0,"That's a feeling, not something he does."]],
    [["I get the money I want for tickets",1,"That's his actual purpose."],["my sister learns not to trust people",0,"Not his goal. He's counting on her trusting him."],["everyone starts lending money to others",0,LATER+"Kai's purpose."]]
   ]},
  {name:"Mo's prices", story:"Back to Mo's shop. A tourist doesn't know local prices. Mo charges the normal price, because cheating would cost him his reputation.",
   slots:[
-   [["when a customer doesn't know the usual price",1,"That's the situation."],["when the shop first opens at nine in the morning",0,"Irrelevant detail."],["when I happen to be feeling friendly today",0,"Kant rules this out: we can't assume Mo has warm feelings for customers."]],
-   [["charge them the normal price",1,"That's the action."],["make as much profit as possible",0,"That's closer to a purpose than an action. What does he actually do?"],["overcharge them just a little",0,"That's not what Mo does."]],
+   [["when a customer doesn't know the usual price",1,"That's the situation."],["when the shop first opens at nine in the morning",0,"Irrelevant detail."],["when I happen to be feeling friendly today",0,"Kant rules this out: we can't assume Mo has warm feelings for customers. The situation slot is the trigger."]],
+   [["charge them the normal price",1,"That's the action."],["make as much profit as possible",0,"That's closer to a purpose than an action. The action slot asks what he actually does."],["overcharge them just a little",0,"That's not what Mo does."]],
    [["I keep my reputation and my customers",1,"Same action as an honest-for-duty shopkeeper, different purpose, different maxim."],["I treat people fairly, as duty requires",0,"That would be a different, duty-driven shopkeeper. The story says Mo's reason is his reputation."],["the tourist has a nice vacation here",0,"Nice, but the story says his reason is his reputation."]]
   ]},
  {name:"Rin's rule", story:"Rin never volunteers, never lends, never helps anyone with anything. Rin's not cruel; Rin just wants to keep every bit of time and money for Rin.",
@@ -1359,7 +1415,7 @@ function mbLines(){
   var built=mbRec.filter(function(r){return r&&r.built;});
   var tried=mbRec.reduce(function(n,r){return n+(r?r.misses:0);},0);
   if(!built.length && !tried && mbS===0) return ["Lead 3 Maxim builder: not started"];
-  return ["Lead 3 Maxim builder: "+built.length+" of "+MB.length+" maxims built, "+tried+" wrong tile(s) tried along the way"];
+  return ["Lead 3 Maxim builder: "+built.length+" of "+MB.length+" maxims built"+(tried?", needed another go on "+tried+" tile(s) along the way":"")];
 }
 
 /* ================= LEAD 4: UNIVERSALIZER ================= */
@@ -1368,27 +1424,27 @@ var UV=[
  {who:"Kai", m:"When I need money and can't get it any other way, I will borrow money by promising to repay, knowing I won't, so that I get the money I want.", a:"A",
   world:"Everyone who needs money makes false promises to repay. Everyone knows it. Nobody lends on a promise anymore.",
   ok:"Kant's own example. In that world the lying promise can't work: nobody would believe it. The maxim needs trust and destroys it. Contradiction in conception: perfect duty not to do it.",
-  no:{B:"Look closer: the problem appears before we even ask what you'd want. Can a lying promise still get you money in this world?",P:"Could Kai still get money this way in this world? If not, the maxim defeats itself."}},
+  no:{B:"Test A comes first: it fails when the maxim can't work once everyone does it. Nobody believes a promise to repay here, so could a lying promise still get Kai money?",P:"Passing means nothing breaks. But if nobody believes promises, could Kai still get money this way? If not, the maxim defeats itself, which fails Test A."}},
  {who:"Rin", m:"When someone needs help I could give, I will refuse to help them at all, so that I keep all my time and money for myself.", a:"B",
   world:"Nobody ever helps anybody. People get by, alone. Including Rin, the day Rin needs help.",
   ok:"That world can exist, so it passes A. But Rin can't consistently will it: Rin may well need help one day, and would be willing to be refused. Contradiction in will: an imperfect duty to help sometimes.",
-  no:{A:"Can this world exist? Grim, but yes. Nothing about refusing help stops refusing help from working. The problem is in what Rin could want.",P:"Could Rin really will this, knowing Rin may need help someday?"}},
+  no:{A:"Test A fails only if the maxim stops working when everyone does it. Refusing help works fine when nobody helps, so Rin passes A. Test B is the question: could Rin want this world?",P:"Test B asks whether you could consistently want that world. Rin may need help one day, and would be wanting to be refused. So it fails B."}},
  {who:"Mo", m:"When a customer doesn't know the usual price, I will charge them the normal price, so that I keep my reputation and my customers.", a:"P",
   world:"Every shopkeeper charges fair prices to customers who don't know better, to keep their reputations.",
   ok:"No contradiction, and nothing anyone couldn't will. The action is permitted. But remember: passing the test doesn't give Mo's honesty moral worth. That's about motive, a separate question.",
-  no:{A:"Does anything break in this world? Fair prices everywhere still work fine.",B:"Would anyone be unable to will a world of fair prices? It's quite a nice world."}},
+  no:{A:"Test A fails only if the maxim stops working when everyone does it. Fair prices everywhere still work fine.",B:"Test B fails only if you couldn't want that world. A world of fair prices is one anyone could want."}},
  {who:"Fake-cash Finn", m:"When I want something from a store, I will pay with banknotes I printed myself, so that I get things without spending real money.", a:"A",
   world:"Everyone pays with banknotes they printed. Stores know any note could be homemade, so no store treats a banknote as payment.",
   ok:"Same shape as the lying promise. On one standard reading of the test (the \"practical contradiction\" reading), a maxim fails A when it couldn't achieve its purpose in the universalized world. Fake money only works if stores trust banknotes, and here they can't. Fails A.",
-  no:{B:"The trouble starts earlier: could Finn's printed notes still buy anything in this world?",P:"Would stores still accept banknotes in this world? If not, Finn's maxim can't work."}},
- {who:"Couch-potato Cass", m:"Whenever I could work on any of my abilities, I will skip it, so that I can just relax and enjoy myself.", a:"B",
+  no:{B:"Test A comes first: it fails when the maxim can't work once everyone does it. If any note could be homemade, could Finn's printed notes still buy anything?",P:"Passing means nothing breaks. If stores won't accept banknotes, Finn's maxim can't achieve its purpose, which fails Test A."}},
+ {who:"Do-nothing Cass", m:"Whenever I could work on any of my abilities, I will skip it, so that I can just relax and enjoy myself.", a:"B",
   world:"Nobody develops any ability at all. Everyone just relaxes.",
   ok:"Kant's talents example. Such a world can be conceived, but a rational being necessarily wants their abilities developed, since they're useful for all sorts of purposes. Fails B: an imperfect duty to develop some talents.",
-  no:{A:"Can this world be conceived? Kant thinks yes. Relaxing doesn't stop relaxing from working. Ask whether you could will it.",P:"Could a rational person want a world where nobody can do anything well?"}},
- {who:"Helpful Hana", m:"When a friend asks for help moving and I'm free, I will help, so that my friend isn't stuck.", a:"P",
-  world:"Everyone helps friends move when they're free.",
+  no:{A:"Test A fails only if the maxim stops working when everyone does it. Relaxing still works when everyone relaxes, so it passes A. Test B asks whether you could will it.",P:"Test B asks whether a rational person could want this world. Abilities are useful for many goals, so a world where nobody develops any can't be willed. It fails B."}},
+ {who:"Helpful Hana", m:"When a friend asks for help moving house and I'm free, I will help, so that my friend isn't left to do it alone.", a:"P",
+  world:"Everyone helps friends move house when they're free.",
   ok:"Passes both. And if Hana helps because it's right, not just because it's fun, it has moral worth too.",
-  no:{A:"Does helping friends stop working if everyone does it?",B:"Could you will a world where friends help? You'd probably love it."}}
+  no:{A:"Test A fails only if the maxim stops working when everyone does it. Helping friends still works if everyone does it.",B:"Test B fails only if you couldn't want that world. A world where friends help each other is one you could want."}}
 ];
 var uI=0, uRec={};
 function uvRender(){
@@ -1430,7 +1486,7 @@ function uvLines(){
   if(!ks.length) return ["Lead 4 Universalizer: not started"];
   var first=ks.filter(function(k){return !uRec[k].misses;}).length;
   var miss=ks.filter(function(k){return uRec[k].misses;}).map(function(k){return UV[k].who;});
-  return ["Lead 4 Universalizer: "+ks.length+" of "+UV.length+" verdicts right, "+first+" first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
+  return ["Lead 4 Universalizer: "+ks.length+" of "+UV.length+" verdicts right"+(miss.length?"; needed another go on: "+miss.join(", "):"; no second goes needed")];
 }
 
 /* ================= LEAD 5: PREDICT KANT ================= */
@@ -1438,24 +1494,24 @@ var MINE=[["ok","It's fine"],["wrong","It's wrong"],["unsure","Not sure"]];
 var PK=shuffle([
  {k:"bus", n:"The back of the bus", ask:"is Ana's seat choice okay?", d:"Ana usually grabs a seat near the back of the bus if one's free. Her friend says: \"What if everyone sat at the back? The front would be empty, so it's wrong!\"",
   o:[["a","Her friend is right: it fails Kant's test"],["b","Her friend misreads the test: it's fine"],["c","Wrong only on days the bus is packed"]], a:"b", kantOk:true,
-  ok:"Two mistakes, the same two as the dentist example in misreading 2: it's consequence thinking, and the maxim is written badly. Ana's real maxim is more like \"sit wherever I like among the free seats\", which universalizes without any contradiction.",
-  no:{a:"Is \"the front would be empty\" a contradiction in the maxim, or just an odd result? Kant's test isn't about results.",c:"That's counting consequences. Ask what Ana's real maxim is, and whether it defeats itself."}},
+  ok:"Two mistakes, the same two as the dentist example in misreading 2: it's consequence thinking, and the maxim is badly written. Ana's real maxim is more like \"sit wherever I like among the free seats\", which universalizes without any contradiction.",
+  no:{a:"Kant's test looks for a maxim that defeats itself, not for odd results. \"The front would be empty\" is only a result. Ana's real maxim works fine if everyone follows it.",c:"Counting how bad the results are isn't Kant's test. The test asks whether the maxim defeats itself once everyone follows it."}},
  {k:"lie", n:"The lie that worked out", ask:"was Kai's lie okay?", d:"Kai's lying promise works out fine: his sister never needed the money and never finds out. Nobody is hurt.",
   o:[["a","Still wrong: the maxim fails Test A anyway"],["b","Fine, since nothing bad happened in the end"],["c","Wrong only if his sister ever finds out"]], a:"a", kantOk:false,
-  ok:"For Kant the wrongness is in the maxim, not the results. Remember the jewel: results don't add or subtract.",
-  no:{b:"That's Bentham talking. Kant judges the maxim, not how things turned out.",c:"Getting caught is a result. The maxim fails the test either way."}},
+  ok:"For Kant the wrongness is in the maxim, not the results. Results don't add or subtract, just as with the jewel.",
+  no:{b:"That's Bentham's view. Kant judges the maxim, not how things turned out, and the lying promise only works if promises are trusted. It fails Test A.",c:"Getting caught is a result, and results don't decide it for Kant. The maxim fails Test A whether or not the sister finds out."}},
  {k:"zoe", n:"Zoe and Grandma", ask:"is what Zoe does okay?", d:"Zoe visits her grandma every week and helps around the house, because she loves her and enjoys it.",
   o:[["a","Wrong: feeling, not duty, is driving her"],["b","Morally worthy, since the results are good"],["c","Fine and kind, but no moral worth for Kant"]], a:"c", kantOk:true,
-  ok:"Permitted, in line with duty, deserving praise. Moral worth is the special credit for acting from duty. Not doing wrong, just a different question.",
-  no:{a:"Acting from feeling isn't wrong. Kant just won't give it moral worth.",b:"Kant doesn't grade worth by results. Worth comes from the motive."}},
+  ok:"Permitted, in line with duty, deserving praise. Moral worth is the special credit for acting from duty. Zoe isn't doing wrong; moral worth is a different question.",
+  no:{a:"Acting from feeling isn't wrong for Kant: Zoe's visits are permitted and kind. Moral worth is the special credit for acting from duty, and love is not duty.",b:"Kant doesn't grade worth by results. Worth comes from the motive, and Zoe's motive is love, not duty."}},
  {k:"max", n:"Never helps, never harms", ask:"is Max's rule okay?", d:"Max never hurts anyone, but has a firm rule never to help anyone, ever.",
   o:[["a","Fine: avoiding harm is all he owes to anyone"],["b","Wrong: it fails Test B (an imperfect duty)"],["c","Wrong: his rule fails Test A (a perfect duty)"]], a:"b", kantOk:false,
-  ok:"Rin's rule again. A world of non-helpers can exist, but nobody could consistently will it. Max must help sometimes.",
-  no:{a:"Kant thinks you have duties to help, not just to avoid harm. Remember Rin.",c:"Could a world of non-helpers exist? Yes. So it passes A and fails B."}},
- {k:"leo", n:"The homework loophole", ask:"is Leo's copying okay?", d:"Leo hands in a classmate's homework as his own. He says: \"I'd let anyone copy mine, so by the Golden Rule it's fine.\"",
+  ok:"This is Rin's rule again. A world of non-helpers can exist, but nobody could consistently will it. Max must help sometimes.",
+  no:{a:"Kant thinks duty goes beyond avoiding harm: a maxim of never helping fails Test B, because you couldn't want to be refused help when you need it.",c:"A world of non-helpers can exist, so the maxim passes Test A. It fails Test B instead, because you couldn't will being refused help."}},
+ {k:"leo", n:"The copied homework", ask:"is Leo's copying okay?", d:"Leo hands in a classmate's homework as his own. He says: \"I'd let anyone copy mine, so by the Golden Rule it's fine.\"",
   o:[["a","Leo's right: if he'd allow copying, it passes"],["b","No: he's making an exception of himself"],["c","It depends on how much of the work he copied"]], a:"b", kantOk:false,
   ok:"What Leo would allow isn't Kant's test. Passing off copied work as your own only works because teachers trust that handed-in work is the student's own. Leo relies on others not doing what he does, just like the lying promise.",
-  no:{a:"That's the Golden Rule, and Kant says that's not his test. Ask whether Leo's maxim works only because others don't act on it.",c:"Amount is a consequence. Kant's test is about the maxim's structure."}}
+  no:{a:"What Leo would allow is the Golden Rule, not Kant's test. Kant asks whether the maxim could be a law for everyone without defeating itself; copying works only because most people don't copy.",c:"How much he copied is a result. Kant's test looks at the maxim's structure: does it need others not to do what Leo does?"}}
 ]);
 PK.push({k:"door", n:"The question at the door", hard:true, d:"Someone who secretly means your friend harm, but is acting friendly, knocks on your door and asks if your friend is inside. Your friend is. You could lie.",
   o:[["lie","Kant would say lie"],["truth","Kant would say don't lie"],["split","Kant would say it's up to you"]],
@@ -1497,7 +1553,7 @@ function pkRender(){
     C.appendChild(g2); g2.querySelector(".choice").focus();
   }
 }
-function pkDone(){ if(pI<PK.length-1) $("pkNext").hidden=false; else { $("pkFb").innerHTML+="<br><br><b>All six cases done.</b> Check your tally: where you and Kant split is exactly where to push Rocky."; clear("g5"); } focusNextOr($("pkNext"),$("pkFb")); }
+function pkDone(){ if(pI<PK.length-1) $("pkNext").hidden=false; else { $("pkFb").innerHTML+="<br><br><b>All six cases done.</b> Check your tally: where you and Kant split is a good place to ask Rocky questions."; clear("g5"); } focusNextOr($("pkNext"),$("pkFb")); }
 var pAgree=0, pCount=0;
 function pkTally(){
   var T=$("pkTally"); T.innerHTML=""; pAgree=0; pCount=0;
@@ -1518,7 +1574,7 @@ function pkLines(){
   var MN={ok:"fine",wrong:"wrong",unsure:"not sure",lie:"I'd lie",truth:"I'd tell the truth",refuse:"I'd refuse to answer"};
   var first=ks.filter(function(k){return !pRec[k].misses;}).length;
   var mine=PK.map(function(P,i){ var R=pRec[i]; return R&&R.mine&&R.done&&!P.hard ? P.n+" = "+MN[R.mine] : null; }).filter(Boolean);
-  var out=["Lead 5 Kant predictions: "+ks.length+" of 5 graded cases solved, "+first+" right first try", "Lead 5 my own views: "+mine.join("; ")+" ("+(pCount?"agreed with Kant on "+pAgree+" of the "+pCount+" I took a side on":"took no side on the graded cases")+")"];
+  var out=["Lead 5 Kant predictions: "+ks.length+" of 5 graded cases solved"+(first<ks.length?"; needed another go on "+(ks.length-first)+" of them":"; no second goes needed"), "Lead 5 my own views: "+mine.join("; ")+" ("+(pCount?"agreed with Kant on "+pAgree+" of the "+pCount+" I took a side on":"took no side on the graded cases")+")"];
   var H=pRec[PK.length-1]; if(H && H.done){ var GN={lie:"lie",truth:"don't lie",split:"up to you"}; out.push("Lead 5 hard case (the question at the door): "+MN[H.mine]+"; I guessed Kant would say "+GN[H.guess]); }
   return out;
 }
@@ -1526,41 +1582,48 @@ function pkLines(){
 /* ================= FINALE ================= */
 var VIEWS=[
  ["kant","Kant is right: some actions are wrong whatever the results, and the universal law test finds them"],
- ["partly","Kant is onto something (motives and not making yourself an exception matter), but rules can bend when the stakes get high enough"],
+ ["partly","Kant is partly right (motives and not making yourself an exception matter), but rules can be broken when the stakes are high enough"],
  ["bentham","Results are what really matter; Bentham beats Kant"],
  ["unsure","Still deciding: the test is clever, but I'm not sure it works"]
 ];
 var pendingView=null;
 VIEWS.forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); if(window.__disarmFin) window.__disarmFin(); });
   $("finOpts").appendChild(b);
 });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
 function freezeFinale(){
   $("finOpts").querySelectorAll(".choice").forEach(function(x){x.disabled=true;});
-  $("finReason").readOnly=true; $("finMoved").disabled=true; $("finBtn").disabled=true; $("finBtn").textContent="Verdict filed";
+  $("finReason").readOnly=true; $("finMoved").disabled=true; $("finBtn").classList.remove("armed"); $("finBtn").disabled=true; $("finBtn").textContent="Verdict filed";
 }
 function finRender(){
-  var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
-  var nowTxt = FIN.view==="kant" ? "some rules are unbreakable" : FIN.view==="unsure" ? "still deciding" : "rules can bend for results";
+  var start = COVER.locked ? VL[COVER.v] : "(no first answer locked in)";
+  var nowTxt = FIN.view==="kant" ? "some rules are unbreakable" : FIN.view==="unsure" ? "still deciding" : "rules can be broken for good results";
   $("finCompare").innerHTML='<div><span class="hd">START OF FILE</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">END OF FILE</span><br>'+esc(nowTxt)+'</div>';
-  var shift = (!COVER.locked || FIN.view==="unsure") ? "" : ((COVER.v==="yes") === (FIN.view==="kant")) ? "Your gut call and your verdict line up." : "Your verdict and your gut call point different ways. That's worth a sentence to Rocky: what changed your mind?";
+  var shift = (!COVER.locked || FIN.view==="unsure") ? "" : ((COVER.v==="yes") === (FIN.view==="kant")) ? "Your first answer and your verdict line up." : "Your verdict and your first answer point different ways. That's worth a sentence to Rocky: what changed your mind?";
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
-  if(FIN.done) return;
+var disarmFin=makeLock($("finBtn"),"Lock my verdict",function(){
+  if(FIN.done) return false;
   var reason=oneLine($("finReason").value), moved=oneLine($("finMoved").value);
-  if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return false; }
+  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return false; }
+  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  setFb($("finFb"),"","Ready?","Tap the button again to lock your verdict. It can't be changed after that.");
+  return true;
+},function(){
+  var reason=oneLine($("finReason").value), moved=oneLine($("finMoved").value);
   FIN.view=pendingView; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
   toast("Case closed: verdict filed", "var(--stamp)");
   focusFb($("finFb"));
-});
+},function(){ if(!FIN.done && /^Ready/.test($("finFb").textContent)){ $("finFb").className="fb"; $("finFb").innerHTML=""; } });
+window.__disarmFin=disarmFin;
+$("finReason").addEventListener("input",function(){ disarmFin(); });
+$("finMoved").addEventListener("change",function(){ disarmFin(); });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
   return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+oneLine(FIN.reason), "What moved me most: "+oneLine(FIN.moved)];
