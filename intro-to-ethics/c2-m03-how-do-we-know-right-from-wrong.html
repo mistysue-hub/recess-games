@@ -497,6 +497,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 :root[data-theme="dark"] details.sealed[open] summary .seal{color:var(--stamp)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) details.sealed[open] summary .seal{color:var(--stamp)} }
 .rcard p *{line-height:1}   /* a bold span in another font must not stretch its 28px line, or the ruled lines drift through the text */
+/* ---------- round 3 ---------- */
+/* toast: top of the screen over the sticky dock only, never over a card, instruction or feedback; clicks pass through */
+.toast{top:6px; bottom:auto; pointer-events:none; padding:8px 14px; font-size:.85rem; line-height:1.25; animation:toastIn3 .22s ease both}
+@keyframes toastIn3{0%{transform:translate(-50%,-14px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+@media (prefers-reduced-motion: reduce){ .toast{animation:none} }
+/* short tap guards are always visible: buttons dim while a tap would be ignored */
+.wbtns.wait .wbtn{opacity:.45}
+.dock .pip.lockedpip{opacity:.7; cursor:pointer}
+.btn.armed{background:var(--hl-y); color:var(--hl-ink); border-color:var(--ink)}
+.btn.armed.arming{opacity:.55}
+.lockhint2{font-family:var(--type); font-size:.85rem; color:var(--ink-soft); margin:8px 0 0}
+/* focus / scroll never lands under the sticky dock */
+.lab-body button, .lab-body textarea, .lab-body .fb, .lab-body .sort-item, .lab-body .gaunt, .clearline, .lockin{scroll-margin-top:150px}
 /* round 2: taller Copy box on phones */
 @media (max-width:600px){ .copymini textarea, .copyrow textarea{min-height:min(40vh,320px)} }
 </style>
@@ -517,7 +530,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="tab">Challenge 2 · Case #3</div>
   <div class="stamp" aria-hidden="true">OPEN<small>case file</small></div>
   <h1 id="t1">How Do We Know Right From Wrong?</h1>
-  <p class="dek">Nobody has ever spotted wrongness under a microscope. So where does moral knowledge come from? Runaway trolleys, a balancing trick, and some unsettling news about your gut feelings.</p>
+  <p class="dek">Nobody has ever spotted wrongness under a microscope. So where does moral knowledge come from? Runaway trolleys, a balancing trick, and some unsettling news about your instincts.</p>
   <svg class="cover-art" viewBox="0 0 352 150" role="img" aria-label="Drawing of a magnifying glass over a question mark, beside a balance scale">
     <circle cx="96" cy="70" r="50" fill="#FFFDF5" stroke="#2A2016" stroke-width="5"/>
     <circle cx="96" cy="70" r="40" fill="#C9ECFF" stroke="#2A2016" stroke-width="2"/>
@@ -536,7 +549,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="13" cy="13" r="8" fill="#FFFDF5" stroke="#2A2016" stroke-width="2.4"/><path d="M19 19l7 7" stroke="#2A2016" stroke-width="3" stroke-linecap="round"/></svg></div>
-    <p>Think of something you're sure is wrong: say, humiliating someone in front of everyone, just for laughs. Is that <i>knowledge</i>, like knowing 7 &times; 8 = 56? Or just a very strong feeling? Lock in your gut call now. You'll make the call again at the end.</p>
+    <p>Think of something you're sure is wrong: say, humiliating someone in front of everyone, just to get a laugh. Is that <i>knowledge</i>, like knowing 7 &times; 8 = 56? Or just a very strong feeling? Lock in your gut call (your first instinct) now. You'll decide again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
     <div class="row" role="group" aria-label="Your gut call">
@@ -545,17 +558,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
       <button class="vbtn" type="button" data-v="unsure" aria-pressed="false">Not sure</button>
     </div>
     <label for="myReason">My reason, in one sentence</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="2" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
+    <p class="lockhint2">Locking this in is what opens Lead 1. It takes two taps, and it can't be changed after.</p>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 45 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP (ungraded) ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
   <div class="wtab">Warm-up · not graded</div>
   <h2 id="wuh"><span style="--mark:var(--hl-p)">How sure are you?</span></h2>
-  <p class="next">30 seconds. Six claims. Tap your first instinct. There are no wrong answers about how sure you feel.</p>
+  <p class="next">About a minute. Six claims. Tap your first instinct. There are no wrong answers about how sure you feel.</p>
   <div class="wcount" id="wCount" role="img"></div>
   <div class="wcard" id="wCard"></div>
   <div class="wreveal" id="wReveal" hidden></div>
@@ -564,7 +578,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 2 HOW DO WE KNOW (merged recap + teaching, short) ================= -->
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-y)">How do we know anything?</span></h2>
-  <p class="next">About a minute of reading. Then Lead 1 opens.</p>
+  <p class="next">About two minutes of reading. Then Lead 1 opens.</p>
   <p>The last two files asked whether morality is <b>objective</b> (true no matter what anyone thinks). This one asks how we could ever <i>find out</i>. You can't weigh kindness or photograph unfairness.</p>
   <p>The study of knowledge is called <b>epistemology</b>. Its big question: what makes a belief more than a lucky guess? Most of what you know comes from three places:</p>
   <div class="srcs" aria-label="Three ordinary sources of knowledge">
@@ -587,7 +601,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g1h">Where did that belief come from?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "How do we know anything?" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Eight beliefs, and each card says how the person got there. Tag the source doing the work: seeing, being told, working it out, or moral intuition. One card is easy to get wrong. Your first tap on each card is what goes in your record, and a miss is fine: it shows Rocky what to talk about.</p>
+  <p class="how">Eight beliefs, and each card says how the person got there. Tag the source that actually led to the belief: seeing, being told, working it out, or moral intuition. One card is easy to get wrong. Misses cost nothing here; Rocky just uses them to see what to review.</p>
   <div id="srcList"></div>
   <p class="score" id="srcScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -599,12 +613,16 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b1b">
   <h2 id="b1b"><span style="--mark:var(--hl-p)">Is a hunch evidence?</span></h2>
   <p class="next">Short. Then the trolley files.</p>
-  <p class="wow">Many philosophers treat gut reactions to imaginary cases the way scientists treat lab results.</p>
-  <p>They say intuitions are <b>evidence</b>: the raw data a moral theory has to fit, just as a scientific theory has to fit observations. The Oxford philosopher W. D. Ross said something close to this in 1930: the moral convictions of thoughtful people play the role in ethics that sense perceptions play in science.</p>
+  <p class="wow">Many philosophers treat instinctive reactions to imaginary cases the way scientists treat lab results.</p>
+  <p>They say intuitions are <b>evidence</b>: the raw data a moral theory has to fit, just as a scientific theory has to fit observations.</p>
   <p>Evidence doesn't have to be perfect. A stick in a glass of water <i>looks</i> bent, yet your eyes still give you evidence. It can be overturned. Philosophers call evidence like that <b>defeasible</b>, which means it can be "defeated" by better evidence. Intuitions are defeasible too. Keep that word: the second half of this file is about what could defeat them.</p>
   <details class="sealed">
-    <summary><span class="seal" aria-hidden="true">?</span>Why? What would defeat a gut feeling? (tap to see)</summary>
+    <summary><span class="seal" aria-hidden="true">?</span>Why? What would defeat a strong feeling? (tap to see)</summary>
     <div class="inner"><p>Say you feel sure a stranger is untrustworthy. Then you realize the feeling came only from his accent. The feeling is still there, but you now have a reason to discount it. That is a defeater.</p></div>
+  </details>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Going deeper: who said this first? (short on time? skip this one)</summary>
+    <div class="inner"><p>The Oxford philosopher W. D. Ross said something close to this in 1930: the moral convictions of thoughtful people play the role in ethics that sense perceptions play in science.</p></div>
   </details>
 </section>
 
@@ -613,7 +631,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b2"><span style="--mark:var(--hl-o)">The trolley files</span></h2>
   <p class="next">Three short cases. Then you predict what the world said.</p>
   <p class="wow">The most famous moral puzzle of the last 60 years began as a side example in a paper about something else.</p>
-  <p>In 1967 the philosopher Philippa Foot imagined a runaway tram driver who can steer onto a side track: kill one person instead of five. Judith Jarvis Thomson built on the idea. Her 1976 paper named it the <b>trolley problem</b>, and by her 1985 paper she had the versions below.</p>
+  <p>The philosopher Philippa Foot imagined this puzzle in 1967, with a runaway tram. Judith Jarvis Thomson later named it the <b>trolley problem</b> and invented the versions below.</p>
   <p>In every case a trolley will kill five people. Act, and five live while one dies. The numbers never change.</p>
   <div class="cases">
     <div class="tcase">
@@ -650,8 +668,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
       <p>No lever. You're on a bridge over the track next to a stranger carrying a huge, heavy pack. Push him off and his weight stops the trolley. (You're too light to stop it yourself.)</p>
     </div>
   </div>
-  <p>If only numbers mattered, everyone would answer all three the same way. When verdicts split, <i>something besides the numbers</i> is steering them. Change one detail at a time, watch the verdicts move: these cases are a lab for intuitions.</p>
-  <p class="note">A huge online study (2020) put versions of these three cases to about 70,000 people in 42 countries. Lead 2 shows what they said, after you guess.</p>
+  <p>If only numbers mattered, everyone would answer all three the same way. When verdicts split, <i>something besides the numbers</i> is shaping them. Change one detail at a time and watch the verdicts move: these cases are a lab for intuitions.</p>
+  <p class="note">Awad and colleagues (2020) put these three cases to about 70,000 people in 42 countries, through the Moral Machine website. Lead 2 shows what they said, after you guess.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -659,10 +677,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet lab" id="g2" style="--g:var(--hl-o)" aria-labelledby="g2h">
   <div class="gtab">Lead 2 of 5</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
-  <h2 id="g2h">Call it, then guess the crowd</h2>
+  <h2 id="g2h">Choose, then guess the crowd</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The trolley files" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">For each case, on one screen: pick your own verdict (never graded, and "Not sure" is allowed), then slide to guess the average percentage, across the 42 countries, who said the person should act (pull or push). Lock both with one tap. Guesses aren't graded either; you'll just see how close you got. One real question at the end.</p>
+  <p class="how">For each case, pick your own verdict (never graded; "Not sure" is allowed). Then slide to guess what percentage of people, on average across the 42 countries, said the person should act (pull or push). Lock both with one tap. Guesses aren't graded either. One graded question comes at the end.</p>
   <p class="m-nav" id="pollNav"></p>
   <div class="pollcard" id="pollCard"></div>
   <div class="fb" id="pollFb" aria-live="polite" tabindex="-1"></div>
@@ -688,10 +706,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <summary><span class="seal" aria-hidden="true">?</span>Why? Why test a rule that seems to fit? (tap to see)</summary>
     <div class="inner"><p>Fitting the cases you have already looked at is easy. A rule earns trust by also giving the right answer on cases it was not built for. The mapper in Lead 3 is a small version of that test.</p></div>
   </details>
-  <p>Look at the Means rule. In Switch, the one death is a side effect: without him, the five would be saved anyway. In Footbridge and in Loop, the person's body <i>is</i> how you save them. Thomson built Loop to make trouble for the Means rule.</p>
+  <p>Look at the Means rule. In Switch, the one death is a side effect: without him, the five would be saved anyway. In Footbridge and in Loop, the person's body <i>is</i> how you save them.</p>
   <details class="sealed">
     <summary><span class="seal" aria-hidden="true">?</span>Going deeper: an old idea behind the Means rule (short on time? skip this one)</summary>
-    <div class="inner"><p>The difference between a harm used as a means and a harm that is only a side effect is the heart of the <b>doctrine of double effect</b>. It is usually traced back to the medieval philosopher Thomas Aquinas. Foot's 1967 paper was largely about it.</p></div>
+    <div class="inner"><p>The difference between a harm used as a means and a harm that is only a side effect is the heart of the <b>doctrine of double effect</b>. It is usually traced back to the medieval philosopher Thomas Aquinas. Foot's 1967 paper was largely about it. Thomson built Loop to test the Means rule against exactly this idea.</p></div>
   </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -703,7 +721,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g3h">The conflict mapper</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Hunting for the rule behind the verdicts" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">The first two rules are filled in for you as worked examples. For the Means and Hands-Off rules, say what each one implies in each case: is acting OK, or not OK? That part is graded, because each rule has exactly one answer. The mapper checks every rule against <b>your own verdicts</b> from Lead 2 and lights up the clashes.</p>
+  <p class="how">Two rules are filled in as worked examples. For the Means and Hands-Off rules, tap what each rule says about each case: OK to act, or Not OK? Each rule has one right answer, so this part is graded. The mapper then compares every rule with <b>your own verdicts</b> from Lead 2 and marks the clashes.</p>
   <div id="mapList"></div>
   <div id="mapSum" hidden></div>
   <div class="clearslot"></div>
@@ -716,7 +734,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b4"><span style="--mark:var(--hl-g)">Reflective equilibrium: the balancing trick</span></h2>
   <p class="next">One method for settling clashes. Then you try it on lying.</p>
   <p class="wow">The most widely used method in moral philosophy works a bit like tuning a guitar (you adjust each string against the others until they sound right together).</p>
-  <p>So principles and intuitions clash. Which one wins? The philosopher John Rawls gave the best-known answer in <i>A Theory of Justice</i> (1971), where he named the method <b>reflective equilibrium</b>. He borrowed the core idea from Nelson Goodman, who described how we justify the rules of deduction and induction in a similar way.</p>
+  <p>So principles and intuitions clash. Which one wins? The philosopher John Rawls gave the best-known answer in <i>A Theory of Justice</i> (1971), where he named the method <b>reflective equilibrium</b>.</p>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit B: the method</span>
     <span class="argline">1. Collect your <b>considered judgments</b>: verdicts you hold with confidence, made calmly, with the facts in front of you and nothing to gain.</span>
@@ -728,11 +746,11 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <summary><span class="seal" aria-hidden="true">?</span>Why? Why not just keep the rule and ignore the clash? (tap to see)</summary>
     <div class="inner"><p>Because then the rule never gets tested, and a rule that clashes with a judgment you hold calmly and confidently may be the thing that is wrong. The method gives neither side automatic priority.</p></div>
   </details>
-  <p>Nothing is untouchable. A principle isn't right just because it's neat, and an intuition isn't right just because it's strong. Each can correct the other, like tuning one string against the others.</p>
-  <p>Keeping a principle and giving up the clashing intuition is called <b>biting the bullet</b>: accepting an unpleasant conclusion rather than dropping your rule. Immanuel Kant bit a famous one. In a 1797 essay he argued that lying is wrong even to a would-be murderer who asks whether your friend is hiding in your house. Most readers find that very hard to accept. Kant accepted it to keep his principle.</p>
+  
+  <p>Keeping a principle and giving up the clashing intuition is called <b>biting the bullet</b>: accepting an unpleasant conclusion rather than dropping your rule. Immanuel Kant did this in a 1797 essay. He argued that lying is wrong even to a would-be murderer who asks whether your friend is hiding in your house. Most readers find that very hard to accept, but Kant accepted it to keep his principle.</p>
   <details class="sealed">
     <summary><span class="seal" aria-hidden="true">?</span>Going deeper: "wide" reflective equilibrium (short on time? skip this one)</summary>
-    <div class="inner"><p>Rawls also described a <b>wide</b> version, and the philosopher Norman Daniels (1979) developed it. You check your principles and judgments against everything else you have good reason to believe, including scientific theories about people and society. It matters later in this file, when science starts to challenge intuitions.</p></div>
+    <div class="inner"><p>Rawls drew on the philosopher Nelson Goodman, who described how we justify the rules of deduction and induction in a similar back-and-forth way. Rawls also described a <b>wide</b> version, and the philosopher Norman Daniels (1979) developed it. You check your principles and judgments against everything else you have good reason to believe, including scientific theories about people and society. It matters later in this file, when science starts to challenge intuitions.</p></div>
   </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -744,7 +762,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="g4h">Build a principle, then try to break it</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Reflective equilibrium: the balancing trick" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">New topic, same method: <b>lying</b>. Pick the principle you like best. Four cases will then try to break it. For each one, first give your own gut verdict (never graded; reflective equilibrium starts with your judgments). Then say what your principle implies (graded: there's one right answer). If they clash, you choose: <b>revise</b> the principle, or <b>bite the bullet</b>.</p>
+  <p class="how">New topic, same method: <b>lying</b>. Pick the principle you like best. Four cases will then test it. For each one, first give your own first-instinct verdict (never graded; reflective equilibrium starts with your own judgments). Then say what your principle implies (graded: there is one right answer). If your verdict and your principle clash, you choose: <b>revise</b> the principle, or <b>bite the bullet</b> (keep the principle and accept the unwelcome verdict).</p>
   <div id="buildPick"></div>
   <div class="gaunt" id="gaunt" hidden></div>
   <div class="fb" id="gauntFb" aria-live="polite" tabindex="-1"></div>
@@ -759,9 +777,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b5"><span style="--mark:var(--hl-p)">Fast thinking, slow thinking</span></h2>
   <p class="next">A brain-scan study, then a quick check on your own flinch.</p>
   <p class="wow">In 2001, scientists put people in brain scanners and asked them trolley questions.</p>
-  <p>Joshua Greene and colleagues at Princeton published the study in the journal <i>Science</i>. Roughly: up-close, hands-on cases like Footbridge lit up emotion-linked brain areas more than remote cases like Switch.</p>
-  <p>Greene's <b>dual-process</b> theory says we have two systems. One is <b>fast</b>: automatic, emotional, gut-level. The other is <b>slow</b>: deliberate and calculating. In <i>Moral Tribes</i> (2013) he compares them to a camera's automatic settings and its manual mode. (Daniel Kahneman's 2011 book <i>Thinking, Fast and Slow</i> made the fast/slow language famous.)</p>
-  <p>On this picture, the "don't push!" alarm is the fast system reacting to up-close force. Automatic settings work well in situations our ancestors met again and again. In strange new ones, like a trolley and a footbridge, Greene argues they can misfire.</p>
+  <p>Joshua Greene and colleagues at Princeton (in the journal <i>Science</i>) found that up-close, hands-on cases like Footbridge produced more activity in emotion-linked brain areas than remote cases like Switch.</p>
+  <p>Greene's <b>dual-process</b> theory says we have two systems. One is <b>fast</b>: automatic, emotional, instant. The other is <b>slow</b>: deliberate and calculating. In <i>Moral Tribes</i> (2013) he compares them to a camera's automatic settings and its manual mode.</p>
+  <p>On this picture, the "don't push!" alarm is the fast system reacting to up-close force. Automatic settings work well in situations our ancestors met again and again. In strange new ones, like a trolley and a footbridge, Greene argues they can go wrong.</p>
   <div class="poll" id="flinchPoll">
     <p><b>Quick check (not graded):</b> imagine your hands on the stranger's back on the footbridge. Does something in you flinch first, before any reasoning?</p>
     <div class="row" role="group" aria-label="Did you flinch?">
@@ -771,7 +789,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="flinchFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <details class="sealed">
-    <summary><span class="seal" aria-hidden="true">?</span>Pushback on Greene (short on time? skip this one)</summary>
+    <summary><span class="seal" aria-hidden="true">?</span>Criticism of Greene (short on time? skip this one)</summary>
     <div class="inner">
       <p>Later researchers questioned parts of the original data, and the clean split between "emotion" and "reason" looks messier than it first seemed. The philosopher Selim Berker argued in 2009 that brain scans alone can't tell us which intuitions are <i>right</i>; you need a moral argument for that. The strongest version of Greene-style arguments supplies one: some intuitions respond to features that don't seem to matter morally.</p>
     </div>
@@ -802,10 +820,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
   <p>Now swap the pill for things that really did shape moral intuitions:</p>
   <ul>
-    <li><b>Evolution.</b> Caring for your children, repaying favors and punishing cheats probably helped our ancestors survive and have descendants. The philosopher Sharon Street, in a 2006 paper called "A Darwinian Dilemma," pushes this hard. Either evolution had nothing to do with moral truth, and then it would be a lucky accident if our values matched it. Or it did track the truth, but the simpler science story needs no moral truth at all. Richard Joyce (2006) argues along related lines.</li>
+    <li><b>Evolution.</b> Caring for your children, repaying favors and punishing cheats probably helped our ancestors survive and have descendants. If so, our moral feelings may be here because they helped survival, whether or not they match any moral truth. The philosopher Sharon Street built her 2006 "Darwinian dilemma" on this idea (drawer below).</li>
     <li><b>Culture.</b> What seems obviously right depends a lot on where and when you grew up. Some things that once seemed obviously fine now seem obviously wrong.</li>
     <li><b>Mood and framing.</b> In a well-known 1981 study, Amos Tversky and Daniel Kahneman showed that people choose differently between the same two plans depending on whether the outcomes are described as lives saved or lives lost. In other studies, a funny video clip beforehand made people more willing to say pushing in Footbridge was OK. Good evidence shouldn't flip with the wording or your mood.</li>
   </ul>
+  <details class="sealed">
+    <summary><span class="seal" aria-hidden="true">?</span>Going deeper: Street's "Darwinian dilemma" (short on time? skip this one)</summary>
+    <div class="inner"><p>Street's 2006 paper is called "A Darwinian Dilemma." Either evolution had nothing to do with moral truth, and then it would be a lucky accident if our values matched it. Or it did track the truth, but the simpler science story needs no moral truth at all. Richard Joyce (2006) argues along related lines.</p></div>
+  </details>
 </section>
 
 <section class="sheet" aria-labelledby="b6b">
@@ -814,14 +836,14 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p>The philosopher Kwame Anthony Appiah titled a chapter of <i>Experiments in Ethics</i> (2008) "The Case Against Intuition." Is this the end of moral knowledge? Not necessarily. Tap each reply to open it.</p>
   <details class="reply" style="--rc:var(--hl-g)">
     <summary><b>Reply 1: companions in guilt.</b> Evolution shaped your math skills too...</summary>
-    <div class="inner"><p>Our ability to count and reason evolved too. Hardly anyone thinks that debunks arithmetic. If evolution doesn't wreck math, maybe it doesn't wreck all of ethics.</p><p class="other">The other side says: math beliefs can be checked against proofs and the world; moral beliefs have no such outside check.</p></div>
+    <div class="inner"><p>Our ability to count and reason evolved too. Hardly anyone thinks that debunks arithmetic. If evolution doesn't undermine math, maybe it doesn't undermine all of ethics.</p><p class="other">The other side says: math beliefs can be checked against proofs and the world; moral beliefs have no such outside check.</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-b)">
     <summary><b>Reply 2: overlap.</b> What helped survival might also be good...</summary>
-    <div class="inner"><p>Maybe what helped our ancestors survive overlaps with what's actually good. Pain feeling bad helped them survive, and pain may also really be bad.</p><p class="other">The other side says: then the overlap is doing all the work, and it would be a lucky coincidence.</p></div>
+    <div class="inner"><p>Maybe what helped our ancestors survive overlaps with what's actually good. Pain feeling bad helped them survive, and pain may also really be bad.</p><p class="other">The other side says: then the overlap carries the whole argument, and it would be a lucky coincidence.</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-p)">
-    <summary><b>Reply 3: debunk selectively.</b> Throw out some intuitions, not all...</summary>
+    <summary><b>Reply 3: debunk selectively.</b> Reject some intuitions, not all...</summary>
     <div class="inner"><p>Greene doesn't debunk everything. He targets intuitions that respond to features that don't seem to matter, like whether you used your hands. That fits a <b>wide</b> reflective equilibrium, where your principles and judgments also have to fit what science tells you.</p><p class="other">The other side says: deciding which features "don't matter" already uses moral intuitions.</p></div>
   </details>
   <div class="poll" id="replyPoll">
@@ -840,8 +862,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="b7"><span style="--mark:var(--hl-g)">How moral minds actually change</span></h2>
   <p class="next">One surprising history and one guess. Then Lead 5.</p>
   <p class="wow">In 1829 the sitting British Prime Minister, the Duke of Wellington, fought a duel. (Both men walked away unhurt.)</p>
-  <p>Culture doesn't only bend intuitions the wrong way. Sometimes it helps fix them. Appiah's book <i>The Honor Code</i> (2010) studies moral changes such as the end of dueling among British gentlemen and the end of foot-binding in China, a practice that had painfully deformed girls' feet for centuries.</p>
-  <p>His surprising finding: the arguments against these practices existed <b>long before</b> the practices ended. For centuries dueling had been condemned as murderous and irrational, by the law, the churches and moral critics. What finally shifted things, Appiah argues, was <b>honor</b>: dueling started to look ridiculous rather than noble, and foot-binding came to be seen as a source of national shame. People changed when what they respected changed.</p>
+  <p>Culture doesn't only bend intuitions the wrong way. Sometimes it helps fix them. Appiah's book <i>The Honor Code</i> (2010) studies how dueling among British gentlemen and foot-binding in China (which painfully deformed girls' feet) finally ended. His surprising finding: the arguments against both existed <b>long before</b> the practices ended. What shifted things, Appiah argues, was <b>honor</b>: dueling started to look ridiculous rather than noble, and foot-binding came to be seen as national shame. People changed when what they respected changed.</p>
   <div class="poll" id="appiahPoll">
     <p><b>Your guess (not graded):</b> what changes people's minds more?</p>
     <div class="row" role="group" aria-label="What changes minds more?">
@@ -850,7 +871,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="appiahFb" aria-live="polite" tabindex="-1"></div>
   </div>
-  <p>Two lessons: <b>debunking cuts both ways</b>, since some social forces may push toward the truth, and <b>knowing isn't the same as being moved</b>, since people often don't act on reasons they already have.</p>
+  <p>Two lessons: <b>debunking can work both ways</b>, since some social forces may push toward the truth, and <b>knowing isn't the same as being moved</b>, since people often don't act on reasons they already have.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="5">Got it: open Lead 5</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -886,6 +907,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div id="weighList"></div>
     <p class="step-lbl">Where does your equilibrium settle on Footbridge?</p>
+    <p class="small" id="scaleHint">Weigh all six considerations above (trust or discount each) to unlock these buttons.</p>
     <div class="row" id="scaleFinal" role="group" aria-label="Your Footbridge verdict after weighing"></div>
     <div class="fb" id="scaleFb" aria-live="polite" tabindex="-1"></div>
   </div>
@@ -923,7 +945,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will argue the other side once; sticking with your view for a good reason is just as good as changing it.</p>
   </div>
   </div>
 </section>
@@ -938,13 +960,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 17 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
   <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
+  <details class="sealed">
+  <summary><span class="seal" aria-hidden="true">?</span>Optional reading and links (short on time? skip this one)</summary>
+  <div class="inner">
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by; Lecture 8 is on moral epistemology.<span class="linkrow"><a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></span></li>
     <li><b>MIT 24.230, Meta-ethics</b> (MIT OpenCourseWare). A full free course on whether moral truths exist and how we could know them. It's also on Recess as "Is Anything Really Wrong?"<span class="linkrow"><a class="linkbtn" href="https://ocw.mit.edu/courses/24-230-meta-ethics-fall-2015/" target="_blank" rel="noopener">ocw.mit.edu</a></span></li>
     <li><b>Kwame Anthony Appiah, <i>Experiments in Ethics</i> (2008)</b>, chapter 3, "The Case Against Intuition", and <b><i>The Honor Code</i> (2010)</b>. Ask a library.</li>
     <li><b>Joshua Greene, <i>Moral Tribes</i> (2013)</b>. The fast/slow camera picture, from the scientist himself. Ask a library.</li>
-    <li><b>Moral Machine</b> (MIT Media Lab). The online project behind the 70,000-person study, where you can judge self-driving-car dilemmas yourself. <span class="linkrow"><a class="linkbtn" href="https://moralmachine.mit.edu" target="_blank" rel="noopener">moralmachine.mit.edu</a></span></li>
+    <li><b>Moral Machine</b> (MIT Media Lab). An online experiment where you judge self-driving-car dilemmas yourself. Its trolley-style "Classic" mode is where the 70,000-person, 42-country data in Lead 2 came from (Awad et al., 2020, <i>PNAS</i>). <span class="linkrow"><a class="linkbtn" href="https://moralmachine.mit.edu" target="_blank" rel="noopener">moralmachine.mit.edu</a></span></li>
   </ul>
+  </div>
+  </details>
 </section>
 
 <p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT.</p>
@@ -963,11 +990,11 @@ var MOD="C2-M03";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Source traced.","Exactly right.","That's the one.","Correct."], no:["Not quite.","Close, look again.","Not that source."]},
- g2:{ok:["Exactly.","You solved it.","That's it."], no:["Not quite.","Close, look again.","A common pick, but no."]},
- g3:{ok:["Rule applied.","Word for word, yes.","Exactly.","Correct."], no:["Not quite.","Read it again.","Close, look again."]},
- g4:{ok:["That's what it says.","Faithful reading.","Exactly.","Correct."], no:["Not quite.","Read the rule literally.","Close, look again."]},
- g5:{ok:["Debunker's eye.","Cause spotted.","Exactly right.","Correct."], no:["Not quite.","Close, look again.","A common pick, but no."]}
+ g1:{ok:["Source traced.","Exactly right.","That's the one.","Correct."], no:["Not quite.","Close, but no.","Not that source."]},
+ g2:{ok:["Exactly.","You solved it.","That's it."], no:["Not quite.","Close, but no.","A common pick, but no."]},
+ g3:{ok:["Rule applied.","Word for word, yes.","Exactly.","Correct."], no:["Not quite.","Close, but no.","Not that one."]},
+ g4:{ok:["That's what it says.","Faithful reading.","Exactly.","Correct."], no:["Not quite.","Close, but no.","Not that reading."]},
+ g5:{ok:["Debunker's eye.","Cause spotted.","Exactly right.","Correct."], ok2:["Exactly right.","Correct.","Good catch."], no:["Not quite.","Close, but no.","A common pick, but no."]}
 };
 var lastV={};
 function vword(g,kind){ var pool=VERD[g][kind], w; do{ w=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && w===lastV[g+kind]); lastV[g+kind]=w; return w; }
@@ -999,7 +1026,7 @@ var POLLS={flinch:null, pill:null, reply:null, appiah:null};
 /* ---------- evidence dock + display-only progress bar ---------- */
 var GAMES=[
  {id:"g1",c:"var(--hl-p)",lead:1,title:"Intuitions as evidence",body:"We know ordinary things by <b>seeing</b>, <b>being told</b> and <b>working it out</b>. A <b>moral intuition</b> is a moral claim that seems true when you consider it. Many philosophers treat intuitions as <b>defeasible</b> evidence: real, but able to be overturned.",ex:"Punishing someone everyone knows is innocent just seems unfair."},
- {id:"g2",c:"var(--hl-o)",lead:2,title:"The trolley lab",body:"Switch, Loop and Footbridge all trade one life for five, yet verdicts differ. So <b>something besides the numbers</b> is steering our intuitions.",ex:"In a 42-country study, about 81% (country average) chose to act in Switch, 72% in Loop, 51% in Footbridge, and every country had the same order."},
+ {id:"g2",c:"var(--hl-o)",lead:2,title:"The trolley lab",body:"Switch, Loop and Footbridge all trade one life for five, yet verdicts differ. So <b>something besides the numbers</b> is shaping our intuitions.",ex:"In a 42-country study, about 81% (country average) chose to act in Switch, 72% in Loop, 51% in Footbridge, and every country had the same order."},
  {id:"g3",c:"var(--hl-b)",lead:3,title:"Principles vs intuitions",body:"A <b>principle</b> is a general rule. It <b>fits</b> a case if it matches your verdict; a case where it clashes is a <b>counterexample</b>.",ex:"The Means rule (never use a person's body as your tool in a way that kills him) fits Switch and Footbridge for many people, but Loop makes trouble for it."},
  {id:"g4",c:"var(--hl-g)",lead:4,title:"Reflective equilibrium",body:"Rawls's method: go back and forth between <b>considered judgments</b> and principles, revising either one, until they support each other. Keeping the principle and dropping the intuition is <b>biting the bullet</b>.",ex:"Kant bit the bullet: no lying, even to a would-be murderer at the door."},
  {id:"g5",c:"var(--hl-y)",lead:5,title:"Debunking",body:"If a process would have given you a belief <b>whether or not it was true</b>, the belief loses its evidence. Evolution, culture, mood and framing are the suspects. Replies: companions in guilt, overlap, and debunking selectively.",ex:"A comedy clip shouldn't change whether pushing is wrong, but it changed some people's verdicts."}
@@ -1008,8 +1035,8 @@ var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
-  b.addEventListener("click",function(){ showCard(g); });
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true"); b.classList.add("lockedpip");
+  b.addEventListener("click",function(){ if(!cleared[g.id]){ toast("Evidence "+g.lead+" is not collected yet. Clear Lead "+g.lead+" first.", g.c); return; } showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
 $("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
@@ -1033,11 +1060,11 @@ var toastTimer=null;
 function toast(msg, color){
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1500);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1600);
 }
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
-  toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
+  toast("Evidence "+n+"/"+NG+" filed"+(n===NG?": final file open":""), g.c);
   var slot=$(g.id).querySelector(".clearslot");
   if(slot){ slot.innerHTML='<div class="clearline"><div class="stamp" aria-hidden="true">CLEARED</div><p><b>Evidence '+n+'/'+NG+' filed: '+g.title+'.</b> Tap pip '+g.lead+' in the top bar any time to review it.'+(n===NG?' The final file is open below.':'')+'</p></div>';
     try{ slot.firstChild.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"nearest"}); }catch(e){} }
@@ -1047,7 +1074,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.classList.remove("lockedpip"); b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -1090,8 +1117,16 @@ function freezeCover(){
   $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); cDisarm(); });
 });
+/* one lock pattern: the first tap arms, the second confirms (not sooner than 500 ms later); the arm reset after 20 s or when anything changes */
+var cArm={on:false,t:0,timer:null,dim:null};
+function cDisarm(){
+  if(!cArm.on) return;
+  cArm.on=false; clearTimeout(cArm.timer); clearTimeout(cArm.dim);
+  var b=$("lockBtn"); if(!COVER.locked){ b.textContent="Lock it in"; b.classList.remove("armed","arming"); $("lockMsg").textContent=""; }
+}
+$("myReason").addEventListener("input",cDisarm);
 function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
@@ -1099,8 +1134,16 @@ function syncLockin(){
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
   var r=$("myReason").value.trim();
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(!COVER.v){ cDisarm(); $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the three first."; return; }
+  if(!r){ cDisarm(); $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
+  if(!cArm.on){
+    cArm.on=true; cArm.t=Date.now(); var lb=$("lockBtn"); lb.textContent="Tap again to lock it in"; lb.classList.add("armed","arming");
+    cArm.dim=setTimeout(function(){ lb.classList.remove("arming"); },500); cArm.timer=setTimeout(cDisarm,20000);
+    $("lockMsg").style.color=""; $("lockMsg").textContent="Ready? Tap the button again. You can't change it after.";
+    return;
+  }
+  if(Date.now()-cArm.t<500) return;   /* the button is dimmed during this half second */
+  cArm.on=false; clearTimeout(cArm.timer); clearTimeout(cArm.dim); $("lockBtn").classList.remove("armed","arming");
   COVER.reason=one(r); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   refreshGot(); saveState();
@@ -1119,8 +1162,8 @@ function warmLine(){
   if(!ks.length) return "Warm-up: not played yet";
   return "Warm-up: ungraded how-sure round, "+ks.length+" of "+WN+" locked on first tap: "+ks.map(function(k){return WUBY[k].s+" = "+WL[WARM.ans[k]].toLowerCase();}).join("; ");
 }
-function one(s){ return String(s==null?"":s).replace(/[\r\n\u2028\u2029\u0085]+/g," "); }
-function coverLines(){ return ["Gut call (is 'humiliating someone for laughs is wrong' knowledge?), locked before the leads: "+(COVER.locked ? VL[COVER.v]+". My reason: "+one(COVER.reason) : "not locked in")]; }
+function one(s){ return String(s==null?"":s).replace(/\s*[\r\n\u2028\u2029\u0085]+\s*/g," "); }
+function coverLines(){ return ["Gut call (is 'humiliating someone for a laugh is wrong' knowledge?), locked before the leads: "+(COVER.locked ? VL[COVER.v]+". My reason: "+one(COVER.reason) : "not locked in")]; }
 var PL={flinch:{yes:"flinched instantly",no:"no flinch"}, pill:{yes:"trust it less",bit:"only a bit less",no:"no"}, reply:{guilt:"companions in guilt",overlap:"overlap",select:"debunk selectively"}, appiah:{arg:"a good argument",look:"starting to look ridiculous"}};
 function tapLines(){
   function v(k){ return POLLS[k]?PL[k][POLLS[k]]:"not answered"; }
@@ -1178,7 +1221,7 @@ var WU=[
 ];
 var WUBY={}; WU.forEach(function(c){ WUBY[c.k]=c; });
 var WN=WU.length;
-var WL={dead:"Dead sure", pretty:"Pretty sure", hmm:"Not sure"};
+var WL={dead:"Completely sure", pretty:"Pretty sure", hmm:"Not sure"};
 var WCOL={dead:"var(--hl-b)", pretty:"var(--hl-y)", hmm:"var(--hl-p)"};
 WARM.order=shuffle(WU.map(function(c){return c.k;}));
 var wReadyAt=0;
@@ -1196,16 +1239,16 @@ function wRender(userTap){
     var morPretty=WU.filter(function(c){return c.g==="moral" && WARM.ans[c.k]==="pretty";}).length;
     var line = morSure>=2 ? "You felt sure about right and wrong, with nothing to look at, measure or look up. Where does that certainty come from? That's today's case."
                           : "You hesitated on right and wrong, even though people argue about it as if it were a fact. How could anyone know? That's today's case.";
-    rev.innerHTML='<div class="wchips">'+chips+'</div><div class="pattern"><b>Dead sure: '+fact+' of 3 checkable claims, '+mor+' of 3 about right and wrong'+(morPretty?', pretty sure on '+morPretty+' more':'')+'.</b><br>'+line+'</div>';
+    rev.innerHTML='<div class="wchips">'+chips+'</div><div class="pattern"><b>You were completely sure of '+fact+' of the 3 claims you could check (math, astronomy, weather) and '+mor+' of the 3 about right and wrong'+(morPretty?', and pretty sure of '+morPretty+' more':'')+'.</b><br>'+line+'</div>';
     if(userTap){ rev.setAttribute("tabindex","-1"); focusFb(rev); }
     return;
   }
   rev.hidden=true; card.hidden=false;
   var k=WARM.order[n], c=WUBY[k];
-  if(userTap) wReadyAt=Date.now()+400;
+  if(userTap) wReadyAt=Date.now()+250;
   card.className="wcard"; card.innerHTML='<p class="wq"></p><div class="wbtns" role="group" aria-label="How sure are you?"></div>';
   card.querySelector(".wq").textContent=c.q;
-  [["dead","Dead sure"],["pretty","Pretty sure"],["hmm","Not sure"]].forEach(function(o){
+  [["dead","Completely sure"],["pretty","Pretty sure"],["hmm","Not sure"]].forEach(function(o){
     var b=el("button",{class:"wbtn",type:"button","data-w":o[0]}); b.textContent=o[1];
     b.addEventListener("click",function(){
       if(WARM.ans[k] || Date.now()<wReadyAt) return;
@@ -1213,6 +1256,7 @@ function wRender(userTap){
     });
     card.querySelector(".wbtns").appendChild(b);
   });
+  if(userTap){ var wb=card.querySelector(".wbtns"); wb.classList.add("wait"); setTimeout(function(){ wb.classList.remove("wait"); },250); }
   if(userTap){ void card.offsetWidth; if(!reduceMotion) card.className="wcard pop"; card.querySelector("button").focus({preventScroll:true}); }
 }
 wRender(false);
@@ -1230,7 +1274,7 @@ function restoreWarm(sv){
 var SL={see:"Seeing",told:"Being told",work:"Working it out",intu:"Moral intuition"};
 var SRC=[
  {b:"It's raining.", h:"You look out the window and watch rain streak down the glass.", short:"rain", a:"see",
-  why:"Your senses are doing the work. That's perception."},
+  why:"Your senses are what led you to the belief. That's perception."},
  {b:"Gold's atomic number is 79.", h:"Your chemistry teacher said so, and you trust her.", short:"gold", a:"told",
   why:"You haven't checked it yourself; you're trusting a reliable source. That's testimony, and most of what anyone knows comes this way."},
  {b:"There's no largest number.", h:"You notice that adding 1 to any number gives a bigger one.", short:"largest number", a:"work",
@@ -1244,7 +1288,7 @@ var SRC=[
  {b:"Punishing someone for a crime everyone knows she didn't commit is unfair.", h:"You consider the case, and it just seems unfair, even before you can say why.", short:"innocent punished", a:"intu",
   why:"Considered on its own, the claim just seems true. That's an intuition, and it's the kind philosophers use as evidence."},
  {b:"It's wrong to read other people's letters.", h:"Your grandmother told you so, and you believe it because she said it.", short:"grandmother", a:"told", surprise:true,
-  why:"The surprise card. It's a moral belief, but the source doing the work is her say-so: testimony. Moral beliefs can arrive by being told, just like facts about gold. The question is how the first person in the chain knew."}
+  why:"The surprise card. It's a moral belief, but what led to the belief is her say-so: testimony. Moral beliefs can arrive by being told, just like facts about gold. The question is how the first person in the chain knew."}
 ];
 var srcOrder=shuffle(SRC); if(srcOrder[0].surprise){ srcOrder.push(srcOrder.shift()); }
 var srcDone=0, srcUI={};
@@ -1305,7 +1349,7 @@ function srcLines(){
   if(!done) return ["Lead 1 Where did that belief come from?: not started"];
   var first=ks.filter(function(k){return REC.src[k].final && !REC.src[k].misses.length;}).length;
   var miss=ks.filter(function(k){return REC.src[k].misses.length;});
-  return ["Lead 1 Where did that belief come from?: "+done+" of "+SRC.length+" tagged, "+first+" of "+done+" right first try"+(miss.length?"; needed a second go on: "+miss.join(", "):"")];
+  return ["Lead 1 Where did that belief come from?: "+done+" of "+SRC.length+" tagged, "+first+" of "+done+" on the first tap"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 2: PREDICTED POLL ================= */
@@ -1352,7 +1396,7 @@ function pollRender(){
     var verdict = diff<=10 ? "Close guess." : diff<=25 ? "Fairly close." : "Far off, and that's interesting.";
     var tail;
     if(pend==="unsure") tail="You weren't sure, which is a fair place to start.";
-    else if(C.k==="foot") tail=(pend==="yes"?"You'd act":"You wouldn't act")+", so you're on the "+(pend==="yes"?"slightly more common":"slightly less common")+" side here (by country average), though only just: it's close to a coin flip.";
+    else if(C.k==="foot") tail=(pend==="yes"?"You'd act":"You wouldn't act")+", so you're on the "+(pend==="yes"?"slightly more common":"slightly less common")+" side here (by country average), though only just: it's almost an even split.";
     else tail=(pend==="yes"?"You'd act":"You wouldn't act")+", so you're with the "+(pend==="yes"?"majority":"minority")+" here.";
     setFb($("pollFb"),"good",verdict,"On average across the 42 countries, about "+C.real+"% chose to act. "+tail);
     if(pI<POLL.length-1){ $("pollNext").hidden=false; if(!silent) $("pollNext").focus(); } else { pollEnd(); }
@@ -1367,13 +1411,13 @@ $("pollNext").addEventListener("click",function(){ pI++; pollRender(); $("pollCa
 pollRender();
 var PQ={q:"In all three cases, acting saves five and costs one. So what does the drop from Switch (about 81%) to Footbridge (about 51%) show?",
   o:[["a","Some feature other than the body count is shaping people's verdicts"],["b","People value Footbridge's five lives less than Switch's five lives"],["c","The study proves pushing is wrong, since fewer people approve of it"]], a:"a",
-  ok:"Same numbers, different verdicts: some other feature of the case (pushing, using the person's body, being up close to the harm) is steering intuitions. Working out which feature is the next job.",
-  no:{b:"Nothing in the cases makes one set of five worth less; they're described the same way. Something else about the cases is doing the work.",c:"Popularity isn't proof; that's the fine-print point. A poll tells you what people think, not what's true."}};
+  ok:"Same numbers, different verdicts: some other feature of the case (pushing, using the person's body, being up close to the harm) is shaping intuitions. Working out which feature is the next job.",
+  no:{b:"Nothing in the cases makes one set of five worth less; they're described the same way. Something else about the cases is doing the work.",c:"Popularity isn't proof. A poll tells you what people think, not what's true."}};
 function pollEnd(){
   var E=$("pollEnd"); E.hidden=false;
   var acts=POLL.filter(function(c){return REC.poll.mine[c.k]==="yes";}).map(function(c){return c.n;});
   var uns=POLL.filter(function(c){return REC.poll.mine[c.k]==="unsure";}).map(function(c){return c.n;});
-  E.innerHTML='<div class="pattern"><b>The big picture</b><br>Every one of the 42 countries showed the same order: Switch most accepted, then Loop, then Footbridge. Your own pattern: you\'d act in '+(acts.length?acts.join(", "):"none of the three")+'.'+(uns.length?" You weren\'t sure about "+uns.join(", ")+".":"")+'<br><br><b>Read the fine print.</b> These were volunteers on a website, and the authors say the sample was self-selected. Among the roughly 20,000 who answered an optional survey, about three-quarters were men, and most were young and college-educated. Some studies of other groups have found much lower approval for pushing. Data about intuitions needs the same care as any other data.</div><p class="small"><b>One question to clear this lead.</b> '+PQ.q+'</p><div id="pqOpts"></div>';
+  E.innerHTML='<div class="pattern"><b>The big picture</b><br>Every one of the 42 countries showed the same order: Switch most accepted, then Loop, then Footbridge. Your own pattern: you\'d act in '+(acts.length?acts.join(", "):"none of the three")+'.'+(uns.length?" You weren\'t sure about "+uns.join(", ")+".":"")+'<br><br><b>How was the data collected?</b> These were volunteers on a website, and the authors say the sample was self-selected. Among the roughly 20,000 who answered an optional survey, about three-quarters were men, and most were young and college-educated. Some studies of other groups have found much lower approval for pushing. Data about intuitions needs the same care as any other data.</div><p class="small"><b>One question to clear this lead.</b> '+PQ.q+'</p><div id="pqOpts"></div>';
   var O=$("pqOpts");
   shuffle(PQ.o).forEach(function(o){
     var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
@@ -1389,9 +1433,9 @@ function pollEnd(){
 }
 function pollLines(){
   var ks=POLL.filter(function(c){return REC.poll.guess[c.k]!=null;});
-  if(!ks.length) return ["Lead 2 Call it, then guess the crowd: not started"];
+  if(!ks.length) return ["Lead 2 Choose, then guess the crowd: not started"];
   var L=POLL.map(function(c){ var m=REC.poll.mine[c.k], g=REC.poll.guess[c.k]; return c.n+": "+(g==null?"not reached yet":verdictText(m)+", guessed "+g+"% (study country average about "+c.real+"%)"); });
-  return ["Lead 2 my trolley verdicts and guesses: "+L.join("; "), "Lead 2 'same numbers' question: "+(REC.poll.q.done?"right"+(REC.poll.q.misses?" after "+REC.poll.q.misses+" miss(es)":" first try"):"not done")];
+  return ["Lead 2 my trolley verdicts and guesses: "+L.join("; "), "Lead 2 'same numbers' question: "+(REC.poll.q.done?"right"+(REC.poll.q.misses?" after "+REC.poll.q.misses+" extra go(es)":" on the first tap"):"not done")];
 }
 
 function restorePoll(sv){
@@ -1450,7 +1494,7 @@ PRIN.forEach(function(p){
             refreshMap();
           } else {
             R.misses++;
-            cfb.innerHTML='<b>'+vword("g3","no")+'</b> '+(R.misses===1 ? p.hint : "Read the rule word by word: "+p.why[ck]);
+            cfb.innerHTML='<b>'+vword("g3","no")+'</b> '+(R.misses===1 ? p.hint : "Here is how the rule applies: "+p.why[ck]);
           }
           touch("g3");
         });
@@ -1489,7 +1533,7 @@ function mapSummary(){
     var full=PRIN.filter(function(p){ var f=fitCount(p); return f[1]>0 && f[0]===f[1]; }).map(function(p){return p.n;});
     REC.map.full=full;
     var msg = full.length ? "Principles that fit every one of your verdicts: <b>"+full.join(", ")+"</b>. That's a candidate explanation of your intuitions. Does it feel like the <i>real</i> reason behind them? If a rule fits the data but seems morally silly, that's a warning sign."
-      : "<b>None of the four principles fits all your verdicts.</b> So either there's a better principle nobody's put on the table yet, or one of your verdicts has to give. That choice is exactly what the next screen is about.";
+      : "<b>None of the four principles fits all your verdicts.</b> So either there's a better principle nobody has proposed yet, or one of your verdicts has to change. That choice is exactly what the next screen is about.";
     S.innerHTML='<div class="pattern"><b>Your conflict map</b><br>'+msg+'<br><br>Philosophers have proposed dozens of cleverer principles for these cases, and every one has met counterexamples. The search goes on.</div>';
   }
   if(!mapSummed){ mapSummed=true; clear("g3"); }
@@ -1504,7 +1548,7 @@ function restoreMap(sv){
         R.done=true; u.btns[p.imp[cs[0]]].classList.add("right"); u.row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
         u.cfb.innerHTML='<b>Right.</b> '+p.why[cs[0]]; mapDone++; if(!R.misses) REC.map.first++;
       } else if(R.misses){
-        u.cfb.innerHTML='<b>Not quite.</b> '+(R.misses===1 ? p.hint : "Read the rule word by word: "+p.why[cs[0]]);
+        u.cfb.innerHTML='<b>Not quite.</b> '+(R.misses===1 ? p.hint : "Here is how the rule applies: "+p.why[cs[0]]);
       }
     });
   });
@@ -1513,7 +1557,7 @@ function restoreMap(sv){
 }
 function mapLines(){
   if(!REC.map.done) return ["Lead 3 Conflict mapper: not started"];
-  var L=["Lead 3 Conflict mapper: "+REC.map.done+" of "+mapTotal+" graded rule verdicts (Means and Hands-Off rules) done, "+REC.map.first+" of "+REC.map.done+" first try"];
+  var L=["Lead 3 Conflict mapper: "+REC.map.done+" of "+mapTotal+" graded rule verdicts (Means and Hands-Off rules) done, "+REC.map.first+" of "+REC.map.done+" on the first tap"];
   if(REC.map.done===mapTotal){ L.push("Lead 3 principles that fit all my trolley verdicts: "+(REC.map.full==null?"no Lead 2 verdicts to compare":REC.map.full.length?REC.map.full.join(", "):"none of the four")); }
   return L;
 }
@@ -1527,7 +1571,7 @@ var BP=[
 ];
 var BC=[
  {k:"hunt", n:"The knock at the door", t:"Your friend is hiding in your house from someone who wants to hurt her. That person knocks and asks if she's inside. You say no. (Your lie prevents serious harm. The person at the door is trying to do wrong, and would not want to be lied to.)",
-  why:{always:"Always means always: wrong. This is Kant's famous bullet.",harm:"The lie prevents serious harm, so it's OK.",wrongdoer:"The person at the door is trying to do something wrong, so it's OK.",consent:"The person at the door would not want to be lied to, so it's wrong."}},
+  why:{always:"Always means always: wrong. This is the unwelcome answer Kant accepted.",harm:"The lie prevents serious harm, so it's OK.",wrongdoer:"The person at the door is trying to do something wrong, so it's OK.",consent:"The person at the door would not want to be lied to, so it's wrong."}},
  {k:"party", n:"The surprise party", t:"You're secretly planning your best friend's surprise party. She asks what you're doing Saturday and you say \"nothing much\". (No serious harm is prevented. She isn't doing anything wrong. She loves surprises and would be glad you lied.)",
   why:{always:"Always wrong, even here.",harm:"No serious harm is prevented, so it's wrong.",wrongdoer:"She isn't trying to do anything wrong, so it's wrong.",consent:"She'd want you to lie if she knew everything, so it's OK."}},
  {k:"alibi", n:"The fake alibi", t:"A classmate damaged a school laptop on purpose. The principal asks if he was with you at the time, and you say yes. (The lie saves him from a serious punishment, which counts as serious harm to him. The principal isn't doing anything wrong, and wouldn't want to be lied to.)",
@@ -1538,6 +1582,7 @@ var BC=[
 var VW={ok:"Lying is OK here", wrong:"Lying is wrong here"};
 var GL={ok:"OK",wrong:"Wrong",unsure:"Unsure"};
 var bState={p:null, i:0, misses:0, runClashes:0};
+var REVNOTE="Pick a revised principle. The four cases start again from case 1, because a new principle has to fit every case. Your first-instinct verdicts stay, so each case is just one graded tap.";
 function bpText(k){ return BP.filter(function(x){return x.k===k;})[0].t; }
 function unsureCount(){ return Object.keys(REC.build.gut).filter(function(k){return REC.build.gut[k]==="unsure";}).length; }
 function renderPick(note){
@@ -1566,10 +1611,10 @@ function renderCase(){
   var p=BP.filter(function(x){return x.k===bState.p;})[0];
   G.innerHTML='<p class="myp">My principle: '+esc(p.t)+'</p><p class="m-nav">Case '+(bState.i+1)+' of '+BC.length+'</p><h3>'+C.n+'</h3><p class="small">'+esc(C.t)+'</p>';
   var gut=REC.build.gut[C.k];
-  if(gut){ var k=el("p",{class:"kept"}); k.textContent="1. Your gut verdict (kept from before, because your judgments stand when only the principle changes): "+GL[gut]; G.appendChild(k); askImp(); }
+  if(gut){ var k=el("p",{class:"kept"}); k.textContent="1. Your first-instinct verdict (kept from before, because your judgments stay the same when only the principle changes): "+GL[gut]; G.appendChild(k); askImp(); }
   else askGut();
   function askGut(){
-    var lbl=el("p",{class:"step-lbl"}); lbl.textContent="1. Your gut verdict on this lie, before any rule (not graded):"; G.appendChild(lbl);
+    var lbl=el("p",{class:"step-lbl"}); lbl.textContent="1. Your first-instinct verdict on this lie, before any rule (not graded):"; G.appendChild(lbl);
     var g2=el("div",{class:"row",role:"group","aria-label":"Your gut verdict"});
     var noUnsure=unsureCount()>=2;
     [["ok","OK"],["wrong","Wrong"],["unsure","Unsure"]].forEach(function(o){
@@ -1595,7 +1640,7 @@ function renderCase(){
           g1.setAttribute("data-done","1"); b.className="btn"; b.setAttribute("aria-pressed","true"); g1.querySelectorAll("button").forEach(function(x){x.disabled=true;});
           REC.build.asked++; if(!bState.misses) REC.build.first++;
           setFb($("gauntFb"),"good",vword("g4","ok"),C.why[p.k]); compare(v);
-        } else { bState.misses++; b.disabled=true; setFb($("gauntFb"),"bad",vword("g4","no"), bState.misses===1 ? "Apply the principle exactly as written, and check the facts in brackets." : C.why[p.k]); }
+        } else { bState.misses++; b.disabled=true; setFb($("gauntFb"),"bad",vword("g4","no"), bState.misses===1 ? "Your principle says: \u201C"+p.t+"\u201D Apply it only to the facts in the brackets." : C.why[p.k]); }
         touch("g4");
       });
       g1.appendChild(b);
@@ -1610,7 +1655,7 @@ function renderCase(){
       focusFb($("gauntFb")); advance(); return;
     }
     bState.runClashes++;
-    $("gauntFb").innerHTML+="<br><br><b>Clash!</b> This case is a counterexample to your principle, by your own lights. Reflective equilibrium says something has to give.";
+    $("gauntFb").innerHTML+="<br><br><b>Clash!</b> Your principle and your first-instinct verdict disagree here, so this case is a counterexample to your principle. Reflective equilibrium says something has to change.";
     var g3=el("div",{class:"row",role:"group","aria-label":"Resolve the clash"});
     var rv=el("button",{class:"btn",type:"button"}); rv.textContent="Revise my principle";
     var bt=el("button",{class:"btn ghost",type:"button"}); bt.textContent="Bite the bullet";
@@ -1618,14 +1663,15 @@ function renderCase(){
       REC.build.revisions++;
       REC.build.history.push("revised after "+C.n+(REC.build.bullets.length?" (dropped bullets bitten under the old principle: "+REC.build.bullets.join(", ")+")":""));
       REC.build.bullets=[]; renderTally(); touch("g4");
-      renderPick("Pick a revised principle. The gauntlet restarts from case 1, because a new principle has to fit every case again. Your gut verdicts stay.");
+      $("gauntFb").className="fb"; $("gauntFb").innerHTML="";
+      renderPick(REVNOTE);
       cp4("pick",0);
       $("buildPick").querySelector("button:not(:disabled)").focus();
     });
     bt.addEventListener("click",function(){
       REC.build.bullets.push(C.n); REC.build.history.push("bit the bullet on "+C.n); renderTally();
       g3.querySelectorAll("button").forEach(function(x){x.disabled=true;});
-      $("gauntFb").innerHTML+="<br><br>Bullet bitten: you keep the principle and decide your gut was wrong about this case. Kant would approve. Rocky may ask whether you really believe it.";
+      $("gauntFb").innerHTML+="<br><br>Bullet bitten: you keep the principle and decide your first instinct was wrong about this case. Kant would approve. Rocky may ask whether you really believe it.";
       touch("g4"); advance();
     });
     g3.appendChild(rv); g3.appendChild(bt); G.appendChild(g3); rv.focus();
@@ -1640,7 +1686,7 @@ function renderCase(){
       REC.build.final=bState.p;
       var B=REC.build.bullets.length, R=REC.build.revisions;
       var s=el("div",{class:"pattern"});
-      s.innerHTML="<b>Equilibrium reached</b><br>Final principle: "+esc(p.t)+"<br>Revisions: "+R+". Bullets bitten under this principle: "+B+(B?" ("+esc(REC.build.bullets.join(", "))+")":"")+".<br><br>"+(bState.runClashes===0?"No clashes at all on this run. Optional challenge for Rocky: try a friend's gut verdicts on your principle. Would it survive them?":"That back-and-forth, sometimes changing the rule and sometimes changing the verdict, is reflective equilibrium in miniature.");
+      s.innerHTML="<b>Equilibrium reached</b><br>Final principle: "+esc(p.t)+"<br>Revisions: "+R+". Bullets bitten under this principle: "+B+(B?" ("+esc(REC.build.bullets.join(", "))+")":"")+".<br><br>"+(bState.runClashes===0?"No clashes at all on this run. Optional challenge for Rocky: try a friend's first-instinct verdicts on your principle. Would it survive them?":"That back-and-forth, sometimes changing the rule and sometimes changing the verdict, is reflective equilibrium in miniature.");
       G.appendChild(s); clear("g4");
     }
   }
@@ -1658,7 +1704,7 @@ function restoreCp4(sv){
   bState.p=sv.p; bState.i=sv.i; bState.runClashes=num(sv.rc); bState.misses=0;
   CP4={phase:sv.phase, i:sv.i, p:sv.p, rc:bState.runClashes, b:JSON.parse(JSON.stringify(REC.build))};
   renderTally();
-  if(sv.phase==="pick") renderPick("Pick a revised principle. The gauntlet restarts from case 1, because a new principle has to fit every case again. Your gut verdicts stay.");
+  if(sv.phase==="pick") renderPick(REVNOTE);
   else { $("buildPick").hidden=true; renderCase(); }
 }
 renderPick(); renderTally();
@@ -1666,8 +1712,8 @@ function buildLines(){
   if(!REC.build.history.length) return ["Lead 4 Build a principle: not started"];
   var L=["Lead 4 Build a principle: "+(REC.build.final?"final principle '"+bpText(REC.build.final)+"'":"current principle '"+(bState.p?bpText(bState.p):"none")+"' (not finished)")+"; revisions "+REC.build.revisions+"; bullets bitten under this principle "+REC.build.bullets.length+(REC.build.bullets.length?" ("+REC.build.bullets.join(", ")+")":"")];
   var gut=BC.filter(function(c){return REC.build.gut[c.k];}).map(function(c){return c.n+" = "+GL[REC.build.gut[c.k]];});
-  if(gut.length) L.push("Lead 4 my gut verdicts on lying (given before seeing the rule's answer): "+gut.join("; "));
-  if(REC.build.asked) L.push("Lead 4 'what does your principle say' answers: "+REC.build.first+" of "+REC.build.asked+" right first try");
+  if(gut.length) L.push("Lead 4 my first-instinct verdicts on lying (given before seeing the rule's answer): "+gut.join("; "));
+  if(REC.build.asked) L.push("Lead 4 'what does your principle say' answers: "+REC.build.first+" of "+REC.build.asked+" on the first tap");
   return L;
 }
 
@@ -1675,15 +1721,15 @@ function buildLines(){
 var DL={evo:"Evolution story",cul:"Culture story",moo:"Mood or framing story",rea:"Not a debunking story"};
 var DC={evo:"var(--hl-g)",cul:"var(--hl-o)",moo:"var(--hl-p)",rea:"var(--hl-b)"};
 var DB=[
- {b:"Pushing someone in front of a trolley is terribly wrong.", s:"In small ancestral groups, people with a strong alarm against violently attacking group members may have kept more allies and left more descendants.", a:"evo", short:"ancestral alarm", h:"Look at the cause in the story: long-ago survival and who left more descendants. What kind of cause is that?",
+ {b:"Pushing someone in front of a trolley is terribly wrong.", s:"In small ancestral groups, people with a strong alarm against violently attacking group members may have kept more allies and left more descendants.", a:"evo", short:"ancestral alarm", h:"An evolution story explains a belief by what helped ancestors survive and have descendants. Is that the cause here?",
   why:"An origin story about survival and descendants: evolution. Notice it would explain the alarm whether or not the act is really wrong. (It may well be wrong anyway: that's the overlap reply.)"},
- {b:"Refusing a challenge to a duel is shameful.", s:"The person grew up among 18th-century gentlemen, for whom accepting a challenge was a matter of honor.", a:"cul", short:"duel honor", h:"Look at where and when the person grew up. Is that cause biological, social, or a passing state?",
+ {b:"Refusing a challenge to a duel is shameful.", s:"The person grew up among 18th-century gentlemen, for whom accepting a challenge was a matter of honor.", a:"cul", short:"duel honor", h:"A culture story explains a belief by where and when the person grew up. Is that the cause here?",
   why:"Where and when you were raised: a culture story. And this is one we now think led people astray."},
- {b:"Pushing in Footbridge is OK.", s:"The person had just watched a comedy clip, and in studies like that, people became more willing to say pushing was OK.", a:"moo", short:"comedy clip", h:"What happened to the person just before? Is that cause lasting, or passing?",
+ {b:"Pushing in Footbridge is OK.", s:"The person had just watched a comedy clip, and in studies like that, people became more willing to say pushing was OK.", a:"moo", short:"comedy clip", h:"A mood or framing story explains a belief by something passing, like a mood or the wording of a question. Is that the cause here?",
   why:"A passing mood shifted the verdict. Whether pushing is wrong can't depend on whether you just laughed, so this is a mood story."},
- {b:"Pushing in Footbridge is wrong.", s:"Pushing uses the stranger's body as a tool to stop the trolley, without his agreement.", a:"rea", short:"means reason", h:"Is this about where the belief came from, or about why it might be true?",
+ {b:"Pushing in Footbridge is wrong.", s:"Pushing uses the stranger's body as a tool to stop the trolley, without his agreement.", a:"rea", short:"means reason", h:"A debunking story is about where a belief came from. A reason is about why it might be true. Which is this?",
   why:"This isn't a story about where the belief came from. It's a reason that bears on whether the belief is true (the Means rule). Debunking needs a cause that would work whether or not the belief is true."},
- {b:"Plan A is the better plan.", s:"The two plans were described in terms of lives saved. When the very same plans were described in terms of lives lost, most people preferred Plan B.", a:"moo", short:"framing", h:"What changed between the two versions: the facts, or only the words?",
+ {b:"Plan A is the better plan.", s:"The two plans were described in terms of lives saved. When the very same plans were described in terms of lives lost, most people preferred Plan B.", a:"moo", short:"framing", h:"A framing story explains a choice by the wording of a question. Did the facts change here, or only the words?",
   why:"Same plans, different wording, different choice: a framing effect, like Tversky and Kahneman's 1981 study."}
 ];
 var dbDone=0, dbUI={}, wtUI={};
@@ -1701,7 +1747,7 @@ shuffle(DB).forEach(function(it){
       row.querySelectorAll(".pick").forEach(function(x){x.classList.remove("chosen");}); b.classList.add("chosen");
       if(v===it.a){
         R.final=v; box.classList.add("locked"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
-        setFb(fb,"good",R.misses?"Got it.":vword("g5","ok"),it.why); focusFb(fb); dbDone++; $("dbScore").textContent=dbDone+" of "+DB.length+" named";
+        setFb(fb,"good",R.misses?"Got it.":vword("g5",it.a==="rea"?"ok2":"ok"),it.why); focusFb(fb); dbDone++; $("dbScore").textContent=dbDone+" of "+DB.length+" named";
         if(dbDone===DB.length){ $("dbScore").textContent="All five named. Part 2 is open below."; $("scalePart").hidden=false; }
       } else {
         R.misses++;
@@ -1727,6 +1773,7 @@ function scaleUpdate(){
   var ang=Math.max(-16,Math.min(16,(R-L)*3));
   $("beam").style.transform="rotate("+ang+"deg)";
   $("wL").textContent=String(L); $("wR").textContent=String(R);
+  $("scaleHint").hidden=(n===WT.length); $("scaleHint").textContent="Weigh all "+WT.length+" considerations above (trust or discount each) to unlock these buttons ("+n+" of "+WT.length+" done).";
   $("scaleRead").textContent = !n ? "Nothing on the scale yet." : L>R ? "Tipping toward PUSH ("+L+" to "+R+")." : R>L ? "Tipping toward DON'T PUSH ("+R+" to "+L+")." : "Perfectly balanced ("+L+" to "+R+").";
   return n;
 }
@@ -1786,9 +1833,9 @@ function dbLines(){
   if(!done) return ["Lead 5 Debunk-o-meter: not started"];
   var first=ks.filter(function(k){return REC.db[k].final && !REC.db[k].misses;}).length;
   var miss=ks.filter(function(k){return REC.db[k].misses;});
-  var L=["Lead 5 Debunk-o-meter: "+done+" of "+DB.length+" stories named, "+first+" of "+done+" first try"+(miss.length?"; tricky: "+miss.join(", "):"")];
+  var L=["Lead 5 Debunk-o-meter: "+done+" of "+DB.length+" stories named, "+first+" of "+done+" on the first tap"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
   var w=WT.filter(function(x){return REC.scale.w[x.k];}).map(function(x){return x.k+" = "+REC.scale.w[x.k];});
-  if(w.length) L.push("Lead 5 balance scale weights (nums=numbers rule, means=means rule, alarm=gut alarm, debunk=Greene's point, univ=42 countries, mood=comedy clip): "+w.join(", "));
+  if(w.length) L.push("Lead 5 balance scale weights (nums=numbers rule, means=means rule, alarm=instant alarm, debunk=Greene's point, univ=42 countries, mood=comedy clip): "+w.join(", "));
   if(REC.scale.final) L.push("Lead 5 my Footbridge equilibrium (locked): "+FV[REC.scale.final]);
   return L;
 }
@@ -1797,13 +1844,21 @@ function dbLines(){
 var VIEWS=[
  ["re","We can know some moral truths: intuitions are real evidence, and reflective equilibrium sorts them out"],
  ["filtered","Intuitions count, but only the ones that survive debunking tests"],
- ["slow","Trust careful principles and argument much more than gut intuitions"],
+ ["slow","Trust careful principles and argument much more than first reactions"],
  ["skeptic","We can't really know moral truths; the debunkers win"]
 ];
 var pendingView=null;
+var fArm={on:false,t:0,timer:null,dim:null,msg:false};
+function fDisarm(){
+  if(!fArm.on) return;
+  fArm.on=false; clearTimeout(fArm.timer); clearTimeout(fArm.dim);
+  var b=$("finBtn"); if(!FIN.done){ b.textContent="Lock my verdict"; b.classList.remove("armed","arming"); }
+  if(fArm.msg){ fArm.msg=false; $("finFb").className="fb"; $("finFb").innerHTML=""; }
+}
+$("finReason").addEventListener("input",fDisarm); $("finMoved").addEventListener("change",fDisarm);
 VIEWS.forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; pendingView=v[0]; fDisarm(); $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
   $("finOpts").appendChild(b);
 });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
@@ -1815,16 +1870,24 @@ function finRender(){
   var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
   var knowable = FIN.view!=="skeptic";
   $("finCompare").innerHTML='<div><span class="hd">START OF FILE</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">END OF FILE</span><br>'+(knowable?"Moral knowledge is possible":"Moral knowledge is out of reach")+'</div>';
-  var shift = !COVER.locked ? "" : COVER.v==="unsure" ? "You started unsure. Which lead did the most to settle you? Worth a sentence to Rocky." : ((COVER.v==="know") === knowable) ? "Your gut call and your verdict line up." : "Your verdict and your gut call point different ways. That's worth a sentence to Rocky: which one gives?";
+  var shift = !COVER.locked ? "" : COVER.v==="unsure" ? "You started unsure. Which lead did the most to settle you? Worth a sentence to Rocky." : ((COVER.v==="know") === knowable) ? "Your gut call and your verdict line up." : "Your verdict and your gut call point different ways. That's worth a sentence to Rocky: which one changes?";
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
   var reason=$("finReason").value.trim(), moved=$("finMoved").value;
-  if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  if(!pendingView){ fDisarm(); setFb($("finFb"),"bad","One thing first.","Pick the view closest to yours."); return; }
+  if(reason.length<8){ fDisarm(); setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
+  if(!moved){ fDisarm(); setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  if(!fArm.on){
+    fArm.on=true; fArm.t=Date.now(); var fb=$("finBtn"); fb.textContent="Tap again to lock it in"; fb.classList.add("armed","arming");
+    fArm.dim=setTimeout(function(){ fb.classList.remove("arming"); },500); fArm.timer=setTimeout(fDisarm,20000);
+    setFb($("finFb"),"","Ready?","Tap the button again to lock your verdict. You can't change it after."); fArm.msg=true;
+    return;
+  }
+  if(Date.now()-fArm.t<500) return;   /* the button is dimmed during this half second */
+  fArm.on=false; fArm.msg=false; clearTimeout(fArm.timer); clearTimeout(fArm.dim); $("finBtn").classList.remove("armed","arming");
   FIN.view=pendingView; FIN.reason=one(reason); FIN.moved=one(moved); FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState(); focusFb($("finFb"));

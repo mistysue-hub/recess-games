@@ -141,7 +141,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
 <h1>HIVE MIND GAUNTLET</h1>
 <p class="note">Boss round! The Hive Mind has 8 HP. You have 3 lives. Crack a puzzle on your <b>first try</b> to knock off 1 HP. Miss on your first try and you lose a life. Lose all 3 lives and the Hive Mind wins.</p>
 <div class="bar">
-  <div class="box">ROUND<b id="rn">1/8</b></div>
+  <div class="box"><span id="rl">ROUND</span><b id="rn">1/8</b></div>
   <div class="box">HIVE HP<b id="hp">8</b></div>
   <div class="box">YOUR LIVES<b id="lives">3</b></div>
 </div>
@@ -163,7 +163,7 @@ a[href*="-deck.html"]{display:inline-block;margin-top:8px;padding:10px 18px;bord
   <h1 id="endt">GAUNTLET OVER</h1>
   <div id="verdict"></div>
   <button class="big" id="rematch" style="display:none" onclick="rematch()">REMATCH</button>
-  <p>This is your <b>game</b> line (it starts with GN3-M08). Copy it and paste it to Rocky in the chat. The reading gives you a second, different line later.</p>
+  <p>This is your <b>game</b> line (it starts with GN3-M08). Copy it and paste it to Rocky in the chat. The reading you did earlier gave you a second, different line (it starts with GN3-READ-M08).</p>
   <textarea id="out" readonly></textarea><br>
   <button class="big" onclick="copyIt()">COPY MY RESULTS FOR ROCKY</button>
   <p class="note" id="status"></p>
@@ -177,43 +177,51 @@ var R=[
   scene:"<div class=\"story\">Tit for Tat (share first, then copy) plays 5 rounds of Share or Grab against Always Grab. Share/Share 3 each, Share vs Grab 0 and 5, Grab/Grab 1 each.</div>",
   q:"How many points does <b>Tit for Tat</b> score?",ch:["0","4","5","15"],a:1,
   short:"0 in round 1, then 1 point in each of the last 4 rounds: 4.",
-  why:"Tit for Tat shares first and gets 0. Then it copies the grab, so both grab for 1 point, four more times. It never wins the match, but it stops being a pushover."},
+  why:"Tit for Tat shares first and gets 0. Then it copies the grab, so both grab for 1 point, four more times. It never wins the match, but it stops being a pushover.",
+  alt:{scene:"<div class=\"story\">Tit for Tat (share first, then copy) plays 6 rounds of Share or Grab against Always Grab. Share/Share 3 each, Share vs Grab 0 and 5, Grab/Grab 1 each.</div>",q:"How many points does <b>Tit for Tat</b> score?",ch:["0","5","6","18"],a:1,short:"0 in round 1, then 1 point in each of the last 5 rounds: 5.",why:"Tit for Tat shares first and gets 0. Then it copies the grab, so both grab for 1 point, five more times. It never wins the match, but it stops being a pushover."}},
  {t:"ROUND 2: TRUST ME",taunt:"\"Trust us. We are very trustworthy.\"",
   scene:"<div class=\"story\">In the trust game, you send 4 coins. They are tripled on the way. Your partner sends back half of what they received.</div>",
   q:"How many coins come back to you?",ch:["2","6","8","12"],a:1,
   short:"4 tripled is 12. Half of 12 is 6.",
-  why:"Your partner receives 4 × 3 = 12 and returns half: 6. You sent 4 and got 6 back, so trusting paid off."},
+  why:"Your partner receives 4 × 3 = 12 and returns half: 6. You sent 4 and got 6 back, so trusting paid off.",
+  alt:{scene:"<div class=\"story\">In the trust game, you send 6 coins. They are tripled on the way. Your partner sends back half of what they received.</div>",ch:["3","9","12","18"],a:1,short:"6 tripled is 18. Half of 18 is 9.",why:"Your partner receives 6 × 3 = 18 and returns half: 9. You sent 6 and got 9 back, so trusting paid off."}},
  {t:"ROUND 3: HAWK OR DOVE",taunt:"\"We fight. Always. Or do we?\"",
   scene:"<div class=\"story\">Birds fight over food worth 10. A fight costs the loser 40 points of injuries, more than the food is worth. Hawks always fight; doves back down.</div>",
   q:"Where does the share of hawks settle?",ch:["10%","25%","50%","75%"],a:1,
   short:"Food ÷ fight cost = 10 ÷ 40 = 1/4 = 25% (the rule works because a fight costs more than the food).",
-  why:"The mix settles where hawks and doves score the same. When a fight costs more than the food, that's food divided by fight cost: 10 ÷ 40, or 25% hawks. (If fighting were cheaper than the food, everyone would be a hawk.)"},
+  why:"The mix settles where hawks and doves score the same. When a fight costs more than the food, that's food divided by fight cost: 10 ÷ 40, or 25% hawks. (If fighting were cheaper than the food, everyone would be a hawk.)",
+  alt:{scene:"<div class=\"story\">Birds fight over food worth 10. A fight costs the loser 25 points of injuries, more than the food is worth. Hawks always fight; doves back down.</div>",ch:["10%","25%","40%","50%"],a:2,short:"Food ÷ fight cost = 10 ÷ 25 = 2/5 = 40%.",why:"The mix settles where hawks and doves score the same. When a fight costs more than the food, that's food divided by fight cost: 10 ÷ 25, or 40% hawks."}},
  {t:"ROUND 4: SIGNALS",taunt:"\"Anyone can SAY they're fast.\"",
   scene:"<div class=\"story\">You're picking a fast runner. Every runner says \"I'm fast!\"</div>",
   q:"Which is the most <b>believable</b> sign of a fast runner?",ch:["Saying \"I'm the fastest\"","Wearing fast-looking shoes","Finishing a brutal training camp that slow runners can't finish","Having a cool nickname"],a:2,
   short:"Only the camp is too costly for slow runners to fake.",
-  why:"Talk and shoes are cheap, so anyone can fake them. A signal is believable when it costs too much for the wrong people to copy."},
+  why:"Talk and shoes are cheap, so anyone can fake them. A signal is believable when it costs too much for the wrong people to copy.",
+  alt:{scene:"<div class=\"story\">You're picking a fast swimmer for the relay. Every swimmer says \"I'm the fastest!\"</div>",q:"Which is the most <b>believable</b> sign of a fast swimmer?",ch:["Saying it louder","Having a team jacket","Having a famous coach","Finishing a brutal training camp that slow swimmers can't finish"],a:3,short:"Only the camp is too costly for slow swimmers to fake.",why:"Talk, jackets and famous coaches are cheap or borrowed, so anyone can fake them. A signal is believable when it costs too much for the wrong people to copy."}},
  {t:"ROUND 5: BLUFF",taunt:"\"We can read every card in your hand.\"",
   scene:"<div class=\"story\">In Bluff, a player PUSHES only when holding a HIGH card. Never with LOW.</div>",
   q:"When that player pushes, what should a smart rival do?",ch:["Challenge every time","Back down every time","Flip a coin"],a:1,
   short:"A push always means HIGH, so challenging just loses 2.",
-  why:"If you never bluff, your push gives your card away, and a smart rival simply backs down. That's why good players bluff sometimes."},
+  why:"If you never bluff, your push gives your card away, and a smart rival simply backs down. That's why good players bluff sometimes.",
+  alt:{scene:"<div class=\"story\">A Bluff player PUSHES with every HIGH card and never with LOW, so every push means HIGH.</div>",q:"Why is that player easy to beat?",ch:["Their pushes give away their card, so a rival just backs down","Their cards are always LOW","Rivals can't see their cards"],a:0,short:"A push always means HIGH, so the rival backs down every time.",why:"If you never bluff, your push gives your card away, and a smart rival simply backs down. That's why good players bluff sometimes."}},
  {t:"ROUND 6: THE SHARED LAKE",taunt:"\"Take it all. Before someone else does.\"",
   scene:"<div class=\"story\">A lake has 50 fish. Four fishers follow the town rule: each takes 1 fish for every 10 in the lake.</div>",
   q:"How many fish are caught in total?",ch:["5","10","20","50"],a:2,
   short:"Each takes 5; four fishers take 20.",
-  why:"50 fish means 5 each. Four fishers take 20, leaving 30. If the lake doubles, it's back to 60 next season."},
+  why:"50 fish means 5 each. Four fishers take 20, leaving 30. If the lake doubles, it's back to 60 next season.",
+  alt:{scene:"<div class=\"story\">A lake has 80 fish. Five fishers follow the town rule: each takes 1 fish for every 10 in the lake.</div>",ch:["8","16","40","80"],a:2,short:"Each takes 8; five fishers take 40.",why:"80 fish means 8 each. Five fishers take 40, leaving 40. If the lake doubles, it refills to the 80 it can hold."}},
  {t:"ROUND 7: VOTE!",taunt:"\"We always agree with ourselves.\"",
   scene:"<div class=\"story\">Head to head, a club prefers Pizza over Tacos, Tacos over Sushi, and Sushi over Pizza. You run the votes: two foods face off, then the winner faces the third.</div>",
   q:"You want <b>SUSHI</b> to win. Which pair votes first?",ch:["Pizza vs Tacos","Tacos vs Sushi","Pizza vs Sushi"],a:0,
   short:"Pizza beats Tacos, then Sushi beats Pizza.",
-  why:"In a circle of preferences, whatever enters the vote last wins. Keep Sushi out of the first vote."},
+  why:"In a circle of preferences, whatever enters the vote last wins. Keep Sushi out of the first vote.",
+  alt:{scene:"<div class=\"story\">Head to head, a class prefers Zoo over Museum, Museum over Park, and Park over Zoo. You run the votes: two places face off, then the winner faces the third.</div>",q:"You want the <b>PARK</b> to win. Which pair votes first?",ch:["Museum vs Park","Zoo vs Park","Zoo vs Museum"],a:2,short:"Zoo beats Museum, then Park beats Zoo.",why:"In a circle of preferences, whatever enters the vote last wins. Keep the Park out of the first vote."}},
  {t:"ROUND 8: THE LONG GAME",taunt:"\"Five rounds. Share or Grab. We never forget.\"",rps:true,
   scene:"<div class=\"story\">Final round: play 5 rounds of Share or Grab against the Hive Mind (Share/Share 3 each, Share vs Grab 0 and 5, Grab/Grab 1 each). Score at least <b>15</b> to land the hit. Word is the Hive Mind <b>always answers your last move</b>...</div>",
   q:"Make your move.",ch:["SHARE","GRAB"],a:-1,
   short:"The Hive Mind plays Tit for Tat: it shares first, then copies your last move.",
   why:"Share every round for 15. Grab early and it grabs right back, so your score sinks. (Grabbing only in the very last round gets 17, because there's no round left for revenge.)"}
 ];
+function cur(){var b=R[r];return attempt>1&&b.alt?Object.assign({},b,b.alt):b}
 var r,hp,lives,tries,log,locked,firstMiss,rps,attempt=1,queue,qi,hitSet,res,replayed,lastAns="";
 function el(i){return document.getElementById(i)}
 function show(id,on){el(id).style.display=on?"block":"none"}
@@ -223,17 +231,17 @@ function note(s){log.push(s);res[parseInt(s.slice(1),10)-1]=s.split(":")[1]}
 function begin(){lives=3;log=[];qi=0;r=queue[0];setHP();setup()}
 function start(){attempt=1;hp=8;hitSet=[];res=[];replayed=[];queue=[0,1,2,3,4,5,6,7];for(var i=0;i<8;i++)res[i]="not reached";begin()}
 function setup(){
-  var x=R[r];tries=0;locked=false;firstMiss=false;
-  el("rn").textContent=(r+1)+"/8";el("taunt").textContent="THE HIVE MIND: "+x.taunt;el("rtitle").textContent=x.t;
+  var x=cur();tries=0;locked=false;firstMiss=false;
+  el("rl").textContent=attempt>1?"REMATCH":"ROUND";el("rn").textContent=attempt>1?(qi+1)+"/"+queue.length:(r+1)+"/8";el("taunt").textContent="THE HIVE MIND: "+x.taunt;el("rtitle").textContent=x.t;
   el("scene").innerHTML=x.scene;el("q").innerHTML=x.q;el("fb").innerHTML="";show("next",false);show("whyb",false);show("whytxt",false);
   var h="";x.ch.forEach(function(c,i){h+="<button id=\"c"+i+"\" onclick=\""+(x.rps?"throwIt":"pick")+"("+i+")\">"+c+"</button>"});el("choices").innerHTML=h;
   if(x.rps){rps={n:0,wins:0,last:null,hist:[]}}
   show("pick",true);show("final",false);
 }
-function showWhy(){el("whytxt").innerHTML=R[r].why;show("whytxt",true);show("whyb",false)}
+function showWhy(){el("whytxt").innerHTML=cur().why;show("whytxt",true);show("whyb",false)}
 function loseLife(){lives--;setHP();if(lives<=0){setTimeout(hiveWins,2600);return true}return false}
 function pick(i){
-  if(locked)return;locked=true;var x=R[r];tries++;
+  if(locked)return;locked=true;var x=cur();tries++;
   el("fb").innerHTML="The Hive Mind buzzes...";
   setTimeout(function(){
     if(i===x.a){
@@ -253,7 +261,7 @@ function pick(i){
   },650);
 }
 function throwIt(i){
-  if(locked)return;locked=true;var me=R[r].ch[i];
+  if(locked)return;locked=true;var me=cur().ch[i];
   var hive=rps.last?rps.last:"SHARE";
   el("fb").innerHTML="The Hive Mind decides...";
   setTimeout(function(){
@@ -262,12 +270,12 @@ function throwIt(i){
     el("fb").innerHTML="Round "+rps.n+": You <b>"+me+"</b> &nbsp; Hive Mind <b>"+hive+"</b> &nbsp; +"+p+" (total "+rps.wins+")";
     if(rps.n<5){locked=false;return}
     var hit=rps.wins>=15;
-    if(hit){hp--;hitSet[r]=true;setHP();note("R8:hit ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>HIT!</b> You played the long game. "+R[r].short;endRound();}
-    else{note("R8:miss ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>The Hive Mind holds.</b> No hit. "+R[r].short;endRound();}
+    if(hit){hp--;hitSet[r]=true;setHP();note("R8:hit ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>HIT!</b> You played the long game. "+cur().short;endRound();}
+    else{note("R8:miss ("+rps.wins+" pts)");el("fb").innerHTML+="<br><b>The Hive Mind holds.</b> No hit. "+cur().short;endRound();}
   },650);
 }
 function endRound(){
-  for(var k=0;k<R[r].ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
+  for(var k=0;k<cur().ch.length;k++){var b=el("c"+k);if(b)b.disabled=true}
   show("whyb",true);
   el("next").textContent=(qi===queue.length-1)?"SEE FINAL SCORE":"NEXT ROUND";show("next",true);
 }

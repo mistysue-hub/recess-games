@@ -139,6 +139,7 @@ details.sealed .inner p{font-size:1rem}
   padding:8px 16px; font-family:var(--type); font-weight:700; font-size:.95rem; line-height:1.2}
 .btn.ghost{background:transparent; color:var(--ink)}
 .btn:disabled{opacity:.45; cursor:not-allowed}
+.btn.wait{opacity:.5; cursor:progress}
 .btn:not(:disabled):active{transform:translateY(1px)}
 .row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
 
@@ -254,6 +255,7 @@ details.sealed .inner p{font-size:1rem}
 .dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
 .dock .pip:not(:disabled){cursor:pointer}
 .dock .pip:disabled{opacity:1}
+.dock .pip.lockedpip{opacity:.7; cursor:pointer}
 @media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
 .evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
 .evpanel h3{font-size:1rem; margin-bottom:4px}
@@ -423,10 +425,12 @@ body.skip .sec{display:revert}
 
 /* ---------- review pass 1 (REUSABLE-FIXES from M03) ---------- */
 @media (max-width:520px){ .plug-hook{flex-direction:column; align-items:flex-start} }
-.toast{pointer-events:none; position:fixed; left:50%; top:calc(var(--dockh,60px) + 8px); transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
-  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,-24px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.toast{pointer-events:none; position:fixed; left:50%; top:0; transform:translateX(-50%); z-index:40; width:min(100%,760px); height:var(--dockh,60px); box-sizing:border-box;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:6px 16px;
+  border-bottom:5px solid var(--tc,var(--hl-y)); animation:toastIn .2s ease-out both}
+@keyframes toastIn{0%{opacity:0}100%{opacity:1}}
+.toast[hidden]{display:none}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -505,25 +509,25 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </svg>
   <div class="plug-hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M9 25 L15 5 L21 25 M11 18h8" fill="none" stroke="#2A2016" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <p>Your school bans running in the hallways. Is running in the halls wrong <b>because of the rule</b>? Or is there a rule <b>because running in the halls is dangerous</b>? Lock in your gut call. There's no right answer; a few screens in, you'll see what you were really choosing between.</p>
+    <p>Your school bans running in the hallways. Is running in the halls wrong <b>because of the rule</b>? Or is there a rule <b>because running in the halls is dangerous</b>? Lock in your first instinct (your quick first answer). There's no right answer; a few screens in, you'll see what you were really choosing between.</p>
   </div>
   <div class="lockin" id="lockin">
-    <div class="row" role="group" aria-label="Your gut call">
+    <div class="row" role="group" aria-label="Your first instinct">
       <button class="vbtn" type="button" data-v="rule" aria-pressed="false">Wrong because of the rule</button>
       <button class="vbtn" type="button" data-v="danger" aria-pressed="false">A rule because it's dangerous</button>
     </div>
     <label for="myReason">My reason, in one sentence</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="2" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 33 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 2: Right, Wrong, and the Great Theories</span><span>Read, then open each lead</span><span>About 40 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
   <h2 id="wuh"><span style="--mark:var(--hl-p)">Warm-up: draw the line</span></h2>
   <p class="wow">30 seconds. No right answers. Not scored.</p>
-  <p>Six rules, from "meh" to "serious." <b>Above</b> your line go rules that are <b>just rules</b>: they only count because somebody made them. <b>Below</b> it go rules that would be <b>wrong anyway</b>, even if nobody had ever made a rule. Tap a gap to draw your line. One tap and it's locked.</p>
+  <p>Six rules, from small to serious. <b>Above</b> your line go rules that are <b>just rules</b>: they only count because somebody made them. <b>Below</b> it go rules that would be <b>wrong anyway</b>, even if nobody had ever made a rule. Tap a gap to draw your line. One tap and it's locked.</p>
   <div class="wu" id="wuBoard"></div>
   <div class="pattern" id="wuReveal" tabindex="-1" aria-live="polite" hidden></div>
 </section>
@@ -541,18 +545,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit A: the dilemma, any authority</span>
-    <p>A <b>dilemma</b> is a choice between two options that both have a cost. Each option is called a <b>horn</b> (picture a bull: whichever horn you grab, you get poked). For any authority and any rule, ask:</p>
+    <p>A <b>dilemma</b> is a choice between two options that both have a cost. Each option is called a <b>horn</b> (picture a bull: whichever horn you pick, it still costs you something). For any authority and any rule, ask:</p>
     <p><span class="hornpill" style="--hp:var(--hl-o)">Horn 1</span> Is it right <b>because it's commanded</b>? (The command <i>makes</i> it right: the "ref said so" answer.)<br><span class="hornpill" style="--hp:var(--hl-b)">Horn 2</span> Or is it commanded <b>because it's right</b>? (The command <i>reports</i> it: the "offside" answer.)</p>
   </div>
   <div class="poll" id="refPoll">
     <p><b>Your instinct: can a referee's call be wrong?</b> (Not graded.)</p>
     <div class="row" role="group" aria-label="Can a referee's call be wrong?">
-      <button class="btn ghost" type="button" data-r="yes">Yes, refs blow calls</button>
-      <button class="btn ghost" type="button" data-r="no">No, the call is the call</button>
+      <button class="btn ghost" type="button" data-r="yes">Yes, refs can get a call wrong</button>
+      <button class="btn ghost" type="button" data-r="no">No, the ref's word is final</button>
     </div>
     <div class="fb" id="refFb" aria-live="polite"></div>
   </div>
-  <p>Back to your gut call: "Wrong because of the rule" was Horn 1. "A rule because it's dangerous" was Horn 2.</p>
+  <p>Back to your first instinct: "Wrong because of the rule" was Horn 1. "A rule because it's dangerous" was Horn 2.</p>
+  <p class="small"><b>Misses cost nothing here; Rocky just uses them to see what to review.</b></p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -605,7 +610,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="lbl">The cost of Horn 2: independence</span>
     <p>So try Horn 2: Ozric commands things <i>because</i> they're right. Now there's a standard of right and wrong that is <b>independent</b> of Ozric: it would hold even if he said the opposite. Ozric becomes like a good teacher pointing to true answers, not the person who makes them true. His decrees can be wise or foolish. But on Horn 2, the rule-maker is not the <i>source</i> of right and wrong.</p>
   </div>
-  <p>One wrinkle. For conventions, Horn 1 is fine: if Ozric decrees "drive on the left," driving on the left really does become the right thing to do. Even then, the <i>reason</i> to obey (nobody wants head-on crashes) was there before he picked up the quill.</p>
+  <p>One complication. For conventions, Horn 1 is fine: if Ozric decrees "drive on the left," driving on the left really does become the right thing to do. Even then, the <i>reason</i> to obey (nobody wants head-on crashes) was there before he picked up the quill.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -636,7 +641,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-b)">Athens, about 399 BCE: <span class="rel">the original</span><span class="sec">the puzzle</span></span></h2>
   <div class="route" id="route">
-    <h3>Heads up: two routes from here</h3>
+    <h3>Note: two routes from here</h3>
     <p>The original version of this puzzle is about gods, and for centuries people have asked it about God. The next screens explain that version as a puzzle about logic: not for or against any religion, and nobody will ask what you believe. If you'd rather not go there, take the <b>Lawgiver route</b>: the same argument, with an imaginary perfect ruler in place of God. Same logic, same games, and you can switch back any time.</p>
     <div class="row" role="group" aria-label="Choose a route">
       <button class="btn" type="button" data-route="orig" aria-pressed="true">Original version</button>
@@ -662,8 +667,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
   </div>
   <div class="poll" id="euthPoll">
-    <p><b>Predict: which horn does Euthyphro grab?</b> (Not graded.)</p>
-    <div class="row" role="group" aria-label="Which horn will Euthyphro grab?">
+    <p><b>Predict: which horn does Euthyphro pick?</b> (Not graded.)</p>
+    <div class="row" role="group" aria-label="Which horn will Euthyphro pick?">
       <button class="btn ghost" type="button" data-r="h1">Horn 1</button>
       <button class="btn ghost" type="button" data-r="h2">Horn 2</button>
     </div>
@@ -773,10 +778,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lab-body" hidden>
   <p class="how">A philosophy club is arguing about the dilemma. Match each speaker to the move they're making. Four moves, eight speakers.</p>
   <div class="legend4" aria-label="The four moves">
-    <div style="--lc:var(--hl-o)"><b>Bite the bullet:</b> Horn 1, costs accepted</div>
+    <div style="--lc:var(--hl-o)"><b>Bite the bullet</b> (accept the cost)<b>:</b> Horn 1, costs accepted</div>
     <div style="--lc:var(--hl-b)"><b>Horn 2:</b> goodness is independent</div>
     <div style="--lc:var(--hl-g)"><b>Nature reply:</b> goodness grounded in the commander's nature</div>
-    <div style="--lc:var(--hl-p)"><b>Objection:</b> arbitrariness, emptiness, or the dilemma strikes again</div>
+    <div style="--lc:var(--hl-p)"><b>Objection:</b> arbitrariness, emptiness, or the dilemma strikes again (it comes back one level up)</div>
   </div>
   <div id="matchList"></div>
   <p class="score" id="matchScore" aria-live="polite"></p>
@@ -844,7 +849,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lab-body" hidden>
   <p class="how">Time to commit, as a question about logic. Which answer to the dilemma works best for the <b>big</b> moral questions, like cruelty or honesty? This isn't about what you believe: people of every faith and of none have defended every option below. Any choice is fine; the reason is what counts. Once you lock it, it stays locked.</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
-  <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
+  <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences (at least four words)</b></label>
   <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
   <label class="small" for="finMoved" style="display:block;margin-top:12px"><b>What moved me most in this file</b></label>
   <select class="reasonbox" id="finMoved">
@@ -863,7 +868,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will press your horn's problem once; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will ask you about your horn's biggest problem once; holding firm with a reason is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -882,7 +887,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 16 COPY FOR ROCKY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your gut call, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it.</p>
+  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your first instinct, your quick taps, all four leads and your verdict. Nothing is sent anywhere; it only goes where you paste it.</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
@@ -917,9 +922,9 @@ function D(t){ return t.indexOf("[G")<0 ? t : dual(G(t),L(t)); }
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Horn spotted.","Sharp read.","Yes.","Clean."], no:["Not quite.","Read the because again.","Not that one."]},
- g2:{ok:["The quill agrees.","Yes.","Exactly.","Clean."], no:["Not quite.","Tempting, but...","Not that one."]},
- g3:{ok:["Club minutes say yes.","Exactly that move.","Yes.","Clean."], no:["Not that move.","Tempting, but...","Not that one."]},
+ g1:{ok:["Horn spotted.","Good read.","Yes.","Correct."], no:["Not quite.","Not yet.","Not that one."]},
+ g2:{ok:["The quill agrees.","Yes.","Exactly.","Correct."], no:["Not quite.","Tempting, but...","Not that one."]},
+ g3:{ok:["Right match.","Exactly that move.","Yes.","Correct."], no:["Not that move.","Tempting, but...","Not that one."]},
  g4:{ok:["Called it.","Yes.","Exactly.","That's their view."], no:["Not this theorist.","Tempting, but...","Not that one."]}
 };
 var lastV={};
@@ -960,8 +965,8 @@ var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
-  b.addEventListener("click",function(){ showCard(g); });
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true"); b.classList.add("lockedpip");
+  b.addEventListener("click",function(){ if(!cleared[g.id]){ toast("Evidence "+g.lead+" is not collected yet. Clear Lead "+g.lead+" first.", g.c); return; } showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
 function updateProg(){
@@ -984,7 +989,7 @@ var toastTimer=null;
 function toast(msg, color){
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--dockh", ($("dock").offsetHeight||60)+"px"); T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2200);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1700);
 }
 try{ new ResizeObserver(function(){ $("toast").style.setProperty("--dockh", ($("dock").offsetHeight||60)+"px"); }).observe($("dock")); }catch(e){}
 function celebrate(g, n){
@@ -999,7 +1004,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.classList.remove("lockedpip"); b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -1057,21 +1062,45 @@ function freezeCover(){
   $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); if(typeof disarmCover==="function") disarmCover(); });
 });
 function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
-$("lockBtn").addEventListener("click",function(){
-  if(COVER.locked) return;
+/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm reset after 20 s */
+function armLock(btn, idleText, validate, confirm, onArm, onDisarm){
+  var armed=false, armedAt=0, t4=null, t5=null;
+  function disarm(){ if(!armed) return; armed=false; clearTimeout(t4); clearTimeout(t5); btn.classList.remove("wait"); btn.removeAttribute("aria-busy"); btn.textContent=idleText; if(onDisarm) onDisarm(); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armed){
+      if(!validate()) return;
+      armed=true; armedAt=Date.now(); btn.textContent="Tap again to lock it in";
+      btn.classList.add("wait"); btn.setAttribute("aria-busy","true");   /* dimmed while the 500 ms wait runs, so a quick second tap is visibly ignored */
+      t5=setTimeout(function(){ btn.classList.remove("wait"); btn.removeAttribute("aria-busy"); }, 500);
+      t4=setTimeout(disarm, 20000);
+      if(onArm) onArm(); return;
+    }
+    if(Date.now()-armedAt<500) return;
+    armed=false; clearTimeout(t4); clearTimeout(t5); btn.classList.remove("wait"); btn.removeAttribute("aria-busy");
+    confirm();
+  });
+  return disarm;
+}
+var disarmCover=armLock($("lockBtn"),"Lock it in",function(){
   var r=one($("myReason").value);
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the two first."; return; }
-  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
+  if(COVER.locked) return false;
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the two first."; return false; }
+  if(!r){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add your one-sentence reason."; $("myReason").focus(); return false; }
+  return true;
+},function(){
+  if(COVER.locked) return;
+  COVER.reason=one($("myReason").value); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
-});
+},function(){ $("lockMsg").style.color=""; $("lockMsg").textContent="Tap again to lock it in. It can't be changed after that."; },function(){ if(!COVER.locked) $("lockMsg").textContent=""; });
+$("myReason").addEventListener("input",function(){ disarmCover(); });
 
 /* ---------- ungraded taps in the reading ---------- */
 function wirePoll(id, key, onPick){
@@ -1086,8 +1115,8 @@ function wirePoll(id, key, onPick){
 var LOCKPOLL={euth:true};
 function syncPoll(id,key){ $(id).querySelectorAll("button[data-r]").forEach(function(x){ var on=x.getAttribute("data-r")===POLLS[key]; x.setAttribute("aria-pressed",String(on)); x.className= on ? "btn" : "btn ghost"; if(LOCKPOLL[key] && POLLS[key]) x.disabled=true; }); }
 var POLLFB={
- ref:function(v){ setFb($("refFb"),"","Noted.", v==="yes" ? "Then you already think of refereeing the Horn 2 way: the call answers to the facts on the field." : "Then you're thinking of the call the Horn 1 way: the ruling settles it. Hold that thought."); },
- cheer:function(v){ setFb($("cheerFb"),"","Noted.", (v==="nothing" ? "Right where the critics land. " : "Look again: ")+"\"Ozric's laws are commanded by Ozric\" is true, but <b>empty</b>. It tells you nothing, like saying \"the winner won.\" The compliment disappears."); },
+ ref:function(v){ setFb($("refFb"),"","Noted.", v==="yes" ? "Then you already think of refereeing the Horn 2 way: the call answers to the facts on the field." : "Then you're thinking of the call the Horn 1 way: the ruling settles it. Keep that in mind."); },
+ cheer:function(v){ setFb($("cheerFb"),"","Noted.", (v==="nothing" ? "That is where the critics land. " : "Not quite: ")+"\"Ozric's laws are commanded by Ozric\" is true, but <b>empty</b>. It tells you nothing, like saying \"the winner won.\" The compliment disappears."); },
  euth:function(v){ setFb($("euthFb"),"","Noted.", (v==="h2"?"You called it. ":"Good guess, but no. ")+"Read on to see what Socrates does with it."); $("euthMore").hidden=false; },
  worse:function(v){ setFb($("worseFb"),"","Noted.", {arb:"Arbitrariness is the one most critics lead with.",emp:(ROUTE==="skip"?"Emptiness is the subtler one.":"Emptiness is the subtler one; the philosopher Leibniz pressed it hard."),ind:(ROUTE==="skip"?"That's the worry that keeps many command theorists away from a plain Horn 2.":"That's the worry that keeps many religious philosophers away from a plain Horn 2.")}[v]+" The next screen shows how defenders reply."); }
 };
@@ -1095,9 +1124,9 @@ wirePoll("refPoll","ref",POLLFB.ref);
 wirePoll("cheerPoll","cheer",POLLFB.cheer);
 wirePoll("euthPoll","euth",POLLFB.euth);
 wirePoll("worsePoll","worse",POLLFB.worse);
-POLLFB.third=function(v){ setFb($("thirdFb"),"","Noted.", v==="yes" ? "Hold that thought: Reply 2 below claims exactly that. Open it and judge whether it works." : "Then Reply 2 below is the one to test hardest, because it says the choice is false."); };
+POLLFB.third=function(v){ setFb($("thirdFb"),"","Noted.", v==="yes" ? "Keep that in mind: Reply 2 below claims exactly that. Open it and judge whether it works." : "Then Reply 2 below is the one to test hardest, because it says the choice is false."); };
 wirePoll("thirdPoll","third",POLLFB.third);
-POLLFB.king=function(v){ setFb($("kingFb"),"","Noted.", v==="final" ? "On a strict Horn 1 that is the only kind of king there is: his word is the whole story. Does that still sound fine?" : "Asking for checkable reasons is a Horn 2 instinct: the reasons, not the king, would be doing the work."); };
+POLLFB.king=function(v){ setFb($("kingFb"),"","Noted.", v==="final" ? "On a strict Horn 1 that is the only kind of king there is: his word is all there is to it. Does that still sound fine?" : "Asking for checkable reasons is a Horn 2 instinct: the reasons, not the king, would be doing the work."); };
 POLLFB.obj=function(v){ setFb($("objFb"),"","Noted.", v==="s1" ? "Sense 1 can be met by either horn. Lead 4 tests where the horns part ways." : v==="s2" ? "Only Horn 2 gives you that, and the nature reply tries to get close. Lead 4 tests it." : "That's fine. Lead 4 gives you cases to test both senses."); };
 wirePoll("kingPoll","king",POLLFB.king);
 wirePoll("objPoll","obj",POLLFB.obj);
@@ -1112,8 +1141,8 @@ var WU=[
  {t:"No hurting someone just for fun.", s:"no hurting someone for fun"}
 ];
 var WUREV=[
- "You put every rule below the line, as if something real stood behind each one, even the driving rule. Hold that thought: this whole case file is about exactly that.",
- "You put every rule above the line, even the cruel one: for you, a rule is the whole story. Hold that thought: this case file tests how far that goes.",
+ "You put every rule below the line, as if something real stood behind each one, even the driving rule. Keep that in mind: this whole case file is about exactly that.",
+ "You put every rule above the line, even the cruel one: for you, a rule is all there is to it. Keep that in mind: this case file tests how far that goes.",
  "Your line splits rules that only count because somebody made them from rules that answer to something real. That split is the whole case. Next: names for both sides, then eight more to sort."
 ];
 var wuGaps=[], wuCards=[];
@@ -1152,7 +1181,7 @@ function linesFor(g){
   return LIVE[g]();   /* a half-finished lead restarts on screen after a reload, so the copy line restarts too */
 }
 function coverLines(){
-  var l=["Gut call on the hallway rule (locked before reading): "+(COVER.locked ? VL[COVER.v]+" ("+VH[COVER.v]+"). My reason: "+COVER.reason : "not locked in")];
+  var l=["First instinct (gut call) on the hallway rule (locked before reading): "+(COVER.locked ? VL[COVER.v]+" ("+VH[COVER.v]+"). My reason: "+COVER.reason : "not locked in")];
   if(ROUTE==="skip") l.push("Route: I chose the Lawgiver route (skipped the God version)");
   return l;
 }
@@ -1184,15 +1213,15 @@ function wireCopies(){
 /* ================= LEAD 1: SPOT THE HORN ================= */
 var HL={h1:"Horn 1: the command makes it right", h2:"Horn 2: the command reports it"};
 var HORNS=[
- {t:"The goal doesn't count, because the referee disallowed it. End of story.", short:"ref's ruling", a:"h1",
+ {t:"The goal doesn't count, because the referee disallowed it. That is the only reason given.", short:"ref's ruling", a:"h1",
   why:"The ruling itself settles the matter. Nothing is said about where the players were.",
   miss:"Is any fact about the players mentioned, or only the ruling?"},
  {t:"The referee disallowed it because the striker was offside.", short:"offside", a:"h2",
   why:"The call reports a fact about the players' positions. This referee could have been wrong.",
   miss:"Could the striker have been offside even if the ref had missed it?"},
  {t:"You'll be home by 10. Why? Because I said so, and that's what makes it right.", short:"curfew, because I said so", a:"h1",
-  why:"\"That's what makes it right\" gives the game away: the command creates the rightness.",
-  miss:"Look at the last five words. What do they say makes it right?"},
+  why:"\"That's what makes it right\" shows exactly what the speaker means: the command creates the rightness.",
+  miss:"What do the last five words say makes it right?"},
  {t:"You'll be home by 10, because the last bus is at 10:15 and I want you safe.", short:"curfew, bus", a:"h2",
   why:"Same curfew, different horn. The reason (safety) exists before and apart from the order.",
   miss:"Would the bus reason still hold if the parent never said a word?"},
@@ -1209,6 +1238,7 @@ var HORNS=[
   why:"The vote answers to the hurt, which was there before anyone voted.",
   miss:"What came first here, the hurt or the vote?"}
 ];
+var HRULE="Rule: Horn 1 means the command makes it right; Horn 2 means the command reports something already true. ";
 var hornDone=0;
 /* keep the referee pair first (it mirrors the teaching), shuffle the rest; shuffle buttons per card */
 var hornOrder=[0,1].concat(shuffle([2,3,4,5,6,7]));
@@ -1230,7 +1260,7 @@ hornOrder.forEach(function(i){
         if(hornDone===HORNS.length){ $("hornScore").textContent="All "+HORNS.length+" spotted. Notice: Horn 1 sounded fine for chess and odd for lying. That's the puzzle in one line."; clear("g1"); }
       } else {
         r.misses++;
-        setFb(fb,"bad",vword("g1","no"), r.misses===1 ? it.miss : "Here's the key: "+it.why);
+        setFb(fb,"bad",vword("g1","no"), r.misses===1 ? HRULE+it.miss : "Here's the key: "+it.why);
       }
       touch("g1");
     });
@@ -1243,7 +1273,7 @@ function hornLines(){
   if(!done) return ["Lead 1 Spot the horn: not started"];
   var first=HORNS.filter(function(_,i){return REC.horn[i].final && !REC.horn[i].misses;}).length;
   var miss=HORNS.map(function(it,i){ return REC.horn[i].misses ? it.short : null; }).filter(Boolean);
-  return ["Lead 1 Spot the horn: "+done+" of "+HORNS.length+" spotted, "+first+" right first try"+(miss.length?"; needed a second go on: "+miss.join(" / "):"")];
+  return ["Lead 1 Spot the horn: "+done+" of "+HORNS.length+" spotted, "+first+" without needing another go"+(miss.length?"; needed another go on: "+miss.join(" / "):"")];
 }
 
 /* ================= LEAD 2: RULE-MAKER SANDBOX ================= */
@@ -1258,13 +1288,13 @@ var SBD=[
 var SBR={
  "h1-left":{c:"calm",h:"Driving on the left is now the right thing to do.",b:"Before the decree, either side was fine. Horn 1 handles conventions without a problem."},
  "h2-left":{c:"calm",h:"The left is now the correct side.",b:"The decree picked a side, and that matters. But the reason to follow it, nobody wants head-on crashes, existed before Ozric spoke. Both horns are comfortable here."},
- "h1-friday":{c:"calm",h:"Fridays are now the right day to hand in homework.",b:"Any day would have done; the decree chose one. No alarm bells."},
+ "h1-friday":{c:"calm",h:"Fridays are now the right day to hand in homework.",b:"Any day would have done; the decree chose one. Nothing alarming here."},
  "h2-friday":{c:"calm",h:"Fridays are now the correct day.",b:"The decree settles an open choice. The reason to have <i>some</i> fixed day (so everyone knows) was there already."},
- "h1-promise":{c:"warn",h:"Keeping promises is now right, because Ozric said so.",b:"Strange question: was promise-keeping not right yesterday, before the ink dried? On Horn 1, nothing made it right until now."},
+ "h1-promise":{c:"warn",h:"Keeping promises is now right, because Ozric said so.",b:"Strange question: was promise-keeping not right yesterday, before the decree was signed? On Horn 1, nothing made it right until now."},
  "h2-promise":{c:"calm",h:"Keeping promises was already right. The decree reports it.",b:"Ozric got this one right, and he could have got it wrong."},
  "h1-mock":{c:"alarm",h:"Mocking newcomers for fun is now RIGHT.",b:"Not just legal: right. On Horn 1, Ozric cannot be mistaken, so a cruel decree makes cruelty good. This is the arbitrariness problem."},
  "h2-mock":{c:"calm",h:"The decree is mistaken.",b:"Mocking newcomers for fun was wrong before the decree and is still wrong. Ozric has just issued a bad law. On Horn 2, rulers can be wrong."},
- "h1-repeal":{c:"alarm",h:"Breaking promises is now fine.",b:"Yesterday it was wrong; today it isn't, because of one stroke of a quill. On Horn 1, morality is exactly as stable as the ruler's mind."},
+ "h1-repeal":{c:"alarm",h:"Breaking promises is now fine.",b:"Yesterday it was wrong; today it isn't, because of one signature. On Horn 1, morality is exactly as stable as the ruler's mind."},
  "h2-repeal":{c:"calm",h:"Promise-breaking is still wrong.",b:"Ozric can change the <i>law</i>. He can't change the morality. Breaking promises is now legal, and still wrong."}
 };
 var sbH=null, sbD=null, sbQBuilt=false;
@@ -1306,9 +1336,9 @@ var SBQ=[
   ok:"The emptiness problem. If \"good\" just means \"commanded by Ozric\", the cheer says nothing.",
   no:{a:"It would be praise on Horn 2. On Horn 1, \"good\" just means \"commanded by Ozric\", so what's left of it?",c:"Happiness isn't part of the Horn 1 definition. Swap in the definition of \"good\" and see what the sentence says."}},
  {q:"Which decree fits Horn 1 most comfortably?",
-  o:[["a","Keep your promises"],["b","Mock newcomers for fun"],["c","Drive on the left"]], a:"c",
+  o:[["a","Keep your promises"],["b","Punish people for telling the truth"],["c","Drive on the left"]], a:"c",
   ok:"A convention: before the decree, either side was fine. The decree really does make one side correct, and nothing feels arbitrary in a bad way.",
-  no:{a:"On Horn 1, promise-keeping wasn't right until Ozric said so. That's the strange part. Look for a decree where either option was fine beforehand.",b:"That one sets off the arbitrariness alarm. Look for a decree where either option was fine beforehand."}}
+  no:{a:"On Horn 1, promise-keeping wasn't right until Ozric said so. That's the strange part. Look for a decree where either option was fine beforehand.",b:"That one raises the arbitrariness problem. Look for a decree where either option was fine beforehand."}}
 ];
 var sbQDone=0;
 function sbBuildQs(){
@@ -1337,25 +1367,25 @@ function sbLines(){
   var tried=Object.keys(REC.sb.tried).length;
   if(!tried) return ["Lead 2 Rule-maker sandbox: not started"];
   var ks=Object.keys(REC.sb.q), done=ks.filter(function(k){return REC.sb.q[k].done;}).length, first=ks.filter(function(k){return REC.sb.q[k].done && !REC.sb.q[k].misses;}).length;
-  return ["Lead 2 Rule-maker sandbox: tried "+tried+" theory-and-decree combinations; questions "+(ks.length?done+" of "+ks.length+" right, "+first+" first try":"not reached yet")];
+  return ["Lead 2 Rule-maker sandbox: tried "+tried+" theory-and-decree combinations; questions "+(ks.length?done+" of "+ks.length+" done, "+first+" without needing another go":"not reached yet")];
 }
 
 /* ================= LEAD 3: REPLY-MATCHER ================= */
 var ML={bite:"Bite the bullet", ind:"Horn 2", nat:"Nature reply", obj:"Objection"};
 var MATCH=[
- {s:"Priya", c:"Key words: \"who [G] is\". Which reply card puts goodness in the commander's own nature?", t:"Goodness isn't a rulebook outside [G]. The commands come from who [G] is, not from a whim.", a:"nat",
+ {s:"Priya", c:"Key words: \"who [G] is\". Which reply puts goodness in the commander's own nature?", t:"Goodness isn't a rulebook outside [G]. The commands come from who [G] is, not from a whim.", a:"nat",
   why:"Grounding the commands in the commander's own nature: the nature reply."},
  {s:"Tomas", c:"Key words: \"it would have been right\". Which reply accepts Horn 1's scary consequence?", t:"If [G] had commanded cruelty, it would have been right. \"Right\" just means \"commanded by [G]\", so that's not a scandal; it's a definition.", a:"bite",
   why:"Accepting Horn 1's most alarming consequence and calling it a definition: biting the bullet."},
  {s:"Ayo", c:"Key words: \"because kindness is good\". Which reply says the commander follows a standard?", t:"[G] commands kindness because kindness is good, the way a perfect mathematician says 2 + 2 = 4 because it's true.", a:"ind",
   why:"The commander reports a standard rather than creating it: Horn 2."},
- {s:"Mei", c:"Key words: \"That isn't praise\". Is Mei defending a reply, or attacking one?", t:"Hang on. On your view, saying \"[G] is good\" just means \"[G] commands what [G] commands\". That isn't praise.", a:"obj",
+ {s:"Mei", c:"Key words: \"That isn't praise\". Is Mei defending a reply, or attacking one?", t:"Wait. On your view, saying \"[G] is good\" just means \"[G] commands what [G] commands\". That isn't praise.", a:"obj",
   why:"The emptiness objection, aimed at Horn 1."},
- {s:"Jonah", c:"Key words: \"[G] is the standard\". Which reply card mentions the meter bar?", t:"[G] doesn't measure up to some standard of goodness. [G] is the standard, the way the old meter bar was the meter.", a:"nat",
+ {s:"Jonah", c:"Key words: \"[G] is the standard\". Which reply compares the commander to the old meter bar?", t:"[G] doesn't measure up to some standard of goodness. [G] is the standard, the way the old meter bar was the meter.", a:"nat",
   why:"The meter-bar version of the nature reply."},
- {s:"Sam", c:"Key words: \"the dilemma comes right back\". Find the card whose comeback says the dilemma strikes again.", t:"Is that nature good because it's [G's], or because it's loving and just? Either way, the dilemma comes right back.", a:"obj",
+ {s:"Sam", c:"Key words: \"the dilemma comes right back\". Which move says the dilemma comes back one level up?", t:"Is that nature good because it's [G's], or because it's loving and just? Either way, the dilemma comes right back.", a:"obj",
   why:"The dilemma strikes again: an objection to the nature reply."},
- {s:"Lena", c:"Key words: \"so be it\". Which reply accepts the cost instead of dodging it?", t:"There's no deeper reason lying is wrong. [G] forbids it, and the forbidding is what makes it wrong. If that makes it arbitrary, so be it.", a:"bite",
+ {s:"Lena", c:"Key words: \"so be it\" (meaning: I accept that). Which reply accepts the cost instead of avoiding it?", t:"There's no deeper reason lying is wrong. [G] forbids it, and the forbidding is what makes it wrong. If that makes it arbitrary, so be it (I accept that).", a:"bite",
   why:"No reason behind the command, and the cost accepted: Horn 1, bullet bitten."},
  {s:"Ravi", c:"Key words: \"knows them rather than invents them\". Which reply says the commander reports, not creates?", t:"Moral truths are like truths of logic. Even [G] knows them rather than invents them.", a:"ind",
   why:"Moral truths that hold independently of any will: Horn 2."}
@@ -1364,8 +1394,9 @@ var MHINT={
  bite:"This speaker is defending Horn 1. Are they accepting its cost?",
  ind:"Does this speaker think the commander creates goodness, or reports something already true?",
  nat:"Is this speaker putting goodness inside the commander's own character?",
- obj:"Is this speaker defending a view, or poking a hole in someone else's?"
+ obj:"Is this speaker defending a view, or pointing out a flaw in someone else's?"
 };
+var MRULE="The four moves: bite the bullet = accept Horn 1 and its costs; Horn 2 = goodness exists apart from the commander; nature reply = goodness comes from the commander's own nature; objection = pointing out a flaw in another view. ";
 var mDone=0;
 shuffle(MATCH.map(function(_,i){return i;})).forEach(function(i){
   var it=MATCH[i];
@@ -1387,7 +1418,7 @@ shuffle(MATCH.map(function(_,i){return i;})).forEach(function(i){
         if(mDone===MATCH.length){ $("matchScore").textContent="All "+MATCH.length+" matched. You can now name every move in a 2,400-year-old argument."; clear("g3"); }
       } else {
         r.misses++; b.classList.add("wrongpick");
-        setFb(fb,"bad",vword("g3","no"), r.misses===1 ? MHINT[it.a] : "Look back at the reply cards. "+D(it.c));
+        setFb(fb,"bad",vword("g3","no"), r.misses===1 ? MHINT[it.a] : MRULE+D(it.c));
       }
       touch("g3");
     });
@@ -1400,17 +1431,17 @@ function matchLines(){
   if(!done) return ["Lead 3 Reply-matcher: not started"];
   var first=MATCH.filter(function(_,i){return REC.match[i].final && !REC.match[i].misses;}).length;
   var miss=MATCH.map(function(it,i){ return REC.match[i].misses ? it.s+" ("+ML[it.a]+")" : null; }).filter(Boolean);
-  return ["Lead 3 Reply-matcher: "+done+" of "+MATCH.length+" matched, "+first+" first try"+(miss.length?"; trickier ones: "+miss.join(" / "):"")];
+  return ["Lead 3 Reply-matcher: "+done+" of "+MATCH.length+" matched, "+first+" without needing another go"+(miss.length?"; needed another go on: "+miss.join(" / "):"")];
 }
 
 /* ================= LEAD 4: PREDICT THE VERDICT ================= */
-var TH={h1:{n:"Horn 1 theorist",c:"var(--hl-o)",hint:"For this theorist, is there anything <i>behind</i> the command?"},
-        nat:{n:"Nature theorist",c:"var(--hl-g)",hint:"Could a perfectly loving nature issue this command at all?"},
-        h2:{n:"Horn 2 theorist",c:"var(--hl-b)",hint:"Can a command change the standard, for this theorist?"}};
+var TH={h1:{n:"Horn 1 theorist",c:"var(--hl-o)",hint:"For this theorist, is there anything <i>behind</i> the command?",hint2:"Rule: for a Horn 1 theorist, whatever the commander decrees is right, because the decree is what makes it right."},
+        nat:{n:"Nature theorist",c:"var(--hl-g)",hint:"Could a perfectly loving nature issue this command at all?",hint2:"Rule: for the nature theorist, goodness comes from the commander's own loving nature, so a cruel command could never come from it."},
+        h2:{n:"Horn 2 theorist",c:"var(--hl-b)",hint:"Can a command change the standard, for this theorist?",hint2:"Rule: for a Horn 2 theorist, a command can only report what is already right or wrong; it cannot change it."}};
 var ROUNDS=[
- {k:"captain", title:"Round 1: the team captain", who:"about the captain", scn:"The captain decrees: <b>everyone mocks the newest player in the group chat, for a laugh</b>. Is that now right?", human:true,
+ {k:"captain", title:"Round 1: the team captain", who:"about the captain", scn:"The captain decrees: <b>everyone mocks the newest player in the group chat, for fun</b>. Is that now right?", human:true,
   opts:[["right","Now right"],["wrong","Still wrong"],["never","Couldn't happen"]],
-  th:[["h1","right","Applied to the captain, Horn 1 says the decree makes the mocking right, cruel or not."],["h2","wrong","On Horn 2 the captain's decree is just mistaken: mocking someone for a laugh was wrong before the decree and still is."]],
+  th:[["h1","right","Applied to the captain, Horn 1 says the decree makes the mocking right, cruel or not."],["h2","wrong","On Horn 2 the captain's decree is just mistaken: mocking someone for fun was wrong before the decree and still is."]],
   mine:{q:"Your call (not graded): could the captain's decree make mocking the new player right?", o:[["no","No"],["yes","Yes"],["unsure","Not sure"]]}},
  {k:"commander", strict:true, title:"Round 2: the perfect commander", who:D("about [G]"),
   scn:D("All three theorists agree [G] is perfectly good. They disagree about what makes that true, so this round tests their definitions, not what [G] would do. Set aside whether it would ever happen (one of the three theorists will refuse to): <b>if [G] commanded cruelty for its own sake, would the command make cruelty right?</b>"),
@@ -1423,9 +1454,10 @@ var ROUNDS=[
   opts:[["wrong","Yes, still wrong"],["nothing","Nothing would be right or wrong"],["right","It would be right"]],
   th:[["h1","nothing","If \"wrong\" means \"forbidden by the commander\", then with no commander, nothing is forbidden. Sense 2 of objective fails."],["h2","wrong","Horn 2's standard doesn't depend on anyone's will, so it holds with or without a commander. Objective in sense 2."]]},
  {k:"vote", title:"Round 4: the class vote", who:"about the class vote", scn:"Your class votes: <b>presentations happen on Tuesdays</b>. Any weekday would work equally well. Is Tuesday now the right day?", human:true,
-  hint:"For a convention, would any day have done? Then what settles an open choice?",
+  hint:{h1:"For a convention, would any day have done? Then what settles an open choice?",h2:"For a convention, would any day have done? Then what, if anything, does the vote add?"},
+  hint2:{h1:"The setup says any weekday works equally well, so no day was \"already the best\". Horn 1 says the command makes it right: so is Tuesday right now?",h2:"The setup says any weekday works equally well, so no day was \"already the best\". A Horn 2 theorist has two fair answers: the vote settles the open choice, or the vote adds no new rightness. Pick one of those."},
   opts:[["right","Tuesday is now the right day"],["onlyif","Right only if Tuesday was already the best day"],["same","The vote changes nothing"]],
-  th:[["h1","right","The vote settles it. A classic convention."],["h2","right","For a convention, an open choice really does get settled by the vote. The reason to pick <i>some</i> day existed already."]],
+  th:[["h1","right","The vote settles it. A classic convention."],["h2",["right","same"],"For a convention, an open choice really does get settled by the vote. The reason to pick <i>some</i> day existed already.",{same:"A fair Horn 2 reading too: the vote adds no new rightness, because the reasons for having some fixed day were there already. (Many Horn 2 thinkers still say that, once the class has picked Tuesday, Tuesday is the day to follow.) Both readings pass."}]],
   mine:{q:"Your call (not graded): did the vote make Tuesday the right day?", o:[["yes","Yes"],["no","No"],["unsure","Not sure"]]}}
 ];
 var vRevealed=false;
@@ -1436,7 +1468,7 @@ ROUNDS.forEach(function(R,ri){
   box.innerHTML='<h3>'+R.title+'</h3><p class="scn">'+R.scn+'</p>';
   var opts=shuffle(R.opts);   /* one shuffled order per round, shared by its theorists */
   R.th.forEach(function(t){
-    var T=TH[t[0]], w=el("div",{class:"throw"}); w.style.setProperty("--tc",T.c);
+    var T=TH[t[0]], w=el("div",{class:"throw"}), tmiss=0; w.style.setProperty("--tc",T.c);
     w.innerHTML='<div class="who"><i aria-hidden="true"></i><span>'+(R.strict&&t[0]==="h1"?"Strict ":"")+T.n+' ('+R.who+') says...</span></div>';
     var row=el("div",{class:"row",role:"group","aria-label":T.n});
     var fb=el("div",{class:"fb","aria-live":"polite",tabindex:"-1"});
@@ -1445,8 +1477,9 @@ ROUNDS.forEach(function(R,ri){
       if(ri>0) b.disabled=true;
       b.addEventListener("click",function(){
         var S=REC.ver[R.k]; if(S.th[t[0]]) return;
-        if(o[0]===t[1]){ S.th[t[0]]=true; b.classList.add("right"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true; x.classList.remove("wrongpick");}); setFb(fb,"good",vword("g4","ok"),T.n+": "+t[2]); focusFb(fb); vCheck(ri); }
-        else { S.misses++; b.classList.add("wrongpick"); setFb(fb,"bad",vword("g4","no"),R.hint||T.hint); }
+        var okset=Array.isArray(t[1])?t[1]:[t[1]];
+        if(okset.indexOf(o[0])>=0){ S.th[t[0]]=true; b.classList.add("right"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true; x.classList.remove("wrongpick");}); setFb(fb,"good",vword("g4","ok"),T.n+": "+((t[3]&&t[3][o[0]])||t[2])); focusFb(fb); vCheck(ri); }
+        else { S.misses++; tmiss++; b.classList.add("wrongpick"); setFb(fb,"bad",vword("g4","no"), tmiss>=2 ? ((R.hint2&&R.hint2[t[0]])||T.hint2) : ((R.hint&&R.hint[t[0]])||T.hint)); }
         touch("g4");
       });
       row.appendChild(b);
@@ -1496,8 +1529,8 @@ function vReveal(){
   else if(a==="yes") t="<b>Your pattern: Horn 1 for human rule-makers.</b> You'd let even the captain's decree make it right. That's consistent. Expect Rocky to press you on the arbitrariness problem.";
   else t="<b>Your pattern: undecided on the captain.</b> That's honest. Ask yourself what would settle it: a reason <i>behind</i> the decree (Horn 2), or the decree itself (Horn 1)?";
   if(v==="yes") t+="<br><br>And you let the class vote make Tuesday right: Horn 1 works for conventions. Many people end up mixing: Horn 1 for conventions, something else for cruelty and honesty.";
-  else if(v==="unsure") t+="<br><br>You weren't sure whether the vote made Tuesday right. Both theorists would say it did, for a convention. If you see it differently, that's a good thing to raise with Rocky.";
-  else if(v) t+="<br><br>You said the vote didn't make Tuesday right. Both theorists would say it did, for a convention. If you see it differently, that's a good thing to raise with Rocky.";
+  else if(v==="unsure") t+="<br><br>You weren't sure whether the vote made Tuesday right. A Horn 1 theorist says it did; a Horn 2 theorist can say it settled the choice, or that it added no new rightness. That's a good thing to raise with Rocky.";
+  else if(v) t+="<br><br>You said the vote didn't make Tuesday right. That fits a Horn 2 reading (the vote adds no new rightness), though a Horn 1 theorist would say it did, for a convention. That's a good thing to raise with Rocky.";
   vRevealed=true;
   $("g4").querySelectorAll(".mycall button").forEach(function(b){ b.disabled=true; });   /* freeze own calls once the summary is shown */
   var P=$("verdictReveal"); P.innerHTML=t; P.hidden=false;
@@ -1509,7 +1542,7 @@ function verLines(){
   var done=ROUNDS.filter(function(R){return REC.ver[R.k].done;}).length;
   var miss=ROUNDS.reduce(function(s,R){return s+REC.ver[R.k].misses;},0);
   var MC={no:"No",yes:"Yes",unsure:"Not sure"};
-  var l=["Lead 4 Predict the verdict: "+done+" of "+ROUNDS.length+" rounds done, "+miss+" wrong guess(es) along the way"];
+  var l=["Lead 4 Predict the verdict: "+done+" of "+ROUNDS.length+" rounds done, "+(miss?"needed another go "+miss+" time"+(miss===1?"":"s")+" along the way":"no extra goes needed")];
   var mine=[];
   if(REC.ver.captain.mine) mine.push("could the captain's decree make mocking the new player right? "+MC[REC.ver.captain.mine]);
   if(REC.ver.vote.mine) mine.push("did the class vote make Tuesday right? "+MC[REC.ver.vote.mine]);
@@ -1527,7 +1560,7 @@ var VIEWS=[
 ];
 shuffle(VIEWS).forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; if(typeof disarmFin==="function") disarmFin(); $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
   $("finOpts").appendChild(b);
 });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
@@ -1547,17 +1580,24 @@ function finRender(){
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
+var disarmFin=armLock($("finBtn"),"Lock my verdict",function(){
+  if(FIN.done) return false;
+  var reason=one($("finReason").value), moved=one(movedText());
+  if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the option closest to yours."); return false; }
+  if(reason.split(/\s+/).filter(Boolean).length<4){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two (at least four words)."); $("finReason").focus(); return false; }
+  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  setFb($("finFb"),"","Ready.","Tap the button again to lock your verdict. Once locked, it stays locked.");
+  return true;
+},function(){
   if(FIN.done) return;
   var reason=one($("finReason").value), moved=one(movedText());
-  if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the option closest to yours."); return; }
-  if(reason.split(/\s+/).filter(Boolean).length<4){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two (at least four words)."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
   FIN.reason=reason; FIN.moved=moved; FIN.movedIdx=$("finMoved").selectedIndex; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below."); focusFb($("finFb"));
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();
   toast("Case closed: verdict filed", "var(--stamp)");
-});
+},null,function(){ if(!FIN.done){ $("finFb").className="fb"; $("finFb").innerHTML=""; } });
+$("finReason").addEventListener("input",function(){ disarmFin(); });
+$("finMoved").addEventListener("change",function(){ disarmFin(); });
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
   return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+FIN.reason, "What moved me most: "+FIN.moved];

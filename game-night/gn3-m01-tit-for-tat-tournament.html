@@ -260,8 +260,8 @@ function runIt(){var t=tourney(choice),key=choice.join("");
  el("table").innerHTML="<tr><th>#</th><th>Bot</th><th>Total</th></tr>"+t.order.map(function(o,i){return "<tr"+(o.n==="YOUR BOT"?" class=\"me\"":"")+"><td>"+(i+1)+"</td><td>"+o.n+"</td><td>"+o.s+"</td></tr>"}).join("");
  el("matches").innerHTML="Your matches (10 rounds each): "+t.mine.map(function(m){return m.vs+" "+m.me+"-"+m.them}).join(" · ");
  var gusPos=0;t.order.forEach(function(o,i){if(o.n==="Grabby Gus")gusPos=i+1});
- el("lesson").textContent=(t.rank===1?"Champion! Notice how you did against the grabbers AND the sharers.":"Look at which bots beat you, and which bots you beat. Can a different rule do better?")+(gusNeverLoses()?" Fun fact: Grabby Gus won or tied every match he played, yet he finished #"+gusPos+" in the tournament. Winning matches is not the same as winning the tournament.":"");
- el("next").textContent=run<2?"TRY ANOTHER BOT":"SEE FINAL RESULTS";
+ el("lesson").textContent=(t.rank===1?"Champion! Notice how you did against the grabbers AND the sharers.":"Look at which bots beat you, and which bots you beat. Can a different rule do better?")+(gusNeverLoses()?(gusPos>1?" Fun fact: Grabby Gus won or tied every match he played, yet he finished #"+gusPos+" in the tournament. Winning matches is not the same as winning the tournament.":" Fun fact: Grabby Gus won or tied every match he played, and with your bot in the arena that was enough to finish #1, because a bot that shares with grabbers hands him points. Try a Tit for Tat bot to see him fall behind."):"");
+ el("next").textContent=run<2?"TRY ANOTHER BOT":"NEXT: THE OOPS ROUND";
  show("pick",false);show("round",true)}
 function nextRun(){run++;if(run>=3){showOops();return}setup()}
 function showOops(){show("round",false);show("pick",false);
@@ -298,11 +298,11 @@ function runChal(){if(!(cchoice[0]&&cchoice[1]&&cchoice[2]))return;var key=cchoi
  if(diff>0)h+="<br>Look at your match scores: a bot can pass Tit for Tat's total by squeezing points out of Saint Sam, not by being a better partner.";
  el("cres").innerHTML=h}
 function finish(){if(finished)return;finished=true;show("round",false);show("pick",false);show("oops",false);
- var tft=tourney(["S","S","G"]);
+ var tft=tourney(["S","S","G"]),gg={pos:0,s:0};tft.order.forEach(function(o,i){if(o.n==="Grabby Gus"){gg.pos=i+1;gg.s=o.s}});
  var rank=best.rank===1?"CHAMPION":(best.rank<=2?"CONTENDER":"ROOKIE BOT");
  el("verdict").innerHTML="<p>Best bot: <b>"+best.name+"</b> with <b>"+best.score+"</b> points, rank <b>#"+best.rank+"</b> of 6.</p><div class=\"rank\">RANK: "+rank+"</div>"+
  "<h2>REPLAY THE TAPE</h2><div class=\"tape\">Tit for Tat (share first, then copy) in this arena scores <b>"+tft.my+"</b> and finishes <b>"+(tft.tie?"tied for ":"")+"#"+tft.rank+"</b> (Copycat Cora and Grudge Greta score the same).</div>"+
- (gusNeverLoses()?"<div class=\"tape\">Grabby Gus <b>won or tied every match he played</b> (against every bot in the arena and every bot you could build), yet finished behind Tit for Tat. Winning each match is not the same as winning the tournament. The total decides.</div>":"")+
+ (gusNeverLoses()?"<div class=\"tape\">Grabby Gus <b>won or tied every match he played</b> (against every bot in the arena and every bot you could build), "+(gg.pos>tft.rank?"yet finished #"+gg.pos+" ("+gg.s+" points) in the Tit for Tat arena, behind Tit for Tat ("+tft.my+"). Winning each match is not the same as winning the tournament. The total decides. Where Gus finishes depends on who he plays: with an Always Share bot in the arena he can finish first.":"and finished #"+gg.pos+" in the Tit for Tat arena. The total decides.")+"</div>":"")+
  "<p class=\"note\">Tit for Tat never scores more than its partner in any single match. It wins by getting lots of 3-point rounds with nice bots, and refusing to be a pushover against grabbers.</p>"+
  "<div class=\"fact\">Around 1980 the political scientist Robert Axelrod ran a computer tournament like this. The winner was Tit for Tat, sent in by Anatol Rapoport.</div>";
  el("out").value="GN3-M01 | runs: "+runs.map(function(r){return r.name+" "+r.score+" (#"+r.rank+")"}).join(", ")+" | best: "+best.name+" "+best.score+" points, rank "+best.rank+" of 6 | rank "+rank+(oops?" | oops round: "+best.name+" "+oops.score+" (#"+oops.rank+"), winner "+oops.winner:"");

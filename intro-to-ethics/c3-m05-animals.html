@@ -125,7 +125,7 @@ details.sealed .inner{padding:0 16px 16px}
 details.sealed .inner p{font-size:1rem}
 
 /* ---------- games ---------- */
-.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:calc(var(--dockh,120px) + 44px)}
 .lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
   font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
 .lab h2{margin-bottom:.4em}
@@ -254,6 +254,7 @@ details.sealed .inner p{font-size:1rem}
 .dock .pip{cursor:default; font-family:var(--type); background:transparent; width:44px; height:44px}
 .dock .pip:not(:disabled){cursor:pointer}
 .dock .pip:disabled{opacity:1}
+.dock .pip.lockedpip{opacity:.7}
 @media (max-width:420px){ .dock{gap:6px; padding:8px 10px} .dock ol{gap:2px} .dock .evw{display:none} }
 .evpanel{flex-basis:100%; background:var(--card); color:var(--ink); border-radius:10px; padding:12px 14px; font-family:var(--serif); font-size:.98rem; margin-top:6px; border:3px solid var(--c,var(--hl-y))}
 .evpanel h3{font-size:1rem; margin-bottom:4px}
@@ -403,10 +404,10 @@ select.reasonbox{min-height:44px}
 /* the CLEARED stamp briefly scales up as it lands; never let that make the page scroll sideways */
 html,body{overflow-x:clip}
 /* ---- reusable fixes from M03 ---- */
-.toast{pointer-events:none; position:fixed; left:50%; top:64px; transform:translateX(-50%); z-index:40; max-width:min(92vw,520px);
-  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:12px 18px; border-radius:12px;
-  box-shadow:0 10px 24px -6px #000a; border:3px solid var(--tc,var(--hl-y)); animation:toastIn .35s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes toastIn{0%{transform:translate(-50%,-30px); opacity:0}100%{transform:translate(-50%,0); opacity:1}}
+.toast{pointer-events:none; position:fixed; left:0; top:0; z-index:40; box-sizing:border-box; display:flex; align-items:center; justify-content:center; text-align:center;
+  background:var(--ink); color:var(--paper); font-family:var(--type); font-weight:700; font-size:.95rem; padding:6px 14px; border-radius:0 0 12px 12px;
+  border-bottom:4px solid var(--tc,var(--hl-y)); animation:toastIn .2s ease-out both}
+@keyframes toastIn{0%{opacity:0}100%{opacity:1}}
 .dock .pip.pulse{animation:pipPulse .9s ease}
 @keyframes pipPulse{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .clearline{display:flex; gap:12px; align-items:center; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--card); border:3px solid var(--g,var(--hl-y))}
@@ -428,6 +429,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .lab .gtab.fintab{color:var(--hl-ink)} }
 
 [hidden]{display:none!important}
+
+/* tap guard: buttons look dimmed while a quick second tap would be ignored */
+body.guarding .lab .lab-body :is(.pick,.tile,.choice,.binz,.seg,.btn:not(.skipbtn)){opacity:.45}
+.wucard.wait .wu{opacity:.45}
+.btn.wait{opacity:.45}
+.btn.armed{background:var(--stamp); color:#fff; border-color:var(--stamp)}
+.lockin textarea{resize:vertical}
 
 /* warm-up: same pain, whose first? */
 .wucard{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0}
@@ -489,18 +497,18 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <path d="M120 30 q0 -12 12 -12 q12 0 12 10 q0 8 -10 12 v6" fill="none" stroke="#C0152F" stroke-width="4" stroke-linecap="round"/><circle cx="134" cy="54" r="3" fill="#C0152F"/>
     <path d="M206 24 q0 -10 10 -10 q10 0 10 8 q0 7 -8 10 v5" fill="none" stroke="#2443C4" stroke-width="3.5" stroke-linecap="round"/><circle cx="218" cy="44" r="2.6" fill="#2443C4"/>
   </svg>
-  <div class="cnote" role="note"><b>Heads-up.</b> Animal use (food, research, pets) comes up only as ideas, never graphically. Nobody will tell you what to eat. Every lead has a <b>Skip</b> button.</div>
+  <div class="cnote" role="note"><b>Note.</b> Animal use (food, research, pets) comes up only as ideas, never graphically. Nobody will tell you what to eat. Every lead has a <b>Skip</b> button.</div>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 4v22M6 9h18M6 9l-4 9h8zM24 9l-4 9h8z" fill="#FFFDF5" stroke="#2A2016" stroke-width="2" stroke-linejoin="round"/></svg></div>
-    <p>A dog, an octopus and a person get hurt the same way, with the same amount of pain. Does it matter morally? <i>Equally</i>? Lock in your gut call. You'll make it again at the end.</p>
+    <p>A dog, an octopus and a person get hurt the same way, with the same amount of pain. Does it matter morally? <i>Equally</i>? Lock in your first instinct (your "gut call"). You'll make the call again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
-    <div class="gut-opts" id="gutOpts" role="group" aria-label="Your gut call"></div>
+    <div class="gut-opts" id="gutOpts" role="group" aria-label="Your first instinct"></div>
     <label for="myReason">My reason, in one sentence</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="3" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Intro to Ethics · Challenge 3</span><span>About 30 minutes, plus a 1-minute warm-up</span></div>
+  <div class="meta"><span>Intro to Ethics · Challenge 3</span><span>About 35 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
@@ -520,7 +528,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <p>A being has <b>moral status</b> if it matters <i>for its own sake</i>: what happens to it can <b>wrong</b> it, not just damage it. You have it; a rock doesn't.</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit A: wronged, or just damaged?</span>
-    <p>Scratch your neighbor's car and you wrong your neighbor, not the car. That is <b>indirect</b> concern: it matters only because of someone else. Concern for a being for its own sake is <b>direct</b>.</p>
+    <p>Scratch your neighbor's car and you wrong your neighbor, not the car. That is <b>indirect</b> concern: it matters only because of someone else. Concern for a being itself is <b>direct</b>.</p>
   </div>
   <p>Are animals more like your neighbor, or the car? Claims about this come in three kinds:</p>
   <div class="kinds">
@@ -528,10 +536,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div style="--kc:var(--hl-p)"><b>Moral claims</b>What <i>matters</i>. Settled by argument.</div>
     <div style="--kc:var(--hl-o)"><b>Personal instructions</b>What one person should do.</div>
   </div>
-  <p><b>This file sticks to science claims and moral claims. Your plate is your business.</b></p>
-  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Optional: why science alone can't give you a moral claim</summary><div class="inner">
-    <p>Knowing that a crab feels pain doesn't, by itself, tell you whether its pain matters. Philosophers call this the <b>is-ought gap</b>, after the Scottish philosopher David Hume, who pointed out that arguments often slide from "is" to "ought" without saying how.</p>
-    <p>Getting from a moral claim to a personal instruction takes even more steps: someone's health, budget, culture, religion, family, what food they can get, and what difference one person's choice makes. Thoughtful people disagree about every one of those steps.</p>
+  <p><b>This file sticks to science claims and moral claims. What you eat is your own business.</b></p>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: why science alone can't give you a moral claim</summary><div class="inner">
+    <p>Knowing that a crab feels pain doesn't, by itself, tell you whether its pain matters. Philosophers call this the <b>is-ought gap</b>, after the Scottish philosopher David Hume, who noticed that arguments often jump from "is" to "ought" without saying how.</p>
+    <p>Getting from a moral claim to a personal instruction takes even more steps: health, budget, culture, religion, family, what food is available. Thoughtful people disagree about each step.</p>
   </div></details>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
@@ -540,12 +548,13 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <section class="sheet lab" id="g1" style="--g:var(--hl-y)" aria-labelledby="g1h">
   <div class="gtab">Lead 1 of 5</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
-  <h2 id="g1h">Science, morals, or marching orders?</h2>
+  <h2 id="g1h">Science, morals, or personal instructions?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Moral status, and what this file won't do" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g1">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g1">Play it anyway</button></div>
-  <p class="how">Eight statements overheard in a debate about animals. Don't judge whether they're <i>true</i>. Just say what <i>kind</i> of claim each one is. One is sneakier than it looks. (The cards come in a random order.)</p>
+  <p class="how">Misses cost nothing here; Rocky just uses them to see what to review.</p>
+  <p class="how">Eight statements overheard in a debate about animals. Don't judge whether they're <i>true</i>. Just say what <i>kind</i> of claim each one is. One is trickier than it looks.</p>
   <div id="claimList"></div>
   <p class="score" id="claimScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -556,9 +565,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 4 BENTHAM ================= -->
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-o)">"Can they suffer?"</span></h2>
-  <p class="wow">One of the most quoted sentences in animal ethics is hiding in a footnote.</p>
-  <p>You met Jeremy Bentham (1748 to 1832) back in Challenge 1 (Case 3) and Challenge 2 (Case 4): the English reformer who wanted to do math with pleasure and pain. In his 1789 book <i>An Introduction to the Principles of Morals and Legislation</i>, near the end, he added a footnote about animals.</p>
-  <p>In it, he points out that the French had already recognized that skin color is no reason to leave a human being at the mercy of someone who would hurt them. Maybe, he suggests, people will one day see that the number of legs or having fur is an equally bad reason. And what about intelligence? A grown horse or dog, he notes, is more rational and easier to communicate with than a baby a day, a week, or even a month old. Then comes the line:</p>
+  <p class="wow">One of the most quoted sentences in animal ethics is in a footnote.</p>
+  <p>Jeremy Bentham (1748 to 1832), the English reformer from Challenges 1 and 2, put a footnote about animals near the end of his 1789 book <i>An Introduction to the Principles of Morals and Legislation</i>.</p>
+  <p>In it he says skin color is no reason to abandon a human being to a tormentor, and that one day the number of legs or a furry coat will count as equally poor reasons. A grown horse or dog, he adds, is more rational and easier to talk to than a baby a day, a week or a month old. Then comes the line:</p>
   <div class="exhibit" style="--hl-c:var(--hl-o)">
     <span class="lbl">Exhibit B: the footnote</span>
     <p>"The question is not, Can they <i>reason</i>? nor, Can they <i>talk</i>? but, Can they <i>suffer</i>?"</p>
@@ -572,20 +581,20 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="bentFb" aria-live="polite"></div>
   </div>
-  <p>The ability Bentham is pointing at has a name: <b>sentience</b>. A being is sentient if it can have experiences that feel like something to it, good or bad: pain, fear, comfort, pleasure. Sentience is not the same as intelligence, language or being able to reason. A being could be sentient and not very clever at all.</p>
+  <p>The ability Bentham points at is called <b>sentience</b>: being able to have experiences that feel like something, good or bad (pain, fear, comfort, pleasure). It is not intelligence, language or reasoning. A being could be sentient and not very clever.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit C: the two candidates</span>
     <span class="argline"><b>Sentience view:</b> a being has moral status if it can feel. (Bentham's bet.)</span>
     <span class="argline"><b>Rationality view:</b> a being has moral status if it can reason and choose by principles. (Kant's bet; he arrives in a few screens.)</span>
   </div>
-  <p>On the sentience view, the question "does this animal matter?" partly turns into a <i>science</i> question: can it feel? Which raises a problem...</p>
+  <p>On the sentience view, "does this animal matter?" partly becomes a <i>science</i> question: can it feel?</p>
 </section>
 
 <!-- ================= 5 EVIDENCE ================= -->
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-g)">How would you know if a crab feels pain?</span></h2>
   <p class="wow">You've never felt anyone's pain but your own. Not even your best friend's.</p>
-  <p>Philosophers call this the <b>problem of other minds</b>. You can't climb inside someone else's head; you <i>infer</i> that they feel things from how they act and how they're built. Scientists studying animals do the same thing, carefully. They look for <b>markers</b>. Try one first:</p>
+  <p>Philosophers call this the <b>problem of other minds</b>: you can't climb inside someone else's head, so you <i>infer</i> that they feel things from how they act and how they're built. Scientists studying animals do this carefully. They look for <b>markers</b>. Try one first:</p>
   <div class="poll" id="crabPoll">
     <p><b>A hermit crab gets a mild shock inside its shell. It's more likely to move out of a poor shell than a really good one. Reflex, or weighing?</b> (Not graded; your first tap is final.)</p>
     <div class="row" role="group" aria-label="Reflex or weighing?">
@@ -595,29 +604,29 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="crabFb" aria-live="polite"></div>
   </div>
-  <p>Here are the markers scientists use:</p>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: the markers scientists use</summary><div class="inner">
   <div class="markers">
     <div style="--mc:var(--hl-b)"><b>Damage detectors.</b> Nerve cells that respond to injury. Needed, but not enough: your hand jerks off a hot pan <i>before</i> you feel it. A reflex isn't a feeling.</div>
     <div style="--mc:var(--hl-p)"><b>More than a reflex.</b> Guarding a wound, learning to avoid a place where it got hurt.</div>
-    <div style="--mc:var(--hl-o)"><b>Trade-offs.</b> Paying a cost to avoid harm. That's the hermit crab's pattern: it needs a stronger shock to leave a really good shell. That looks like weighing, not just flinching.</div>
+    <div style="--mc:var(--hl-o)"><b>Trade-offs.</b> Paying a cost to avoid harm. The hermit crab needs a stronger shock to leave a really good shell, which looks like weighing, not just flinching.</div>
     <div style="--mc:var(--hl-g)"><b>Drugs that change it.</b> Painkillers or anti-anxiety drugs changing the behavior, the way they would in us.</div>
   </div>
-  <p>More markers make a stronger case. None of them is proof. Groups of scientists have summed up where the evidence points. The latest summary:</p>
+  </div></details>
+  <p>More markers make a stronger case, but none is proof. The latest expert summary:</p>
   <ul class="decl">
-    <li><span class="yr">2024</span><b>The New York Declaration on Animal Consciousness.</b> Announced in April 2024 with about 40 researchers signing; many more have signed since. It says there's strong scientific support for consciousness in mammals and birds. It also says there's at least a <b>realistic possibility</b> of it in all other vertebrates (animals with backbones, such as fish, reptiles and amphibians) and in many invertebrates (animals without backbones), including at least octopuses and squid, crabs and lobsters, and insects. Studies behind it include bumblebees that roll little balls with no obvious reward, as if playing, and crayfish whose anxiety-like behavior changes with anti-anxiety drugs.</li>
+    <li><span class="yr">2024</span><b>The New York Declaration on Animal Consciousness.</b> Announced in April 2024 by about 40 researchers, with many more signing since. It says there's strong scientific support for consciousness in mammals and birds, and at least a <b>realistic possibility</b> of it in all other vertebrates (animals with backbones, such as fish, reptiles and amphibians) and many invertebrates (animals without backbones), including octopuses, squid, crabs, lobsters and insects.</li>
   </ul>
-  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Optional: two earlier statements (2012 and 2021)</summary><div class="inner">
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: two earlier statements (2012 and 2021)</summary><div class="inner">
   <ul class="decl">
     <li><span class="yr">2012</span><b>The Cambridge Declaration on Consciousness.</b> At a conference in Cambridge, England, scientists declared that humans aren't unique in having the brain machinery for consciousness. They named all mammals and birds, and many other creatures, including octopuses.</li>
     <li><span class="yr">2021</span><b>A review for the UK government</b>, led by philosopher Jonathan Birch at the London School of Economics, looked at more than 300 studies. It concluded that octopuses and their relatives, and crabs, lobsters and their relatives, should be regarded as sentient. The UK then added them to a new law, the Animal Welfare (Sentience) Act 2022. It also sets up a committee to check how government policies affect sentient animals. (It didn't extend every older animal-welfare protection to them.)</li>
   </ul>
   </div></details>
   <p class="note">"Realistic possibility" doesn't mean "proven". A declaration isn't a vote that makes something true; it's experts summarizing the evidence.</p>
-  <div class="exhibit" style="--hl-c:var(--hl-p)">
-    <span class="lbl">Exhibit C2: spot the "ought"</span>
-    <p>The New York Declaration's third statement goes further. It says that when there's a realistic possibility an animal is conscious, it's irresponsible to ignore that possibility in decisions that affect it. Notice the switch: the first two statements are science claims about evidence. The third is a <b>moral claim</b> about what we should do. Same document, two kinds of claim. That is the is-ought gap from the optional box on the "Moral status" screen, live.</p>
-  </div>
-  <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: a moral claim inside a science document</summary><div class="inner">
+    <p>The Declaration's third statement goes further: when there's a realistic possibility an animal is conscious, it's irresponsible to ignore that possibility in decisions that affect it. Notice the switch: the first two statements are science claims, and the third is a <b>moral claim</b> about what we should do. That jump from "is" to "ought" is the is-ought gap.</p>
+  </div></details>
+    <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
 <!-- ================= LEAD 2: EVIDENCE LADDER ================= -->
@@ -629,7 +638,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g2">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g2">Play it anyway</button></div>
-  <p class="how">Eight specimens, in a random order. Put each on the rung the <b>2024 New York Declaration</b> gives its group. (The 2012 and 2021 statements, in the optional box on the evidence screen, show up in the feedback. For the oak and the robot, use what you know about nervous systems.) This is a ladder of <i>evidence</i>, not of how much anyone matters.</p>
+  <p class="how">Eight specimens, in a random order. Put each on the rung the <b>2024 New York Declaration</b> gives its group. (For the oak and the robot, use what you know about nervous systems.) This ladder is about <i>evidence</i>, not about how much anyone matters.</p>
   <div class="rungs" id="rungs">
     <div class="rung" style="--rc:var(--hl-g)"><span class="rl">Top rung: strong scientific support (2024: mammals, birds)</span><div class="chips" id="rung-top"></div></div>
     <div class="rung" style="--rc:var(--hl-y)"><span class="rl">Middle rung: a realistic possibility (2024: other vertebrates, many invertebrates)</span><div class="chips" id="rung-mid"></div></div>
@@ -647,17 +656,19 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 
 <!-- ================= 7 SPECIESISM ================= -->
 <section class="sheet" aria-labelledby="b4">
-  <h2 id="b4"><span style="--mark:var(--hl-p)">Speciesism: a word with a punch</span></h2>
+  <h2 id="b4"><span style="--mark:var(--hl-p)">Speciesism: favoring your own species</span></h2>
   <p class="wow">The word "speciesism" was invented in 1970, on a pamphlet a psychologist printed himself.</p>
-  <p>The British psychologist Richard Ryder coined <b>speciesism</b> in 1970. The Australian philosopher Peter Singer, the same Singer behind the drowning-child pond in this challenge's needy-strangers case (Case 2), made it famous in his 1975 book <i>Animal Liberation</i>, crediting Ryder for the word.</p>
-  <p><b>Speciesism</b> means favoring the interests of your own species <i>just because</i> they're your species. Singer's provocative comparison: racism and sexism pick out a feature that doesn't matter morally (skin color, sex) and use it to decide whose interests count. Speciesism, he argues, does the same with species. Remember the warm-up, where the pain was identical but you may still have picked a side? Singer's charge is aimed at doing that when species is the only reason.</p>
+  <p>The British psychologist Richard Ryder coined <b>speciesism</b> in 1970. The Australian philosopher Peter Singer (of the drowning-child pond in Case 2) made it famous in his 1975 book <i>Animal Liberation</i>, crediting Ryder for the word.</p>
+  <p><b>Speciesism</b> means favoring the interests of your own species <i>just because</i> they're your species. Singer compares it to racism and sexism, which use a feature that doesn't matter morally (skin color, sex) to decide whose interests count. Speciesism, he argues, does the same with species. In the warm-up the pain was identical, but you may still have picked a side; his charge is about doing that when species is the only reason.</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Exhibit D: equal consideration of interests</span>
-    <p>Singer's core principle: <b>equal interests deserve equal weight, no matter whose interests they are.</b> If a pig and a child would suffer equally, the two sufferings count equally.</p>
+    <p>Singer's core principle: <b>equal interests deserve equal weight, no matter whose they are.</b> If a pig and a child would suffer equally, the two sufferings count equally.</p>
   </div>
-  <p>Notice what this does <i>not</i> say. <b>Equal consideration isn't equal treatment.</b> A pig can't vote, so it makes no sense to talk about its right to vote. Different beings have different interests. Singer also doesn't claim every life is the same: a being with plans and hopes for its future may have more to lose by dying. The principle is only about weighing like with like.</p>
-  <p>Singer is a <b>utilitarian</b> (someone who judges actions by their overall results): he weighs everyone's interests and asks what gives the best overall result. In his book he applied the principle to how animals are used in farming and research, and argued that a lot of common practice causes suffering that the benefits don't justify. We're not going into the details of those practices here, and you don't have to agree with him. The point for now is the shape of his argument.</p>
-  <p class="note">This screen and Lead 3 touch on farming and research as ideas. If you'd rather skip them, press Got it and use the Skip button inside Lead 3.</p>
+  <p>Notice what this does <i>not</i> say. <b>Equal consideration isn't equal treatment.</b> A pig can't vote, so a right to vote makes no sense for it. Different beings have different interests, and Singer doesn't claim every life is the same: a being with plans for its future may have more to lose by dying. The principle only says to weigh like with like.</p>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: Singer's wider view</summary><div class="inner">
+    <p>Singer is a <b>utilitarian</b> (someone who judges actions by their overall results): he weighs everyone's interests and asks what gives the best overall result. In his book he applied the principle to farming and research, and argued that a lot of common practice causes suffering that the benefits don't justify. We're not going into those details here, and you don't have to agree with him. The point for now is the shape of his argument.</p>
+  </div></details>
+  <p class="note">Farming and research come up only as ideas. To skip them, press Got it and use Skip in Lead 3.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -666,11 +677,11 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="gtab">Lead 3 of 5</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
   <h2 id="g3h">Build Singer's argument</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Speciesism: a word with a punch" above, then press <b>Got it</b>.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Speciesism: favoring your own species" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g3">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g3">Play it anyway</button></div>
-  <p class="how">You're the architect. First pick the conclusion Singer's argument actually reaches (options shuffle each time). Then pick exactly three premises that get you there. Then tell us where you'd push back (that part is never graded).</p>
+  <p class="how">You're the architect. First pick the conclusion Singer's argument actually reaches (options shuffle each time). Then pick exactly three premises that get you there. Then say which premise you'd challenge (that part is never graded).</p>
   <div class="argbox" aria-label="The argument so far">
     <span class="slot" id="slot0">Premise 1</span>
     <span class="slot" id="slot1">Premise 2</span>
@@ -692,7 +703,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <div class="fb" id="sciFb" aria-live="polite"></div>
   </div>
   <div id="pushStep" hidden>
-    <p class="step-lbl">Step 4. Where would you push back hardest? (not graded; first tap is final)</p>
+    <p class="step-lbl">Step 4. Which premise would you challenge first? (not graded; first tap is final)</p>
     <div id="pushOpts"></div>
     <div class="fb" id="pushFb" aria-live="polite"></div>
   </div>
@@ -703,21 +714,17 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 
 <!-- ================= 9 KANT ================= -->
 <section class="sheet" aria-labelledby="b5">
-  <h2 id="b5"><span style="--mark:var(--hl-b)">Kant: reason is the ticket</span></h2>
+  <h2 id="b5"><span style="--mark:var(--hl-b)">Kant: reason is what counts</span></h2>
   <p class="wow">Kant thought cruelty to animals was wrong. His reason surprises almost everyone.</p>
-  <p>The German philosopher Immanuel Kant (1724 to 1804) built his ethics around <b>rational beings</b>: beings who can step back from their urges, ask "what principle am I acting on?", and choose. That ability, he thought, gives persons a special worth he called <b>dignity</b>. So you must never treat a person <i>merely</i> as a tool for your own goals.</p>
-  <p>Animals, in Kant's view, don't reason in that sense. So we have no duties <b>to</b> them, only duties <b>concerning</b> them: indirect concern, like the neighbor's car. Then why not be cruel to animals? Kant's answer, in his <i>Metaphysics of Morals</i> (1797) and in lectures his students wrote down: cruelty to animals dulls our natural sympathy for suffering, and that makes us likelier to treat <i>people</i> badly. Kindness to animals is practice for kindness to humans.</p>
+  <p>The German philosopher Immanuel Kant (1724 to 1804) built his ethics around <b>rational beings</b>: beings who can step back from their urges, ask "what principle am I acting on?", and choose. That ability, he thought, gives persons a special worth called <b>dignity</b>, so you must never treat a person <i>merely</i> as a tool.</p>
+  <p>Animals, he thought, don't reason in that sense. So we have no duties <b>to</b> them, only duties <b>concerning</b> them (indirect concern, like the neighbor's car). Then why not be cruel to animals? Kant's answer (in his <i>Metaphysics of Morals</i>, 1797): cruelty to animals weakens our natural sympathy for suffering, which makes us likelier to treat <i>people</i> badly.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
-    <span class="lbl">Exhibit E: the objection everyone raises</span>
-    <p>Kant puts the wrong in the wrong place. If someone hurts a dog for fun, the problem seems to be what happened to <i>the dog</i>, not what happened to the person's character. And Kant's view has a strange implication: if being cruel to an animal somehow left your character untouched, there'd be nothing wrong with it at all.</p>
+    <span class="lbl">Exhibit E: the objection most people raise</span>
+    <p>Kant gives the wrong reason. If someone hurts a dog for fun, the problem seems to be what happened to <i>the dog</i>, not to the person's character. And if cruelty somehow left your character untouched, his view would say it's not wrong at all.</p>
   </div>
-  <p>Modern Kantians have pushed back from inside the tradition. The philosopher Christine Korsgaard, in <i>Fellow Creatures</i> (2018), argues that Kant's own ideas, rethought, give us duties to animals themselves, because animals, like us, are beings for whom things can go well or badly.</p>
-  <div class="exhibit" style="--hl-c:var(--hl-y)">
-    <span class="lbl">Exhibit F: the two tests, side by side</span>
-    <span class="argline"><b>Sentience test:</b> Can it feel? If yes, it counts directly.</span>
-    <span class="argline"><b>Rationality test (as Kant understood it):</b> Can it reason about principles and choose by them? If yes, it counts directly. If no, concern is only indirect.</span>
-  </div>
-  <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
+  <p>Many philosophers dispute this, some from inside Kant's own tradition. Christine Korsgaard, in <i>Fellow Creatures</i> (2018), argues that Kant's ideas, rethought, give us duties to animals themselves, because animals, like us, are beings for whom things can go well or badly.</p>
+  <p><b>So there are two tests.</b> Sentience test: can it feel? If yes, it counts directly. Rationality test (Kant's): can it reason about principles and choose by them? If no, concern is only indirect.</p>
+    <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
 <!-- ================= LEAD 4: MORAL-STATUS SORTER ================= -->
@@ -725,11 +732,11 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="gtab">Lead 4 of 5</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
   <h2 id="g4h">The moral-status sorter</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Kant: reason is the ticket" above, then press <b>Got it</b>.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Kant: reason is what counts" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g4">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g4">Play it anyway</button></div>
-  <p class="how">Tap a card in the tray, then tap the bin it belongs in. You're sorting by what each <b>test</b> says, not by what you think. For the sentience test, count animals on the top <i>and</i> middle rungs of the evidence ladder as passing. That's the <b>precautionary reading</b>: when it's a realistic possibility an animal can feel, play it safe and count it. (The New York Declaration's third statement urges the same.) Then one question to finish.</p>
+  <p class="how">Tap a card in the tray, then tap the bin it belongs in. You're sorting by what each <b>test</b> says, not by what you think. For the sentience test, count animals on the top <i>and</i> middle rungs of the evidence ladder as passing. That's the <b>precautionary reading</b>: when it's a realistic possibility an animal can feel, be cautious and count it. (The New York Declaration urges the same caution.) Then one question to finish.</p>
   <div class="stray" id="sTray" role="group" aria-label="Cards to sort"></div>
   <div class="bins3" id="sBins"></div>
   <div class="fb" id="sortFb" aria-live="polite"></div>
@@ -741,10 +748,10 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 
 <!-- ================= 11 RIGHTS ================= -->
 <section class="sheet" aria-labelledby="b6">
-  <h2 id="b6"><span style="--mark:var(--hl-g)">Rights: not up for trade</span></h2>
+  <h2 id="b6"><span style="--mark:var(--hl-g)">Rights: not to be traded away</span></h2>
   <p class="wow">Tom Regan thought Singer and Kant were both wrong, for opposite reasons.</p>
-  <p>The American philosopher Tom Regan (1938 to 2017) published <i>The Case for Animal Rights</i> in 1983. His complaint about Singer: utilitarianism weighs everything. In principle, anyone's suffering could be outweighed if it brought enough benefit to others. (You saw this worry in Case 1 of this challenge, about people.) His complaint about Kant: tying moral status to reason leaves out beings who obviously matter, human babies included.</p>
-  <p>Regan's alternative: what matters is being a <b>subject-of-a-life</b>. A subject-of-a-life has beliefs and desires, memory, a sense of its own future, an emotional life, and a welfare: its life can go better or worse <i>for it</i>, whatever use it is to anyone else. Such beings have <b>inherent value</b> (worth in themselves, not just as useful to others), and with it <b>rights</b>. Above all, the right not to be treated merely as a means, even for good results. That's Kant's "never merely as a means", stretched past reason. Regan was confident that at least normal mammals about a year old or older qualify.</p>
+  <p>The American philosopher Tom Regan (1938 to 2017) published <i>The Case for Animal Rights</i> in 1983. His complaint about Singer: utilitarianism weighs everything, so anyone's suffering could in principle be outweighed by enough benefit to others. His complaint about Kant: tying moral status to reason leaves out beings who obviously matter, human babies included.</p>
+  <p>Regan's alternative: what matters is being a <b>subject-of-a-life</b>. A subject-of-a-life has beliefs and desires, memory, a sense of its own future, an emotional life, and a welfare: its life can go better or worse <i>for it</i>, whatever use it is to anyone else. Such beings have <b>inherent value</b> (worth in themselves) and with it <b>rights</b>, above all the right not to be treated merely as a means, even for good results. That's Kant's "never merely as a means", extended beyond reason. Regan was sure that normal mammals a year old or older qualify.</p>
   <div class="views3">
     <div style="--vc:var(--hl-p)"><b>Singer (utilitarian: judges by overall results)</b>Count every sentient being's interests equally, then weigh for the best outcome.</div>
     <div style="--vc:var(--hl-b)"><b>Kant (classic)</b>Only rational beings count directly. Cruelty to animals is wrong because of what it does to us.</div>
@@ -759,15 +766,17 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     </div>
     <div class="fb" id="rightsFb" aria-live="polite"></div>
   </div>
-  <p>Having rights doesn't make every loss the same size, though. Regan argued that death harms a being by closing off its future, and a normal adult human usually has more possibilities to lose than a dog. So when someone must be harmed and everyone involved has the same rights, his rights view says to spare the one who would lose more.</p>
-  <p class="note">The other side: critics ask what Regan's view says about beings that may not be subjects-of-a-life, like insects or very young animals. And Peter Singer argued that Regan's "spare the one who loses more" reasoning sits uneasily with Regan's flat opposition to all harmful research on animals. (Regan replied that lab animals, unlike the dog in the lifeboat, are forced into the risk.)</p>
+  <p>Having rights doesn't make every loss the same size, though. Regan argued that death harms a being by closing off its future, and a normal adult human usually has more to lose than a dog. So when someone must be harmed and everyone involved has the same rights, his view says to spare the one who would lose more.</p>
+  <details class="sealed deepnote"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: the other side</summary><div class="inner">
+    <p>Critics ask what Regan's view says about beings that may not be subjects-of-a-life, like insects or very young animals. And Peter Singer argued that Regan's "spare the one who loses more" reasoning doesn't fit well with Regan's complete opposition to all harmful research on animals. (Regan replied that lab animals, unlike the dog in the lifeboat, are forced into the risk.)</p>
+  </div></details>
 </section>
 
 <!-- ================= 12 SPECIES OVERLAP ================= -->
 <section class="sheet" aria-labelledby="b7">
   <h2 id="b7"><span style="--mark:var(--hl-o)">The overlap argument (handled with care)</span></h2>
   <p class="wow">This argument only works because everyone agrees on one thing: every human being matters fully.</p>
-  <p>Suppose someone says moral status comes from some ability, call it T: being able to reason, or to use language. Here's the problem. Some human beings don't have T, or don't have it <i>yet</i>, or don't have it <i>any more</i>: newborn babies, people with severe cognitive disabilities, people with advanced dementia. And we are completely sure they matter fully. So T can't be what gives a being moral status.</p>
+  <p>Suppose someone says moral status comes from some ability T, such as reasoning or using language. But some human beings don't have T, or not <i>yet</i>, or not <i>any more</i>: newborn babies, people with severe cognitive disabilities, people with advanced dementia. And we are completely sure they matter fully. So T can't be what gives a being moral status.</p>
   <div class="exhibit" style="--hl-c:var(--hl-o)">
     <span class="lbl">Exhibit G: the argument</span>
     <span class="argline">1. Every human being has full moral status.</span>
@@ -775,9 +784,9 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <span class="argline">3. So ability T can't be what moral status rests on.</span>
     <span class="argline concl">So whatever does ground it (feeling? being a subject-of-a-life?) many animals may share.</span>
   </div>
-  <p>It's traditionally called the "argument from marginal cases". Some philosophers now prefer the name <b>argument from species overlap</b>, because "marginal" can sound as if those humans are on the edge of mattering. That's the opposite of what the argument assumes: premise 1 says they matter <i>fully</i>. Bentham's newborn-versus-dog comparison was an early version.</p>
-  <p class="note">Be careful with this one. The argument is never a reason to think any human matters less. Anyone who uses it that way has thrown out its first premise.</p>
-  <p>Three common replies. Tap each one open (worth a look before Lead 5, but Lead 5 does not require it).</p>
+  <p>It's traditionally called the "argument from marginal cases". Some philosophers prefer <b>argument from species overlap</b>, because "marginal" can sound as if those humans are on the edge of mattering, the opposite of premise 1, which says they matter <i>fully</i>. Bentham's newborn-versus-dog comparison was an early version.</p>
+  <p class="note">Be careful with this one. The argument is never a reason to think any human matters less. Anyone who uses it that way has rejected its first premise.</p>
+  <p>Three common replies. Tap each one open (worth a look before Lead 5, not required).</p>
   <details class="reply" style="--rc:var(--hl-o)">
     <summary><b>Reply 1: kind, not ability</b></summary>
     <div class="inner"><p>What counts is the kind of being you are: what's normal for your species.</p><p class="other">The other side says: why should how much I matter depend on other individuals' abilities, not my own?</p><p><b>Rejoinder</b> (the defenders' comeback)<b>:</b> defenders say moral status belongs to kinds of beings, not to test scores, and that's exactly why no human ever falls below it.</p></div>
@@ -798,11 +807,12 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="gtab">Lead 5 of 5</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
   <h2 id="g5h">Predict the verdict</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Rights: not up for trade" and "The overlap argument" above, then press <b>Got it</b>.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Rights: not to be traded away" and "The overlap argument" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
   <div class="skiprow"><button class="btn ghost skipbtn" type="button" data-skip="g5">Skip this lead</button></div>
   <div class="skippanel" hidden><p><b>Skipped.</b> No problem, and no reason needed. Rocky will see that you skipped it (plus anything you'd already answered). The evidence card is still in the top bar if you want a quick look.</p><button class="btn ghost" type="button" data-playanyway="g5">Play it anyway</button></div>
   <p class="how">Four cases. For each, two taps: first predict how the three views line up (graded), then make <b>your own</b> call (never graded). One case is about research; it stays at the level of ideas.</p>
+  <p class="small"><b>The three views:</b> Singer weighs everyone's interests for the best overall result. Classic Kant counts only rational beings directly. Regan says subjects-of-a-life have rights that good results can't override.</p>
   <p class="m-nav" id="pollNav"></p>
   <div class="mach" id="pollCard"></div>
   <div class="fb" id="pollFb" aria-live="polite"></div>
@@ -816,9 +826,8 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 14 WHAT IT SETTLES ================= -->
 <section class="sheet" aria-labelledby="b8">
   <h2 id="b8"><span style="--mark:var(--hl-y)">What the arguments settle, and what they don't</span></h2>
-  <p><b>Common ground.</b> Every view in this file condemns hurting animals for fun. Even classic Kant does, though for a reason most people find too thin.</p>
-  <p><b>Still open.</b> Which beings count directly, how much weight their interests get, and what that means for particular practices. This is a live debate among serious philosophers, not a solved problem.</p>
-  <p><b>The gap.</b> Remember the three kinds of claim. Even if you accept a moral claim like "equal suffering counts equally", turning it into a personal instruction needs more steps. Think of your health, your family, your culture and faith, what you can afford and what's available. Then ask which practices really cause harm, and what difference one choice makes. Thoughtful people who agree on the moral claim still end up living very differently.</p>
+  <p><b>Common ground.</b> Every view in this file condemns hurting animals for fun. Even classic Kant does, though for a reason many people find too weak. <b>Still open:</b> which beings count directly, and how much weight their interests get. Serious philosophers still debate both.</p>
+  <p><b>The gap.</b> Even if you accept a moral claim like "equal suffering counts equally", turning it into a personal instruction takes more steps (your health, family, culture and faith, budget, what's available). Thoughtful people who agree on the moral claim still end up living very differently.</p>
   <p class="note">In this course your reasoning gets feedback. Your lifestyle never does, and nobody is owed an explanation of your dinner.</p>
 </section>
 
@@ -829,7 +838,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <h2 id="finh">Case closed: what do we owe animals?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear (or skip) all five leads to open the final file.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Time to commit. Pick the view closest to yours and give the reason that does the most work for you. Any view is fine; the reason is what counts. This is about moral status, not about what anyone eats.</p>
+  <p class="how">Time to decide. Pick the view closest to yours and give the reason that matters most to you. Any view is fine; the reason is what counts. This is about moral status, not about what anyone eats.</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
   <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
   <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
@@ -852,7 +861,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will argue the other side once; holding firm with a reason is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -860,29 +869,29 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
 <!-- ================= 16 MIT ================= -->
 <section class="sheet" aria-labelledby="b10">
   <h2 id="b10"><span style="--mark:var(--hl-b)">Before you go back to Rocky: MIT's lecture</span></h2>
-  <p>MIT's free course 24.02x, <i>Moral Problems and the Good Life</i>, has a lecture on this exact question, called "What You Owe to Non-Human Animals" (Lecture 16). It covers the same ground from MIT's side, with its own examples.</p>
+  <p>MIT's free course 24.02x, <i>Moral Problems and the Good Life</i>, has a lecture on this exact question, "What You Owe to Non-Human Animals" (Lecture 16), with its own examples.</p>
   <div class="linkrow"><a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">MIT 24.02x on the Open Learning Library</a></div>
-  <p class="small">Free. You can browse without an account (some parts may need one), or enroll to track progress. Lecture 16 is in the course outline.</p>
+  <p class="small">Free. You can browse without an account (some parts may need one). Lecture 16 is in the course outline.</p>
 </section>
 
 <!-- ================= 17 COPY FOR ROCKY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your gut call, all five leads (or that you skipped them) and your verdict. Nothing is sent anywhere; it only goes where you paste it. (The small "Copy just this lead" buttons are only for when Rocky asks about one lead.)</p>
+  <p>Rocky can't see this page. Copy your whole case file below and paste it to Rocky as one message: your gut call, warm-up, all five leads (or that you skipped them) and your verdict. Nothing is sent anywhere; it only goes where you paste it. (The small "Copy just this lead" buttons are only for when Rocky asks about one lead.)</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
 <!-- ================= 18 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
   <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
-  <details class="sealed"><summary><span class="seal" aria-hidden="true">+</span>Open the bonus files (short on time? Skip this one.)</summary><div class="inner">
+  <details class="sealed"><summary><span class="seal" aria-hidden="true">+</span>Short on time? Skip this one: the bonus files</summary><div class="inner">
   <ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by; Lecture 16 is on animals. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>"Can They Suffer?": Jeremy Bentham on our Obligations to Animals</b> (1000-Word Philosophy). A short, clear essay on the famous footnote. <a class="linkbtn" href="https://1000wordphilosophy.com/2022/03/18/bentham-on-animals/" target="_blank" rel="noopener">1000wordphilosophy.com</a></li>
     <li><b>"Insects and Other Animals Have Consciousness, Experts Declare"</b> (Quanta Magazine, April 2024). The story behind the New York Declaration. <a class="linkbtn" href="https://www.quantamagazine.org/insects-and-other-animals-have-consciousness-experts-declare-20240419/" target="_blank" rel="noopener">quantamagazine.org</a></li>
     <li><b>The 2021 LSE review on octopuses, crabs and lobsters</b> (LSE news story). <a class="linkbtn" href="https://www.lse.ac.uk/News/Latest-news-from-LSE/2021/k-November-21/Octopuses-crabs-and-lobsters-welfare-protection" target="_blank" rel="noopener">lse.ac.uk</a></li>
     <li><b>Christine Korsgaard, <i>Fellow Creatures</i> (2018)</b>. A Kantian argues for duties to animals. Demanding but rewarding; ask a library.</li>
-    <li><b>Peter Singer, <i>Animal Liberation</i> (1975; updated in 2023 as <i>Animal Liberation Now</i>)</b>. The book that made "speciesism" famous. Heads-up: some chapters describe farming and research practices in detail.</li>
+    <li><b>Peter Singer, <i>Animal Liberation</i> (1975; updated in 2023 as <i>Animal Liberation Now</i>)</b>. The book that made "speciesism" famous. Note: some chapters describe farming and research practices in detail.</li>
   </ul>
   </div></details>
 </section>
@@ -897,7 +906,7 @@ var $ = function(id){ return document.getElementById(id); };
 function el(tag, attrs){ var e=document.createElement(tag); if(attrs){for(var k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); }} return e; }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 var streak=0, nudgeNext=false;
-function setFb(node, kind, verdict, body){ if(kind==="good") streak=0; if(nudgeNext && kind==="bad"){ body+=" <i>That's "+streak+" misses in a row. Take a minute to reread the box above, then try again.</i>"; } nudgeNext=false; node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
+function setFb(node, kind, verdict, body){ if(kind==="good") streak=0; if(nudgeNext && kind==="bad"){ body+=" <i>That's "+streak+" misses in a row. That is fine: the rule is restated in each hint. Try again.</i>"; } nudgeNext=false; node.className="fb "+(kind||""); node.innerHTML = (verdict?'<strong class="v">'+verdict+'</strong> ':"")+body; }
 function flat(t){ return String(t==null?"":t).replace(/[\r\n\u2028\u2029]+/g," ").replace(/\s{2,}/g," ").trim(); }
 function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 var reduceMotion=false; try{ reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
@@ -905,11 +914,11 @@ function focusFb(node){ if(!node) return; if(!node.hasAttribute("tabindex")) nod
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Yep.","Spot on.","Clean sort.","Exactly."], no:["Not that one.","Close, but no.","Look again."]},
- g2:{ok:["Right rung.","The evidence agrees.","Yep.","Spot on."], no:["Not that rung.","Close, but no.","Check the 2024 list."]},
- g3:{ok:["Solid.","Yep.","Exactly.","Nicely built."], no:["Not quite.","Close, but no.","Tempting, but..."]},
- g4:{ok:["Both tests check out.","Yep.","Spot on."], no:["Not that bin.","Close, but no.","Run the two tests again."]},
- g5:{ok:["Called it.","Good read of the views.","Yep.","Exactly."], no:["Not quite.","Tempting, but...","Close, but no."]}
+ g1:{ok:["Yep.","Right.","Clean sort.","Exactly."], no:["Not that one.","Close, but no.","Not quite."]},
+ g2:{ok:["Right rung.","Yep.","Right placement.","Exactly."], no:["Not that rung.","Close, but no.","Not quite."]},
+ g3:{ok:["Right.","Yep.","Exactly."], no:["Not quite.","Close, but no.","Tempting, but no."]},
+ g4:{ok:["Right bin.","Yep.","Exactly."], no:["Not that bin.","Close, but no.","Not quite."]},
+ g5:{ok:["Right prediction.","Good read of the views.","Yep.","Exactly."], no:["Not quite.","Tempting, but no.","Close, but no."]}
 };
 var lastV={};
 function vword(g,kind){ if(kind==="no"){ streak++; nudgeNext = streak%3===0; } else { streak=0; nudgeNext=false; }
@@ -951,8 +960,8 @@ var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, skipped={}, playAnyway={}, openCard=null;
 function gameOf(id){ return GAMES.filter(function(x){return x.id===id;})[0]; }
 GAMES.forEach(function(g){
-  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
+  var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet. Tap to see why.","aria-expanded":"false"});
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.classList.add("lockedpip");
   b.addEventListener("click",function(){ showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
@@ -975,6 +984,11 @@ function showCard(g){
   if(openCard===g.id){ P.hidden=true; openCard=null; return; }
   openCard=g.id; $("dock-"+g.id).setAttribute("aria-expanded","true");
   P.style.setProperty("--c",g.c);
+  if(!cleared[g.id]){
+    P.innerHTML='<h3>Evidence '+g.lead+': not collected yet</h3><p>Clear or skip Lead '+g.lead+' to file this evidence card. Then tap here to review it.</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+    P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
+    return;
+  }
   P.innerHTML='<h3>Evidence '+g.lead+': '+g.title+'</h3><p>'+g.body+'</p><p><i>Example:</i> '+g.ex+'</p>'+(skipped[g.id]?'<p class="small">(You skipped this lead. The card is here if you want it.)</p>':'')+'<div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
   P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; openCard=null; $("dock-"+g.id).setAttribute("aria-expanded","false"); $("dock-"+g.id).focus(); });
 }
@@ -982,10 +996,12 @@ function showCard(g){
 /* on-screen clearing feedback: toast + pip pulse + inline badge where the student is */
 var toastTimer=null;
 function toast(msg, color){
-  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); var dk=document.querySelector(".dock"); if(dk){ T.style.top=Math.max(8,Math.round(dk.getBoundingClientRect().bottom+8))+"px"; }
+  var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)");
+  /* the toast sits on top of the dock bar (never over the lead, its instructions or its feedback) */
+  var dk=$("dock"); if(dk){ var r=dk.getBoundingClientRect(); T.style.top=Math.max(0,Math.round(r.top))+"px"; T.style.left=Math.round(r.left)+"px"; T.style.width=Math.round(r.width)+"px"; T.style.height=Math.min(Math.round(r.height),60)+"px"; }
   T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1800);
 }
 function celebrate(g, isSkip){
   var n=nCleared(), all=Object.keys(cleared).length===NG;
@@ -997,7 +1013,7 @@ function celebrate(g, isSkip){
 }
 function setPip(id){
   var g=gameOf(id), b=$("dock-"+id);
-  b.classList.remove("done","skip"); b.classList.add(skipped[id]?"skip":"done"); b.disabled=false;
+  b.classList.remove("done","skip","lockedpip"); b.classList.add(skipped[id]?"skip":"done"); b.disabled=false;
   b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+(skipped[id]?" (skipped)":"")+". Open the card.");
 }
 function markSkippedUI(id, on){
@@ -1025,8 +1041,9 @@ function clear(id, quiet, isSkip){
   if(Object.keys(cleared).length===NG) openLab("fin");
   refreshGot(); updateProg(); saveState();
 }
-/* double-tap guard: ignore taps for ~400 ms after a card advances */
-var guardUntil=0; function advGuard(){ guardUntil=Date.now()+400; }
+/* double-tap guard: ignore taps for 250 ms after a card advances, and dim the buttons while it lasts so a swallowed tap is never silent */
+var GUARD_MS=250, guardUntil=0, guardTimer=null;
+function advGuard(){ guardUntil=Date.now()+GUARD_MS; document.body.classList.add("guarding"); clearTimeout(guardTimer); guardTimer=setTimeout(function(){ document.body.classList.remove("guarding"); }, GUARD_MS); }
 function blocked(id){ return (skipped[id] && !playAnyway[id]) || Date.now()<guardUntil; }
 
 /* ---------- locks: each lead opens only after its reading AND the previous lead ---------- */
@@ -1047,9 +1064,14 @@ function refreshGot(){
     else { b.disabled=true; msg.textContent = (k>unlockedStep+1) ? "Open the earlier leads first (scroll up)." : (!prevOk ? "Clear (or skip) Lead "+(k-1)+" first (scroll up)." : extraNeed(k)); }
   });
 }
+function setDockH(){ try{ document.documentElement.style.setProperty("--dockh", $("dock").offsetHeight+"px"); }catch(e){} }
+setDockH(); window.addEventListener("resize", setDockH);
+try{ if(window.ResizeObserver) new ResizeObserver(setDockH).observe($("dock")); }catch(e){}
 function doUnlock(k, focus){
   unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
-  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body .how"); if(first){ first.setAttribute("tabindex","-1"); first.focus(); } }
+  if(focus){ var lab=$(UNLOCKS[k]), first=lab.querySelector(".lab-body .how");
+    if(first){ first.setAttribute("tabindex","-1"); try{ first.focus({preventScroll:true}); }catch(e){ first.focus(); } }
+    setDockH(); try{ lab.scrollIntoView({behavior: reduceMotion?"auto":"smooth", block:"start"}); }catch(e){} }
 }
 gotBtns.forEach(function(b){
   b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(b.disabled || k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
@@ -1065,6 +1087,26 @@ refreshGot();
     var n=el("p",{class:"skipped-note"}); n.textContent="Playing anyway. Your record stays \"skipped\" unless you finish the lead."; var body=$(id).querySelector(".lab-body"); body.insertBefore(n, body.children[2]||null);
     var f=$(id).querySelector(".lab-body .how"); if(f){ f.setAttribute("tabindex","-1"); f.focus(); } });
 });
+
+/* ---------- shared two-tap lock: first tap arms, second tap (after 500 ms) confirms, arm reset after 20 s ---------- */
+function armLock(btn, idleText, check, confirm){
+  var armedAt=0, timer=null, dimT=null;
+  function disarm(){ armedAt=0; clearTimeout(timer); clearTimeout(dimT); btn.textContent=idleText; btn.classList.remove("armed","wait"); btn.removeAttribute("aria-disabled"); }
+  btn.addEventListener("click",function(){
+    if(btn.disabled) return;
+    if(!armedAt){
+      if(!check()) return;
+      armedAt=Date.now(); btn.textContent="Tap again to lock it in"; btn.classList.add("armed","wait"); btn.setAttribute("aria-disabled","true");
+      clearTimeout(dimT); dimT=setTimeout(function(){ btn.classList.remove("wait"); btn.removeAttribute("aria-disabled"); }, 500);
+      clearTimeout(timer); timer=setTimeout(disarm, 20000); return;
+    }
+    if(Date.now()-armedAt<500) return;
+    if(!check()){ disarm(); return; }
+    clearTimeout(timer); clearTimeout(dimT); armedAt=0; btn.classList.remove("armed","wait"); btn.removeAttribute("aria-disabled");
+    confirm();
+  });
+  return disarm;
+}
 
 /* ---------- gut call: truly locked after "Lock it in" ---------- */
 var GUT=[
@@ -1087,12 +1129,15 @@ function freezeCover(){
   $("gutOpts").querySelectorAll(".choice").forEach(function(b){ b.disabled=true; });
   $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
-$("lockBtn").addEventListener("click",function(){
-  if(COVER.locked) return;
+armLock($("lockBtn"),"Lock it in",function(){
+  if(COVER.locked) return false;
   var r=$("myReason").value.trim();
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the four first."; return; }
-  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a real reason, in a sentence."; $("myReason").focus(); return; }
-  COVER.reason=flat(r); COVER.locked=true; freezeCover();
+  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick one of the four first."; return false; }
+  if(r.length<8){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a real reason, in a sentence."; $("myReason").focus(); return false; }
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Tap the button again to lock it for good.";
+  return true;
+},function(){
+  COVER.reason=flat($("myReason").value); COVER.locked=true; freezeCover();
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
   saveState();
 });
@@ -1105,7 +1150,7 @@ function linesFor(g){
   if(saved && !touched[g]) return saved.concat();
   return LIVE[g]();
 }
-function coverLines(){ return ["Gut call (dog, octopus, person, same pain; locked before reading): "+(COVER.locked ? GL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
+function coverLines(){ return ["Gut call (first instinct; dog, octopus, person, same pain; locked before reading): "+(COVER.locked ? GL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
 function pollLines(){
   var P={reflex:"reflex",weigh:"weighing",cant:"can't tell yet",never:"never",some:"sometimes",unsure:"not sure",horse:"horse's pain counts less",baby:"baby's pain counts less",neither:"neither counts less"};
   return ["Ungraded taps: hermit crab and the good shell = "+(POLLS.crab?P[POLLS.crab]:"not answered")+"; horse or baby under Bentham's test = "+(POLLS.bent?P[POLLS.bent]:"not answered")+"; can a big benefit override a right = "+(POLLS.rights?P[POLLS.rights]:"not answered")+"; reply cards opened = "+Object.keys(repliesOpen).length+" of "+replyEls.length];
@@ -1148,7 +1193,7 @@ function wuCount(){ return WARM.picks.filter(function(x){return x;}).length; }
 function wuText(i){ var p=WARM.picks[i]; return WU[i][0].replace(/^A /,"").toLowerCase()+" vs "+WU[i][1].replace(/^A /,"").toLowerCase()+" = "+(p==="a"?WU[i][0].replace(/^A /,"").toLowerCase():p==="b"?WU[i][1].replace(/^A /,"").toLowerCase():"tie"); }
 function wuReveal(){
   var ties=WARM.picks.filter(function(x){return x==="same";}).length;
-  var msg = ties===5 ? "You called every pair a tie: pain is pain, to you. The file will test that." : "The pain was identical in every pair"+(ties?", yet you picked a side in "+(5-ties)+" of 5":", yet you picked a side every time")+". So something other than the pain tipped you: size, cuteness, brains or how close they feel. Is that a good reason? Hold that thought. We test it in Lead 3.";
+  var msg = ties===5 ? "You called every pair a tie: pain is pain, to you. The file will test that." : "The pain was identical in every pair"+(ties?", yet you picked a side in "+(5-ties)+" of 5":", yet you picked a side every time")+". So something other than the pain pushed you: size, cuteness, brains or how close they feel. Is that a good reason? Keep that in mind. We test it in Lead 3.";
   setFb($("wuFb"),"good","Done.",msg);
 }
 function wuRender(focus){
@@ -1160,7 +1205,7 @@ function wuRender(focus){
   var i=WARM.picks.indexOf(null);
   C.className="wucard"; C.innerHTML=""; $("wuFb").className="fb"; $("wuFb").innerHTML="";
   $("wuNav").textContent="Pair "+(i+1)+" of 5. Same pain in both.";
-  if(focus) wuReadyAt=Date.now()+400;
+  if(focus){ wuReadyAt=Date.now()+250; C.classList.add("wait"); setTimeout(function(){ C.classList.remove("wait"); }, 250); }
   var order=shuffle(["a","b"]);
   order.concat(["same"]).forEach(function(k){
     var b=el("button",{class:"wu"+(k==="same"?" same":""),type:"button","data-s":k});
@@ -1194,11 +1239,11 @@ function wirePoll(id, key, onPick){
     });
   });
 }
-var CRAB_FB={weigh:["That fits.","Many researchers read it that way: a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."],reflex:["Fair guess.","Some scientists would agree it could be a reflex. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."],cant:["Fair.","Scientists argue about this too. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker. Here are the others."]};
+var CRAB_FB={weigh:["That fits.","Many researchers read it that way: a pure reflex wouldn't care how good the shell is. That's one marker (the next box lists the others)."],reflex:["Fair guess.","Some scientists would agree it could be a reflex. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker (the next box lists the others)."],cant:["Fair.","Scientists argue about this too. Many read it as weighing, because a pure reflex wouldn't care how good the shell is. That's one marker (the next box lists the others)."]};
 function wirePollReply(v){ var f=BENT_FB[v]||BENT_FB.neither; setFb($("bentFb"),"",f[0],f[1]); }
 function crabReply(v){ var f=CRAB_FB[v]||CRAB_FB.cant; setFb($("crabFb"),"",f[0],f[1]); }
 var BENT_FB={horse:["Not quite.","Bentham's point runs the other way. The horse out-reasons the baby, yet nobody thinks a baby's pain counts for less. So reasoning can't be the test. The test is whether each can suffer."],baby:["Not quite.","Bentham's point runs the other way. The horse out-reasons the baby, yet nobody thinks a baby's pain counts for less. So reasoning can't be the test. The test is whether each can suffer."],neither:["That's his point.","The horse out-reasons the baby, yet nobody thinks a baby's pain counts for less. So reasoning can't be the test. The test is whether each can suffer."]};
-var RIGHTS_FB={never:"That's Regan's side: rights aren't for trading.",some:"That's closer to Singer: everything goes on the scale.",unsure:"Most people feel both pulls. Lead 5 tests where each view lands."};
+var RIGHTS_FB={never:"That's Regan's side: rights aren't for trading.",some:"That's closer to Singer: everything gets weighed.",unsure:"Most people feel both pulls. Lead 5 tests where each view lands."};
 wirePoll("crabPoll","crab",crabReply);
 wirePoll("bentPoll","bent",function(v){ var f=BENT_FB[v]||BENT_FB.neither; setFb($("bentFb"),"",f[0],f[1]); });
 wirePoll("rightsPoll","rights",function(v){ setFb($("rightsFb"),"","Noted.",RIGHTS_FB[v]); });
@@ -1221,7 +1266,7 @@ var CLAIMS=[
  {t:"Sam should get their family to change what's for dinner.", short:"Sam's family dinner", a:"per",
   why:"It tells one person what to do in their own household. That's a personal call, which this file leaves to each person."},
  {t:"In a survey, most people said dogs matter more than pigs.", short:"survey", a:"sci", sneaky:true,
-  why:"The sneaky one. It sounds moral, but it only reports what people <i>said</i>. Whether that's true about people is checked with evidence, so it's a science claim. And a survey can't tell you whether those people are <i>right</i>."}
+  why:"The tricky one. It sounds moral, but it only reports what people <i>said</i>. Whether that's true about people is checked with evidence, so it's a science claim. And a survey can't tell you whether those people are <i>right</i>."}
 ];
 var HINT2="Is it describing the world, judging what matters, or telling one particular person what to do?";
 var claimDone=0;
@@ -1239,11 +1284,11 @@ shuffle(CLAIMS.map(function(_,i){return i;})).forEach(function(i){
       row.querySelectorAll(".pick").forEach(function(x){x.classList.remove("chosen");}); b.classList.add("chosen");
       if(v===it.a){
         r.final=v; box.classList.add("locked");
-        setFb(fb,"good", r.misses.length?"Got it.":(it.sneaky?"Sharp eye.":vword("g1","ok")), it.why);
+        setFb(fb,"good", r.misses.length?"Got it.":(it.sneaky?"Good catch.":vword("g1","ok")), it.why);
         row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
         focusFb(fb);
         claimDone++; $("claimScore").textContent=claimDone+" of "+CLAIMS.length+" sorted";
-        if(claimDone===CLAIMS.length){ $("claimScore").textContent="All "+CLAIMS.length+" sorted. Keep this tool handy: arguments about animals often slide between these three without noticing."; clear("g1"); }
+        if(claimDone===CLAIMS.length){ $("claimScore").textContent="All "+CLAIMS.length+" sorted. Keep this tool in mind: arguments about animals often slide between these three without noticing."; clear("g1"); }
       } else {
         r.misses.push(v);
         setFb(fb,"bad",vword("g1","no"), r.misses.length===1 ? "Ask: could you settle it with evidence? Is it about what matters? Or is it telling one person what to do?" : HINT2);
@@ -1255,12 +1300,12 @@ shuffle(CLAIMS.map(function(_,i){return i;})).forEach(function(i){
   box.appendChild(row); box.appendChild(fb); $("claimList").appendChild(box);
 });
 function claimLines(){
-  var s=skipLine("g1","Lead 1 Science, morals, or marching orders"); if(s) return [s];
+  var s=skipLine("g1","Lead 1 Science, morals, or personal instructions"); if(s) return [s];
   var done=CLAIMS.filter(function(_,i){return REC.claims[i].final;}).length;
-  if(!done) return ["Lead 1 Science, morals, or marching orders: not started"];
+  if(!done) return ["Lead 1 Science, morals, or personal instructions: not started"];
   var first=CLAIMS.filter(function(_,i){return REC.claims[i].final && !REC.claims[i].misses.length;}).length;
   var miss=CLAIMS.map(function(it,i){ return REC.claims[i].misses.length ? it.short : null; }).filter(Boolean);
-  return ["Lead 1 Science, morals, or marching orders: "+done+" of "+CLAIMS.length+" sorted, "+first+" of "+done+" right first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")+skipSuffix("g1")];
+  return ["Lead 1 Science, morals, or personal instructions: "+done+" of "+CLAIMS.length+" sorted, "+first+" of "+done+" right first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")+skipSuffix("g1")];
 }
 
 /* ================= LEAD 2: EVIDENCE LADDER ================= */
@@ -1295,7 +1340,7 @@ function lRender(){
       } else {
         lMiss++;
         if(REC.lad.misses.indexOf(s.n)<0) REC.lad.misses.push(s.n);
-        setFb($("ladFb"),"bad",vword("g2","no"), lMiss===1 ? "Which groups did the 2024 declaration give \"strong support\", and which a \"realistic possibility\"? And remember: reacting isn't feeling." : "Read the buttons again: the 2024 groups are named right on them.");
+        setFb($("ladFb"),"bad",vword("g2","no"), lMiss===1 ? "The rule: the 2024 declaration gives mammals and birds \"strong support\" (top rung), and other vertebrates and many invertebrates a \"realistic possibility\" (middle rung). Reacting isn't feeling." : "Quick sort: mammals and birds go on top. Fish, reptiles, amphibians, crabs, octopuses, squid and insects go in the middle. Things with no nervous system, like plants and machines, go on the bottom.");
       }
       touch("g2");
     });
@@ -1307,7 +1352,7 @@ lRender();
 function ladLines(){
   var s=skipLine("g2","Lead 2 Evidence ladder"); if(s) return [s];
   if(!REC.lad.done) return ["Lead 2 Evidence ladder: not started"];
-  return ["Lead 2 Evidence ladder: "+REC.lad.done+" of "+SPECS.length+" placed, "+REC.lad.first+" of "+REC.lad.done+" first try"+(REC.lad.misses.length?"; tricky: "+REC.lad.misses.join(", "):"")+skipSuffix("g2")];
+  return ["Lead 2 Evidence ladder: "+REC.lad.done+" of "+SPECS.length+" placed, "+REC.lad.first+" of "+REC.lad.done+" first try"+(REC.lad.misses.length?"; needed another go on: "+REC.lad.misses.join(", "):"")+skipSuffix("g2")];
 }
 
 /* ================= LEAD 3: ARGUMENT BUILDER ================= */
@@ -1317,16 +1362,16 @@ var CONCL=[
  ["c","So animals are just as intelligent as most humans are."]
 ];
 var CONCL_NO={
- b:"Equal consideration isn't equal treatment (screen 7): a pig can't vote, so a right to vote makes no sense for it. The argument is about whose suffering counts.",
+ b:"Equal consideration isn't equal treatment: a pig can't vote, so a right to vote makes no sense for it. The argument is about whose suffering counts.",
  c:"That's a science claim, and false in general. Singer's argument doesn't need animals to be clever at all; it's about suffering."
 };
 var PREMS=[
- {k:"p1", t:"If a being can suffer, its suffering matters morally.", good:true, short:"suffering matters", why:"Bentham's idea: sentience is the ticket."},
+ {k:"p1", t:"If a being can suffer, its suffering matters morally.", good:true, short:"suffering matters", why:"Bentham's idea: being able to feel is what gives a being moral status."},
  {k:"p2", t:"Many animals can suffer.", good:true, short:"animals can suffer", why:"The science premise: the evidence ladder."},
  {k:"p3", t:"Equal interests deserve equal weight, no matter whose they are.", good:true, short:"equal consideration", why:"Singer's equal consideration of interests."},
  {k:"d1", t:"Most animals are cute and easy to love.", good:false, short:"cute", why:"Cuteness isn't a reason. And the argument has to work for creatures nobody finds cute, too."},
  {k:"d2", t:"Humans are smarter than most animals.", good:false, short:"humans smarter", why:"Mostly true, but it doesn't support this conclusion. If anything, critics use it on the other side, and the overlap argument (coming up) asks whether it matters."},
- {k:"d3", t:"Most people already agree that animals matter.", good:false, short:"most people agree", why:"Popularity isn't proof. That's a survey fact, not a reason (remember Lead 1's sneaky card)."}
+ {k:"d3", t:"Most people already agree that animals matter.", good:false, short:"most people agree", why:"Popularity isn't proof. A survey reports what people think; it doesn't show they're right."}
 ];
 var premSel={};
 shuffle(CONCL).forEach(function(c){
@@ -1398,10 +1443,10 @@ var PUSH=[
  ["none","None: I think the argument works"]
 ];
 var PUSH_FB={
- p1:"That's Kant's line of attack: maybe reason, not feeling, is the ticket. Next screen.",
+ p1:"That's Kant's line of attack: maybe reason, not feeling, is what gives a being moral status. Next screen.",
  p2:"Fair, and the ladder showed real uncertainty. Notice, though, that this only shrinks the list of animals; it doesn't touch dogs or crows.",
  p3:"Then you owe a reason why, one that isn't just \"because they're human\" (that's what Singer calls speciesism). The overlap argument coming up tests exactly this.",
- none:"Then you're with Singer on the core idea. Keep an eye on whether Kant and Regan change your mind."
+ none:"Then you're with Singer on the core idea. Notice whether Kant and Regan change your mind."
 };
 PUSH.forEach(function(o){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-k":o[0]}); b.textContent=o[1];
@@ -1419,8 +1464,8 @@ PUSH.forEach(function(o){
 function argLines(){
   var s=skipLine("g3","Lead 3 Build Singer's argument"); if(s) return [s];
   var A=REC.arg; if(!A.conclDone && !A.conclMiss) return ["Lead 3 Build Singer's argument: not started"];
-  var out=["Lead 3 Build Singer's argument: conclusion "+(A.conclDone?"right"+(A.conclMiss?" after "+A.conclMiss+" miss(es)":" first try"):"not found yet")+"; premises "+(A.premDone?"right"+(A.premTries>1?" on try "+A.premTries:" first try"):"not done")+"; science premise "+(A.sciDone?"spotted"+(A.sciMiss?" after "+A.sciMiss+" miss(es)":" first try"):"not done")+skipSuffix("g3")];
-  if(A.push) out.push("Lead 3 where I'd push back: "+PUSH.filter(function(p){return p[0]===A.push;})[0][1]);
+  var out=["Lead 3 Build Singer's argument: conclusion "+(A.conclDone?"right"+(A.conclMiss?" (needed another go)":" first try"):"not found yet")+"; premises "+(A.premDone?"right"+(A.premTries>1?" (needed another go)":" first try"):"not done")+"; science premise "+(A.sciDone?"spotted"+(A.sciMiss?" (needed another go)":" first try"):"not done")+skipSuffix("g3")];
+  if(A.push) out.push("Lead 3 premise I'd challenge first: "+PUSH.filter(function(p){return p[0]===A.push;})[0][1]);
   return out;
 }
 
@@ -1464,14 +1509,14 @@ BINS3.forEach(function(bn){
     } else {
       sMiss[sSel]=(sMiss[sSel]||0)+1; if(REC.sort.misses.indexOf(it.n)<0) REC.sort.misses.push(it.n);
       z.classList.add("flash"); setTimeout(function(){z.classList.remove("flash");},500);
-      setFb($("sortFb"),"bad",vword("g4","no"), sMiss[sSel]===1 ? "Two separate questions: can it feel (top or middle rung counts)? Can it reason about principles, in Kant's sense?" : "Take the tests one at a time: sentience first, then Kant's rationality test.");
+      setFb($("sortFb"),"bad",vword("g4","no"), sMiss[sSel]===1 ? "Two separate questions: can it feel (top or middle rung counts)? Can it reason about principles, in Kant's sense?" : "The rule: the sentience test counts anything that can feel (top or middle rung). Kant's test counts only beings that reason about principles. The bins are: both, sentience only, neither.");
     }
     touch("g4");
   });
   $("sBins").appendChild(z);
 });
 var SQ={q:"Kant still says you shouldn't kick a dog for fun. On his view, why?",
- o:[["a","Because the dog's pain is a wrong done to the dog itself"],["b","Because cruelty dulls our sympathy, so we treat people worse"],["c","Because dogs can reason a little, so they count a little"]], a:"b",
+ o:[["a","Because the dog's pain is a wrong done to the dog itself"],["b","Because cruelty weakens our sympathy, so we treat people worse"],["c","Because dogs can reason a little, so they count a little"]], a:"b",
  ok:"Indirect concern: the duty is about us and other people, not owed to the dog. That's exactly what critics find too thin.",
  no:{a:"That's the sentience view (or Korsgaard's rethink). Classic Kant says we owe nothing to the dog directly.",c:"Kant didn't think dogs pass the rationality test. His reason is about what cruelty does to us."}};
 function sortQuestion(){
@@ -1492,21 +1537,21 @@ function sortQuestion(){
 function sortLines(){
   var s=skipLine("g4","Lead 4 Moral-status sorter"); if(s) return [s];
   if(!REC.sort.placed) return ["Lead 4 Moral-status sorter: not started"];
-  return ["Lead 4 Moral-status sorter: "+REC.sort.placed+" of "+SORT.length+" sorted, "+REC.sort.first+" of "+REC.sort.placed+" first try"+(REC.sort.misses.length?"; tricky: "+REC.sort.misses.join(", "):"")+"; Kant's reason question "+(REC.sort.qDone?"right"+(REC.sort.qMiss?" after "+REC.sort.qMiss+" miss(es)":" first try"):"not done")+skipSuffix("g4")];
+  return ["Lead 4 Moral-status sorter: "+REC.sort.placed+" of "+SORT.length+" sorted, "+REC.sort.first+" of "+REC.sort.placed+" first try"+(REC.sort.misses.length?"; needed another go on: "+REC.sort.misses.join(", "):"")+"; Kant's reason question "+(REC.sort.qDone?"right"+(REC.sort.qMiss?" (needed another go)":" first try"):"not done")+skipSuffix("g4")];
 }
 
 /* ================= LEAD 5: PREDICT THE VERDICT ================= */
 var POLL=[
  {n:"The secret kick", d:"Someone hurts a stray dog just for fun. Nobody sees, the dog recovers, and (this is a thought experiment) it won't change the person's character at all.",
-  q:"Which view has the hardest time saying what went wrong?",
+  q:"Which view has the most trouble explaining what went wrong?",
   o:[["s","Singer's"],["k","Classic Kant's"],["r","Regan's"]], a:"k",
   ok:"Kant's wrong lives in the effect on character, and the story removed that effect. Singer points to the dog's suffering; Regan to the dog's rights. This is the objection to Kant, made vivid.",
   no:{s:"Singer has an easy answer: the dog suffered, for no comparable benefit.",r:"Regan has an easy answer: a dog is a subject-of-a-life, and its rights were violated."},
   mine:[["w","It was wrong"],["nw","Nothing wrong happened"],["u","Not sure"]]},
  {n:"The octopus law", d:"A country debates adding octopuses to its animal-welfare law, with protections like those dogs get.",
-  q:"Which view says the whole question turns on whether octopuses can feel?",
+  q:"Which view says the whole question depends on whether octopuses can feel?",
   o:[["s","Singer's"],["k","Classic Kant's"],["r","Regan's"]], a:"s",
-  ok:"On the sentience view the question turns on whether they can suffer, so the science is front and center. For classic Kant, octopuses fail the rationality test however much they feel.",
+  ok:"On the sentience view the question depends on whether they can suffer, so the science is front and center. For classic Kant, octopuses fail the rationality test however much they feel.",
   no:{k:"Kant's test is rationality. Evidence about feelings doesn't change his answer.",r:"Regan's test asks for more than feeling: beliefs, desires, memory, a sense of the future. Feeling is only part of it, so it isn't the whole question."},
   mine:[["y","I'd support the law"],["no","I'd oppose it"],["u","Not sure"]]},
  {n:"The lab trade-off", d:"A study would cause some mice mild, short-lived discomfort, and could lead to a medicine that helps many people. (We'll keep it at that.)",
@@ -1515,12 +1560,12 @@ var POLL=[
   ok:"Rights aren't traded for good results. Regan argued that subjects-of-a-life mustn't be used merely as means, even for great benefits. Singer would weigh the discomfort against the benefits; classic Kant sees no direct duty to the mice.",
   no:{s:"Singer is the one who weighs. If the benefits truly outweigh the suffering, his view can allow it.",k:"Classic Kant has no direct duties to mice at all, so he isn't the one blocking it."},
   mine:[["y","Allow the study"],["no","Don't allow it"],["u","Not sure"]]},
- {n:"The lifeboat", d:"Four people and a dog are in a lifeboat built for four. Someone has to go over the side, or everyone sinks.",
+ {n:"The lifeboat", d:"Four people and a dog are in a lifeboat built for four. Someone has to go overboard, or the boat sinks.",
   q:"Regan discussed a case like this himself. What did his rights view say?",
-  o:[["d","The dog goes: a human has more to lose"],["l","Draw lots: equal rights mean equal claims"],["p","A person goes: the dog is the innocent one"]], a:"d",
-  ok:"Regan said the dog: death takes more from a human, who loses more future possibilities (the rights screen). Singer's weighing might point the same way, but that is a prediction, not something he is on record saying. Classic Kant gives the dog no direct status. So having moral status, even rights, doesn't make every loss the same size.",
-  no:{l:"Equal rights, but not equal losses. Look back at the rights screen: when someone must be harmed, Regan spares the one who would lose more.",p:"Regan didn't count innocence. Look back at the rights screen: his test is who would lose more by dying."},
-  mine:[["dog","The dog goes"],["lots","Draw lots, dog included"],["u","Not sure"]]}
+  o:[["d","The dog goes overboard: a human has more to lose"],["l","Draw lots: equal rights mean equal claims"],["p","A person goes: the dog is the innocent one"]], a:"d",
+  ok:"Regan said the dog: death takes more from a human, who loses more future possibilities. Singer's weighing might point the same way, but that is a prediction, not something he is on record saying. Classic Kant gives the dog no direct status. So having moral status, even rights, doesn't make every loss the same size.",
+  no:{l:"Equal rights, but not equal losses. Regan's rule: when someone must be harmed and everyone has the same rights, spare the one who would lose more.",p:"Regan didn't count innocence. His rule: when someone must be harmed, spare the one who would lose more by dying."},
+  mine:[["dog","The dog goes overboard"],["lots","Draw lots, dog included"],["u","Not sure"]]}
 ];
 var pI=0;
 function pRender(){
@@ -1602,12 +1647,16 @@ function finRender(){
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
-$("finBtn").addEventListener("click",function(){
-  if(FIN.done) return;
+armLock($("finBtn"),"Lock my verdict",function(){
+  if(FIN.done) return false;
   var reason=flat($("finReason").value), moved=flat($("finMoved").value);
-  if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
+  if(!pendingView){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); return false; }
+  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return false; }
+  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return false; }
+  setFb($("finFb"),"","Ready.","Tap the button again to lock your verdict for good.");
+  return true;
+},function(){
+  var reason=flat($("finReason").value), moved=flat($("finMoved").value);
   FIN.view=pendingView; FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState();

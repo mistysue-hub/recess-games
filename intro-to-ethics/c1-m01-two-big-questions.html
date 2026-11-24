@@ -272,7 +272,7 @@ html,body{overflow-x:clip}
 .lockin .vbtn{cursor:pointer; min-height:44px; padding:8px 18px; border-radius:999px; border:2px solid var(--ink); background:transparent; font-family:var(--type); font-weight:700; color:var(--ink)}
 .lockin .vbtn[aria-pressed="true"]{background:var(--stamp); color:#fff; border-color:var(--stamp)}
 .lockin label{font-family:var(--type); font-weight:700; font-size:.92rem; display:block; margin-top:12px}
-.lockin input[type=text], .lockin textarea{width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
+.lockin textarea{resize:vertical; min-height:88px; width:100%; min-height:44px; margin-top:6px; font-family:var(--serif); font-size:1rem; padding:8px 10px; border-radius:8px; border:2px solid var(--ink-soft); background:var(--paper); color:var(--ink)}
 .lockmsg{font-family:var(--type); font-size:.9rem; color:var(--ok); margin-left:6px}
 .poll{background:var(--card); border-radius:12px; padding:14px 16px; margin:4px 0 18px; border:2px dashed var(--hl-o)}
 .poll p{font-size:1rem}
@@ -349,6 +349,11 @@ details.opt summary::before{content:"+"; display:inline-grid; place-items:center
 details.opt[open] summary::before{content:"\2212"}
 details.opt .inner{padding:0 14px 12px}
 details.opt .inner p{font-size:1rem}
+.btn.wait{opacity:.5}
+.btn.armed{background:var(--hl-o); color:var(--hl-ink)}
+.wopt:disabled{opacity:.6}
+.wopt.pick1:disabled{opacity:1}
+.dock .pip[aria-disabled="true"]{opacity:.7}
 /* ---------- warm-up: Tug of War ---------- */
 .warm{border-top:10px solid var(--hl-o); padding-top:34px; scroll-margin-top:70px}
 .warm .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--hl-o); color:var(--hl-ink);
@@ -408,17 +413,17 @@ details.opt .inner p{font-size:1rem}
       <button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn't press it</button>
     </div>
     <label for="myReason">My reason, in one sentence (you can add it later, at the end)</label>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" maxlength="220" rows="2" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 20 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 20 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP: TUG OF WAR ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wh">
-  <div class="gtab">Warm-up &middot; 30 seconds</div>
+  <div class="gtab">Warm-up &middot; about 1 minute</div>
   <h2 id="wh"><span style="--mark:var(--hl-o)">Warm-up: Tug of War</span></h2>
-  <p class="how">Six quick picks. There are no right answers, and a pick locks the moment you tap it. Go with your gut.</p>
+  <p class="how">Six quick picks. There are no right answers, and a pick locks the moment you tap it. Pick fast, without overthinking.</p>
   <div class="rope-ends" aria-hidden="true"><span class="l">Me</span><span class="r">Someone else</span></div>
   <div class="rope" aria-hidden="true"><div class="knot" id="wKnot"></div></div>
   <div id="wStage"></div>
@@ -455,7 +460,7 @@ details.opt .inner p{font-size:1rem}
   <h2 id="g1h">Sort the motives</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The two big questions" above, then press <b>Got it</b> at the end of it.</span></div>
   <div class="lab-body" hidden inert>
-  <p class="how">Each line is a reason someone might give. Tag it: is it about what's <b>good for me</b>, what I <b>owe others</b>, or <b>neither</b> (a fact that isn't a reason either way)? One of them is a judgment call and accepts two tags. Remember: a reason about someone else's good counts as a moral reason for you, because it's what you owe them.</p>
+  <p class="how">Misses cost nothing here; Rocky just uses them to see what to review. Each line is a reason someone might give. Tag it: is it about what's <b>good for me</b>, what I <b>owe others</b>, or <b>neither</b> (a fact that isn't a reason either way)? One of them is a hard one, and it accepts two tags. Remember: a reason about someone else's good counts as a moral reason for you, because it's what you owe them.</p>
   <div class="sort-scn">The situation: you find a wallet on the bus seat. Inside, $200 and an ID card.</div>
   <div id="sortList"></div>
   <p class="score" id="sortScore" aria-live="polite"></p>
@@ -467,9 +472,9 @@ details.opt .inner p{font-size:1rem}
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-p)">When the questions collide</span></h2>
   <p class="wow">Plato wrote a version of your button about 2,400 years ago.</p>
-  <p>Most of the time the two questions agree. Being honest tends to keep your friendships alive; being cruel tends to make you miserable. But not always.</p>
+  <p>Most of the time the two questions agree. Being honest tends to help your friendships last; being cruel tends to make you unhappy. But not always.</p>
   <div class="poll" id="ringPoll">
-    <p><b>Quick, honest gut check:</b> you find a ring that makes you invisible whenever you like. Would you behave exactly the same as you do now?</p>
+    <p><b>Quick, honest question:</b> you find a ring that makes you invisible whenever you like. Would you behave exactly the same as you do now?</p>
     <div class="row" role="group" aria-label="Your answer">
       <button class="btn ghost" type="button" data-r="yes">Yes, exactly</button>
       <button class="btn ghost" type="button" data-r="mostly">Mostly</button>
@@ -482,7 +487,7 @@ details.opt .inner p{font-size:1rem}
     <p>In Plato's <i>Republic</i>, written around 2,400 years ago, a character named Glaucon tells a story about a shepherd (often named Gyges in English) who finds exactly that ring. With nobody able to see him, he uses it to take the throne for himself. Glaucon is playing <i>devil's advocate</i>: he argues the harsh side on purpose, to test the idea. His challenge: if you could never get caught, would you still have any reason to be just? Or are people only good because they're afraid of being seen?</p>
     <p>"Nobody will ever know" is the Ring of Gyges in button form. Socrates spends most of the rest of the book trying to prove that being just is actually good <i>for</i> the just person.</p>
   </div>
-  <p>Fast forward to 1874. The Cambridge philosopher Henry Sidgwick wrote <i>The Methods of Ethics</i>. He found two principles that both seemed <i>self-evident</i> to him: obviously true once he thought hard about them.</p>
+  <p>Now jump ahead to 1874. The Cambridge philosopher Henry Sidgwick wrote <i>The Methods of Ethics</i>. He found two principles that both seemed <i>self-evident</i> to him: obviously true once he thought hard about them.</p>
   <div class="versus" aria-label="Sidgwick's two principles">
     <div class="hd">Do what's best for you</div><div class="hd b">Do what's best for everyone, you counting as one</div>
     <div class="full">Usually: they point the same way.</div>
@@ -490,7 +495,7 @@ details.opt .inner p{font-size:1rem}
     <div class="full">Sidgwick's verdict: he couldn't prove either one always wins. He called the standoff the <i>dualism of practical reason</i>: two rival guides for deciding what to do.</div>
   </div>
   <div class="poll" id="sidPoll">
-    <p><b>Which way do you lean?</b> No right answer. When the two principles split, which one do you usually follow?</p>
+    <p><b>Which do you usually choose?</b> No right answer. When the two principles split, which one do you usually follow?</p>
     <div class="row" role="group" aria-label="Your answer">
       <button class="btn ghost" type="button" data-r="me">What's best for me</button>
       <button class="btn ghost" type="button" data-r="all">What's best for everyone</button>
@@ -498,12 +503,12 @@ details.opt .inner p{font-size:1rem}
     </div>
     <div class="fb" id="sidFb" aria-live="polite"></div>
   </div>
-  <p class="note">So when the button feels hard, that's not you being confused. You've run into a problem Sidgwick never managed to settle.</p>
+  <p class="note">So when the button feels hard, that's not you being confused. You have met a problem Sidgwick never managed to settle.</p>
 </section>
 
 <!-- ================= BEAT 3: ARGUMENTS ================= -->
 <section class="sheet" aria-labelledby="b3">
-  <h2 id="b3"><span style="--mark:var(--hl-b)">How philosophers fight (politely)</span></h2>
+  <h2 id="b3"><span style="--mark:var(--hl-b)">How philosophers argue (politely)</span></h2>
   <p class="wow">An argument can be perfectly logical and still completely wrong. Next case file, you'll see how.</p>
   <p>In philosophy an <b>argument</b> isn't a shouting match. It's a package: some claims, called <b>premises</b>, offered as support for one more claim, the <b>conclusion</b>.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
@@ -512,12 +517,12 @@ details.opt .inner p{font-size:1rem}
     <span class="argline">2. Jordan is on the team.</span>
     <span class="argline concl">So, Jordan has to come to practice.</span>
   </div>
-  <p>In real life arguments come scrambled. The conclusion might be first, last, or stuck in the middle. Watch for signpost words:</p>
+  <p>In real life arguments come scrambled. The conclusion might be first, last, or somewhere in the middle. Watch for signpost words:</p>
   <ul>
     <li><b>so, therefore, which means, that's why</b> usually come right before a conclusion.</li>
     <li><b>because, since, given that, after all</b> usually come right before a premise.</li>
   </ul>
-  <p>Premises can also be chained on with plain <b>and</b>. And not every sentence in a paragraph is part of the argument. Some are just side comments.</p>
+  <p>Premises can also be joined with the plain word <b>and</b>. And not every sentence in a paragraph is part of the argument. Some are just side comments.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -526,7 +531,7 @@ details.opt .inner p{font-size:1rem}
   <div class="gtab">Lead 2 of 2</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
   <h2 id="g2h">The highlighter</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "How philosophers fight (politely)" above, then press <b>Got it</b>.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "How philosophers argue (politely)" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden inert>
   <p class="how">Tap a chunk of text to cycle its color: yellow for premise, pink for conclusion, tap again to clear it. Leave anything that isn't part of the argument unmarked. Then check.</p>
   <div class="legend" aria-hidden="true"><span><i style="background:var(--hl-y)"></i>premise</span><span><i style="background:var(--hl-p)"></i>conclusion</span><span><i style="border:1.5px dotted var(--ink-soft)"></i>unmarked</span></div>
@@ -541,7 +546,7 @@ details.opt .inner p{font-size:1rem}
 <section class="sheet lab" id="fin" style="--g:var(--stamp)" aria-labelledby="finh">
   <div class="gtab fintab">The board</div>
   <div class="stamp cleared" aria-hidden="true">STEP 1</div>
-  <h2 id="finh">Case closed (Step 1): your argument on the board</h2>
+  <h2 id="finh">Step 1 done: your argument on the board</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect both pieces of evidence (clear Leads 1 and 2) to open this file.</span></div>
   <div class="lab-body" hidden inert>
   <p class="how">Here's your button call from the cover, laid out the way philosophers lay out arguments: your reason as premise 1, your call as the conclusion.</p>
@@ -552,7 +557,7 @@ details.opt .inner p{font-size:1rem}
   <div class="fb" id="finFb" aria-live="polite"></div>
   <div id="cliff" hidden>
     <p class="wow stampbg">To be continued.</p>
-    <p>Look at line 2. Your argument has a <b>hidden premise</b>: a step nobody wrote down, sitting between your reason and your call. Almost every one-sentence reason has one. Next case file, we find yours and try to break it.</p>
+    <p>Look at line 2. Your argument has a <b>hidden premise</b>: a step nobody wrote down, sitting between your reason and your call. Almost every one-sentence reason has one. Next case file, we find yours and test it.</p>
   </div>
   </div>
 </section>
@@ -627,11 +632,18 @@ var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
-  b.addEventListener("click",function(){ showCard(g); });
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true");
+  b.addEventListener("click",function(){ if(!cleared[g.id]){ showLocked(g); return; } showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
 $("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
+function showLocked(g){
+  var P=$("evPanel");
+  GAMES.forEach(function(x){ $("dock-"+x.id).setAttribute("aria-expanded","false"); });
+  openCard=null; P.style.setProperty("--c",g.c);
+  P.innerHTML='<h3>Evidence '+g.lead+': not collected yet</h3><p>Clear Lead '+g.lead+' to unlock this card.</p><div class="row"><button class="btn ghost" type="button" id="evClose">Close</button></div>';
+  P.hidden=false; $("evClose").addEventListener("click",function(){ P.hidden=true; });
+}
 function showCard(g){
   var P=$("evPanel");
   GAMES.forEach(function(x){ $("dock-"+x.id).setAttribute("aria-expanded","false"); });
@@ -645,7 +657,7 @@ function clear(id, quiet){
   if(cleared[id]) return; cleared[id]=true;
   var g=GAMES.filter(function(x){return x.id===id;})[0];
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.removeAttribute("aria-disabled"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet){
@@ -672,7 +684,8 @@ function refreshGot(){
 }
 function doUnlock(k, focus){
   unlockedStep=k; openLab(UNLOCKS[k]); refreshGot();
-  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body textarea"); if(first) first.focus(); }
+  if(focus){ var first=$(UNLOCKS[k]).querySelector(".lab-body button, .lab-body textarea"); if(first){ try{ first.focus({preventScroll:true}); }catch(e){ first.focus(); } }
+    var lab=$(UNLOCKS[k]); lab.style.scrollMarginTop=($("dock").offsetHeight+12)+"px"; lab.scrollIntoView({block:"start"}); }
 }
 gotBtns.forEach(function(b){
   b.addEventListener("click",function(){ var k=+b.getAttribute("data-unlock"); if(k!==unlockedStep+1) return; doUnlock(k,true); saveState(); });
@@ -684,7 +697,7 @@ window.__m01={cleared:cleared, unlockStep:function(){return unlockedStep;}};
 var VL={press:"I'd press it", nopress:"I wouldn't press it"};
 function buildLockin(root){
   root.querySelectorAll(".vbtn").forEach(function(b){
-    b.addEventListener("click",function(){ COVER.v=b.getAttribute("data-v"); syncLockins(); renderFinale(); saveState(); });
+    b.addEventListener("click",function(){ COVER.v=b.getAttribute("data-v"); lockReset(); syncLockins(); renderFinale(); saveState(); });
   });
 }
 function syncLockins(){
@@ -692,9 +705,21 @@ function syncLockins(){
   var a=$("myReason"), f=$("finReason"); if(a && document.activeElement!==a) a.value=COVER.reason; if(f && document.activeElement!==f) f.value=COVER.reason;
 }
 buildLockin($("lockin"));
+var lockArmed=false, lockArmAt=0, lockTimer=null, waitTimer=null;
+function lockReset(){ lockArmed=false; clearTimeout(lockTimer); clearTimeout(waitTimer); var b=$("lockBtn"); b.textContent="Lock it in"; b.classList.remove("wait","armed"); b.removeAttribute("aria-disabled"); }
 $("lockBtn").addEventListener("click",function(){
+  var b=$("lockBtn"), now=Date.now();
+  if(!lockArmed){
+    if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
+    lockArmed=true; lockArmAt=now; b.textContent="Tap again to lock it in"; b.classList.add("armed","wait"); b.setAttribute("aria-disabled","true");
+    $("lockMsg").style.color=""; $("lockMsg").textContent="";
+    waitTimer=setTimeout(function(){ b.classList.remove("wait"); b.removeAttribute("aria-disabled"); },500);
+    lockTimer=setTimeout(lockReset,20000);
+    return;
+  }
+  if(now-lockArmAt<500) return;
+  lockReset();
   COVER.reason=flat($("myReason").value);
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick press or don't press first."; return; }
   if(!COVER.reason){ $("lockMsg").style.color=""; $("lockMsg").textContent="Call saved. Add your one-sentence reason now, or in the final file."; renderFinale(); saveState(); return; }
   $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in. You'll need it at the end.";
   renderFinale(); saveState();
@@ -706,7 +731,7 @@ var WCARDS=[
  {s:"seat",   q:"The bus is packed and your feet hurt. One seat is free, and a stranger with heavy bags just got on.", m:"Take the seat", o:"Offer it to them"},
  {s:"charger",q:"Your phone is at 6%. A classmate's phone just died and they need to call home.", m:"Keep my charger", o:"Lend it to them"},
  {s:"study night", q:"A friend asks for help studying tonight. You were looking forward to a free evening.", m:"Keep my evening", o:"Help them study"},
- {s:"credit", q:"Your teammate's idea saved the group project. The teacher assumes it was yours and picks you for the class award.", m:"Say nothing and keep the award", o:"Set the record straight and lose the award"},
+ {s:"credit", q:"Your teammate's idea saved the group project. The teacher assumes it was yours and picks you for the class award.", m:"Say nothing and keep the award", o:"Tell the truth and lose the award"},
  {s:"ticket", q:"You have one free ticket to see your favorite band. A friend who had a terrible week would love it too.", m:"Go myself", o:"Give it to my friend"},
  {s:"hoodie", q:"You have $10. You could buy a hoodie you want, or send it to strangers who just lost their homes in a flood.", m:"Buy the hoodie", o:"Send it to them"}
 ];
@@ -737,7 +762,7 @@ function wPick(side, btn, opts){
   btn.classList.add("pick1");
   WARM.picks.push(side); wKnot(); saveState();
   $("wLive").textContent="Locked. Pick "+WARM.picks.length+" of "+WCARDS.length+".";
-  setTimeout(function(){ wBusy=false; wRender(true); }, reduceMotion?250:550);
+  setTimeout(function(){ wBusy=false; wRender(true); }, 250);
 }
 function wResult(){
   var st=$("wStage"), t=wTally(), box=el("div",{class:"wres",tabindex:"-1",role:"group","aria-label":"Warm-up result"});
@@ -793,13 +818,13 @@ function sortLines(){
   var anyMiss=Object.keys(REC.sort).some(function(k){return REC.sort[k].misses.length;});
   if(!done && !anyMiss) return ["Lead 1 Sort the motives: not started"];
   var first=Object.keys(REC.sort).filter(function(k){return REC.sort[k].final && !REC.sort[k].misses.length;}).length;
-  var L=["Lead 1 Sort the motives: "+done+" of "+SORT.length+" sorted, "+first+" right on the first try"];
+  var L=["Lead 1 Sort the motives: "+done+" of "+SORT.length+" sorted, "+(done-first)+" needed another go"];
   L.push("Final tags: "+SORT.map(function(it,i){ var r=REC.sort[i]; return it.short+" = "+(r&&r.final?LBL[r.final]:"(not done)"); }).join("; "));
-  var miss=SORT.map(function(it,i){ var r=REC.sort[i]; return r&&r.misses.length ? it.short+" (first tried "+r.misses.map(function(m){return LBL[m];}).join(", then ")+")" : null; }).filter(Boolean);
-  L.push("Misses: "+(miss.length?miss.join("; "):"none"));
+  var miss=SORT.map(function(it,i){ var r=REC.sort[i]; return r&&r.misses.length ? it.short+" (first picked "+r.misses.map(function(m){return LBL[m];}).join(", then ")+")" : null; }).filter(Boolean);
+  L.push("Needed another go on: "+(miss.length?miss.join("; "):"nothing"));
   return L;
 }
-function hlLines(){ return ["Lead 2 Highlighter: "+(REC.hl.done?"all 3 passages correct":"not finished")+", checks with mistakes: "+REC.hl.wrongChecks]; }
+function hlLines(){ return ["Lead 2 Highlighter: "+(REC.hl.done?"all 3 passages correct":"not finished")+", needed another check "+REC.hl.wrongChecks+" time"+(REC.hl.wrongChecks===1?"":"s")]; }
 var LIVE={g1:sortLines,g2:hlLines};
 function finLines(){ return ["Step 1 verdict, my premise 1 is: "+(FIN.pick||"not done yet")]; }
 var BUILDERS={ g1:function(){return linesFor("g1");},
@@ -807,17 +832,17 @@ var BUILDERS={ g1:function(){return linesFor("g1");},
 wireCopies();
 window.__m01.report=report;
 /* ---------- ring poll (no right answer) ---------- */
-var RING={yes:"Then you're rarer than Glaucon's challenge assumes: the view he lays out, arguing the harsh side on purpose, is that with the ring, nobody would stay just. Socrates spends most of the rest of the book on your side.",
- mostly:"Honest answer. The view Glaucon lays out, arguing the harsh side on purpose, is harsher: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that people would still have reason to.",
- no:"You'd side with Glaucon's reading of human nature: with the ring, nobody would stay just. Socrates spends most of the book arguing he's mistaken, which is the part worth reading."};
+var RING={yes:"Noted. Glaucon doubts that many people could say that honestly. He argues the harsh side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book on your side.",
+ mostly:"Noted. Honest answers are often in the middle. Glaucon argues the harsher side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that people would still have reason to.",
+ no:"Noted. Thank you for being honest. That pull is what makes Glaucon's challenge feel real: he argues, on purpose, that with the ring nobody would stay just. One answer from you does not prove him right. Socrates spends most of the book arguing that people would still have reason to be just."};
 $("ringPoll").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){ $("ringPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("ringFb"),"","Noted.",RING[b.getAttribute("data-r")]+" Read on for the story."); });
 });
 
 /* ---------- Sidgwick lean poll (ungraded, not recorded) ---------- */
-var SID={me:"Honest. That is the first of Sidgwick's two principles. Plenty of people lean that way, and he admitted he couldn't prove it always wins.",
+var SID={me:"Honest. That is the first of Sidgwick's two principles. Plenty of people choose that way, and he admitted he couldn't prove it always wins.",
  all:"That is the second principle, with you counting as one among everyone. Sidgwick couldn't prove it always wins either.",
- dep:"That is the standoff in a nutshell. Sidgwick felt the same pull and never found a rule for choosing."};
+ dep:"That is the standoff in short: two guides, no rule for choosing. Sidgwick felt the same pull and never found a rule for choosing."};
 $("sidPoll").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){ $("sidPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("sidFb"),"","Noted.",SID[b.getAttribute("data-r")]); });
 });
@@ -829,7 +854,7 @@ var SORT=[
       mo:"Ask who benefits here. You do. That makes it a well-being reason, even though it's the reason you're tempted.",
       ne:"It's definitely a reason: it pulls you toward keeping the cash. It's about your own good, so it's a well-being reason."}},
  {t:"The money isn't mine. It belongs to whoever lost it.", short:"not mine", a:["mo"], ok:"Owed to others: it's about what's theirs.", hint:"Is this about what makes your life better, or about what you owe someone?",
-  fb:{mo:"It's about what you owe the owner: their stuff is theirs. Classic moral reason.",
+  fb:{mo:"It's about what you owe the owner: their stuff is theirs. A standard moral reason.",
       wb:"This reason doesn't say anything about your life going better. It says the money is someone else's, which is about what you owe them: a moral reason.",
       ne:"It sounds like a plain fact, but ownership gives the owner a claim on you: it's theirs, so you shouldn't keep it. That's a moral reason."}},
  {t:"The wallet is brown leather with a zipper.", short:"brown leather", a:["ne"], ok:"Neither: true, but not a reason either way.", hint:"Does this count for or against keeping the money at all?",
@@ -837,7 +862,7 @@ var SORT=[
       wb:"The zipper doesn't make your life better or worse either way. It's a fact that isn't a reason: neither.",
       mo:"Nobody is owed anything because of a zipper. It's a fact that doesn't bear on the choice: neither."}},
  {t:"If I kept it, I'd feel guilty every time I put on my headphones.", short:"guilt", a:["wb","mo"], ok:null, hint:"Does this push you one way or the other? If so, whose good or what duty does it appeal to?",
-  fb:{wb:"Good call. Read one way, the reason is about you: avoiding weeks of feeling bad. That's well-being. Read another way, it's your conscience saying keeping it is wrong, so 'Owed to others' also counts. One feeling, both questions.",
+  fb:{wb:"Right. Read one way, the reason is about you: avoiding weeks of feeling bad. That's well-being. Read another way, it's your conscience saying keeping it is wrong, so 'Owed to others' also counts. One feeling, both questions.",
       mo:"Fair. Guilt can be your conscience telling you that keeping it would be wrong, which is moral. Read another way, it's about avoiding feeling bad yourself, which is well-being. Both tags count here.",
       ne:"It's a reason: it pushes you to return the wallet. It appeals either to your own good (not feeling bad) or to your conscience (it's wrong). Both of those tags count."}},
  {t:"The owner might need that ID to get into work tomorrow.", short:"owner needs ID", a:["mo"], ok:"Owed to others: someone else's good.", hint:"Whose good is this reason about: yours, or someone else's?",
@@ -845,7 +870,7 @@ var SORT=[
       wb:"It is about well-being, but not yours. A reason about someone else's good is on the moral side.",
       ne:"It's more than a fact. It counts in favor of returning the wallet because of what it means for another person: a moral reason."}},
  {t:"The owner is probably panicking right now.", short:"owner panicking", a:["mo"], ok:"Owed to others: another person's distress.", hint:"Whose feelings is this reason about?",
-  fb:{mo:"It's about another person's distress, which you could end. Someone else's good: moral side.",
+  fb:{mo:"It's about another person's distress, which you could end. It is also about the owner's well-being, and that is exactly why it counts here: a reason about someone else's good is what you owe them. Moral side.",
       wb:"It's about feelings, but someone else's. A reason about another person's good is a moral reason.",
       ne:"It's a reason: it counts toward returning the wallet fast, because of what it means for someone else. Moral."}}
 ];
@@ -911,7 +936,7 @@ var HL=[
  [ {t:"Sleep helps your brain hold on to what you studied that day.",r:"p",why:"This is support for the plan at the end. Premise."},
    {t:"Your chem final is Friday.",r:"p",why:"Another supporting fact. Premise."},
    {t:"Honestly, the cafeteria coffee is terrible.",r:"x",why:"True or not, it doesn't support anything here. It's commentary, so leave it unmarked."},
-   {t:"So pulling an all-nighter on Thursday is a bad plan for you.",r:"c",why:"'So' announces the conclusion. Bonus: this is a well-being argument."} ],
+   {t:"So staying up all night on Thursday is a bad plan for you.",r:"c",why:"'So' announces the conclusion. Bonus: this is a well-being argument."} ],
  [ {t:"Since a stranger's loss counts just as much as your gain,",r:"p",why:"'Since' flags a premise, even at the start of a sentence."},
    {t:"and the button's gain and loss are exactly the same size,",r:"p",why:"Second premise, joined with 'and'."},
    {t:"pressing it doesn't make the world any better.",r:"c",why:"No signpost word right before it, but it's what the 'since' clauses are supporting. Conclusion."},
@@ -932,12 +957,12 @@ $("hlCheck").addEventListener("click",function(){
   var segs=$("hlPass").querySelectorAll(".seg"), bad=[];
   segs.forEach(function(b,i){ var want=HL[hlI][i].r==="x"?"":HL[hlI][i].r, got=b.getAttribute("data-m"); b.classList.toggle("wrong",want!==got); if(want!==got) bad.push({i:i,got:got}); });
   if(!bad.length){
-    setFb($("hlFb"),"good","Clean read.", HL[hlI].map(function(s){return "<br>&bull; "+s.why;}).join(""));
+    setFb($("hlFb"),"good","All correct.", HL[hlI].map(function(s){return "<br>&bull; "+s.why;}).join(""));
     $("hlCheck").hidden=true;
-    if(hlI<HL.length-1){ $("hlNext").hidden=false; $("hlNext").focus(); } else { REC.hl.done=true; clear("g2"); $("hlFb").innerHTML+="<br><br>Three for three. Signpost words won't fool you now."; }
+    if(hlI<HL.length-1){ $("hlNext").hidden=false; $("hlNext").focus(); } else { REC.hl.done=true; clear("g2"); $("hlFb").innerHTML+="<br><br>All three passages correct. Signpost words won't trick you now."; }
   } else {
     REC.hl.wrongChecks++;
-    var tips=bad.map(function(x){ var s=HL[hlI][x.i]; var hint = s.r==="x" ? "Does this chunk actually support anything?" : (s.r==="c" ? "Is this chunk supporting something, or being supported?" : "Look for a signpost word nearby, or ask what this chunk is helping to prove."); return "<br>&bull; “"+s.t+"”: you have it as "+NAMES[x.got]+". "+hint; }).join("");
+    var tips=bad.map(function(x){ var s=HL[hlI][x.i]; var hint = s.r==="x" ? "Rule: a side comment doesn't support the conclusion, so leave it unmarked." : (s.r==="c" ? "Rule: the conclusion is the claim the other chunks support; it is not the one doing the supporting." : "Rule: a premise is a chunk that supports the conclusion, often after because, since or and."); return "<br>&bull; “"+s.t+"”: you have it as "+NAMES[x.got]+". "+hint; }).join("");
     setFb($("hlFb"),"bad","Almost.", bad.length+" chunk"+(bad.length>1?"s are":" is")+" outlined in red."+tips);
   }
   touch("g2");
@@ -956,14 +981,14 @@ hlRender();
 var KINDS=[
  {k:"wb",t:"A well-being reason (it's about what's good for me)",fb:"Then your argument rests on what's good for you. Next file's question: does \"good for me\" on its own make it what you should do?"},
  {k:"mo",t:"A moral reason (it's about what I owe others)",fb:"Then your argument rests on what you owe others. Next file's question: what general rule turns that into a \"should\"?"},
- {k:"both",t:"Honestly, a bit of both",fb:"Like the guilt item in Lead 1: one reason, both questions. Next file you'll find out which one is really doing the work."},
+ {k:"both",t:"A bit of both",fb:"Like the guilt item in Lead 1: one reason, both questions. Next file you'll find out which one is really doing the work."},
  {k:"ne",t:"Just a fact",fb:"Then something else has to be doing the work, because a plain fact doesn't count for or against anything on its own (remember the zipper). Next file, you'll find out what it is."}
 ];
 var finOpen=false;
 function openFinale(){
   finOpen=true; openLab("fin");
   var L=$("finLock");
-  L.innerHTML='<div class="row" role="group" aria-label="Your button call"><button class="vbtn" type="button" data-v="press" aria-pressed="false">I\'d press it</button><button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn\'t press it</button></div><label for="finReason">My reason, in one sentence</label><input type="text" id="finReason" maxlength="220" autocomplete="off">';
+  L.innerHTML='<div class="row" role="group" aria-label="Your button call"><button class="vbtn" type="button" data-v="press" aria-pressed="false">I\'d press it</button><button class="vbtn" type="button" data-v="nopress" aria-pressed="false">I wouldn\'t press it</button></div><label for="finReason">My reason, in one sentence</label><textarea id="finReason" maxlength="220" rows="2" autocomplete="off"></textarea>';
   buildLockin(L);
   $("finReason").addEventListener("input",function(){ COVER.reason=flat($("finReason").value); renderFinArg(); saveState(); });
   syncLockins(); renderFinale();

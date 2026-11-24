@@ -125,7 +125,7 @@ details.sealed .inner{padding:0 16px 16px}
 details.sealed .inner p{font-size:1rem}
 
 /* ---------- games ---------- */
-.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:70px}
+.lab{border-top:10px solid var(--g,#FFE15A); padding-top:34px; scroll-margin-top:96px}
 .lab .gtab{position:absolute; top:-10px; left:22px; transform:translateY(-100%); background:var(--g); color:var(--hl-ink);
   font-family:var(--type); font-weight:700; font-size:14px; padding:5px 14px 3px; border-radius:8px 8px 0 0}
 .lab h2{margin-bottom:.4em}
@@ -410,6 +410,7 @@ select.reasonbox{min-height:44px}
 .ev{background:var(--card); border-radius:10px; padding:12px 14px; font-size:1.02rem; margin:12px 0; border:2px dashed var(--ink-soft)}
 .ev b{font-family:var(--type); font-size:.8rem; display:block; color:var(--ink-soft)}
 .scorebtns{display:flex; flex-wrap:wrap; gap:6px}
+.scorebtns > .step-lbl{flex:1 0 100%; margin-top:6px}
 .scorebtns .pick{--pc:var(--hl-y); min-width:44px; padding:6px 8px; font-family:var(--type); font-weight:700}
 .scorebtns .pick.right{background:var(--hl-g); color:var(--hl-ink)}
 
@@ -511,6 +512,17 @@ html,body{overflow-x:clip}
 .wu-opt b{display:block; margin-bottom:3px}
 .chips-r{margin:2px 0 8px}
 .chips-r .btn{font-size:.92rem; min-height:44px}
+/* round 3 */
+body.tapwait .pick:not(:disabled), body.tapwait .choice:not(:disabled), body.tapwait .wu-opt:not(:disabled){opacity:.45}
+.btn.wait{opacity:.5}
+.btn.armed{outline:3px solid var(--stamp); outline-offset:2px}
+.lockin textarea{display:block; min-height:64px; resize:vertical}
+.dock .pip.locked{cursor:default}
+.toast{position:absolute; left:0; right:0; top:0; bottom:0; transform:none; max-width:none; border-radius:0; border:0; border-bottom:4px solid var(--tc,var(--hl-y));
+  display:flex; align-items:center; justify-content:center; text-align:center; background:var(--desk); color:#F4E3B4; box-shadow:none; pointer-events:none; cursor:default; z-index:5; animation:toastFade .2s ease both}
+.toast[hidden]{display:none}
+@keyframes toastFade{from{opacity:0}to{opacity:1}}
+details.sealed.skipbox>summary{font-weight:700}
 </style>
 </head>
 <body>
@@ -519,8 +531,8 @@ html,body{overflow-x:clip}
   <ol id="dockList"></ol>
   <div class="prog" id="prog" role="progressbar" aria-label="Case progress" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0"><i id="progFill"></i></div>
   <div class="evpanel" id="evPanel" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <main class="wrap">
 <!-- ================= 1 COVER ================= -->
@@ -547,10 +559,10 @@ html,body{overflow-x:clip}
   </svg>
   <div class="hook">
     <div class="hook-dot" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M8 5h14v6a7 7 0 0 1-14 0z" fill="#FFE15A" stroke="#2A2016" stroke-width="2"/><path d="M15 18v5M10 25h10" stroke="#2A2016" stroke-width="2.4" stroke-linecap="round"/></svg></div>
-    <p>Your team wins the championship the day after you leave for six months at a station with no signal. You never find out. Did your life go better because they won? Lock in your gut call; you'll make it again at the end.</p>
+    <p>Your team wins the championship the day after you leave for six months at a research station with no phone or internet. You never find out. Did your life go better because they won? Lock in your first instinct; you'll answer again at the end.</p>
   </div>
   <div class="lockin" id="lockin">
-    <div class="row" role="group" aria-label="Your gut call">
+    <div class="row" role="group" aria-label="Your first instinct">
       <button class="vbtn" type="button" data-v="yes" aria-pressed="false">Yes, a bit better</button>
       <button class="vbtn" type="button" data-v="no" aria-pressed="false">No difference</button>
     </div>
@@ -560,17 +572,17 @@ html,body{overflow-x:clip}
       <button class="btn ghost" type="button" data-fill="I felt nothing, so nothing changed for me.">No feeling, no change</button>
       <button class="btn ghost" type="button" data-fill="Not sure, both sides pull me.">Not sure</button>
     </div>
-    <input type="text" id="myReason" maxlength="220" autocomplete="off">
+    <textarea id="myReason" rows="2" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 50 minutes (slower readers: allow more)</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
 <section class="sheet warm" id="warm" aria-labelledby="wuh">
   <div class="wtab">Warm-up · 30 seconds</div>
   <h2 id="wuh"><span style="--mark:var(--hl-p)">Wish stamp</span></h2>
-  <p class="how" id="wuHow">Five wishes. For each, two futures are on offer: in one the wish really comes true but you never feel it, in the other you feel it came true but it did not. <b>The thing itself</b> = what really happens. <b>The good feeling</b> = how it feels to you. Stamp the one you want more. No right answers. Each stamp locks when you tap it.</p>
+  <p class="how" id="wuHow">Five wishes. For each, you get two futures. In one, the wish really comes true but you never feel it. In the other, you feel it came true but it did not. <b>What really happens</b> = the real result. <b>How it feels</b> = what you feel, true or not. Stamp the one you want more. No right answers. Each stamp is final when you tap it.</p>
   <p class="m-nav" id="wuNav" aria-live="polite"></p>
   <div class="wu-stack" id="wuStack" role="img" aria-label="Your stamps so far"></div>
   <div class="wu-card" id="wuCard">
@@ -584,7 +596,7 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b1">
   <h2 id="b1"><span style="--mark:var(--hl-b)">The theory: the world matches your wishes</span></h2>
   <p class="wow">On this theory, your life can go better on a day when you feel nothing at all.</p>
-  <p>A <b>desire</b> is any want, like "I want my sister's surgery to go well." A desire is <b>satisfied</b> when the thing you wanted really happens, whether or not you feel anything. If your team wins while you're out of signal, your desire is satisfied.</p>
+  <p>A <b>desire</b> is any want, like wanting your sister's surgery to go well. A desire is <b>satisfied</b> when the thing you wanted really happens, whether or not you feel anything. If your team wins while you are out of contact, your desire is satisfied.</p>
   <p>The <b>desire theory</b> says your life goes well to the extent your desires are satisfied. <b>Hedonism</b> (Case 3) says only how your life <i>feels</i> counts.</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit A: two scorekeepers</span>
@@ -595,12 +607,12 @@ html,body{overflow-x:clip}
     <div class="full">The secret win: your team wins and you never find out.</div>
     <div class="k-f"><span class="v">No change.</span> You felt nothing.</div>
     <div class="k-w"><span class="v up">Better.</span> What you wanted happened.</div>
-    <div class="full">The false report: you're told your team won and you party all night. They actually lost.</div>
+    <div class="full">The false report: you're told your team won and you celebrate all night. They actually lost.</div>
     <div class="k-f"><span class="v up">Better.</span> Best night of the year.</div>
     <div class="k-w"><span class="v dn">Worse.</span> What you wanted didn't happen.</div>
   </div>
   <div class="poll" id="keeperPoll">
-    <p><b>Gut check:</b> which scorekeeper would you trust with your life? (Not graded.)</p>
+    <p><b>Quick check:</b> which scorekeeper would you trust to judge your life? (Not graded.)</p>
     <div class="row" role="group" aria-label="Which scorekeeper?">
       <button class="btn ghost" type="button" data-r="feel">Feel-o-meter</button>
       <button class="btn ghost" type="button" data-r="world">World-ledger</button>
@@ -612,14 +624,14 @@ html,body{overflow-x:clip}
     <div class="inner">
       <p><b>You're the authority.</b> What's good for you depends on what <i>you</i> care about, not on a list written by a philosopher. A life that suits your cousin perfectly could be miserable for you.</p>
       <p><b>It survives the Experience Machine.</b> The machine gives you the <i>feeling</i> of your wishes coming true. If what you want is real friends and real wins, the machine frustrates your desires while making you feel great. Desire theory says: don't plug in.</p>
-      <p><b>Economists use a version of it.</b> Measuring welfare by whether people get what they prefer is a cousin of this theory.</p>
+      <p><b>Economists use a version of it.</b> Measuring welfare by whether people get what they prefer is a close relative of this theory.</p>
     </div>
   </details>
   <details class="sealed">
     <summary><span class="seal" aria-hidden="true">?</span>Refresher: Cases 1 to 3</summary>
     <div class="inner">
       <p>We're still on the <b>well-being</b> question from Case 1: what makes a life go well <i>for the person living it</i>? (Not what we owe each other. That's morality, and it waits for Challenge 2.)</p>
-      <p>Case 3 tested hedonism. Because it looks only at what goes on inside your head, it's called a <b>mental-state theory</b>. Then the Experience Machine hit it hard: lots of people refuse a lifetime of perfect fake experiences, because they want the real thing. So the second big family of theories asks: <b>what if what matters is getting what you actually want, in the real world?</b></p>
+      <p>Case 3 tested hedonism. Because it looks only at what goes on inside your head, it's called a <b>mental-state theory</b>. Then the Experience Machine put it under pressure: lots of people refuse a lifetime of perfect fake experiences, because they want the real thing. So the second big family of theories asks: <b>what if what matters is getting what you actually want, in the real world?</b></p>
       <p>Case 2's toolkit still applies: when an argument's conclusion seems wrong, find the premise you'd reject.</p>
     </div>
   </details>
@@ -629,6 +641,7 @@ html,body{overflow-x:clip}
       <p><b>Well-being on this theory:</b> wants that come true minus wants that don't, with stronger wants counting more.<br><b>Satisfied:</b> the thing you wanted really happened (not a feeling).<br><b>Frustrated:</b> the thing you wanted did not happen.<br><b>Final desire:</b> wanted for its own sake.<br><b>Instrumental desire:</b> wanted only as a way to get something else.<br><b>Informed desire:</b> what you would want if you knew all the facts.<br><b>Patch:</b> a small change to a theory that fixes a problem.</p>
     </div>
   </details>
+  <p class="small">Misses cost nothing here; Rocky just uses them to see what to review.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -639,7 +652,7 @@ html,body{overflow-x:clip}
   <h2 id="g1h">Two scorekeepers</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "The theory: the world matches your wishes" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Four little stories. For each, score it twice: what the hedonist's Feel-o-meter says and what the desire theorist's World-ledger says. Did the person's life go better, worse, or no change? Answer as each theory would, not with your own opinion. <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">Four little stories. Score each twice: once as the hedonist's Feel-o-meter, once as the desire theorist's World-ledger. Better, worse, or no change? Answer as each theory would, not as you would. <span class="savenote">Cleared leads stay saved. If you leave in the middle of a lead, it starts over.</span></p>
   <p class="m-nav" id="skNav"></p>
   <div class="sk-card" id="skCard"></div>
   <div class="fb" id="skFb" aria-live="polite" tabindex="-1"></div>
@@ -653,7 +666,7 @@ html,body{overflow-x:clip}
 <!-- ================= 5 WHY-CHAINS ================= -->
 <section class="sheet" aria-labelledby="b2">
   <h2 id="b2"><span style="--mark:var(--hl-y)">Why do you want that? Chains go UP</span></h2>
-  <p class="wow">Ask "why?" enough times and every want runs out of reasons. That's not a bug. It's the whole point.</p>
+  <p class="wow">Ask "why?" enough times and every want runs out of reasons. That's normal. It's the whole idea.</p>
   <p>Not all wants are the same kind. Some things you want only as a <b>way to get something else</b>. That's an <b>instrumental desire</b>. Other things you want <b>for their own sake</b>. That's a <b>final desire</b> (philosophers also say <i>intrinsic</i> desire). You can find out which is which by climbing a <b>why-chain</b>: keep asking "why do you want that?" until there's no further answer.</p>
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Exhibit B: one why-chain, bottom to top</span>
@@ -670,7 +683,6 @@ html,body{overflow-x:clip}
     <div style="--uc:var(--hl-g)"><b>Going UP</b> (a why-answer): what's it <i>for</i>? "I want the charger so my phone works."</div>
     <div style="--uc:var(--hl-o)"><b>Going DOWN</b> (a how-answer): how would you <i>get</i> it? "I'll borrow my friend's charger." True, but that's a plan, not a reason.</div>
   </div>
-  <p>Most people slip into how-answers at least once. Watch for it.</p>
   <div class="poll" id="chainPoll">
     <p><b>Your turn:</b> think of something you want this week and climb its chain in your head. Where does it stop? (Not graded.)</p>
     <div class="row" role="group" aria-label="Where does your chain stop?">
@@ -684,7 +696,10 @@ html,body{overflow-x:clip}
     <summary><span class="seal" aria-hidden="true">?</span>Bonus: Aristotle got here first (short on time? skip this one)</summary>
     <div class="inner"><p>Over 2,300 years ago, Aristotle made a version of this point in his <i>Nicomachean Ethics</i>: if everything were wanted only for the sake of something else, the chain would go on forever and wanting would be empty. Something has to be wanted for itself.</p></div>
   </details>
-  <p class="note">Why this matters for the theory: desire theorists usually count only <b>final</b> desires. If the charger and the reunion both scored points, you'd be counting the same thing twice. And if you get the charger but the reunion falls through, your life hasn't gone better at all.</p>
+  <details class="sealed skipbox">
+    <summary><span class="seal" aria-hidden="true">?</span>Why this matters for the theory (short on time? skip this one)</summary>
+    <div class="inner"><p>Desire theorists usually count only <b>final</b> desires. If the charger and the reunion both scored points, you'd be counting the same thing twice. And if you get the charger but the reunion falls through, your life hasn't gone better at all.</p></div>
+  </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="2">Got it: open Lead 2</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -695,7 +710,7 @@ html,body{overflow-x:clip}
   <h2 id="g2h">Climb the why-tower</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-y)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Why do you want that? Chains go UP" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Build each person's tower one floor at a time. Each floor must answer "why do they want the floor below?" Watch for how-answers (they go down) and random true facts (they go sideways). When you reach a want with no further reason, don't add a floor: press <b>Put the roof on</b>. Roofing too early is a miss too. <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">Build each tower one floor at a time. Each floor answers "why do they want the floor below?" Beware how-answers (they go down) and random true facts (they go sideways). When a want has no further reason, press <b>Put the roof on</b>. Roofing too early is a miss. <span class="savenote">Cleared leads stay saved. If you leave in the middle of a lead, it starts over.</span></p>
   <p class="m-nav" id="twNav"></p>
   <div class="tw-who" id="twWho"></div>
   <div class="tw-wrap">
@@ -717,17 +732,17 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b3">
   <h2 id="b3"><span style="--mark:var(--hl-g)">Read the reason, not the thing</span></h2>
   <p class="wow">The same activity can be final for you and purely instrumental for your best friend.</p>
-  <p>Here's a trap. It's tempting to think some things are just "naturally" final (fun stuff, love) and others "naturally" instrumental (money, chores). But whether a desire is final or instrumental depends on <b>why that person wants it</b>.</p>
+  <p>It's tempting to think some things are "naturally" final (fun, love) and others "naturally" instrumental (money, chores). But whether a desire is final or instrumental depends on <b>why that person wants it</b>.</p>
   <ul>
     <li>Ines runs every morning because she loves the feeling of running. For her, running is <b>final</b>.</li>
     <li>Ben runs every morning only because his coach requires it for the team. For him, running is <b>instrumental</b>.</li>
-    <li>Mo runs because he loves it <i>and</i> because it keeps him fit for soccer. His desire is <b>both</b>: final and instrumental at once. That's common, and it's allowed. If soccer disappeared tomorrow, Mo would keep running, just with one reason fewer.</li>
+    <li>Mo runs because he loves it <i>and</i> because it keeps him fit for soccer. His desire is <b>both</b>: final and instrumental at once. That's common and allowed. Without soccer he would keep running, with one reason fewer.</li>
   </ul>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Exhibit C: the quick test</span>
     <p>Imagine the purpose is removed. Would they still want it? <b>No</b>: instrumental. <b>Yes, and they gave no other reason</b>: final. <b>Yes, but they also gave a further purpose</b>: both.</p>
   </div>
-  <p>Wants aimed at <i>other people</i> follow the same rule. Wanting your friend to recover because you care about her is final. Wanting her to recover so she can drive you to the concert is instrumental. Remember this; a future bishop will need it later.</p>
+  <p>Wants aimed at <i>other people</i> follow the same rule. Wanting your friend to recover because you care about her is final. Wanting her to recover so she can drive you to the concert is instrumental.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="3">Got it: open Lead 3</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -738,7 +753,7 @@ html,body{overflow-x:clip}
   <h2 id="g3h">Same want, different reasons</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-g)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Read the reason, not the thing" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Eight people, but only four different things wanted. Read each person's reason and file the desire as instrumental, final, or both. The thing they want won't tell you. Only the reason will. <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">Eight people, but only four different things wanted. Read each person's reason and file the desire as instrumental, final, or both. The thing they want won't tell you. Only the reason will. <span class="savenote">Cleared leads stay saved. If you leave in the middle of a lead, it starts over.</span></p>
   <div id="binList"></div>
   <p class="score" id="binScore" aria-live="polite"></p>
   <div class="clearslot"></div>
@@ -752,11 +767,14 @@ html,body{overflow-x:clip}
   <p class="wow">A theory that says "getting what you want is good for you" has to deal with people who want the wrong things.</p>
   <div class="exhibit" style="--hl-c:var(--hl-o)">
     <span class="lbl">Problem 1: ill-informed desires</span>
-    <p>You're thirsty and want to drink whatever is in the juice bottle in the fridge (you think it's juice). You don't know your little cousin refilled it with salt water as a prank. You drink it. Your desire was satisfied: you drank what was in that bottle. Did your life just go better? Obviously not. The desire was based on a false belief.</p>
+    <p>You're thirsty and want to drink what's in the juice bottle in the fridge, which you think is juice. Your little cousin secretly filled it with salt water as a prank. You drink it. As worded, your desire came true: you drank what was in that bottle. Did your life go better? Obviously not. The desire rested on a false belief. (Or you could say you really wanted juice, so it failed. Philosophers argue about how to word such desires.)</p>
   </div>
+  <details class="sealed skipbox">
+    <summary><span class="seal" aria-hidden="true">?</span>Problem 2: odd desires, the grass counter (short on time? skip this one)</summary>
+    <div class="inner">
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Problem 2: odd desires</span>
-    <p>The philosopher John Rawls, in <i>A Theory of Justice</i> (1971), imagined a clever person whose only pleasure is counting blades of grass in parks and lawns. He isn't confused about anything; it's simply what he wants most. If he gets to count grass all day, is his life going well? Rawls accepted that his own account of a person's good had to say yes, though he said we'd naturally be surprised that such a person exists. Many readers think the case shows that what you want isn't the whole story.</p>
+    <p>The philosopher John Rawls, in <i>A Theory of Justice</i> (1971), imagined a clever person whose only wish is to count blades of grass in parks and lawns. He isn't confused; it's simply what he wants most. If he counts grass all day, is his life going well? Rawls accepted that his account of a person's good had to say yes, though he thought such a person would be rare. Many readers think the case shows that what you want isn't the whole story.</p>
   </div>
   <div class="poll" id="grassPoll">
     <p><b>Quick vote:</b> is the grass counter's life going well? (Not graded.)</p>
@@ -766,14 +784,16 @@ html,body{overflow-x:clip}
     </div>
     <div class="fb" id="grassFb" aria-live="polite" tabindex="-1"></div>
   </div>
+    </div>
+  </details>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
-    <span class="lbl">Problem 3: adaptive desires ("sour grapes")</span>
-    <p>In Aesop's fable, a fox can't reach some grapes and decides they were probably sour anyway. People do this too. If you're told for years that someone like you will never get to go to college, you might stop wanting it, just to stop the ache. Philosophers call these <b>adaptive preferences</b>: wants that shrink to fit what seems possible. Satisfy the shrunken wants and the World-ledger looks great, even though something has clearly gone wrong.</p>
+    <span class="lbl">Problem 3: adaptive desires (the "sour grapes" problem)</span>
+    <p>In Aesop's fable, a fox can't reach some grapes and decides they were probably sour anyway. ("Sour grapes" now means pretending you never wanted what you can't have.) People do this too. If you're told for years that someone like you will never get to go to college, you might stop wanting it, just to stop the ache. Philosophers call these <b>adaptive preferences</b>: wants that shrink to fit what seems possible. Satisfy the shrunken wants and the World-ledger looks great, even though something has clearly gone wrong.</p>
   </div>
   <div class="poll" id="sourPoll">
-    <p><b>Quick vote:</b> a student stopped wanting college after years of being told it was not for them, and now has a life with no college in it. Is that life going well on the simple desire theory? (Not graded.)</p>
-    <div class="row" role="group" aria-label="Does the simple theory say it is going well?">
-      <button class="btn ghost" type="button" data-r="yes">Yes, they got what they want</button>
+    <p><b>Quick vote:</b> a student stopped wanting college after years of being told it was not for them. The simple desire theory says their life is going fine, because they no longer want college and so nothing they want is going unmet. Does that seem right to you? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Does it seem right that their life is going fine?">
+      <button class="btn ghost" type="button" data-r="yes">Yes, that seems right</button>
       <button class="btn ghost" type="button" data-r="no">No, something's off</button>
     </div>
     <div class="fb" id="sourFb" aria-live="polite" tabindex="-1"></div>
@@ -788,7 +808,7 @@ html,body{overflow-x:clip}
     <div class="inner">
       <p><b>Who is this informed you?</b> A version of you who knew <i>everything</i> might be so different that their wants don't feel like yours. Why should their wishes run your life?</p>
       <p><b>Does it drift?</b> If we keep correcting desires until they point at things that are actually good for you, the "good things" start doing the work, not the desires. (That's where Case 5 picks up.)</p>
-      <p><b>The grass counter survives.</b> Inform him of every fact and he might still want to count grass.</p>
+      <p><b>The grass counter is still a problem.</b> Inform him of every fact and he might still want to count grass.</p>
     </div>
   </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="4">Got it: open Lead 4</button><span class="gmsg" aria-live="polite"></span></div>
@@ -801,11 +821,11 @@ html,body{overflow-x:clip}
   <h2 id="g4h">Nia's desire ledger</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Trouble 1" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">You're the desire theorist's accountant for one week of Nia's life. Her wants are listed with their strength in points. For each event, enter what it does to her <b>World-ledger</b>. Rules: a satisfied desire adds its points, a frustrated one subtracts them, whether or not Nia finds out; only <b>final</b> desires score. On one event you'll also score the <b>informed</b> version of the theory. <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">You're the desire theorist's accountant for one week of Nia's life. Her wants are listed with points. For each event, enter what it does to her <b>World-ledger</b>. Score each want exactly as written on her list. Rules: a satisfied desire adds its points, a frustrated one subtracts them, whether or not Nia finds out; only <b>final</b> desires score. On one event you'll also score the <b>informed</b> version of the theory. <span class="savenote">Cleared leads stay saved. If you leave in the middle of a lead, it starts over.</span></p>
   <div class="wants" aria-label="Nia's desires this week">
     <div style="--wc:var(--hl-g)"><b>3 pts</b> Her robotics team reaches the regional final. (final: she loves building with them)</div>
     <div style="--wc:var(--hl-b)"><b>2 pts</b> Her pen pal in Chile gets into the university she applied to. (final: Nia cares about her)</div>
-    <div style="--wc:var(--hl-y)"><b>1 pt</b> To drink whatever is in the juice bottle in the fridge. (She thinks it's her favorite juice. Count it as final, as Nia lists it.)</div>
+    <div style="--wc:var(--hl-y)"><b>1 pt</b> To drink whatever is in the juice bottle in the fridge. (She thinks it holds her favorite juice. Score it as written, and count it as final.)</div>
     <div style="--wc:var(--hl-p)"><b>1 pt</b> Her bike gets fixed. (instrumental: only so she can ride to practice)</div>
     <div style="--wc:var(--hl-o)"><b>1 pt</b> The school's old first-ever robot gets restored for the display case. (final: she just loves that robot)</div>
   </div>
@@ -825,14 +845,14 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b5">
   <h2 id="b5"><span style="--mark:var(--hl-p)">Trouble 2: wants that wander far from you</span></h2>
   <p class="wow">If the simplest version of this theory is right, a stranger's recovery can make <i>your</i> life go better.</p>
-  <p>The simplest version counts <b>every desire you've ever had, about anything at all</b>. Call it the <b>unrestricted</b> theory. It runs into four kinds of strange cases.</p>
+  <p>The simplest version counts <b>every desire you've ever had, about anything at all</b>. Call it the <b>unrestricted</b> theory. It runs into strange cases. Two are below; two more are in the drawer (all four are in Lead 5).</p>
   <div class="exhibit" style="--hl-c:var(--hl-p)">
     <span class="lbl">Strange case 1: the stranger</span>
-    <p>Derek Parfit, in <i>Reasons and Persons</i> (1984), described meeting a stranger who is believed to be seriously ill. You're moved, and you sincerely want him to recover. You never meet again. Later, without your knowing, he recovers. On the unrestricted theory, your life went better. Parfit himself found that implausible, and used the case against the unrestricted theory. Do you agree with him?</p>
+    <p>Derek Parfit (<i>Reasons and Persons</i>, 1984) described meeting a stranger believed to be seriously ill. You sincerely want him to recover. You never meet again. Later, without your knowing, he recovers. On the unrestricted theory, your life went better. Parfit found that implausible. Do you agree?</p>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Strange case 2: after you're gone</span>
-    <p>You spend years building a community garden and want it to keep growing long after you die. Some time after your death, it's paved over for parking. You're not around to know. The unrestricted theory says your life went worse, after it was over. Some philosophers accept this; they think it helps explain why breaking a promise to someone who has died seems to wrong <i>them</i>. Others find it spooky.</p>
+    <p>You spend years building a community garden and want it to keep growing long after you die. Some time after your death, it's paved over for parking. You're not around to know. The unrestricted theory says your life went worse, after it was over. Some philosophers accept this (it may explain why breaking a promise to someone who has died seems to wrong <i>them</i>). Others find it strange and unsettling.</p>
   </div>
   <div class="poll" id="gardenPoll">
     <p><b>Quick vote:</b> can the garden's fate make your life go worse after you are gone? (Not graded.)</p>
@@ -842,25 +862,30 @@ html,body{overflow-x:clip}
     </div>
     <div class="fb" id="gardenFb" aria-live="polite" tabindex="-1"></div>
   </div>
+  <details class="sealed skipbox">
+    <summary><span class="seal" aria-hidden="true">?</span>Two more strange cases (short on time? skip this one)</summary>
+    <div class="inner">
   <div class="exhibit" style="--hl-c:var(--hl-y)">
     <span class="lbl">Strange case 3: about the past</span>
     <p>Your family says your great-great-grandmother invented the soup recipe you all love, and you really hope it's true. Suppose it isn't: she copied it from a newspaper in 1920. Your desire about the past is frustrated, so on the unrestricted theory your life is going worse, because of something that happened a century before you were born.</p>
   </div>
   <div class="exhibit" style="--hl-c:var(--hl-g)">
     <span class="lbl">Strange case 4: desires you've outgrown</span>
-    <p>At seven you desperately wanted to be a train driver. At seventeen you couldn't care less. If you end up driving trains anyway, does the seven-year-old's wish make your life go better now?</p>
+    <p>At seven you desperately wanted to be a train driver. At seventeen you no longer care at all. If you end up driving trains anyway, does the seven-year-old's wish make your life go better now?</p>
   </div>
+    </div>
+  </details>
   <p><b>Three ways to patch it.</b> Tap each one open; Lead 5 opens once you've read all three.</p>
   <details class="reply" style="--rc:var(--hl-p)">
     <summary><b>Patch 1: keep it about your own life</b></summary>
-    <div class="inner"><p>Count only desires about your own life. Parfit discussed a view along these lines. That rules out the stranger and, probably, the soup.</p><p class="other">The other side says: is a parent's desire for their child to be happy "about their own life"? It feels like it should count.</p></div>
+    <div class="inner"><p>Count only desires about your own life. Parfit discussed a view along these lines. That rules out the stranger and, probably, the soup recipe (a wish about the past).</p><p class="other">The other side says: is a parent's desire for their child to be happy "about their own life"? It feels like it should count.</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-b)">
     <summary><b>Patch 2: only what you want now</b></summary>
-    <div class="inner"><p>Count a desire only while you still have it. That handles the train driver, and the garden too, since nobody has desires after they die.</p><p class="other">The other side says: what about plans you'll care about later, or a life's work you want to last?</p></div>
+    <div class="inner"><p>Count a desire only while you still have it. That handles a wish you outgrew (like a childhood dream you no longer care about), and the garden too, since nobody has desires after they die.</p><p class="other">The other side says: what about plans you'll care about later, or a life's work you want to last?</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-y)">
-    <summary><b>Patch 3: accept the odd results ("bite the bullet")</b></summary>
+    <summary><b>Patch 3: accept the odd results ("bite the bullet" means accepting a strange conclusion instead of avoiding it)</b></summary>
     <div class="inner"><p>Accept the strange verdicts. Maybe your life really is a bit better when the stranger recovers, and a bit worse when the garden goes.</p><p class="other">The other side says: then your well-being depends on events you'll never touch or know about, which is a strange kind of "good for you".</p></div>
   </details>
   <div class="gotit"><button class="btn" type="button" data-unlock="5">Got it: open Lead 5</button><span class="gmsg" aria-live="polite"></span></div>
@@ -873,7 +898,7 @@ html,body{overflow-x:clip}
   <h2 id="g5h">Call it: theory vs you</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-p)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Trouble 2" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Five hard cases. For each, two taps: first predict what the <b>unrestricted</b> desire theory says (graded), then give <b>your own</b> verdict (never graded). At the end, the page shows which patch your answers point to. <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">Five hard cases, two taps each: first predict what the <b>unrestricted</b> desire theory says (graded; it counts every desire you have ever had, about anything), then give <b>your own</b> verdict (never graded). At the end, the page shows which patch your answers point to. <span class="savenote">Cleared leads stay saved. If you leave in the middle of a lead, it starts over.</span></p>
   <p class="m-nav" id="callNav"></p>
   <div class="mach" id="callCard"></div>
   <div class="fb" id="callFb" aria-live="polite" tabindex="-1"></div>
@@ -889,7 +914,7 @@ html,body{overflow-x:clip}
 <section class="sheet" aria-labelledby="b6">
   <h2 id="b6"><span style="--mark:var(--hl-b)">Is everyone secretly selfish? Butler's timing trick</span></h2>
   <p class="wow">In 1726, an English clergyman (later a bishop) noticed that the cynic's story gets the order of events backwards.</p>
-  <p>You've probably heard this one: "Nobody ever really does anything for anyone else. You helped your friend move because it made <i>you</i> feel good."</p>
+  <p>You've probably heard this one: "Nobody ever really does anything for anyone else. You helped your friend carry boxes into her new home because it made <i>you</i> feel good."</p>
   <div class="poll" id="cynPoll">
     <p><b>Convincing?</b> (Not graded.)</p>
     <div class="row" role="group" aria-label="Is the cynic convincing?">
@@ -899,8 +924,8 @@ html,body{overflow-x:clip}
     <div class="fb" id="cynFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <p>That claim has a name. <b>Psychological egoism</b> says every desire you have is ultimately a desire for your own benefit. One famous version, <b>psychological hedonism</b>, says everything you want, you really want for your own pleasure (or to avoid pain).</p>
-  <p>Notice these are claims about <b>motivation</b> (why people act), not about well-being. But they matter here. If psychological hedonism were true, every final desire would be a desire for your own pleasure, so the desire theory would give roughly the same verdicts as hedonism. It stays a different theory only if psychological hedonism is false.</p>
-  <p>Enter <b>Joseph Butler</b> (1692 to 1752), an English clergyman and philosopher who later became a bishop. In his <i>Fifteen Sermons</i> (1726), he made an argument that philosophers still use. In our words:</p>
+  <p>These claims are about <b>motivation</b> (why people act), not about well-being. But they matter here. If psychological hedonism were true, every final desire would be a desire for your own pleasure, so the desire theory would give roughly the same verdicts as hedonism. It stays a different theory only if psychological hedonism is false.</p>
+  <p>Now meet <b>Joseph Butler</b> (1692 to 1752), an English clergyman who later became a bishop. In his <i>Fifteen Sermons</i> (1726) he made an argument philosophers still use. In our words:</p>
   <div class="exhibit" style="--hl-c:var(--hl-b)">
     <span class="lbl">Exhibit D: Butler's argument</span>
     <span class="argline">1. Most of our desires are aimed at things outside ourselves: food, a friend's safety, the end of a good book, even revenge.</span>
@@ -909,7 +934,7 @@ html,body{overflow-x:clip}
     <span class="argline concl">So, those desires can't just be desires for pleasure. The pleasure presupposes them.</span>
   </div>
   <div class="timeline" aria-label="Butler's order of events">
-    <div style="--tc:var(--hl-y)"><b>1. WANT</b>your friend's move to go well</div>
+    <div style="--tc:var(--hl-y)"><b>1. WANT</b>your friend's house move goes well</div>
     <div style="--tc:var(--hl-b)"><b>2. GET</b>it goes well</div>
     <div style="--tc:var(--hl-g)"><b>3. GLOW</b>you feel great</div>
   </div>
@@ -923,12 +948,12 @@ html,body{overflow-x:clip}
     <div class="fb" id="tlFb" aria-live="polite" tabindex="-1"></div>
   </div>
   <p>The cynic points at step 3 and says it explains step 1. Butler says step 3 only happens <i>because of</i> step 1. Your good feeling after helping isn't proof you were selfish all along. It's evidence that you really wanted your friend to be OK.</p>
-  <p>Not everyone thinks Butler wins. An egoist can reply that we want the food, or the friend's success, <i>only because</i> we expect it to bring us pleasure. Rocky may push you on this.</p>
   <details class="sealed">
-    <summary><span class="seal" aria-hidden="true">?</span>Two warnings: what Butler does not prove</summary>
+    <summary><span class="seal" aria-hidden="true">?</span>Two warnings and a reply: what Butler does not prove</summary>
     <div class="inner">
-    <p><b>First,</b> Butler doesn't prove people are nice. Spite and revenge are also aimed outside ourselves, and Butler pointed out that people sometimes wreck their own interests to get even. His point is that our desires reach out into the world, for better or worse. </p>
+    <p><b>First,</b> Butler doesn't prove people are nice. Spite and revenge are also aimed outside ourselves, and Butler pointed out that people sometimes harm their own interests to get revenge. His point is that our desires reach out into the world, for better or worse. </p>
       <p><b>Second,</b> he never denied that we <i>sometimes</i> act for our own pleasure. He denied that we <i>always</i> do.</p>
+      <p><b>Third,</b> not everyone thinks Butler wins. An egoist can reply that we want the food, or the friend's success, <i>only because</i> we expect it to bring us pleasure. Rocky may argue the other side with you here.</p>
     </div>
   </details>
   <p class="note">The payoff for this case: final desires can be aimed at other people and at the world. So the desire theory really is a different theory from hedonism, not hedonism in disguise.</p>
@@ -942,7 +967,7 @@ html,body{overflow-x:clip}
   <h2 id="g6h">Rewind the tape</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-b)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Read "Is everyone secretly selfish?" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Two scenes, each chopped into frames, but the cynic has slipped a fake frame into each. Tap a frame to pick it up, then either put it in the next slot on the timeline or toss it as the cynic's edit. The fake frame is the cynic's claim: that the first frame was really a want for the glow. Then face the cynic: three quick challenges. ("Rewind the tape" means replaying the scene in the right order.) <span class="savenote">Leaving this page restarts a lead you have not cleared. Cleared leads stay saved.</span></p>
+  <p class="how">Two scenes, each cut into frames. The cynic has slipped a fake frame into each: the claim that the first frame was really a want for the glow. Tap a frame, then put it in the next timeline slot or toss it out as the cynic's edit. Then face the cynic's three challenges. ("Rewind the tape" means replaying the scene in the right order.) <span class="savenote">Cleared leads stay saved. If you leave in the middle of a lead, it starts over.</span></p>
   <div id="tapeList"></div>
   <div id="cynQs" hidden></div>
   <p class="score" id="cynScore" aria-live="polite"></p>
@@ -958,7 +983,7 @@ html,body{overflow-x:clip}
   <h2 id="finh">Case closed: is getting what you want what makes life go well?</h2>
   <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--stamp)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Collect all six pieces of evidence (clear all six leads) to open the final file.</span></div>
   <div class="lab-body" hidden>
-  <p class="how">Time to commit. You've seen the theory, why-chains, wrong and shrunken wants, wants that wander off, and Butler. Pick the view closest to yours and give the reason that does the most work for you. Any view is fine; the reason is what counts.</p>
+  <p class="how">Time to choose. Pick the view closest to yours and give the reason that matters most to you. Any view is fine; the reason is what counts.</p>
   <div class="verdict-opts" id="finOpts" role="group" aria-label="Your view"></div>
   <label class="small" for="finReason" style="display:block;margin-top:12px"><b>My reason, in one or two sentences</b></label>
   <textarea class="reasonbox" id="finReason" maxlength="400"></textarea>
@@ -979,7 +1004,7 @@ html,body{overflow-x:clip}
   <div id="finCard" hidden>
     <div class="compare" id="finCompare"></div>
     <div class="rcard" id="rcard"></div>
-    <p class="pause">Take this to Rocky. Rocky will push back once from the other side; holding firm with a reason is just as good as changing your mind.</p>
+    <p class="pause">Take this to Rocky. Rocky will argue the other side once; holding firm with a reason is just as good as changing your mind.</p>
   </div>
   </div>
 </section>
@@ -987,31 +1012,30 @@ html,body{overflow-x:clip}
 <!-- ================= 16 WATCH ================= -->
 <section class="sheet" aria-labelledby="b10">
   <h2 id="b10"><span style="--mark:var(--hl-b)">Before you go back to Rocky: the clips</span></h2>
-  <p>These short clips come from MIT's course 24.02x, Moral Problems and the Good Life. They cover the same ground from MIT's side.</p>
+  <p>Two short clips from MIT's course 24.02x, Moral Problems and the Good Life, covering the same ground.</p>
   <div class="linkrow">
     <a class="linkbtn" href="https://youtu.be/28YbbiZkVrE" target="_blank" rel="noopener">MIT clip: Introduction</a>
     <a class="linkbtn" href="https://youtu.be/zKNoYX-As3U" target="_blank" rel="noopener">MIT clip: Desire-Satisfaction and Psychological Egoism</a>
   </div>
-  <p>Rocky will also send you to the <b>Why Do You Want That?</b> app. It has different chains to climb, so your tower skills will get a second workout.</p>
 </section>
 
 <!-- ================= 17 COPY ================= -->
 <section class="sheet" aria-labelledby="b11">
   <h2 id="b11"><span style="--mark:var(--hl-y)">Hand your file to Rocky</span></h2>
-  <p>Rocky can't see this page. Done? Copy your whole case file below and paste it to Rocky as one message. It includes your gut call, all six leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (If Rocky asks about just one lead, open "Rocky asked about this lead?" inside that lead.)</p>
+  <p>Rocky can't see this page. Copy your whole case file below and paste it to Rocky as one message. It includes your first instinct, all six leads and your verdict. Nothing is sent anywhere; it only goes where you paste it. (For just one lead, open "Rocky asked about this lead?" inside it.)</p>
   <div class="copyrow" data-copy="all"></div>
 </section>
 
 <!-- ================= 18 DEEPER ================= -->
 <section class="sheet deeper" aria-labelledby="b12">
   <h2 id="b12"><span style="--mark:var(--hl-g)">Bonus files: where to go deeper</span></h2>
-  <ul>
+  <details class="sealed skipbox"><summary><span class="seal" aria-hidden="true">?</span>Open the bonus files (short on time? skip this one)</summary><div class="inner"><ul>
     <li><b>MIT 24.02x, Moral Problems and the Good Life</b> (MIT Open Learning Library). The free online course this one is inspired by, with a full lecture on the desire-satisfaction theory. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/courses/course-v1:MITx+24.02x+2T2020/about" target="_blank" rel="noopener">openlearninglibrary.mit.edu</a></li>
     <li><b>Joseph Butler, Sermon XI (excerpt)</b>, the reading MIT assigns for this lecture. Butler's own 18th-century English, so take it slowly; the "stone" line is the timing trick in his own words. <a class="linkbtn" href="https://openlearninglibrary.mit.edu/asset-v1:MITx+24.02x+2T2020+type@asset+block/L3_Butler_Sermon.pdf" target="_blank" rel="noopener">MIT's Butler reading (PDF)</a></li>
     <li><b>Stanford Encyclopedia of Philosophy, "Well-Being"</b>. Free, expert-written, and it covers hedonism, desire theories and objective list theories side by side. <a class="linkbtn" href="https://plato.stanford.edu/entries/well-being/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
     <li><b>Stanford Encyclopedia of Philosophy, "Egoism"</b>. More on psychological egoism and Butler's reply. <a class="linkbtn" href="https://plato.stanford.edu/entries/egoism/" target="_blank" rel="noopener">plato.stanford.edu</a></li>
     <li><b>Derek Parfit, <i>Reasons and Persons</i> (1984), Appendix I</b>. Where the stranger comes from, plus a famous short survey of all three families of theories. Ask a library.</li>
-  </ul>
+  </ul></div></details>
 </section>
 
 <p class="foot">Case file written for Intro to Ethics on Recess. Inspired by MIT 24.02x, Moral Problems and the Good Life. This page, its games and its wording are our own; it is not affiliated with or endorsed by MIT. The clips are MIT's, linked from their original pages.</p>
@@ -1027,8 +1051,9 @@ function esc(t){ return String(t).replace(/[&<>"]/g,function(c){return {"&":"&am
 function mkFb(){ return el("div",{class:"fb","aria-live":"polite",tabindex:"-1"}); }
 function focusFb(node){ try{ node.focus({preventScroll:true}); }catch(e){ node.focus(); } }
 function flat(s){ return String(s==null?"":s).replace(/[\r\n\u2028\u2029\u0085\v\f]+/g," ").replace(/ {2,}/g," ").trim(); }
-var tapGuardUntil=0;
-function armGuard(){ tapGuardUntil=Date.now()+420; }
+var tapGuardUntil=0, guardT=null;
+/* a tap that lands in the first 200 ms after a new item appears is ignored, and the answer buttons look dimmed so it is never silent */
+function armGuard(){ tapGuardUntil=Date.now()+200; document.body.classList.add("tapwait"); clearTimeout(guardT); guardT=setTimeout(function(){ document.body.classList.remove("tapwait"); },200); }
 document.addEventListener("click",function(e){
   var t=e.target&&e.target.closest?e.target.closest(".pick,.choice,.wu-opt"):null;
   if(t&&Date.now()<tapGuardUntil&&e.isTrusted){ e.stopImmediatePropagation(); e.preventDefault(); }
@@ -1040,10 +1065,10 @@ var MID="C1-M04";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{ok:["Needle reads true.","Ledger checks out.","Clean read.","Spot on."], no:["Not quite.","Look again.","Not what that scorekeeper sees."]},
- g3:{ok:["Right drawer.","Reason read.","Filed.","Clean."], no:["Wrong drawer.","Reread the reason.","Not that one."]},
- g4:{ok:["Books balance.","Accountant-grade.","Entered.","Clean."], no:["Not quite.","Check that line.","Recheck the rules."]},
- g5:{ok:["That's the theory talking.","Theory-true.","Exactly what it says.","Clean."], no:["The theory wouldn't say that.","Not on this theory.","Not that one."]},
+ g1:{okf:["Needle reads true.","Clean read.","Spot on."], okw:["Ledger checks out.","Clean read.","Spot on."], okr:["There it is.","That one fits.","Got it."], no:["Not quite.","Not yet.","Not what that scorekeeper sees."]},
+ g3:{ok:["Right drawer.","Reason read.","Filed.","Clean."], no:["Wrong drawer.","Not that drawer.","Not that one."]},
+ g4:{ok:["Books balance.","Accountant-grade.","Entered.","Clean."], no:["Not quite.","Not that number.","Not yet."]},
+ g5:{ok:["Right: that is what it says.","Theory-true.","Exactly what it says.","Clean."], no:["The theory wouldn't say that.","Not on this theory.","Not that one."]},
  g6:{ok:["Butler nods.","Cynic stumped.","Clean.","That's the timing trick."], no:["The cynic would love that one.","Not quite Butler.","Not that one."]}
 };
 var lastV={};
@@ -1075,15 +1100,15 @@ var GAMES=[
  {id:"g2",c:"var(--hl-y)",lead:2,title:"Why-chains go up",body:"Each why-step says what a want is <b>for</b>, not how to get it. The chain stops at a <b>final</b> desire; everything below it is <b>instrumental</b>.",ex:"Charger, so my phone works, so I see her text, so I meet her plane, because I love her. Stop."},
  {id:"g3",c:"var(--hl-g)",lead:3,title:"Read the reason",body:"Whether a desire is instrumental, final or <b>both</b> depends on the person's reason, not on the thing wanted. Test: remove the purpose; would they still want it?",ex:"Zoe bakes for its own sake (final); Omar bakes for a job test (instrumental)."},
  {id:"g4",c:"var(--hl-o)",lead:4,title:"Bad wants and the informed fix",body:"Ill-informed, odd and <b>adaptive</b> (sour-grapes) desires make the simple theory give strange scores. The <b>informed desire</b> fix counts what you'd want if you knew the facts.",ex:"Salt water in the juice bottle: +1 on the simple ledger, 0 on the informed one."},
- {id:"g5",c:"var(--hl-p)",lead:5,title:"Wants that wander",body:"The <b>unrestricted</b> theory counts desires about strangers, the past, after your death, and desires you've outgrown. Patches: keep it about your own life, count only current desires, or bite the bullet.",ex:"Parfit's stranger recovers without your knowing; the unrestricted theory says your life went better. Parfit found that implausible."},
+ {id:"g5",c:"var(--hl-p)",lead:5,title:"Wants that wander",body:"The <b>unrestricted</b> theory counts desires about strangers, the past, after your death, and desires you've outgrown. Patches: keep it about your own life, count only current desires, or accept the odd results.",ex:"Parfit's stranger recovers without your knowing; the unrestricted theory says your life went better. Parfit found that implausible."},
  {id:"g6",c:"var(--hl-b)",lead:6,title:"Butler's reply",body:"Pleasure comes from getting what you wanted <b>first</b>, so not every desire is a desire for your own pleasure. Desires aimed at others can be kind or spiteful.",ex:"Want the cat found, find the cat, feel great: the glow depends on the want."}
 ];
 var NG=GAMES.length, GAME_IDS=GAMES.map(function(g){return g.id;});
 var cleared={}, openCard=null;
 GAMES.forEach(function(g){
   var li=el("li"); var b=el("button",{class:"pip",type:"button",id:"dock-"+g.id,"aria-label":"Evidence "+g.lead+": not collected yet","aria-expanded":"false"});
-  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.disabled=true;
-  b.addEventListener("click",function(){ showCard(g); });
+  b.textContent=String(g.lead); b.style.setProperty("--c",g.c); b.setAttribute("aria-disabled","true"); b.classList.add("locked");
+  b.addEventListener("click",function(){ if(!cleared[g.id]){ toast("Evidence "+g.lead+" is not filed yet. Clear Lead "+g.lead+" first.", g.c); return; } showCard(g); });
   li.appendChild(b); $("dockList").appendChild(li);
 });
 $("dockCount").innerHTML='<span class="evw">Evidence </span>0/'+NG;
@@ -1107,9 +1132,8 @@ var toastTimer=null;
 function toast(msg, color){
   var T=$("toast"); T.textContent=msg; T.style.setProperty("--tc",color||"var(--hl-y)"); T.hidden=false;
   T.style.animation="none"; void T.offsetWidth; T.style.animation="";
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 2600);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ T.hidden=true; }, 1700);
 }
-$("toast").addEventListener("click",function(){ $("toast").hidden=true; });
 function celebrate(g, n){
   var pip=$("dock-"+g.id); pip.classList.remove("pulse"); void pip.offsetWidth; if(!reduceMotion) pip.classList.add("pulse");
   toast("Evidence "+n+"/"+NG+" filed: "+g.title+(n===NG?". Final file open!":""), g.c);
@@ -1122,7 +1146,7 @@ function clear(id, quiet){
   if(cleared[id]){ if(!quiet){ replayCleared[id]=true; celebrate(g, Object.keys(cleared).length); saveState(); } return; }
   cleared[id]=true; if(!quiet) replayCleared[id]=true;
   $(id).classList.add("is-cleared");
-  var b=$("dock-"+id); b.classList.add("done"); b.disabled=false; b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
+  var b=$("dock-"+id); b.classList.add("done"); b.removeAttribute("aria-disabled"); b.classList.remove("locked"); b.setAttribute("aria-label","Evidence "+g.lead+": "+g.title+". Open the card.");
   var n=Object.keys(cleared).length;
   $("dockCount").innerHTML='<span class="evw">Evidence </span>'+n+"/"+NG+(n===NG?'<span class="evw">: final file open</span>':"");
   if(!quiet) celebrate(g, n);
@@ -1137,7 +1161,7 @@ var repliesOpen={};
 var replyEls=[].slice.call(document.querySelectorAll("details.reply"));
 var gotBtns=[].slice.call(document.querySelectorAll("[data-unlock]"));
 function openLab(id){ var lab=$(id); lab.classList.add("is-unlocked"); lab.querySelector(".lab-body").hidden=false; }
-function extraNeed(k){ if(k===5 && Object.keys(repliesOpen).length<replyEls.length) return "Open all three patches above first."; return ""; }
+function extraNeed(k){ if(k===5 && Object.keys(repliesOpen).length<replyEls.length) return "Tap all three patches above to open them ("+Object.keys(repliesOpen).length+" of "+replyEls.length+" opened)."; return ""; }
 function refreshGot(){
   gotBtns.forEach(function(b){
     var k=+b.getAttribute("data-unlock"), msg=b.parentNode.querySelector(".gmsg");
@@ -1162,25 +1186,45 @@ function freezeCover(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.disabled=true; });
   $("myReason").readOnly=true; $("lockBtn").disabled=true; $("lockBtn").textContent="Locked";
 }
+var LOCKS={};
+function lockReset(btn,idle){ var S=LOCKS[btn.id]; if(S){ S.armed=false; clearTimeout(S.t); } btn.textContent=idle; btn.classList.remove("armed","wait"); }
+/* one lock pattern: first tap arms ("Tap again to lock it in"), second tap confirms only after 500 ms, the arm reset after 20 s */
+function lockTap(btn,idle,valid,go,msg){
+  var S=LOCKS[btn.id]||(LOCKS[btn.id]={armed:false,at:0,t:0}), now=Date.now();
+  if(!valid()){ lockReset(btn,idle); return; }
+  if(!S.armed){
+    S.armed=true; S.at=now; btn.textContent="Tap again to lock it in"; btn.classList.add("armed","wait"); if(msg) msg("Tap the button again to lock it in. You can't change it after that.");
+    clearTimeout(S.t); S.t=setTimeout(function(){ lockReset(btn,idle); if(msg) msg(""); },20000);
+    setTimeout(function(){ if(S.armed) btn.classList.remove("wait"); },500);
+    return;
+  }
+  if(now-S.at<500) return;
+  clearTimeout(S.t); S.armed=false; btn.classList.remove("armed","wait"); go();
+}
 $("lockin").querySelectorAll(".vbtn").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); syncLockin(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; COVER.v=b.getAttribute("data-v"); lockReset($("lockBtn"),"Lock it in"); syncLockin(); });
 });
 function syncLockin(){
   $("lockin").querySelectorAll(".vbtn").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-v")===COVER.v)); });
   if(COVER.locked) $("myReason").value=COVER.reason;
 }
 $("lockin").querySelectorAll("[data-fill]").forEach(function(b){
-  b.addEventListener("click",function(){ if(COVER.locked) return; $("myReason").value=b.getAttribute("data-fill"); COVER.draft=$("myReason").value; saveState(); });
+  b.addEventListener("click",function(){ if(COVER.locked) return; $("myReason").value=b.getAttribute("data-fill"); COVER.draft=$("myReason").value; lockReset($("lockBtn"),"Lock it in"); saveState(); });
 });
-$("myReason").addEventListener("input",function(){ if(COVER.locked) return; COVER.draft=$("myReason").value; saveState(); });
+$("myReason").addEventListener("input",function(){ if(COVER.locked) return; COVER.draft=$("myReason").value; lockReset($("lockBtn"),"Lock it in"); saveState(); });
 $("lockBtn").addEventListener("click",function(){
   if(COVER.locked) return;
   var r=flat($("myReason").value);
-  if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no difference first."; return; }
-  if(r.length<3){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a few words, or tap a starter reason above."; $("myReason").focus(); return; }
-  COVER.reason=r; COVER.locked=true; freezeCover();
-  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in for good. You'll see it again at the end.";
-  saveState();
+  function say(t){ $("lockMsg").style.color=""; $("lockMsg").textContent=t; }
+  lockTap($("lockBtn"),"Lock it in",function(){
+    if(!COVER.v){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Pick yes or no difference first."; return false; }
+    if(r.length<3){ $("lockMsg").style.color="var(--bad)"; $("lockMsg").textContent="Add a few words, or tap a starter reason above."; $("myReason").focus(); return false; }
+    return true;
+  },function(){
+    COVER.reason=r; COVER.locked=true; $("myReason").value=r; freezeCover();
+    say("Locked in for good. You'll see it again at the end.");
+    saveState();
+  },say);
 });
 
 /* ---------- copy for Rocky ---------- */
@@ -1190,12 +1234,12 @@ function linesFor(g){
   if(saved && wasCleared && !replayCleared[g]) return saved.concat();   /* keep a finished record until a replay finishes too */
   return LIVE[g]();   /* an unfinished lead restarts after a reload, so its saved partial line is never reused: screen and copy always agree */
 }
-function coverLines(){ return ["Gut call on the secret championship win (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
+function coverLines(){ return ["First instinct on the secret championship win (locked before reading): "+(COVER.locked ? VL[COVER.v]+". My reason: "+flat(COVER.reason) : "not locked in")]; }
 var WUN={cat:"cat",friends:"friends",stand:"lemonade stand",guitar:"guitar",story:"story"};
 function warmLine(){
   var n=WU.ans.length; if(!n) return ["Warm-up: not played (ungraded)"];
   var R=0, fk=[]; WU.ans.forEach(function(a,i){ if(a==="r") R++; else fk.push(WUN[WUC[i].k]); });
-  return ["Warm-up: "+n+" of "+WUC.length+" wishes stamped (ungraded); wanted the thing itself "+R+"x, the good feeling "+fk.length+"x"+(fk.length?" (good feeling on: "+fk.join(", ")+")":"")];
+  return ["Warm-up: "+n+" of "+WUC.length+" wishes stamped (ungraded); picked what really happens "+R+"x, how it feels "+fk.length+"x"+(fk.length?" (how it feels on: "+fk.join(", ")+")":"")];
 }
 var PL={want:"1 WANT",get:"2 GET",glow:"3 GLOW",feel:"Feel-o-meter",world:"World-ledger",person:"at someone I care about",enjoy:"at something I enjoy",other:"somewhere else",yes:"yes",no:"no"};
 function pollLines(){
@@ -1223,13 +1267,13 @@ function wireCopies(){
 
 /* ---------- ungraded taps in the reading ---------- */
 var POLLREPLY={
- keeper:{feel:"Hold that thought. Lead 1 makes you run both scorekeepers, and the finale asks again.", world:"Hold that thought. Lead 1 makes you run both scorekeepers, and the finale asks again."},
+ keeper:{feel:"Keep your pick in mind. Lead 1 has you run both scorekeepers, and the finale asks again.", world:"Keep your pick in mind. Lead 1 has you run both scorekeepers, and the finale asks again."},
  chain:{person:"Lots of chains end at a person. Either way, it stops; that's the point of a final desire.", enjoy:"Plenty of chains end at an experience you love. Either way, it stops; that's the point of a final desire.", other:"Wherever it lands, it stops somewhere. That landing spot is a final desire."},
- grass:{yes:"That's the \"you're the authority\" instinct, the desire theory's big selling point.", no:"That instinct, that some things are good for you whatever you want, is where Case 5 starts."},
- sour:{yes:"That is what the simple theory has to say: the want was satisfied. Many people feel uneasy about it, and that unease is why the fix below exists.", no:"That unease is the objection. The shrunken want was shaped by the lack of a chance, so many people say the theory should not count it."},
+ grass:{yes:"That's the \"you're the authority\" instinct, the desire theory's main strength.", no:"That instinct, that some things are good for you whatever you want, is where Case 5 starts."},
+ sour:{yes:"That is where the simple theory lands too: with no want left, nothing is unmet. Many people feel uneasy about it, and that unease is why the fix below exists.", no:"That unease is the objection. The shrunken want was shaped by the lack of a chance, so many people say the theory should not count it."},
  garden:{yes:"That is the unrestricted theory's answer, and some philosophers accept it. The patches below try to avoid it.", no:"Many people share that instinct. The patches below try to rescue it."},
  tl:{want:"Close, but the cynic does not point at the want. He says the want is just a disguise for step 3. The next paragraph shows his move.", get:"Not quite: the cynic is not worried about whether it went well. He is pointing at how you felt afterward. The next paragraph shows his move.", glow:"Yes: the glow. He says it is the real reason you helped. The next paragraph shows what Butler does with that."},
- cyn:{yes:"It sounds airtight at first. Now watch Butler try to take it apart.", no:"Hold that doubt. Now watch Butler try to pin down what's wrong with it."}
+ cyn:{yes:"It sounds airtight at first. Now watch Butler try to take it apart.", no:"Keep that doubt. Now watch Butler work out what is wrong with it."}
 };
 function wirePoll(id, key){
   $(id).querySelectorAll("button[data-r]").forEach(function(b){
@@ -1250,16 +1294,16 @@ var WUC=[
  {k:"guitar", w:"You want to get good at guitar.", r:"You really do get good, but it never feels that way to you.", f:"You feel like a great guitarist, but you are actually not good.", rr:"Stamped: being good, felt or not.", fr:"Stamped: feeling like a great player."},
  {k:"story", w:"You want the story you wrote to be good.", r:"Your story really is good, but you always feel it is bad.", f:"You feel proud that it is good, but it isn't.", rr:"Stamped: a really good story.", fr:"Stamped: the pride, even for a story that is not good."}
 ];
-var WUSTAMP={r:"The thing itself", f:"The good feeling"};
+var WUSTAMP={r:"What really happens", f:"How it feels"};
 var wuBusy=false;
 function wuClose(R,n){
-  if(R===n) return "You wanted the thing itself 5 of 5 times, and the good feeling 0. Every time, you picked what really happens over how it feels. That is the desire theory's instinct, and Lead 1 will put it to work.";
-  if(R===0) return "You wanted the thing itself 0 of 5 times, and the good feeling 5. That is the hedonist's instinct: how it feels is what counts. Keep it handy, because the two scorekeepers below are about to test it against reality. Feeling versus reality is the whole case.";
-  return "You wanted the thing itself "+R+" of "+n+" times, and the good feeling "+(n-R)+". Feeling versus reality is the whole case, and the two scorekeepers below are about to fight over it.";
+  if(R===n) return "You picked what really happens 5 of 5 times, and how it feels 0. Every time, you chose the real result over the feeling. That is the desire theory's instinct, and Lead 1 will put it to work.";
+  if(R===0) return "You picked what really happens 0 of 5 times, and how it feels 5. That is the hedonist's instinct: how it feels is what counts. Keep it in mind, because the two scorekeepers below will test it. Feeling versus reality is the whole case.";
+  return "You picked what really happens "+R+" of "+n+" times, and how it feels "+(n-R)+". Feeling versus reality is the whole case, and the two scorekeepers below are about to fight over it.";
 }
 function wuRender(focusFirst){
   var n=WU.ans.length, done=n>=WUC.length, S=$("wuStack"); S.innerHTML="";
-  WUC.forEach(function(c,i){ var a=WU.ans[i]; var b=el("span",{class:"blk "+(a||"empty")}); b.textContent=a==="r"?"itself":(a==="f"?"feeling":""); if(!a) b.setAttribute("aria-hidden","true"); S.appendChild(b); });
+  WUC.forEach(function(c,i){ var a=WU.ans[i]; var b=el("span",{class:"blk "+(a||"empty")}); b.textContent=a==="r"?"real":(a==="f"?"feels":""); if(!a) b.setAttribute("aria-hidden","true"); S.appendChild(b); });
   S.setAttribute("aria-label", n+" of "+WUC.length+" wishes stamped");
   $("wuNav").textContent = done ? "Warm-up done" : "Wish "+(n+1)+" of "+WUC.length;
   if(done){
@@ -1273,13 +1317,13 @@ function wuRender(focusFirst){
   $("wuQ").textContent="Wish ticket: “"+C.w+"” Which future do you want more?";
   shuffle([["r",WUSTAMP.r,C.r],["f",WUSTAMP.f,C.f]]).forEach(function(o,i){
     var b=el("button",{class:"wu-opt "+(i?"b":"a"),type:"button"});
-    var h=el("b"); h.textContent="Stamp it: "+o[1]; b.appendChild(h); b.appendChild(el("br")); b.appendChild(document.createTextNode(o[2]));
+    var h=el("b"); h.textContent="Stamp: "+o[1]; b.appendChild(h); b.appendChild(el("br")); b.appendChild(document.createTextNode(o[2]));
     b.addEventListener("click",function(){
       if(wuBusy || WU.ans.length!==n) return; wuBusy=true;
       WU.ans.push(o[0]);
       O.querySelectorAll(".wu-opt").forEach(function(x){ x.disabled=true; });
       b.classList.add("chosen"); h.textContent="Stamped: "+o[1];
-      setFb($("wuFb"),"","Stamped.",o[0]==="r"?C.rr:C.fr+" No right answer."); focusFb($("wuFb"));
+      var wtx=(o[0]==="r"?C.rr:C.fr+" No right answer.").replace(/^Stamped: ?/,""); wtx=wtx.charAt(0).toUpperCase()+wtx.slice(1); setFb($("wuFb"),"","Stamped.",wtx); focusFb($("wuFb"));
       saveState();
       setTimeout(function(){ wuBusy=false; wuRender(true); }, reduceMotion?400:700);
     });
@@ -1314,7 +1358,7 @@ function skRender(){
         var R=REC1[skI];
         if(v===S[r[0]]){
           b.classList.add("right"); row.classList.add("ok"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
-          R[r[0]]=true; setFb($("skFb"),"good",vword("g1","ok"), r[0]==="f"?S.fy:S.wy);
+          R[r[0]]=true; setFb($("skFb"),"good",vword("g1",R.misses>0?"okr":(r[0]==="f"?"okf":"okw")), r[0]==="f"?S.fy:S.wy);
           if(R.f && R.w){
             if(skI<SK.length-1) showNext($("skNext"));
             else { skSummary(); focusFb($("skFb")); clear("g1"); }
@@ -1336,7 +1380,7 @@ function skSummary(){
   g.innerHTML="<b>Story</b><b>Feel-o-meter</b><b>World-ledger</b>";
   SK.forEach(function(S){ g.innerHTML+="<span>"+S.k+"</span><span>"+VW[S.f]+"</span><span>"+VW[S.w]+"</span>"; });
   D.appendChild(g);
-  var p=el("p",{class:"pause"}); p.textContent="Three of four stories split the scorekeepers, and every split happens when feelings and reality come apart: a secret, a lie, or a false rumor. In ordinary life (you ace a test and see the grade) the two usually agree.";
+  var p=el("p",{class:"pause"}); p.textContent="Three of four stories split the scorekeepers, and every split happens when feelings and reality come apart. In ordinary life (you do well on a test and see the grade) the two usually agree.";
   D.appendChild(p);
 }
 $("skNext").addEventListener("click",function(){ skI++; skRender(); $("skCard").querySelector(".pick").focus(); });
@@ -1346,7 +1390,7 @@ function skLines(){
   if(!done.length) return ["Lead 1 Two scorekeepers: not started"];
   var first=done.filter(function(k){return !REC1[k].misses;}).length;
   var miss=done.filter(function(k){return REC1[k].misses;}).map(function(k){return SK[k].k;});
-  return ["Lead 1 Two scorekeepers: "+done.length+" of "+SK.length+" stories scored both ways, "+first+" with no misses"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
+  return ["Lead 1 Two scorekeepers: "+done.length+" of "+SK.length+" stories scored both ways, "+first+" right first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")];
 }
 
 /* ================= LEAD 2: WHY-TOWER ================= */
@@ -1356,16 +1400,16 @@ var TOWERS=[
    {up:["To wake up at 5:30 tomorrow","wake 5:30"], down:"To order one online tonight", side:"Old alarm clocks had two bells on top"},
    {up:["To catch the sunrise at the lake","sunrise"], down:"To go to bed by ten", side:"The sun rises earlier in summer"},
    {up:["To photograph the sunrise over the water","photo"], down:"To bike to the lake in the dark", side:"The lake is two miles away"},
-   {up:["Because he loves making photos he's proud of","proud photo"], down:"To borrow his aunt's tripod", side:"His phone has a good camera"}
+   {up:["Because he loves making photos he's proud of","proud photo"], down:"To borrow his aunt's tripod", side:"Because he loves the smell of coffee at dawn"}
   ], roof:["To charge his camera the night before","To clear space on his phone","Photos look softer at sunrise"]},
  {who:"Ana wants to learn Portuguese.", base:"Portuguese", steps:[
    {up:["To talk with her grandmother, who speaks only Portuguese","talk w/ grandma"], down:"To download a language app", side:"Portuguese is spoken in Brazil and Portugal"},
-   {up:["Because she loves her grandmother","loves grandma"], down:"To practice ten minutes every day", side:"Her grandmother makes great custard tarts"}
+   {up:["Because she loves her grandmother","loves grandma"], down:"To practice ten minutes every day", side:"Because she loves Brazilian music"}
   ], roof:["To find a tutor this month","To label things in her room","Her grandmother lives near the sea"]},
  {who:"Marcus wants to win the student council election.", base:"win election", steps:[
    {up:["To get the cafeteria to label allergens on every dish","labels"], down:"To make campaign posters", side:"The election is in March"},
    {up:["So his friends with nut allergies can eat lunch safely","safe lunch"], down:"To write a letter to the principal", side:"The labels could be printed in color"},
-   {up:["Because he cares about his friends","friends OK"], down:"To ask the cafeteria staff what's in each dish", side:"Lunch starts at 12:15"}
+   {up:["Because he cares about his friends","friends OK"], down:"To ask the cafeteria staff what's in each dish", side:"Because he likes the color of the cafeteria walls"}
   ], roof:["To give a speech at assembly","To hand out flyers at lunch","The cafeteria serves pizza on Fridays"]}
 ];
 var tI=0, tS=0, REC2={}, twFloors=[];
@@ -1381,7 +1425,7 @@ function twRender(){
   $("twNav").textContent="Tower "+(tI+1)+" of "+TOWERS.length+", floor "+(tS+1);
   $("twWho").textContent=tw.who+" Trust the reasons in the cards; they come from the person.";
   var current = tS===0 ? tw.who.replace(/\.$/,"") : tw.steps[tS-1].up[0];
-  $("twNow").innerHTML="<b>Top floor right now</b>"+esc(current)+"<br><span class='small'>Why do they want this?</span>";
+  $("twNow").innerHTML="<b>Top floor right now</b>"+esc(current)+"<br><span class='small'>Why does "+esc(tw.who.split(" ")[0])+" want this?</span>";
   var C=$("twCards"); C.innerHTML=""; $("twNext").hidden=true;
   var opts;
   if(tS<tw.steps.length){ var st=tw.steps[tS]; opts=shuffle([["up",st.up[0]],["down",st.down],["side",st.side]]); }
@@ -1421,9 +1465,14 @@ $("twNext").addEventListener("click",function(){ tI++; tS=0; twFloors=[TOWERS[tI
 twFloors=[TOWERS[0].base]; twRender(); twTower();
 function twLines(){
   var ks=Object.keys(REC2); var done=ks.filter(function(k){return REC2[k].done;});
-  var d=0,s=0,e=0,l=0; ks.forEach(function(k){ d+=REC2[k].down; s+=REC2[k].side; e+=REC2[k].early; l+=REC2[k].late; });
-  if(!done.length && !d && !s && !e && !l && tS===0) return ["Lead 2 Why-tower: not started"];
-  return ["Lead 2 Why-tower: "+done.length+" of "+TOWERS.length+" towers roofed; slips: "+d+" how-answer(s) going down, "+s+" sideways fact(s), "+e+" roof(s) put on too early, "+l+" extra floor(s) tried above the final desire"];
+  var tot=0; ks.forEach(function(k){ var q=REC2[k]; tot+=q.down+q.side+q.early+q.late; });
+  if(!done.length && !tot && tS===0 && tI===0) return ["Lead 2 Why-tower: not started"];
+  var parts=ks.map(function(k){ var q=REC2[k], t=TOWERS[k], n=+k+1, nm=t.who.split(" ")[0], x=q.down+q.side+q.early+q.late;
+    var st=(q.done?"roofed":"not finished");
+    if(!x) return "tower "+n+" ("+nm+") "+st+", no extra tries";
+    var bits=[]; if(q.down) bits.push(q.down+" how-answer(s) going down"); if(q.side) bits.push(q.side+" sideways fact(s)"); if(q.early) bits.push(q.early+" early roof(s)"); if(q.late) bits.push(q.late+" extra floor(s) above the final desire");
+    return "tower "+n+" ("+nm+") "+st+", needed another go: "+bits.join(", "); });
+  return ["Lead 2 Why-tower: "+done.length+" of "+TOWERS.length+" towers roofed"+(parts.length?"; "+parts.join("; "):"")];
 }
 
 /* ================= LEAD 3: THREE BINS ================= */
@@ -1434,9 +1483,9 @@ var BINS=[
  {t:"Lin wants to bake bread because she loves doing it, and also to sell loaves to pay for a school trip.", s:"Lin (bread)", a:"both", why:"She'd bake even without the trip (final), and the trip is a further purpose (instrumental). Both."},
  {t:"Kai wants to learn Korean only because he needs one more language credit to graduate.", s:"Kai (Korean)", a:"ins", why:"No credit needed, no desire. Instrumental."},
  {t:"Ama wants to learn Korean because she loves how the language sounds. Nothing more to it.", s:"Ama (Korean)", a:"fin", why:"Same thing as Kai wants, opposite kind of desire. Final."},
- {t:"Theo wants to run the city marathon. It raises money for the animal shelter, and he asks his neighbors to sponsor him for the shelter's sake. But he's entered it every year since he was sixteen, long before the shelter got involved.", s:"Theo (marathon)", a:"both", why:"Take away the shelter and he'd still enter (final); the money is a further purpose (instrumental). Both."},
- {t:"Jess wants her friend to get over the flu, just because she cares about him.", s:"Jess (friend's recovery)", a:"fin", why:"It's about someone else, and it's still final: there's no further purpose."},
- {t:"Sam wants his friend to get over the flu only so the friend will be back in time to play bass at Sam's gig. Sam doesn't care about the friend's health itself.", s:"Sam (friend's recovery)", a:"ins", why:"Same wish as Jess, but Sam's reason points further: the gig. Instrumental."}
+ {t:"Theo wants to run the city marathon. He has entered it every year since he was sixteen, because he loves racing. This year he also asks neighbors to sponsor him, to raise money for the animal shelter.", s:"Theo (marathon)", a:"both", why:"He'd still run without the shelter (final), and the shelter money is a further purpose (instrumental). Both."},
+ {t:"Jess wants her friend to recover from the flu, just because she cares about him.", s:"Jess (friend's recovery)", a:"fin", why:"It's about someone else, and it's still final: there's no further purpose."},
+ {t:"Sam wants his friend to recover from the flu only so the friend will be back in time to play bass at Sam's gig. Sam doesn't care about the friend's health itself.", s:"Sam (friend's recovery)", a:"ins", why:"Same wish as Jess, but Sam's reason points further: the gig. Instrumental."}
 ];
 var REC3={}, binDone=0;
 BINS.forEach(function(it,i){
@@ -1470,7 +1519,7 @@ function binLines(){
   var first=BINS.filter(function(_,i){return REC3[i].final && !REC3[i].misses.length;}).length;
   var miss=BINS.map(function(it,i){ return REC3[i].misses.length ? it.s : null; }).filter(Boolean);
   var tm=0; BINS.forEach(function(_,i){ tm+=REC3[i].misses.length; });
-  return ["Lead 3 Same want, different reasons: "+done+" of "+BINS.length+" filed, "+first+" right first try"+(miss.length?"; needed another go on: "+miss.join(", ")+" ("+tm+" wrong pick(s) in all)":"")];
+  return ["Lead 3 Same want, different reasons: "+done+" of "+BINS.length+" filed, "+first+" right first try"+(miss.length?"; needed another go on: "+miss.join(", ")+" ("+tm+" extra tries in all)":"")];
 }
 
 /* ================= LEAD 4: NIA'S LEDGER ================= */
@@ -1487,17 +1536,25 @@ var EVENTS=[
    no:"The informed theory counts only what she'd want if she knew the facts. Knowing it's salt water, would she want to drink it?"}},
  {k:"bike", t:"Thursday: her bike gets fixed. But practice moves online for the rest of the season, so she'll never ride there.", a:"0", s:0, i:0,
   why:"The bike desire was instrumental (only for getting to practice), and only final desires score. 0. And notice: now that practice is online, she doesn't even care about the bike anymore."},
- {k:"robot", t:"Friday: the school quietly scraps the old robot. That evening a friend wrongly tells Nia it has been restored, and she's thrilled.", a:"-1", s:-1, i:-1,
+ {k:"robot", t:"Friday: the school quietly throws away the old robot. That evening a friend wrongly tells Nia it has been restored, and she's thrilled.", a:"-1", s:-1, i:-1,
   why:"What she wanted (the robot restored) is now impossible: frustrated, -1. Her thrilled evening doesn't touch the World-ledger. That's the false report again."},
  {k:"camp", t:"Sunday: Nia used to want a place at a summer coding camp, but after hearing \"it's full\" three years running, she stopped wanting it. It's not on her list anymore. This year a place opens, and she doesn't apply.", a:"0", s:0, i:null,
   why:"She has no current desire for the camp, so the simple ledger scores 0.",
   q2:{q:"Why might a critic say that 0 hides something?", opts:[["a","Her want shrank to fit what seemed possible, like sour grapes."],["b","The camp was only instrumental, so it never counted anyway."],["c","She never heard a place opened, so it can't count at all."]], a:"a",
-   ok:"Sour grapes. The ledger looks tidy only because the want was squeezed out. The informed theory might add a minus here (a well-informed Nia might still want to go), and that's the point of the fix.",
-   no:{b:"Nothing says it was instrumental. The problem is that the want disappeared for a suspicious reason.",c:"Not finding out never stops the ledger from scoring. Look at why the desire vanished."}}}
+   ok:"Sour grapes. The ledger looks tidy only because the want was pushed out. The informed theory might add a minus here (a well-informed Nia might still want to go), and that's the point of the fix.",
+   no:{b:"Nothing says it was instrumental. The problem is that the want disappeared for a suspicious reason.",c:"Not finding out never stops the ledger from scoring; it scores events whether or not she hears of them. The odd part is why her want vanished."}}}
 ];
+var HINT={
+ regional:"Rule: a satisfied final desire adds its points. This one is worth 3 points, and it came true.",
+ penpal:"Rule: the ledger scores what happened, not what she knew. This final desire is worth 2 points, and it came true.",
+ juice:"Rule: score the desire as written on her list. It is final and worth 1 point, and she did drink what was in the bottle.",
+ bike:"Rule: only final desires score. Did she want the bike for itself, or only to ride to practice?",
+ robot:"Rule: a frustrated final desire subtracts its points, even if she feels thrilled. It is worth 1 point, and the robot was not restored.",
+ camp:"Rule: only desires she has now score, and she no longer wants the camp. What does the simple ledger add for no current desire?"
+};
 var eI=0, totS=0, totI=0, infOn=false, REC4={}, ledDone=false;
 function sgn(n){ return (n>0?"+":"")+n; }
-function ledSet(){ $("totS").querySelector("strong").textContent=sgn(totS); $("totI").querySelector("strong").textContent=sgn(totI)+(ledDone?" (camp unscored)":""); $("totI").classList.toggle("off",!infOn); }
+function ledSet(){ $("totS").querySelector("strong").textContent=sgn(totS); $("totI").querySelector("strong").textContent=sgn(totI)+(ledDone?" (not counting the camp)":""); $("totI").classList.toggle("off",!infOn); }
 function ledRow(E){
   var tb=$("ledTable").querySelector("tbody"); $("ledTable").hidden=false;
   tb.querySelectorAll("tr").forEach(function(r){ r.classList.remove("new"); });
@@ -1520,7 +1577,7 @@ function ledRender(){
         if(E.inf) ledInf(E); else if(E.q2) ledQ2(E); else ledFinish(E);
       } else {
         R.misses++; b.disabled=true; focusFb($("ledFb"));
-        setFb($("ledFb"),"bad",vword("g4","no"), R.misses>=2 ? "Plain version: only a final desire on her list scores. If the thing she wanted happened, add its points. If it did not, subtract them. If no final desire is involved, the score is 0. What she felt never counts." : "Check the rules: Is this desire final? Did what she wanted really happen (never mind what she felt)? How many points is it worth? Is it on her list at all?");
+        setFb($("ledFb"),"bad",vword("g4","no"), R.misses>=2 ? "Plain version: only a final desire on her list scores. If the thing she wanted happened, add its points. If it did not, subtract them. If no final desire is involved, the score is 0. What she felt never counts." : HINT[E.k]);
       }
       ledSet(); touch("g4");
     });
@@ -1535,7 +1592,7 @@ function ledInf(E){
     b.addEventListener("click",function(){
       var R=REC4[eI]; if(R.inf==="ok") return;
       row.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
-      if(o[0]===E.inf.a){ R.inf="ok"; row.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); infOn=true; setFb($("ledFb"),"good",vword("g4","ok"),E.inf.ok); ledFinish(E); }
+      if(o[0]===E.inf.a){ R.inf="ok"; row.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); infOn=true; setFb($("ledFb"),"good","Right.",E.inf.ok); ledFinish(E); }
       else { R.infMiss=(R.infMiss||0)+1; setFb($("ledFb"),"bad",vword("g4","no"),E.inf.no); focusFb($("ledFb")); }
       ledSet(); touch("g4");
     });
@@ -1551,7 +1608,7 @@ function ledQ2(E){
     b.addEventListener("click",function(){
       var R=REC4[eI]; if(R.q2==="ok") return;
       wrap.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
-      if(o[0]===E.q2.a){ R.q2="ok"; wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("ledFb"),"good",vword("g4","ok"),E.q2.ok); ledFinish(E); }
+      if(o[0]===E.q2.a){ R.q2="ok"; wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); setFb($("ledFb"),"good","Right.",E.q2.ok); ledFinish(E); }
       else { R.q2Miss=(R.q2Miss||0)+1; setFb($("ledFb"),"bad",vword("g4","no"),E.q2.no[o[0]]); focusFb($("ledFb")); }
       touch("g4");
     });
@@ -1562,7 +1619,7 @@ function ledQ2(E){
 function ledFinish(E){
   totI += (E.i===null?0:E.i); ledRow(E);
   if(eI<EVENTS.length-1){ showNext($("ledNext")); }
-  else { ledDone=true; $("ledFb").innerHTML+="<br><br><b>Week closed.</b> Simple ledger: +"+totS+". Informed ledger: +"+totI+", with the camp left unscored. Same week, two different scores, and on both ledgers the robot evening counts as a <i>loss</i>, even though she spent it thrilled."; focusFb($("ledFb")); clear("g4"); }
+  else { ledDone=true; $("ledFb").innerHTML+="<br><br><b>Week closed.</b> Simple ledger: +"+totS+". Informed ledger: +"+totI+", not counting the camp, which cannot be scored without knowing what a fully informed Nia wants. Same week, two different scores, and on both ledgers the robot evening counts as a <i>loss</i>, even though she spent it thrilled."; focusFb($("ledFb")); clear("g4"); }
   ledSet();
 }
 $("ledNext").addEventListener("click",function(){ eI++; ledRender(); $("ledBtns").querySelector(".pick").focus(); });
@@ -1574,7 +1631,7 @@ function ledLines(){
   var miss=ks.filter(function(k){return REC4[k].misses;}).map(function(k){return EVENTS[k].k;});
   var extra=[]; if(REC4[2]&&REC4[2].inf==="ok") extra.push("informed juice question right"+(REC4[2].infMiss?" after a miss":" first try"));
   if(REC4[5]&&REC4[5].q2==="ok") extra.push("sour-grapes question right"+(REC4[5].q2Miss?" after "+REC4[5].q2Miss+" miss(es)":" first try"));
-  return ["Lead 4 Nia's desire ledger: "+ks.length+" of "+EVENTS.length+" events scored, "+first+" first try"+(miss.length?"; tricky events: "+miss.join(", "):"")+(extra.length?"; "+extra.join("; "):"")+(ledDone?"; final totals simple +"+totS+", informed +"+totI+" (camp unscored)":"")];
+  return ["Lead 4 Nia's desire ledger: "+ks.length+" of "+EVENTS.length+" events scored, "+first+" first try"+(miss.length?"; needed another go on: "+miss.join(", "):"")+(extra.length?"; "+extra.join("; "):"")+(ledDone?"; final totals simple +"+totS+", informed +"+totI+" (not counting the camp)":"")];
 }
 
 /* ================= LEAD 5: CALL IT ================= */
@@ -1596,7 +1653,7 @@ var cI=0, REC5={};
 function cRender(){
   var C5=CALLS[cI]; REC5[cI]=REC5[cI]||{misses:0, th:false, mine:null};
   $("callNav").textContent="Hard case "+(cI+1)+" of "+CALLS.length; $("callNext").hidden=true; $("callFb").className="fb"; $("callFb").innerHTML="";
-  var C=$("callCard"); C.innerHTML='<h3>'+C5.n+'<em>'+C5.tag+'</em></h3><p class="small">'+esc(C5.d)+'</p><p class="step-lbl">1. What does the unrestricted desire theory say this does to how well the life went?</p>';
+  var C=$("callCard"); C.innerHTML='<h3>'+C5.n+'<em>'+C5.tag+'</em></h3><p class="small">'+esc(C5.d)+'</p><p class="step-lbl">1. What does the unrestricted desire theory (it counts every desire, about anything) say this does to how well the life went?</p>';
   var g1=el("div",{role:"group","aria-label":"Theory's verdict"});
   ["up","dn","same"].forEach(function(v){
     var b=el("button",{class:"choice",type:"button","aria-pressed":"false"}); b.textContent=CW[v];
@@ -1631,8 +1688,8 @@ function cRender(){
 function cTally(){
   var T=$("callTally"); T.innerHTML=""; var with_=0, n=0;
   CALLS.forEach(function(C5,i){ var R=REC5[i]; if(!R||!R.mine) return; n++; var same=R.mine===C5.a; if(same) with_++;
-    var s=el("span",{class:same?"on":""}); s.textContent=C5.n.replace("The ","")+": "+(same?"with the theory":(R.mine==="unsure"?"unsure":"split")); T.appendChild(s); });
-  if(n){ var s=el("span",{class:"on"}); s.textContent="Agreed with the theory "+with_+"/"+n; T.appendChild(s); }
+    var s=el("span",{class:same?"on":""}); s.textContent=C5.n.replace("The ","")+": "+(same?"matches the theory":(R.mine==="unsure"?"unsure":"differs")); T.appendChild(s); });
+  if(n){ var s=el("span",{class:"on"}); s.textContent="Your view matched the theory on "+with_+" of "+n+" (a tally, not a score)"; T.appendChild(s); }
 }
 var callPattern=null;
 function cReveal(){
@@ -1640,7 +1697,7 @@ function cReveal(){
   var P=splits.map(function(c){return c.patch;});
   var out=[], keys=[];
   var agreed=CALLS.filter(function(C5,i){ return REC5[i] && REC5[i].mine===C5.a; }).length, unsure=CALLS.length-agreed-splits.length;
-  if(!splits.length && agreed===CALLS.length){ callPattern="Bullet-biter (agreed with the theory on all "+CALLS.length+")"; out.push("<b>Bullet-biter.</b> That means someone who accepts the odd results instead of dodging them. You agreed with the unrestricted theory every time. That's a real position: maybe a stranger's recovery really does make your life a little better. Rocky will test how far you'll go."); }
+  if(!splits.length && agreed===CALLS.length){ callPattern="Bullet-biter (agreed with the theory on all "+CALLS.length+")"; out.push("<b>Bullet-biter.</b> That means someone who accepts the odd results instead of avoiding them. You agreed with the unrestricted theory every time. That's a real position: maybe a stranger's recovery really does make your life a little better. Rocky will test how far you'll go."); }
   else if(!splits.length){ callPattern="Hasn't decided (agreed with the theory on "+agreed+", not sure on "+unsure+")"; out.push("<b>Hasn't decided yet.</b> "+(unsure===CALLS.length?"You were not sure on all "+CALLS.length+" cases, and you never disagreed with the theory.":"You were not sure on "+unsure+" of the "+CALLS.length+" cases and never disagreed with the theory on the others.")+" That's honest: these cases are hard. Rocky will help you work out what you would say."); }
   else {
     if(P.indexOf("own")>=0){ keys.push("own-life"); out.push("<b>Keep it about your own life.</b> You split from the theory on a desire about a stranger or about the past. That points to the patch that counts only desires about your own life."); }
@@ -1692,7 +1749,7 @@ TAPES.forEach(function(T,ti){
   });
   function used(){ heldBtn.hidden=true; heldBtn.disabled=true; held=null; heldBtn=null; put.disabled=true; toss.disabled=true; }
   function check(){ var R=REC6.tapes[ti]; if(R.placed===3 && R.tossed){ R.done=true; box.classList.add("done"); tapesDone++;
-      setFb(fb,"good","Rolling.","Want, then get, then glow, and the cynic's frame is in the bin. The glow can't come before the want it depends on.");
+      setFb(fb,"good","In order.","Want, then get, then glow, and the cynic's frame is tossed out. The glow can't come before the want it depends on.");
       focusFb(fb); if(tapesDone===TAPES.length) cynBuild(); } }
   put.addEventListener("click",function(){
     var R=REC6.tapes[ti]; if(!held||R.done) return;
@@ -1702,8 +1759,8 @@ TAPES.forEach(function(T,ti){
   });
   toss.addEventListener("click",function(){
     var R=REC6.tapes[ti]; if(!held||R.done) return;
-    if(held.k==="fake"){ R.tossed=true; bin.textContent="Cynic's edits: "+held.t; bin.classList.add("f"); used(); setFb(fb,"good","Binned.","That's the cynic's order. The glow can't come before the want it depends on."); check(); if(!R.done){ var n=chips.querySelector(".tile:not([hidden])"); if(n) n.focus(); } }
-    else { R.misses++; focusFb(fb); setFb(fb,"bad","Keep that one.","That frame really happens in the scene. Only the cynic's planted frame goes in the bin."); }
+    if(held.k==="fake"){ R.tossed=true; bin.textContent="Cynic's edits: "+held.t; bin.classList.add("f"); used(); setFb(fb,"good","Tossed.","That's the cynic's order. The glow can't come before the want it depends on."); check(); if(!R.done){ var n=chips.querySelector(".tile:not([hidden])"); if(n) n.focus(); } }
+    else { R.misses++; focusFb(fb); setFb(fb,"bad","Keep that one.","That frame really happens in the scene. Only the cynic's planted frame gets tossed."); }
     touch("g6");
   });
   box.appendChild(chips); box.appendChild(acts); box.appendChild(fb); $("tapeList").appendChild(box);
@@ -1716,7 +1773,7 @@ var CYN=[
  {q:"The cynic tries again: \"Fine. So Butler proves people are basically good?\"",
   o:[["a","Yes: any desire aimed at someone else must be a kind one."],["b","No: aiming at others can be spiteful, like wanting a rival to lose."],["c","No: he thought people were all secretly selfish, deep down."]], a:"b",
   ok:"Scene 2 is the proof. Wanting your rival to lose is aimed outside yourself, and it isn't kind. Butler shows our desires reach outward, not that they're nice.",
-  no:{a:"Look at scene 2. Wanting your rival to lose is aimed at someone else. Is it kind?",c:"The opposite: Butler argued against the idea that everyone is selfish deep down."}},
+  no:{a:"Butler's point: a want can reach out to other people and still be spiteful, like wanting a rival to lose. Does aiming at someone else make a want kind?",c:"The opposite: Butler argued against the idea that everyone is selfish deep down."}},
  {q:"Why does Butler's point matter for the desire theory?",
   o:[["a","If all desires aimed at pleasure, it would match hedonism."],["b","Because Butler is the one who invented the desire theory."],["c","Because desire theory is really a theory of why people act."]], a:"a",
   ok:"If psychological hedonism were true, the World-ledger would only ever be counting wants for pleasure, so it would score roughly like the Feel-o-meter and you'd be back at Case 3.",
@@ -1752,7 +1809,7 @@ function tapeLines(){
   var tm=0; ks.forEach(function(k){ tm+=REC6.tapes[k].misses; });
   var qd=Object.keys(REC6.q).filter(function(k){return REC6.q[k].done;}).length;
   var qf=Object.keys(REC6.q).filter(function(k){return REC6.q[k].done && !REC6.q[k].misses;}).length;
-  return ["Lead 6 Rewind the tape: "+tapesDone+" of "+TAPES.length+" scenes put in order with the cynic's frame binned ("+tm+" misplaced frame(s)); cynic challenges "+qd+" of "+(Object.keys(REC6.q).length||CYN.length)+" answered right, "+qf+" first try"];
+  return ["Lead 6 Rewind the tape: "+tapesDone+" of "+TAPES.length+" scenes put in order with the cynic's frame tossed ("+tm+" extra tries); cynic challenges "+qd+" of "+(Object.keys(REC6.q).length||CYN.length)+" answered right, "+qf+" first try"];
 }
 
 /* ================= FINALE ================= */
@@ -1765,7 +1822,7 @@ var VIEWS=[
 var ENDTXT={unres:"your view says the secret win made your life go better", fixed:"your view probably says the secret win made your life go better (unless your patch rules out desires about your team)", hed:"your view says the secret win made no difference", obj:"your view says it depends on whether the win was good for you, not just wanted"};
 VIEWS.forEach(function(v){
   var b=el("button",{class:"choice",type:"button","aria-pressed":"false","data-v":v[0]}); b.textContent=v[1];
-  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
+  b.addEventListener("click",function(){ if(FIN.done) return; FIN.view=v[0]; lockReset($("finBtn"),"Lock my verdict"); $("finOpts").querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); });
   $("finOpts").appendChild(b);
 });
 function viewText(k){ var v=VIEWS.filter(function(x){return x[0]===k;})[0]; return v?v[1]:"not chosen"; }
@@ -1774,25 +1831,32 @@ function freezeFinale(){
   $("finReason").readOnly=true; $("finMoved").disabled=true; $("finBtn").disabled=true; $("finBtn").textContent="Verdict filed";
 }
 function finRender(){
-  var start = COVER.locked ? VL[COVER.v] : "(no gut call locked in)";
+  var start = COVER.locked ? VL[COVER.v] : "(no first instinct locked in)";
   $("finCompare").innerHTML='<div><span class="hd">START OF FILE</span><br>'+esc(start)+(COVER.locked?'<br><i>'+esc(COVER.reason)+'</i>':'')+'</div><div><span class="hd">END OF FILE</span><br>'+esc(ENDTXT[FIN.view])+'</div>';
   var shift="";
-  if(COVER.locked && FIN.view!=="obj"){ var desireView=FIN.view==="unres"||FIN.view==="fixed"; shift = (COVER.v==="yes")===desireView ? "Your gut call and your verdict line up." : "Your verdict and your gut call point different ways. That's worth a sentence to Rocky: which one gives?"; }
-  else if(COVER.locked) shift="Your verdict sets up Case 5. Tell Rocky how your gut call fits it.";
+  if(COVER.locked && FIN.view!=="obj"){ var desireView=FIN.view==="unres"||FIN.view==="fixed"; shift = (COVER.v==="yes")===desireView ? "Your first instinct and your verdict agree." : "Your verdict and your first instinct point different ways. That's worth a sentence to Rocky: which one gives?"; }
+  else if(COVER.locked) shift="Your verdict sets up Case 5. Tell Rocky how your first instinct fits it.";
   $("rcard").innerHTML='<div class="stamp">FILED</div><h3>My verdict</h3><p><b>View:</b> '+esc(viewText(FIN.view))+'</p><p><b>Because:</b> '+esc(FIN.reason)+'</p><p><b>Moved me most:</b> '+esc(FIN.moved)+'</p><p class="small">'+shift+'</p>';
   $("finCard").hidden=false;
 }
+$("finReason").addEventListener("input",function(){ lockReset($("finBtn"),"Lock my verdict"); });
+$("finMoved").addEventListener("change",function(){ lockReset($("finBtn"),"Lock my verdict"); });
 $("finBtn").addEventListener("click",function(){
   if(FIN.done) return;
   var reason=flat($("finReason").value), moved=flat($("finMoved").value);
-  if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); focusFb($("finFb")); return; }
-  if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return; }
-  if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return; }
-  FIN.reason=reason; FIN.moved=moved; FIN.done=true; freezeFinale();
+  lockTap($("finBtn"),"Lock my verdict",function(){
+    if(!FIN.view){ setFb($("finFb"),"bad","First things first.","Pick the view closest to yours."); focusFb($("finFb")); return false; }
+    if(reason.length<8){ setFb($("finFb"),"bad","Almost.","Give a real reason, in a sentence or two."); $("finReason").focus(); return false; }
+    if(!moved){ setFb($("finFb"),"bad","One more.","Pick what moved you most."); $("finMoved").focus(); return false; }
+    return true;
+  },function(){ finGo(reason,moved); },function(t){ if(t) setFb($("finFb"),"","Ready?",t); else $("finFb").className="fb", $("finFb").innerHTML=""; });
+});
+function finGo(reason,moved){
+  FIN.reason=reason; FIN.moved=moved; FIN.done=true; $("finReason").value=reason; freezeFinale();
   setFb($("finFb"),"good","Filed.","Your verdict is locked and on the board. Now copy your case file for Rocky below.");
   $("fin").classList.add("is-cleared"); finRender(); updateProg(); saveState(); focusFb($("finFb"));
   toast("Case closed: verdict filed", "var(--stamp)");
-});
+}
 function finLines(){
   if(!FIN.done) return ["Final verdict: not locked yet"];
   return ["Final verdict (locked): "+viewText(FIN.view), "My reason: "+flat(FIN.reason), "What moved me most: "+flat(FIN.moved)];

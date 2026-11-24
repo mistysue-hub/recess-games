@@ -52,8 +52,11 @@
   .card{width:150px;height:250px;border-radius:14px;position:relative;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.55);
    background:#fff8e7;color:#1b1b1b;border:3px solid #fff;overflow:hidden;font-family:"Rubik",system-ui,sans-serif}
   .card .front,.card .bk{position:absolute;inset:0;padding:10px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .card.flip{height:auto;min-height:250px;overflow:visible}
+  .card.flip .bk{position:relative;inset:auto}
   .card .bk{display:none;background:#fff8e7;font-size:12px;overflow-y:auto;text-align:left;justify-content:flex-start}
   .card.flip .front{display:none}.card.flip .bk{display:flex}
+  .card.back.tapme{cursor:pointer}
   .card .bk p{margin:6px 0;line-height:1.3}
   .card .ex{color:#7a1020;font-style:italic}
   .cn{font-size:10px;letter-spacing:2px;color:#888;position:absolute;top:7px;left:9px}
@@ -183,12 +186,15 @@ var fresh=null,foil=[];
 try{var fr=localStorage.getItem("gn1foil");if(fr)foil=JSON.parse(fr)||[]}catch(e){foil=[]}
 try{var m=/[?&]card=(\d+)/.exec(location.search);if(m){var k=parseInt(m[1],10);if(k>=1&&k<=8){fresh=k;if(got.indexOf(k)<0)got.push(k);if(/[?&]foil=1(&|$)/.test(location.search)&&foil.indexOf(k)<0)foil.push(k)}}}catch(e){}
 try{localStorage.setItem("gn1foil",JSON.stringify(foil))}catch(e){}
-try{localStorage.setItem("gn1deck",JSON.stringify(got))}catch(e){}
+try{if(!got.length&&window.name&&window.name.indexOf("gn1deck:")===0)got=JSON.parse(window.name.slice(8))||[]}catch(e){}
+function save(){try{localStorage.setItem("gn1deck",JSON.stringify(got))}catch(e){}try{window.name="gn1deck:"+JSON.stringify(got)}catch(e){}}
+save();
+function restore(n){if(got.indexOf(n)<0)got.push(n);save();draw()}
 function draw(){
   var h="";
   CARDS.forEach(function(c,i){
     var n=i+1,open=got.indexOf(n)>=0,isFoil=foil.indexOf(n)>=0;
-    if(!open){h+="<div class=\"card back\"><div class=\"backpat\">▲●<br>■✖</div><div class=\"cn\">CARD "+n+"</div><div class=\"lockd\">LOCKED</div></div>";return}
+    if(!open){h+="<div class=\"card back tapme\" onclick=\"restore("+n+")\"><div class=\"backpat\">▲●<br>■✖</div><div class=\"cn\">CARD "+n+"</div><div class=\"lockd\">LOCKED<br><small>earned it? tap to add</small></div></div>";return}
     h+="<div class=\"card "+c.r.toLowerCase()+(isFoil?" foil":"")+(n===fresh?" glow":"")+"\" onclick=\"this.classList.toggle('flip')\">"+
       "<div class=\"front\"><div class=\"cn\">CARD "+n+"</div><div class=\"emo\">"+c.e+"</div><div class=\"name\">"+c.n+"</div><div class=\"rar\">"+c.r+"</div>"+(isFoil?"<div class=\"foiltag\">GOLD FOIL</div>":"")+"<div class=\"hint\">tap to flip</div></div>"+
       "<div class=\"bk\"><div class=\"name\">"+c.n+"</div><p>"+c.d+"</p><p class=\"use\">Use it when "+c.u+"</p><p class=\"ex\">Example: "+c.x+"</p></div></div>";
