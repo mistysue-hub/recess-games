@@ -1398,8 +1398,8 @@ function ladRender(){
     var s=el("span"); s.textContent=it.t; li.appendChild(s);
     var up=el("button",{class:"mv",type:"button","aria-label":"Move up: "+it.t}); up.textContent="▲"; up.disabled=pos===0||ladLocked;
     var dn=el("button",{class:"mv",type:"button","aria-label":"Move down: "+it.t}); dn.textContent="▼"; dn.disabled=pos===ladOrder.length-1||ladLocked;
-    up.addEventListener("click",function(){ var t=ladOrder[pos-1]; ladOrder[pos-1]=idx; ladOrder[pos]=t; ladMoved=true; $("ladLock").disabled=false; $("ladHint").hidden=true; ladRender(); touch("g3"); var bs=$("ladder").children[pos-1].querySelectorAll(".mv"); (bs[0].disabled?bs[1]:bs[0]).focus(); });
-    dn.addEventListener("click",function(){ var t=ladOrder[pos+1]; ladOrder[pos+1]=idx; ladOrder[pos]=t; ladMoved=true; $("ladLock").disabled=false; $("ladHint").hidden=true; ladRender(); touch("g3"); var bs=$("ladder").children[pos+1].querySelectorAll(".mv"); (bs[1].disabled?bs[0]:bs[1]).focus(); });
+    up.addEventListener("click",function(){ var t=ladOrder[pos-1]; ladOrder[pos-1]=idx; ladOrder[pos]=t; ladMoved=true; $("ladLock").disabled=false; disarm($("ladLock"),"Lock my ladder"); $("ladHint").hidden=true; ladRender(); touch("g3"); var bs=$("ladder").children[pos-1].querySelectorAll(".mv"); (bs[0].disabled?bs[1]:bs[0]).focus(); });
+    dn.addEventListener("click",function(){ var t=ladOrder[pos+1]; ladOrder[pos+1]=idx; ladOrder[pos]=t; ladMoved=true; $("ladLock").disabled=false; disarm($("ladLock"),"Lock my ladder"); $("ladHint").hidden=true; ladRender(); touch("g3"); var bs=$("ladder").children[pos+1].querySelectorAll(".mv"); (bs[1].disabled?bs[0]:bs[1]).focus(); });
     li.appendChild(up); li.appendChild(dn); L.appendChild(li);
   });
   $("ladder").classList.toggle("locked",ladLocked);
@@ -1423,7 +1423,7 @@ function buildLQ(Ls, Hs, Lj){
 }
 var lqDone=0;
 $("ladLock").addEventListener("click",function(){
-  if(ladLocked || !ladMoved) return; ladLocked=true; REC.lad.order=ladOrder.map(function(i){return LAD[i].s;}); ladRender();
+  if(ladLocked || !ladMoved) return; var r=armLock($("ladLock"),"Lock my ladder"); if(r!=="go") return; ladLocked=true; REC.lad.order=ladOrder.map(function(i){return LAD[i].s;}); ladRender();
   $("ladLock").disabled=true; $("ladLock").textContent="Ladder locked";
   var lowPos=-1, hiPos=-1;
   ladOrder.forEach(function(idx,pos){ if(!LAD[idx].hi && lowPos<0) lowPos=pos; if(LAD[idx].hi && hiPos<0) hiPos=pos; });
@@ -1599,9 +1599,9 @@ FLIP.forEach(function(v){
   box.appendChild(row); $("flipList").appendChild(box);
 });
 var FQ={q:"The classic and the reverse are the same deal with \"home\" swapped. Which of the hedonist's replies does that pair test most directly?",
-  o:[["a","Status quo bias: we may just prefer whatever world we're in"],["b","Moral reasons: we may owe it to others to stay in reality"],["c","Bentham's calculus: we may be weighing each life's intensity"]], a:"a",
-  ok:"Flipping which world counts as \"home\" is exactly how you check for status quo bias. If people's answers flip with it, their \"no\" may be about familiarity, not reality. Your results are below.",
-  no:{b:"That reply is about loved ones and duties. The leftovers card tests it, but the classic-versus-reverse pair tests something else: which world you start in.",c:"The calculus weighs the pleasures in a life; it doesn't care which world you start in. The two cards differ only in which world counts as home."}};
+  o:[["a","Reply 1: you'd refuse to unplug, too (we may just prefer whatever world we're in)"],["b","Reply 3: that's not a well-being reason (we may owe it to others to stay in reality)"],["c","Reply 4: reality is usually the best route to pleasure"]], a:"a",
+  ok:"Flipping which world counts as \"home\" is exactly how you check Reply 1, status quo bias. If people's answers flip with it, their \"no\" may be about familiarity, not reality. Your results are below.",
+  no:{b:"That reply is about loved ones and duties. The leftovers card tests it, but the classic-versus-reverse pair tests something else: which world you start in.",c:"Reply 4 is about how reliably reality delivers pleasure; it doesn't care which world you start in. The two cards differ only in which world counts as home."}};
 function showFlipQ(){
   fqShown=true; var Q=$("flipQ"); Q.hidden=false;
   Q.innerHTML='<p class="small"><b>One question, then your results.</b> '+FQ.q+'</p><div id="fqOpts"></div>';
