@@ -410,6 +410,7 @@ select.reasonbox{min-height:44px}
 .ev{background:var(--card); border-radius:10px; padding:12px 14px; font-size:1.02rem; margin:12px 0; border:2px dashed var(--ink-soft)}
 .ev b{font-family:var(--type); font-size:.8rem; display:block; color:var(--ink-soft)}
 .scorebtns{display:flex; flex-wrap:wrap; gap:6px}
+.scorebtns > .step-lbl{flex:1 0 100%; margin-top:6px}
 .scorebtns .pick{--pc:var(--hl-y); min-width:44px; padding:6px 8px; font-family:var(--type); font-weight:700}
 .scorebtns .pick.right{background:var(--hl-g); color:var(--hl-ink)}
 
@@ -790,9 +791,9 @@ details.sealed.skipbox>summary{font-weight:700}
     <p>In Aesop's fable, a fox can't reach some grapes and decides they were probably sour anyway. ("Sour grapes" now means pretending you never wanted what you can't have.) People do this too. If you're told for years that someone like you will never get to go to college, you might stop wanting it, just to stop the ache. Philosophers call these <b>adaptive preferences</b>: wants that shrink to fit what seems possible. Satisfy the shrunken wants and the World-ledger looks great, even though something has clearly gone wrong.</p>
   </div>
   <div class="poll" id="sourPoll">
-    <p><b>Quick vote:</b> a student stopped wanting college after years of being told it was not for them. Does the simple desire theory say their life is going well? (Not graded.)</p>
-    <div class="row" role="group" aria-label="Does the simple theory say it is going well?">
-      <button class="btn ghost" type="button" data-r="yes">Yes, they got what they want</button>
+    <p><b>Quick vote:</b> a student stopped wanting college after years of being told it was not for them. The simple desire theory says their life is going fine, because they no longer want college and so nothing they want is going unmet. Does that seem right to you? (Not graded.)</p>
+    <div class="row" role="group" aria-label="Does it seem right that their life is going fine?">
+      <button class="btn ghost" type="button" data-r="yes">Yes, that seems right</button>
       <button class="btn ghost" type="button" data-r="no">No, something's off</button>
     </div>
     <div class="fb" id="sourFb" aria-live="polite" tabindex="-1"></div>
@@ -881,7 +882,7 @@ details.sealed.skipbox>summary{font-weight:700}
   </details>
   <details class="reply" style="--rc:var(--hl-b)">
     <summary><b>Patch 2: only what you want now</b></summary>
-    <div class="inner"><p>Count a desire only while you still have it. That handles the train driver (a wish you outgrew), and the garden too, since nobody has desires after they die.</p><p class="other">The other side says: what about plans you'll care about later, or a life's work you want to last?</p></div>
+    <div class="inner"><p>Count a desire only while you still have it. That handles a wish you outgrew (like a childhood dream you no longer care about), and the garden too, since nobody has desires after they die.</p><p class="other">The other side says: what about plans you'll care about later, or a life's work you want to last?</p></div>
   </details>
   <details class="reply" style="--rc:var(--hl-y)">
     <summary><b>Patch 3: accept the odd results ("bite the bullet" means accepting a strange conclusion instead of avoiding it)</b></summary>
@@ -1064,7 +1065,7 @@ var MID="C1-M04";
 
 /* ---------- varied feedback words, per lead ---------- */
 var VERD={
- g1:{okf:["Needle reads true.","Clean read.","Spot on."], okw:["Ledger checks out.","Clean read.","Spot on."], no:["Not quite.","Not yet.","Not what that scorekeeper sees."]},
+ g1:{okf:["Needle reads true.","Clean read.","Spot on."], okw:["Ledger checks out.","Clean read.","Spot on."], okr:["There it is.","That one fits.","Got it."], no:["Not quite.","Not yet.","Not what that scorekeeper sees."]},
  g3:{ok:["Right drawer.","Reason read.","Filed.","Clean."], no:["Wrong drawer.","Not that drawer.","Not that one."]},
  g4:{ok:["Books balance.","Accountant-grade.","Entered.","Clean."], no:["Not quite.","Not that number.","Not yet."]},
  g5:{ok:["Right: that is what it says.","Theory-true.","Exactly what it says.","Clean."], no:["The theory wouldn't say that.","Not on this theory.","Not that one."]},
@@ -1269,7 +1270,7 @@ var POLLREPLY={
  keeper:{feel:"Keep your pick in mind. Lead 1 has you run both scorekeepers, and the finale asks again.", world:"Keep your pick in mind. Lead 1 has you run both scorekeepers, and the finale asks again."},
  chain:{person:"Lots of chains end at a person. Either way, it stops; that's the point of a final desire.", enjoy:"Plenty of chains end at an experience you love. Either way, it stops; that's the point of a final desire.", other:"Wherever it lands, it stops somewhere. That landing spot is a final desire."},
  grass:{yes:"That's the \"you're the authority\" instinct, the desire theory's main strength.", no:"That instinct, that some things are good for you whatever you want, is where Case 5 starts."},
- sour:{yes:"That is what the simple theory has to say: the want was satisfied. Many people feel uneasy about it, and that unease is why the fix below exists.", no:"That unease is the objection. The shrunken want was shaped by the lack of a chance, so many people say the theory should not count it."},
+ sour:{yes:"That is where the simple theory lands too: with no want left, nothing is unmet. Many people feel uneasy about it, and that unease is why the fix below exists.", no:"That unease is the objection. The shrunken want was shaped by the lack of a chance, so many people say the theory should not count it."},
  garden:{yes:"That is the unrestricted theory's answer, and some philosophers accept it. The patches below try to avoid it.", no:"Many people share that instinct. The patches below try to rescue it."},
  tl:{want:"Close, but the cynic does not point at the want. He says the want is just a disguise for step 3. The next paragraph shows his move.", get:"Not quite: the cynic is not worried about whether it went well. He is pointing at how you felt afterward. The next paragraph shows his move.", glow:"Yes: the glow. He says it is the real reason you helped. The next paragraph shows what Butler does with that."},
  cyn:{yes:"It sounds airtight at first. Now watch Butler try to take it apart.", no:"Keep that doubt. Now watch Butler work out what is wrong with it."}
@@ -1357,7 +1358,7 @@ function skRender(){
         var R=REC1[skI];
         if(v===S[r[0]]){
           b.classList.add("right"); row.classList.add("ok"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
-          R[r[0]]=true; setFb($("skFb"),"good",vword("g1",r[0]==="f"?"okf":"okw"), r[0]==="f"?S.fy:S.wy);
+          R[r[0]]=true; setFb($("skFb"),"good",vword("g1",R.misses>0?"okr":(r[0]==="f"?"okf":"okw")), r[0]==="f"?S.fy:S.wy);
           if(R.f && R.w){
             if(skI<SK.length-1) showNext($("skNext"));
             else { skSummary(); focusFb($("skFb")); clear("g1"); }
@@ -1424,7 +1425,7 @@ function twRender(){
   $("twNav").textContent="Tower "+(tI+1)+" of "+TOWERS.length+", floor "+(tS+1);
   $("twWho").textContent=tw.who+" Trust the reasons in the cards; they come from the person.";
   var current = tS===0 ? tw.who.replace(/\.$/,"") : tw.steps[tS-1].up[0];
-  $("twNow").innerHTML="<b>Top floor right now</b>"+esc(current)+"<br><span class='small'>Why do they want this?</span>";
+  $("twNow").innerHTML="<b>Top floor right now</b>"+esc(current)+"<br><span class='small'>Why does "+esc(tw.who.split(" ")[0])+" want this?</span>";
   var C=$("twCards"); C.innerHTML=""; $("twNext").hidden=true;
   var opts;
   if(tS<tw.steps.length){ var st=tw.steps[tS]; opts=shuffle([["up",st.up[0]],["down",st.down],["side",st.side]]); }
@@ -1464,9 +1465,14 @@ $("twNext").addEventListener("click",function(){ tI++; tS=0; twFloors=[TOWERS[tI
 twFloors=[TOWERS[0].base]; twRender(); twTower();
 function twLines(){
   var ks=Object.keys(REC2); var done=ks.filter(function(k){return REC2[k].done;});
-  var d=0,s=0,e=0,l=0; ks.forEach(function(k){ d+=REC2[k].down; s+=REC2[k].side; e+=REC2[k].early; l+=REC2[k].late; });
-  if(!done.length && !d && !s && !e && !l && tS===0) return ["Lead 2 Why-tower: not started"];
-  return ["Lead 2 Why-tower: "+done.length+" of "+TOWERS.length+" towers roofed"+((d+s+e+l)?"; needed another go: "+d+" how-answer(s) going down, "+s+" sideways fact(s), "+e+" early roof(s), "+l+" extra floor(s) above the final desire":"; no extra tries")];
+  var tot=0; ks.forEach(function(k){ var q=REC2[k]; tot+=q.down+q.side+q.early+q.late; });
+  if(!done.length && !tot && tS===0 && tI===0) return ["Lead 2 Why-tower: not started"];
+  var parts=ks.map(function(k){ var q=REC2[k], t=TOWERS[k], n=+k+1, nm=t.who.split(" ")[0], x=q.down+q.side+q.early+q.late;
+    var st=(q.done?"roofed":"not finished");
+    if(!x) return "tower "+n+" ("+nm+") "+st+", no extra tries";
+    var bits=[]; if(q.down) bits.push(q.down+" how-answer(s) going down"); if(q.side) bits.push(q.side+" sideways fact(s)"); if(q.early) bits.push(q.early+" early roof(s)"); if(q.late) bits.push(q.late+" extra floor(s) above the final desire");
+    return "tower "+n+" ("+nm+") "+st+", needed another go: "+bits.join(", "); });
+  return ["Lead 2 Why-tower: "+done.length+" of "+TOWERS.length+" towers roofed"+(parts.length?"; "+parts.join("; "):"")];
 }
 
 /* ================= LEAD 3: THREE BINS ================= */
