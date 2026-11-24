@@ -533,7 +533,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
     <textarea id="myReason" maxlength="220" rows="2" autocomplete="off"></textarea>
     <div class="row"><button class="btn dim" type="button" id="lockBtn" aria-disabled="true">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 50 minutes (slower readers: allow more)</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 60 minutes</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
@@ -1275,7 +1275,7 @@ function judgeLines(){
   var ks=Object.keys(REC1).filter(function(k){return Object.keys(REC1[k].done).length;});
   if(!ks.length) return ["Lead 1 Which life goes better (Three Judges): not started"];
   var rulings=0, again=[];
-  ks.forEach(function(k){ var R=REC1[k]; Object.keys(R.done).forEach(function(j){ rulings++; if(R.miss[j]) again.push(PAIRS[k].k+" ("+j.replace("h","hedonist").replace("d","desire theorist").replace("o","list theorist")+")"); }); });
+  ks.forEach(function(k){ var R=REC1[k]; Object.keys(R.done).forEach(function(j){ rulings++; if(R.miss[j]) again.push(PAIRS[k].k+" ("+({h:"hedonist",d:"desire theorist",o:"list theorist"})[j]||j+")"); }); });
   var ML={A:"Life A",B:"Life B",T:"tie",U:"can't decide"};
   var mine=PAIRS.map(function(P,i){ var R=REC1[i]; return R&&R.mine ? P.n.replace("Warm-up: the","The")+" = "+ML[R.mine] : null; }).filter(Boolean);
   return ["Lead 1 Three Judges: "+(rulings===12 ? "all 12 judge rulings done" : rulings+" judge rulings done so far")+(again.length?"; needed another go on: "+again.join(", "):"; no extra tries needed"),
@@ -1370,7 +1370,7 @@ $("lDefBtn").addEventListener("click",function(){
         if(L.q[qi].done) return;
         wrap.querySelectorAll(".choice").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});
         if(o[0]===item.a){ L.q[qi].done=true; setFb(fb,"good",vword("g2","ok"),item.ok); wrap.querySelectorAll(".choice").forEach(function(x){x.disabled=true;}); lqDone++; focusFb(fb);
-          if(lqDone===LQ.length){ $("lScore").textContent="All three critics answered. Your list survives."; clear("g2"); } }
+          if(lqDone===LQ.length){ $("lScore").textContent="All three critics answered. Your list is still standing."; clear("g2"); } }
         else { L.q[qi].misses++; setFb(fb,"bad",vword("g2","no"),item.no[o[0]]); }
         touch("g2");
       });
@@ -1387,7 +1387,7 @@ function listLines(){
   if(L.prin) out.push("Lead 2 What holds it together: "+PRIN.filter(function(p){return p[0]===L.prin;})[0][1]);
   if(L.defItem && L.def) out.push("Lead 2 My defense of "+cName(L.defItem)+": a life without it would be worse because "+L.def);
   var ks=Object.keys(L.q);
-  if(ks.length){ var d=ks.filter(function(k){return L.q[k].done;}).length; var again=ks.filter(function(k){return L.q[k].misses;}).map(function(k){return "Critic "+(+k+1);}); out.push("Lead 2 Critics: "+(d===3?"all 3 answered":d+" answered so far (of 3)")+(again.length?"; needed another go on: "+again.join(", "):"; no extra tries needed")); }
+  if(ks.length){ var d=ks.filter(function(k){return L.q[k].done;}).length; var again=ks.filter(function(k){return L.q[k].misses;}).map(function(k){return "Critic "+(+k+1)+({0:" (money on the list)",1:" (personal taste)",2:" (put getting what you want on the list)"}[k]||"");}); out.push("Lead 2 Critics: "+(d===3?"all 3 answered":d+" answered so far (of 3)")+(again.length?"; needed another go on: "+again.join(", "):"; no extra tries needed")); }
   return out;
 }
 

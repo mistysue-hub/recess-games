@@ -402,7 +402,7 @@ details.optbox summary{min-height:44px}
     <textarea id="myReason" rows="3" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 35 minutes (slower readers: allow more)</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics &middot; Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 45 minutes</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
@@ -471,7 +471,7 @@ details.optbox summary{min-height:44px}
       <p>One square is off-limits. That's all validity is: a guarantee that you'll never land in the red square.</p>
     </div>
   </details>
-  <p class="preview">Next: Lead 1, eight quick questions, about 5 minutes for a first round. For each one, call it sound, valid but not sound, or invalid. Misses cost nothing here; Rocky just uses them to see what to review.</p>
+  <p class="preview">Next: Lead 1, eight quick questions, about 5 minutes for a first round. For each one, call it sound, valid but not sound, or invalid. To clear this lead you need 6 of 8, with at least one valid-but-not-sound right. Play as many rounds as you like; misses just show you what to review.</p>
   <div class="gotit"><button class="btn" type="button" data-unlock="1">Got it: open Lead 1</button><span class="gmsg" aria-live="polite"></span></div>
 </section>
 
@@ -677,7 +677,7 @@ function saveState(){
   if(!canSave || restoring) return;
   try{
     var lines={}; GAME_IDS.forEach(function(g){ lines[g]=linesFor(g); });
-    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, finale:FIN.pick, finaleTry:FIN_WRONG, rf:REC.rf, m:{solved:REC.m.solved, notes:REC.m.notes}, b:{done:REC.b.done, firstTry:REC.b.firstTry}, wu:WU, lines:lines}));
+    localStorage.setItem(KEY, JSON.stringify({unlock:unlockedStep, cleared:Object.keys(cleared), cover:COVER, finale:FIN.pick, finaleTry:FIN_WRONG, rf:REC.rf, m:{solved:REC.m.solved, notes:REC.m.notes}, b:{done:REC.b.done, firstTry:REC.b.firstTry, missed:REC.b.missed||[]}, wu:WU, lines:lines}));
     if(COVER.v && COVER.reason) localStorage.setItem(BKEY, JSON.stringify({v:COVER.v, reason:COVER.reason}));
   }catch(e){}
 }
@@ -814,7 +814,7 @@ armLock($("lockBtn"),"Lock it in",function(){
 function finalRecord(g){
   var sv = SAVED && SAVED.lines && SAVED.lines[g];
   if(restoring && Array.isArray(sv) && sv.length && sv.every(function(x){return typeof x==="string";})){
-    var ok = g==="g3" ? /: 4 of 4 arguments solved$/.test(sv[0]) : g==="g6" ? /: 3 of 3 repaired(; needed another go on \d of 3)?$/.test(sv[0]) : true;
+    var ok = g==="g3" ? /: 4 of 4 arguments solved$/.test(sv[0]) : g==="g6" ? /: 3 of 3 repaired(; needed another go on \d of 3( \([^)]*\))?)?$/.test(sv[0]) : true;
     if(ok) return sv.concat();
   }
   if(restoring && g==="g3") return ["Lead 2 Counterexample machine: 4 of 4 arguments solved"];
@@ -843,9 +843,9 @@ function wireCopies(){
   });
 }
 
-function rfLines(){ return ["Lead 1 Sound/valid/broken: "+(REC.rf.rounds? "best round "+REC.rf.best+" of 8 over "+REC.rf.rounds+" round"+(REC.rf.rounds>1?"s":"")+(REC.rf.passed?" (cleared)":" (not cleared yet)") : "no full round played")]; }
+function rfLines(){ return ["Lead 1 Sound/valid/broken: "+(REC.rf.rounds? "best round "+REC.rf.best+" of 8 over "+REC.rf.rounds+" round"+(REC.rf.rounds>1?"s":"")+(REC.rf.passed?" (cleared)":" (not cleared yet)")+(REC.rf.miss&&Object.keys(REC.rf.miss).length?"; missed: "+Object.keys(REC.rf.miss).join(", "):"") : "no full round played")]; }
 function mLines(){ return ["Lead 2 Counterexample machine: "+REC.m.solved+" of 4 arguments solved"].concat(REC.m.notes); }
-function bLines(){ var again=REC.b.done-REC.b.firstTry; return ["Lead 3 Missing piece: "+REC.b.done+" of 3 repaired"+(again>0?"; needed another go on "+again+" of 3":"")]; }
+function bLines(){ var again=REC.b.done-REC.b.firstTry; return ["Lead 3 Missing piece: "+REC.b.done+" of 3 repaired"+(again>0?"; needed another go on "+again+" of 3"+(REC.b.missed&&REC.b.missed.length?" ("+REC.b.missed.join(", ")+")":""):"")]; }
 var LIVE={g4:rfLines,g3:mLines,g6:bLines};
 function finLines(){
   if(!FIN.pick && FIN_WRONG) return ["Verdict, hidden premise my button argument relies on: not picked yet (needed another go; first picked \""+FIN_WRONG.t+"\", which "+(FIN_WRONG.k==="is"?"only says what people do":"just repeats my conclusion")+")"];
@@ -861,10 +861,10 @@ var JURY=[
  {k:"friendly dogs", p:["Every dog I have ever met was friendly."], c:"So, all dogs are friendly."},
  {k:"tall trio", p:["Mia is taller than Noah.","Noah is taller than Eli."], c:"So, Mia is taller than Eli."},
  {k:"snow day", p:["It snowed all night."], c:"So, school is closed today."},
- {k:"chess club", p:["Everyone in the chess club is in 6th grade or above.","Zoe is in the chess club."], c:"So, Zoe is in 6th grade or above."},
+ {k:"chess club", p:["Everyone in the chess club has passed Algebra 1.","Zoe is in the chess club."], c:"So, Zoe has passed Algebra 1."},
  {k:"aliens", p:["Nobody has ever proved that aliens don't exist."], c:"So, aliens exist."}
 ];
-var JSAY=["Noted.","The jury writes that down.","Hm. Interesting.","Locked.","Filed."];
+var JSAY=["Noted.","The jury writes that down.","Logged.","Locked.","Filed."];
 var GUARD_MS=200;
 var wuBusy=false, wuReadyAt=0, rfReadyAt=0;   /* ~200 ms after a card advances, the buttons are visibly dimmed and extra taps are ignored */
 function wuLines(){
@@ -1013,7 +1013,7 @@ $("rfBtns").querySelectorAll("button").forEach(function(b){
     if(rfAnswered || Date.now()<rfReadyAt) return; rfAnswered=true; var it=rfRound[rfI], a=b.getAttribute("data-a");
     $("rfBtns").querySelectorAll("button").forEach(function(x){ x.disabled=true; if(x.getAttribute("data-a")===it.a) x.classList.add("right"); });
     if(a===it.a){ rfScore++; rfStreak++; if(it.a==="valid") rfValidHit++; setFb($("rfFb"),"good","Yes: "+ALBL[it.a]+".",it.why); }
-    else { b.classList.add("wrongpick"); rfStreak=0; var extra = (a==="sound"&&it.a==="valid")?"You got the connection right; now check each premise against the real world. ":(a==="valid"&&it.a==="sound")?"Right that it's valid. Are the premises actually false, though? ":(it.a==="invalid")?"Before checking truth, ask: could the premises be true and the conclusion false? ":"Try to imagine the premises true and the conclusion false. If you can't, it's valid. ";
+    else { b.classList.add("wrongpick"); rfStreak=0; REC.rf.miss=REC.rf.miss||{}; var mk="\""+it.c.replace(/^So, /,"").slice(0,45)+"\" (I said "+a+", it is "+it.a+")"; REC.rf.miss[mk]=(REC.rf.miss[mk]||0)+1; var extra = (a==="sound"&&it.a==="valid")?"You got the connection right; now check each premise against the real world. ":(a==="valid"&&it.a==="sound")?"Right that it's valid. Are the premises actually false, though? ":(it.a==="invalid")?"Before checking truth, ask: could the premises be true and the conclusion false? ":"Try to imagine the premises true and the conclusion false. If you can't, it's valid. ";
       setFb($("rfFb"),"bad","It's "+ALBL[it.a]+".",extra+it.why); }
     rfTop(rfStreak===3||rfStreak===5||rfStreak===8);
     $("rfNext").hidden=false; $("rfNext").textContent= rfI<7 ? "Next" : "See result"; $("rfNext").focus();
@@ -1205,7 +1205,7 @@ function bRender(){
 $("bCheck").addEventListener("click",function(){
   if(!bSel) return; var t=bSel;
   if(t.r==="ok"){
-    REC.b.done++; if(!bMissed) REC.b.firstTry++;
+    REC.b.done++; if(!bMissed) REC.b.firstTry++; else { REC.b.missed=REC.b.missed||[]; REC.b.missed.push("F"+(bI+1)); }
     setFb($("bFb"),"good","It follows.",t.fb); $("bCheck").hidden=true;
     $("bTray").querySelectorAll(".tile").forEach(function(x){x.disabled=true;});
     if(bI<BUILD.length-1){ $("bNext").hidden=false; $("bNext").focus(); } else { $("bFb").innerHTML+="<br><br>All three repaired. Every moral or reason-giving conclusion needed a premise that said so."; clear("g6"); }
@@ -1278,7 +1278,7 @@ armLock($("finOwnBtn"),"Use my premise",function(){
 });
 function finishFinale(t, msg){
   FIN.pick=t; renderFinArg();
-  setFb($("finFb"),"good","Bridge picked.", msg+"<br><br><b>Test it yourself:</b> suppose your reason (line 1) and this premise (line 2) were both true. Would your conclusion <i>have to</i> be true? If you can picture a case where both are true and the conclusion still fails, that is a counterexample, and it shows a gap. For example, if your reason is about something that this premise does not mention, the bridge does not connect yet. Tightening the wording is a good job for Rocky.<br><br>You started with a quick first answer. Now your argument is laid out with its bridge, and you know which premise you'd have to defend.");
+  setFb($("finFb"),"good","Bridge picked.", msg+"<br><br><b>Test it yourself:</b> suppose your reason (line 1) and this premise (line 2) were both true. Would your conclusion <i>have to</i> be true? If you can picture a case where both are true and the conclusion still fails, that is a counterexample, and it shows a gap. For example, if your reason is about something that this premise does not mention, the bridge does not connect yet. If it feels loose, tighten the wording and tell Rocky what you changed.<br><br>You started with a quick first answer. Now your argument is laid out with its bridge, and you know which premise you'd have to defend.");
   $("fin").classList.add("is-cleared"); buildCard(); $("rcardWrap").hidden=false; saveState();
 }
 /* the card and the copy text must agree: once Lead 1 is cleared, both use the frozen record, not later replay rounds */
@@ -1286,7 +1286,7 @@ function cardBest(){
   if(cleared.g4 && FINAL.g4){ var m=/best round (\d+) of 8/.exec(FINAL.g4[0]||""); if(m) return +m[1]; }
   return REC.rf.best;
 }
-function rank(){ var b=cardBest()||0; return b>=8?"Counterexample Machine":b>=7?"Senior Logician":"Junior Logician"; }
+function rank(){ var b=cardBest()||0; return b>=8?"Counterexample Machine":b>=7?"Sharp Logician":"Logician in training"; }
 function cardData(){ return {verdict:COVER.v?VL[COVER.v]:"Not locked in", premise:FIN.pick||"", rf:(cardBest()!=null?cardBest()+"/8":"not played this visit"), rank:rank()}; }
 function buildCard(){
   var d=cardData();
@@ -1337,7 +1337,7 @@ if(SAVED){
     }
     var sb=SAVED.b;
     if(!doneG6 && sb && sb.done>0 && sb.done<BUILD.length && sb.firstTry>=0 && sb.firstTry<=sb.done){
-      REC.b.done=sb.done; REC.b.firstTry=sb.firstTry; bI=sb.done; bRender();
+      REC.b.done=sb.done; REC.b.firstTry=sb.firstTry; REC.b.missed=Array.isArray(sb.missed)?sb.missed:[]; bI=sb.done; bRender();
     }
     var ft=SAVED.finaleTry;
     if(ft && typeof ft.t==="string" && (ft.k==="is"||ft.k==="circ") && ["press","nopress"].some(function(v){ return FINOPTS[v].some(function(o){ return o.t===ft.t && o.k===ft.k; }); })) FIN_WRONG={t:ft.t, k:ft.k};

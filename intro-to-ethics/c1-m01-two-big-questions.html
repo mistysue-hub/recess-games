@@ -416,7 +416,7 @@ details.opt .inner p{font-size:1rem}
     <textarea id="myReason" maxlength="220" rows="2" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 20 minutes (slower readers: allow more)</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 30 minutes</span></div>
 </section>
 
 <!-- ================= WARM-UP: TUG OF WAR ================= -->
@@ -557,7 +557,7 @@ details.opt .inner p{font-size:1rem}
   <div class="fb" id="finFb" aria-live="polite"></div>
   <div id="cliff" hidden>
     <p class="wow stampbg">To be continued.</p>
-    <p>Look at line 2. Your argument has a <b>hidden premise</b>: a step nobody wrote down, sitting between your reason and your call. Almost every one-sentence reason has one. Next case file, we find yours and test it.</p>
+    <p>Look at the classified line 2 on your Exhibit Z card. Your argument has a <b>hidden premise</b>: a step nobody wrote down, sitting between your reason and your call. Almost every one-sentence reason has one. Next case file, we find yours and test it.</p>
   </div>
   </div>
 </section>
@@ -721,7 +721,7 @@ $("lockBtn").addEventListener("click",function(){
   lockReset();
   COVER.reason=flat($("myReason").value);
   if(!COVER.reason){ $("lockMsg").style.color=""; $("lockMsg").textContent="Call saved. Add your one-sentence reason now, or in the final file."; renderFinale(); saveState(); return; }
-  $("lockMsg").style.color=""; $("lockMsg").textContent="Locked in. You'll need it at the end.";
+  $("lockMsg").style.color=""; $("lockMsg").textContent="Saved. You can still change it on this page, and you'll need it at the end.";
   renderFinale(); saveState();
 });
 
@@ -824,7 +824,8 @@ function sortLines(){
   L.push("Needed another go on: "+(miss.length?miss.join("; "):"nothing"));
   return L;
 }
-function hlLines(){ return ["Lead 2 Highlighter: "+(REC.hl.done?"all 3 passages correct":"not finished")+", needed another check "+REC.hl.wrongChecks+" time"+(REC.hl.wrongChecks===1?"":"s")]; }
+function hlLines(){ var by=REC.hl.by||{}, parts=Object.keys(by).map(function(k){ var f=HL[k][0].t.replace(/[,.]$/,""); return "passage "+(+k+1)+" (\""+f.split(" ").slice(0,5).join(" ")+"...\") "+by[k]+" time"+(by[k]>1?"s":""); });
+  return ["Lead 2 Highlighter: "+(REC.hl.done?"all 3 passages correct":"not finished")+", needed another check "+REC.hl.wrongChecks+" time"+(REC.hl.wrongChecks===1?"":"s")+(parts.length?" ("+parts.join("; ")+")":"")]; }
 var LIVE={g1:sortLines,g2:hlLines};
 function finLines(){ return ["Step 1 verdict, my premise 1 is: "+(FIN.pick||"not done yet")]; }
 var BUILDERS={ g1:function(){return linesFor("g1");},
@@ -832,17 +833,17 @@ var BUILDERS={ g1:function(){return linesFor("g1");},
 wireCopies();
 window.__m01.report=report;
 /* ---------- ring poll (no right answer) ---------- */
-var RING={yes:"Noted. Glaucon doubts that many people could say that honestly. He argues the harsh side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book on your side.",
- mostly:"Noted. Honest answers are often in the middle. Glaucon argues the harsher side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that people would still have reason to.",
- no:"Noted. Thank you for being honest. That pull is what makes Glaucon's challenge feel real: he argues, on purpose, that with the ring nobody would stay just. One answer from you does not prove him right. Socrates spends most of the book arguing that people would still have reason to be just."};
+var RING={yes:"Glaucon doubts that many people could say that honestly. He argues the harsh side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book on your side.",
+ mostly:"Honest answers are often in the middle. Glaucon argues the harsher side on purpose: with the ring, nobody would stay just. Socrates spends most of the rest of the book arguing that people would still have reason to.",
+ no:"That pull is what makes Glaucon's challenge feel real: he argues, on purpose, that with the ring nobody would stay just. One answer from you does not prove him right. Socrates spends most of the book arguing that people would still have reason to be just."};
 $("ringPoll").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){ $("ringPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("ringFb"),"","Noted.",RING[b.getAttribute("data-r")]+" Read on for the story."); });
 });
 
 /* ---------- Sidgwick lean poll (ungraded, not recorded) ---------- */
-var SID={me:"Honest. That is the first of Sidgwick's two principles. Plenty of people choose that way, and he admitted he couldn't prove it always wins.",
+var SID={me:"That is the first of Sidgwick's two principles. Plenty of people choose that way, and he admitted he couldn't prove it always wins.",
  all:"That is the second principle, with you counting as one among everyone. Sidgwick couldn't prove it always wins either.",
- dep:"That is the standoff in short: two guides, no rule for choosing. Sidgwick felt the same pull and never found a rule for choosing."};
+ dep:"That is the standoff in short: two guides, no rule for choosing. Sidgwick felt the same pull and never settled it."};
 $("sidPoll").querySelectorAll("button").forEach(function(b){
   b.addEventListener("click",function(){ $("sidPoll").querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); setFb($("sidFb"),"","Noted.",SID[b.getAttribute("data-r")]); });
 });
@@ -961,7 +962,7 @@ $("hlCheck").addEventListener("click",function(){
     $("hlCheck").hidden=true;
     if(hlI<HL.length-1){ $("hlNext").hidden=false; $("hlNext").focus(); } else { REC.hl.done=true; clear("g2"); $("hlFb").innerHTML+="<br><br>All three passages correct. Signpost words won't trick you now."; }
   } else {
-    REC.hl.wrongChecks++;
+    REC.hl.wrongChecks++; REC.hl.by=REC.hl.by||{}; REC.hl.by[hlI]=(REC.hl.by[hlI]||0)+1;
     var tips=bad.map(function(x){ var s=HL[hlI][x.i]; var hint = s.r==="x" ? "Rule: a side comment doesn't support the conclusion, so leave it unmarked." : (s.r==="c" ? "Rule: the conclusion is the claim the other chunks support; it is not the one doing the supporting." : "Rule: a premise is a chunk that supports the conclusion, often after because, since or and."); return "<br>&bull; “"+s.t+"”: you have it as "+NAMES[x.got]+". "+hint; }).join("");
     setFb($("hlFb"),"bad","Almost.", bad.length+" chunk"+(bad.length>1?"s are":" is")+" outlined in red."+tips);
   }
@@ -1019,7 +1020,7 @@ function restoreFinale(){ renderFinale(); var b=[].filter.call($("finOpts").quer
 /* ---------- restore saved progress, if any ---------- */
 try{
   var src = (SAVED && SAVED.cover && SAVED.cover.v) ? SAVED.cover : SHARED;
-  if(src && src.v){ COVER.v=src.v; COVER.reason=src.reason||""; syncLockins(); if(COVER.reason) $("lockMsg").textContent="Locked in (saved). You'll need it at the end.";  }
+  if(src && src.v){ COVER.v=src.v; COVER.reason=src.reason||""; syncLockins(); if(COVER.reason) $("lockMsg").textContent="Saved. You can still change it, and you'll need it at the end.";  }
 }catch(e){}
 if(SAVED){
   restoring=true;

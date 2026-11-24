@@ -528,7 +528,7 @@ html.guarding .wu-tile, html.guarding #plugCard .choice, html.guarding #plugCard
     <textarea id="myReason" rows="2" maxlength="220" autocomplete="off"></textarea>
     <div class="row"><button class="btn" type="button" id="lockBtn">Lock it in</button><span class="lockmsg" id="lockMsg" aria-live="polite"></span></div>
   </div>
-  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 45 minutes (slower readers: allow more), warm-up included</span></div>
+  <div class="meta"><span>Filed under Intro to Ethics · Challenge 1: The Good Life</span><span>Read, then open each lead</span><span>About 55 minutes, warm-up included</span></div>
 </section>
 
 <!-- ================= WARM-UP ================= -->
@@ -741,7 +741,7 @@ html.guarding .wu-tile, html.guarding #plugCard .choice, html.guarding #plugCard
         </div>
       </div>
       <div id="ratMore" hidden>
-        <p><b>Surprise: the rats may not have been enjoying it.</b> Later neuroscientists, notably Kent Berridge, argued that the brain's systems for <b>wanting</b> something are partly separate from its systems for <b>liking</b> it. The rats may have been driven to want the zap more than they enjoyed it.</p>
+        <p><b>A twist: the rats may not have been enjoying it.</b> Later neuroscientists, notably Kent Berridge, argued that the brain's systems for <b>wanting</b> something are partly separate from its systems for <b>liking</b> it. The rats may have been driven to want the zap more than they enjoyed it.</p>
         <p>Researchers who study addiction have used the same split to explain how someone can keep wanting a drug long after it stops being enjoyable: lots of wanting, not much liking.</p>
       </div>
     </div>
@@ -1255,7 +1255,7 @@ var BINS=[
   why:"Money only matters for what it gets you: fun, comfort, less stress. Classic instrumental good."},
  {t:"Having close friendships (the friendships themselves, not the joy they bring)", short:"friendship", a:"for", surprise:true,
   hint:"A friendship isn't a feeling; the joy it brings is. What would a strict hedonist say about the friendship itself?",
-  why:"Surprise! A strict hedonist says friendship is hugely valuable, but only because of the joy and comfort it brings. The friendship itself is a means. (Some Epicureans were less strict about this; scholars still argue over it.) Many people find that hard to accept, and that's a clue we'll come back to."},
+  why:"The twist: a strict hedonist says friendship is hugely valuable, but only because of the joy and comfort it brings. The friendship itself is a means. (Some Epicureans were less strict about this; scholars still argue over it.) Many people find that hard to accept, and that's a clue we'll come back to."},
  {t:"The sting of embarrassment", short:"embarrassment", a:"neg",
   hint:"This one is itself a feeling. Is it a good one or a bad one?",
   why:"It's a bad feeling, so it's bad in itself: the minus side of the equation."},
@@ -1264,7 +1264,7 @@ var BINS=[
   why:"Another surprise. For a hedonist, truth matters only for the good feelings it brings or the pain it saves. A hard truth that only made you feel worse would be bad for you. Plenty of people find that hard to accept."},
  {t:"The calm feeling of a quiet morning", short:"calm feeling", a:"in",
   hint:"This one is itself a feeling. Good or bad?",
-  why:"Calm feels good. Epicurus, the ancient hedonist from the start of this file, would rate this one very highly."}
+  why:"Calm feels good. Epicurus, the ancient Greek hedonist (341 to 270 BCE), would rate this one very highly."}
 ];
 var binDone=0;
 BINS.forEach(function(it,i){
@@ -1341,7 +1341,7 @@ function cRender(){
         }
       } else {
         cMiss++; b.disabled=true;
-        if(REC.calc.misses.indexOf(c.d)<0) REC.calc.misses.push(c.d);
+        if(REC.calc.misses.indexOf(c.d)<0) REC.calc.misses.push(c.d); REC.calc.missClues=REC.calc.missClues||[]; if(REC.calc.missClues.indexOf(c.s)<0) REC.calc.missClues.push(c.s);
         setFb($("calcFb"),"bad",vword("g2","no"), cMiss===1 && HINTS[c.d+">"+d[0]] ? HINTS[c.d+">"+d[0]] : cMiss===1 ? "Ask what the clue is really about. The seven choices are intensity (how strong), duration (how long), certainty (how likely), nearness (how soon), fecundity (does it lead to more pleasure), purity (is pain mixed in) and extent (how many people)." : "This clue is about "+DEF[c.d]+". Which dimension is that?");
       }
       touch("g2");
@@ -1376,7 +1376,7 @@ $("weighDone").addEventListener("click",function(){
 });
 function calcLines(){
   if(!REC.calc.done) return ["Lead 2 Pleasure-o-Meter: not started"];
-  var L=["Lead 2 Pleasure-o-Meter: "+REC.calc.done+" of "+CLUES.length+" clues tagged, "+REC.calc.first+" on the first try"+(REC.calc.misses.length?"; needed another go on clues about: "+REC.calc.misses.map(function(d){return DN[d];}).join(", "):"")];
+  var L=["Lead 2 Pleasure-o-Meter: "+REC.calc.done+" of "+CLUES.length+" clues tagged, "+REC.calc.first+" on the first try"+(REC.calc.misses.length?"; needed another go on clues about: "+REC.calc.misses.map(function(d){return DN[d];}).join(", ")+(REC.calc.missClues&&REC.calc.missClues.length?" (clues: "+REC.calc.missClues.join(", ")+")":""):"")];
   L.push("Lead 2 my weighing (0-3): "+(REC.calc.weights ? REC.calc.weights+"; needle landed on "+REC.calc.verdict : "not done"));
   return L;
 }
@@ -1461,7 +1461,7 @@ function ladLines(){
   if(!REC.lad.order) return ["Lead 3 Pleasure ladder: not locked yet"];
   var first=Object.keys(REC.lad.q).filter(function(k){return REC.lad.q[k].done && !REC.lad.q[k].misses;}).length;
   var done=Object.keys(REC.lad.q).filter(function(k){return REC.lad.q[k].done;}).length;
-  return ["Lead 3 Pleasure ladder, my ranking best to least: "+REC.lad.order.join(" > ")+" ("+REC.lad.mill+")", "Lead 3 Bentham/Mill questions: "+done+" of 3 answered, "+first+" on the first try"];
+  return ["Lead 3 Pleasure ladder, my ranking best to least: "+REC.lad.order.join(" > ")+" ("+REC.lad.mill+")", "Lead 3 Bentham/Mill questions: "+done+" of 3 answered, "+first+" on the first try"+(function(){ var m=Object.keys(REC.lad.q).filter(function(k){return REC.lad.q[k].misses;}).map(function(k){return "Q"+(+k+1);}); return m.length?"; needed another go on: "+m.join(", "):""; })()];
 }
 
 /* ================= LEAD 4: PLUG IN (pocket) ================= */
@@ -1569,7 +1569,8 @@ function plugLines(){
   var first=keys.filter(function(k){return !REC.plug[k].misses;}).length;
   var ML={"in":"plug in","out":"stay out","unsure":"can't decide"};
   var mine=PLUG.map(function(M,i){ var R=REC.plug[i]; return R&&R.mine ? M.n.replace("The ","")+" = "+ML[R.mine]+(M.own?" (my gauges: flight "+R.r+", dream "+R.m+")":"") : null; }).filter(Boolean);
-  return ["Lead 4 Plug In?: hedonist verdicts "+keys.length+" of "+PLUG.length+" answered, "+first+" on the first try",
+  var pm=keys.filter(function(k){return REC.plug[k].misses;}).map(function(k){return PLUG[k].n;});
+  return ["Lead 4 Plug In?: hedonist verdicts "+keys.length+" of "+PLUG.length+" answered, "+first+" on the first try"+(pm.length?"; needed another go on: "+pm.join(", "):""),
           "Lead 4 my own calls: "+(mine.length?mine.join("; "):"none yet")+(pAnswered2?" (sided with the hedonist on "+pSided+" of "+pAnswered2+" answered machines where the hedonist picks a side; \"can't decide\" not counted)":"")];
 }
 
