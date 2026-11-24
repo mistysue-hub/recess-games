@@ -215,9 +215,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

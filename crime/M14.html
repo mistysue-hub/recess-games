@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">Raskolnikov helps carry the dying Marmeladov home, then returns to his own room to find his mother and sister waiting.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>An elegant carriage stood in the middle of the road with a pair of spirited grey horses; there was no one in it, and the coachman had got off his box and stood by; the horses were being held by the bridle.... A mass of people had gathered round, the police standing in front. One of them held a lighted lantern which he was turning on something lying close to the wheels. Everyone was talking, shouting, exclaiming; the coachman seemed at a loss and kept repeating:</p>
 <p>“What a misfortune! Good Lord, what a misfortune!”</p>
 <p>Raskolnikov pushed his way in as far as he could, and succeeded at last in seeing the object of the commotion and interest. On the ground a man who had been run over lay apparently unconscious, and covered with blood; he was very badly dressed, but not like a workman. Blood was flowing from his head and face; his face was crushed, mutilated and disfigured. He was evidently badly injured.</p>
@@ -153,7 +154,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“Perhaps those who have involuntarily caused the accident will agree to compensate you, at least for the loss of his earnings.”</p>
 <p>“You don’t understand!” cried Katerina Ivanovna angrily waving her hand. “And why should they compensate me? Why, he was drunk and threw himself under the horses! What earnings? He brought us in nothing but misery. He drank everything away, the drunkard! He robbed us to get drink, he wasted their lives and mine for drink! And thank God he’s dying! One less to keep!”</p>
 <p>“You must forgive in the hour of death, that’s a sin, madam, such feelings are a great sin.”</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>Katerina Ivanovna was busy with the dying man; she was giving him water, wiping the blood and sweat from his head, setting his pillow straight, and had only turned now and then for a moment to address the priest. Now she flew at him almost in a frenzy.</p>
 <p>“Ah, father! That’s words and only words! Forgive! If he’d not been run over, he’d have come home to-day drunk and his only shirt dirty and in rags and he’d have fallen asleep like a log, and I should have been sousing and rinsing till daybreak, washing his rags and the children’s and then drying them by the window and as soon as it was daylight I should have been darning them. That’s how I spend my nights!... What’s the use of talking of forgiveness! I have forgiven as it is!”</p>
 <p>A terrible hollow cough interrupted her words. She put her handkerchief to her lips and showed it to the priest, pressing her other hand to her aching chest. The handkerchief was covered with blood. The priest bowed his head and said nothing.</p>
@@ -258,9 +259,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

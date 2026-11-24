@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">At Porfiry Petrovitch&#x27;s, Raskolnikov explains his article about &quot;extraordinary&quot; people while Porfiry probes him with friendly questions.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>Raskolnikov was already entering the room. He came in looking as though he had the utmost difficulty not to burst out laughing again. Behind him Razumihin strode in gawky and awkward, shamefaced and red as a peony, with an utterly crestfallen and ferocious expression. His face and whole figure really were ridiculous at that moment and amply justified Raskolnikov’s laughter.</p>
 <p>Raskolnikov, not waiting for an introduction, bowed to Porfiry Petrovitch, who stood in the middle of the room looking inquiringly at them. He held out his hand and shook hands, still apparently making desperate efforts to subdue his mirth and utter a few words to introduce himself. But he had no sooner succeeded in assuming a serious air and muttering something when he suddenly glanced again as though accidentally at Razumihin, and could no longer control himself: his stifled laughter broke out the more irresistibly the more he tried to restrain it. The extraordinary ferocity with which Razumihin received this “spontaneous” mirth gave the whole scene the appearance of most genuine fun and naturalness. Razumihin strengthened this impression as though on purpose.</p>
 <p>“Fool! You fiend,” he roared, waving his arm which at once struck a little round table with an empty tea-glass on it. Everything was sent flying and crashing.</p>
@@ -167,7 +168,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“But it came out in the <em>Periodical</em>.”</p>
 <p>“And the <em>Weekly Review</em> ceased to exist, so that’s why it wasn’t printed at the time.”</p>
 <p>“That’s true; but when it ceased to exist, the <em>Weekly Review</em> was amalgamated with the <em>Periodical</em>, and so your article appeared two months ago in the latter. Didn’t you know?”</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>Raskolnikov had not known.</p>
 <p>“Why, you might get some money out of them for the article! What a strange person you are! You lead such a solitary life that you know nothing of matters that concern you directly. It’s a fact, I assure you.”</p>
 <p>“Bravo, Rodya! I knew nothing about it either!” cried Razumihin. “I’ll run to-day to the reading-room and ask for the number. Two months ago? What was the date? It doesn’t matter though, I will find it. Think of not telling us!”</p>
@@ -277,9 +278,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

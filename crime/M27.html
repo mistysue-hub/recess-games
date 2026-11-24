@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">A bitter Luzhin and his friend Lebeziatnikov talk, then Luzhin calls Sonia in and offers to help her family.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>The morning that followed the fateful interview with Dounia and her mother brought sobering influences to bear on Pyotr Petrovitch. Intensely unpleasant as it was, he was forced little by little to accept as a fact beyond recall what had seemed to him only the day before fantastic and incredible.</p>
 <p>The black snake of wounded vanity had been gnawing at his heart all night. When he got out of bed, Pyotr Petrovitch immediately looked in the looking-glass. He was afraid that he had jaundice.</p>
 <p>However his health seemed unimpaired so far, and looking at his noble, clear-skinned countenance which had grown fattish of late, Pyotr Petrovitch for an instant was positively comforted in the conviction that he would find another bride and, perhaps, even a better one.</p>
@@ -124,7 +125,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“What of it? I think, that is, it is my own personal conviction that this is the normal condition of women. Why not? I mean, <em>distinguons</em>. In our present society it is not altogether normal, because it is compulsory, but in the future society it will be perfectly normal, because it will be voluntary.</p>
 <p>“Even as it is, she was quite right: she was suffering and that was her asset, so to speak, her capital which she had a perfect right to dispose of. Of course, in the future society there will be no need of assets, but her part will have another significance, rational and in harmony with her environment. As to Sofya Semyonovna personally, I regard her action as a vigorous protest against the organisation of society, and I respect her deeply for it; I rejoice indeed when I look at her!”</p>
 <p>“I was told that you got her turned out of these lodgings.”</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>Lebeziatnikov was enraged.</p>
 <p>“That’s another slander,” he yelled. “It was not so at all! That was all Katerina Ivanovna’s invention, for she did not understand! And I never made love to Sofya Semyonovna! I was simply developing her, entirely disinterestedly, trying to rouse her to protest.... All I wanted was her protest and Sofya Semyonovna could not have remained here anyway!”</p>
 <p>“Have you asked her to join your community?”</p>
@@ -225,9 +226,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">The morning after, Raskolnikov hides what he took, then is summoned to the police office for a reason he did not expect.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>So he lay a very long while. Now and then he seemed to wake up, and at such moments he noticed that it was far into the night, but it did not occur to him to get up. At last he noticed that it was beginning to get light. He was lying on his back, still dazed from his recent oblivion. Fearful, despairing cries rose shrilly from the street, sounds which he heard every night, indeed, under his window after two o’clock. They woke him up now.</p>
 <p>“Ah! the drunken men are coming out of the taverns,” he thought, “it’s past two o’clock,” and at once he leaped up, as though someone had pulled him from the sofa.</p>
 <p>“What! Past two o’clock!”</p>
@@ -168,7 +169,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“The notice was only brought me a quarter of an hour ago,” Raskolnikov answered loudly over his shoulder. To his own surprise he, too, grew suddenly angry and found a certain pleasure in it. “And it’s enough that I have come here ill with fever.”</p>
 <p>“Kindly refrain from shouting!”</p>
 <p>“I’m not shouting, I’m speaking very quietly, it’s you who are shouting at me. I’m a student, and allow no one to shout at me.”</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>The assistant superintendent was so furious that for the first minute he could only splutter inarticulately. He leaped up from his seat.</p>
 <p>“Be silent! You are in a government office. Don’t be impudent, sir!”</p>
 <p>“You’re in a government office, too,” cried Raskolnikov, “and you’re smoking a cigarette as well as shouting, so you are showing disrespect to all of us.”</p>
@@ -273,9 +274,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

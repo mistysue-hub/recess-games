@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">Raskolnikov visits Sonia late at night, makes her read the story of Lazarus aloud, and hints at a confession.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>Raskolnikov went straight to the house on the canal bank where Sonia lived. It was an old green house of three storeys. He found the porter and obtained from him vague directions as to the whereabouts of Kapernaumov, the tailor. Having found in the corner of the courtyard the entrance to the dark and narrow staircase, he mounted to the second floor and came out into a gallery that ran round the whole second storey over the yard. While he was wandering in the darkness, uncertain where to turn for Kapernaumov’s door, a door opened three paces from him; he mechanically took hold of it.</p>
 <p>“Who is there?” a woman’s voice asked uneasily.</p>
 <p>“It’s I... come to see you,” answered Raskolnikov and he walked into the tiny entry.</p>
@@ -182,7 +183,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“But what would become of them?” Sonia asked faintly, gazing at him with eyes of anguish, but not seeming surprised at his suggestion.</p>
 <p>Raskolnikov looked strangely at her. He read it all in her face; so she must have had that thought already, perhaps many times, and earnestly she had thought out in her despair how to end it and so earnestly, that now she scarcely wondered at his suggestion. She had not even noticed the cruelty of his words.</p>
 <p>(The significance of his reproaches and his peculiar attitude to her shame she had, of course, not noticed either, and that, too, was clear to him.) But he saw how monstrously the thought of her disgraceful, shameful position was torturing her and had long tortured her. “What, what,” he thought, “could hitherto have hindered her from putting an end to it?” Only then he realised what those poor little orphan children and that pitiful half-crazy Katerina Ivanovna, knocking her head against the wall in her consumption, meant for Sonia.</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>But, nevertheless, it was clear to him again that with her character and the amount of education she had after all received, she could not in any case remain so. He was still confronted by the question, how could she have remained so long in that position without going out of her mind, since she could not bring herself to jump into the water?</p>
 <p>Of course he knew that Sonia’s position was an exceptional case, though unhappily not unique and not infrequent, indeed; but that very exceptionalness, her tinge of education, her previous life might, one would have thought, have killed her at the first step on that revolting path. What held her up--surely not depravity? All that infamy had obviously only touched her mechanically, not one drop of real depravity had penetrated to her heart; he saw that. He saw through her as she stood before him....</p>
 <p>“There are three ways before her,” he thought, “the canal, the madhouse, or... at last to sink into depravity which obscures the mind and turns the heart to stone.”</p>
@@ -320,9 +321,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">In a tavern, a drunken clerk pours out the story of his ruined family, and Raskolnikov walks him home.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>Raskolnikov was not used to crowds, and, as we said before, he avoided society of every sort, more especially of late. But now all at once he felt a desire to be with other people. Something new seemed to be taking place within him, and with it he felt a sort of thirst for company. He was so weary after a whole month of concentrated wretchedness and gloomy excitement that he longed to rest, if only for a moment, in some other world, whatever it might be; and, in spite of the filthiness of the surroundings, he was glad now to stay in the tavern.</p>
 <p>The master of the establishment was in another room, but he frequently came down some steps into the main room, his jaunty, tarred boots with red turn-over tops coming into view each time before the rest of his person.</p>
 <p>He wore a full coat and a horribly greasy black satin waistcoat, with no cravat, and his whole face seemed smeared with oil like an iron lock. At the counter stood a boy of about fourteen, and there was another boy somewhat younger who handed whatever was wanted. On the counter lay some sliced cucumber, some pieces of dried black bread, and some fish, chopped up small, all smelling very bad.</p>
@@ -129,7 +130,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“And I went on lying there, just as before....</p>
 <p>“And then I saw, young man, I saw Katerina Ivanovna, in the same silence go up to Sonia’s little bed; she was on her knees all the evening kissing Sonia’s feet, and would not get up, and then they both fell asleep in each other’s arms... together, together... yes... and I... lay drunk.”</p>
 <p>Marmeladov stopped short, as though his voice had failed him. Then he hurriedly filled his glass, drank, and cleared his throat.</p>
-<p>**Sitting 2 of 2 starts here**</p>
+<div class="sitting-mark">Sitting 2 of 2</div>
 <p>“Since then, sir,” he went on after a brief pause--“Since then, owing to an unfortunate occurrence and through information given by evil-intentioned persons--in all which Darya Frantsovna took a leading part on the pretext that she had been treated with want of respect--since then my daughter Sofya Semyonovna has been forced to take a yellow ticket, and owing to that she is unable to go on living with us.</p>
 <p>“For our landlady, Amalia Fyodorovna would not hear of it (though she had backed up Darya Frantsovna before) and Mr. Lebeziatnikov too... hm.... All the trouble between him and Katerina Ivanovna was on Sonia’s account. At first he was for making up to Sonia himself and then all of a sudden he stood on his dignity: ‘how,’ said he, ‘can a highly educated man like me live in the same rooms with a girl like that?’</p>
 <p>“And Katerina Ivanovna would not let it pass, she stood up for her... and so that’s how it happened. And Sonia comes to us now, mostly after dark; she comforts Katerina Ivanovna and gives her all she can....</p>
@@ -237,9 +238,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

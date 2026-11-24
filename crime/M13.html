@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">Raskolnikov slips out of bed, toys with Zametov about the murder, and ends up back at the scene of the crime.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>But as soon as she went out, he got up, latched the door, undid the parcel which Razumihin had brought in that evening and had tied up again and began dressing. Strange to say, he seemed immediately to have become perfectly calm; not a trace of his recent delirium nor of the panic fear that had haunted him of late. It was the first moment of a strange sudden calm.</p>
 <p>His movements were precise and definite; a firm purpose was evident in them. “To-day, to-day,” he muttered to himself. He understood that he was still weak, but his intense spiritual concentration gave him strength and self-confidence. He hoped, moreover, that he would not fall down in the street.</p>
 <p>When he had dressed in entirely new clothes, he looked at the money lying on the table, and after a moment’s thought put it in his pocket. It was twenty-five roubles. He took also all the copper change from the ten roubles spent by Razumihin on the clothes. Then he softly unlatched the door, went out, slipped downstairs and glanced in at the open kitchen door. Nastasya was standing with her back to him, blowing up the landlady’s samovar. She heard nothing. Who would have dreamed of his going out, indeed? A minute later he was in the street.</p>
@@ -233,7 +234,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>“What about? Confound you, don’t tell me then. Potchinkov’s house, 47, Babushkin’s flat, remember!”</p>
 <p>Raskolnikov walked on and turned the corner into Sadovy Street. Razumihin looked after him thoughtfully. Then with a wave of his hand he went into the house but stopped short of the stairs.</p>
 <p>“Confound it,” he went on almost aloud. “He talked sensibly but yet... I am a fool! As if madmen didn’t talk sensibly! And this was just what Zossimov seemed afraid of.” He struck his finger on his forehead. “What if... how could I let him go off alone? He may drown himself.... Ach, what a blunder! I can’t.” And he ran back to overtake Raskolnikov, but there was no trace of him. With a curse he returned with rapid steps to the Palais de Cristal to question Zametov.</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>Raskolnikov walked straight to X---- Bridge, stood in the middle, and leaning both elbows on the rail stared into the distance. On parting with Razumihin, he felt so much weaker that he could scarcely reach this place. He longed to sit or lie down somewhere in the street.</p>
 <p>Bending over the water, he gazed mechanically at the last pink flush of the sunset, at the row of houses growing dark in the gathering twilight, at one distant attic window on the left bank, flashing as though on fire in the last rays of the setting sun, at the darkening water of the canal, and the water seemed to catch his attention. At last red circles flashed before his eyes, the houses seemed moving, the passers-by, the canal banks, the carriages, all danced before his eyes.</p>
 <p>Suddenly he started, saved again perhaps from swooning by an uncanny and hideous sight. He became aware of someone standing on the right side of him; he looked and saw a tall woman with a kerchief on her head, with a long, yellow, wasted face and red sunken eyes. She was looking straight at him, but obviously she saw nothing and recognised no one.</p>
@@ -327,9 +328,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();

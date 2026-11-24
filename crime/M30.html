@@ -33,6 +33,7 @@ main.inner{max-width:680px;margin:0 auto;padding:30px 22px 140px}
 main p{margin:0 0 1.15em;line-height:1.75;font-size:1.08em}
 main p.attribution,main p.end-mark{font-size:.8em;font-style:italic;text-align:center;opacity:.75;margin-top:1.6em}
 .scene-break{text-align:center;margin:1.9em 0;letter-spacing:.7em;opacity:.55;font-size:.85em}
+.sitting-mark{text-align:center;margin:2em 0;font-variant:small-caps;letter-spacing:.12em;color:var(--gold);font-size:.85em;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:.5em 0}
 .sheet{counter-reset:none}
 .pagefold{height:1px}
 footer.endnote{max-width:680px;margin:0 auto;padding:0 22px 30px;font-size:.72em;line-height:1.5;color:#5b4630}
@@ -68,7 +69,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p class="tease">Raskolnikov tells Sonia he is the murderer and struggles to say why he did it.</p>
 </div></header>
 <main class="inner" id="sheet">
-<p>**Sitting 1 of 2**</p>
+<div class="sitting-mark">Sitting 1 of 2</div>
 <p>Raskolnikov had been a vigorous and active champion of Sonia against Luzhin, although he had such a load of horror and anguish in his own heart. But having gone through so much in the morning, he found a sort of relief in a change of sensations, apart from the strong personal feeling which impelled him to defend Sonia. He was agitated too, especially at some moments, by the thought of his approaching interview with Sonia: he <em>had</em> to tell her who had killed Lizaveta. He knew the terrible suffering it would be to him and, as it were, brushed away the thought of it. So when he cried as he left Katerina Ivanovna’s, “Well, Sofya Semyonovna, we shall see what you’ll say now!” he was still superficially excited, still vigorous and defiant from his triumph over Luzhin.</p>
 <p>But, strange to say, by the time he reached Sonia’s lodging, he felt a sudden impotence and fear. He stood still in hesitation at the door, asking himself the strange question: “Must he tell her who killed Lizaveta?” It was a strange question because he felt at the very time not only that he could not help telling her, but also that he could not put off the telling. He did not yet know why it must be so, he only <em>felt</em> it, and the agonising sense of his impotence before the inevitable almost crushed him.</p>
 <p>To cut short his hesitation and suffering, he quickly opened the door and looked at Sonia from the doorway. She was sitting with her elbows on the table and her face in her hands, but seeing Raskolnikov she got up at once and came to meet him as though she were expecting him.</p>
@@ -184,7 +185,7 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
 <p>He paused and sank into thought.</p>
 <p>“Ach, we are so different,” he cried again, “we are not alike. And why, why did I come? I shall never forgive myself that.”</p>
 <p>“No, no, it was a good thing you came,” cried Sonia. “It’s better I should know, far better!”</p>
-<p>**Sitting 2 starts here**</p>
+<div class="sitting-mark">Sitting 2</div>
 <p>He looked at her with anguish.</p>
 <p>“What if it were really that?” he said, as though reaching a conclusion. “Yes, that’s what it was! I wanted to become a Napoleon, that is why I killed her.... Do you understand now?”</p>
 <p>“N-no,” Sonia whispered naïvely and timidly. “Only speak, speak, I shall understand, I shall understand <em>in myself</em>!” she kept begging him.</p>
@@ -275,9 +276,12 @@ footer.endnote hr{border:0;border-top:1px dotted #cdb98a;margin:18px 0}
   var nextBtn = document.getElementById('nextPage');
   function pageInfo(){
     var h = window.innerHeight;
-    var total = Math.max(1, Math.ceil((document.documentElement.scrollHeight - h) / (h*0.92)) + 1);
-    var current = Math.min(total, Math.round(window.scrollY / (h*0.92)) + 1);
-    return {current: current, total: total, step: h*0.92};
+    var step = h * 0.92;
+    var maxScroll = document.documentElement.scrollHeight - h;
+    var total = Math.max(1, Math.ceil(maxScroll / step) + 1);
+    var atEnd = window.scrollY >= maxScroll - 2;
+    var current = atEnd ? total : Math.min(total, Math.round(window.scrollY / step) + 1);
+    return {current: current, total: total, step: step};
   }
   function update(){
     var info = pageInfo();
