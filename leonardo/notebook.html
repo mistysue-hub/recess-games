@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>Inside Leonardo's Notebook</title>
+<title>The Secret Notebooks of Leonardo da Vinci</title>
 <style>
 /* Layout: a dark "desk" band on top with ten wax stamps; below it one parchment page at a time (the desk hub, or one notebook page). Single parchment look by choice. */
 :root{--parch:#f4ead0;--card:#fbf4de;--paper:#fff8e6;--ink:#3b2a1a;--soft:#5b4630;--wax:#8c2f1b;--wax-dark:#5e1d10;--blue:#1f3a5f;--green:#2f5a3a;--gold:#b8892b;--gold-lt:#e0b95a;--line:#cdb98a;--night:#2a1c10;
@@ -42,6 +42,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 .hands{background:var(--card);border:2px dashed var(--wax);border-radius:12px;padding:14px 18px 6px;margin:1.4em 0}
 .btn{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:999px;padding:9px 20px;background:var(--wax);color:var(--card);box-shadow:0 3px 0 var(--wax-dark)}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--wax-dark)}
+.linkbtn{font:inherit;background:none;border:0;color:var(--wax);text-decoration:underline;cursor:pointer;padding:12px 0;min-height:44px}
+.restart{margin:0}
 .btn.ghost{background:var(--card);color:var(--wax);box-shadow:inset 0 0 0 2px var(--wax)}
 .opts{display:flex;flex-wrap:wrap;gap:8px;margin:.6em 0 1em}
 .opts button{font:inherit;cursor:pointer;background:var(--paper);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:8px 14px;text-align:left;min-width:0}
@@ -76,9 +78,10 @@ footer{max-width:760px;margin:0 auto;padding-block:0 30px;padding-left:max(16px,
 
 <header class="band"><div class="wrap">
 <p class="kicker">Florence and Milan, about 1480 to 1519</p>
-<h1>Inside Leonardo's Notebook</h1>
+<h1>The Secret Notebooks of Leonardo da Vinci</h1>
 <p class="tease">Eleven pages from real notebooks. Open them in any order. Finish a page to earn its wax stamp.</p>
 <div class="stamps" id="stamps" role="img" aria-label="Stamps earned"></div>
+<p class="restart" id="restartp" hidden><button type="button" class="linkbtn" id="restart">Start over</button></p>
 </div></header>
 
 <main>
@@ -316,9 +319,11 @@ function rockyBox(id){var s=$('p-'+id);if(!s||s.querySelector('.rocky'))return;v
  d.innerHTML='<h3>Notes for Rocky</h3><p>Stamp earned. Copy your notes and paste them into your chat with Rocky.</p><textarea readonly rows="4" id="rk-'+id+'" aria-label="Notes for Rocky"></textarea><div class="row"><button class="btn" id="rkb-'+id+'">Copy my notes for Rocky</button></div><p class="fb" id="rkf-'+id+'"></p>';
  s.appendChild(d);var ta=$('rk-'+id);ta.value=note(id);$('rkb-'+id).onclick=function(){ta.value=note(id);copyTo(ta,$('rkf-'+id))}}
 var N=P.length;
+(function(){var rs=$('restart'),rt;rs.onclick=function(){if(!rs.dataset.arm){rs.dataset.arm='1';rs.textContent='Tap again to clear all stamps';clearTimeout(rt);rt=setTimeout(function(){delete rs.dataset.arm;rs.textContent='Start over'},4000);return}try{localStorage.removeItem('leoNotebook')}catch(e){}location.reload()}})();
 function drawStamps(){var h='',n=0;P.forEach(function(p,i){if(done[p.id])n++;h+='<i class="'+(done[p.id]?'got':'')+'">'+(done[p.id]?'L':(i+1))+'</i>'});
  $('stamps').innerHTML=h+'<span>'+n+' of '+N+' stamps</span>';
  P.forEach(function(p){var b=$('d-'+p.id);if(b)b.classList.toggle('done',!!done[p.id])});
+ $('restartp').hidden=n===0;
  if(n===N)finale();}
 function earn(id){if(!done[id]){done[id]=1;order.push(id);save();drawStamps();}rockyBox(id);var t=$('rk-'+id);if(t)t.value=note(id)}
 function show(id){document.querySelectorAll('.page').forEach(function(s){s.hidden=true});
