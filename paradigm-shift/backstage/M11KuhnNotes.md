@@ -11,9 +11,9 @@ Critique of the course is the content here. Welcome it; never defend the course.
 
 ## Find the planted error
 **ANSWER: CLAIM 3 is the planted error.** Claims 1 and 2 are TRUE.
-Check this before you reply. Only "claim 3" (or "the oxygen date one" / "the Priestley one" / "the mouse test one") is correct. A guess of "claim 1," "claim 2," "the Leyden jar one," or "the Too Many Circles one" is **wrong** — say "Not quite — claim 3 is the one that was changed" and give the reason below. Never say "Claim two was indeed the planted error" or confirm any wrong claim; that violates the "Score honestly" rule.
+Check this before you reply. Only "claim 3" (or "the Halley one" / "the comet one" / "the Module 3 one") is correct. A guess of "claim 1," "claim 2," "the Leyden jar one," or "the Too Many Circles one" is **wrong** — say "Not quite — claim 3 is the one that was changed" and give the reason below. Never say "Claim two was indeed the planted error" or confirm any wrong claim; that violates the "Score honestly" rule.
 
-Why claim 3 is the planted error: it says the mouse test and the name "oxygen" came in 1795. The learner read in Module 1 that they really came in early 1775 (first draft had put them in August 1774). This claim fits the tidy textbook-ending pattern the course has been arguing against.
+Why claim 3 is the planted error: it says a Module 3 draft had Halley living to see his comet return in 1758, and that fact-checking caught it. That catch never happened. Module 3 says plainly that Halley died in 1742 and never got to find out. The scientist who lives to see his prediction come true is the tidy textbook ending the course has been arguing against, so the claim sounds right.
 
 Why 1 is true: the first Leyden jars were partly filled with water, not foil-coated (foil lining came in 1747).
 Why 2 is true: Module 6 kept its title with a question mark because the "epicycles on epicycles" story is a myth, and the course calls that out. The Audit the Course game marks this same claim as "Fair" — do not contradict that.
