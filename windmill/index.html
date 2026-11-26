@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>William's Windmill: The Explorer</title>
+<style>
+:root{--kraft:#d9c4a0;--paper:#f3e8d0;--pencil:#3b3a36;--rust:#b4521f;--blue:#2b5d7a;--ok:#2f6b3a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--kraft);color:var(--pencil);font:17px/1.45 Georgia,serif}
+header{padding:14px 18px;background:var(--pencil);color:var(--paper)}
+header h1{margin:0;font:700 22px/1.2 "Trebuchet MS",sans-serif;letter-spacing:.5px}
+header p{margin:2px 0 0;font-size:14px;opacity:.85}
+nav{display:flex;gap:6px;padding:10px 12px 0;flex-wrap:wrap}
+nav button{font:700 15px "Trebuchet MS",sans-serif;padding:9px 14px;border:2px solid var(--pencil);border-bottom:none;border-radius:10px 10px 0 0;background:#c8b48e;color:var(--pencil);cursor:pointer}
+nav button.on{background:var(--paper)}
+main{background:var(--paper);margin:0 12px 24px;padding:16px;border:2px solid var(--pencil);border-radius:0 12px 12px 12px;min-height:420px}
+.tab{display:none}.tab.on{display:block}
+h2{margin:0 0 6px;font:700 20px "Trebuchet MS",sans-serif;color:var(--rust)}
+.q{background:#fff8e6;border-left:5px solid var(--rust);padding:10px 12px;margin:10px 0;border-radius:6px}
+textarea{width:100%;min-height:80px;font:16px Georgia,serif;padding:8px;border:2px solid var(--pencil);border-radius:8px;background:#fffdf5}
+button.act{font:700 16px "Trebuchet MS",sans-serif;padding:10px 16px;margin:6px 6px 0 0;border:2px solid var(--pencil);border-radius:10px;background:var(--rust);color:#fff;cursor:pointer;min-height:44px}
+button.alt{background:#fff8e6;color:var(--pencil)}
+button.pick.sel{background:var(--blue);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button.alt.sel{background:var(--blue);color:#fff}
+.opt{margin:6px 0}.opt b{display:inline-block;min-width:92px;font:700 14px "Trebuchet MS",sans-serif}
+.log div{padding:4px 0;border-bottom:1px dashed #b8a98a;font-size:14px}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.res .card a{color:var(--blue);font-weight:700;word-break:break-word}
+.badge{display:inline-block;font:700 12px "Trebuchet MS",sans-serif;padding:2px 8px;border-radius:10px;background:var(--rust);color:#fff;margin-bottom:4px}
+.badge.g{background:var(--ok)}.badge.a{background:var(--pencil)}
+.hide{display:none}
+.card{background:#fff;border:2px solid var(--pencil);border-radius:10px;padding:10px 12px;margin:8px 0}
+.card b{color:var(--blue)}
+canvas{max-width:100%;height:auto!important;border:2px solid var(--pencil);border-radius:10px;background:#fffdf5;display:block;margin:8px 0}
+.note{font-size:14px;opacity:.8}
+.done{color:var(--ok);font-weight:700}
+pre{white-space:pre-wrap;background:#fff;border:2px dashed var(--pencil);padding:8px;border-radius:8px;font:14px/1.4 monospace}
+</style>
+</head>
+<body>
+<header><h1>William's Windmill: The Explorer</h1><p>How a 14-year-old turned scrap into electricity. Guess first, then tap.</p></header>
+<nav id="nav">
+<button data-t="parts">1 The Parts</button>
+<button data-t="spin">2 Spin = Light</button>
+<button data-t="blades">3 Catch the Wind</button>
+<button data-t="build">4 Build It</button>
+<button data-t="more">5 More Simulators</button>
+</nav>
+<main>
+
+<!-- PARTS -->
+<section class="tab" id="parts">
+<h2>The Jobs of a Windmill</h2>
+<div id="p-gate">
+<div class="q">You read the book. Before you tap anything, write what you remember: what jobs did William's windmill have to do, and what scrap did he use for each?</div>
+<textarea id="p-guess" placeholder="Type what you remember here..."></textarea>
+<button class="act" id="p-lock">Lock in what I remember</button>
+</div>
+<div id="p-body" class="hide">
+<p class="note">Locked. Tap each dot on the windmill. Then say whether you remembered that part.</p>
+<div id="p-canvas"></div>
+<div class="card" id="p-info">Tap a dot.</div>
+<div id="p-rem" class="hide">
+<button class="act alt" id="p-yes">I remembered this</button>
+<button class="act alt" id="p-no">I missed this</button>
+</div>
+<p id="p-count" class="note">0 of 6 parts seen.</p>
+<button class="act" id="p-copy" disabled>Copy my answers for Rocky</button>
+<p class="note" id="p-msg"></p>
+<pre id="p-out" class="hide"></pre>
+</div>
+</section>
+
+<!-- SPIN -->
+<section class="tab" id="spin">
+<h2>Spin Makes Light</h2>
+<div class="q" id="s-q1">Guess first. If the magnet spins faster, the bulb will be...</div>
+<div id="s-g1">
+<button class="act alt pick" data-g="brighter">brighter</button>
+<button class="act alt pick" data-g="dimmer">dimmer</button>
+<button class="act alt pick" data-g="same">the same</button>
+<button class="act" id="s-lock1" disabled>Lock in my guess</button>
+</div>
+<div id="s-body1" class="hide">
+<p class="note">Locked. Tap each speed and watch the bulb.</p>
+<div id="s-speeds"></div>
+<div id="s-c1"></div>
+<div id="s-r1" class="note"></div>
+</div>
+<div id="s-part2" class="hide">
+<div class="q">Next guess. If the coil has more loops of wire, the bulb will be...</div>
+<div id="s-g2">
+<button class="act alt pick" data-g="brighter">brighter</button>
+<button class="act alt pick" data-g="dimmer">dimmer</button>
+<button class="act alt pick" data-g="same">the same</button>
+<button class="act" id="s-lock2" disabled>Lock in my guess</button>
+</div>
+<div id="s-body2" class="hide">
+<div id="s-loops"></div>
+<div id="s-r2" class="note"></div>
+</div>
+</div>
+<button class="act" id="s-copy" disabled>Copy my answers for Rocky</button>
+<p class="note" id="s-msg"></p>
+<pre id="s-out" class="hide"></pre>
+</section>
+
+<!-- BLADES -->
+<section class="tab" id="blades">
+<h2>Catch the Wind</h2>
+<p class="note">Do this one with real cardboard and a fan first (the Catch the Wind lesson). Then check your numbers here.</p>
+<div class="q">Guess first. Which tilt makes a blade turn the spinner best? 0 degrees means the blade faces the fan flat. 90 means its thin edge points at the fan.</div>
+<div id="b-g">
+<button class="act alt pick" data-g="0">0</button>
+<button class="act alt pick" data-g="15">15</button>
+<button class="act alt pick" data-g="30">30</button>
+<button class="act alt pick" data-g="45">45</button>
+<button class="act alt pick" data-g="60">60</button>
+<button class="act alt pick" data-g="90">90</button>
+<button class="act" id="b-lock" disabled>Lock in my guess</button>
+</div>
+<div id="b-body" class="hide">
+<p class="note">Locked. Tap a tilt to push the wind through it. Tap them all.</p>
+<div id="b-tilts"></div>
+<div id="b-c"></div>
+<div id="b-r" class="note"></div>
+<p class="note">This is a simple model of flat cardboard blades. It shows turning push, not speed: on real cardboard a smaller tilt often spins fastest. Your real blades decide the truth: test them.</p>
+<button class="act" id="b-copy" disabled>Copy my answers for Rocky</button>
+<p class="note" id="b-msg"></p>
+<pre id="b-out" class="hide"></pre>
+</div>
+</section>
+
+<!-- BUILD -->
+<section class="tab" id="build">
+<h2>Build It</h2>
+<p class="note">Design a pretend windmill, guess how fast it lifts a weight, then run it. This is a simple made-up model to help you plan: the fan is always the same, and the animation runs 4 times faster than the pretend time. Your real cardboard decides the truth. Making the light? Plan your blades and tilt here and ignore the washers.</p>
+<div class="opt"><b>Blades</b><span id="o-b"></span></div>
+<div class="opt"><b>Blade length (cm)</b><span id="o-l"></span></div>
+<div class="opt"><b>Tilt (degrees)</b><span id="o-t"></span></div>
+<div class="opt"><b>Weights (washers)</b><span id="o-w"></span></div>
+<div class="q">Guess first. How long will this design take to lift the weight 20 cm?</div>
+<div id="u-g">
+<button class="act alt pick" data-g="under 10 s">under 10 s</button>
+<button class="act alt pick" data-g="10 to 30 s">10 to 30 s</button>
+<button class="act alt pick" data-g="over 30 s">over 30 s</button>
+<button class="act alt pick" data-g="won't lift">won't lift</button>
+</div>
+<button class="act" id="u-run" disabled>Lock in my guess and run</button>
+<div id="u-c"></div>
+<div id="u-r" class="note"></div>
+<div class="card log" id="u-log"><b>Your runs</b><div class="note">No runs yet. Change ONE thing between runs so you can tell what mattered.</div></div>
+<button class="act" id="u-copy" disabled>Copy my answers for Rocky</button>
+<p class="note">Needs 3 runs.</p>
+<p class="note" id="u-msg"></p>
+<pre id="u-out" class="hide"></pre>
+</section>
+
+<!-- MORE -->
+<section class="tab" id="more">
+<h2>More Simulators and Reading</h2>
+<p class="note">These are outside sites. Pretend models help you guess, but only real cardboard tells the truth. Ask a grown-up before you make any account or type in a code.</p>
+<div class="res">
+<div class="card"><span class="badge g">Starter</span><br><b>PhET: Faraday's Electromagnetic Lab</b><br>Spin a magnet near a coil and light a bulb (Generator screen). Try it after Spin Makes Light.<br><a href="https://phet.colorado.edu/en/simulations/faradays-electromagnetic-lab" target="_blank" rel="noopener">phet.colorado.edu/en/simulations/faradays-electromagnetic-lab</a></div>
+<div class="card"><span class="badge g">Starter</span><br><b>Wind turbine project with a lift test</b><br>A build idea that lifts a small object with a spinning axle, like your Lift It finish line.<br><a href="https://littlebinsforlittlehands.com/wind-turbine/" target="_blank" rel="noopener">littlebinsforlittlehands.com/wind-turbine</a></div>
+<div class="card"><span class="badge">Story</span><br><b>Moving Windmills Project</b><br>William's own project in Malawi, with his writing and photos.<br><a href="https://movingwindmills.org/" target="_blank" rel="noopener">movingwindmills.org</a></div>
+<div class="card"><span class="badge a">Grown-up helps</span><br><b>KidWind Simulation Challenge</b><br>Design simulated blades and wind farms. Entering uses sign-up and login codes, so a grown-up needs to handle that.<br><a href="https://kidwind.org/simulation-challenge" target="_blank" rel="noopener">kidwind.org/simulation-challenge</a></div>
+<div class="card"><span class="badge a">Advanced</span><br><b>Wind Turbine Simulator</b><br>Change wind speed, blade angle and blade type, and read the numbers. Made for engineering students, so expect big words.<br><a href="https://instrumentationandcontrol.net/wind-turbine-simulator.php" target="_blank" rel="noopener">instrumentationandcontrol.net/wind-turbine-simulator</a></div>
+<div class="card"><span class="badge a">Advanced</span><br><b>KidWind: Advanced Blade Design</b><br>Why real blades are shaped and twisted the way they are. A reading, not a game.<br><a href="https://www.vernier.com/files/kidwind/advanced_blade_design_manual.pdf" target="_blank" rel="noopener">vernier.com advanced blade design (PDF)</a></div>
+</div>
+</section>
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+function show(t){
+  document.querySelectorAll('.tab').forEach(function(s){s.classList.toggle('on',s.id===t)});
+  document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});
+}
+document.querySelectorAll('#nav button').forEach(function(b){b.onclick=function(){show(b.dataset.t)}});
+var q=new URLSearchParams(location.search).get('tab');
+show(['parts','spin','blades','build','more'].indexOf(q)>-1?q:'parts');
+
+// copy first, then report honestly
+function copyOut(text,outEl,msgEl){
+  outEl.textContent=text;
+  function fail(){outEl.classList.remove('hide');var r=document.createRange();r.selectNodeContents(outEl);var s=getSelection();s.removeAllRanges();s.addRange(r);msgEl.textContent='Copy did not work. Your answers are selected above: copy them by hand and paste in chat.';}
+  function ok(){outEl.classList.add('hide');msgEl.innerHTML='<span class="done">Copied!</span> Paste it in the chat with Rocky.';}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,function(){try{fallback()}catch(e){fail()}});}
+  else{try{fallback()}catch(e){fail()}}
+  function fallback(){var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();var r=document.execCommand('copy');document.body.removeChild(ta);if(r)ok();else fail();}
+}
+function pickGroup(gid,lockId,cb){
+  var chosen=null,box=$(gid);
+  box.querySelectorAll('.pick').forEach(function(b){b.onclick=function(){
+    box.querySelectorAll('.pick').forEach(function(x){x.classList.remove('sel')});
+    b.classList.add('sel');chosen=b.dataset.g;$(lockId).disabled=false;}});
+  $(lockId).onclick=function(){if(chosen===null)return;box.querySelectorAll('button').forEach(function(x){x.disabled=true});cb(chosen);};
+}
+
+// ---------- PARTS ----------
+var PARTS=[
+ {n:'Blades',job:'Catch the wind.',used:'PVC pipe, cut, heated over a fire and pressed flat.',x:120,y:70},
+ {n:'Rotor and shaft (the spinning middle)',job:'Turn all the blades as one spinner.',used:'A tractor fan, with a shock absorber as part of the shaft.',x:170,y:100},
+ {n:'Drive (passes the spin on)',job:'Pass the spin to the generator.',used:'Bicycle parts, including the chain. Check your book for how he joined them.',x:200,y:190},
+ {n:'Generator (makes electricity)',job:'Make electricity when it spins.',used:'A bicycle dynamo: a small machine where a magnet spins past coils of wire.',x:240,y:225},
+ {n:'Tower',job:'Hold everything up where the wind is stronger.',used:'A wooden tower built from tree wood.',x:150,y:290},
+ {n:'Wiring and light',job:'Carry power to where it is needed.',used:'Wire to light bulbs, with homemade switches. A car battery stored the power.',x:320,y:290}
+];
+var seen={},rem={},cur=-1,locked=false,guess='';
+$('p-lock').onclick=function(){
+  var v=$('p-guess').value.trim();
+  if(v.split(/\s+/).length<3){$('p-guess').placeholder='Write at least a few words: name two parts or jobs you remember.';$('p-guess').focus();return;}
+  guess=v;locked=true;$('p-guess').disabled=true;$('p-lock').disabled=true;$('p-body').classList.remove('hide');
+};
+new p5(function(p){
+  var rot=0;
+  p.setup=function(){var c=p.createCanvas(420,340);c.parent('p-canvas');p.textFont('Trebuchet MS');};
+  p.draw=function(){
+    p.background('#fffdf5');
+    // grid paper
+    p.stroke('#e6dcc3');p.strokeWeight(1);for(var i=0;i<420;i+=20)p.line(i,0,i,340);for(var j=0;j<340;j+=20)p.line(0,j,420,j);
+    p.stroke('#3b3a36');p.strokeWeight(3);
+    // tower
+    p.line(150,300,170,110);p.line(190,300,170,110);p.line(160,200,182,200);p.line(155,250,187,250);
+    // ground
+    p.line(100,300,260,300);
+    // wires + bulb
+    p.stroke('#2b5d7a');p.line(240,230,240,300);p.line(240,300,320,300);
+    p.noStroke();p.fill('#f6c744');p.ellipse(320,290,24,24);
+    // generator
+    p.stroke('#3b3a36');p.fill('#c8b48e');p.rect(228,215,26,22,4);
+    // drive
+    p.line(170,105,200,190);p.line(176,105,208,190);p.noFill();p.ellipse(204,190,16,16);
+    // rotor
+    rot+=0.03;p.push();p.translate(170,100);p.rotate(rot);
+    p.fill('#b4521f');p.stroke('#3b3a36');
+    for(var k=0;k<4;k++){p.rotate(p.HALF_PI);p.rect(0,-6,70,12,3);}
+    p.fill('#c8b48e');p.ellipse(0,0,18,18);p.pop();
+    // hotspots
+    for(var h=0;h<PARTS.length;h++){var P=PARTS[h];
+      p.stroke('#3b3a36');p.strokeWeight(2);p.fill(seen[h]?'#2f6b3a':'#b4521f');p.ellipse(P.x,P.y,22,22);
+      p.noStroke();p.fill('#fff');p.textAlign(p.CENTER,p.CENTER);p.textSize(13);p.text(h+1,P.x,P.y);}
+  };
+  function hit(x,y){if(!locked)return;for(var h=0;h<PARTS.length;h++){var P=PARTS[h];if(p.dist(x,y,P.x,P.y)<18){choose(h);return;}}}
+  p.mousePressed=function(){if(p.mouseX>=0&&p.mouseX<420&&p.mouseY>=0&&p.mouseY<340)hit(p.mouseX,p.mouseY);};
+  p.touchStarted=function(){if(p.touches.length&&p.touches[0].x>=0)hit(p.touches[0].x,p.touches[0].y);return false;};
+  function choose(h){
+    seen[h]=true;cur=h;var P=PARTS[h];
+    $('p-info').innerHTML='<b>'+(h+1)+'. '+P.n+'</b><br>Job: '+P.job+'<br>William used: '+P.used;
+    $('p-rem').classList.remove('hide');
+    updCount();
+  }
+});
+function updCount(){
+  var n=Object.keys(seen).length,r=Object.keys(rem).length;
+  $('p-count').textContent=n+' of 6 parts seen. '+r+' of 6 marked.';
+  if(r===6)$('p-copy').disabled=false;
+}
+function mark(v){if(cur<0)return;rem[cur]=v;updCount();}
+$('p-yes').onclick=function(){mark(true)};
+$('p-no').onclick=function(){mark(false)};
+$('p-copy').onclick=function(){
+  var got=Object.keys(rem).filter(function(k){return rem[k]}).length;
+  var byPart=PARTS.map(function(P,i){return P.n.split(' (')[0]+': '+(rem[i]?'remembered':'missed')}).join(', ');
+  var t='Windmill Explorer, Parts (recall). What I remembered before tapping: '+guess+' | Remembered '+got+' of 6 | '+byPart;
+  copyOut(t,$('p-out'),$('p-msg'));
+};
+
+// ---------- SPIN ----------
+var sGuess1='',sGuess2='',sSpeedsTried={},sLoopsTried={};
+var sSpeed=0,sLoops=2;
+function bulbLevel(){var x=(sSpeed*sLoops)/20;return x<0.15?0:Math.min(1,(x-0.15)/0.85);} // 0..1; too slow = dark, like a real bulb
+new p5(function(p){
+  var ang=0;
+  p.setup=function(){var c=p.createCanvas(420,220);c.parent('s-c1');};
+  p.draw=function(){
+    p.background('#fffdf5');
+    ang+=sSpeed*0.05;
+    // coil
+    p.stroke('#3b3a36');p.strokeWeight(2);p.noFill();
+    for(var i=0;i<sLoops;i++){p.ellipse(190+i*14,110,40,90);}
+    // magnet
+    p.push();p.translate(110,110);p.rotate(ang);p.noStroke();p.fill('#b4521f');p.rect(-30,-9,30,18);p.fill('#2b5d7a');p.rect(0,-9,30,18);p.pop();
+    p.fill('#3b3a36');p.noStroke();p.textSize(12);p.text('magnet',92,170);p.text('coil',170,170);
+    // wire to bulb
+    p.stroke('#2b5d7a');p.strokeWeight(2);p.noFill();p.line(260,110,320,110);
+    // bulb
+    var L=bulbLevel();
+    p.noStroke();
+    if(L>0){p.fill(246,199,68,60+L*120);p.ellipse(340,110,40+L*70,40+L*70);}
+    p.stroke('#3b3a36');p.strokeWeight(2);p.fill(p.lerpColor(p.color(235),p.color(246,199,68),L));p.ellipse(340,110,36,36);
+    p.noStroke();p.fill('#3b3a36');p.textSize(13);p.text('speed '+sSpeed+'   loops '+sLoops,20,24);
+  };
+});
+function buildBtns(id,vals,label,store,fn,doneCheck){
+  var box=$(id);vals.forEach(function(v){var b=document.createElement('button');b.className='act alt';b.textContent=label+' '+v;
+    b.onclick=function(){fn(v);store[v]=true;b.style.background='#2b5d7a';b.style.color='#fff';doneCheck();};box.appendChild(b);});
+}
+pickGroup('s-g1','s-lock1',function(g){
+  sGuess1=g;$('s-body1').classList.remove('hide');
+  sSpeed=0;
+  buildBtns('s-speeds',[0,1,2,3,4,5],'speed',sSpeedsTried,function(v){sSpeed=v;},function(){
+    var n=Object.keys(sSpeedsTried).length;
+    $('s-r1').textContent=n<6?n+' of 6 speeds tried.':'All speeds tried. Look at your guess. Was it right? Tell Rocky why.';
+    if(n===6)$('s-part2').classList.remove('hide');
+  });
+});
+pickGroup('s-g2','s-lock2',function(g){
+  sGuess2=g;$('s-body2').classList.remove('hide');
+  buildBtns('s-loops',[1,2,3,4],'loops',sLoopsTried,function(v){sLoops=v;if(sSpeed<3)sSpeed=3;},function(){
+    var n=Object.keys(sLoopsTried).length;
+    $('s-r2').textContent=n<4?n+' of 4 coil sizes tried.':'All coil sizes tried. Tell Rocky what you saw.';
+    if(n===4)$('s-copy').disabled=false;
+  });
+});
+$('s-copy').onclick=function(){
+  copyOut('Windmill Explorer, Spin. Guess about speed: '+sGuess1+' | Guess about loops: '+sGuess2+' | Speeds tried: '+Object.keys(sSpeedsTried).length+' of 6 | Coil sizes tried: '+Object.keys(sLoopsTried).length+' of 4',$('s-out'),$('s-msg'));
+};
+
+// ---------- BLADES ----------
+var bGuess='',bTilt=0,bTried={};
+function torque(deg){var a=deg*Math.PI/180;return Math.sin(a)*Math.cos(a)*2;} // 0..1, peak at 45
+new p5(function(p){
+  var wobble=0,ang=0;
+  p.setup=function(){var c=p.createCanvas(420,240);c.parent('b-c');};
+  p.draw=function(){
+    p.background('#fffdf5');
+    var T=torque(bTilt);ang+=T*0.12;wobble+=0.2;
+    // wind arrows
+    p.stroke('#2b5d7a');p.strokeWeight(2);
+    for(var y=50;y<=190;y+=35){var o=(wobble*10)%40;p.line(10+o,y,50+o,y);p.line(50+o,y,43+o,y-5);p.line(50+o,y,43+o,y+5);}
+    // blade (side view): a plate tilted from face-on
+    p.push();p.translate(250,120);p.rotate(bTilt*Math.PI/180);p.stroke('#3b3a36');p.fill('#b4521f');p.rect(-4,-60,8,120,2);p.pop();
+    // spinner readout
+    p.push();p.translate(350,60);p.rotate(ang);p.stroke('#3b3a36');p.fill('#c8b48e');
+    for(var k=0;k<4;k++){p.rotate(p.HALF_PI);p.rect(0,-4,26,8,2);}p.pop();
+    p.noStroke();p.fill('#3b3a36');p.textSize(13);
+    p.text('tilt '+bTilt+' degrees',20,24);
+    p.text('turning push: '+Math.round(T*100)+'%',290,150);
+    p.fill('#e6dcc3');p.rect(290,160,110,14,4);p.fill('#2f6b3a');p.rect(290,160,110*T,14,4);
+  };
+});
+pickGroup('b-g','b-lock',function(g){
+  bGuess=g;$('b-body').classList.remove('hide');
+  buildBtns('b-tilts',[0,15,30,45,60,90],'tilt',bTried,function(v){bTilt=v;},function(){
+    var n=Object.keys(bTried).length;
+    $('b-r').textContent=n<6?n+' of 6 tilts tried.':'All tilts tried. Compare with your guess and with your real cardboard blades.';
+    if(n===6)$('b-copy').disabled=false;
+  });
+});
+$('b-copy').onclick=function(){
+  copyOut('Windmill Explorer, Blades. My guess for best tilt: '+bGuess+' degrees | Tilts tried: '+Object.keys(bTried).length+' of 6',$('b-out'),$('b-msg'));
+};
+
+// ---------- BUILD ----------
+var D={b:4,l:12,t:30,w:5},uRuns=[],uGuess=null,uRun={t0:null,T:null,ok:false};
+function fB(b){return b*(1-0.1*(b-1));}
+function uPower(){return 0.5*fB(D.b)*Math.pow(D.l/10,2)*Math.sin(2*D.t*Math.PI/180);}
+function uTime(){var net=uPower()-0.12*D.w;if(net<=0.05)return null;var T=20/net;return T>120?null:T;} // heavier cup = less spare push; too heavy = stall
+function bucket(T){return T===null?"won't lift":T<10?'under 10 s':T<=30?'10 to 30 s':'over 30 s';}
+function uReset(){uRun.t0=null;$('u-r').textContent='';}
+function optRow(id,vals,key){
+  var box=$(id);
+  vals.forEach(function(v){var b=document.createElement('button');b.className='act alt'+(D[key]===v?' sel':'');b.textContent=v;
+    b.onclick=function(){D[key]=v;box.querySelectorAll('button').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');uReset();};box.appendChild(b);});
+}
+optRow('o-b',[2,3,4,5,6,8],'b');optRow('o-l',[8,12,16],'l');optRow('o-t',[0,15,30,45,60,90],'t');optRow('o-w',[1,3,5,8,10],'w');
+document.querySelectorAll('#u-g .pick').forEach(function(b){b.onclick=function(){
+  document.querySelectorAll('#u-g .pick').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');uGuess=b.dataset.g;$('u-run').disabled=false;};});
+function bestRun(){var best=null;uRuns.forEach(function(r){if(r.T!==null&&(best===null||r.T<best.T))best=r;});return best;}
+function desc(r){return r.b+' blades, '+r.l+' cm, tilt '+r.t+', '+r.w+' washers';}
+$('u-run').onclick=function(){
+  if(uGuess===null)return;
+  var T=uTime(),res=bucket(T);
+  uRun={t0:null,T:T,ok:T!==null,start:0};uRun.t0=-1; // started in draw
+  var rec={b:D.b,l:D.l,t:D.t,w:D.w,guess:uGuess,res:res,T:T};
+  uRuns.push(rec);
+  $('u-r').textContent='Pretend result: '+(T===null?"it won't lift this weight":Math.round(T)+' seconds')+'. Your guess: '+uGuess+'. '+(uGuess===res?'Match!':'Not this time. Look at what you changed.')+' Now change ONE thing and guess again.';
+  var row=document.createElement('div');row.textContent=uRuns.length+'. '+desc(rec)+' | guess: '+uGuess+' | result: '+(T===null?"won't lift":Math.round(T)+' s');
+  var log=$('u-log');if(uRuns.length===1)log.querySelector('.note').remove();log.appendChild(row);
+  uGuess=null;$('u-run').disabled=true;document.querySelectorAll('#u-g .pick').forEach(function(x){x.classList.remove('sel')});
+  if(uRuns.length>=3)$('u-copy').disabled=false;
+};
+new p5(function(p){
+  var ang=0,t0=0;
+  p.setup=function(){var c=p.createCanvas(420,300);c.parent('u-c');};
+  p.draw=function(){
+    p.background('#fffdf5');
+    if(uRun.t0===-1){uRun.t0=p.millis();}
+    var prog=0;if(uRun.t0!==null&&uRun.ok)prog=Math.min(1,(p.millis()-uRun.t0)/(uRun.T*250));
+    var spinning=uRun.t0!==null&&uRun.ok&&prog<1;
+    if(spinning)ang+=0.12;
+    p.stroke('#e6dcc3');p.strokeWeight(1);for(var i=0;i<420;i+=20)p.line(i,0,i,300);for(var j=0;j<300;j+=20)p.line(0,j,420,j);
+    p.stroke('#3b3a36');p.strokeWeight(3);
+    p.line(180,280,190,90);p.line(230,280,220,90);p.line(100,282,320,282);
+    // rotor
+    var cx=205,cy=80,len=Math.min(70,D.l*4);
+    p.push();p.translate(cx,cy);p.rotate(ang);p.fill('#b4521f');p.stroke('#3b3a36');p.strokeWeight(2);
+    for(var k=0;k<D.b;k++){p.push();p.rotate(k*p.TWO_PI/D.b);p.rect(0,-4,len,8,2);p.pop();}
+    p.fill('#c8b48e');p.ellipse(0,0,16,16);p.pop();
+    // string and cup
+    var cupTop=270-prog*(spinning||prog>=1?130:0);
+    p.stroke('#2b5d7a');p.strokeWeight(2);p.line(212,90,212,cupTop);
+    p.fill('#fff8e6');p.stroke('#3b3a36');p.rect(198,cupTop,28,20,3);
+    p.noStroke();p.fill('#3b3a36');p.textSize(12);p.text(D.w+' washers',230,cupTop+14);
+    p.text('lift 20 cm',20,40);
+    p.stroke('#2b5d7a');p.line(20,50,20,180);
+    if(uRun.t0!==null&&!uRun.ok){p.noStroke();p.fill('#b4521f');p.textSize(14);p.text("Stalled: not enough turning push.",20,120);}
+  };
+});
+$('u-copy').onclick=function(){
+  var b=bestRun();
+  var t='Windmill Explorer, Build. Runs: '+uRuns.map(function(r,i){return (i+1)+') '+desc(r)+', guess '+r.guess+', result '+r.res;}).join(' | ')+' | Best design so far: '+(b?desc(b)+' at '+Math.round(b.T)+' s':'none lifted yet');
+  copyOut(t,$('u-out'),$('u-msg'));
+};
+})();
+</script>
+</body>
+</html>
