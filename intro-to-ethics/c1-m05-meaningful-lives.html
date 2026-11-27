@@ -370,6 +370,13 @@ select.reasonbox{min-height:44px}
 .judge .pick.wrongp{text-decoration:line-through; opacity:.6}
 .judge .jfb{font-size:.9rem}
 .judge .jfb:empty{display:none}
+/* judge feedback sits below all three judges, so answering one judge never moves the next judge's buttons */
+.jfbs{display:grid; gap:6px; margin-top:4px}
+.jfbs:empty{display:none}
+.jfbs .jfb{font-size:.9rem; padding:8px 10px; border-left:4px solid var(--jc); background:var(--card); border-radius:6px}
+.jfbs .jfb:empty{display:none}
+.judge .jst{height:1.6em; line-height:1.6em; font-family:var(--type); font-size:.82rem; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.judge .jst.ok{color:var(--ok)} .judge .jst.no{color:var(--bad)}
 
 /* lead 2: list builder */
 .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0}
@@ -638,7 +645,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   </div>
   <p>Short on time? Skip this one; nothing later depends on it.</p>
   <details class="sealed" id="listFile">
-    <summary><span class="seal" aria-hidden="true">?</span>Two real lists, and a worry about bossiness</summary>
+    <summary><span class="seal" aria-hidden="true">?</span>Optional extra: two real lists, and a worry about bossiness (not needed for Lead 2)</summary>
     <div class="inner">
       <p>Lists made by testing items differ, but overlap a lot. The legal philosopher John Finnis listed basic human goods including knowledge, friendship, play and religion (1980). The philosopher Martha Nussbaum's list of central human capabilities also includes play, alongside health, imagination, thought and close relationships.</p>
       <p>A second worry is <b>paternalism</b>: if philosophers know what's good for you better than you do, might someone use that to force "goods" on you? List theorists usually answer that knowing what's good for someone doesn't give anyone the right to impose it, and many put freedom to run your own life on the list itself.</p>
@@ -652,7 +659,7 @@ a.linkbtn{display:inline-flex; align-items:center; min-height:44px; padding:6px 
   <div class="gtab">Lead 2 of 5</div>
   <div class="stamp cleared" aria-hidden="true">CLEARED</div>
   <h2 id="g2h">Write your own list, then defend it</h2>
-  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 1, read "Who gets to write the list?" above, then press <b>Got it</b>.</span></div>
+  <div class="lockcard"><svg class="padlock" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="15" width="22" height="16" rx="3" fill="var(--hl-o)" stroke="currentColor" stroke-width="2"/><path d="M11 15v-4a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><span>Locked. Clear Lead 1 (all four pairs), read "Who gets to write the list?" above, then press <b>Got it</b>.</span></div>
   <div class="lab-body" hidden>
   <p class="how">You're the philosopher now. Step 1: pick 3 to 6 things you think are good for a person <i>in themselves</i>. Step 2: say what holds your list together and defend one item. Steps 1 and 2 are yours; no wrong answers. Step 3: answer three critics (graded).</p>
   <p class="step-lbl">1. Pick 3 to 6</p>
@@ -1216,31 +1223,36 @@ var jI=0, REC1={};
 function jRender(){
   var pi=jOrder[jI], P=PAIRS[pi]; REC1[pi]=REC1[pi]||{done:{}, miss:{}, mine:null};
   var R=REC1[pi];
-  $("jNav").textContent="Pair "+(jI+1)+" of "+PAIRS.length; $("jNext").hidden=true; $("jFb").className="fb"; $("jFb").innerHTML="";
+  $("jNav").textContent="Pair "+(jI+1)+" of "+PAIRS.length+" (clear all "+PAIRS.length+" to finish Lead 1)"; $("jNext").hidden=true; $("jFb").className="fb"; $("jFb").innerHTML="";
   var C=$("jCase"); C.innerHTML='<h3>'+P.n+'</h3><div class="ab"><div style="--sc:var(--hl-g)"><b>Life A</b><br>'+P.A+'</div><div style="--sc:var(--hl-o)"><b>Life B</b><br>'+P.B+'</div></div>';
+  var stack=el("div",{class:"jfbs"});
   JUDGES.forEach(function(J){
     var w=el("div",{class:"judge"}); w.style.setProperty("--jc",J[2]);
     w.innerHTML='<div class="jn"><i aria-hidden="true"></i>'+J[1]+'</div><div class="jq">'+J[3]+'</div>';
     var row=el("div",{class:"row",role:"group","aria-label":J[1]+": which life goes better?"});
-    var fb=el("div",{class:"jfb","aria-live":"polite",tabindex:"-1"});
+    var fb=el("div",{class:"jfb","aria-live":"polite",tabindex:"-1"}); fb.style.setProperty("--jc",J[2]);
+    var st=el("div",{class:"jst","aria-hidden":"true"});   /* one reserved line: shows the result next to the buttons without moving anything */
     ["A","B","T"].forEach(function(v){
       var b=el("button",{class:"pick",type:"button","data-v":v}); b.textContent= v==="T" ? "Tie" : "Life "+v;
       b.addEventListener("click",function(){
         if(R.done[J[0]]) return;
         if(v===P.ans[J[0]]){
           R.done[J[0]]=true; b.classList.add("right"); row.querySelectorAll(".pick").forEach(function(x){x.disabled=true;});
-          fb.innerHTML='<b style="color:var(--ok)">'+vword("g1","ok")+'</b> '+P.why[J[0]];
+          fb.innerHTML='<b>'+J[1]+':</b> <b style="color:var(--ok)">'+vword("g1","ok")+'</b> '+P.why[J[0]];
+          st.className="jst ok"; st.textContent="Right. Reason below the judges ↓";
           if(Object.keys(R.done).length===3) showMine(); else focusFb(fb);
         } else {
           R.miss[J[0]]=(R.miss[J[0]]||0)+1; b.classList.add("wrongp"); b.disabled=true;
-          fb.innerHTML='<b style="color:var(--bad)">'+vword("g1","no")+'</b> '+P.miss[J[0]];
+          fb.innerHTML='<b>'+J[1]+':</b> <b style="color:var(--bad)">'+vword("g1","no")+'</b> '+P.miss[J[0]];
+          st.className="jst no"; st.textContent="Not quite. Hint below the judges ↓";
         }
         touch("g1");
       });
       row.appendChild(b);
     });
-    w.appendChild(row); w.appendChild(fb); C.appendChild(w);
+    w.appendChild(row); w.appendChild(st); stack.appendChild(fb); C.appendChild(w);
   });
+  C.appendChild(stack);
   function showMine(){
     var lbl=el("p",{class:"step-lbl"}); lbl.textContent="And you? Which life goes better for the person? (not graded)"; C.appendChild(lbl);
     var g2=el("div",{class:"row",role:"group","aria-label":"Your own ruling"});
@@ -1251,7 +1263,7 @@ function jRender(){
         g2.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b)); x.className= x===b ? "btn" : "btn ghost";});
         jTally();
         if(first){
-          if(jI<PAIRS.length-1){ $("jNext").hidden=false; $("jNext").focus(); }
+          if(jI<PAIRS.length-1){ $("jNext").textContent="Next pair ("+(jI+2)+" of "+PAIRS.length+")"; $("jNext").hidden=false; $("jNext").focus(); }
           else { setFb($("jFb"),"good","All four pairs ruled.","Look at your tally. If you sided with the list theorist on the grass counter or the star chart, some part of you thinks things can be good for a person whatever they feel or want. That's exactly the starting question from the cover."); focusFb($("jFb")); clear("g1"); }
         }
         touch("g1");
